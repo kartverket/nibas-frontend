@@ -1,4 +1,4 @@
-import { Badge, TabPanel } from "@kvib/react";
+import { TabPanel } from "@kvib/react";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { styled } from "styled-components";
 import { isKommuneInndeling, isStemmekretsInndeling, useFlatedata } from "./useFlatedata";
@@ -10,7 +10,7 @@ import KretsTableHeader from "./KretsTableHeader";
 import { FieldError, RegisterOptions, useForm } from "react-hook-form";
 import FlatedataFooter from "./FlatedataFooter";
 import { useState } from "react";
-import InputCell, { TableCell } from "./InputCell";
+import InputCell, { MerknadCell, TableCell } from "./KretsTableCells";
 import { ValidationError } from "components/Input";
 import { isIntegerString } from "utils/type-utils";
 
@@ -38,29 +38,14 @@ const KretsTable = ({ inndeling }: Props) => {
 
   const flatedata = useFlatedata(inndeling) ?? [];
   const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
-
   const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
-
-  const defaultValues = flatedata.reduce<FormInputs>((inndelinger, currentInndeling) => {
-    if (isKommuneInndeling(currentInndeling)) {
-      inndelinger[getIdFromEntity(currentInndeling)] = {
-        samiskforvaltningsomraade: currentInndeling.samiskforvaltningsomraade,
-      };
-    } else {
-      inndelinger[getIdFromEntity(currentInndeling)] = {
-        nummer: currentInndeling.nummer,
-        navn: currentInndeling.navn,
-      };
-    }
-    return inndelinger;
-  }, {});
 
   const {
     register,
     getValues,
     handleSubmit,
     formState: { isDirty, errors },
-  } = useForm<FormInputs>({ defaultValues });
+  } = useForm<FormInputs>();
 
   const validationError = (error: FieldError | undefined | null) => {
     if (error) {
@@ -92,7 +77,6 @@ const KretsTable = ({ inndeling }: Props) => {
 
   const kretsPrefix = isAdministrativEnhet ? "Kommune" : capitalize(inndeling.inndelingtype);
 
-  // TODO: legg til mer?
   const registerOptions: Record<string, RegisterOptions> = {
     nummer: {
       required: `${kretsPrefix}nummer kan ikke være tomt`,
@@ -130,6 +114,7 @@ const KretsTable = ({ inndeling }: Props) => {
         <tbody>
           {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((krets) => {
             const kretsId = getIdFromEntity(krets);
+            const kretsErrors = errors[kretsId];
 
             return (
               <tr key={kretsId}>
@@ -137,31 +122,33 @@ const KretsTable = ({ inndeling }: Props) => {
                   <>
                     <TableCell>{krets.nummer}</TableCell>
                     <TableCell>{getNavnInSpraak(krets.navn, "nor")}</TableCell>
-                    <TableCell>
-                      {krets.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>}
-                    </TableCell>
-
-                    {/* uhuhu hauh uahu hau 
-                  <InputCell
-                    isEditing={isEditing}
-                    data={`${getValues(`${kretsId}.navn`)}`}
-                    validationError={"navn" in errors ? validationError(errors.navn as FieldError) : undefined}
-                    {...register("navn", registerOptions.navn)}
-                  />
-                  */}
+                    <MerknadCell
+                      isEditing={isEditing}
+                      data={getValues(`${kretsId}.samiskforvaltningsomraade`) ?? krets.samiskforvaltningsomraade}
+                      validationError={
+                        kretsErrors && "samiskforvaltningsomraade" in kretsErrors
+                          ? validationError(kretsErrors.samiskforvaltningsomraade)
+                          : undefined
+                      }
+                      {...register(`${kretsId}.samiskforvaltningsomraade`)}
+                    />
                   </>
                 ) : (
                   <>
                     <InputCell
                       isEditing={isEditing}
-                      data={`${getValues(`${kretsId}.nummer`)}`}
-                      validationError={"nummer" in errors ? validationError(errors.nummer as FieldError) : undefined}
+                      data={getValues(`${kretsId}.nummer`) ?? krets.nummer}
+                      validationError={
+                        kretsErrors && "nummer" in kretsErrors ? validationError(kretsErrors.nummer) : undefined
+                      }
                       {...register(`${kretsId}.nummer`, registerOptions.nummer)}
                     />
                     <InputCell
                       isEditing={isEditing}
-                      data={`${getValues(`${kretsId}.navn`)}`}
-                      validationError={"navn" in errors ? validationError(errors.navn as FieldError) : undefined}
+                      data={getValues(`${kretsId}.navn`) ?? krets.navn}
+                      validationError={
+                        kretsErrors && "navn" in kretsErrors ? validationError(kretsErrors.navn) : undefined
+                      }
                       {...register(`${kretsId}.navn`, registerOptions.navn)}
                     />
                     <TableCell>{isStemmekretsInndeling(krets) ? krets.valgdistriktsnummer ?? "" : ""}</TableCell>
@@ -217,17 +204,6 @@ const Table = styled.table`
       padding-left: 24px;
     }
   }
-`;
-
-const Merknad = styled(Badge)`
-  display: inline-flex;
-  align-items: center;
-  height: 100%;
-  padding: 0 8px;
-  text-transform: unset;
-  vertical-align: unset;
-  border-radius: 6px;
-  background: var(--kvib-colors-orange-100);
 `;
 
 export default KretsTable;
