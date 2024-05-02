@@ -70,25 +70,25 @@ type InndelingWithFeatureCollection = {
   inndelinger: TempInndelingResponse;
 };
 
-const inndelingWithGrenseFetcher = async ([inndelingIds, inndelingtype, isEditing, token]: [
-  string[],
-  Inndelingtype,
-  boolean,
-  string | undefined,
-]) => {
-  const promises: Promise<InndelingWithFeatureCollection>[] = inndelingIds.map(async (id) => {
-    const grenserUrl = getGrenserRequestUrl(inndelingtype, isEditing);
-    const geoJSONFeatures = await fetcherWithToken([getModifiedUrl<typeof grenserUrl>(grenserUrl, { id }), token]);
+const inndelingWithGrenseFetcher = async ([inndelinger, token]: [Inndeling[], string | undefined]) => {
+  const promises: Promise<InndelingWithFeatureCollection>[] = inndelinger.map(async (inndeling) => {
+    const grenserUrl = getGrenserRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
+    const geoJSONFeatures = await fetcherWithToken([
+      getModifiedUrl<typeof grenserUrl>(grenserUrl, { id: inndeling.id }),
+      token,
+    ]);
 
-    // TODO Kan man typesette inndelinger her og bygge opp representasjonspunktet her i stedet for i selve hooken?
-    const inndelingUrl = getInndelingRequestUrl(inndelingtype, isEditing);
-    const inndelinger = await fetcherWithToken([getModifiedUrl<typeof inndelingUrl>(inndelingUrl, { id }), token]);
+    const inndelingUrl = getInndelingRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
+    const inndelingerResponses = await fetcherWithToken([
+      getModifiedUrl<typeof inndelingUrl>(inndelingUrl, { id: inndeling.id }),
+      token,
+    ]);
 
     return {
-      id,
-      inndelingtype,
+      id: inndeling.id,
+      inndelingtype: inndeling.inndelingtype,
       geoJSONFeatures,
-      inndelinger,
+      inndelinger: inndelingerResponses,
     };
   });
 
@@ -98,18 +98,9 @@ const inndelingWithGrenseFetcher = async ([inndelingIds, inndelingtype, isEditin
 const useInndelingerFeatures = (inndelinger: Inndeling[]) => {
   const auth = useAuthentication();
 
-  // TODO Dette er ikke en veldig smud måte å bygge opp keyen på. Kan vi gjøre noe bedre her?
-  return useSWR(
-    inndelinger.length > 0
-      ? [
-          inndelinger.map((inndeling) => inndeling.id),
-          inndelinger[0].inndelingtype,
-          inndelinger[0].isEditing,
-          auth.token,
-        ]
-      : null,
-    inndelingWithGrenseFetcher,
-  );
+  // Ikke blodfan av å bruke hele inndelinger som key. Kommer essensielt aldri til å cache noe.
+  // Det er nok ikke superofte man trenger å hente inn inndelinger så lastetid er ikke kriiise, men det er ikke helr nice heller.
+  return useSWR(inndelinger.length > 0 ? [inndelinger, auth.token] : null, inndelingWithGrenseFetcher);
 };
 
 type InndelingWithFeatures = {

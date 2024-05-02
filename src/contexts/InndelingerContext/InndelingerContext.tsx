@@ -40,10 +40,12 @@ const getEmptyInndelinger = (): Inndelinger => {
 type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndelinger: (inndelinger: Inndeling[]) => void;
+
   currentlyEditingInndelinger: Inndeling[];
   isLoadingInndeling: boolean;
 
   getNewInndeling: (id: string, type: Inndelingtype, isEditing: boolean) => Inndeling;
+  getAllInndelinger: () => Inndeling[];
 
   clearInndelingerAndSources: () => void;
 
@@ -107,7 +109,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             if (layer === "edit") {
               setFeatureStylesForUtkast(changedFeaturesInUtkast, sammenslaaingFeaturesInUtkast);
             }
-            zoomToFeatures(features);
           });
         }
       }
@@ -129,6 +130,61 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
       if (!currentInndeling) continue;
 
+      if (currentInndeling.isEditing) {
+        // TODO Kan man unngå så mye looping her? Er det en potensiell performance save?
+        const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
+
+        for (const feature of inndelingWithFeatures.features) {
+          const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
+            (featureFromUtkast) => featureFromUtkast.getId()?.toString() === feature.getId()?.toString(),
+          );
+
+          if (!featureIfInUtkast) {
+            inndelingFeaturesExcludedUtkastFeatures.push(feature);
+          }
+        }
+
+        const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
+
+        if (currentInndeling.inndelingtype === "stemmekrets") {
+          const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+          if (sammenslaaing != null) {
+            const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
+              (stemmekrets) => stemmekrets.lokalId,
+            );
+
+            const stemmekretsInSammenslaaingIds = [
+              sammenslaaing.viderefoertStemmekrets.lokalId,
+              ...innlemmedeStemmekretsIder,
+            ];
+
+            for (const feature of inndelingWithFeatures.features) {
+              const geometry = feature.getGeometry();
+
+              // Filtrerer ut representasjonspunkt
+              if (geometry instanceof LineString) {
+                const properties = feature.getProperties() as FeatureProperties;
+
+                const kontekstEgenskapIds = removeNil(
+                  properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
+                );
+
+                for (const id of kontekstEgenskapIds) {
+                  if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
+                }
+              }
+            }
+          }
+        }
+
+        addInndelingToLayer(
+          "edit",
+          inndelingFeaturesExcludedUtkastFeatures,
+          utkastFeaturesInInndeling,
+          sammenslaaingFeaturesWithDuplicates,
+        );
+      }
+
       const defaultPreviousinndeling = {
         id: currentInndeling.id,
         inndelingtype: currentInndeling.inndelingtype,
@@ -141,66 +197,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           defaultPreviousinndeling
         : defaultPreviousinndeling;
 
-      if (
-        previousInndeling.inndelingtype !== currentInndeling.inndelingtype ||
-        previousInndeling.isEditing !== currentInndeling.isEditing
-      ) {
-        if (currentInndeling.isEditing) {
-          // TODO Kan man unngå så mye looping her? Er det en potensiell performance save?
-          const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
-
-          for (const feature of inndelingWithFeatures.features) {
-            const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
-              (featureFromUtkast) => featureFromUtkast.getId()?.toString() === feature.getId()?.toString(),
-            );
-
-            if (!featureIfInUtkast) {
-              inndelingFeaturesExcludedUtkastFeatures.push(feature);
-            }
-          }
-
-          const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
-
-          if (currentInndeling.inndelingtype === "stemmekrets") {
-            const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
-            if (sammenslaaing != null) {
-              const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
-                (stemmekrets) => stemmekrets.lokalId,
-              );
-
-              const stemmekretsInSammenslaaingIds = [
-                sammenslaaing.viderefoertStemmekrets.lokalId,
-                ...innlemmedeStemmekretsIder,
-              ];
-
-              for (const feature of inndelingWithFeatures.features) {
-                const geometry = feature.getGeometry();
-
-                // Filtrerer ut representasjonspunkt
-                if (geometry instanceof LineString) {
-                  const properties = feature.getProperties() as FeatureProperties;
-
-                  const kontekstEgenskapIds = removeNil(
-                    properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
-                  );
-
-                  for (const id of kontekstEgenskapIds) {
-                    if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
-                  }
-                }
-              }
-            }
-          }
-
-          addInndelingToLayer(
-            "edit",
-            inndelingFeaturesExcludedUtkastFeatures,
-            utkastFeaturesInInndeling,
-            sammenslaaingFeaturesWithDuplicates,
-          );
-        }
-      }
-
       if (previousInndeling.isVisible !== currentInndeling.isVisible) {
         if (!currentInndeling.isVisible) {
           removeInndelingFromLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
@@ -209,6 +205,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         }
       }
     }
+
+    zoomToFeatures(inndelingFeatures.flatMap((inndelingWithFeatures) => inndelingWithFeatures.features));
 
     setSelectedInndelinger([]);
   }, [
@@ -228,19 +226,24 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setInndelinger(getEmptyInndelinger());
   };
 
+  const getAllInndelinger = (): Inndeling[] => {
+    const allInndelinger: Inndeling[] = [];
+
+    for (const inndelingerType of Object.values(inndelinger)) {
+      for (const [, inndeling] of inndelingerType) {
+        allInndelinger.push(inndeling);
+      }
+    }
+
+    return allInndelinger;
+  };
+
   /**
    * Sjekker hvilke inndelinger som redigeres
    * @returns Inndelingene som redigeres dersom de finnes, tom liste ellers
    */
   const getCurrentlyEditingInndelinger = (): Inndeling[] => {
-    const currentlyEditingInndelinger: Inndeling[] = [];
-    for (const inndelingerType of Object.values(inndelinger)) {
-      for (const [, inndeling] of inndelingerType) {
-        if (inndeling.isEditing) currentlyEditingInndelinger.push(inndeling);
-      }
-    }
-
-    return currentlyEditingInndelinger;
+    return getAllInndelinger().filter((inndeling) => inndeling.isEditing);
   };
 
   /**
@@ -315,6 +318,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
 
     getNewInndeling,
+    getAllInndelinger,
 
     clearInndelingerAndSources: useCallback(clearInndelingerAndSources, []),
 
