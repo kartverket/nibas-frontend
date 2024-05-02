@@ -40,6 +40,10 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
+export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<VectorSource> => {
+  return layer instanceof VectorLayer && layer.getSource() instanceof VectorSource;
+};
+
 export const getMatrikkelFeatures = async () => {
   const extent = map.getView().calculateExtent(map.getSize());
   const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({

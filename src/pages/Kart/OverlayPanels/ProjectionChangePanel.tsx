@@ -11,34 +11,31 @@ import { register } from "ol/proj/proj4";
 import proj4 from "proj4";
 import { useEffect, useState } from "react";
 import { keyframes, styled } from "styled-components";
-import { isWMSLayer, isWMTSLayer } from "utils/map/layers";
+import { isVectorLayer, isWMSLayer, isWMTSLayer } from "utils/map/layers";
 import { EpsgCode, defaultProjection, projectionDefinitions } from "utils/map/projections";
 import { map } from "../constants";
 import { AbsolutePanel, PanelProps } from "./Panel";
-import VectorLayer from "ol/layer/Vector";
-import VectorSource from "ol/source/Vector";
 
 export const ProjectionChangePanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayModal } = useOverlayPanel();
   const [coordianteSystem, setCoordinateSystem] = useState(defaultProjection.epsgCode);
 
   useEffect(() => {
-    const updateProjection = () => {
-      const viewProjection = map.getView().getProjection();
-      const projectionEpsgCode = viewProjection.getCode() as EpsgCode;
+    const reprojectLayers = () => {
+      const projectionEpsgCode = map.getView().getProjection().getCode() as EpsgCode;
       map.getAllLayers().forEach((layer) => {
         if (isWMSLayer(layer)) {
           setWMSProjection(layer, projectionEpsgCode);
         } else if (isWMTSLayer(layer)) {
           setWMTSProjection(layer, projectionEpsgCode);
-        } else {
-          transformVectorLayerFeaturesToProjection(layer as VectorLayer<VectorSource>, projectionEpsgCode);
+        } else if (isVectorLayer(layer)) {
+          transformVectorLayerFeaturesToProjection(layer, projectionEpsgCode);
         }
       });
     };
-    map.on("change:view", updateProjection);
+    map.on("change:view", reprojectLayers);
     return () => {
-      map.un("change:view", updateProjection);
+      map.un("change:view", reprojectLayers);
     };
   }, []);
 

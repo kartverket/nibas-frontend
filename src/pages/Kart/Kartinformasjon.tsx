@@ -9,16 +9,16 @@ import { map } from "./constants";
 
 export const getCurrentProjection = () => map.getView().getProjection();
 
-const getCurrentProjectionName = () => {
+export const getCurrentProjectionName = (inShort: boolean) => {
   const projection = getCurrentProjection();
-  return projectionDefinitions.find((def) => def.epsgCode === projection.getCode())?.shortName;
+  return projectionDefinitions.find((def) => def.epsgCode === projection.getCode())?.[inShort ? "shortName" : "name"];
 };
 
 const Projection = () => {
-  const [currentProjectionName, setCurrentProjectionName] = useState(getCurrentProjectionName());
+  const [currentProjectionName, setCurrentProjectionName] = useState(getCurrentProjectionName(true));
   useEffect(() => {
     const updateName = () => {
-      setCurrentProjectionName(getCurrentProjectionName());
+      setCurrentProjectionName(getCurrentProjectionName(true));
     };
     map.on("change:view", updateName);
     return () => {
@@ -38,7 +38,6 @@ const Kartinformasjon = () => {
           if (!coordinates) return "";
           return `${coordinates[1].toFixed(2)}N  ${coordinates[0].toFixed(2)}Ø`;
         },
-        projection: getCurrentProjection(),
         target: document.getElementById("mouse-position") ?? "",
       });
 
