@@ -1,3 +1,4 @@
+import { Options } from "ol/layer/BaseTile";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import TileWMS from "ol/source/TileWMS";
@@ -8,7 +9,6 @@ import { map } from "pages/Kart/constants";
 import { getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
 import { kartlagSources } from "./kartlagSources";
 import { GrenseId, KartlagId } from "./types";
-import { Options } from "ol/layer/BaseTile";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, options?: Options<WMTS | TileWMS>) => {
   const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity, ...options });

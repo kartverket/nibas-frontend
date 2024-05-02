@@ -1,5 +1,9 @@
 import { CloseButton, Select, Text } from "@kvib/react";
-import { setWMSProjection, setWMTSProjection } from "contexts/KartlagContext/kartlag-utils";
+import {
+  setWMSProjection,
+  setWMTSProjection,
+  transformVectorLayerFeaturesToProjection,
+} from "contexts/KartlagContext/kartlag-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { View } from "ol";
 import { get as getProjection } from "ol/proj.js";
@@ -11,6 +15,8 @@ import { isWMSLayer, isWMTSLayer } from "utils/map/layers";
 import { EpsgCode, defaultProjection, projectionDefinitions } from "utils/map/projections";
 import { map } from "../constants";
 import { AbsolutePanel, PanelProps } from "./Panel";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
 
 export const ProjectionChangePanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayModal } = useOverlayPanel();
@@ -25,6 +31,8 @@ export const ProjectionChangePanel = ({ isOpen }: PanelProps) => {
           setWMSProjection(layer, projectionEpsgCode);
         } else if (isWMTSLayer(layer)) {
           setWMTSProjection(layer, projectionEpsgCode);
+        } else {
+          transformVectorLayerFeaturesToProjection(layer as VectorLayer<VectorSource>, projectionEpsgCode);
         }
       });
     };

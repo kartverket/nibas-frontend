@@ -7,6 +7,11 @@ import WMTS, { optionsFromCapabilities } from "ol/source/WMTS";
 import { getLayerById } from "utils/map/layers";
 import { EpsgCode } from "utils/map/projections";
 import { MappedLayer } from "./KartlagContext";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import { FeatureProperties } from "types/api";
+import { Feature } from "ol";
+import { Geometry } from "ol/geom";
 
 /**
  * Navigerer rekursivt gjennom kartlagene for å finne laget som skal endres
@@ -313,4 +318,41 @@ export const setWMSProjection = (layer: TileLayer<TileWMS>, projectionEpsgCode: 
   if (source instanceof TileWMS) {
     source.updateParams({ CRS: projectionEpsgCode });
   }
+};
+
+export const transformVectorLayerFeaturesToProjection = (
+  layer: VectorLayer<VectorSource>,
+  projectionEpsgCode: EpsgCode,
+) => {
+  const source = layer.getSource();
+  if (source != null) {
+    source?.getFeatures().forEach((feature) => {
+      transformFeatureToProjection(feature, projectionEpsgCode);
+    });
+  }
+};
+
+export const transformFeatureToProjection = (feature: Feature<Geometry>, projectionEpsgCode: EpsgCode) => {
+  const geometry = feature.getGeometry();
+  const currentFeatureProperties = feature.getProperties() as FeatureProperties;
+  const currentFeatureProjectionSRID = currentFeatureProperties.srid;
+  const currentFeatureProjectionEPSGCode = getEPSGCodeFromSRID(currentFeatureProjectionSRID);
+  if (geometry && !(currentFeatureProjectionEPSGCode === projectionEpsgCode)) {
+    geometry.transform(currentFeatureProjectionEPSGCode, projectionEpsgCode);
+    const newProperties: FeatureProperties = {
+      ...currentFeatureProperties,
+      srid: getSRIDFromEPSGCode(projectionEpsgCode),
+    };
+    feature.setProperties({
+      ...newProperties,
+    });
+  }
+};
+
+const getSRIDFromEPSGCode = (epsgCode: EpsgCode) => {
+  return Number(epsgCode.replace("EPSG:", ""));
+};
+
+const getEPSGCodeFromSRID = (srid: number): EpsgCode => {
+  return `EPSG:${srid.toString()}`;
 };

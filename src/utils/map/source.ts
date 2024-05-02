@@ -7,6 +7,12 @@ import VectorSource from "ol/source/Vector";
 import { FeatureProperties } from "../../types/api";
 import { isFeatureToBeArchived } from "utils/features";
 import { archivedSource } from "hooks/layers/constants";
+import {
+  transformFeatureToProjection,
+  transformVectorLayerFeaturesToProjection,
+} from "contexts/KartlagContext/kartlag-utils";
+import { getCurrentProjection } from "pages/Kart/Kartinformasjon";
+import { EpsgCode } from "./projections";
 
 export const addEditedFeaturesToSource = (features: Feature<Geometry>[], callback?: () => void) => {
   const editedFeatured = features.filter((f) => !(f.getProperties() as FeatureProperties).shouldArchive);
@@ -56,7 +62,7 @@ export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometr
         return;
       }
     }
-
+    transformFeatureToProjection(feature, getCurrentProjection().getCode() as EpsgCode);
     newFeatures.push(feature);
   });
 
