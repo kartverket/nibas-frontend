@@ -24,7 +24,7 @@ export type KommuneResponse = components["schemas"]["KommuneResponse"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
 export type FylkeResponse = components["schemas"]["FylkeResponse"];
 export type NasjonRequest = components["schemas"]["NasjonRequest"];
-export type KommunalKretsResponse = components["schemas"]["KommunalKretsResponse"];
+export type InndelingerMedDeltGeometriResponse = components["schemas"]["InndelingerMedDeltGeometriResponse"];
 
 type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
 type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;

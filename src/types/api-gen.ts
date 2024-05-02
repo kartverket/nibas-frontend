@@ -56,11 +56,11 @@ export interface paths {
     /** Henter alle stemmekretser som tilhører en kommune. */
     get: operations["hentKommunesStemmekretser"];
   };
-  "/v1/kommuner/{id}/kommunalkretsgrenser": {
-    get: operations["hentKommunesKommunalKretsGrenser"];
+  "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser": {
+    get: operations["hentKommunesInndelingerMedDeltGeometriGrenser"];
   };
-  "/v1/kommuner/{id}/kommunalkretser": {
-    get: operations["hentKommunesKommunalKretser"];
+  "/v1/kommuner/{id}/inndelingerdeltgeometri": {
+    get: operations["hentKommunesInndelingerMedDeltGeometri"];
   };
   "/v1/kommuner/{id}/grunnkretsgrenser": {
     get: operations["hentKommunesGrunnkretsgrenser"];
@@ -622,20 +622,6 @@ export interface components {
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
     };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
-    };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaasResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
@@ -732,6 +718,20 @@ export interface components {
         | "511 NETWORK_AUTHENTICATION_REQUIRED";
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
+    };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
     };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
@@ -931,8 +931,8 @@ export interface components {
        */
       version: number;
     };
-    /** @description Samling av alle kommunalkretser for en kommune */
-    KommunalKretsResponse: {
+    /** @description Samling av alle inndelinger med delt geometri for en kommune */
+    InndelingerMedDeltGeometriResponse: {
       /** @description Stemmekretsene i kommunen */
       stemmekretser: components["schemas"]["StemmekretsResponse"][];
       /** @description Grunnkretsene i kommunen */
@@ -1585,10 +1585,10 @@ export interface operations {
       };
     };
   };
-  hentKommunesKommunalKretsGrenser: {
+  hentKommunesInndelingerMedDeltGeometriGrenser: {
     parameters: {
       path: {
-        /** ID til kommunen man vil hente kommunalkretsgrenser til */
+        /** ID til kommunen man vil hente grensene i inndelingene til */
         id: string;
       };
       query: {
@@ -1617,10 +1617,10 @@ export interface operations {
       };
     };
   };
-  hentKommunesKommunalKretser: {
+  hentKommunesInndelingerMedDeltGeometri: {
     parameters: {
       path: {
-        /** ID til kommunen man vil hente kommunalkretser til */
+        /** ID til kommunen man vil hente inndelingene til */
         id: string;
       };
       query: {
@@ -1644,7 +1644,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["KommunalKretsResponse"];
+          "application/json": components["schemas"]["InndelingerMedDeltGeometriResponse"];
         };
       };
     };

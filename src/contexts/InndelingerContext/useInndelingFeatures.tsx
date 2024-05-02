@@ -6,7 +6,7 @@ import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
 import { Inndeling, Inndelingtype } from "./InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureCollection, InndelingNavn, InndelingResponse, KommunalKretsResponse } from "types/api";
+import { FeatureCollection, InndelingerMedDeltGeometriResponse, InndelingNavn, InndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { paths } from "types/api-gen";
@@ -23,7 +23,7 @@ type InndelingGrenserRequestPath = Pick<
   paths,
   | "/v1/fylker/{id}/grenser"
   | "/v1/kommuner/{id}/grenser"
-  | "/v1/kommuner/{id}/kommunalkretsgrenser"
+  | "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser"
   | "/v1/kommuner/{id}/stemmekretsgrenser"
   | "/v1/kommuner/{id}/grunnkretsgrenser"
 >;
@@ -34,7 +34,7 @@ const getGrenserRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean):
   }
 
   if (inndelingtype === "kommune") {
-    return isEditing ? "/v1/kommuner/{id}/kommunalkretsgrenser" : "/v1/kommuner/{id}/grenser";
+    return isEditing ? "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser" : "/v1/kommuner/{id}/grenser";
   }
 
   return `/v1/kommuner/{id}/${inndelingtype}grenser`;
@@ -44,7 +44,7 @@ type InndelingRequestPath = Pick<
   paths,
   | "/v1/fylker/{id}"
   | "/v1/kommuner/{id}"
-  | "/v1/kommuner/{id}/kommunalkretser"
+  | "/v1/kommuner/{id}/inndelingerdeltgeometri"
   | "/v1/kommuner/{id}/stemmekretser"
   | "/v1/kommuner/{id}/grunnkretser"
 >;
@@ -55,13 +55,13 @@ const getInndelingRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean
   }
 
   if (inndelingtype === "kommune") {
-    return isEditing ? "/v1/kommuner/{id}/kommunalkretser" : "/v1/kommuner/{id}";
+    return isEditing ? "/v1/kommuner/{id}/inndelingerdeltgeometri" : "/v1/kommuner/{id}";
   }
 
   return `/v1/kommuner/{id}/${inndelingtype}er`;
 };
 
-type TempInndelingResponse = InndelingResponse | InndelingResponse[] | KommunalKretsResponse;
+type TempInndelingResponse = InndelingResponse | InndelingResponse[] | InndelingerMedDeltGeometriResponse;
 
 type InndelingWithFeatureCollection = {
   id: string;
