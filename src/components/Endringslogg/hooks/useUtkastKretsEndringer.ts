@@ -2,20 +2,29 @@ import { useEffect, useMemo, useState } from "react";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import useNibasApi from "hooks/useNibasApi";
 import { UtkastResponse } from "types/api";
-import { Kretsendringer, KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import { getKretsEndringer, getKretserAvTypeMedEndringer } from "components/Endringslogg/hooks/endringer-utils";
+import {
+  GrunnkretsMetadataendringer,
+  Kretsendringer,
+  Metadataendringer,
+  StemmekretsMetadataendringer,
+} from "components/Endringslogg/hooks/utkastEndringerTypes";
+import {
+  getGrunnkretsEndringer,
+  getKretserAvTypeMedEndringer,
+  getStemmekretsEndringer,
+} from "components/Endringslogg/hooks/endringerUtils";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 
-type useUtkastKretsEndringerReturnType<T extends KretsType> = {
+type useUtkastKretsEndringerReturnType<KretsMetadataendringer extends Metadataendringer> = {
   harEndringer: boolean;
   laster: boolean;
-  endringer: Kretsendringer<T>[] | null;
+  endringer: Kretsendringer<KretsMetadataendringer>[] | null;
 };
 
 export const useUtkastStemmekretsEndringer = (
   utkast: UtkastResponse,
-): useUtkastKretsEndringerReturnType<"STEMMEKRETS"> => {
-  const [endringer, setEndringer] = useState<Kretsendringer<"STEMMEKRETS">[] | null>(null);
+): useUtkastKretsEndringerReturnType<StemmekretsMetadataendringer> => {
+  const [endringer, setEndringer] = useState<Kretsendringer<StemmekretsMetadataendringer>[] | null>(null);
 
   const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner");
   const operasjoner = utkast.operasjoner;
@@ -30,7 +39,7 @@ export const useUtkastStemmekretsEndringer = (
 
   useEffect(() => {
     if (!lasterData && stemmekretser && kommuner) {
-      setEndringer(getKretsEndringer(stemmekretserMedEndringer, operasjoner, stemmekretser, kommuner, "STEMMEKRETS"));
+      setEndringer(getStemmekretsEndringer(stemmekretserMedEndringer, operasjoner, stemmekretser, kommuner));
     }
   }, [stemmekretserMedEndringer, operasjoner, kommuner, lasterData, stemmekretser]);
 
@@ -43,8 +52,8 @@ export const useUtkastStemmekretsEndringer = (
 
 export const useUtkastGrunnkretsEndringer = (
   utkast: UtkastResponse,
-): useUtkastKretsEndringerReturnType<"GRUNNKRETS"> => {
-  const [endringer, setEndringer] = useState<Kretsendringer<"GRUNNKRETS">[] | null>(null);
+): useUtkastKretsEndringerReturnType<GrunnkretsMetadataendringer> => {
+  const [endringer, setEndringer] = useState<Kretsendringer<GrunnkretsMetadataendringer>[] | null>(null);
 
   const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner");
   const operasjoner = utkast.operasjoner;
@@ -59,7 +68,7 @@ export const useUtkastGrunnkretsEndringer = (
 
   useEffect(() => {
     if (!lasterData && grunnkretser && kommuner) {
-      setEndringer(getKretsEndringer(grunnkretserMedEndringer, operasjoner, grunnkretser, kommuner, "GRUNNKRETS"));
+      setEndringer(getGrunnkretsEndringer(grunnkretserMedEndringer, operasjoner, grunnkretser, kommuner));
     }
   }, [grunnkretserMedEndringer, operasjoner, kommuner, lasterData, grunnkretser]);
 

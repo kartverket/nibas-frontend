@@ -1,5 +1,6 @@
 import { AllEndringTypes, Change, NumericEndringType } from "components/Endringslogg/Endringcard/EndringCardTypes";
-import { KretsType, Metadataendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { Metadataendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { removeNil } from "utils/list-utils";
 
 export const getTitleForEndringstype = (endringstype: AllEndringTypes): string => {
   switch (endringstype) {
@@ -25,7 +26,7 @@ export const getTitleForEndringstype = (endringstype: AllEndringTypes): string =
 export const getBodyTextForNumericChange = (value: number, endringstype: NumericEndringType): string => {
   switch (endringstype) {
     case "grenseendring":
-      return `${value} ${value > 1 ? "grendeendringer" : "grenseendring"} er gjennomført`;
+      return `${value} ${value > 1 ? "grendeendringer" : "grenseendring"} er gjennomført `;
     case "arkiveringer":
       return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} er arkivert`;
     case "grenseinformasjon":
@@ -35,22 +36,34 @@ export const getBodyTextForNumericChange = (value: number, endringstype: Numeric
   }
 };
 
-export const getNavnOgNummerChanges = <T extends KretsType>(metadataendringer: Metadataendringer<T>[]): Change[] => {
+export const getNavnOgNummerChanges = (metadataendringer: Metadataendringer[]): Change[] => {
   return metadataendringer
-    .map((endring) => ({
-      from: [`${endring.nummer?.fra} ${endring.navn?.fra}`],
-      to: [`${endring.nummer?.til} ${endring.navn?.til}`],
-    }))
+    .map((endring) => {
+      const nummerTil = endring.nummer ?? endring.opprinneligKrets.nummer;
+      const navnTil = endring.navn ?? endring.opprinneligKrets.navn;
+
+      return {
+        from: [`${endring.opprinneligKrets.nummer} ${endring.opprinneligKrets.navn}`],
+        to: [`${nummerTil} ${navnTil}`],
+      };
+    })
     .filter((change) => change.from !== change.to);
 };
 
-export const getValgdistriktChanges = (metadataendringer: Metadataendringer<"STEMMEKRETS">[]): Change[] => {
-  const valgdistriktsendringer = metadataendringer.filter((endring) => {
-    return endring.valgdistriktsnummer != null && endring.valgdistriktsnummer.fra !== endring.valgdistriktsnummer.til;
-  });
+export const getValgdistriktChanges = (metadataendringer: Metadataendringer[]): Change[] => {
+  const valgdistriksendringer = removeNil(
+    metadataendringer.map((endring) => (endring.kretsType === "STEMMEKRETS" ? endring.valgdistriktsnummer : null)),
+  );
 
-  return valgdistriktsendringer.map((endring) => ({
-    from: [endring.valgdistriktsnummer?.fra?.toString() ?? "[Ingen verdi]"],
-    to: [endring.valgdistriktsnummer?.til?.toString() ?? "[Ingen verdi]"],
-  }));
+  return removeNil(
+    valgdistriksendringer.map((endring) => {
+      if (endring?.fra == null || endring?.til == null || endring?.fra === endring?.til) {
+        return null;
+      }
+      return {
+        from: [endring?.fra?.toString() ?? "[Ingen verdi]"],
+        to: [endring?.til?.toString() ?? "[Ingen verdi]"],
+      };
+    }),
+  );
 };

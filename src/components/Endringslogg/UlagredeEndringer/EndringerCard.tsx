@@ -7,11 +7,15 @@ import { styled } from "styled-components";
 import { getUrlForPath } from "utils/api";
 import { removeNil } from "utils/list-utils";
 import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
-import { Endring } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import {
   getBodyTextForNumericChange,
   getTitleForEndringstype,
 } from "components/Endringslogg/Endringcard/EndringCardUtils";
+
+type Endring = {
+  fra: ReactNode;
+  til: ReactNode;
+};
 
 type EndringerProps = {
   type: HistoryTypeValues;

@@ -1,5 +1,9 @@
 import { UtkastResponse } from "types/api";
-import { Kretsendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import {
+  GrunnkretsMetadataendringer,
+  Kretsendringer,
+  StemmekretsMetadataendringer,
+} from "components/Endringslogg/hooks/utkastEndringerTypes";
 import {
   useUtkastGrunnkretsEndringer,
   useUtkastStemmekretsEndringer,
@@ -8,8 +12,8 @@ import {
 type UseUtkastEndringerReturnType = {
   laster: boolean;
   harEndringer: boolean;
-  stemmekretsendringer: Kretsendringer<"STEMMEKRETS">[] | null;
-  grunnkretsendringer: Kretsendringer<"GRUNNKRETS">[] | null;
+  stemmekretsendringer: Kretsendringer<StemmekretsMetadataendringer>[] | null;
+  grunnkretsendringer: Kretsendringer<GrunnkretsMetadataendringer>[] | null;
 };
 
 export const useUtkastEndringer = (utkast: UtkastResponse): UseUtkastEndringerReturnType => {

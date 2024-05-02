@@ -16,24 +16,34 @@ export type ResponseTypeFromKretstype<T extends KretsType> = T extends "STEMMEKR
     ? GrunnkretsResponse
     : never;
 
-export type KretsMetadataFields = {
-  STEMMEKRETS: StemmekretsMetadataFields;
-  GRUNNKRETS: GrunnkretsMetadataFields;
-};
+interface IMetadataendringer {
+  kretsType: KretsType;
+  opprinneligKrets: {
+    navn: string;
+    nummer: string;
+  };
+  navn: string | null | undefined;
+  nummer: string | null | undefined;
+}
 
-export type Metadataendringer<T extends KretsType> = T extends "STEMMEKRETS"
-  ? { [Key in KretsMetadataFields["STEMMEKRETS"]]: Endring | null }
-  : T extends "GRUNNKRETS"
-    ? { [Key in KretsMetadataFields["GRUNNKRETS"]]: Endring | null }
-    : never;
+export interface StemmekretsMetadataendringer extends IMetadataendringer {
+  kretsType: "STEMMEKRETS";
+  valgdistriktsnummer: Endring | null;
+}
 
-export type Kretsendringer<T extends KretsType> = {
+export interface GrunnkretsMetadataendringer extends IMetadataendringer {
+  kretsType: "GRUNNKRETS";
+}
+
+export type Metadataendringer = GrunnkretsMetadataendringer | StemmekretsMetadataendringer;
+
+export type Kretsendringer<KretsMetadataendringer extends IMetadataendringer> = {
   kommune: {
     id: string;
     nummer: string;
     navn: string;
   };
-  metadataendringer: Metadataendringer<T>[];
+  metadataendringer: KretsMetadataendringer[];
   antallArkiverteGrenser: number;
   antallNyeGrenser: number;
   antallEndredeGrenser: number;

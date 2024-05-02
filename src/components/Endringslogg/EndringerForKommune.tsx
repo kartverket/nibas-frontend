@@ -7,10 +7,10 @@ import { getNavnOgNummerChanges, getValgdistriktChanges } from "components/Endri
 
 type EndringerForKommuneProps<T extends KretsType> = {
   kretstype: T;
-  endringer: Kretsendringer<T>;
+  endringer: Kretsendringer<Metadataendringer>;
 };
 
-const harEndringer = <T extends KretsType>(endringer: Kretsendringer<T>) =>
+const harEndringer = (endringer: Kretsendringer<Metadataendringer>) =>
   endringer.antallArkiverteGrenser > 0 ||
   endringer.antallNyeGrenser > 0 ||
   endringer.antallEndredeGrenser > 0 ||
@@ -28,8 +28,7 @@ export const EndringerForKommune = <T extends KretsType>({ kretstype, endringer 
   }
 
   const navnOgNummerChanges = getNavnOgNummerChanges(metadataendringer);
-  const valgdistriktEndringer =
-    kretstype === "STEMMEKRETS" ? getValgdistriktChanges(metadataendringer as Metadataendringer<"STEMMEKRETS">[]) : [];
+  const valgdistriktEndringer = kretstype === "STEMMEKRETS" ? getValgdistriktChanges(metadataendringer) : [];
 
   return (
     <EndringListItem>
