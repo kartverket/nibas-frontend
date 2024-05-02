@@ -8,7 +8,6 @@ import {
 } from "../../../types/api";
 import {
   GrunnkretsMetadataendringer,
-  GrunnkretsMetadataFields,
   Kretsendringer,
   KretsSammenslaaingEndring,
   KretsSplittingEndring,
@@ -16,7 +15,6 @@ import {
   Metadataendringer,
   ResponseTypeFromKretstype,
   StemmekretsMetadataendringer,
-  StemmekretsMetadataFields,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { getNavnInSpraak } from "utils/language/language";
 
