@@ -3,8 +3,8 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { keyframes, styled } from "styled-components";
 import { map } from "../../constants";
 import { AbsolutePanel, PanelProps } from "../Panel";
-import { KoordinaterSearch } from "./KoordinaterSearch";
 import { InndelingSearch } from "./InndelingSearch";
+import { KoordinaterSearch } from "./KoordinaterSearch";
 
 export type NavigasjonProps = {
   onSelect: (north: number | null, east: number | null) => void;

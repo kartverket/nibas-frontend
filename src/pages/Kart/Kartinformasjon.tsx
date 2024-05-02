@@ -4,8 +4,8 @@ import { MousePosition, ScaleLine } from "ol/control";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { zindex } from "utils/constants";
-import { map } from "./constants";
 import { projectionDefinitions } from "utils/map/projections";
+import { map } from "./constants";
 
 export const getCurrentProjection = () => map.getView().getProjection();
 

@@ -5,6 +5,9 @@ import { styled } from "styled-components";
 import { InndelingSearchResponse } from "types/api";
 import { NavigasjonProps } from "./NavigasjonPanel";
 import { useInndelingerSearch } from "./useInndelingerSearch";
+import { getCurrentProjection } from "pages/Kart/Kartinformasjon";
+import { transform } from "ol/proj";
+import { defaultProjectionEpsgCode } from "utils/map/projections";
 
 type InndelingOption = InndelingSearchResponse & {
   label: string;
@@ -35,7 +38,12 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProp
     const north = inndeling?.representasjonspunkt.y;
     const east = inndeling?.representasjonspunkt.x;
     if (north != null && east != null) {
-      centerOnCoordinate(north, east);
+      const transformedCoordinates = transform(
+        [east, north],
+        defaultProjectionEpsgCode,
+        getCurrentProjection().getCode(),
+      );
+      centerOnCoordinate(transformedCoordinates[1], transformedCoordinates[0]);
       setSelectedInndeling(null);
     }
   };
