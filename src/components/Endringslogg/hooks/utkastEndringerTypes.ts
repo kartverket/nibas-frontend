@@ -1,21 +1,14 @@
-import { ReactNode } from "react";
 import { GrunnkretsResponse, KretsNavnOgNummer, StemmekretsResponse } from "../../../types/api";
 
 export type Endring = {
-  fra: ReactNode;
-  til: ReactNode;
+  fra: string;
+  til: string;
 };
 
 export type StemmekretsMetadataFields = "navn" | "nummer" | "valgdistriktsnummer";
 export type GrunnkretsMetadataFields = "navn" | "nummer";
 
 export type KretsType = "STEMMEKRETS" | "GRUNNKRETS";
-
-export type EndringsFieldFromKretstype<T extends KretsType> = T extends "STEMMEKRETS"
-  ? StemmekretsMetadataFields
-  : T extends "GRUNNKRETS"
-    ? GrunnkretsMetadataFields
-    : never;
 
 export type ResponseTypeFromKretstype<T extends KretsType> = T extends "STEMMEKRETS"
   ? StemmekretsResponse
