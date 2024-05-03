@@ -21,12 +21,12 @@ export const EndringCard = ({ title, children }: EndringCardProps) => {
   );
 };
 
-type EndringNumericCard = {
+type EndringNumericCardProps = {
   type: NumericEndringType;
   value: number;
 };
 
-export const EndringNumericCard = ({ type, value }: EndringNumericCard) => {
+export const EndringNumericCard = ({ type, value }: EndringNumericCardProps) => {
   if (value <= 0) {
     return null;
   }

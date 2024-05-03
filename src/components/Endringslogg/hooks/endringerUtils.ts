@@ -52,7 +52,7 @@ export const getKretserMedGrensejusteringer = (operasjoner: OperasjonerOrNull, k
 };
 
 /**
- * Denne funksjonen tar inn et sett med endrede stemmekretser og lager et map av endringene hvor de er gruppert per kommune.
+ * Denne funksjonen tar inn et sett med endrede kretser og lager et map av endringene hvor de er gruppert per kommune.
  * Resultatet er da er Map med KommuneId som key og en liste an endrede stemmekretser som value.
  */
 
