@@ -32,7 +32,7 @@ export const getBodyTextForNumericChange = (value: number, endringstype: Numeric
     case "grenseinformasjon":
       return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} har fått endret informasjon`;
     case "nyegrenser":
-      return `${value} nye ${value > 1 ? "grenser" : "grense"} er tegnet`;
+      return `${value} ${value > 1 ? "nye grenser" : "ny grense"} er tegnet`;
   }
 };
 
