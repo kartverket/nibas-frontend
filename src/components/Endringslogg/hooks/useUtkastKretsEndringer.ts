@@ -14,6 +14,7 @@ import {
   getStemmekretsEndringer,
 } from "components/Endringslogg/hooks/endringerUtils";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type useUtkastKretsEndringerReturnType<KretsMetadataendringer extends Metadataendringer> = {
   harEndringer: boolean;
@@ -30,7 +31,7 @@ export const useUtkastStemmekretsEndringer = (
   const operasjoner = utkast.operasjoner;
 
   const stemmekretserMedEndringer = useMemo(() => {
-    return getKretserAvTypeMedEndringer(operasjoner, "STEMMEKRETS");
+    return getKretserAvTypeMedEndringer(operasjoner, KontekstType.STEMMEKRETS);
   }, [operasjoner]);
 
   const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(stemmekretserMedEndringer);
@@ -59,7 +60,7 @@ export const useUtkastGrunnkretsEndringer = (
   const operasjoner = utkast.operasjoner;
 
   const grunnkretserMedEndringer = useMemo(() => {
-    return getKretserAvTypeMedEndringer(operasjoner, "GRUNNKRETS");
+    return getKretserAvTypeMedEndringer(operasjoner, KontekstType.GRUNNKRETS);
   }, [operasjoner]);
 
   const { data: grunnkretser, isValidating: lasterGrunnkretser } = useGrunnkretser(grunnkretserMedEndringer);

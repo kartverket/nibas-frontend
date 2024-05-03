@@ -1,23 +1,19 @@
 import { GrunnkretsResponse, KretsNavnOgNummer, StemmekretsResponse } from "../../../types/api";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export type Endring = {
   fra: string;
   til: string;
 };
 
-export type StemmekretsMetadataFields = "navn" | "nummer" | "valgdistriktsnummer";
-export type GrunnkretsMetadataFields = "navn" | "nummer";
-
-export type KretsType = "STEMMEKRETS" | "GRUNNKRETS";
-
-export type ResponseTypeFromKretstype<T extends KretsType> = T extends "STEMMEKRETS"
+export type ResponseTypeFromKretstype<T extends KontekstType> = T extends KontekstType.STEMMEKRETS
   ? StemmekretsResponse
-  : T extends "GRUNNKRETS"
+  : T extends KontekstType.GRUNNKRETS
     ? GrunnkretsResponse
     : never;
 
 interface IMetadataendringer {
-  kretsType: KretsType;
+  kretsType: KontekstType;
   opprinneligKrets: {
     navn: string;
     nummer: string;
@@ -27,12 +23,12 @@ interface IMetadataendringer {
 }
 
 export interface StemmekretsMetadataendringer extends IMetadataendringer {
-  kretsType: "STEMMEKRETS";
+  kretsType: KontekstType.STEMMEKRETS;
   valgdistriktsnummer: Endring | null;
 }
 
 export interface GrunnkretsMetadataendringer extends IMetadataendringer {
-  kretsType: "GRUNNKRETS";
+  kretsType: KontekstType.GRUNNKRETS;
 }
 
 export type Metadataendringer = GrunnkretsMetadataendringer | StemmekretsMetadataendringer;

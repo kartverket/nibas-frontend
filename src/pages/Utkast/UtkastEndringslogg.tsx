@@ -4,10 +4,10 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  MenuItem,
-  useDisclosure,
   Icon,
+  MenuItem,
   Spinner,
+  useDisclosure,
 } from "@kvib/react";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
@@ -15,6 +15,7 @@ import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 import { EndringList } from "components/Endringslogg/EndringerList";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type Props = {
   utkast: UtkastResponse;
@@ -49,11 +50,19 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
           {!harLastetData && <Spinner size="xl" />}
           <EndringList>
             {stemmekretsendringer?.map((endringer) => (
-              <EndringerForKommune key={endringer.kommune.id} kretstype="STEMMEKRETS" endringer={endringer} />
+              <EndringerForKommune
+                key={endringer.kommune.id}
+                kretstype={KontekstType.STEMMEKRETS}
+                endringer={endringer}
+              />
             ))}
 
             {grunnkretsendringer?.map((endringer) => (
-              <EndringerForKommune key={endringer.kommune.id} kretstype="GRUNNKRETS" endringer={endringer} />
+              <EndringerForKommune
+                key={endringer.kommune.id}
+                kretstype={KontekstType.GRUNNKRETS}
+                endringer={endringer}
+              />
             ))}
           </EndringList>
         </AccordionPanel>

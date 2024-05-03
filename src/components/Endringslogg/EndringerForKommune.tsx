@@ -1,12 +1,13 @@
 import { Heading } from "@kvib/react";
-import { Kretsendringer, KretsType, Metadataendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { Kretsendringer, Metadataendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { EndringNumericCard, EndringToFromCard } from "components/Endringslogg/Endringcard/EndringCard";
 import { EndringListItem } from "components/Endringslogg/EndringerList";
 import { styled } from "styled-components";
 import { getNavnOgNummerChanges, getValgdistriktChanges } from "components/Endringslogg/Endringcard/EndringCardUtils";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
-type EndringerForKommuneProps<T extends KretsType> = {
-  kretstype: T;
+type EndringerForKommuneProps = {
+  kretstype: KontekstType;
   endringer: Kretsendringer<Metadataendringer>;
 };
 
@@ -18,7 +19,7 @@ const harEndringer = (endringer: Kretsendringer<Metadataendringer>) =>
   endringer.sammenslaaing != null ||
   endringer.metadataendringer.length > 0;
 
-export const EndringerForKommune = <T extends KretsType>({ kretstype, endringer }: EndringerForKommuneProps<T>) => {
+export const EndringerForKommune = ({ kretstype, endringer }: EndringerForKommuneProps) => {
   const titlePrefix = kretstype === "STEMMEKRETS" ? "Stemmekretsendringer" : "Grunnkretsendringer";
   const { metadataendringer, antallArkiverteGrenser, antallEndredeGrenser, antallNyeGrenser, delinger, sammenslaaing } =
     endringer;

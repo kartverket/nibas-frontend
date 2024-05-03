@@ -1,13 +1,13 @@
 import { styled } from "styled-components";
 import {
   Modal,
-  ModalOverlay,
+  ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  Stack,
+  ModalOverlay,
   Spinner,
+  Stack,
 } from "@kvib/react";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { UtkastResponse } from "types/api";
@@ -15,6 +15,7 @@ import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCo
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 import { EndringList } from "components/Endringslogg/EndringerList";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type Props = {
   isOpen: boolean;
@@ -43,10 +44,18 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
             {!harLastetData && <Spinner size="xl" />}
             <EndringList>
               {stemmekretsendringer?.map((endringer) => (
-                <EndringerForKommune key={endringer.kommune.id} endringer={endringer} kretstype="STEMMEKRETS" />
+                <EndringerForKommune
+                  key={endringer.kommune.id}
+                  endringer={endringer}
+                  kretstype={KontekstType.STEMMEKRETS}
+                />
               ))}
               {grunnkretsendringer?.map((endringer) => (
-                <EndringerForKommune key={endringer.kommune.id} endringer={endringer} kretstype="GRUNNKRETS" />
+                <EndringerForKommune
+                  key={endringer.kommune.id}
+                  endringer={endringer}
+                  kretstype={KontekstType.GRUNNKRETS}
+                />
               ))}
             </EndringList>
           </Stack>
