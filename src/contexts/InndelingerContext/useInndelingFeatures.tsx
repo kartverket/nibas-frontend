@@ -98,8 +98,9 @@ const inndelingWithGrenseFetcher = async ([inndelinger, token]: [Inndeling[], st
 const useInndelingerFeatures = (inndelinger: Inndeling[]) => {
   const auth = useAuthentication();
 
-  // Ikke blodfan av å bruke hele inndelinger som key. Kommer essensielt aldri til å cache noe.
-  // Det er nok ikke superofte man trenger å hente inn inndelinger så lastetid er ikke kriiise, men det er ikke helr nice heller.
+  // Ikke blodfan av å bruke hele inndelinger som key. Kommer essensielt aldri til å cache noe
+  // Det er nok ikke superofte man trenger å hente inn inndelinger så lastetid er ikke kriiise, men det er ikke nice heller
+  // Spørsmålet er om det gir noe ekstra å skrive om fra SWR, siden vi her har sjanse for at noe faktisk caches, og gir ellers ingen ulemper
   return useSWR(inndelinger.length > 0 ? [inndelinger, auth.token] : null, inndelingWithGrenseFetcher);
 };
 
