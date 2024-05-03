@@ -6,7 +6,7 @@ import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
 import { Inndeling, Inndelingtype } from "./InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureCollection, InndelingNavn, InndelingResponse } from "types/api";
+import { FeatureCollection, InndelingNavn, FullInndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { getRepresentasjonspunktId } from "utils/map/source";
@@ -58,7 +58,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
   );
 
   const getRepresentasjonspunktFeatureForInndeling = (
-    inndelingWithRepresentasjonspunkt: InndelingResponse,
+    inndelingWithRepresentasjonspunkt: FullInndelingResponse,
   ): GeoJSONFeature => {
     const inndelingName: string = inndelingResponseNavnToString(inndelingWithRepresentasjonspunkt.navn);
 
