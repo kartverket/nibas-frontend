@@ -1,7 +1,7 @@
 import { Button, FormControl, FormErrorMessage, InputGroup, InputRightAddon } from "@kvib/react";
 import Input from "components/Input";
 import useNibasApi from "hooks/useNibasApi";
-import { useForm } from "react-hook-form";
+import { ChangeHandler, useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { coordinateDecimalPattern, coordinateDecimalPatternHelperText } from "../FlyttKoordinaterPanel";
 import { NavigasjonProps } from "./NavigasjonPanel";
@@ -70,9 +70,18 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
     },
   };
 
-  const clearErrorsOnChange = (field: keyof KoordinaterForm) => () => {
-    clearErrors(field);
-    clearErrors("insideMultiPolygon");
+  const registerWithClearErrorsOnChange = (field: keyof KoordinaterForm) => {
+    const { onChange, ...rest } = register(field, numericFieldValidator);
+    const handleOnChange: ChangeHandler = (value) => {
+      clearErrors(field);
+      clearErrors("insideMultiPolygon");
+      return onChange(value);
+    };
+
+    return {
+      onChange: handleOnChange,
+      ...rest,
+    };
   };
 
   return (
@@ -86,8 +95,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
               inputMode="decimal"
               title={coordinateDecimalPatternHelperText}
               placeholder="Fyll inn koordinat ..."
-              {...register("north", numericFieldValidator)}
-              onChange={clearErrorsOnChange("north")}
+              {...registerWithClearErrorsOnChange("north")}
             />
             <InputRightAddon>N</InputRightAddon>
           </InputGroup>
@@ -102,8 +110,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
               inputMode="decimal"
               title={coordinateDecimalPatternHelperText}
               placeholder="Fyll inn koordinat ..."
-              {...register("east", numericFieldValidator)}
-              onChange={clearErrorsOnChange("east")}
+              {...registerWithClearErrorsOnChange("east")}
             />
             <InputRightAddon>Ø</InputRightAddon>
           </InputGroup>
