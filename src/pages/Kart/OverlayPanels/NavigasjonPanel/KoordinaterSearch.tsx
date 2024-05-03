@@ -118,7 +118,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
       )}
       <SpacedRow>
         <Text>
-          Nåværende kartprojeksjon er: <b>{getCurrentProjectionName(false)}</b>
+          Nåværende kartprojeksjon er <b>{getCurrentProjectionName(false)}</b>
         </Text>
         <Button type="submit" isDisabled={!isDirty}>
           Gå til koordinater

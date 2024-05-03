@@ -1,19 +1,23 @@
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { PanelHeader, PanelProps, AbsolutePanel } from "./Panel";
+import { Alert, AlertIcon, Button, Select, Spacer, useToast, Text } from "@kvib/react";
 import Input from "components/Input";
-import { useForm } from "react-hook-form";
-import { styled } from "styled-components";
-import LineString from "ol/geom/LineString";
-import { useCallback, useEffect } from "react";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { HistoryChange, MinimalGrense, HistoryDirection, GrenseEntry } from "contexts/HistoryContext/types";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
-import Point from "ol/geom/Point";
-import { Button, Spacer, useToast } from "@kvib/react";
-import { editSource } from "hooks/layers/constants";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { GrenseEntry, HistoryChange, HistoryDirection, MinimalGrense } from "contexts/HistoryContext/types";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
+import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
+import LineString from "ol/geom/LineString";
+import Point from "ol/geom/Point";
+import { useCallback, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { styled } from "styled-components";
+import { projectionDefinitions } from "utils/map/projections";
+import { useProjection } from "./NavigasjonPanel/useProjection";
+import { AbsolutePanel, PanelHeader, PanelProps } from "./Panel";
+import { getCurrentProjection, getCurrentProjectionName } from "../Kartinformasjon";
+import { transform } from "ol/proj";
 
 type KoordinaterFormData = {
   north: number;
@@ -127,15 +131,23 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
     };
   }, [setFormValues]);
 
+  const { selectedProjection, setProjection } = useProjection();
+
   // Tilbakestill defaultverdier når man endrer eller oppdaterer valgt punkt
   useEffect(() => {
     reset(defaultValues(selectedPoint));
-  }, [selectedPoint, reset, selectedFeatures]);
+    setProjection(getCurrentProjection().getCode());
+  }, [selectedPoint, reset, selectedFeatures, setProjection]);
 
   const movePoint = () => {
     if (selectedPoint) {
       // getValues skal returnere et tall, men den returnerer string for en eller annen grunn
-      const newCoordinates = [+getValues("east"), +getValues("north")];
+      // Transformerer gitte koordinater til det kartet bruker
+      const newCoordinates = transform(
+        [+getValues("east"), +getValues("north")],
+        selectedProjection,
+        getCurrentProjection().getCode(),
+      );
       const oldGeometry = selectedPoint.getGeometry() as Point;
       const oldCoordinates = oldGeometry.getCoordinates();
 
@@ -190,6 +202,26 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
         Flytt punkt med koordinater
       </PanelHeader>
       <Form onSubmit={handleSubmit(movePoint)}>
+        <Select
+          value={selectedProjection}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setProjection(e.target.value)}
+        >
+          {projectionDefinitions.map((projection) => (
+            <option value={projection.epsgCode} key={projection.epsgCode}>
+              {projection.name}
+            </option>
+          ))}
+        </Select>
+        {selectedProjection !== getCurrentProjection().getCode() && (
+          <Alert>
+            <AlertIcon />
+            Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
+            transformert til kartet sitt koordinatsystem.
+          </Alert>
+        )}
+        <Text>
+          Nåværende kartprojeksjon er <b>{getCurrentProjectionName(false)}</b>
+        </Text>
         <InputRow>
           <Input
             type="text"
