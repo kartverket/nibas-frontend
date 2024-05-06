@@ -6,7 +6,7 @@ import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
 import { Inndeling, Inndelingtype } from "./InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureCollection, InndelingerMedDeltGeometriResponse, InndelingNavn, InndelingResponse } from "types/api";
+import { FeatureCollection, InndelingNavn, FullInndelingResponse, SimpleInndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { paths } from "types/api-gen";
@@ -61,7 +61,7 @@ const getInndelingRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean
   return `/v1/kommuner/{id}/${inndelingtype}er`;
 };
 
-type TempInndelingResponse = InndelingResponse | InndelingResponse[] | InndelingerMedDeltGeometriResponse;
+type TempInndelingResponse = FullInndelingResponse | FullInndelingResponse[] | SimpleInndelingResponse[];
 
 type InndelingWithFeatureCollection = {
   id: string;
@@ -116,7 +116,7 @@ const useInndelingFeatures = (inndelinger: Inndeling[]) => {
   const { data: featuresResponses, isValidating: isFetchingFeatures } = useInndelingerFeatures(inndelinger);
 
   const getRepresentasjonspunktFeatureForInndeling = (
-    inndelingWithRepresentasjonspunkt: InndelingResponse,
+    inndelingWithRepresentasjonspunkt: FullInndelingResponse | SimpleInndelingResponse,
   ): Feature<Geometry> => {
     const inndelingName: string = inndelingResponseNavnToString(inndelingWithRepresentasjonspunkt.navn);
 
@@ -135,14 +135,13 @@ const useInndelingFeatures = (inndelinger: Inndeling[]) => {
     if (featuresResponses != null) {
       const inndelingerWithFeatures: InndelingWithFeatures[] = removeNil(
         featuresResponses.map((featuresResponse) => {
-          // TODO Litt cleanere måte å vite hva slags inndelingresponse man har fått
-          const inndelingerResponse =
-            "id" in featuresResponse.inndelinger ? [featuresResponse.inndelinger] : featuresResponse.inndelinger;
-          const representasjonspunkter = (
-            "stemmekretser" in inndelingerResponse
-              ? inndelingerResponse.grunnkretser.concat(inndelingerResponse.stemmekretser)
-              : inndelingerResponse
-          ).map((inndeling) => getRepresentasjonspunktFeatureForInndeling(inndeling));
+          const inndelingerResponse = Array.isArray(featuresResponse.inndelinger)
+            ? featuresResponse.inndelinger
+            : [featuresResponse.inndelinger];
+
+          const representasjonspunkter = inndelingerResponse.map((inndeling) =>
+            getRepresentasjonspunktFeatureForInndeling(inndeling),
+          );
 
           const grenser = geoJsonToSource(featuresResponse.geoJSONFeatures).getFeatures();
 

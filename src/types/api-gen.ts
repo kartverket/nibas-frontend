@@ -622,6 +622,20 @@ export interface components {
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
     };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
+    };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaasResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
@@ -718,20 +732,6 @@ export interface components {
         | "511 NETWORK_AUTHENTICATION_REQUIRED";
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
-    };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
     };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
@@ -902,6 +902,19 @@ export interface components {
        */
       version: number;
     };
+    InndelingResponse: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /**
+       * @description Flatetypen til inndelingen
+       * @enum {string}
+       */
+      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      /** @description Navnet til inndelingen */
+      navn: string;
+      /** @description Nummeret til inndelingen */
+      nummer: string;
+      representasjonspunkt: components["schemas"]["Feature"];
+    };
     /** @description Representasjon av en grunnkrets */
     GrunnkretsResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
@@ -931,13 +944,6 @@ export interface components {
        */
       version: number;
     };
-    /** @description Samling av alle inndelinger med delt geometri for en kommune */
-    InndelingerMedDeltGeometriResponse: {
-      /** @description Stemmekretsene i kommunen */
-      stemmekretser: components["schemas"]["StemmekretsResponse"][];
-      /** @description Grunnkretsene i kommunen */
-      grunnkretser: components["schemas"]["GrunnkretsResponse"][];
-    };
     /** @description Liste av kodeliste-elementer. */
     KodelisteItem: {
       /** @description Id til kodeliste-innslaget. */
@@ -964,12 +970,12 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
+      valid?: boolean;
       coordinate?: components["schemas"]["Coordinate"];
     };
-    InndelingResponse: {
+    InndelingSearchResponse: {
       /** @description Lokalid til inndelingen */
       id: string;
       /**
@@ -1644,7 +1650,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["InndelingerMedDeltGeometriResponse"];
+          "application/json": components["schemas"]["InndelingResponse"][];
         };
       };
     };
@@ -1773,7 +1779,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["InndelingResponse"][];
+          "application/json": components["schemas"]["InndelingSearchResponse"][];
         };
       };
       /** Bad Request */
@@ -1785,7 +1791,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["InndelingResponse"][];
+          "application/json": components["schemas"]["InndelingSearchResponse"][];
         };
       };
     };

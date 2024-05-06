@@ -8,9 +8,11 @@ import { isApiError, statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
 import Header from "./Header/Header";
 import frontendLogger from "components/FrontendLogger/FrontendLogger";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 const PageLayout = () => {
   const { error, setError } = useErrorHandling();
+  const { token } = useAuthentication();
 
   return (
     <Grid>
@@ -18,7 +20,7 @@ const PageLayout = () => {
         value={{
           fetcher: (url) => fetch(url).then((res) => res.json()),
           onError: (err) => {
-            frontendLogger.error("Noe gikk galt med kall til baksystem", err);
+            frontendLogger.error("Noe gikk galt med kall til baksystem", err, token);
             if (statusCode.isError(err.response?.status) && isApiError(err)) {
               const wrapper = err as ApiErrorResponse;
               setError({
