@@ -12,13 +12,12 @@ import {
   KretsSammenslaaingEndring,
   KretsSplittingEndring,
   Metadataendringer,
+  OperasjonerOrNull,
   ResponseTypeFromKretstype,
   StemmekretsMetadataendringer,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { getNavnInSpraak } from "utils/language/language";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
-
-export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 
 export const getEndredeFeaturesForKretstype = (
   operasjoner: OperasjonerOrNull,
@@ -30,7 +29,7 @@ export const getEndredeFeaturesForKretstype = (
     return [];
   }
 
-  const endredeFeatures = removeNil(Object.values(endredeFeaturesMap));
+  const endredeFeatures = removeNil(endredeFeaturesMap);
 
   return removeNil(
     endredeFeatures
@@ -160,8 +159,8 @@ const getSammenslaaingEndring = (
     });
 
   return {
-    nyttNavn: sammenslaaing.navn ?? "",
-    nyttNummer: sammenslaaing.nummer ?? "",
+    nyttNavn: sammenslaaing.navn,
+    nyttNummer: sammenslaaing.nummer,
     gamleKretser,
   };
 };
@@ -316,9 +315,9 @@ const getKretsEndringer = <T extends KontekstType>(
     return null;
   }
 
-  const endredeKretserGroupedBykommuneId = groupEndringerByKommune(endredeKretser, alleKretser);
+  const endredeKretserGroupedByKommuneId = groupEndringerByKommune(endredeKretser, alleKretser);
 
-  return Object.entries(endredeKretserGroupedBykommuneId).map(([kommune, kretser]) =>
+  return Object.entries(endredeKretserGroupedByKommuneId).map(([kommune, kretser]) =>
     getEndringerForKommune(kommune, kretser, operasjoner, alleKretser, alleKommuner, kretstype),
   );
 };

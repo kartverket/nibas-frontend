@@ -1,10 +1,12 @@
-import { GrunnkretsResponse, KretsNavnOgNummer, StemmekretsResponse } from "../../../types/api";
+import { GrunnkretsResponse, KretsNavnOgNummer, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export type Endring = {
   fra: string;
   til: string;
 };
+
+export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 
 export type ResponseTypeFromKretstype<T extends KontekstType> = T extends KontekstType.STEMMEKRETS
   ? StemmekretsResponse
