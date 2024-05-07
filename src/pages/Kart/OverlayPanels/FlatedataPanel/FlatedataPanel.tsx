@@ -20,10 +20,12 @@ import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { useState } from "react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import useSearch from "hooks/useSearch";
 
 const FlatedataPanel = ({ isOpen }: PanelProps) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
+  const { searchValue, setInputValue } = useSearch();
 
   const { closeOverlayModal } = useOverlayPanel();
   const { inndelinger } = useInndelinger();
@@ -79,7 +81,7 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
             <InputLeftElement>
               <Icon icon="search" />
             </InputLeftElement>
-            <Input placeholder="TODO" />
+            <Input placeholder="Søk etter navn eller nummer" onChange={(e) => setInputValue(e.currentTarget.value)} />
           </SearchInput>
         </FlatedataPanelHeader>
         <FlatedataTabs size="md" index={tabIndex} onChange={handleTabsChange}>
@@ -95,6 +97,7 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
                 inndeling={inndeling}
                 isEditing={isEditing}
                 setIsEditing={setIsEditing}
+                searchValue={searchValue}
               />
             ))}
           </FlatedataTabPanels>

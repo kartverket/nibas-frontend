@@ -39,6 +39,13 @@ const onUndo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "kommune": {
+      return document.dispatchEvent(
+        new CustomEvent("kommuneUndo", {
+          detail: { entry },
+        }),
+      );
+    }
     case "utkast": {
       return document.dispatchEvent(
         new CustomEvent("utkastUndo", {
@@ -91,6 +98,13 @@ const onRedo = (entry: HistoryEntry) => {
     case "stemmekrets": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretsRedo", {
+          detail: { entry },
+        }),
+      );
+    }
+    case "kommune": {
+      return document.dispatchEvent(
+        new CustomEvent("kommuneRedo", {
           detail: { entry },
         }),
       );

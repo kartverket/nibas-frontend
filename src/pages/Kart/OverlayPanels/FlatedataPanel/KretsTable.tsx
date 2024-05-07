@@ -1,6 +1,6 @@
 import { TabPanel } from "@kvib/react";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
-import { styled } from "styled-components";
+import { styled, css } from "styled-components";
 import { isKommuneInndeling, isStemmekretsInndeling, useFlatedata } from "./useFlatedata";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
@@ -12,8 +12,8 @@ import FlatedataFooter from "./FlatedataFooter";
 import InputCell, { MerknadCell, TableCell } from "./KretsTableCells";
 import { ValidationError } from "components/Input";
 import { isIntegerString } from "utils/type-utils";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useEffect, useRef } from "react";
+import { MetadataResponse } from "types/api";
 
 type KommuneInputs = {
   [inndelingId: string]: {
@@ -34,6 +34,7 @@ type Props = {
   inndeling: Inndeling;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
+  searchValue: string;
 };
 
 const validationError = (error: FieldError | undefined | null) => {
@@ -92,7 +93,7 @@ const fromFormToRequest = (
 };
 */
 
-const KretsTable = ({ inndeling, isEditing, setIsEditing }: Props) => {
+const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) => {
   const flatedata = useFlatedata(inndeling) ?? [];
   const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
   const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
@@ -218,6 +219,9 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing }: Props) => {
     },
   };
 
+  const isFiltered = (krets: MetadataResponse) =>
+    krets.nummer.includes(searchValue) || getNavnInSpraak(krets.navn, "nor").toLowerCase().includes(searchValue);
+
   return (
     <Container>
       <Table>
@@ -239,7 +243,7 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing }: Props) => {
             const kretsId = getIdFromEntity(krets);
             const kretsErrors = errors[kretsId];
             return (
-              <tr key={kretsId}>
+              <Row key={kretsId} $isFiltered={!isFiltered(krets)}>
                 {isKommuneInndeling(krets) ? (
                   <>
                     <TableCell>{krets.nummer}</TableCell>
@@ -276,7 +280,7 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing }: Props) => {
                     <TableCell>{isStemmekretsInndeling(krets) ? krets.valgdistriktsnummer ?? "" : ""}</TableCell>
                   </>
                 )}
-              </tr>
+              </Row>
             );
           })}
         </tbody>
@@ -326,6 +330,14 @@ const Table = styled.table`
       padding-left: 24px;
     }
   }
+`;
+
+const Row = styled.tr<{ $isFiltered: boolean }>`
+  ${(props) =>
+    props.$isFiltered &&
+    css`
+      display: none !important;
+    `};
 `;
 
 export default KretsTable;
