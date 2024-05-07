@@ -61,13 +61,13 @@ const getInndelingRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean
   return `/v1/kommuner/{id}/${inndelingtype}er`;
 };
 
-type TempInndelingResponse = FullInndelingResponse | FullInndelingResponse[] | SimpleInndelingResponse[];
+type PotentialInndelingResponse = FullInndelingResponse | FullInndelingResponse[] | SimpleInndelingResponse[];
 
 type InndelingWithFeatureCollection = {
   id: string;
   inndelingtype: Inndelingtype;
   geoJSONFeatures: GeoJSONFeature;
-  inndelinger: TempInndelingResponse;
+  inndelinger: PotentialInndelingResponse;
 };
 
 const inndelingWithGrenseFetcher = async ([inndelinger, token]: [Inndeling[], string | undefined]) => {
