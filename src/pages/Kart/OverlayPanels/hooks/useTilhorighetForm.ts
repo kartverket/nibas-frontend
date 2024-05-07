@@ -109,6 +109,7 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
   const kontekstType = kontekstTypeOverride ?? getKontekstTypeForFeature(kontekstEgenskaper, featureProperties);
   const { currentlyEditingInndelinger } = useInndelinger();
 
+  // Her aner jeg ikke hvordan vi skal håndtere flere potensielle aktivt redigerte inndelinger
   const kommunerId = useMemo(
     () =>
       getKommunerIdFromKontekstEgenskaper(

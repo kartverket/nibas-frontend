@@ -114,7 +114,7 @@ const useDraw = () => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
       if (currentlyEditingInndelinger.length > 0) return;
 
-      // TODO Fiks currentlyediting
+      // Kan kun redigere én inndelingstype om gangen, så velger bare første
       const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
 
       if (grenseType) {
