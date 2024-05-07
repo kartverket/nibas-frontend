@@ -26,7 +26,7 @@ export const getTitleForEndringstype = (endringstype: AllEndringTypes): string =
 export const getBodyTextForNumericChange = (value: number, endringstype: NumericEndringType): string => {
   switch (endringstype) {
     case "grenseendring":
-      return `${value} ${value > 1 ? "grendeendringer" : "grenseendring"} er gjennomført `;
+      return `${value} ${value > 1 ? "grenseendringer" : "grenseendring"} er gjennomført `;
     case "arkiveringer":
       return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} er arkivert`;
     case "grenseinformasjon":
