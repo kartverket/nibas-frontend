@@ -14,7 +14,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
-import { Breadcrumb, BreadcrumbItem, Hide, Text } from "@kvib/react";
+import { Breadcrumb, BreadcrumbItem, Hide, Text, Tooltip } from "@kvib/react";
 import { capitalize } from "utils/string-utils";
 import { KommuneResponse } from "types/api";
 
@@ -117,7 +117,20 @@ const Header = () => {
                 </BreadcrumbItem>
                 {activeKommuner && activeKommuner.length > 0 && (
                   <BreadcrumbItem>
-                    <InndelingText $isBold>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
+                    {activeKommuner.length > 3 ? (
+                      <Tooltip
+                        hasArrow
+                        label={activeKommuner.map((kommune) => (
+                          <p key={kommune.nummer}>
+                            {kommune.nummer} {inndelingResponseNavnToString(kommune.navn)}
+                          </p>
+                        ))}
+                      >
+                        <InndelingText $isBold>{activeKommuner.length} inndelinger redigeres</InndelingText>
+                      </Tooltip>
+                    ) : (
+                      <InndelingText $isBold>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
+                    )}
                   </BreadcrumbItem>
                 )}
               </Breadcrumb>

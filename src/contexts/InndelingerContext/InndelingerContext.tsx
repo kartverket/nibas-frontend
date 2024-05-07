@@ -269,22 +269,22 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     for (const inndelingerType of Object.values(inndelinger)) {
       for (const [, inndeling] of inndelingerType) {
-        // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
-        if (isNewEditingInndelinger && inndeling.isEditing) {
-          const notEditingInndeling: Inndeling = {
-            ...inndeling,
-            isEditing: false,
-          };
+        const inndelingIsInSelected = inndelingerToSelect.some(
+          (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
+        );
 
-          newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
-        }
+        if (!inndelingIsInSelected) {
+          // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
+          if (isNewEditingInndelinger && inndeling.isEditing) {
+            const notEditingInndeling: Inndeling = {
+              ...inndeling,
+              isEditing: false,
+            };
 
-        if (!isNewEditingInndelinger && inndeling.isVisible) {
-          const inndelingIsInSelected = inndelingerToSelect.some(
-            (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
-          );
+            newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
+          }
 
-          if (!inndelingIsInSelected) {
+          if (!isNewEditingInndelinger && inndeling.isVisible) {
             const notVisibleInndeling: Inndeling = {
               ...inndeling,
               isVisible: false,
