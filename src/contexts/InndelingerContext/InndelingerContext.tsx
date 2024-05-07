@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
@@ -65,9 +65,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const { setFeatureStylesForUtkast } = useFeatureStyle();
 
-  const previousInndelinger = useRef<Inndelinger>();
-  if (previousInndelinger.current == null) previousInndelinger.current = getEmptyInndelinger();
-
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
   const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>([]);
 
@@ -121,7 +118,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     if (inndelingFeatures.length === 0) return;
 
+    // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
     if (selectedInndelinger.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
+    for (const inndeling of selectedInndelinger.filter((selectedInndeling) => selectedInndeling.isVisible)) {
+      const source = getLayerById(inndeling.inndelingtype).getSource();
+      if (source) source.clear(true);
+    }
 
     for (const inndelingWithFeatures of inndelingFeatures) {
       const currentInndeling = selectedInndelinger.find((inndeling) => {
@@ -185,24 +187,10 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         );
       }
 
-      const defaultPreviousinndeling = {
-        id: currentInndeling.id,
-        inndelingtype: currentInndeling.inndelingtype,
-        isEditing: false,
-        isVisible: false,
-      };
-
-      const previousInndeling = previousInndelinger.current
-        ? previousInndelinger.current[currentInndeling.inndelingtype].get(currentInndeling.id) ??
-          defaultPreviousinndeling
-        : defaultPreviousinndeling;
-
-      if (previousInndeling.isVisible !== currentInndeling.isVisible) {
-        if (!currentInndeling.isVisible) {
-          removeInndelingFromLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
-        } else {
-          addInndelingToLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
-        }
+      if (!currentInndeling.isVisible) {
+        removeInndelingFromLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
+      } else {
+        addInndelingToLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
       }
     }
 
@@ -277,18 +265,32 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const selectInndelinger = (inndelingerToSelect: Inndeling[]) => {
     const newInndelinger = structuredClone(inndelinger);
 
-    // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
     const isNewEditingInndelinger = inndelingerToSelect.some((inndeling) => inndeling.isEditing);
-    if (isNewEditingInndelinger) {
-      for (const inndelingerType of Object.values(inndelinger)) {
-        for (const [, inndeling] of inndelingerType) {
-          if (inndeling.isEditing) {
-            const notEditingInndeling: Inndeling = {
+
+    for (const inndelingerType of Object.values(inndelinger)) {
+      for (const [, inndeling] of inndelingerType) {
+        // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
+        if (isNewEditingInndelinger && inndeling.isEditing) {
+          const notEditingInndeling: Inndeling = {
+            ...inndeling,
+            isEditing: false,
+          };
+
+          newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
+        }
+
+        if (!isNewEditingInndelinger && inndeling.isVisible) {
+          const inndelingIsInSelected = inndelingerToSelect.some(
+            (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
+          );
+
+          if (!inndelingIsInSelected) {
+            const notVisibleInndeling: Inndeling = {
               ...inndeling,
-              isEditing: false,
+              isVisible: false,
             };
 
-            newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
+            newInndelinger[notVisibleInndeling.inndelingtype].set(notVisibleInndeling.id, notVisibleInndeling);
           }
         }
       }
@@ -306,7 +308,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       newInndelinger[inndeling.inndelingtype].set(inndeling.id, inndeling);
     }
 
-    previousInndelinger.current = inndelinger;
     setInndelinger(newInndelinger);
     setSelectedInndelinger(inndelingerToSelect);
   };
@@ -318,7 +319,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
 
     getNewInndeling,
-    getAllInndelinger,
+    getAllInndelinger: useCallback(getAllInndelinger, [inndelinger]),
 
     clearInndelingerAndSources: useCallback(clearInndelingerAndSources, []),
 

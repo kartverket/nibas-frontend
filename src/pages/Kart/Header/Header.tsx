@@ -44,7 +44,7 @@ const Header = () => {
     const responsesExceptLast = responsesToString.slice(0, -1);
     const responseLast = responsesToString.slice(-1);
 
-    return `${responsesExceptLast.join(", ")}, og ${responseLast}`;
+    return `${responsesExceptLast.join(", ")} og ${responseLast}`;
   };
 
   const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {

@@ -19,7 +19,7 @@ import {
 } from "contexts/InndelingerContext/InndelingerContext";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { styled } from "styled-components";
@@ -45,6 +45,12 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
 
   const hasUnsavedChangesInHistory = history.entries.length > 0;
   const isEditingPanel = activeOverlayModal === "inndelinger";
+
+  useEffect(() => {
+    if (isOpen) {
+      isEditingPanel ? setSelectedInndelinger([]) : setSelectedInndelinger(getAllInndelinger());
+    }
+  }, [getAllInndelinger, isEditingPanel, isOpen]);
 
   const resetInndelingerPanel = () => {
     closeOverlayModal();
@@ -80,14 +86,17 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
   };
 
   const selectInndelingtype = (inndelingtype: Inndelingtype) => {
+    if (isEditingPanel) setSelectedInndelinger([]);
+
     if (selectedInndelingtype !== inndelingtype) {
       setSelectedInndelingtype(inndelingtype);
       setActivePanelFylkeId("");
-      setSelectedInndelinger(selectedInndelinger.filter((inndeling) => inndeling.isEditing === false));
     }
   };
 
   const toggleFylke = (fylkeId: string) => {
+    if (isEditingPanel) setSelectedInndelinger([]);
+
     if (selectedInndelingtype === "fylke") {
       const isAlreadySelected = selectedInndelinger.findIndex(
         (inndeling) => inndeling.id === fylkeId && inndeling.inndelingtype === selectedInndelingtype,
@@ -108,7 +117,6 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
     } else {
       setActivePanelFylkeId(fylkeId);
       setSelectedFylkeId(fylkeId);
-      setSelectedInndelinger(selectedInndelinger.filter((inndeling) => inndeling.isEditing === false));
     }
   };
 
@@ -188,7 +196,11 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
                   const fylkeId = getIdFromEntity(fylke);
                   return (
                     <InndelingOption
-                      isActive={isInndelingSelected(selectedInndelingtype, fylkeId)}
+                      isActive={
+                        selectedInndelingtype === "fylke"
+                          ? isInndelingSelected(selectedInndelingtype, fylkeId)
+                          : activePanelFylkeId === fylkeId
+                      }
                       key={fylkeId}
                       onClick={() => toggleFylke(fylkeId)}
                       rightIcon={selectedInndelingtype !== "fylke" ? "chevron_right" : undefined}
@@ -244,7 +256,6 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
               <Button
                 size={"md"}
                 isDisabled={
-                  selectedInndelingtype == null ||
                   !selectedInndelinger.some((inndeling) => (isEditingPanel ? inndeling.isEditing : inndeling.isVisible))
                 }
                 onClick={selectNewInndelinger}
