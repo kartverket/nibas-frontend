@@ -1,9 +1,8 @@
 import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { useState } from "react";
-import { GrunnkretsResponse, KommuneResponse, StemmekretsResponse } from "types/api";
+import { GrunnkretsResponse, KommuneResponse, MetadataResponse, StemmekretsResponse } from "types/api";
 import get from "lodash.get";
 
-type InndelingResponse = KommuneResponse | StemmekretsResponse | GrunnkretsResponse;
 type ResponseProperty = keyof KommuneResponse | keyof StemmekretsResponse | keyof GrunnkretsResponse;
 interface PropertiesByInndelingtype extends Record<Inndelingtype, ResponseProperty[]> {
   fylke: (keyof KommuneResponse)[];
@@ -49,10 +48,10 @@ export const useKretsTableSort = (inndelingtype: Inndelingtype) => {
 };
 
 export function orderInndelingerBy(
-  items: InndelingResponse[],
+  items: MetadataResponse[],
   sortField: ResponseProperty,
   sortOrder: "asc" | "desc",
-): InndelingResponse[] {
+): MetadataResponse[] {
   const sortedItems = items.sort((itemA, itemB) => {
     const itemAValue = get(itemA, sortField, "");
     const itemBValue = get(itemB, sortField, "");

@@ -3,6 +3,7 @@ import { GrenseType } from "hooks/layers/types";
 import {
   FeatureProperties,
   GrunnkretsRequest,
+  KommuneRequest,
   KontekstEgenskaper,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
@@ -25,6 +26,7 @@ export type HistoryTypeValues =
   | "property"
   | "grunnkrets"
   | "stemmekrets"
+  | "kommune"
   | "utkast"
   | "stemmekretssammenslaaingsendring"
   | "grensearkivering"
@@ -50,6 +52,12 @@ export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> 
 export type StemmekretsEntry = BaseHistoryEntry<"stemmekrets", StemmekretsRequest> & {
   kommuneId: string;
 };
+export type KommuneEntry = BaseHistoryEntry<"kommune", KommuneRequest> & {
+  fylkeId: string;
+};
+
+export type MetadataEntry = KommuneEntry | StemmekretsEntry | GrunnkretsEntry;
+
 type UtkastEntry = BaseHistoryEntry<"utkast", UtkastRequestWithoutOperations>;
 
 export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
@@ -68,8 +76,7 @@ export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling", Feature[]>;
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
-  | GrunnkretsEntry
-  | StemmekretsEntry
+  | MetadataEntry
   | UtkastEntry
   | StemmekretsSammenslaaingsendringEntry
   | GrenseArkiveringsEntry

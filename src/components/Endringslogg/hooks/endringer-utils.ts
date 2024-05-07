@@ -40,6 +40,7 @@ export const getKretserMedGrensejusteringer = (
  * Resultatet er da er Map med KommuneId som key og en liste an endrede stemmekretser som value.
  */
 
+// TODO: må gjøre noe med endringslogg her kanskje?
 type groupEndringerByKommuneReturnType = { [kommuneid: string]: string[] };
 export function groupEndringerByKommune(
   endredeKretser: string[],

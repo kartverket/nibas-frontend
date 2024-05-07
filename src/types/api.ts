@@ -53,6 +53,9 @@ export type ApiPath = keyof paths;
 /**
  * Metadata
  */
+
+export type MetadataRequest = KommuneRequest | StemmekretsRequest | GrunnkretsRequest;
+export type MetadataResponse = KommuneResponse | StemmekretsResponse | GrunnkretsResponse;
 export type AdministrativGrenseMetadata = components["schemas"]["AdministrativGrenseMetadata"];
 type AvtaltAvgrensningslinjeMetadata = components["schemas"]["AvtaltAvgrensningslinjeMetadata"];
 type GrunnlinjeMetadata = components["schemas"]["GrunnlinjeMetadata"];

@@ -17,6 +17,7 @@ type Props<T extends GrunnkretsResponse | StemmekretsResponse> = {
   getRows: (futureChanges: T[]) => TableRow[];
 };
 
+// TODO: må dette endres med kommuneresponse også?
 const FutureChangesTable = <T extends GrunnkretsResponse | StemmekretsResponse>({
   id,
   futureChangesUrl,

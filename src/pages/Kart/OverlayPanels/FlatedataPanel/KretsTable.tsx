@@ -12,6 +12,8 @@ import FlatedataFooter from "./FlatedataFooter";
 import InputCell, { MerknadCell, TableCell } from "./KretsTableCells";
 import { ValidationError } from "components/Input";
 import { isIntegerString } from "utils/type-utils";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useEffect, useRef } from "react";
 
 type KommuneInputs = {
   [inndelingId: string]: {
@@ -34,45 +36,165 @@ type Props = {
   setIsEditing: (isEditing: boolean) => void;
 };
 
+const validationError = (error: FieldError | undefined | null) => {
+  if (error) {
+    return {
+      showError: true,
+      message: error.message,
+    } as ValidationError;
+  }
+};
+
+/*
+const fromFormToRequest = (
+  inndelingtype: Inndelingtype,
+  data: FormInputs,
+  krets: MetadataResponse,
+): MetadataRequest | null => {
+  switch (inndelingtype) {
+    case "fylke":
+    case "kommune": {
+      if (isKommuneInndeling(krets)) {
+        const kommuneRequest: KommuneRequest = {
+          lokalid: getIdFromEntity(krets),
+          administrativenhetnavn: krets.navn,
+          kommunenummerId: krets.,
+          version: krets.version,
+          samiskforvaltningsomraade: data.samiskforvaltningsomraade,
+        };
+        return kommuneRequest;
+      }
+    }
+    case "stemmekrets": {
+      const stemmekretsRequest: StemmekretsRequest = {
+        identifikasjon: {
+          lokalid: getIdFromEntity(krets),
+        },
+        valgdistriktsnummer: isStemmekretsInndeling(krets) ? krets.valgdistriktsnummer : undefined,
+        version: krets.version,
+        navn: data.navn,
+        nummer: data.nummer,
+      };
+      return stemmekretsRequest;
+    }
+    case "grunnkrets": {
+      const grunnkretsRequest: GrunnkretsRequest = {
+        identifikasjon: {
+          lokalid: getIdFromEntity(krets),
+        },
+        version: krets.version,
+        navn: data.navn,
+        nummer: data.nummer,
+      };
+      return grunnkretsRequest;
+    }
+  }
+};
+*/
+
 const KretsTable = ({ inndeling, isEditing, setIsEditing }: Props) => {
   const flatedata = useFlatedata(inndeling) ?? [];
   const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
   const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
+  // TODO: const { addHistoryEntry } = useHistory();
 
   const {
     register,
+    reset,
     getValues,
     handleSubmit,
     formState: { isDirty, errors },
   } = useForm<FormInputs>();
 
-  const validationError = (error: FieldError | undefined | null) => {
-    if (error) {
-      return {
-        showError: true,
-        message: error.message,
-      } as ValidationError;
+  // Hold styr på forrige tilstand i formet slik at vi har sammenlikningsgrunnlag for history
+  const previousValues = useRef<FormInputs>();
+  useEffect(() => {
+    if (!isEditing) {
+      previousValues.current = undefined;
     }
-  };
+    if (isEditing && !previousValues.current) {
+      previousValues.current = structuredClone(getValues());
+    }
+  }, [getValues, isEditing]);
+
+  // TODO: form history sync for undo og redo?
 
   // TODO: history
-  // TODO: form history sync for undo og redo?
   const saveAndAddHistoryEntry = () => {
     /*
-    const newValues = getValues();
-    addHistoryEntry({
-      type: "stemmekrets",
-      kommuneId,
-      changes: [
-        {
-          from: fromFormToRequest(previousValues.current, stemmekrets),
-          to: fromFormToRequest(newValues, stemmekrets),
-          id: stemmekretsId,
-        },
-      ],
-    });
-    updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newValues.navn, newValues.nummer);
+    const formValues = getValues();
+    console.log("previous", previousValues.current);
+    console.log("current", formValues);
+    const changes = Object.entries(formValues).reduce((accumulator, [key, values]) => {
+      const oldValues = previousValues.current?.[key];
+
+      if (oldValues) {
+        // Dersom kretsen er uendret skal vi ikke gjøre noe med den
+        if ("samiskforvaltningsomraade" in oldValues) {
+          if (values.samiskforvaltningsomraade === oldValues.samiskforvaltningsomraade) return accumulator;
+        } else if ("navn" in oldValues) {
+          if (values.nummer === oldValues.nummer && values.navn === oldValues.navn) return accumulator;
+        }
+
+        const krets = flatedata.find((flate) => getIdFromEntity(flate) === key);
+
+        return [
+          ...accumulator,
+          {
+            id: key,
+            from: fromFormToRequest(inndeling.inndelingtype, previousValues.current, krets),
+            to: fromFormToRequest(inndeling.inndelingtype, formValues, krets),
+          },
+        ];
+      }
+    }, []);
+
+    if (inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune") {
+      addHistoryEntry({
+        type: "kommune",
+        fylkeId: inndeling.id,
+        changes,
+      });
+    } else {
+      addHistoryEntry({
+        type: inndeling.inndelingtype,
+        kommuneId: inndeling.id,
+        changes,
+      });
+    }
     */
+
+    // TODO: finn ut om det her trengs
+    // updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newValues.navn, newValues.nummer);
+    setIsEditing(!isEditing);
+  };
+
+  /*
+  // TODO: må håndtere dette på magisk vis
+  const setFormValues = (change: StemmekretsEntry["changes"][number], direction: HistoryDirection) => {
+    const newName = change[direction]?.navn;
+    const newNumber = change[direction]?.nummer;
+    setValue("navn", newName ?? "");
+    setValue("nummer", newNumber ?? "");
+
+    previousValues.current = getValues();
+
+    updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newName, newNumber);
+  };
+
+  // TODO: må håndtere dette på magisk vis
+  useHistoryFormSync<StemmekretsEntry>({
+    entityId: inndeling.id,
+    redoEventKey: `${inndeling.inndelingtype}Redo`,
+    undoEventKey: `${inndeling.inndelingtype}Undo`,
+    setFormValues,
+  });
+  */
+
+  const toggleEditing = () => {
+    if (isEditing) {
+      reset(previousValues.current);
+    }
     setIsEditing(!isEditing);
   };
 
@@ -82,7 +204,7 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing }: Props) => {
     nummer: {
       required: `${kretsPrefix}nummer kan ikke være tomt`,
       validate: (nummer: string) => {
-        if (!isIntegerString(nummer) || parseInt(nummer) > 9999) {
+        if (!isIntegerString(nummer) || nummer.length > 4 || parseInt(nummer) > 9999) {
           return `${kretsPrefix}nummer må kun inneholde siffer (maks 4)`;
         }
         if (parseInt(nummer) <= 0) {
@@ -161,7 +283,7 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing }: Props) => {
       </Table>
       <FlatedataFooter
         isEditing={isEditing}
-        toggleEditing={() => setIsEditing(!isEditing)}
+        toggleEditing={toggleEditing}
         canSave={isDirty}
         onSubmit={handleSubmit(saveAndAddHistoryEntry)}
       />
