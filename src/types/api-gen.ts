@@ -37,6 +37,10 @@ export interface paths {
     /** Henter grensene til en stemmekrets med gitt id */
     get: operations["hentGrenserForStemmekrets"];
   };
+  "/v1/nasjon/": {
+    /** Henter nasjon på en gitt dato */
+    get: operations["hentNasjon"];
+  };
   "/v1/kommuner": {
     /** Henter alle kommuner i Nasjonal inndelingsbase. */
     get: operations["hentKommuner"];
@@ -51,6 +55,12 @@ export interface paths {
   "/v1/kommuner/{id}/stemmekretser": {
     /** Henter alle stemmekretser som tilhører en kommune. */
     get: operations["hentKommunesStemmekretser"];
+  };
+  "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser": {
+    get: operations["hentKommunesInndelingerMedDeltGeometriGrenser"];
+  };
+  "/v1/kommuner/{id}/inndelingerdeltgeometri": {
+    get: operations["hentKommunesInndelingerMedDeltGeometri"];
   };
   "/v1/kommuner/{id}/grunnkretsgrenser": {
     get: operations["hentKommunesGrunnkretsgrenser"];
@@ -612,20 +622,6 @@ export interface components {
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
     };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
-    };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaasResponse: {
       /** @description Identifikatoren til objektet som er utdatert. */
@@ -722,6 +718,20 @@ export interface components {
         | "511 NETWORK_AUTHENTICATION_REQUIRED";
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
+    };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
     };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
@@ -851,6 +861,24 @@ export interface components {
       /** @description Liste av features som holder på dataene */
       features: components["schemas"]["Feature"][];
     };
+    /** @description Representasjon av nasjon */
+    NasjonResponse: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Liste over navn til nasjon */
+      navn: components["schemas"]["AdministrativEnhetNavn"][];
+      omraade?: components["schemas"]["MultiPolygon"];
+      representasjonspunkt: components["schemas"]["Feature"];
+      /**
+       * Format: date-time
+       * @description Angir når denne nasjonen ble sist oppdatert
+       */
+      oppdateringsdato: string;
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
     /** @description Representasjon av en kommune */
     KommuneResponse: {
       id: components["schemas"]["ObjektIdentifikator"];
@@ -873,6 +901,19 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+    };
+    InndelingResponse: {
+      id: components["schemas"]["ObjektIdentifikator"];
+      /**
+       * @description Flatetypen til inndelingen
+       * @enum {string}
+       */
+      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      /** @description Navnet til inndelingen */
+      navn: string;
+      /** @description Nummeret til inndelingen */
+      nummer: string;
+      representasjonspunkt: components["schemas"]["Feature"];
     };
     /** @description Representasjon av en grunnkrets */
     GrunnkretsResponse: {
@@ -931,10 +972,10 @@ export interface components {
       z?: number;
       /** Format: double */
       m?: number;
-      coordinate?: components["schemas"]["Coordinate"];
       valid?: boolean;
+      coordinate?: components["schemas"]["Coordinate"];
     };
-    InndelingResponse: {
+    InndelingSearchResponse: {
       /** @description Lokalid til inndelingen */
       id: string;
       /**
@@ -1404,6 +1445,35 @@ export interface operations {
       };
     };
   };
+  /** Henter nasjon på en gitt dato */
+  hentNasjon: {
+    parameters: {
+      query: {
+        /** Eventuell gyldighetsdato for nasjonen (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["NasjonResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["NasjonResponse"];
+        };
+      };
+    };
+  };
   /** Henter alle kommuner i Nasjonal inndelingsbase. */
   hentKommuner: {
     parameters: {
@@ -1517,6 +1587,70 @@ export interface operations {
       400: {
         content: {
           "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
+  hentKommunesInndelingerMedDeltGeometriGrenser: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente grensene i inndelingene til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
+  hentKommunesInndelingerMedDeltGeometri: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente inndelingene til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["InndelingResponse"][];
         };
       };
     };
@@ -1645,7 +1779,7 @@ export interface operations {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["InndelingResponse"][];
+          "application/json": components["schemas"]["InndelingSearchResponse"][];
         };
       };
       /** Bad Request */
@@ -1657,7 +1791,7 @@ export interface operations {
       /** Not Found */
       404: {
         content: {
-          "application/json": components["schemas"]["InndelingResponse"][];
+          "application/json": components["schemas"]["InndelingSearchResponse"][];
         };
       };
     };

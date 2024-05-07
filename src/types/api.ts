@@ -8,6 +8,8 @@ export type Spraak = {
   navn: string;
   spraak: string;
 };
+
+export type FeatureDTO = components["schemas"]["Feature"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type KodelisteRespons = components["schemas"]["KodelisteRespons"];
 export type ObjektIdentifikator = components["schemas"]["ObjektIdentifikator"];
@@ -27,10 +29,11 @@ export type NasjonRequest = components["schemas"]["NasjonRequest"];
 
 type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
 type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
-export type InndelingResponse = KretsResponse | AdministrativEnhetResponse;
+export type FullInndelingResponse = KretsResponse | AdministrativEnhetResponse;
+export type SimpleInndelingResponse = components["schemas"]["InndelingResponse"];
 export type InndelingNavn = components["schemas"]["AdministrativEnhetNavn"][] | string;
-export type InndelingSearchResponse = components["schemas"]["InndelingResponse"];
 export type KretsNavnOgNummer = components["schemas"]["KretsNavnOgNummer"];
+export type InndelingSearchResponse = components["schemas"]["InndelingSearchResponse"];
 
 /**
  * Utkast

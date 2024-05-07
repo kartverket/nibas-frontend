@@ -1,4 +1,4 @@
-import { Badge, Card, Text } from "@kvib/react";
+import { Badge, Card, Icon, Text } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
@@ -6,8 +6,16 @@ import { ReactNode, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { getUrlForPath } from "utils/api";
 import { removeNil } from "utils/list-utils";
-import { EndringFraTil } from "../EndringsloggComponents";
 import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
+import {
+  getBodyTextForNumericChange,
+  getTitleForEndringstype,
+} from "components/Endringslogg/Endringcard/EndringCardUtils";
+
+type Endring = {
+  fra: ReactNode;
+  til: ReactNode;
+};
 
 type EndringerProps = {
   type: HistoryTypeValues;
@@ -33,22 +41,13 @@ const getTitleAndDescriptionFragments = (
   switch (type) {
     case "grense":
       return {
-        title: <EndringTitle>Justering på grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt endret på
-          </Text>
-        ),
+        title: <EndringTitle>{getTitleForEndringstype("grenseendring")}</EndringTitle>,
+        description: <Text>{getBodyTextForNumericChange(antallEndringer, "grenseendring")}</Text>,
       };
     case "property":
       return {
-        title: <EndringTitle>Informasjon om grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har fått endret
-            informasjon
-          </Text>
-        ),
+        title: <EndringTitle>{getTitleForEndringstype("grenseinformasjon")}</EndringTitle>,
+        description: <Text>{getBodyTextForNumericChange(antallEndringer, "grenseinformasjon")}</Text>,
       };
     case "grunnkrets":
       return {
@@ -76,7 +75,7 @@ const getTitleAndDescriptionFragments = (
       };
     case "stemmekretssammenslaaingsendring":
       return {
-        title: <EndringTitle>Stemmekretssammenslåing</EndringTitle>,
+        title: <EndringTitle>{getTitleForEndringstype("sammenslåing")}</EndringTitle>,
         description: (
           <Text>
             {antallEndringer <= 1 ? `${antallEndringer} sammenslåing` : `${antallEndringer} sammenslåinger`} har blitt
@@ -86,12 +85,8 @@ const getTitleAndDescriptionFragments = (
       };
     case "grensearkivering":
       return {
-        title: <EndringTitle>Arkiverte grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt arkivert
-          </Text>
-        ),
+        title: <EndringTitle>{getTitleForEndringstype("arkiveringer")}</EndringTitle>,
+        description: <Text>{getBodyTextForNumericChange(antallEndringer, "arkiveringer")}</Text>,
       };
     case "grensetilhorighetendring":
       return {
@@ -100,17 +95,12 @@ const getTitleAndDescriptionFragments = (
       };
     case "nygrense":
       return {
-        title: <EndringTitle>Nye grenser</EndringTitle>,
-        description: (
-          <Text>
-            {antallEndringer <= 1 ? `${antallEndringer} ny grense` : `${antallEndringer} nye grenser`} har blitt
-            opprettet
-          </Text>
-        ),
+        title: <EndringTitle>{getTitleForEndringstype("nyegrenser")}</EndringTitle>,
+        description: <Text>{getBodyTextForNumericChange(antallEndringer, "nyegrenser")}</Text>,
       };
     case "grensedeling":
       return {
-        title: <EndringTitle>Delte grenser</EndringTitle>,
+        title: <EndringTitle>{getTitleForEndringstype("deling")}</EndringTitle>,
         description: (
           <Text>
             {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt delt
@@ -285,6 +275,52 @@ const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringe
     </TilhorighetEndringer>
   );
 };
+
+type EndringFraTilProps = {
+  endring: Endring;
+  withBadges?: boolean;
+};
+
+const FraTilContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+`;
+
+const EndringAndBadge = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const RightArrow = styled(Icon)`
+  color: var(--kvib-colors-blue-500);
+  font-size: 20px;
+  vertical-align: middle;
+`;
+
+export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
+  <FraTilContainer>
+    <EndringAndBadge>
+      {endring.fra}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="gray">
+          Utgår
+        </Badge>
+      )}
+    </EndringAndBadge>
+    <RightArrow icon="arrow_right_alt" />
+    <EndringAndBadge>
+      {endring.til}
+      {withBadges === true && (
+        <Badge variant={"subtle"} colorScheme="green">
+          Ny
+        </Badge>
+      )}
+    </EndringAndBadge>
+  </FraTilContainer>
+);
 
 const EndringTitle = styled(Text)`
   font-size: var(--kvib-fontSizes-sm);
