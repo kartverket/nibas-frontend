@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import { Button, Checkbox, MaterialSymbol, Radio } from "@kvib/react";
 
-export type InndelingButtonType = "checkbox" | "radio" | "button";
+type InndelingButtonType = "checkbox" | "radio" | "button";
 
 type CheckOrRadioProps = {
   isActive: boolean;
