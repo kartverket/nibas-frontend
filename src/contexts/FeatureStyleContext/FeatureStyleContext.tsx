@@ -14,12 +14,7 @@ import {
   isFeatureDeadEnd,
 } from "utils/features";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
-import {
-  filterOnlyDeadEnds,
-  getEntriesUpToIndex,
-  mapAffectedFeaturesForErrorEntries,
-  removeDuplicateIds,
-} from "./feature-style-utils";
+import { filterOnlyDeadEnds, getEntriesUpToIndex, mapAffectedFeaturesForErrorEntries } from "./feature-style-utils";
 import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
 import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
@@ -151,7 +146,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       return;
     }
 
-    const allFeatureIds = removeDuplicateIds(history.entries.flatMap(getChangeIds));
+    const allFeatureIds = history.entries.flatMap(getChangeIds);
     // Finn IDer som er med i historikken etter index, men ikke før
     const featureIdsToIgnore = allFeatureIds.filter((id) => newFeatureOnlyExistsAfterIndex(id, history));
 
@@ -159,18 +154,15 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       (featureEndpoint) => featureEndpoint != null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
     ) as FeatureIdWithEndpoints[];
 
-    const archivedFeatures = removeDuplicateIds(archivedSource.getFeatures().map((f) => f.getId()?.toString() ?? ""));
-    const errorFeatures = removeDuplicateIds(
-      getEntriesUpToIndex(history, (entry) => errorHistoryTypes.includes(entry.type))
-        .flatMap(mapAffectedFeaturesForErrorEntries)
-        .filter(filterOnlyDeadEnds(featureEndpointsToCheck, archivedFeatures))
-        .map((feature) => feature.getId()?.toString() ?? ""),
-    );
-
+    const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() ?? "");
+    const errorFeatures = getEntriesUpToIndex(history, (entry) => errorHistoryTypes.includes(entry.type))
+      .flatMap(mapAffectedFeaturesForErrorEntries)
+      .filter(filterOnlyDeadEnds(featureEndpointsToCheck, archivedFeatures))
+      .map((feature) => feature.getId()?.toString() ?? "");
     // Entries før index skal fargelegges basert på endringen som er gjort
-    const dirtyFeatures = removeDuplicateIds(
-      getEntriesUpToIndex(history, (entry) => dirtyHistoryTypes.includes(entry.type)).flatMap(getChangeIds),
-    ).filter((id) => !errorFeatures.includes(id));
+    const dirtyFeatures = getEntriesUpToIndex(history, (entry) => dirtyHistoryTypes.includes(entry.type))
+      .flatMap(getChangeIds)
+      .filter((id) => !errorFeatures.includes(id));
 
     // For å forhindre uendelig løkke
     if (

@@ -6,6 +6,7 @@ import {
   HistoryChange,
   HistoryState,
   HistoryTypeValues,
+  NyGrense,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext/types";
@@ -152,9 +153,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     if (!feature) return;
 
     const featureAsGeoJson = featureToGeoJson(feature);
-
     const index = editedFeatures.findIndex((geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id);
-
     // Hvis vi allerede har lagt inn featuren tidligere i historikken,
     // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
     if (index !== -1) {
@@ -174,6 +173,18 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         // Grensedeling er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
         const newFeatures = removeNil((change as HistoryChange<Feature[]>).to.map((f) => f.getId()?.toString()));
         newFeatures.forEach((id) => {
+          addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
+        });
+      } else if (entry.type === "nygrense") {
+        // ny grense er også sær, siden den kan inneholde 1-2 grensedelinger attåt
+        const grenseChange = change as HistoryChange<NyGrense>;
+        if (grenseChange.from.grensedeling == null || grenseChange.to.grensedeling == null) return;
+
+        const featureIds = removeNil(
+          [...grenseChange.from.grensedeling, ...grenseChange.to.grensedeling].map((f) => f.getId()?.toString()),
+        );
+
+        featureIds.forEach((id) => {
           addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
         });
       }
@@ -196,7 +207,7 @@ export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtk
     featureIsNotAnArchivedNewFeature,
   );
 
-  // Fjerner midlertigie ID fra alle nye grenser og deres dokumentasjonsreferanser, da dette ikke er forventet fra backend
+  // Fjerner midlertidige ID fra alle nye grenser og deres dokumentasjonsreferanser, da dette ikke er forventet fra backend
   endredeFeatures.forEach((endretFeature) => {
     if (endretFeature.id != null && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
 
