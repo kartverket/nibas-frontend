@@ -1,11 +1,9 @@
-import { IconButton } from "@kvib/react";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { MousePosition, ScaleLine } from "ol/control";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { styled } from "styled-components";
 import { zindex } from "utils/constants";
-import { projectionDefinitions } from "utils/map/projections";
 import { map } from "./constants";
+import { EPSGCode, projectionDefinitions } from "utils/map/projections";
 
 export const getCurrentProjection = () => map.getView().getProjection();
 
@@ -14,23 +12,11 @@ export const getCurrentProjectionName = (inShort: boolean) => {
   return projectionDefinitions.find((def) => def.epsgCode === projection.getCode())?.[inShort ? "shortName" : "name"];
 };
 
-const Projection = () => {
-  const [currentProjectionName, setCurrentProjectionName] = useState(getCurrentProjectionName(true));
-  useEffect(() => {
-    const updateName = () => {
-      setCurrentProjectionName(getCurrentProjectionName(true));
-    };
-    map.on("change:view", updateName);
-    return () => {
-      map.un("change:view", updateName);
-    };
-  }, []);
-  return <ProjectionSpan>{currentProjectionName}</ProjectionSpan>;
+export const isLatLongProjection = (epsgCode: EPSGCode) => {
+  return projectionDefinitions.find((def) => def.epsgCode === epsgCode)?.isLatLong;
 };
 
 const Kartinformasjon = () => {
-  const { closeOverlayModal, openOverlayModal, activeOverlayModal } = useOverlayPanel();
-
   useEffect(() => {
     if (map.getControls().getLength() === 0) {
       const mousePosition = new MousePosition({
@@ -62,24 +48,14 @@ const Kartinformasjon = () => {
 
   return (
     <>
-      <ScaleIndicator id="scale-line" />
       <Container>
         <Wrapper>
-          <Projection />
+          <ProjectionSpan>EU89 UTM-33</ProjectionSpan>
           <Position id="mouse-position" />
-          <Scale id="scale-bar" />
         </Wrapper>
-        <IconButton
-          aria-label={"koordinatsystem-innstillinger"}
-          icon={"settings"}
-          iconFill
-          size={"sm"}
-          variant="ghost"
-          onClick={() =>
-            activeOverlayModal === "koordinatsystem" ? closeOverlayModal() : openOverlayModal("koordinatsystem")
-          }
-        />
       </Container>
+      <Scale id="scale-bar" />
+      <ScaleIndicator id="scale-line" />
     </>
   );
 };
@@ -108,7 +84,7 @@ const Container = styled.div`
 
 const ScaleIndicator = styled.span`
   position: absolute;
-  bottom: 8px;
+  bottom: 40px;
   left: 8px;
   z-index: ${zindex.farBack};
 
@@ -117,10 +93,13 @@ const ScaleIndicator = styled.span`
   text-align: center;
 `;
 
-const Scale = styled.section`
+const Scale = styled(Container)`
   display: flex;
   align-items: center;
   gap: 8px;
+  top: unset;
+  bottom: 8px;
+  left: 8px;
 
   /* Vi hindrer OpenLayers sin innebygde styling fra å sette bredde ved å bare ha inline-elementer */
   .ol-scale-bar-inner {

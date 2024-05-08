@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, Select, Spacer, useToast, Text } from "@kvib/react";
+import { Alert, AlertIcon, Button, Select, Spacer, Text, useToast } from "@kvib/react";
 import Input from "components/Input";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
@@ -10,14 +10,13 @@ import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
-import { useCallback, useEffect } from "react";
+import { transform } from "ol/proj";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
-import { projectionDefinitions } from "utils/map/projections";
-import { useProjection } from "./NavigasjonPanel/useProjection";
+import { EPSGCode, defaultProjectionEpsgCode, projectionDefinitions } from "utils/map/projections";
 import { AbsolutePanel, PanelHeader, PanelProps } from "./Panel";
-import { getCurrentProjection, getCurrentProjectionName } from "../Kartinformasjon";
-import { transform } from "ol/proj";
+import { getCurrentProjectionName, isLatLongProjection } from "../Kartinformasjon";
 
 type KoordinaterFormData = {
   north: number;
@@ -27,7 +26,6 @@ type KoordinaterFormData = {
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 24px;
   padding-bottom: 16px;
 `;
@@ -131,13 +129,13 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
     };
   }, [setFormValues]);
 
-  const { selectedProjection, setProjection } = useProjection();
+  const [coordinatesProjection, setCoordinatesProjection] = useState<EPSGCode>(defaultProjectionEpsgCode);
 
   // Tilbakestill defaultverdier når man endrer eller oppdaterer valgt punkt
   useEffect(() => {
     reset(defaultValues(selectedPoint));
-    setProjection(getCurrentProjection().getCode());
-  }, [selectedPoint, reset, selectedFeatures, setProjection]);
+    setCoordinatesProjection(defaultProjectionEpsgCode);
+  }, [selectedPoint, reset, selectedFeatures]);
 
   const movePoint = () => {
     if (selectedPoint) {
@@ -145,8 +143,8 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
       // Transformerer gitte koordinater til det kartet bruker
       const newCoordinates = transform(
         [+getValues("east"), +getValues("north")],
-        selectedProjection,
-        getCurrentProjection().getCode(),
+        coordinatesProjection,
+        defaultProjectionEpsgCode,
       );
       const oldGeometry = selectedPoint.getGeometry() as Point;
       const oldCoordinates = oldGeometry.getCoordinates();
@@ -203,8 +201,8 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
       </PanelHeader>
       <Form onSubmit={handleSubmit(movePoint)}>
         <Select
-          value={selectedProjection}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setProjection(e.target.value)}
+          value={coordinatesProjection}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCoordinatesProjection(e.target.value as EPSGCode)}
         >
           {projectionDefinitions.map((projection) => (
             <option value={projection.epsgCode} key={projection.epsgCode}>
@@ -212,7 +210,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
             </option>
           ))}
         </Select>
-        {selectedProjection !== getCurrentProjection().getCode() && (
+        {coordinatesProjection !== defaultProjectionEpsgCode && (
           <Alert>
             <AlertIcon />
             Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
@@ -228,16 +226,16 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
             inputMode="decimal"
             pattern={coordinateDecimalPattern.source}
             title={coordinateDecimalPatternHelperText}
-            label="Nord"
-            {...register("north")}
+            label={isLatLongProjection(coordinatesProjection) === true ? "Lat" : "Øst"}
+            {...register("east")}
           />
           <Input
             type="text"
             inputMode="decimal"
             pattern={coordinateDecimalPattern.source}
             title={coordinateDecimalPatternHelperText}
-            label="Øst"
-            {...register("east")}
+            label={isLatLongProjection(coordinatesProjection) === true ? "Long" : "Nord"}
+            {...register("north")}
           />
         </InputRow>
         <InputRow>

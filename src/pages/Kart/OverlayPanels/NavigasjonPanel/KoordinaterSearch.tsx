@@ -1,14 +1,13 @@
-import { Alert, AlertIcon, Button, InputGroup, Text, Select } from "@kvib/react";
+import { Alert, AlertIcon, Button, InputGroup, Select, Text } from "@kvib/react";
 import Input from "components/Input";
-import { transform } from "ol/proj";
-import { getCurrentProjection, getCurrentProjectionName } from "pages/Kart/Kartinformasjon";
+import { getCurrentProjectionName, isLatLongProjection } from "pages/Kart/Kartinformasjon";
 import { norwayExtent } from "pages/Kart/constants";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
-import { projectionDefinitions } from "utils/map/projections";
+import { EPSGCode, defaultProjectionEpsgCode, projectionDefinitions } from "utils/map/projections";
 import { coordinateDecimalPattern, coordinateDecimalPatternHelperText } from "../FlyttKoordinaterPanel";
 import { NavigasjonProps } from "./NavigasjonPanel";
-import { useProjection } from "./useProjection";
 
 const Form = styled.form`
   display: flex;
@@ -27,7 +26,7 @@ const SpacedRow = styled.div`
 `;
 export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProps) => {
   // dette er projeksjonen brukeren sier at de gir koordinatene på
-  const { selectedProjection, setProjection } = useProjection();
+  const [coordinatesProjection, setCoordinatesProjection] = useState<EPSGCode>(defaultProjectionEpsgCode);
   const {
     register,
     handleSubmit,
@@ -44,12 +43,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
       const parsedNorth = parseFloat(north.toString());
       const parsedEast = parseFloat(east.toString());
       if (!isNaN(parsedNorth) && !isNaN(parsedEast) && isFinite(parsedNorth) && isFinite(parsedEast)) {
-        const transformedCoordinates = transform(
-          [parsedEast, parsedNorth],
-          selectedProjection,
-          getCurrentProjection().getCode(),
-        );
-        centerOnCoordinate(transformedCoordinates[1], transformedCoordinates[0]);
+        centerOnCoordinate(north, east);
         reset();
       }
     }
@@ -65,7 +59,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
             pattern={coordinateDecimalPattern.source}
             title={coordinateDecimalPatternHelperText}
             placeholder="Fyll inn koordinat ..."
-            label="Øst"
+            label={isLatLongProjection(coordinatesProjection) === true ? "Lat" : "Øst"}
             isRequired
             {...register("east", {
               validate: (value: number | null) =>
@@ -85,7 +79,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
             pattern={coordinateDecimalPattern.source}
             title={coordinateDecimalPatternHelperText}
             placeholder="Fyll inn koordinat ..."
-            label="Nord"
+            label={isLatLongProjection(coordinatesProjection) === true ? "Long" : "Nord"}
             isRequired
             {...register("north", {
               validate: (value: number | null) =>
@@ -100,8 +94,8 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
         </InputGroup>
       </InputContainer>
       <Select
-        value={selectedProjection}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setProjection(e.target.value)}
+        value={coordinatesProjection}
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCoordinatesProjection(e.target.value as EPSGCode)}
       >
         {projectionDefinitions.map((projection) => (
           <option value={projection.epsgCode} key={projection.epsgCode}>
@@ -109,7 +103,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
           </option>
         ))}
       </Select>
-      {selectedProjection !== getCurrentProjection().getCode() && (
+      {coordinatesProjection !== defaultProjectionEpsgCode && (
         <Alert>
           <AlertIcon />
           Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor

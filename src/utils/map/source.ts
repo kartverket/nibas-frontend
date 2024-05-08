@@ -1,15 +1,12 @@
-import { transformFeatureToProjection } from "contexts/KartlagContext/kartlag-utils";
 import { archivedSource } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
-import { getCurrentProjection } from "pages/Kart/Kartinformasjon";
 import { isFeatureToBeArchived } from "utils/features";
 import { FeatureProperties } from "../../types/api";
 import { getLayerById } from "./layers";
-import { EpsgCode } from "./projections";
 
 export const addEditedFeaturesToSource = (features: Feature<Geometry>[], callback?: () => void) => {
   const editedFeatured = features.filter((f) => !(f.getProperties() as FeatureProperties).shouldArchive);
@@ -59,7 +56,6 @@ export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometr
         return;
       }
     }
-    transformFeatureToProjection(feature, getCurrentProjection().getCode() as EpsgCode);
     newFeatures.push(feature);
   });
 
