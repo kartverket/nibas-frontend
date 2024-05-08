@@ -13,19 +13,13 @@ import { Style } from "ol/style";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import { isAdministrativGrense } from "utils/grenser";
-import {
-  isFeatureToBeArchived,
-  isFeatureEditable,
-  isPreviousAndCurrentCoordinatesEqual,
-  featureHasFremtidigEndring,
-} from "utils/features";
+import { isFeatureToBeArchived, isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import useToastCounter from "hooks/toast/useToastCounter";
 import { Geometry } from "ol/geom";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
 import { Coordinate, equals } from "ol/coordinate";
-import { FeatureProperties, Metadata } from "types/api";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -73,27 +67,6 @@ const useModify = () => {
               ? "Ved endring av administrative grenser må du skru på visning for alle kretser som er knyttet til grensen"
               : undefined,
           });
-          return false;
-        }
-
-        const featuresWithFremtidigEndring = selectedFeatures.filter((feature) => featureHasFremtidigEndring(feature));
-        if (featuresWithFremtidigEndring.length > 0) {
-          const featuresAsText = featuresWithFremtidigEndring
-            .map((feature) => {
-              const featureId = feature.getId()?.toString();
-              const properties = feature.getProperties() as FeatureProperties;
-              const metadata = properties.metadata as Metadata | undefined;
-              const gyldigTil = metadata?.common?.gyldigTil;
-
-              return `ID: ${featureId}, Gyldig Til: ${gyldigTil}`;
-            })
-            .join(", ");
-          toast({
-            status: "error",
-            title: "En av valgte grenser er ikke redigerbar",
-            description: `En av grensene du har valgt er ikke redigerbar. Gjelder grenser: ${featuresAsText}`,
-          });
-
           return false;
         }
 
