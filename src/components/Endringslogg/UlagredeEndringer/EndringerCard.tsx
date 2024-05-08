@@ -300,7 +300,7 @@ const RightArrow = styled(Icon)`
   vertical-align: middle;
 `;
 
-export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
+const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
   <FraTilContainer>
     <EndringAndBadge>
       {endring.fra}

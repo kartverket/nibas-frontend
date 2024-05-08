@@ -142,7 +142,7 @@ export const getKommunerIdFromKontekstEgenskaper = (
   return kommuner.length > 0 ? kommuner : null;
 };
 
-export const sortKretserOptionsByFormattedName = (kretser: Krets[] | undefined): Krets[] => {
+const sortKretserOptionsByFormattedName = (kretser: Krets[] | undefined): Krets[] => {
   if (!kretser) return [];
 
   return kretser.sort((a, b) => formatKretsNavn(a).localeCompare(formatKretsNavn(b)));

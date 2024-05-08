@@ -163,7 +163,7 @@ const removeLayer = (layers: string, layerId: string) => {
   return layers.replace(replaceString, "");
 };
 
-export const setWMSLayerVisibility = (layer: TileLayer<TileSource>, willBeVisible: boolean, layerId: string) => {
+const setWMSLayerVisibility = (layer: TileLayer<TileSource>, willBeVisible: boolean, layerId: string) => {
   const source = layer.getSource();
   if (source instanceof TileWMS) {
     const layers = source.getParams().LAYERS as string;

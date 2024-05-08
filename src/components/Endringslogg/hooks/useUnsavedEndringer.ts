@@ -10,7 +10,7 @@ import {
   MetadataRequest,
 } from "types/api";
 
-export type HistoryTypeData =
+type HistoryTypeData =
   | MinimalGrense
   | FeatureProperties
   | MetadataRequest

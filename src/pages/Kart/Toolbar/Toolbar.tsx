@@ -17,6 +17,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { anyFeatureIsEditable } from "utils/features";
 import SnapMenu from "./SnapMenu";
+import ZoomButtons from "./ZoomButtons";
 
 const Toolbar = () => {
   const { utkast } = useUtkast();
@@ -282,17 +283,6 @@ const ToolbarButtons = styled.div`
   padding: 16px 20px;
   background: white;
   border-radius: 10px;
-  box-shadow: var(--kvib-shadows-base);
-`;
-
-const ZoomButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  width: fit-content;
-  border-radius: 10px;
-  background: white;
   box-shadow: var(--kvib-shadows-base);
 `;
 
