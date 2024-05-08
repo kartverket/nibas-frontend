@@ -266,3 +266,10 @@ export const isMatrikkelFeature = (feature: FeatureLike) => {
 };
 
 export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;
+
+export const featureHasFremtidigEndring = (feature: FeatureLike): boolean => {
+  const properties = feature.getProperties() as FeatureProperties;
+  const metadata = properties.metadata as Metadata;
+
+  return metadata?.common?.gyldigTil != null;
+};

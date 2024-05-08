@@ -66,6 +66,12 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
         ...inndelingWithRepresentasjonspunkt.representasjonspunkt.properties,
         name: inndelingName,
         number: inndelingWithRepresentasjonspunkt.nummer,
+        gyldigTil: inndelingWithRepresentasjonspunkt.gyldighet.gyldigTil,
+        // metadata: {
+        //   common: {
+
+        //   },
+        // },
       },
     });
   };
