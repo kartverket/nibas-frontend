@@ -11,6 +11,7 @@ import { map } from "../constants";
 import { useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { removeNil } from "utils/list-utils";
+import { anyFeatureIsEditable } from "utils/features";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
@@ -91,7 +92,7 @@ const ToolbarPopups = () => {
   const getActiveToolPopup = () => {
     switch (activeTool) {
       case null:
-        if (!activeModeTools.includes("move")) {
+        if (!activeModeTools.includes("move") && anyFeatureIsEditable()) {
           return (
             <ToolbarPopup
               text={

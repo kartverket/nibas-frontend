@@ -14,6 +14,7 @@ import { useState } from "react";
 
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { anyFeatureIsEditable } from "utils/features";
 
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
@@ -212,7 +213,7 @@ const Toolbar = () => {
               onClick={() => disableModeTool("move")}
               isActive={!activeModeTools.includes("move")}
               aria-label="Flytt eller rediger grenser i kartet"
-              isDisabled={!isEditing}
+              isDisabled={!isEditing || !anyFeatureIsEditable()}
               tooltip={{ text: "Flytt eller rediger grenser i kartet", shortcut: "edit" }}
             >
               Flytt / Rediger

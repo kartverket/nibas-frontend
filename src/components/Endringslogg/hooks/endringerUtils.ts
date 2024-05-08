@@ -191,11 +191,24 @@ const getKretsdelinger = (
     });
 };
 
+const erKretsIKommune = (
+  kretsId: string,
+  kommuneId: string | undefined,
+  alleKretser: (StemmekretsResponse & GrunnkretsResponse)[],
+): boolean => {
+  const kretsResponse = alleKretser.find((response) => response.id.lokalid.value === kretsId);
+  return kretsResponse?.kommuneIdentifikator.lokalid.value === kommuneId;
+};
+
 const getMetadataEndringerForStemmekrets = (
+  kommuneId: string | undefined,
   operasjoner: UtkastOperasjoner,
   alleKretser: StemmekretsResponse[],
 ): StemmekretsMetadataendringer[] => {
-  const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, KontekstType.STEMMEKRETS);
+  const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, KontekstType.STEMMEKRETS).filter(
+    (kretsId) => erKretsIKommune(kretsId, kommuneId, alleKretser),
+  );
+
   return kretserMedMetadataEndringer.map((krets) => {
     const oppinneligKrets = findKrets(krets, alleKretser);
 
@@ -216,10 +229,14 @@ const getMetadataEndringerForStemmekrets = (
 };
 
 const getMetadataEndringerForGrunnkrets = (
+  kommuneId: string | undefined,
   operasjoner: UtkastOperasjoner,
   alleKretser: GrunnkretsResponse[],
 ): GrunnkretsMetadataendringer[] => {
-  const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, KontekstType.GRUNNKRETS);
+  const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, KontekstType.GRUNNKRETS).filter(
+    (kretsId) => erKretsIKommune(kretsId, kommuneId, alleKretser),
+  );
+
   return kretserMedMetadataEndringer.map((krets) => {
     const oppinneligKrets = findKrets(krets, alleKretser);
     return {
@@ -235,15 +252,16 @@ const getMetadataEndringerForGrunnkrets = (
 };
 
 function getMetadataEndringer<T extends KontekstType>(
+  kommuneId: string | undefined,
   operasjoner: UtkastOperasjoner,
   alleKretser: ResponseTypeFromKretstype<T>[],
   kretstype: T,
 ): Metadataendringer[] {
   switch (kretstype) {
     case KontekstType.GRUNNKRETS:
-      return getMetadataEndringerForGrunnkrets(operasjoner, alleKretser);
+      return getMetadataEndringerForGrunnkrets(kommuneId, operasjoner, alleKretser);
     case KontekstType.STEMMEKRETS:
-      return getMetadataEndringerForStemmekrets(operasjoner, alleKretser);
+      return getMetadataEndringerForStemmekrets(kommuneId, operasjoner, alleKretser);
     default:
       return [];
   }
@@ -273,7 +291,7 @@ const getEndringerForKommune = <T extends KontekstType>(
       nummer: kommune?.nummer ?? "",
       navn: getNavnInSpraak(kommune?.navn, "nor"),
     },
-    metadataendringer: getMetadataEndringer(operasjoner, alleKretser, kretstype),
+    metadataendringer: getMetadataEndringer(kommune?.id.lokalid.value, operasjoner, alleKretser, kretstype),
     antallEndredeGrenser,
     antallArkiverteGrenser,
     antallNyeGrenser,

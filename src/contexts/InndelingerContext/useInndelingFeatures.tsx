@@ -6,7 +6,7 @@ import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
 import { Inndeling, Inndelingtype } from "./InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureCollection, InndelingNavn, FullInndelingResponse, SimpleInndelingResponse } from "types/api";
+import { FeatureCollection, FullInndelingResponse, SimpleInndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { paths } from "types/api-gen";
@@ -15,9 +15,7 @@ import { useAuthentication } from "components/Authentication/AuthenticationHook"
 import useSWR from "swr";
 import { getRepresentasjonspunktId } from "utils/map/source";
 
-export const inndelingResponseNavnToString = (inndelingNavn: InndelingNavn): string => {
-  return Array.isArray(inndelingNavn) ? inndelingNavn.map((navn) => navn.navn).join(" - ") : inndelingNavn;
-};
+import { inndelingResponseNavnToString } from "./inndelinger-utils";
 
 type InndelingGrenserRequestPath = Pick<
   paths,

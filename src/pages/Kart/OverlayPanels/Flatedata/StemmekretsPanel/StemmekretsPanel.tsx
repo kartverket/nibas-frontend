@@ -12,7 +12,7 @@ import { orderBy } from "utils/list-utils";
 import { Modal, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
+import { inndelingResponseNavnToString } from "contexts/InndelingerContext/inndelinger-utils";
 
 const StemmekretsPanel = ({ isOpen }: PanelProps) => {
   const { utkast } = useUtkast();
