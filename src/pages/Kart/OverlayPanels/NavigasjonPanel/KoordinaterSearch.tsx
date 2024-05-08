@@ -125,7 +125,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
             pattern={coordinateDecimalPattern.source}
             title={coordinateDecimalPatternHelperText}
             placeholder="Fyll inn koordinat ..."
-            label={isLatLongProjection(coordinatesProjection) === true ? "Lat" : "Øst"}
+            label={isLatLongProjection(coordinatesProjection) === true ? "Breddegrad" : "Øst"}
             isRequired
             {...registerWithClearErrorsOnChange("east")}
             validationError={{
@@ -143,7 +143,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
             pattern={coordinateDecimalPattern.source}
             title={coordinateDecimalPatternHelperText}
             placeholder="Fyll inn koordinat ..."
-            label={isLatLongProjection(coordinatesProjection) === true ? "Long" : "Nord"}
+            label={isLatLongProjection(coordinatesProjection) === true ? "Lengdegrad" : "Nord"}
             isRequired
             {...registerWithClearErrorsOnChange("north")}
             validationError={{

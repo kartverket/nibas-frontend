@@ -267,7 +267,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
               inputMode="decimal"
               pattern={coordinateDecimalPattern.source}
               title={coordinateDecimalPatternHelperText}
-              label={isLatLongProjection(coordinatesProjection) === true ? "Lat" : "Øst"}
+              label={isLatLongProjection(coordinatesProjection) === true ? "Breddegard" : "Øst"}
               {...register("east")}
             />
             <Input
@@ -275,7 +275,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
               inputMode="decimal"
               pattern={coordinateDecimalPattern.source}
               title={coordinateDecimalPatternHelperText}
-              label={isLatLongProjection(coordinatesProjection) === true ? "Long" : "Nord"}
+              label={isLatLongProjection(coordinatesProjection) === true ? "Lengdegrad" : "Nord"}
               {...register("north")}
             />
             {error != null && <FormErrorMessage>{error}</FormErrorMessage>}
