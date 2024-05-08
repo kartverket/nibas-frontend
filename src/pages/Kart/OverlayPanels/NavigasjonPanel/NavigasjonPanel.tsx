@@ -5,6 +5,7 @@ import { map } from "../../constants";
 import { AbsolutePanel, PanelProps } from "../Panel";
 import { InndelingSearch } from "./InndelingSearch";
 import { KoordinaterSearch } from "./KoordinaterSearch";
+import { useState } from "react";
 
 export type NavigasjonProps = {
   onSelect: (north: number | null, east: number | null) => void;
@@ -12,6 +13,8 @@ export type NavigasjonProps = {
 
 const NavigasjonPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayModal } = useOverlayPanel();
+
+  const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
   const centerOnCoordinate = (north: number | null, east: number | null) => {
     if (north !== null && east !== null) {
@@ -25,14 +28,14 @@ const NavigasjonPanel = ({ isOpen }: PanelProps) => {
     <Container $isOpen={isOpen}>
       <CustomTabs size="md">
         <TabList>
-          <Tab>Gå til inndeling</Tab>
-          <Tab>Gå til koordinater</Tab>
+          <Tab onClick={() => setCurrentTabIndex(0)}>Gå til inndeling</Tab>
+          <Tab onClick={() => setCurrentTabIndex(1)}>Gå til koordinater</Tab>
           <Spacer />
           <CloseButton onClick={() => closeOverlayModal()} aria-label="Lukk" />
         </TabList>
         <TabPanels>
           <StyledTabPanel>
-            <InndelingSearch onSelect={centerOnCoordinate} />
+            <InndelingSearch onSelect={centerOnCoordinate} isOpen={isOpen && currentTabIndex === 0} />
           </StyledTabPanel>
           <StyledTabPanel>
             <KoordinaterSearch onSelect={centerOnCoordinate} />

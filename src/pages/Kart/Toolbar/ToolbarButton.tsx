@@ -3,12 +3,15 @@ import { forwardRef } from "react";
 import { styled } from "styled-components";
 import CustomTooltip, { CustomTooltipProps } from "./CustomTooltip";
 
-type Props = {
+export type ToolbarButtonProps = {
   isActive?: boolean;
   tooltip: CustomTooltipProps;
 } & IconButtonProps;
 
-const ToolbarButton = ({ icon, children, tooltip, ...props }: Props, ref: React.ForwardedRef<HTMLButtonElement>) => (
+const ToolbarButton = (
+  { icon, children, tooltip, ...props }: ToolbarButtonProps,
+  ref: React.ForwardedRef<HTMLButtonElement>,
+) => (
   <CustomTooltip {...tooltip}>
     <ButtonContainer>
       <IconButton icon={icon} variant="ghost" ref={ref} {...props} />

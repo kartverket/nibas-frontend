@@ -18,7 +18,6 @@ export type HistoryTypeData =
   | StemmekretsRequest
   | UtkastRequestWithoutOperations
   | StemmekretsSammenslaaingsendringRequest
-  | FeatureProperties
   | KontekstEgenskaper[]
   | (MinimalGrense & FeatureProperties)
   | Feature[];

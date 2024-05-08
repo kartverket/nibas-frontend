@@ -6,15 +6,12 @@ import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
 import { Inndeling, Inndelingtype } from "./InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
-import { FeatureCollection, InndelingNavn, InndelingResponse } from "types/api";
+import { FeatureCollection, FullInndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { paths } from "types/api-gen";
-
-export const inndelingResponseNavnToString = (inndelingNavn: InndelingNavn): string => {
-  return Array.isArray(inndelingNavn) ? inndelingNavn.map((navn) => navn.navn).join(" - ") : inndelingNavn;
-};
+import { inndelingResponseNavnToString } from "./inndelinger-utils";
 
 type GrenseRequestPath = Pick<
   paths,
@@ -58,7 +55,7 @@ const useInndelingFeatures = (inndeling: Inndeling | null) => {
   );
 
   const getRepresentasjonspunktFeatureForInndeling = (
-    inndelingWithRepresentasjonspunkt: InndelingResponse,
+    inndelingWithRepresentasjonspunkt: FullInndelingResponse,
   ): GeoJSONFeature => {
     const inndelingName: string = inndelingResponseNavnToString(inndelingWithRepresentasjonspunkt.navn);
 

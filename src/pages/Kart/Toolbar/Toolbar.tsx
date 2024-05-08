@@ -31,6 +31,8 @@ const Toolbar = () => {
   const { currentlyEditedInndeling } = useInndelinger();
   const isEditing = currentlyEditedInndeling != null;
 
+  const [isSnappingMenuOpen, setIsSnappingMenuOpen] = useState(false);
+
   const toggleSnapping = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
     const isNibasToggled = activeModeTools.includes("snap_nibas");
@@ -67,6 +69,19 @@ const Toolbar = () => {
       }
     }
     toggleModeTool("matrikkel");
+  };
+
+  const toggleGoto = () => {
+    if (activeOverlayModal === "navigasjon") {
+      closeOverlayModal();
+      return;
+    }
+
+    openOverlayModal("navigasjon");
+  };
+
+  const toggleSnapMenu = () => {
+    setIsSnappingMenuOpen(!isSnappingMenuOpen);
   };
 
   const zoom = (difference: number) => {
@@ -110,6 +125,8 @@ const Toolbar = () => {
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
+  useKeyboardShortcut("goto", toggleGoto);
+  useKeyboardShortcut("snap", toggleSnapMenu);
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
@@ -118,7 +135,6 @@ const Toolbar = () => {
     isPanningAllowed,
   );
 
-  const [isSnappingMenuOpen, setIsSnappingMenuOpen] = useState(false);
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
   useKeyboardShortcut("escape", () => {
     if (activeTool === "draw") {
@@ -207,8 +223,8 @@ const Toolbar = () => {
             icon="search"
             isActive={activeOverlayModal === "navigasjon"}
             onClick={() => (activeOverlayModal === "navigasjon" ? closeOverlayModal() : openOverlayModal("navigasjon"))}
-            aria-label="Gå til punkt i kartet"
-            tooltip={{ text: "Gå til punkt i kartet" }}
+            aria-label="Gå til inndeling eller punkt i kartet"
+            tooltip={{ text: "Gå til inndeling eller punkt i kartet", shortcut: "goto" }}
           >
             Gå til ...
           </ToolbarButton>
@@ -251,12 +267,12 @@ const Toolbar = () => {
                   return (
                     <>
                       <MenuButton
-                        onClick={() => setIsSnappingMenuOpen(!isSnappingMenuOpen)}
+                        onClick={toggleSnapMenu}
                         isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
                         as={ToolbarButton}
                         aria-label="Snap til andre grenser i kartet"
                         icon="align_justify_space_between"
-                        tooltip={{ text: "Skru av/på snapping mot andre grenser." }}
+                        tooltip={{ text: "Skru av/på snapping mot andre grenser.", shortcut: "snap" }}
                       >
                         Snap
                       </MenuButton>

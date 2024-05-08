@@ -1,12 +1,10 @@
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import useToastUnique from "hooks/toast/useToastUnique";
 import { InndelingSearchResponse } from "types/api";
 import { getUrlForPath, statusCode } from "utils/api";
 
 export const useInndelingerSearch = () => {
   const auth = useAuthentication();
-  const { utkast } = useUtkast();
   const { toastUnique: searchErrorToast } = useToastUnique({
     status: "error",
     title: "Søket feilet",
@@ -14,11 +12,9 @@ export const useInndelingerSearch = () => {
   });
 
   const searchInndelinger = async (searchString: string, limit: number): Promise<InndelingSearchResponse[] | null> => {
-    const gyldhetsdato = utkast?.gyldigFra;
-
     const response = await fetch(
       getUrlForPath(
-        `v1/inndelinger/?searchString=${encodeURIComponent(searchString)}&gyldighetsdato=${encodeURIComponent(gyldhetsdato ?? "")}&limit=${encodeURIComponent(limit)}`,
+        `v1/inndelinger/?searchString=${encodeURIComponent(searchString)}&limit=${encodeURIComponent(limit)}`,
       ),
       {
         method: "GET",

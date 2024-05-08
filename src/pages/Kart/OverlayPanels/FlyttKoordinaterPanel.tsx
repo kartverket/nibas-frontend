@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, Select, Spacer, Text, useToast } from "@kvib/react";
+import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, Select, Text, useToast } from "@kvib/react";
 import Input from "components/Input";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
@@ -7,6 +7,7 @@ import { GrenseEntry, HistoryChange, HistoryDirection, MinimalGrense } from "con
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { editSource } from "hooks/layers/constants";
+import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
@@ -15,8 +16,9 @@ import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { EPSGCode, defaultProjectionEpsgCode, projectionDefinitions } from "utils/map/projections";
-import { AbsolutePanel, PanelHeader, PanelProps } from "./Panel";
 import { getCurrentProjectionName, isLatLongProjection } from "../Kartinformasjon";
+import { isPointInsideMultiPolygon } from "./NavigasjonPanel/koordinater-utils";
+import { AbsolutePanel, PanelHeader, PanelProps } from "./Panel";
 
 type KoordinaterFormData = {
   north: number;
@@ -30,10 +32,23 @@ const Form = styled.form`
   padding-bottom: 16px;
 `;
 
+const SpacedFormControl = styled(FormControl)`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+`;
+
 const InputRow = styled.div`
   display: flex;
   width: 100%;
   gap: 16px;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 16px;
+  justify-content: flex-end;
 `;
 
 export const coordinateDecimalPattern = /^-?\d+(\.\d+)?$/;
@@ -194,65 +209,86 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
     }
   };
 
+  const onKoordinaterPanelClose = () => {
+    closeOverlayPanel();
+    setError(null);
+    reset();
+    resetTool();
+  };
+
+  const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
+  const [error, setError] = useState<string | null>();
+
+  const moveToCoordinate = () => {
+    if (nasjonFetchError != null) {
+      movePoint();
+    } else if (
+      isLoading === false &&
+      nasjon?.omraade?.coordinates != null &&
+      isPointInsideMultiPolygon(getValues("east"), getValues("north"), nasjon?.omraade?.coordinates)
+    ) {
+      setError(null);
+      movePoint();
+    } else {
+      setError("Koordinatene må være innenfor Norge sine grenser");
+    }
+  };
+
   return (
     <AbsolutePanel $isOpen={isOpen}>
-      <PanelHeader onClose={closeOverlayPanel} isSmall>
+      <PanelHeader onClose={onKoordinaterPanelClose} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>
-      <Form onSubmit={handleSubmit(movePoint)}>
-        <Select
-          value={coordinatesProjection}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCoordinatesProjection(e.target.value as EPSGCode)}
-        >
-          {projectionDefinitions.map((projection) => (
-            <option value={projection.epsgCode} key={projection.epsgCode}>
-              {projection.name}
-            </option>
-          ))}
-        </Select>
-        {coordinatesProjection !== defaultProjectionEpsgCode && (
-          <Alert>
-            <AlertIcon />
-            Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
-            transformert til kartet sitt koordinatsystem.
-          </Alert>
-        )}
-        <Text>
-          Nåværende kartprojeksjon er <b>{getCurrentProjectionName(false)}</b>
-        </Text>
-        <InputRow>
-          <Input
-            type="text"
-            inputMode="decimal"
-            pattern={coordinateDecimalPattern.source}
-            title={coordinateDecimalPatternHelperText}
-            label={isLatLongProjection(coordinatesProjection) === true ? "Lat" : "Øst"}
-            {...register("east")}
-          />
-          <Input
-            type="text"
-            inputMode="decimal"
-            pattern={coordinateDecimalPattern.source}
-            title={coordinateDecimalPatternHelperText}
-            label={isLatLongProjection(coordinatesProjection) === true ? "Long" : "Nord"}
-            {...register("north")}
-          />
-        </InputRow>
-        <InputRow>
-          <Spacer />
-          <Button
-            variant="tertiary"
-            onClick={() => {
-              reset();
-              resetTool();
-            }}
+      <Form onSubmit={handleSubmit(moveToCoordinate)}>
+        <SpacedFormControl isInvalid={error != null}>
+          <Select
+            value={coordinatesProjection}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCoordinatesProjection(e.target.value as EPSGCode)}
           >
+            {projectionDefinitions.map((projection) => (
+              <option value={projection.epsgCode} key={projection.epsgCode}>
+                {projection.name}
+              </option>
+            ))}
+          </Select>
+          {coordinatesProjection !== defaultProjectionEpsgCode && (
+            <Alert>
+              <AlertIcon />
+              Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
+              transformert til kartet sitt koordinatsystem.
+            </Alert>
+          )}
+          <Text>
+            Nåværende kartprojeksjon er <b>{getCurrentProjectionName(false)}</b>
+          </Text>
+          <InputRow>
+            <Input
+              type="text"
+              inputMode="decimal"
+              pattern={coordinateDecimalPattern.source}
+              title={coordinateDecimalPatternHelperText}
+              label={isLatLongProjection(coordinatesProjection) === true ? "Lat" : "Øst"}
+              {...register("east")}
+            />
+            <Input
+              type="text"
+              inputMode="decimal"
+              pattern={coordinateDecimalPattern.source}
+              title={coordinateDecimalPatternHelperText}
+              label={isLatLongProjection(coordinatesProjection) === true ? "Long" : "Nord"}
+              {...register("north")}
+            />
+            {error != null && <FormErrorMessage>{error}</FormErrorMessage>}
+          </InputRow>
+        </SpacedFormControl>
+        <ButtonRow>
+          <Button variant="tertiary" onClick={onKoordinaterPanelClose}>
             Avbryt
           </Button>
           <Button type="submit" isDisabled={!isDirty}>
             Flytt punkt til koordinater
           </Button>
-        </InputRow>
+        </ButtonRow>
       </Form>
     </AbsolutePanel>
   );
