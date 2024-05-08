@@ -13,6 +13,7 @@ import Text from "ol/style/Text";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
+import { getRepresentasjonspunktId } from "./source";
 
 const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
@@ -220,11 +221,11 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) =
   });
 };
 
-export const updateEditFeatureText = (featureId: string, name?: string, number?: string) => {
-  const feature = editSource.getFeatureById(featureId);
+export const updateRepresentasjonspunkt = (kretsId: string, number?: string, name?: string) => {
+  const feature = editSource.getFeatureById(getRepresentasjonspunktId(kretsId));
   if (feature) {
-    if (name != null) feature.set("name", name);
     if (number != null) feature.set("number", number);
+    if (name != null) feature.set("name", name);
   }
 };
 

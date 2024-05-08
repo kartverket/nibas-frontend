@@ -73,7 +73,7 @@ const reduceStemmekretssammenslaingsOperations = (
 const addKretsChangeToOperations = (
   operations: UtkastOperasjoner,
   entry: MetadataEntry,
-  endringerKey: "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer" | "fylkesendringer",
+  endringerKey: "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer",
 ): UtkastOperasjoner => {
   for (const change of entry.changes) {
     if (change.to != null && operations.metadataendringer[endringerKey] != null) {

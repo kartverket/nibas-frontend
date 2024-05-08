@@ -22,6 +22,16 @@ import { useState } from "react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSearch from "hooks/useSearch";
 
+const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
+  const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
+  const inndelingIsUnique = !allInndelinger.some(
+    (i) => i.id === inndeling.id && i.inndelingtype !== inndeling.inndelingtype,
+  );
+  const inndelingType = !inndelingIsUnique ? ` (${capitalize(pluralizeInndelingtype(inndeling.inndelingtype))})` : "";
+  const isEditable = inndeling.isEditing ? " (Kan redigeres)" : "";
+  return nameAndNumber + inndelingType + isEditable;
+};
+
 const FlatedataPanel = ({ isOpen }: PanelProps) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
@@ -35,16 +45,7 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
     .flatMap((inndelingerMap) => [...inndelingerMap.values()])
     .toSorted((a, b) => (a.isEditing === b.isEditing ? 0 : a.isEditing ? -1 : 1));
 
-  const getTabText = (inndeling: Inndeling) => {
-    const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
-    const inndelingIsUnique = !allInndelinger.some(
-      (i) => i.id === inndeling.id && i.inndelingtype !== inndeling.inndelingtype,
-    );
-    const inndelingType = !inndelingIsUnique ? ` (${capitalize(pluralizeInndelingtype(inndeling.inndelingtype))})` : "";
-    const isEditable = inndeling.isEditing ? " (Kan redigeres)" : "";
-    return nameAndNumber + inndelingType + isEditable;
-  };
-
+  // Dersom brukeren lukker panelet med ulagrede endringer ønsker vi en bekreftelse
   const handleDraft = (callback: () => void) => {
     if (isEditing) {
       open({
@@ -87,7 +88,9 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
         <FlatedataTabs size="md" index={tabIndex} onChange={handleTabsChange}>
           <FlatedataTabList>
             {allInndelinger.map((inndeling) => (
-              <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>{getTabText(inndeling)}</FlatedataTab>
+              <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>
+                {getTabText(inndeling, allInndelinger)}
+              </FlatedataTab>
             ))}
           </FlatedataTabList>
           <FlatedataTabPanels>

@@ -12,7 +12,7 @@ import FlatedataFooter from "./FlatedataFooter";
 import { useEffect, useRef } from "react";
 import { MetadataResponse } from "types/api";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
+import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import KretsTableRow from "./KretsTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
@@ -25,6 +25,7 @@ type Props = {
 };
 
 const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) => {
+  const { utkast } = useUtkast();
   const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
   const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
@@ -122,21 +123,23 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
           })}
         </tbody>
       </Table>
-      <FlatedataFooter
-        isEditing={isEditing}
-        toggleEditing={toggleEditing}
-        canSave={isDirty}
-        onSubmit={handleSubmit(submitAndAddHistoryEntry)}
-      />
+      {utkast && (
+        <FlatedataFooter
+          isEditing={isEditing}
+          toggleEditing={toggleEditing}
+          canSave={isDirty}
+          onSubmit={handleSubmit(submitAndAddHistoryEntry)}
+        />
+      )}
     </Container>
   );
 };
 
 const Container = styled(TabPanel)`
-  padding: 0;
-  height: 100%;
   display: grid;
   grid-template-rows: 1fr auto;
+  height: 100%;
+  padding: 0;
   overflow: hidden;
 `;
 

@@ -4,8 +4,7 @@ import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { FieldError, RegisterOptions, UseFormReturn } from "react-hook-form";
 import { MetadataResponse } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { updateEditFeatureText } from "utils/map/layerStyles";
-import { getRepresentasjonspunktId } from "utils/map/source";
+import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import InputCell, { TableCell, MerknadCell } from "./KretsTableCells";
@@ -24,15 +23,6 @@ type Props = {
   previousValues: React.MutableRefObject<FlatedataInputs | undefined>;
 };
 
-const validationError = (error: FieldError | undefined | null) => {
-  if (error) {
-    return {
-      showError: true,
-      message: error.message,
-    } as ValidationError;
-  }
-};
-
 const KretsTableRow = ({ inndeling, krets, isSearchMatch, isEditing, formMethods, previousValues }: Props) => {
   const {
     setValue,
@@ -43,27 +33,9 @@ const KretsTableRow = ({ inndeling, krets, isSearchMatch, isEditing, formMethods
 
   const kretsId = getIdFromEntity(krets);
   const kretsErrors = errors[kretsId];
-  const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
-  const kretsPrefix = isAdministrativEnhet ? "Kommune" : capitalize(inndeling.inndelingtype);
+  const registerOptions = getRegisterOptions(inndeling);
 
-  const registerOptions: Record<string, RegisterOptions> = {
-    nummer: {
-      required: `${kretsPrefix}nummer kan ikke være tomt`,
-      validate: (nummer: string) => {
-        if (!isIntegerString(nummer) || nummer.length > 4 || parseInt(nummer) > 9999) {
-          return `${kretsPrefix}nummer må kun inneholde siffer (maks 4)`;
-        }
-        if (parseInt(nummer) <= 0) {
-          return `${kretsPrefix}nummer kan ikke være 0 eller et negativt tall`;
-        }
-        return true;
-      },
-    },
-    navn: {
-      required: `${kretsPrefix}navn kan ikke være tomt`,
-    },
-  };
-
+  // Ved undo og redo må grensesnittet oppdateres med riktig informasjon
   const setFormValues = (change: MetadataEntry["changes"][number], direction: HistoryDirection) => {
     const kretsChange = change[direction];
     if ("samiskforvaltningsomraade" in kretsChange) {
@@ -71,11 +43,7 @@ const KretsTableRow = ({ inndeling, krets, isSearchMatch, isEditing, formMethods
     } else {
       setValue(`${kretsChange.identifikasjon.lokalid}.nummer`, kretsChange.nummer ?? "");
       setValue(`${kretsChange.identifikasjon.lokalid}.navn`, kretsChange.navn ?? "");
-      updateEditFeatureText(
-        getRepresentasjonspunktId(kretsChange.identifikasjon.lokalid),
-        kretsChange.navn,
-        kretsChange.nummer,
-      );
+      updateRepresentasjonspunkt(kretsChange.identifikasjon.lokalid, kretsChange.nummer, kretsChange.navn);
     }
     previousValues.current = structuredClone(getValues());
   };
@@ -123,6 +91,36 @@ const KretsTableRow = ({ inndeling, krets, isSearchMatch, isEditing, formMethods
       )}
     </Row>
   );
+};
+
+const validationError = (error: FieldError | undefined | null) => {
+  if (error) {
+    return {
+      showError: true,
+      message: error.message,
+    } as ValidationError;
+  }
+};
+
+const getRegisterOptions = (inndeling: Inndeling): Record<string, RegisterOptions> => {
+  const kretsPrefix = inndeling.inndelingtype === "fylke" ? "Kommune" : capitalize(inndeling.inndelingtype);
+  return {
+    nummer: {
+      required: `${kretsPrefix}nummer kan ikke være tomt`,
+      validate: (nummer: string) => {
+        if (!isIntegerString(nummer) || nummer.length > 4 || parseInt(nummer) > 9999) {
+          return `${kretsPrefix}nummer må kun inneholde siffer (maks 4)`;
+        }
+        if (parseInt(nummer) <= 0) {
+          return `${kretsPrefix}nummer kan ikke være 0 eller et negativt tall`;
+        }
+        return true;
+      },
+    },
+    navn: {
+      required: `${kretsPrefix}navn kan ikke være tomt`,
+    },
+  };
 };
 
 const Row = styled.tr<{ $isSearchMatch: boolean }>`
