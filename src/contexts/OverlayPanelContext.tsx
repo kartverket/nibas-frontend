@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from "react";
 import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
 
 type OverlayPanel = "grenseinfo" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
-type OverlayModal = "inndelinger" | "inndelinger-view" | "flatedata" | "stemmekrets" | "grunnkrets" | "navigasjon";
+type OverlayModal = "inndelinger" | "inndelinger-view" | "flatedata" | "navigasjon";
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;

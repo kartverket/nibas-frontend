@@ -89,6 +89,7 @@ const Toolbar = () => {
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
+  useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
@@ -202,10 +203,12 @@ const Toolbar = () => {
             aria-label="Se eller endre flatedetaljer"
             tooltip={{
               text: "Se eller endre flatedetaljer",
+              shortcut: "flatedata",
             }}
           >
             Flatedetaljer
           </ToolbarButton>
+
           <ToolbarButton
             icon="query_stats"
             isActive={activeTool === "grenseinfo"}

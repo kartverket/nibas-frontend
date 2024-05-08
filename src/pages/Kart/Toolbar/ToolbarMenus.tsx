@@ -27,32 +27,12 @@ type MenuItems = (MenuItemProps & {
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool } = useToolbar();
-  const {
-    activeOverlayPanel,
-    closeOverlayPanel,
-    activeOverlayModal,
-    openOverlayModal,
-    closeOverlayModal,
-    toggleOverlayPanel,
-  } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel, toggleOverlayPanel } = useOverlayPanel();
 
   const { currentlyEditedInndeling } = useInndelinger();
 
   const isEditing = currentlyEditedInndeling != null;
   const currentlyEditingInndelingtype = currentlyEditedInndeling?.inndelingtype;
-
-  const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
-
-  const toggleFlatedetaljer = () => {
-    if (flatedetaljerIsActive) {
-      closeOverlayModal();
-    } else if (
-      (currentlyEditingInndelingtype && currentlyEditingInndelingtype === "grunnkrets") ||
-      currentlyEditingInndelingtype === "stemmekrets"
-    ) {
-      openOverlayModal(currentlyEditingInndelingtype);
-    }
-  };
 
   const toggleMovePoint = () => {
     toggleTool("koordinater");
@@ -73,7 +53,6 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
-  useKeyboardShortcut("flateinfo", toggleFlatedetaljer);
   useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditing);
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
@@ -137,16 +116,6 @@ const ToolbarMenus = () => {
     },
   ];
   const flateMenuItems: MenuItems = [
-    {
-      label: "Se/endre flatedetaljer",
-      icon: <Icon icon="description" />,
-      command: KeyboardShortcuts["flateinfo"].displayString,
-      // Vi har ikke laget flatedetaljerpaneler for Kommune og Fylke ennå
-      isDisabled: !(currentlyEditingInndelingtype === "stemmekrets" || currentlyEditingInndelingtype === "grunnkrets"),
-      $isActive: flatedetaljerIsActive,
-      onClick: toggleFlatedetaljer,
-      "aria-label": "Se eller endre flatedetaljer for kretsen som redigeres",
-    },
     {
       label: "Slå sammen flater",
       icon: <Icon icon="cell_merge" />,

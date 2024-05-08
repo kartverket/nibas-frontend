@@ -1,7 +1,5 @@
-import GrunnkretsPanel from "./Flatedata/GrunnkretsPanel/GrunnkretsPanel";
 import MergePanel from "./MergePanel/MergePanel";
 import GrenseinformasjonPanel from "./GrenseinformasjonPanel/GrenseinformasjonPanel";
-import StemmekretsPanel from "./Flatedata/StemmekretsPanel/StemmekretsPanel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import FlyttKoordinaterPanel from "./FlyttKoordinaterPanel";
 import { TegnforklaringPanel } from "./Tegnforklaring/TegnforklaringPanel";
@@ -25,8 +23,6 @@ const OverlayPanels = () => {
 
       <InndelingerPanel isOpen={activeOverlayModal === "inndelinger" || activeOverlayModal === "inndelinger-view"} />
       <NavigasjonPanel isOpen={activeOverlayModal === "navigasjon"} />
-      <GrunnkretsPanel isOpen={activeOverlayModal === "grunnkrets"} />
-      <StemmekretsPanel isOpen={activeOverlayModal === "stemmekrets"} />
       <FlatedataPanel isOpen={activeOverlayModal === "flatedata"} />
     </>
   );
