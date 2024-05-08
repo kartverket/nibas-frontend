@@ -16,7 +16,6 @@ import { styled } from "styled-components";
 import InndelingOption from "./InndelingOption";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { capitalize } from "utils/string-utils";
-import { useToolbar } from "contexts/ToolbarContext";
 
 const InndelingerPanel = ({ isOpen }: PanelProps) => {
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
@@ -25,7 +24,6 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
   const [selectedPanelFylkeId, setSelectedPanelFylkeId] = useState<string>("");
   const { selectInndeling, setSelectedFylkeId, getNewInndeling } = useInndelinger();
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
-  const { disableModeTool } = useToolbar();
 
   const { history, clearHistory } = useHistory();
   const hasUnsavedChangesInHistory = history.entries.length > 0;
@@ -55,10 +53,6 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
 
     selectInndeling(newInndeling);
     resetInndelingerPanel();
-
-    if (isEditingPanel) {
-      disableModeTool("move");
-    }
   };
 
   const selectFylke = (fylkeInndeling: BaseInndeling) => {

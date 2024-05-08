@@ -78,7 +78,10 @@ const Panel = styled.div<{ $isOpen: boolean }>`
   z-index: ${zindex.panel};
 `;
 
-export const ModalPanel = styled(Panel)`
+const propsToNotForward = ["variants", "custom"];
+export const ModalPanel = styled(Panel).withConfig({
+  shouldForwardProp: (prop) => !propsToNotForward.includes(prop),
+})`
   height: 100%;
   max-width: 1250px;
   margin-left: 16px;

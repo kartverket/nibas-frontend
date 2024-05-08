@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { anyFeatureIsEditable } from "utils/features";
 import SnapMenu from "./SnapMenu";
 
 const Toolbar = () => {
@@ -177,7 +178,7 @@ const Toolbar = () => {
                   onClick={() => disableModeTool("move")}
                   isActive={!activeModeTools.includes("move")}
                   aria-label="Flytt eller rediger grenser i kartet"
-                  isDisabled={!isEditing}
+                  isDisabled={!isEditing || !anyFeatureIsEditable()}
                   tooltip={{ text: "Flytt eller rediger grenser i kartet", shortcut: "edit" }}
                 >
                   Flytt / Rediger

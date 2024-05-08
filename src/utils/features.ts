@@ -4,7 +4,7 @@ import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 import { FeatureLike } from "ol/Feature";
-import { grenserLayers } from "hooks/layers/constants";
+import { editSource, grenserLayers } from "hooks/layers/constants";
 import { getRepresentasjonspunktId } from "./map/source";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
@@ -266,3 +266,7 @@ export const isMatrikkelFeature = (feature: FeatureLike) => {
 };
 
 export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;
+
+export const anyFeatureIsEditable = (): boolean => {
+  return editSource.getFeatures().some((feature) => isFeatureEditable(feature));
+};

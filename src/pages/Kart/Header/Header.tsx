@@ -13,9 +13,9 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { inndelingResponseNavnToString } from "contexts/InndelingerContext/useInndelingFeatures";
 import { Breadcrumb, BreadcrumbItem, Hide, Text } from "@kvib/react";
 import { capitalize } from "utils/string-utils";
+import { inndelingResponseNavnToString } from "contexts/InndelingerContext/inndelinger-utils";
 
 const Header = () => {
   const { utkast } = useUtkast();

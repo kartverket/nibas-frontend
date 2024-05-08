@@ -1,0 +1,32 @@
+import { MaterialSymbol, Menu } from "@kvib/react";
+import MenuButtonWithChevron from "pages/Kart/Toolbar/MenuButtonWithChevron";
+import { ReactNode } from "react";
+
+type ToolbarMenuProps = {
+  label: string;
+  icon: MaterialSymbol;
+  isDisabled: boolean;
+  isActive: boolean;
+  tooltip: string;
+  children: ReactNode;
+};
+
+export const ToolbarMenu = ({ label, icon, isDisabled, isActive, tooltip, children }: ToolbarMenuProps) => (
+  <Menu autoSelect={false}>
+    {({ isOpen }) => (
+      <>
+        <MenuButtonWithChevron
+          aria-label={tooltip}
+          isOpen={isOpen}
+          icon={icon}
+          isDisabled={isDisabled}
+          isActive={isActive}
+          tooltip={{ text: tooltip }}
+        >
+          {label}
+        </MenuButtonWithChevron>
+        {children}
+      </>
+    )}
+  </Menu>
+);
