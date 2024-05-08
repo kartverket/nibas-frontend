@@ -1,5 +1,5 @@
 import { TabPanel } from "@kvib/react";
-import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndeling, Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { styled, css } from "styled-components";
 import { isKommuneInndeling, isStemmekretsInndeling, useFlatedata } from "./useFlatedata";
 import { getIdFromEntity } from "utils/api";
@@ -13,22 +13,30 @@ import InputCell, { MerknadCell, TableCell } from "./KretsTableCells";
 import { ValidationError } from "components/Input";
 import { isIntegerString } from "utils/type-utils";
 import { useEffect, useRef } from "react";
-import { MetadataResponse } from "types/api";
+import { GrunnkretsRequest, KommuneRequest, MetadataRequest, MetadataResponse, StemmekretsRequest } from "types/api";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import {
+  GrunnkretsEntry,
+  HistoryChange,
+  HistoryDirection,
+  KommuneEntry,
+  MetadataEntry,
+  StemmekretsEntry,
+} from "contexts/HistoryContext/types";
+import { updateEditFeatureText } from "utils/map/layerStyles";
+import { getRepresentasjonspunktId } from "utils/map/source";
+import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
+import { useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 
-type KommuneInputs = {
-  [inndelingId: string]: {
-    samiskforvaltningsomraade: boolean;
-  };
-};
-
-type StemmekretsInputs = {
-  [inndelingId: string]: {
-    navn: string;
-    nummer: string;
-  };
-};
+type KommuneInput = { samiskforvaltningsomraade: boolean };
+type KommuneInputs = { [inndelingId: string]: KommuneInput };
+type StemmekretsInput = { navn: string; nummer: string };
+type StemmekretsInputs = { [inndelingId: string]: StemmekretsInput };
 type GrunnkretsInputs = StemmekretsInputs;
 type FormInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs;
+
+export const isKommuneInput = (value: KommuneInput | StemmekretsInput): value is KommuneInput =>
+  "samiskforvaltningsomraade" in value;
 
 type Props = {
   inndeling: Inndeling;
@@ -46,64 +54,74 @@ const validationError = (error: FieldError | undefined | null) => {
   }
 };
 
-/*
 const fromFormToRequest = (
   inndelingtype: Inndelingtype,
-  data: FormInputs,
+  data: KommuneInput | StemmekretsInput,
   krets: MetadataResponse,
 ): MetadataRequest | null => {
   switch (inndelingtype) {
     case "fylke":
     case "kommune": {
-      if (isKommuneInndeling(krets)) {
+      if (isKommuneInndeling(krets) && isKommuneInput(data)) {
         const kommuneRequest: KommuneRequest = {
           lokalid: getIdFromEntity(krets),
           administrativenhetnavn: krets.navn,
-          kommunenummerId: krets.,
           version: krets.version,
           samiskforvaltningsomraade: data.samiskforvaltningsomraade,
         };
         return kommuneRequest;
       }
+      return null;
     }
     case "stemmekrets": {
-      const stemmekretsRequest: StemmekretsRequest = {
-        identifikasjon: {
-          lokalid: getIdFromEntity(krets),
-        },
-        valgdistriktsnummer: isStemmekretsInndeling(krets) ? krets.valgdistriktsnummer : undefined,
-        version: krets.version,
-        navn: data.navn,
-        nummer: data.nummer,
-      };
-      return stemmekretsRequest;
+      if (!isKommuneInput(data)) {
+        const stemmekretsRequest: StemmekretsRequest = {
+          identifikasjon: {
+            lokalid: getIdFromEntity(krets),
+          },
+          valgdistriktsnummer: isStemmekretsInndeling(krets) ? krets.valgdistriktsnummer : undefined,
+          version: krets.version,
+          navn: data.navn,
+          nummer: data.nummer,
+        };
+        return stemmekretsRequest;
+      }
+      return null;
     }
     case "grunnkrets": {
-      const grunnkretsRequest: GrunnkretsRequest = {
-        identifikasjon: {
-          lokalid: getIdFromEntity(krets),
-        },
-        version: krets.version,
-        navn: data.navn,
-        nummer: data.nummer,
-      };
-      return grunnkretsRequest;
+      if (!isKommuneInput(data)) {
+        const grunnkretsRequest: GrunnkretsRequest = {
+          identifikasjon: {
+            lokalid: getIdFromEntity(krets),
+          },
+          version: krets.version,
+          navn: data.navn,
+          nummer: data.nummer,
+        };
+        return grunnkretsRequest;
+      }
+      return null;
     }
   }
 };
-*/
 
 const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) => {
-  const flatedata = useFlatedata(inndeling) ?? [];
-  const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
   const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
-  // TODO: const { addHistoryEntry } = useHistory();
+  const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
+  const { addHistoryEntry } = useHistory();
+
+  const flatedata = useFlatedata(inndeling) ?? [];
+  const utkastFlatedata = (useUtkastEntity(
+    flatedata,
+    `${inndeling.inndelingtype === "fylke" ? "kommune" : inndeling.inndelingtype}endringer`,
+  ) ?? []) as MetadataResponse[];
 
   const {
     register,
     reset,
     getValues,
     handleSubmit,
+    setValue,
     formState: { isDirty, errors },
   } = useForm<FormInputs>();
 
@@ -122,75 +140,83 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
 
   // TODO: history
   const saveAndAddHistoryEntry = () => {
-    /*
     const formValues = getValues();
-    console.log("previous", previousValues.current);
-    console.log("current", formValues);
-    const changes = Object.entries(formValues).reduce((accumulator, [key, values]) => {
-      const oldValues = previousValues.current?.[key];
+    const changes = Object.entries(formValues).reduce<HistoryChange<MetadataRequest>[]>(
+      (accumulator, [key, newValues]) => {
+        const oldValues = previousValues.current?.[key];
 
-      if (oldValues) {
-        // Dersom kretsen er uendret skal vi ikke gjøre noe med den
-        if ("samiskforvaltningsomraade" in oldValues) {
-          if (values.samiskforvaltningsomraade === oldValues.samiskforvaltningsomraade) return accumulator;
-        } else if ("navn" in oldValues) {
-          if (values.nummer === oldValues.nummer && values.navn === oldValues.navn) return accumulator;
+        if (oldValues) {
+          // Dersom kretsen er uendret skal vi ikke gjøre noe med den
+          if (isKommuneInput(oldValues)) {
+            if (newValues.samiskforvaltningsomraade === oldValues.samiskforvaltningsomraade) return accumulator;
+          } else {
+            if (newValues.nummer === oldValues.nummer && newValues.navn === oldValues.navn) return accumulator;
+          }
+
+          const krets = flatedata.find((flate) => getIdFromEntity(flate) === key);
+          if (krets) {
+            const fromRequest = fromFormToRequest(inndeling.inndelingtype, oldValues, krets);
+            const toRequest = fromFormToRequest(inndeling.inndelingtype, newValues, krets);
+
+            // TODO: verifiser at dette fungerer
+            updateEditFeatureText(getRepresentasjonspunktId(key), newValues.navn, newValues.nummer);
+
+            if (fromRequest && toRequest) {
+              return [
+                ...accumulator,
+                {
+                  id: key,
+                  from: fromRequest,
+                  to: toRequest,
+                },
+              ];
+            }
+          }
         }
+        return accumulator;
+      },
+      [],
+    );
 
-        const krets = flatedata.find((flate) => getIdFromEntity(flate) === key);
-
-        return [
-          ...accumulator,
-          {
-            id: key,
-            from: fromFormToRequest(inndeling.inndelingtype, previousValues.current, krets),
-            to: fromFormToRequest(inndeling.inndelingtype, formValues, krets),
-          },
-        ];
-      }
-    }, []);
-
+    // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
     if (inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune") {
       addHistoryEntry({
         type: "kommune",
         fylkeId: inndeling.id,
         changes,
-      });
+      } as KommuneEntry);
     } else {
       addHistoryEntry({
         type: inndeling.inndelingtype,
         kommuneId: inndeling.id,
         changes,
-      });
+      } as StemmekretsEntry | GrunnkretsEntry);
     }
-    */
 
-    // TODO: finn ut om det her trengs
-    // updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newValues.navn, newValues.nummer);
     setIsEditing(!isEditing);
   };
 
-  /*
-  // TODO: må håndtere dette på magisk vis
-  const setFormValues = (change: StemmekretsEntry["changes"][number], direction: HistoryDirection) => {
-    const newName = change[direction]?.navn;
-    const newNumber = change[direction]?.nummer;
-    setValue("navn", newName ?? "");
-    setValue("nummer", newNumber ?? "");
-
-    previousValues.current = getValues();
-
-    updateEditFeatureText(getRepresentasjonspunktId(stemmekretsId), newName, newNumber);
+  const setFormValues = (change: MetadataEntry["changes"][number], direction: HistoryDirection) => {
+    console.log("setFormValues", change, direction);
+    const krets = change[direction];
+    if ("samiskforvaltningsomraade" in krets) {
+      setValue(`${krets.lokalid}.samiskforvaltningsomraade`, krets.samiskforvaltningsomraade);
+    } else {
+      console.log("ikke kommune", krets.identifikasjon.lokalid);
+      setValue(`${krets.identifikasjon.lokalid}.nummer`, krets.nummer ?? "");
+      setValue(`${krets.identifikasjon.lokalid}.navn`, krets.navn ?? "");
+      updateEditFeatureText(getRepresentasjonspunktId(krets.identifikasjon.lokalid), krets.navn, krets.nummer);
+    }
+    previousValues.current = structuredClone(getValues());
   };
 
-  // TODO: må håndtere dette på magisk vis
-  useHistoryFormSync<StemmekretsEntry>({
+  // TODO: denne må nok registreres for hver rad
+  useHistoryFormSync<MetadataEntry>({
     entityId: inndeling.id,
     redoEventKey: `${inndeling.inndelingtype}Redo`,
     undoEventKey: `${inndeling.inndelingtype}Undo`,
     setFormValues,
   });
-  */
 
   const toggleEditing = () => {
     if (isEditing) {
@@ -239,7 +265,7 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
           </tr>
         </thead>
         <tbody>
-          {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((krets) => {
+          {orderInndelingerBy(utkastFlatedata, sortProperty, sortOrder).map((krets) => {
             const kretsId = getIdFromEntity(krets);
             const kretsErrors = errors[kretsId];
             return (
@@ -267,7 +293,10 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
                       validationError={
                         kretsErrors && "nummer" in kretsErrors ? validationError(kretsErrors.nummer) : undefined
                       }
-                      {...register(`${kretsId}.nummer`, registerOptions.nummer)}
+                      {...register(
+                        `${kretsId}.nummer`,
+                        isStemmekretsInndeling(krets) ? registerOptions.nummer : undefined,
+                      )}
                     />
                     <InputCell
                       isEditing={isEditing}
@@ -275,7 +304,7 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
                       validationError={
                         kretsErrors && "navn" in kretsErrors ? validationError(kretsErrors.navn) : undefined
                       }
-                      {...register(`${kretsId}.navn`, registerOptions.navn)}
+                      {...register(`${kretsId}.navn`, isStemmekretsInndeling(krets) ? registerOptions.navn : undefined)}
                     />
                     <TableCell>{isStemmekretsInndeling(krets) ? krets.valgdistriktsnummer ?? "" : ""}</TableCell>
                   </>

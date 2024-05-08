@@ -1,6 +1,6 @@
 import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
 
-export type EntityUtkastType = "stemmekretsendringer" | "grunnkretsendringer";
+export type EntityUtkastType = "stemmekretsendringer" | "grunnkretsendringer" | "kommuneendringer";
 
 export type ResponseWithId = {
   id: {
