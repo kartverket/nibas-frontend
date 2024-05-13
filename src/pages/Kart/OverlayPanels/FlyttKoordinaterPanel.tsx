@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, Select, Text, useToast } from "@kvib/react";
+import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, Select, useToast } from "@kvib/react";
 import Input from "components/Input";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
@@ -11,13 +11,12 @@ import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
-import { transform } from "ol/proj";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
-import { EPSGCode, defaultProjectionEpsgCode, projectionDefinitions } from "utils/map/projections";
-import { getCurrentProjectionName, isLatLongProjection } from "../Kartinformasjon";
-import { isPointInsideMultiPolygon } from "./NavigasjonPanel/koordinater-utils";
+import { EPSGCode, mapProjectionEPSGCode, projectionDefinitions } from "utils/map/projections";
+import { getLabelsFromProjection } from "../Kartinformasjon";
+import { isPointInsideMultiPolygon, transformCoordinatesToProjection } from "./NavigasjonPanel/koordinater-utils";
 import { AbsolutePanel, PanelHeader, PanelProps } from "./Panel";
 
 type KoordinaterFormData = {
@@ -51,15 +50,13 @@ const ButtonRow = styled.div`
   justify-content: flex-end;
 `;
 
-export const coordinateDecimalPattern = /^-?\d+(\.\d+)?$/;
-export const coordinateDecimalPatternHelperText = "Koordinatet ditt må være et tall med eventuell punktum-separator";
-
 const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { selectedPoint, selectedFeatures, selectPointOnFeature } = useFeatureStyle();
   const { resetTool } = useToolbar();
   const { addHistoryEntry } = useHistory();
   const toast = useToast();
+  const [projectionOfCoordinates, setProjectionOfCoordinates] = useState<EPSGCode>(mapProjectionEPSGCode);
 
   const defaultValues = (punkt: SelectedPoint) => {
     if (!punkt) {
@@ -144,23 +141,16 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
     };
   }, [setFormValues]);
 
-  const [coordinatesProjection, setCoordinatesProjection] = useState<EPSGCode>(defaultProjectionEpsgCode);
-
   // Tilbakestill defaultverdier når man endrer eller oppdaterer valgt punkt
   useEffect(() => {
     reset(defaultValues(selectedPoint));
-    setCoordinatesProjection(defaultProjectionEpsgCode);
+    setProjectionOfCoordinates(mapProjectionEPSGCode);
   }, [selectedPoint, reset, selectedFeatures]);
 
-  const movePoint = () => {
+  const movePoint = (newCoordinates: [number, number]) => {
     if (selectedPoint) {
       // getValues skal returnere et tall, men den returnerer string for en eller annen grunn
       // Transformerer gitte koordinater til det kartet bruker
-      const newCoordinates = transform(
-        [+getValues("east"), +getValues("north")],
-        coordinatesProjection,
-        defaultProjectionEpsgCode,
-      );
       const oldGeometry = selectedPoint.getGeometry() as Point;
       const oldCoordinates = oldGeometry.getCoordinates();
 
@@ -219,18 +209,31 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
   const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
   const [error, setError] = useState<string | null>();
 
-  const moveToCoordinate = () => {
-    if (nasjonFetchError != null) {
-      movePoint();
-    } else if (
-      isLoading === false &&
-      nasjon?.omraade?.coordinates != null &&
-      isPointInsideMultiPolygon(getValues("east"), getValues("north"), nasjon?.omraade?.coordinates)
-    ) {
-      setError(null);
-      movePoint();
+  const movePointToCoordinates = () => {
+    setError(null);
+    const [east, north] = [getValues("east"), getValues("north")];
+    const transformedCoordinates = transformCoordinatesToProjection(
+      east,
+      north,
+      projectionOfCoordinates,
+      mapProjectionEPSGCode,
+    );
+    if (transformedCoordinates != null) {
+      if (nasjonFetchError != null) {
+        movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
+      } else if (
+        isLoading === false &&
+        nasjon?.omraade?.coordinates != null &&
+        isPointInsideMultiPolygon(transformedCoordinates[0], transformedCoordinates[1], nasjon?.omraade?.coordinates)
+      ) {
+        movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
+      } else {
+        setError("Koordinatene må være innenfor Norge sine grenser");
+      }
     } else {
-      setError("Koordinatene må være innenfor Norge sine grenser");
+      setError(
+        "Koordinatene er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+      );
     }
   };
 
@@ -239,11 +242,14 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
       <PanelHeader onClose={onKoordinaterPanelClose} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>
-      <Form onSubmit={handleSubmit(moveToCoordinate)}>
+      <Form onSubmit={handleSubmit(movePointToCoordinates)}>
         <SpacedFormControl isInvalid={error != null}>
           <Select
-            value={coordinatesProjection}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCoordinatesProjection(e.target.value as EPSGCode)}
+            isInvalid={false}
+            value={projectionOfCoordinates}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setProjectionOfCoordinates(e.target.value as EPSGCode)
+            }
           >
             {projectionDefinitions.map((projection) => (
               <option value={projection.epsgCode} key={projection.epsgCode}>
@@ -251,35 +257,22 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
               </option>
             ))}
           </Select>
-          {coordinatesProjection !== defaultProjectionEpsgCode && (
+          {projectionOfCoordinates !== mapProjectionEPSGCode && (
             <Alert>
               <AlertIcon />
               Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
               transformert til kartet sitt koordinatsystem.
             </Alert>
           )}
-          <Text>
-            Nåværende kartprojeksjon er <b>{getCurrentProjectionName(false)}</b>
-          </Text>
           <InputRow>
+            <Input type="text" label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""} {...register("east")} />
             <Input
               type="text"
-              inputMode="decimal"
-              pattern={coordinateDecimalPattern.source}
-              title={coordinateDecimalPatternHelperText}
-              label={isLatLongProjection(coordinatesProjection) === true ? "Breddegard" : "Øst"}
-              {...register("east")}
-            />
-            <Input
-              type="text"
-              inputMode="decimal"
-              pattern={coordinateDecimalPattern.source}
-              title={coordinateDecimalPatternHelperText}
-              label={isLatLongProjection(coordinatesProjection) === true ? "Lengdegrad" : "Nord"}
+              label={getLabelsFromProjection(projectionOfCoordinates).y ?? ""}
               {...register("north")}
             />
-            {error != null && <FormErrorMessage>{error}</FormErrorMessage>}
           </InputRow>
+          {error != null && <FormErrorMessage>{error}</FormErrorMessage>}
         </SpacedFormControl>
         <ButtonRow>
           <Button variant="tertiary" onClick={onKoordinaterPanelClose}>

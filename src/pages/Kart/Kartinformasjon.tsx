@@ -12,8 +12,8 @@ export const getCurrentProjectionName = (inShort: boolean) => {
   return projectionDefinitions.find((def) => def.epsgCode === projection.getCode())?.[inShort ? "shortName" : "name"];
 };
 
-export const isLatLongProjection = (epsgCode: EPSGCode) => {
-  return projectionDefinitions.find((def) => def.epsgCode === epsgCode)?.isLatLong;
+export const getLabelsFromProjection = (projectionEPSGCode: EPSGCode) => {
+  return projectionDefinitions.find((def) => def.epsgCode === projectionEPSGCode)?.xyLabel ?? { x: null, y: null };
 };
 
 const Kartinformasjon = () => {
@@ -22,7 +22,7 @@ const Kartinformasjon = () => {
       const mousePosition = new MousePosition({
         coordinateFormat: (coordinates) => {
           if (!coordinates) return "";
-          return `${coordinates[1].toFixed(2)}N  ${coordinates[0].toFixed(2)}Ø`;
+          return `${coordinates[0].toFixed(2)}Ø  ${coordinates[1].toFixed(2)}N`;
         },
         target: document.getElementById("mouse-position") ?? "",
       });
@@ -49,21 +49,14 @@ const Kartinformasjon = () => {
   return (
     <>
       <Container>
-        <Wrapper>
-          <ProjectionSpan>EU89 UTM-33</ProjectionSpan>
-          <Position id="mouse-position" />
-        </Wrapper>
+        <ProjectionSpan>EU89 UTM-33</ProjectionSpan>
+        <Position id="mouse-position" />
       </Container>
       <Scale id="scale-bar" />
       <ScaleIndicator id="scale-line" />
     </>
   );
 };
-
-const Wrapper = styled.div`
-  display: flex;
-  gap: 12px;
-`;
 
 const Container = styled.div`
   position: absolute;

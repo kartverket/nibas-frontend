@@ -1,45 +1,42 @@
-import { Alert, AlertIcon, Button, FormErrorMessage, InputGroup, Select, Text } from "@kvib/react";
+import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, InputGroup, Select } from "@kvib/react";
 import Input from "components/Input";
 import useNibasApi from "hooks/useNibasApi";
-import { transform } from "ol/proj";
-import { getCurrentProjectionName, isLatLongProjection } from "pages/Kart/Kartinformasjon";
+import { getLabelsFromProjection } from "pages/Kart/Kartinformasjon";
 import { useState } from "react";
 import { ChangeHandler, useForm } from "react-hook-form";
 import { styled } from "styled-components";
-import { EPSGCode, defaultProjectionEpsgCode, projectionDefinitions } from "utils/map/projections";
-import { coordinateDecimalPattern, coordinateDecimalPatternHelperText } from "../FlyttKoordinaterPanel";
+import { EPSGCode, mapProjectionEPSGCode, projectionDefinitions } from "utils/map/projections";
 import { NavigasjonProps } from "./NavigasjonPanel";
-import { isPointInsideMultiPolygon } from "./koordinater-utils";
+import { isPointInsideMultiPolygon, transformCoordinatesToProjection } from "./koordinater-utils";
 
-const Form = styled.form`
+const StyledFormControl = styled(FormControl)`
   display: flex;
   flex-direction: column;
   row-gap: 16px;
 `;
+
 const InputContainer = styled.div`
   display: flex;
   column-gap: 16px;
-`;
-
-const SpacedRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 `;
 
 const StyledFormErrorMessage = styled(FormErrorMessage)`
   grid-column: 1 / -2;
 `;
 
+const StyledButton = styled(Button)`
+  align-self: flex-end;
+`;
+
 type KoordinaterForm = {
   north: number | null;
   east: number | null;
-  insideMultiPolygon: null;
+  globalErrorDummyField: null;
 };
 
 export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProps) => {
   // dette er projeksjonen brukeren sier at de gir koordinatene på
-  const [coordinatesProjection, setCoordinatesProjection] = useState<EPSGCode>(defaultProjectionEpsgCode);
+  const [projectionOfCoordinates, setProjectionOfCoordinates] = useState<EPSGCode>(mapProjectionEPSGCode);
   const {
     register,
     handleSubmit,
@@ -50,24 +47,8 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
   } = useForm<KoordinaterForm>({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
-    defaultValues: { north: null, east: null, insideMultiPolygon: null },
+    defaultValues: { north: null, east: null, globalErrorDummyField: null },
   });
-
-  const submitCoordinates = (north: number | null, east: number | null) => {
-    if (north != null && east != null) {
-      const parsedNorth = parseFloat(north.toString());
-      const parsedEast = parseFloat(east.toString());
-      if (!isNaN(parsedNorth) && !isNaN(parsedEast) && isFinite(parsedNorth) && isFinite(parsedEast)) {
-        const transformedCoordinates = transform(
-          [parsedEast, parsedNorth],
-          coordinatesProjection,
-          defaultProjectionEpsgCode,
-        );
-        centerOnCoordinate(transformedCoordinates[1], transformedCoordinates[0]);
-        reset();
-      }
-    }
-  };
 
   const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
 
@@ -84,28 +65,41 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
     );
   };
 
-  const onFormSubmit = ({ north, east }: KoordinaterForm) => {
-    if (validatePointInsideMultiPolygon(north, east)) {
-      submitCoordinates(north, east);
-      return true;
+  const gotoCoordinates = ({ north, east }: KoordinaterForm) => {
+    if (north != null && east != null) {
+      const transformedCoordinates = transformCoordinatesToProjection(
+        east,
+        north,
+        projectionOfCoordinates,
+        mapProjectionEPSGCode,
+      );
+      if (transformedCoordinates != null) {
+        if (validatePointInsideMultiPolygon(transformedCoordinates[1], transformedCoordinates[0])) {
+          centerOnCoordinate(transformedCoordinates[1], transformedCoordinates[0]);
+          reset();
+          return true;
+        }
+        setError("globalErrorDummyField", { message: "Koordinatene må være innenfor Norge sine grenser" });
+        return false;
+      } else {
+        setError("globalErrorDummyField", {
+          message:
+            "Koordinatene er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+        });
+        return false;
+      }
     }
-    setError("insideMultiPolygon", { message: "Koordinatene må være innenfor Norge sine grenser" });
-    return false;
   };
 
   const numericFieldValidator = {
     required: `Du må skrive inn et koordinat`,
-    pattern: {
-      value: coordinateDecimalPattern,
-      message: `Koordinatet må være et gyldig heltall med punktum som desimaltallseparator.`,
-    },
   };
 
   const registerWithClearErrorsOnChange = (field: keyof KoordinaterForm) => {
     const { onChange, ...rest } = register(field, numericFieldValidator);
     const handleOnChange: ChangeHandler = (value) => {
       clearErrors(field);
-      clearErrors("insideMultiPolygon");
+      clearErrors("globalErrorDummyField");
       return onChange(value);
     };
 
@@ -116,72 +110,65 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
   };
 
   return (
-    <Form onSubmit={handleSubmit(onFormSubmit)}>
-      <InputContainer>
-        <InputGroup>
-          <Input
-            type="text"
-            inputMode="decimal"
-            pattern={coordinateDecimalPattern.source}
-            title={coordinateDecimalPatternHelperText}
-            placeholder="Fyll inn koordinat ..."
-            label={isLatLongProjection(coordinatesProjection) === true ? "Breddegrad" : "Øst"}
-            isRequired
-            {...registerWithClearErrorsOnChange("east")}
-            validationError={{
-              showError: !!formErrors.east,
-              message: formErrors.east?.message ?? "",
-            }}
-          />
-        </InputGroup>
-        {formErrors.east != null && <StyledFormErrorMessage>{formErrors.east.message}</StyledFormErrorMessage>}
-
-        <InputGroup>
-          <Input
-            type="text"
-            inputMode="decimal"
-            pattern={coordinateDecimalPattern.source}
-            title={coordinateDecimalPatternHelperText}
-            placeholder="Fyll inn koordinat ..."
-            label={isLatLongProjection(coordinatesProjection) === true ? "Lengdegrad" : "Nord"}
-            isRequired
-            {...registerWithClearErrorsOnChange("north")}
-            validationError={{
-              showError: !!formErrors.north,
-              message: formErrors.north?.message ?? "",
-            }}
-          />
-        </InputGroup>
-        {formErrors.north != null && <StyledFormErrorMessage>{formErrors.north.message}</StyledFormErrorMessage>}
-      </InputContainer>
-      <Select
-        value={coordinatesProjection}
-        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setCoordinatesProjection(e.target.value as EPSGCode)}
-      >
-        {projectionDefinitions.map((projection) => (
-          <option value={projection.epsgCode} key={projection.epsgCode}>
-            {projection.name}
-          </option>
-        ))}
-      </Select>
-      {coordinatesProjection !== defaultProjectionEpsgCode && (
-        <Alert>
-          <AlertIcon />
-          Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
-          transformert til kartet sitt koordinatsystem.
-        </Alert>
-      )}
-      <SpacedRow>
-        <Text>
-          Nåværende kartprojeksjon er <b>{getCurrentProjectionName(false)}</b>
-        </Text>
-        <Button type="submit" isDisabled={!isDirty}>
-          Gå til koordinater
-        </Button>
-        {formErrors.insideMultiPolygon != null && (
-          <StyledFormErrorMessage>{formErrors.insideMultiPolygon.message}</StyledFormErrorMessage>
+    <form onSubmit={handleSubmit(gotoCoordinates)}>
+      <StyledFormControl isInvalid={formErrors.globalErrorDummyField != null}>
+        <Select
+          isInvalid={false}
+          value={projectionOfCoordinates}
+          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setProjectionOfCoordinates(e.target.value as EPSGCode)}
+        >
+          {projectionDefinitions.map((projection) => (
+            <option value={projection.epsgCode} key={projection.epsgCode}>
+              {projection.name}
+            </option>
+          ))}
+        </Select>
+        {projectionOfCoordinates !== mapProjectionEPSGCode && (
+          <Alert>
+            <AlertIcon />
+            Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
+            transformert til kartet sitt koordinatsystem.
+          </Alert>
         )}
-      </SpacedRow>
-    </Form>
+        <InputContainer>
+          <InputGroup>
+            <Input
+              type="text"
+              placeholder="Fyll inn koordinat ..."
+              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
+              isRequired
+              {...registerWithClearErrorsOnChange("east")}
+              validationError={{
+                showError: !!formErrors.east,
+                message: formErrors.east?.message ?? "",
+              }}
+            />
+          </InputGroup>
+          {formErrors.east != null && <StyledFormErrorMessage>{formErrors.east.message}</StyledFormErrorMessage>}
+
+          <InputGroup>
+            <Input
+              type="text"
+              placeholder="Fyll inn koordinat ..."
+              label={getLabelsFromProjection(projectionOfCoordinates).y ?? ""}
+              isRequired
+              {...registerWithClearErrorsOnChange("north")}
+              validationError={{
+                showError: !!formErrors.north,
+                message: formErrors.north?.message ?? "",
+              }}
+            />
+          </InputGroup>
+          {formErrors.north != null && <StyledFormErrorMessage>{formErrors.north.message}</StyledFormErrorMessage>}
+        </InputContainer>
+        {formErrors.globalErrorDummyField != null && (
+          <StyledFormErrorMessage>{formErrors.globalErrorDummyField.message}</StyledFormErrorMessage>
+        )}
+
+        <StyledButton type="submit" isDisabled={!isDirty}>
+          Gå til koordinater
+        </StyledButton>
+      </StyledFormControl>
+    </form>
   );
 };

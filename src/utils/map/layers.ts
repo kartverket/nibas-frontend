@@ -9,7 +9,7 @@ import VectorSource from "ol/source/Vector";
 import WMTS from "ol/source/WMTS";
 import { map } from "pages/Kart/constants";
 import { getFeaturesFromGeoJson } from "./geoJson";
-import { defaultProjectionEpsgCode } from "./projections";
+import { mapProjectionEPSGCode } from "./projections";
 import { addFeaturesToSource } from "./source";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
@@ -47,7 +47,7 @@ export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<VectorSour
 export const getMatrikkelFeatures = async () => {
   const extent = map.getView().calculateExtent(map.getSize());
   const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
-    srsName: defaultProjectionEpsgCode,
+    srsName: mapProjectionEPSGCode,
     featureNS: "http://www.statkart.no/matrikkel",
     featurePrefix: "matrikkel",
     featureTypes: ["TEIGGRENSEWFS"],

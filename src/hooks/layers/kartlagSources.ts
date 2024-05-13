@@ -4,7 +4,7 @@ import WMTS from "ol/source/WMTS";
 import { createXYZ } from "ol/tilegrid";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
-import { defaultProjectionEpsgCode } from "utils/map/projections";
+import { mapProjectionEPSGCode } from "utils/map/projections";
 import { KartlagId } from "./types";
 
 const tileGrid = createXYZ({
@@ -87,7 +87,7 @@ const createWMTS = (id: KartlagId, config: WMTSConfig) => {
 };
 
 const defaultTileWMSParams = {
-  CRS: defaultProjectionEpsgCode,
+  CRS: mapProjectionEPSGCode,
   TILED: true,
 };
 
@@ -99,7 +99,7 @@ const createTileWMS = (id: KartlagId, url: string) => {
 
   // Setter id på alle sources for å kunne finne riktig mappedLayer senere
   tileWMS.set("id", id);
-  tileWMS.setTileGridForProjection(defaultProjectionEpsgCode, tileGrid);
+  tileWMS.setTileGridForProjection(mapProjectionEPSGCode, tileGrid);
   return tileWMS;
 };
 
@@ -117,7 +117,7 @@ const createAuthedTileWMS = (id: KartlagId, url: string, tjenesteId: string) => 
 
   // Setter id på alle sources for å kunne finne riktig mappedLayer senere
   tileWMS.set("id", id);
-  tileWMS.setTileGridForProjection(defaultProjectionEpsgCode, tileGrid);
+  tileWMS.setTileGridForProjection(mapProjectionEPSGCode, tileGrid);
   return tileWMS;
 };
 
