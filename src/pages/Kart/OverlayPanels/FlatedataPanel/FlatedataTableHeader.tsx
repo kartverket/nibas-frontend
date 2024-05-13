@@ -8,7 +8,7 @@ type Props = {
   isReversed: boolean;
 };
 
-const KretsTableHeader = ({ children, onClick, isActivated, isReversed }: Props) => {
+const FlatedataTableHeader = ({ children, onClick, isActivated, isReversed }: Props) => {
   const getRightIcon = () => {
     if (!isActivated) {
       return undefined;
@@ -47,4 +47,4 @@ const ClickableHeader = styled(Button)`
   }
 `;
 
-export default KretsTableHeader;
+export default FlatedataTableHeader;

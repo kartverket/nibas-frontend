@@ -4,6 +4,7 @@ import { GrunnkretsResponse, KommuneResponse, MetadataResponse, StemmekretsRespo
 import get from "lodash.get";
 
 type ResponseProperty = keyof KommuneResponse | keyof StemmekretsResponse | keyof GrunnkretsResponse;
+
 interface PropertiesByInndelingtype extends Record<Inndelingtype, ResponseProperty[]> {
   fylke: (keyof KommuneResponse)[];
   kommune: (keyof KommuneResponse)[];
@@ -18,7 +19,7 @@ const propertiesByInndelingtype: PropertiesByInndelingtype = {
   grunnkrets: ["nummer", "navn"],
 };
 
-export const useKretsTableSort = (inndelingtype: Inndelingtype) => {
+export const useFlatedataTableSort = (inndelingtype: Inndelingtype) => {
   const properties = propertiesByInndelingtype[inndelingtype];
   const [sortProperty, setSortProperty] = useState(properties[0]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");

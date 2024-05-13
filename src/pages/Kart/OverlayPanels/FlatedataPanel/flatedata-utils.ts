@@ -9,7 +9,8 @@ type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
 type StemmekretsInput = { navn: string; nummer: string };
 type StemmekretsInputs = { [inndelingId: string]: StemmekretsInput };
-type GrunnkretsInputs = StemmekretsInputs;
+type GrunnkretsInput = StemmekretsInput;
+type GrunnkretsInputs = { [inndelingId: string]: GrunnkretsInput };
 export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs;
 
 const isKommuneInput = (value: KommuneInput | StemmekretsInput): value is KommuneInput =>
@@ -17,17 +18,17 @@ const isKommuneInput = (value: KommuneInput | StemmekretsInput): value is Kommun
 
 const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
-  data: KommuneInput | StemmekretsInput,
-  krets: MetadataResponse,
+  data: KommuneInput | StemmekretsInput | GrunnkretsInput,
+  inndeling: MetadataResponse,
 ): MetadataRequest | null => {
   switch (inndelingtype) {
     case "fylke":
     case "kommune": {
-      if (isKommuneInndeling(krets) && isKommuneInput(data)) {
+      if (isKommuneInndeling(inndeling) && isKommuneInput(data)) {
         const kommuneRequest: KommuneRequest = {
-          lokalid: getIdFromEntity(krets),
-          administrativenhetnavn: krets.navn,
-          version: krets.version,
+          lokalid: getIdFromEntity(inndeling),
+          administrativenhetnavn: inndeling.navn,
+          version: inndeling.version,
           samiskforvaltningsomraade: data.samiskforvaltningsomraade,
         };
         return kommuneRequest;
@@ -38,10 +39,10 @@ const getRequestFromInputs = (
       if (!isKommuneInput(data)) {
         const stemmekretsRequest: StemmekretsRequest = {
           identifikasjon: {
-            lokalid: getIdFromEntity(krets),
+            lokalid: getIdFromEntity(inndeling),
           },
-          valgdistriktsnummer: isStemmekretsInndeling(krets) ? krets.valgdistriktsnummer : undefined,
-          version: krets.version,
+          valgdistriktsnummer: isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer : undefined,
+          version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
         };
@@ -53,9 +54,9 @@ const getRequestFromInputs = (
       if (!isKommuneInput(data)) {
         const grunnkretsRequest: GrunnkretsRequest = {
           identifikasjon: {
-            lokalid: getIdFromEntity(krets),
+            lokalid: getIdFromEntity(inndeling),
           },
-          version: krets.version,
+          version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
         };
@@ -77,17 +78,17 @@ export const reduceFlatedataChanges = (
     const oldValues = previousValues?.[key];
 
     if (oldValues) {
-      // Dersom kretsen er uendret skal vi ikke lage en endring i history
+      // Dersom inndelingen er uendret skal vi ikke lage en endring i history
       if (isKommuneInput(oldValues)) {
         if (newValues.samiskforvaltningsomraade === oldValues.samiskforvaltningsomraade) return accumulator;
       } else {
         if (newValues.nummer === oldValues.nummer && newValues.navn === oldValues.navn) return accumulator;
       }
 
-      const krets = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);
-      if (krets) {
-        const fromRequest = getRequestFromInputs(inndeling.inndelingtype, oldValues, krets);
-        const toRequest = getRequestFromInputs(inndeling.inndelingtype, newValues, krets);
+      const changedInndeling = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);
+      if (changedInndeling) {
+        const fromRequest = getRequestFromInputs(inndeling.inndelingtype, oldValues, changedInndeling);
+        const toRequest = getRequestFromInputs(inndeling.inndelingtype, newValues, changedInndeling);
 
         if (fromRequest && toRequest) {
           updateRepresentasjonspunkt(key, newValues.nummer, newValues.navn);

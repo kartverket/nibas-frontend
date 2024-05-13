@@ -14,7 +14,7 @@ import {
 } from "@kvib/react";
 import { ModalPanel, PanelHeader, PanelProps } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import KretsTable from "./KretsTable";
+import FlatedataTable from "./FlatedataTable";
 import { Inndeling, pluralizeInndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
@@ -97,9 +97,9 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
           </FlatedataTabList>
           <FlatedataTabPanels>
             {allInndelinger.map((inndeling) => (
-              <KretsTable
+              <FlatedataTable
                 key={inndeling.id + inndeling.inndelingtype}
-                inndeling={inndeling}
+                mainInndeling={inndeling}
                 isEditing={isEditing}
                 setIsEditing={setIsEditing}
                 searchValue={searchValue}
@@ -140,7 +140,7 @@ const FlatedataTabList = styled(TabList)`
   overflow-x: auto;
   border-bottom: none;
   box-shadow: inset 0 -2px var(--kvib-colors-chakra-border-color);
-  padding: 0 24px;
+  padding-left: 24px;
 
   &::after {
     content: "";

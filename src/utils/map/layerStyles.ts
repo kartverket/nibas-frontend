@@ -221,8 +221,8 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) =
   });
 };
 
-export const updateRepresentasjonspunkt = (kretsId: string, number?: string, name?: string) => {
-  const feature = editSource.getFeatureById(getRepresentasjonspunktId(kretsId));
+export const updateRepresentasjonspunkt = (inndelingId: string, number?: string, name?: string) => {
+  const feature = editSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   if (feature) {
     if (number != null) feature.set("number", number);
     if (name != null) feature.set("name", name);

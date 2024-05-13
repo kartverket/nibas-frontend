@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
-import EditAndSaveButton from "./EditAndSaveButton";
+import EditAndSaveButton from "components/EditAndSaveButton";
 
 interface Props {
   feature: Feature<Geometry>;
@@ -73,6 +73,7 @@ const GrenseinformasjonRow = ({
               isEditing={isEditing}
               size="sm"
               onSubmit={handleSubmit}
+              variant="secondary"
               toggleEditing={() =>
                 setIsEditing((prevState) => {
                   setIsSubmitted(false);
@@ -82,7 +83,9 @@ const GrenseinformasjonRow = ({
                   return !prevState;
                 })
               }
-            />
+            >
+              Rediger
+            </EditAndSaveButton>
           )}
         </Row>
         {isEditing ? (

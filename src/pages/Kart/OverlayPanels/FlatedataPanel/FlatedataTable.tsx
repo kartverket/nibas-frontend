@@ -5,35 +5,35 @@ import { useFlatedata } from "./useFlatedata";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
-import { orderInndelingerBy, useKretsTableSort } from "./useKretsTableSort";
-import KretsTableHeader from "./KretsTableHeader";
+import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
+import FlatedataTableHeader from "./FlatedataTableHeader";
 import { useForm } from "react-hook-form";
-import FlatedataFooter from "./FlatedataFooter";
 import { useEffect, useRef } from "react";
 import { MetadataResponse } from "types/api";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
-import KretsTableRow from "./KretsTableRow";
+import FlatedataTableRow from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
+import EditAndSaveButton from "components/EditAndSaveButton";
 
 type Props = {
-  inndeling: Inndeling;
+  mainInndeling: Inndeling;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
   searchValue: string;
 };
 
-const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) => {
+const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue }: Props) => {
   const { utkast } = useUtkast();
-  const isAdministrativEnhet = inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune";
-  const { sortProperty, sortOrder, sortHeaderProps } = useKretsTableSort(inndeling.inndelingtype);
+  const isAdministrativEnhet = mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune";
+  const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
 
-  const flatedata = useFlatedata(inndeling) ?? [];
+  const flatedata = useFlatedata(mainInndeling) ?? [];
   const utkastFlatedata = (useUtkastEntity(
     flatedata,
-    `${inndeling.inndelingtype === "fylke" ? "kommune" : inndeling.inndelingtype}endringer`,
+    `${mainInndeling.inndelingtype === "fylke" ? "kommune" : mainInndeling.inndelingtype}endringer`,
   ) ?? []) as MetadataResponse[];
 
   const formMethods = useForm<FlatedataInputs>();
@@ -62,23 +62,23 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
     setIsEditing(!isEditing);
   };
 
-  const kretsPrefix = isAdministrativEnhet ? "Kommune" : capitalize(inndeling.inndelingtype);
+  const inndelingPrefix = isAdministrativEnhet ? "Kommune" : capitalize(mainInndeling.inndelingtype);
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
-    const changes = reduceFlatedataChanges(data, previousValues.current, utkastFlatedata, inndeling);
+    const changes = reduceFlatedataChanges(data, previousValues.current, utkastFlatedata, mainInndeling);
 
     if (changes.length > 0) {
       // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
-      if (inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune") {
+      if (mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune") {
         addHistoryEntry({
           type: "kommune",
-          fylkeId: inndeling.id,
+          fylkeId: mainInndeling.id,
           changes,
         } as KommuneEntry);
       } else {
         addHistoryEntry({
-          type: inndeling.inndelingtype,
-          kommuneId: inndeling.id,
+          type: mainInndeling.inndelingtype,
+          kommuneId: mainInndeling.id,
           changes,
         } as StemmekretsEntry | GrunnkretsEntry);
       }
@@ -92,30 +92,32 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
       <Table>
         <thead>
           <tr>
-            <KretsTableHeader {...sortHeaderProps("nummer")}>{`${kretsPrefix}nummer`}</KretsTableHeader>
-            <KretsTableHeader {...sortHeaderProps("navn")}>{`${kretsPrefix}navn`}</KretsTableHeader>
+            <FlatedataTableHeader {...sortHeaderProps("nummer")}>{`${inndelingPrefix}nummer`}</FlatedataTableHeader>
+            <FlatedataTableHeader {...sortHeaderProps("navn")}>{`${inndelingPrefix}navn`}</FlatedataTableHeader>
             {isAdministrativEnhet ? (
-              <KretsTableHeader {...sortHeaderProps("samiskforvaltningsomraade")}>Merknad</KretsTableHeader>
-            ) : inndeling.inndelingtype === "stemmekrets" ? (
-              <KretsTableHeader {...sortHeaderProps("valgdistriktsnummer")}>Valgdistriktsnummer</KretsTableHeader>
+              <FlatedataTableHeader {...sortHeaderProps("samiskforvaltningsomraade")}>Merknad</FlatedataTableHeader>
+            ) : mainInndeling.inndelingtype === "stemmekrets" ? (
+              <FlatedataTableHeader {...sortHeaderProps("valgdistriktsnummer")}>
+                Valgdistriktsnummer
+              </FlatedataTableHeader>
             ) : (
               <th></th>
             )}
           </tr>
         </thead>
         <tbody>
-          {orderInndelingerBy(utkastFlatedata, sortProperty, sortOrder).map((krets) => {
-            const kretsId = getIdFromEntity(krets);
+          {orderInndelingerBy(utkastFlatedata, sortProperty, sortOrder).map((inndeling) => {
+            const inndelingId = getIdFromEntity(inndeling);
 
             const isSearchMatch =
-              krets.nummer.includes(searchValue) ||
-              getNavnInSpraak(krets.navn, "nor").toLowerCase().includes(searchValue);
+              inndeling.nummer.includes(searchValue) ||
+              getNavnInSpraak(inndeling.navn, "nor").toLowerCase().includes(searchValue);
 
             return (
-              <KretsTableRow
-                key={kretsId}
+              <FlatedataTableRow
+                key={inndelingId}
+                inndelingtype={mainInndeling.inndelingtype}
                 inndeling={inndeling}
-                krets={krets}
                 isSearchMatch={isSearchMatch}
                 isEditing={isEditing}
                 formMethods={formMethods}
@@ -125,17 +127,27 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
           })}
         </tbody>
       </Table>
-      {utkast && (
-        <FlatedataFooter
-          isEditing={isEditing}
-          toggleEditing={toggleEditing}
-          isDisabled={!isDirty}
-          onSubmit={handleSubmit(submitAndAddHistoryEntry)}
-        />
+      {utkast && mainInndeling.isEditing && (
+        <>
+          <FlatedataFooter
+            isEditing={isEditing}
+            toggleEditing={toggleEditing}
+            isDisabled={!isDirty}
+            onSubmit={handleSubmit(submitAndAddHistoryEntry)}
+            hasIcon
+          >
+            Rediger flatedetaljer
+          </FlatedataFooter>
+        </>
       )}
     </Container>
   );
 };
+
+const FlatedataFooter = styled(EditAndSaveButton)`
+  padding: 16px;
+  border-top: 1px solid var(--kvib-colors-chakra-border-color);
+`;
 
 const Container = styled(TabPanel)`
   display: grid;
@@ -174,4 +186,4 @@ const Table = styled.table`
   }
 `;
 
-export default KretsTable;
+export default FlatedataTable;
