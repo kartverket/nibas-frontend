@@ -1,4 +1,4 @@
-import { Checkbox, CloseButton, Divider, Menu, MenuButton, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
+import { Checkbox, CloseButton, Divider, Menu, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -15,6 +15,7 @@ import { useState } from "react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { anyFeatureIsEditable } from "utils/features";
+import MenuButtonWithChevron from "pages/Kart/Toolbar/MenuButtonWithChevron";
 
 const Toolbar = () => {
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
@@ -264,19 +265,19 @@ const Toolbar = () => {
                 onClose={() => setIsSnappingMenuOpen(false)}
                 isOpen={isSnappingMenuOpen}
               >
-                {({ onClose }) => {
+                {({ isOpen, onClose }) => {
                   return (
                     <>
-                      <MenuButton
-                        onClick={toggleSnapMenu}
-                        isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
-                        as={ToolbarButton}
+                      <MenuButtonWithChevron
                         aria-label="Snap til andre grenser i kartet"
+                        isOpen={isOpen}
+                        onClick={toggleSnapMenu}
                         icon="align_justify_space_between"
+                        isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
                         tooltip={{ text: "Skru av/på snapping mot andre grenser.", shortcut: "snap" }}
                       >
                         Snap
-                      </MenuButton>
+                      </MenuButtonWithChevron>
                       <MenuList minWidth="240px" marginBottom="10px">
                         <SnappingMenuHeader>
                           <SnappingToggle>
