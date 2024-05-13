@@ -6,7 +6,6 @@ import {
   HistoryChange,
   HistoryState,
   HistoryTypeValues,
-  NyGrense,
   StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext/types";
