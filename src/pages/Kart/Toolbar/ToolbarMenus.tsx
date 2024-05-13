@@ -133,7 +133,7 @@ const ToolbarMenus = () => {
             label="Grenseverktøy"
             icon="timeline"
             isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
-            isActive={grenseMenuItems.every((gmi) => gmi.isDisabled)}
+            isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
             tooltip="Vis grenseverktøy"
           >
             <MenuList>

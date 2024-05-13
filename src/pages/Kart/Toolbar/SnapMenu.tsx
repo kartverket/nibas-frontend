@@ -1,8 +1,8 @@
-import { Menu, MenuButton, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Checkbox, Spacer } from "@kvib/react";
-import ToolbarButton from "./ToolbarButton";
+import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Checkbox, Spacer } from "@kvib/react";
 import { useToolbar } from "contexts/ToolbarContext";
 import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import MenuButtonWithChevron from "./MenuButtonWithChevron";
 
 type Props = {
   isOpen: boolean;
@@ -29,16 +29,16 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
 
   return (
     <Menu closeOnSelect={false} closeOnBlur={false} onClose={onClose} isOpen={isOpen}>
-      <MenuButton
-        onClick={onToggle}
-        isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
-        as={ToolbarButton}
+      <MenuButtonWithChevron
         aria-label="Snap til andre grenser i kartet"
+        isOpen={isOpen}
+        onClick={onToggle}
         icon="align_justify_space_between"
+        isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
         tooltip={{ text: "Skru av/på snapping mot andre grenser.", shortcut: "snap" }}
       >
         Snap
-      </MenuButton>
+      </MenuButtonWithChevron>
       <MenuList minWidth="240px" marginBottom="10px">
         <SnapMenuHeader>
           <Switch
