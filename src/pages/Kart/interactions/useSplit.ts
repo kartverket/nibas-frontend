@@ -112,12 +112,11 @@ const useSplit = () => {
     const features = createNewFeatures(featureToSplit, coordinatesToSplit);
     if (features == null) return;
 
-    const { newFeatures, oldFeature, oldFeatureId } = features;
-    addFeaturesToSource("edit", newFeatures);
-    archiveOldFeature(oldFeature);
+    addFeaturesToSource("edit", features.newFeatures);
+    archiveOldFeature(features.oldFeature);
     addHistoryEntry({
       type: "grensedeling",
-      changes: [{ id: oldFeatureId, from: [oldFeature], to: newFeatures }],
+      changes: [{ id: features.oldFeatureId, from: [features.oldFeature], to: features.newFeatures }],
     });
   };
 
