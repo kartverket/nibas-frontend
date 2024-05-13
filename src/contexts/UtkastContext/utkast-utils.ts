@@ -177,16 +177,22 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         });
       } else if (entry.type === "nygrense") {
         // ny grense er også sær, siden den kan inneholde 1-2 grensedelinger attåt
-        const grenseChange = change as HistoryChange<NyGrense>;
-        if (grenseChange.from.grensedeling == null || grenseChange.to.grensedeling == null) return;
+        if (
+          "grensedeling" in change.from &&
+          change.from.grensedeling != null &&
+          change.from.grensedeling.length > 0 &&
+          "grensedeling" in change.to &&
+          change.to.grensedeling != null &&
+          change.to.grensedeling.length > 0
+        ) {
+          const featureIds = removeNil(
+            [...change.from.grensedeling, ...change.to.grensedeling].map((f) => f.getId()?.toString()),
+          );
 
-        const featureIds = removeNil(
-          [...grenseChange.from.grensedeling, ...grenseChange.to.grensedeling].map((f) => f.getId()?.toString()),
-        );
-
-        featureIds.forEach((id) => {
-          addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
-        });
+          featureIds.forEach((id) => {
+            addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
+          });
+        }
       }
     });
   });

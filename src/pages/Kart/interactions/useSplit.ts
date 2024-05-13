@@ -84,13 +84,15 @@ const useSplit = () => {
   ): Feature<Geometry> => {
     const newFeature = feature.clone();
     const newFeatureId = getTempFeatureId();
-    const newGeometry = newFeature.getGeometry() as LineString;
+    const newGeometry = newFeature.getGeometry();
 
-    // Siden OL er mutable og vi ikke ønsker å mutere den eksisterende geometrien
-    const coordinates = [...newGeometry.getCoordinates()];
-    const newCoordinates = coordinates.splice(startIndex, endIndex);
-    newFeature.setId(newFeatureId);
-    newGeometry.setCoordinates(newCoordinates);
+    if (newGeometry instanceof LineString) {
+      // Siden OL er mutable og vi ikke ønsker å mutere den eksisterende geometrien
+      const coordinates = [...newGeometry.getCoordinates()];
+      const newCoordinates = coordinates.splice(startIndex, endIndex);
+      newFeature.setId(newFeatureId);
+      newGeometry.setCoordinates(newCoordinates);
+    }
     return newFeature;
   };
 
