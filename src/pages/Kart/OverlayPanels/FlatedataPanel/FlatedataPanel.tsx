@@ -70,6 +70,7 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
     handleDraft(() => closeOverlayModal());
     setIsEditing(false);
     setTabIndex(0);
+    setInputValue("");
   };
 
   return (

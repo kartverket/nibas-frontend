@@ -3,16 +3,16 @@ import { ButtonGroup, IconButton, Button } from "@kvib/react";
 
 type Props = {
   isEditing: boolean;
-  canSave?: boolean;
+  isDisabled?: boolean;
   toggleEditing: () => void;
   onSubmit: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
-const EditAndSaveButton = ({ isEditing, toggleEditing, canSave = true, onSubmit }: Props) => (
+const FlatedataFooter = ({ isEditing, toggleEditing, isDisabled, onSubmit }: Props) => (
   <Container>
     {isEditing ? (
       <CombinedButton>
-        <IconButton aria-label="Lagre endringer" onClick={onSubmit} icon="check" isDisabled={!canSave} />
+        <IconButton aria-label="Lagre endringer" onClick={onSubmit} icon="check" isDisabled={isDisabled} />
         <IconButton variant="ghost" aria-label="Forkast endringer" onClick={toggleEditing} icon="close" />
       </CombinedButton>
     ) : (
@@ -39,4 +39,4 @@ const CombinedButton = styled(ButtonGroup)`
   gap: 3px;
 `;
 
-export default EditAndSaveButton;
+export default FlatedataFooter;

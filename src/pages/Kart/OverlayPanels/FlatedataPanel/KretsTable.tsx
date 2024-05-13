@@ -67,22 +67,24 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     const changes = reduceFlatedataChanges(data, previousValues.current, utkastFlatedata, inndeling);
 
-    // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
-    if (inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune") {
-      addHistoryEntry({
-        type: "kommune",
-        fylkeId: inndeling.id,
-        changes,
-      } as KommuneEntry);
-    } else {
-      addHistoryEntry({
-        type: inndeling.inndelingtype,
-        kommuneId: inndeling.id,
-        changes,
-      } as StemmekretsEntry | GrunnkretsEntry);
-    }
+    if (changes.length > 0) {
+      // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
+      if (inndeling.inndelingtype === "fylke" || inndeling.inndelingtype === "kommune") {
+        addHistoryEntry({
+          type: "kommune",
+          fylkeId: inndeling.id,
+          changes,
+        } as KommuneEntry);
+      } else {
+        addHistoryEntry({
+          type: inndeling.inndelingtype,
+          kommuneId: inndeling.id,
+          changes,
+        } as StemmekretsEntry | GrunnkretsEntry);
+      }
 
-    setIsEditing(!isEditing);
+      setIsEditing(!isEditing);
+    }
   };
 
   return (
@@ -127,7 +129,7 @@ const KretsTable = ({ inndeling, isEditing, setIsEditing, searchValue }: Props) 
         <FlatedataFooter
           isEditing={isEditing}
           toggleEditing={toggleEditing}
-          canSave={isDirty}
+          isDisabled={!isDirty}
           onSubmit={handleSubmit(submitAndAddHistoryEntry)}
         />
       )}
