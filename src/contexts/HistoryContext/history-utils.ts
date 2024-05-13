@@ -146,19 +146,9 @@ export const setFeaturePropertiesForEntry = (entry: PropertyEntry, direction: Hi
 };
 
 export const setFeatureCoordinatesAndPropertiesForEntry = (entry: NyGrenseEntry, direction: HistoryDirection) => {
-  // Sjekker en unik egenskap for å se om det er riktige typer
-  entry.changes.forEach((change) => {
-    const featurePropertiesChange = change as HistoryChange<FeatureProperties>;
-
-    if (featurePropertiesChange.from?.inndelingerKontekst != null) {
-      setPropertiesFromChange(featurePropertiesChange, direction);
-    }
-
-    const minimalGrenseChange = change as HistoryChange<MinimalGrense>;
-
-    if (minimalGrenseChange.from?.coordinates != null) {
-      setCoordinatesFromChange(minimalGrenseChange, direction);
-    }
+  entry.changes.forEach((change: HistoryChange<FeatureProperties & MinimalGrense>) => {
+    setPropertiesFromChange(change, direction);
+    setCoordinatesFromChange(change, direction);
   });
 };
 
@@ -232,7 +222,7 @@ export const undoGrensedeling = (delteFeatures: Feature[], newFeaturesFromsDelin
     const deltFeatureId = deltFeature.getId()?.toString();
     if (deltFeatureId == null) return;
 
-    // Om featuren som ble splittet ikke var en ny grense vises den som artkivert, vi må derfor fjerne den fra archived layer
+    // Om featuren som ble splittet ikke var en ny grense vises den som arkivert, vi må derfor fjerne den fra archived layer
     if (!isTempFeatureId(deltFeatureId)) {
       removeFeaturesFromSourceByIds("archived", [deltFeatureId]);
     }
