@@ -116,6 +116,65 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       removeFeaturesFromSourceByIds(layer, featureIds);
     };
 
+    const getFeaturesForInndelingAndUtkast = (
+      featuresInUtkast: Feature<Geometry>[],
+      featuresInInndeling: Feature<Geometry>[],
+    ): Feature<Geometry>[] => {
+      const featuresInInndelingWithoutUtkastDuplicates: Feature<Geometry>[] = [...featuresInUtkast];
+
+      for (const feature of featuresInInndeling) {
+        const featureIfInUtkast = featuresInInndelingWithoutUtkastDuplicates.find(
+          (featureFromUtkast) => featureFromUtkast.getId()?.toString() === feature.getId()?.toString(),
+        );
+
+        if (!featureIfInUtkast) {
+          featuresInInndelingWithoutUtkastDuplicates.push(feature);
+        }
+      }
+
+      return featuresInInndelingWithoutUtkastDuplicates;
+    };
+
+    const getSammenslaaingsFeaturesWithDuplicates = (
+      featuresInInndeling: Feature<Geometry>[],
+      inndelingType: Inndelingtype,
+    ): Feature<Geometry>[] => {
+      if (inndelingType !== "stemmekrets") return [];
+
+      const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
+
+      const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+      if (sammenslaaing != null) {
+        const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
+          (stemmekrets) => stemmekrets.lokalId,
+        );
+
+        const stemmekretsInSammenslaaingIds = [
+          sammenslaaing.viderefoertStemmekrets.lokalId,
+          ...innlemmedeStemmekretsIder,
+        ];
+
+        for (const feature of featuresInInndeling) {
+          const geometry = feature.getGeometry();
+
+          // Filtrerer ut representasjonspunkt
+          if (geometry instanceof LineString) {
+            const properties = feature.getProperties() as FeatureProperties;
+
+            const kontekstEgenskapIds = removeNil(
+              properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
+            );
+
+            for (const id of kontekstEgenskapIds) {
+              if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
+            }
+          }
+        }
+      }
+
+      return sammenslaaingFeaturesWithDuplicates;
+    };
+
     if (inndelingFeatures.length === 0) return;
 
     // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
@@ -130,60 +189,26 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         return inndeling.id === inndelingWithFeatures.id && inndeling.inndelingtype === inndeling.inndelingtype;
       });
 
+      // Dette skal i praksis ikke skje, da inndelingFeatures er bygd opp basert på selectedInndelinger
+      // Må uansett sjekke casen sånn at TypeScript vet at currentInndeling ikke er null videre
       if (!currentInndeling) continue;
 
       if (currentInndeling.isEditing) {
-        // TODO Kan man unngå så mye looping her? Er det en potensiell performance save?
-        const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
+        const featuresInInndelingWithoutUtkastDuplicates = getFeaturesForInndelingAndUtkast(
+          utkastFeaturesInInndeling,
+          inndelingWithFeatures.features,
+        );
 
-        for (const feature of inndelingWithFeatures.features) {
-          const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
-            (featureFromUtkast) => featureFromUtkast.getId()?.toString() === feature.getId()?.toString(),
-          );
-
-          if (!featureIfInUtkast) {
-            inndelingFeaturesExcludedUtkastFeatures.push(feature);
-          }
-        }
-
-        const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
-
-        if (currentInndeling.inndelingtype === "stemmekrets") {
-          const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
-          if (sammenslaaing != null) {
-            const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
-              (stemmekrets) => stemmekrets.lokalId,
-            );
-
-            const stemmekretsInSammenslaaingIds = [
-              sammenslaaing.viderefoertStemmekrets.lokalId,
-              ...innlemmedeStemmekretsIder,
-            ];
-
-            for (const feature of inndelingWithFeatures.features) {
-              const geometry = feature.getGeometry();
-
-              // Filtrerer ut representasjonspunkt
-              if (geometry instanceof LineString) {
-                const properties = feature.getProperties() as FeatureProperties;
-
-                const kontekstEgenskapIds = removeNil(
-                  properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
-                );
-
-                for (const id of kontekstEgenskapIds) {
-                  if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
-                }
-              }
-            }
-          }
-        }
+        const sammenslaaingsFeaturesWithDuplicates = getSammenslaaingsFeaturesWithDuplicates(
+          inndelingWithFeatures.features,
+          currentInndeling.inndelingtype,
+        );
 
         addInndelingToLayer(
           "edit",
-          inndelingFeaturesExcludedUtkastFeatures,
+          featuresInInndelingWithoutUtkastDuplicates,
           utkastFeaturesInInndeling,
-          sammenslaaingFeaturesWithDuplicates,
+          sammenslaaingsFeaturesWithDuplicates,
         );
       }
 
