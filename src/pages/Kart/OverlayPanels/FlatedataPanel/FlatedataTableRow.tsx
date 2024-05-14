@@ -45,6 +45,11 @@ const FlatedataTableRow = ({
   // Ved undo og redo må grensesnittet oppdateres med riktig informasjon
   const setFormValues = (change: MetadataEntry["changes"][number], direction: HistoryDirection) => {
     const inndelingChange = change[direction];
+
+    // TODO: denne fungerer ikke når modalen er lukket da alt blir unmountet
+    // eneste måten rundt det er å skrive om til å ikke være en chakra modal
+    console.log("setFormValues", inndelingChange);
+
     if ("samiskforvaltningsomraade" in inndelingChange) {
       setValue(`${inndelingChange.lokalid}.samiskforvaltningsomraade`, inndelingChange.samiskforvaltningsomraade);
     } else {

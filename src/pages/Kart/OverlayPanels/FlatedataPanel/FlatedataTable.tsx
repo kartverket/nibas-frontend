@@ -16,6 +16,7 @@ import FlatedataTableRow from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
 import EditAndSaveButton from "components/EditAndSaveButton";
+import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 
 type Props = {
   mainInndeling: Inndeling;
@@ -83,6 +84,12 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue }:
         } as StemmekretsEntry | GrunnkretsEntry);
       }
 
+      for (const change of changes) {
+        if ("navn" in change.to && "nummer" in change.to) {
+          updateRepresentasjonspunkt(change.id, change.to.nummer, change.to.navn);
+        }
+      }
+
       setIsEditing(!isEditing);
     }
   };
@@ -128,17 +135,15 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue }:
         </tbody>
       </Table>
       {utkast && mainInndeling.isEditing && (
-        <>
-          <FlatedataFooter
-            isEditing={isEditing}
-            toggleEditing={toggleEditing}
-            isDisabled={!isDirty}
-            onSubmit={handleSubmit(submitAndAddHistoryEntry)}
-            hasIcon
-          >
-            Rediger flatedetaljer
-          </FlatedataFooter>
-        </>
+        <FlatedataFooter
+          isEditing={isEditing}
+          toggleEditing={toggleEditing}
+          isDisabled={!isDirty}
+          onSubmit={handleSubmit(submitAndAddHistoryEntry)}
+          hasIcon
+        >
+          Rediger flatedetaljer
+        </FlatedataFooter>
       )}
     </Container>
   );

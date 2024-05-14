@@ -32,7 +32,6 @@ const EditAndSaveButton = ({
       </CombinedButton>
     ) : (
       <EditButton
-        isDisabled={isDisabled}
         aria-label="Åpne redigering"
         onClick={toggleEditing}
         size={size}

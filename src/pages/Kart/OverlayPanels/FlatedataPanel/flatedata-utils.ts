@@ -3,7 +3,6 @@ import { Inndeling, Inndelingtype } from "contexts/InndelingerContext/Inndelinge
 import { MetadataResponse, MetadataRequest, KommuneRequest, StemmekretsRequest, GrunnkretsRequest } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
-import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
@@ -91,7 +90,6 @@ export const reduceFlatedataChanges = (
         const toRequest = getRequestFromInputs(inndeling.inndelingtype, newValues, changedInndeling);
 
         if (fromRequest && toRequest) {
-          updateRepresentasjonspunkt(key, newValues.nummer, newValues.navn);
           return [
             ...accumulator,
             {

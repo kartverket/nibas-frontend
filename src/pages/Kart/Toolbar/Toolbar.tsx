@@ -34,7 +34,10 @@ const Toolbar = () => {
 
   const { inndelinger, currentlyEditedInndeling } = useInndelinger();
   const isEditing = currentlyEditedInndeling != null;
-  const flatedataIsAvailable = Object.values(inndelinger).some((inndelingtype) => inndelingtype.size > 0);
+  const flatedataIsAvailable =
+    Object.values(inndelinger)
+      .flatMap((inndelingerMap) => [...inndelingerMap.values()])
+      .filter((inndeling) => inndeling.isVisible || inndeling.isEditing).length > 0;
 
   const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 
