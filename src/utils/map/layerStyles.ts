@@ -104,7 +104,7 @@ const inndelingColors = {
   grunnkrets: "#4D94AF",
   stemmekrets: "#FFAE49FF",
   delomraade: "#5DB9DC",
-  fremtidigEndring: "#B92659B3",
+  fremtidigEndring: "#B92659",
   edit: "#000000",
 };
 

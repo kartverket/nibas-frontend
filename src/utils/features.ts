@@ -264,11 +264,13 @@ export const isMatrikkelFeature = (feature: FeatureLike) => {
 
 export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;
 
-export const featureHasFremtidigEndring = (feature: FeatureLike): boolean => {
-  const properties = feature.getProperties() as FeatureProperties;
-  const metadata = properties.metadata as Metadata;
+export const getFeatureFremtidigEndringDato = (feature: FeatureLike) => {
+  const properties = feature.getProperties() as FeatureProperties | undefined;
+  if (!properties) return;
 
-  return metadata?.common?.gyldigTil != null;
+  const metadata = properties.metadata as Metadata | undefined;
+
+  return metadata?.common?.gyldigTil;
 };
 
 export const anyFeatureIsEditable = (): boolean => {

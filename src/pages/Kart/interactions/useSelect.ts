@@ -12,9 +12,8 @@ import {
   isFeatureToBeArchived,
   isFeatureEditable,
   isMatrikkelFeature,
-  featureHasFremtidigEndring,
+  getFeatureFremtidigEndringDato,
 } from "utils/features";
-import { FeatureProperties, Metadata } from "types/api";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
@@ -77,22 +76,21 @@ const useSelect = () => {
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
       if (!safeTools.includes(activeTool)) {
+        const fremtidigEndringDato = getFeatureFremtidigEndringDato(clickedFeature);
+
         if (!isFeatureEditable(clickedFeature, isFeatureToBeArchived(clickedFeature))) {
           toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
-        } else if (featureHasFremtidigEndring(clickedFeature)) {
-          const properties = clickedFeature.getProperties() as FeatureProperties;
-          const metadata = properties.metadata as Metadata | undefined;
-          const gyldigTil = metadata?.common?.gyldigTil;
-
+          event.stopPropagation();
+          return;
+        } else if (fremtidigEndringDato != null) {
           toast({
             status: "error",
             title: "Grensen du har valgt er ikke redigerbar",
-            description: `Grensen har en fremtidig endring og kan ikke endres før den nye endringen har inntruffet. Endringen skal inntreffe ${datestringToFormattedDatestring(gyldigTil ?? "(Dato ikke funnet. Hvis feilen vedvarer, vennligst kontakt Kartverket)")}`,
+            description: `Grensen har en fremtidig endring og kan ikke endres før den nye endringen har inntruffet. Endringen skal inntreffe ${datestringToFormattedDatestring(fremtidigEndringDato)}`,
           });
+          event.stopPropagation();
+          return;
         }
-
-        event.stopPropagation();
-        return;
       }
 
       if (activeTool === "split") {

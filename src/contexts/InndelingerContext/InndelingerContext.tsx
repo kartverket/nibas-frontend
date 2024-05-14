@@ -11,7 +11,7 @@ import { Geometry, LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 import useInndelingFeatures from "./useInndelingFeatures";
-import { featureHasFremtidigEndring } from "utils/features";
+import { getFeatureFremtidigEndringDato } from "utils/features";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Inndelingtyper = typeof INNDELINGTYPER;
@@ -108,7 +108,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             }
             const fremtidigEndringFeatureIds = removeNil(
               features
-                .filter((feature) => featureHasFremtidigEndring(feature))
+                .filter((feature) => getFeatureFremtidigEndringDato(feature) != null)
                 .map((feature) => feature.getId()?.toString()),
             );
 
