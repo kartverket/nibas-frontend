@@ -61,7 +61,6 @@ type InndelingerContextValue = {
   currentlyEditingInndelinger: Inndeling[];
   isLoadingInndeling: boolean;
 
-  getNewInndeling: (baseInndeling: BaseInndeling, isEditing: boolean) => Inndeling;
   getAllInndelinger: () => Inndeling[];
 
   clearInndelingerAndSources: () => void;
@@ -95,6 +94,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     );
   };
 
+  /**
+   * Denne useEffecten er kjernen av motoren i InndelingerContext og tar for seg det å legge til features fra inndelingen i kartet
+   *
+   * Etter at bruker velger inndelinger i InndelingerPanel så blir alle features i inndelingen og utkastet hentet med useInndelingFeatures,
+   * og så beregner vi hvordan disse skal legges inn i kartet gjennom denne useEffecten
+   */
   useEffect(() => {
     const addInndelingToLayer = (
       layer: GrenseId,
@@ -272,40 +277,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return getAllInndelinger().filter((inndeling) => inndeling.isEditing);
   };
 
-  // Denne tror jeg ikke lenger blir nødvendig med hvordan man nå bygger opp inndelinger
-  // Lar den ligge til nytt flatedatapanel er lagd
-  /**
-   * Gir deg en inndeling basert på hva inndelinger allerede er. Dersom du for eksempel åpner en inndeling som allerede var åpnet, så vil denne automatisk
-   * flippe `isVisible` til `false`.
-   * @returns Inndeling med nye verdier basert på tidligere, eller en default Inndeling
-   */
-  const getNewInndeling = (baseInndeling: BaseInndeling, isEditing: boolean): Inndeling => {
-    const { id, navn, nummer, inndelingtype } = baseInndeling;
-
-    const newInndeling: Inndeling = {
-      id,
-      navn,
-      nummer,
-      inndelingtype,
-      isEditing: isEditing,
-      isVisible: !isEditing,
-    };
-
-    const inndelingIfAlreadySelected = inndelinger[inndelingtype].get(id);
-
-    if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
-      if (isEditing) {
-        newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
-        newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
-      } else {
-        newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
-        newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
-      }
-    }
-
-    return newInndeling;
-  };
-
   const selectInndelinger = (inndelingerToSelect: Inndeling[]) => {
     const newInndelinger = structuredClone(inndelinger);
 
@@ -359,17 +330,16 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const value = {
     inndelinger,
     selectInndelinger,
-    currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
-    isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
 
-    getNewInndeling,
     getAllInndelinger: useCallback(getAllInndelinger, [inndelinger]),
+    currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
 
     clearInndelingerAndSources: useCallback(clearInndelingerAndSources, []),
 
     selectedFylkeId,
     setSelectedFylkeId,
 
+    isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
     isSameInndelinger,
   };
 
