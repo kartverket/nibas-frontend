@@ -215,15 +215,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   };
 
   const getAllInndelinger = (): Inndeling[] => {
-    const allInndelinger: Inndeling[] = [];
-
-    for (const inndelingerType of Object.values(inndelinger)) {
-      for (const [, inndeling] of inndelingerType) {
-        allInndelinger.push(inndeling);
-      }
-    }
-
-    return allInndelinger;
+    return Object.values(inndelinger).flatMap((inndelingerMap) => [...inndelingerMap.values()]);
   };
 
   /**
