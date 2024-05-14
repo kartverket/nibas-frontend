@@ -5,6 +5,7 @@ import {
   GrunnkretsRequest,
   KommuneRequest,
   KontekstEgenskaper,
+  KretsDelingEndringRequest,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
@@ -31,6 +32,7 @@ export type HistoryTypeValues =
   | "kommune"
   | "utkast"
   | "stemmekretssammenslaaingsendring"
+  | "kretsdelingendring"
   | "grensearkivering"
   | "grensetilhorighetendring"
   | "nygrense"
@@ -71,6 +73,8 @@ export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
   StemmekretsSammenslaaingsendringRequest
 >;
 
+export type KretsdelingEntry = BaseHistoryEntry<"kretsdelingendring", KretsDelingEndringRequest>;
+
 export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering", FeatureProperties>;
 
 export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring", KontekstEgenskaper[]>;
@@ -85,6 +89,7 @@ export type HistoryEntry =
   | MetadataEntry
   | UtkastEntry
   | StemmekretsSammenslaaingsendringEntry
+  | KretsdelingEntry
   | GrenseArkiveringsEntry
   | GrenseTilhorighetEntry
   | GrenseDelingEntry

@@ -1,4 +1,4 @@
-import { Badge, Card, Icon, Text } from "@kvib/react";
+import { Badge, Card, Icon, Skeleton, Text } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { HistoryTypeValues } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
@@ -11,6 +11,9 @@ import {
   getBodyTextForNumericChange,
   getTitleForEndringstype,
 } from "components/Endringslogg/Endringcard/EndringCardUtils";
+import { ChangeToFromRow } from "components/Endringslogg/Endringcard/EndringCard";
+import { ApiPath, KretsDelingEndringRequest } from "../../../types/api";
+import useNibasApi from "hooks/useNibasApi";
 
 type Endring = {
   fra: ReactNode;
@@ -98,9 +101,14 @@ const getTitleAndDescriptionFragments = (
         title: <EndringTitle>{getTitleForEndringstype("nyegrenser")}</EndringTitle>,
         description: <Text>{getBodyTextForNumericChange(antallEndringer, "nyegrenser")}</Text>,
       };
-    case "grensedeling":
+    case "kretsdelingendring":
       return {
         title: <EndringTitle>{getTitleForEndringstype("deling")}</EndringTitle>,
+        description: <DetailedKretsdelingerList endringer={endringer} />,
+      };
+    case "grensedeling":
+      return {
+        title: <EndringTitle>Grensedelinger</EndringTitle>,
         description: (
           <Text>
             {antallEndringer <= 1 ? `${antallEndringer} grense` : `${antallEndringer} grenser`} har blitt delt
@@ -110,9 +118,9 @@ const getTitleAndDescriptionFragments = (
   }
 };
 
-type DetailedEndringerPorps = Pick<EndringerProps, "endringer">;
+type DetailedEndringerProps = Pick<EndringerProps, "endringer">;
 
-const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
+const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerProps) => {
   return (
     <Container>
       {endringer.map((endring, i) => {
@@ -132,6 +140,41 @@ const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
   );
 };
 
+const DetailedKretsdelingerList = ({ endringer }: { endringer: AbstractedHistoryEntry[] }) => {
+  const kretsdelingrequests = endringer.map((e) => e.to as KretsDelingEndringRequest);
+  const kretsdelinger: KretsdelingRadProps[] = kretsdelingrequests.map((kretsdeling) => ({
+    flatetype: kretsdeling.flatetype === "STEMMEKRETS" ? "stemmekretser" : "grunnkretser",
+    fromKretsId: kretsdeling.opprinneligKrets.lokalId,
+    toKretsNames: kretsdeling.nyeKretser.map((nyKrets) => `${nyKrets.kretsNummer} ${nyKrets.kretsNavn}`),
+  }));
+
+  return (
+    <Container>
+      {kretsdelinger.map((props) => (
+        <KretsdelingRad key={props.fromKretsId + "-" + props.toKretsNames.join("-")} {...props} />
+      ))}
+    </Container>
+  );
+};
+
+type KretsdelingRadProps = {
+  flatetype: "stemmekretser" | "grunnkretser";
+  fromKretsId: string;
+  toKretsNames: string[];
+};
+const KretsdelingRad = ({ flatetype, fromKretsId, toKretsNames }: KretsdelingRadProps) => {
+  const path: ApiPath = `/v1/${flatetype}/{id}`;
+  const { isLoading, data } = useNibasApi(path, { id: fromKretsId });
+
+  const fromKretsNavn = data != null ? `${data.nummer} ${data.navn}` : "UKJENT";
+
+  return (
+    <Skeleton isLoaded={!isLoading}>
+      <ChangeToFromRow from={[fromKretsNavn]} to={toKretsNames.concat(fromKretsNavn)} />
+    </Skeleton>
+  );
+};
+
 type KontekstWithBadgeProps = {
   kontekstEgenskaper: string;
   isNew: boolean;
@@ -139,7 +182,7 @@ type KontekstWithBadgeProps = {
   isUnchanged: boolean;
 };
 
-const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringerPorps) => {
+const DetailedKontekstEgenskaperEndringerList = ({ endringer }: DetailedEndringerProps) => {
   const [kontekstDataForEndringer, setKontekstDataForEndringer] =
     useState<{ kretsNummer: unknown; kretsNavn: unknown }[]>();
   const auth = useAuthentication();

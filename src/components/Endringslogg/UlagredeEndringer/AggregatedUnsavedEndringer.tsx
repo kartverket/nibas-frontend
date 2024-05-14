@@ -17,6 +17,7 @@ const getAggregatedEndringer = (abstractedHistoryEndringer: AbstractedHistoryEnt
     stemmekrets: [],
     utkast: [],
     stemmekretssammenslaaingsendring: [],
+    kretsdelingendring: [],
     grensearkivering: [],
     grensetilhorighetendring: [],
     nygrense: [],

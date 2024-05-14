@@ -20,6 +20,8 @@ import { isGrenseType } from "utils/type-utils";
 import { GrenseType } from "hooks/layers/types";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useNibasApi from "hooks/useNibasApi";
+import { HistoryState, KretsdelingEntry } from "contexts/HistoryContext/types";
+import { historyToKretsdelingOperations } from "contexts/UtkastContext/utkast-utils";
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
   switch (grenseType) {
@@ -86,6 +88,22 @@ const getIdForKontekstEgenskaper = (
   }
 };
 
+const getKretserFromHistory = (
+  history: HistoryState,
+  kommunerIdOgNummer: { id: string; nummer: string }[],
+  kontekstType: KontekstType,
+): Krets[] => {
+  const kretsdelingerEntries = history.entries
+    .slice(0, history.index)
+    .filter((entry) => entry.type === "kretsdelingendring") as KretsdelingEntry[];
+
+  const kretsdelingOperations = historyToKretsdelingOperations(kretsdelingerEntries).filter(
+    (kretsdeling) => kretsdeling.flatetype === kontekstType,
+  );
+
+  return getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
+};
+
 const getKontekstTypeForFeature = (
   kontekstgenskaper: KontekstEgenskaper[],
   featureProperties: FeatureProperties,
@@ -97,7 +115,7 @@ const getKontekstTypeForFeature = (
 };
 
 export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: KontekstType) => {
-  const { addHistoryEntry } = useHistory();
+  const { addHistoryEntry, history } = useHistory();
   const { data: kommuneResponses } = useNibasApi("/v1/kommuner");
   const { utkast } = useUtkast();
 
@@ -138,15 +156,24 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
           kommunerIdOgNummer,
           utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kontekstType),
         );
+        const tihorighetOptionsFromHistory = getKretserFromHistory(history, kommunerIdOgNummer, kontekstType);
         setTilhorighetValg({
-          [Tilhorighet.A]: [...commonOptions[Tilhorighet.A], ...tilhorighetOptionsFromUtkast],
-          [Tilhorighet.B]: [...commonOptions[Tilhorighet.B], ...tilhorighetOptionsFromUtkast],
+          [Tilhorighet.A]: [
+            ...commonOptions[Tilhorighet.A],
+            ...tilhorighetOptionsFromUtkast,
+            ...tihorighetOptionsFromHistory,
+          ],
+          [Tilhorighet.B]: [
+            ...commonOptions[Tilhorighet.B],
+            ...tilhorighetOptionsFromUtkast,
+            ...tihorighetOptionsFromHistory,
+          ],
         });
       } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);
       }
     },
-    [kommunerIdOgNummer, kontekstType, utkast],
+    [kommunerIdOgNummer, kontekstType, utkast, history],
   );
 
   const [formState, setFormState] = useState<TilhorighetForm>(getTilhorighetData(kontekstEgenskaper));

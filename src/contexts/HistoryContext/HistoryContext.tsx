@@ -62,6 +62,13 @@ const onUndo = (entry: HistoryEntry) => {
     case "grensearkivering": {
       return undoArchving(entry);
     }
+    case "kretsdelingendring": {
+      return document.dispatchEvent(
+        new CustomEvent("kretsdelingUndo", {
+          detail: { entry },
+        }),
+      );
+    }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "from");
     }
@@ -115,6 +122,13 @@ const onRedo = (entry: HistoryEntry) => {
     case "stemmekretssammenslaaingsendring": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretssammenslaaingsendringRedo", {
+          detail: { entry },
+        }),
+      );
+    }
+    case "kretsdelingendring": {
+      return document.dispatchEvent(
+        new CustomEvent("kretsdelingRedo", {
           detail: { entry },
         }),
       );

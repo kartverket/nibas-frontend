@@ -7,12 +7,14 @@ import {
   FeatureProperties,
   StemmekretsSammenslaaingsendringRequest,
   KontekstEgenskaper,
+  KretsDelingEndringRequest,
   MetadataRequest,
 } from "types/api";
 
 type HistoryTypeData =
   | MinimalGrense
   | FeatureProperties
+  | KretsDelingEndringRequest
   | MetadataRequest
   | UtkastRequestWithoutOperations
   | StemmekretsSammenslaaingsendringRequest
