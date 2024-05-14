@@ -73,7 +73,7 @@ const ToolbarPopups = () => {
         setError({
           title: "Feil ved henting av grenser fra matrikkelen",
           description:
-            "En ukjent feil skjedde ved henting av grenser fra matrikkelen. Vennligst forsøk igjen, om problemet fortsetter er det fint om du tar kontakt med Kartverket.",
+            "En ukjent feil skjedde ved henting av grenser fra matrikkelen. Hvis feilen vedvarer, vennligst kontakt Kartverket.",
         });
       }
       setMatrikkelIsLoading(false);
