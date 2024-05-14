@@ -87,7 +87,7 @@ const useSelect = () => {
           toast({
             status: "error",
             title: "Grensen du har valgt er ikke redigerbar",
-            description: `Grensen har en fremtidig endring og kan ikke endres før den nye endringen har inntruffet. Endringen skal inntreffe ${datestringToFormattedDatestring(gyldigTil ?? "")}`,
+            description: `Grensen har en fremtidig endring og kan ikke endres før den nye endringen har inntruffet. Endringen skal inntreffe ${datestringToFormattedDatestring(gyldigTil ?? "(Dato ikke funnet. Hvis feilen vedvarer, vennligst kontakt Kartverket)")}`,
           });
         }
 
