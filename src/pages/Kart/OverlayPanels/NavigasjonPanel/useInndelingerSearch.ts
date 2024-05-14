@@ -8,7 +8,7 @@ export const useInndelingerSearch = () => {
   const { toastUnique: searchErrorToast } = useToastUnique({
     status: "error",
     title: "Søket feilet",
-    description: "Vennligst prøv igjen. Ta kontakt med Kartverket om feilen vedvarer.",
+    description: "Hvis feilen vedvarer, vennligst kontakt Kartverket",
   });
 
   const searchInndelinger = async (searchString: string, limit: number): Promise<InndelingSearchResponse[] | null> => {

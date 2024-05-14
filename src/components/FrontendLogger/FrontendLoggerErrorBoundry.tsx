@@ -41,8 +41,8 @@ export class ErrorBoundaryWithFrontendLogger extends React.Component<Props, Erro
               <Box>
                 <AlertTitle>En ukjent feil har oppstått</AlertTitle>
                 <AlertDescription>
-                  Noe gikk galt med siden, men vi vet ikke hvorfor. Kontakt oss om feilen vedvarer. Kontaktinformasjon
-                  finnes i{" "}
+                  Noe gikk galt med siden, men vi vet ikke hvorfor. Hvis feilen vedvarer, vennligst kontakt Kartverket.
+                  Kontaktinformasjon finnes i{" "}
                   <UnderlinedLink href="https://kartverket.atlassian.net/wiki/spaces/NIBAS/pages/685342721/Brukerveiledning">
                     brukerveiledningen.
                   </UnderlinedLink>

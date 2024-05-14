@@ -74,7 +74,7 @@ function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(id: strin
   const resultat = kretser.find((krets) => krets.id.lokalid.value === id);
   if (!resultat) {
     throw Error(
-      `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Gjerne ta kontakt med Team Smia om feilen vedvarer.`,
+      `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Hvis feilen vedvarer, vennligst kontakt Kartverket.`,
     );
   }
   return resultat;

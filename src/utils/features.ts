@@ -10,6 +10,7 @@ import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isGrenseType, isNotNil } from "./type-utils";
+import { removeNil } from "./list-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -141,16 +142,13 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>, allFeatureEndpoints
   const featureEndpointsToCheck = allFeatureEndpoints.filter(
     (featureEndpoint) => featureEndpoint.featureId !== feature.getId()?.toString(),
   );
-
-  const isHeadConnected2 = featureEndpointsToCheck.find(
+  const isHeadConnected = featureEndpointsToCheck.find(
     (featureEndPoint) => equals(featureEndPoint.endpoints.first, head) || equals(featureEndPoint.endpoints.last, head),
   );
-
-  const isTailConnected2 = featureEndpointsToCheck.find(
+  const isTailConnected = featureEndpointsToCheck.find(
     (featureEndPoint) => equals(featureEndPoint.endpoints.first, tail) || equals(featureEndPoint.endpoints.last, tail),
   );
-
-  return !(isHeadConnected2 && isTailConnected2);
+  return !(isHeadConnected && isTailConnected);
 };
 
 const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
@@ -266,6 +264,32 @@ export const isMatrikkelFeature = (feature: FeatureLike) => {
 };
 
 export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;
+
+export const getFeatureFremtidigEndringDato = (feature: FeatureLike) => {
+  const properties = feature.getProperties() as FeatureProperties | undefined;
+  if (!properties) return;
+
+  const metadata = properties.metadata as Metadata | undefined;
+
+  return metadata?.common?.gyldigTil;
+};
+
+export const getFlateRepresentasjonpunkterWithFremtidigEndring = (feature: FeatureLike) => {
+  const properties = feature.getProperties() as FeatureProperties | undefined;
+  if (!properties) return [];
+
+  const relevantRepresentasjonspunkter = removeNil(
+    properties.kontekstEgenskaper.map((kontekstEgenskap) =>
+      editSource.getFeatureById(getRepresentasjonspunktId(kontekstEgenskap.id?.lokalid.value ?? "")),
+    ),
+  ).filter((punkt) => {
+    const gyldigTil = punkt.get("gyldigTil") as string | undefined;
+
+    return gyldigTil != null;
+  });
+
+  return relevantRepresentasjonspunkter;
+};
 
 export const anyFeatureIsEditable = (): boolean => {
   return editSource.getFeatures().some((feature) => isFeatureEditable(feature));

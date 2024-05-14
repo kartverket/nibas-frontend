@@ -125,5 +125,10 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
       dotted: isDottedStyle(grenseStyles.error),
       color: getColorFromStyle(grenseStyles.error),
     },
+    {
+      text: "Grense med fremtidig endring",
+      dotted: isDottedStyle(grenseStyles.fremtidigEndring),
+      color: getColorFromStyle(grenseStyles.fremtidigEndring),
+    },
   ],
 ];
