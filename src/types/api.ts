@@ -9,6 +9,7 @@ export type Spraak = {
   spraak: string;
 };
 
+export type AdministrativEnhetNavn = components["schemas"]["AdministrativEnhetNavn"][];
 export type FeatureDTO = components["schemas"]["Feature"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type KodelisteRespons = components["schemas"]["KodelisteRespons"];

@@ -9,7 +9,7 @@ import { GrenseId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { FeatureProperties, Spraak } from "types/api";
+import { AdministrativEnhetNavn, FeatureProperties } from "types/api";
 import useInndelingFeatures from "./useInndelingFeatures";
 import { getFeatureFremtidigEndringDato } from "utils/features";
 
@@ -31,7 +31,7 @@ export const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
 export type BaseInndeling = {
   id: string;
   nummer: string;
-  navn: Spraak[];
+  navn: AdministrativEnhetNavn;
   inndelingtype: Inndelingtype;
 };
 
@@ -277,51 +277,71 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return getAllInndelinger().filter((inndeling) => inndeling.isEditing);
   };
 
+  const getNewInndeling = (newInndeling: Inndeling, isEditing: boolean): Inndeling => {
+    const inndelingIfAlreadySelected = inndelinger[newInndeling.inndelingtype].get(newInndeling.id);
+
+    if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
+      if (isEditing) {
+        newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
+        newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
+      } else {
+        newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
+        newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
+      }
+    }
+
+    return newInndeling;
+  };
+
   const selectInndelinger = (inndelingerToSelect: Inndeling[]) => {
     const newInndelinger = structuredClone(inndelinger);
 
     const isNewEditingInndelinger = inndelingerToSelect.some((inndeling) => inndeling.isEditing);
 
-    for (const inndelingerType of Object.values(inndelinger)) {
-      for (const [, inndeling] of inndelingerType) {
-        const inndelingIsInSelected = inndelingerToSelect.some(
-          (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
-        );
+    for (const inndeling of getAllInndelinger()) {
+      const inndelingIsInSelected = inndelingerToSelect.some(
+        (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
+      );
 
-        if (!inndelingIsInSelected) {
-          // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
-          if (isNewEditingInndelinger && inndeling.isEditing) {
-            const notEditingInndeling: Inndeling = {
-              ...inndeling,
-              isEditing: false,
-            };
+      if (!inndelingIsInSelected) {
+        // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
+        if (isNewEditingInndelinger && inndeling.isEditing) {
+          const notEditingInndeling: Inndeling = {
+            ...inndeling,
+            isEditing: false,
+          };
 
-            newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
-          }
+          newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
+        }
 
-          if (!isNewEditingInndelinger && inndeling.isVisible) {
-            const notVisibleInndeling: Inndeling = {
-              ...inndeling,
-              isVisible: false,
-            };
+        if (!isNewEditingInndelinger && inndeling.isVisible) {
+          const notVisibleInndeling: Inndeling = {
+            ...inndeling,
+            isVisible: false,
+          };
 
-            newInndelinger[notVisibleInndeling.inndelingtype].set(notVisibleInndeling.id, notVisibleInndeling);
-          }
+          newInndelinger[notVisibleInndeling.inndelingtype].set(notVisibleInndeling.id, notVisibleInndeling);
         }
       }
     }
 
     for (const inndeling of inndelingerToSelect) {
-      const inndelingIfExists = inndelinger[inndeling.inndelingtype].get(inndeling.id);
+      const newInndeling = getNewInndeling(inndeling, isNewEditingInndelinger);
 
-      if (inndelingIfExists != null) {
-        if (isEqualInndelinger(inndelingIfExists, inndeling)) {
-          continue;
-        }
-      }
-
-      newInndelinger[inndeling.inndelingtype].set(inndeling.id, inndeling);
+      newInndelinger[newInndeling.inndelingtype].set(newInndeling.id, newInndeling);
     }
+
+    const newInndelingerList = Object.values(newInndelinger).flatMap((newInndelingerMap) => [
+      ...newInndelingerMap.values(),
+    ]);
+
+    for (const newInndeling of newInndelingerList) {
+      if (!newInndeling.isEditing && !newInndeling.isVisible) {
+        newInndelinger[newInndeling.inndelingtype].delete(newInndeling.id);
+      }
+    }
+
+    console.log("new inndelinger", newInndelinger);
 
     setInndelinger(newInndelinger);
     setActiveInndelinger(inndelingerToSelect);
