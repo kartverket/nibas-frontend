@@ -7,7 +7,12 @@ import { ChangeHandler, useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { EPSGCode, mapProjectionEPSGCode, projectionDefinitions } from "utils/map/projections";
 import { NavigasjonProps } from "./NavigasjonPanel";
-import { isPointInsideMultiPolygon, transformCoordinatesToProjection } from "./koordinater-utils";
+import {
+  decimalCoordinatePattern,
+  dmsCoordinatePattern,
+  isPointInsideMultiPolygon,
+  transformCoordinatesToProjection,
+} from "./koordinater-utils";
 
 const StyledFormControl = styled(FormControl)`
   display: flex;
@@ -83,20 +88,24 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
         return false;
       } else {
         setError("globalErrorDummyField", {
-          message:
-            "Koordinatene er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+          message: "Koordinatene er ikke på samme fornat. Benytt enten desimaltall eller DMS-format (00°00'00\")",
         });
         return false;
       }
     }
   };
 
-  const numericFieldValidator = {
+  const coordinateFieldValidator = {
     required: `Du må skrive inn et koordinat`,
+    pattern: {
+      value: new RegExp(`(${decimalCoordinatePattern.source})|(${dmsCoordinatePattern.source})`),
+      message:
+        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+    },
   };
 
   const registerWithClearErrorsOnChange = (field: keyof KoordinaterForm) => {
-    const { onChange, ...rest } = register(field, numericFieldValidator);
+    const { onChange, ...rest } = register(field, coordinateFieldValidator);
     const handleOnChange: ChangeHandler = (value) => {
       clearErrors(field);
       clearErrors("globalErrorDummyField");
@@ -136,7 +145,6 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
               type="text"
               placeholder="Fyll inn koordinat ..."
               label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
-              isRequired
               {...registerWithClearErrorsOnChange("east")}
               validationError={{
                 showError: !!formErrors.east,
@@ -151,7 +159,6 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
               type="text"
               placeholder="Fyll inn koordinat ..."
               label={getLabelsFromProjection(projectionOfCoordinates).y ?? ""}
-              isRequired
               {...registerWithClearErrorsOnChange("north")}
               validationError={{
                 showError: !!formErrors.north,

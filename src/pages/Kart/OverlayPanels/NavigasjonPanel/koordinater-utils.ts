@@ -8,6 +8,10 @@ export const isPointInsideMultiPolygon = (east: number, north: number, multipoly
   return new Polygon(multipolygon.flat()).intersectsCoordinate(new Point([east, north]).getCoordinates());
 };
 
+// regex som matcher mot koordinater på dms format for North og East (vi trenger ikke S og W i nibas)
+export const dmsCoordinatePattern = /^\d{1,3}°\d{1,2}'\d{1,2}\.?\d{1,}['"]?[NE]?$/i;
+export const decimalCoordinatePattern = /^-?\d+(\.\d+)?$/;
+
 interface DMSCoordinates {
   degrees: number;
   minutes: number;
@@ -46,11 +50,9 @@ export const transformCoordinatesToProjection = (
   sourceProjection: ProjectionLike,
   destinationProjection: ProjectionLike,
 ) => {
-  // regex som matcher mot koordinater på dms format for North og East (vi trenger ikke S og W i nibas)
-  const dmsCoordinateFormatNE = /^\d{1,3}°\d{1,2}'\d{1,2}\.?\d{1,}['"]?[NE]?$/i;
   // hvis vi får koordinater på DMS-format konverterer vi disse til desimaltall før vi transformerer til destinasjonsprojeksjonen
   // hvis kun en av koordinatene matcher dms formatet antar vi at den andre er feil og lar denne delen returnere null
-  if (dmsCoordinateFormatNE.test(east.toString()) || dmsCoordinateFormatNE.test(north.toString())) {
+  if (dmsCoordinatePattern.test(east.toString()) || dmsCoordinatePattern.test(north.toString())) {
     const parsedDMSEast = dmsToDecimal(east.toString());
     const parsedDMSNorth = dmsToDecimal(north.toString());
     if (parsedDMSEast == null || parsedDMSNorth == null) {

@@ -12,11 +12,16 @@ import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
 import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { ChangeHandler, useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { EPSGCode, mapProjectionEPSGCode, projectionDefinitions } from "utils/map/projections";
 import { getLabelsFromProjection } from "../Kartinformasjon";
-import { isPointInsideMultiPolygon, transformCoordinatesToProjection } from "./NavigasjonPanel/koordinater-utils";
+import {
+  decimalCoordinatePattern,
+  dmsCoordinatePattern,
+  isPointInsideMultiPolygon,
+  transformCoordinatesToProjection,
+} from "./NavigasjonPanel/koordinater-utils";
 import { AbsolutePanel, PanelHeader, PanelProps } from "./Panel";
 
 type KoordinaterFormData = {
@@ -78,7 +83,8 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
     handleSubmit,
     getValues,
     reset,
-    formState: { isDirty },
+    clearErrors,
+    formState: { isDirty, errors: formErrors },
   } = useForm<KoordinaterFormData>({
     defaultValues: defaultValues(selectedPoint),
   });
@@ -201,16 +207,16 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
 
   const onKoordinaterPanelClose = () => {
     closeOverlayPanel();
-    setError(null);
+    setGlobalFormError(null);
     reset();
     resetTool();
   };
 
   const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
-  const [error, setError] = useState<string | null>();
+  const [globalFormError, setGlobalFormError] = useState<string | null>();
 
   const movePointToCoordinates = () => {
-    setError(null);
+    setGlobalFormError(null);
     const [east, north] = [getValues("east"), getValues("north")];
     const transformedCoordinates = transformCoordinatesToProjection(
       east,
@@ -228,13 +234,36 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
       ) {
         movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
       } else {
-        setError("Koordinatene må være innenfor Norge sine grenser");
+        setGlobalFormError("Koordinatene må være innenfor Norge sine grenser");
       }
     } else {
-      setError(
-        "Koordinatene er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+      setGlobalFormError(
+        "Koordinatene er ikke på samme format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
       );
     }
+  };
+
+  const coordinateFieldValidator = {
+    required: `Du må skrive inn et koordinat`,
+    pattern: {
+      value: new RegExp(`(${decimalCoordinatePattern.source})|(${dmsCoordinatePattern.source})`),
+      message:
+        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+    },
+  };
+
+  const registerWithClearErrorsOnChange = (field: keyof KoordinaterFormData) => {
+    const { onChange, ...rest } = register(field, coordinateFieldValidator);
+    const handleOnChange: ChangeHandler = (value) => {
+      clearErrors(field);
+      setGlobalFormError(null);
+      return onChange(value);
+    };
+
+    return {
+      onChange: handleOnChange,
+      ...rest,
+    };
   };
 
   return (
@@ -243,7 +272,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
         Flytt punkt med koordinater
       </PanelHeader>
       <Form onSubmit={handleSubmit(movePointToCoordinates)}>
-        <SpacedFormControl isInvalid={error != null}>
+        <SpacedFormControl isInvalid={globalFormError != null && formErrors != null}>
           <Select
             isInvalid={false}
             value={projectionOfCoordinates}
@@ -265,14 +294,26 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
             </Alert>
           )}
           <InputRow>
-            <Input type="text" label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""} {...register("east")} />
+            <Input
+              type="text"
+              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
+              {...registerWithClearErrorsOnChange("east")}
+              validationError={{
+                showError: !!formErrors.east,
+                message: formErrors.east?.message ?? "",
+              }}
+            />
             <Input
               type="text"
               label={getLabelsFromProjection(projectionOfCoordinates).y ?? ""}
-              {...register("north")}
+              {...registerWithClearErrorsOnChange("north")}
+              validationError={{
+                showError: !!formErrors.north,
+                message: formErrors.north?.message ?? "",
+              }}
             />
           </InputRow>
-          {error != null && <FormErrorMessage>{error}</FormErrorMessage>}
+          {globalFormError != null && <FormErrorMessage>{globalFormError}</FormErrorMessage>}
         </SpacedFormControl>
         <ButtonRow>
           <Button variant="tertiary" onClick={onKoordinaterPanelClose}>
