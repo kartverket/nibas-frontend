@@ -66,12 +66,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const { setFeatureStylesForUtkast } = useFeatureStyle();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
-  const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>([]);
+  const [activeInndelinger, setActiveInndelinger] = useState<Inndeling[]>([]);
 
   // TODO: mellomløsning for flatedata i visningsmodus til vi får skrevet det om
   const [selectedFlatedataInndeling, setSelectedFlatedataInndeling] = useState<Inndeling | null>(null);
 
-  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndelinger);
+  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(activeInndelinger);
   const { utkast } = useUtkast();
 
   const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
@@ -173,14 +173,14 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     if (inndelingFeatures.length === 0) return;
 
     // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
-    if (selectedInndelinger.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
-    for (const inndeling of selectedInndelinger.filter((selectedInndeling) => selectedInndeling.isVisible)) {
+    if (activeInndelinger.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
+    for (const inndeling of activeInndelinger.filter((selectedInndeling) => selectedInndeling.isVisible)) {
       const source = getLayerById(inndeling.inndelingtype).getSource();
       if (source) source.clear(true);
     }
 
     for (const inndelingWithFeatures of inndelingFeatures) {
-      const currentInndeling = selectedInndelinger.find((inndeling) => {
+      const currentInndeling = activeInndelinger.find((inndeling) => {
         return inndeling.id === inndelingWithFeatures.id && inndeling.inndelingtype === inndeling.inndelingtype;
       });
 
@@ -188,6 +188,13 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       // Må uansett sjekke casen sånn at TypeScript vet at currentInndeling ikke er null videre
       if (!currentInndeling) continue;
 
+      /**
+       * Når vi legger inn inndelinger som redigeres må vi i tillegg til å deale med de vanlige featurene i inndelingen, deale med featurene som kommer fra utkastet
+       * Det som må bli gjort er følgende:
+       * 1. Beregne en union av features fra utkast og features fra inndeling uten duplikater, hvor features fra utkast får prioritet
+       * 2. Hente alle features som ble påvirket av eventuelle stemmekretssammenslåinger
+       * 3. Sette korrekt styling på ikke-redigerte features, utkastfeatures og sammmenslåingsfeatures
+       */
       if (currentInndeling.isEditing) {
         const featuresInInndelingWithoutUtkastDuplicates = getFeaturesForInndelingAndUtkast(
           utkastFeaturesInInndeling,
@@ -214,10 +221,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     zoomToFeatures(inndelingFeatures.flatMap((inndelingWithFeatures) => inndelingWithFeatures.features));
 
-    setSelectedInndelinger([]);
+    // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
+    // Dette sikrer også at featurene man får hentet fra inndelingene er tomme, og useEffecten ikke kjører flere ganger
+    setActiveInndelinger([]);
   }, [
     inndelingFeatures,
-    selectedInndelinger,
+    activeInndelinger,
     setFeatureStylesForUtkast,
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,
@@ -228,7 +237,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       const source = layer.getSource();
       source?.clear(true);
     }
-    setSelectedInndelinger([]);
+    setActiveInndelinger([]);
     setInndelinger(getEmptyInndelinger());
   };
 
@@ -321,7 +330,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     }
 
     setInndelinger(newInndelinger);
-    setSelectedInndelinger(inndelingerToSelect);
+    setActiveInndelinger(inndelingerToSelect);
   };
 
   const value = {
