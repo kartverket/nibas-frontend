@@ -10,6 +10,7 @@ import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { Coordinate, equals } from "ol/coordinate";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { isGrenseType, isNotNil } from "./type-utils";
+import { removeNil } from "./list-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -271,6 +272,23 @@ export const getFeatureFremtidigEndringDato = (feature: FeatureLike) => {
   const metadata = properties.metadata as Metadata | undefined;
 
   return metadata?.common?.gyldigTil;
+};
+
+export const getFlateRepresentasjonpunkterWithFremtidigEndring = (feature: FeatureLike) => {
+  const properties = feature.getProperties() as FeatureProperties | undefined;
+  if (!properties) return [];
+
+  const relevantRepresentasjonspunkter = removeNil(
+    properties.kontekstEgenskaper.map((kontekstEgenskap) =>
+      editSource.getFeatureById(getRepresentasjonspunktId(kontekstEgenskap.id?.lokalid.value ?? "")),
+    ),
+  ).filter((punkt) => {
+    const gyldigTil = punkt.get("gyldigTil") as string | undefined;
+
+    return gyldigTil != null;
+  });
+
+  return relevantRepresentasjonspunkter;
 };
 
 export const anyFeatureIsEditable = (): boolean => {
