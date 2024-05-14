@@ -276,7 +276,7 @@ export const getFeatureFremtidigEndringDato = (feature: FeatureLike) => {
 
 export const getFlateRepresentasjonpunkterWithFremtidigEndring = (feature: FeatureLike) => {
   const properties = feature.getProperties() as FeatureProperties | undefined;
-  if (!properties) return;
+  if (!properties) return [];
 
   const relevantRepresentasjonspunkter = removeNil(
     properties.kontekstEgenskaper.map((kontekstEgenskap) =>

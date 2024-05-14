@@ -94,10 +94,7 @@ const useSelect = () => {
           });
           event.stopPropagation();
           return;
-        } else if (
-          fremtidigEndringRepresentasjonspunkter != null &&
-          fremtidigEndringRepresentasjonspunkter.length > 0
-        ) {
+        } else if (fremtidigEndringRepresentasjonspunkter.length > 0) {
           const punkterByDate = removeNil(
             fremtidigEndringRepresentasjonspunkter
               .map((punkt) => {
