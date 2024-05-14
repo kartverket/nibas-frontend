@@ -7,10 +7,14 @@ import { removeFeatureFromAllLayers } from "utils/features";
 type Options = {
   onUndo: (entry: HistoryEntry) => void;
   onRedo: (entry: HistoryEntry) => void;
+  initialState?: HistoryEntry[];
 };
 
-const useHistoryState = ({ onUndo, onRedo }: Options) => {
-  const [history, setHistory] = useState<HistoryState>({ index: 0, entries: [] });
+const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
+  const [history, setHistory] = useState<HistoryState>({
+    index: initialState?.length ?? 0,
+    entries: initialState,
+  });
 
   // Dersom applikasjonen er i tilstanden endring -> angre -> endring, kan man ende opp med features i en source
   // som ikke er representert i hverken history eller database. Dette vil lage "usynlig" geometri som skaper bugs i beregninger.

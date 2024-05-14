@@ -133,7 +133,7 @@ const ToolbarMenus = () => {
       <Hide below="xl">
         <ConditionalHide above="xl" condition={!!activeOverlayPanel}>
           <ToolbarMenu
-            label="Grenseverktøy"
+            label="Grense"
             icon="timeline"
             isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
             isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}

@@ -62,6 +62,13 @@ const onUndo = (entry: HistoryEntry) => {
     case "grensearkivering": {
       return undoArchving(entry);
     }
+    case "kretsdelingendring": {
+      return document.dispatchEvent(
+        new CustomEvent("kretsdelingUndo", {
+          detail: { entry },
+        }),
+      );
+    }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "from");
     }
@@ -119,6 +126,13 @@ const onRedo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "kretsdelingendring": {
+      return document.dispatchEvent(
+        new CustomEvent("kretsdelingRedo", {
+          detail: { entry },
+        }),
+      );
+    }
     case "grensearkivering": {
       return redoArchiving(entry);
     }
@@ -133,15 +147,23 @@ const onRedo = (entry: HistoryEntry) => {
 
 export const HistoryContext = createContext<HistoryContextValue | undefined>(undefined);
 
-export const HistoryProvider = ({ children }: { children: React.ReactNode }) => {
+type HistoryProviderProps = {
+  children: React.ReactNode;
+  initialHistory?: HistoryEntry[];
+};
+export const HistoryProvider = ({ children, initialHistory }: HistoryProviderProps) => {
   const { history, addHistoryEntry, clearHistory, undo, redo } = useHistoryState({
     onUndo,
     onRedo,
+    initialState: initialHistory,
   });
+
+  const getHistoryEntries = () => history.entries.slice(0, history.index);
 
   const value = {
     history,
     clearHistory,
+    getHistoryEntries,
     canSave: history.entries.length > 0 && history.index > 0,
     undo: history.index > 0 ? undo : undefined,
     redo: history.entries.length > 0 && history.index < history.entries.length ? redo : undefined,

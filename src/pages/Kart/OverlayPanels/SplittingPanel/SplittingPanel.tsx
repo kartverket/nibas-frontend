@@ -62,7 +62,7 @@ export const SplittingPanel = ({ isOpen }: PanelProps) => {
     append,
     remove,
     resetSplitting,
-    updateDraftWithSplittingRequest,
+    addSplittingRequestToHistory,
     getValues,
     handleOpprinneligKretsChange,
     handleSubmit,
@@ -231,7 +231,7 @@ export const SplittingPanel = ({ isOpen }: PanelProps) => {
                 Avbryt
               </Button>
               <Button
-                onClick={handleSubmit(updateDraftWithSplittingRequest)}
+                onClick={handleSubmit(addSplittingRequestToHistory)}
                 isDisabled={getValues("nyeKretser").slice(1).length < 1}
               >
                 Splitt

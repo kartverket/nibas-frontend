@@ -1,8 +1,8 @@
 import { Alert, AlertIcon, AlertTitle, Box, Button, Collapse } from "@kvib/react";
 import { useState } from "react";
 import { styled } from "styled-components";
-import { useUnsavedEndringer } from "../hooks/useUnsavedEndringer";
-import { AggregatedUnsavedEndringer } from "./AggregatedUnsavedEndringer";
+import { UnsavedEndringer } from "components/Endringslogg/UlagredeEndringer/UnsavedEndringer";
+import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 
 type Props = {
   expandedByDefault?: boolean;
@@ -10,19 +10,16 @@ type Props = {
 
 export const UnsavedEndringerCollapse = ({ expandedByDefault = false }: Props) => {
   const [isExpanded, setIsExpanded] = useState(expandedByDefault);
-  const abstractedHistory = useUnsavedEndringer();
-
-  const numberOfUnsavedEndringer = abstractedHistory.length;
+  const { antallEndringer, endringer } = useUnsavedEndringer();
 
   return (
-    numberOfUnsavedEndringer > 0 && (
+    antallEndringer > 0 && (
       <CustomCollapse animateOpacity={false} in={isExpanded} startingHeight={64}>
         <AlertWithButton status="warning">
           <Wrapper>
             <AlertIcon />
             <AlertTitle>
-              Du har {numberOfUnsavedEndringer}{" "}
-              {numberOfUnsavedEndringer > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
+              Du har {antallEndringer} {antallEndringer > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
             </AlertTitle>
           </Wrapper>
           <CustomButton
@@ -30,11 +27,11 @@ export const UnsavedEndringerCollapse = ({ expandedByDefault = false }: Props) =
             variant="tertiary"
             onClick={() => setIsExpanded((prevState) => !prevState)}
           >
-            {isExpanded ? "Skjul" : "Vis"} {numberOfUnsavedEndringer > 1 ? "ulagrede endringer" : "ulagret endring"}
+            {isExpanded ? "Skjul" : "Vis"} {antallEndringer > 1 ? "ulagrede endringer" : "ulagret endring"}
           </CustomButton>
         </AlertWithButton>
         <EndringerContent>
-          <AggregatedUnsavedEndringer abstractedHistory={abstractedHistory} />
+          <UnsavedEndringer antall={antallEndringer} endringer={endringer} />
         </EndringerContent>
       </CustomCollapse>
     )

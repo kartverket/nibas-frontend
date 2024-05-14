@@ -1,6 +1,5 @@
 import { AllEndringTypes, Change, NumericEndringType } from "components/Endringslogg/Endringcard/EndringCardTypes";
 import { Metadataendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import { removeNil } from "utils/list-utils";
 
 export const getTitleForEndringstype = (endringstype: AllEndringTypes): string => {
   switch (endringstype) {
@@ -18,8 +17,6 @@ export const getTitleForEndringstype = (endringstype: AllEndringTypes): string =
       return "Nye grenser";
     case "sammenslåing":
       return "Sammenslåing";
-    case "valgdistrikt":
-      return "Endring av valgdistrikt";
   }
 };
 
@@ -48,22 +45,4 @@ export const getNavnOgNummerChanges = (metadataendringer: Metadataendringer[]): 
       };
     })
     .filter((change) => change.from !== change.to);
-};
-
-export const getValgdistriktChanges = (metadataendringer: Metadataendringer[]): Change[] => {
-  const valgdistriksendringer = removeNil(
-    metadataendringer.map((endring) => (endring.kretsType === "STEMMEKRETS" ? endring.valgdistriktsnummer : null)),
-  );
-
-  return removeNil(
-    valgdistriksendringer.map((endring) => {
-      if (endring?.fra == null || endring?.til == null || endring?.fra === endring?.til) {
-        return null;
-      }
-      return {
-        from: [endring?.fra?.toString() ?? "[Ingen verdi]"],
-        to: [endring?.til?.toString() ?? "[Ingen verdi]"],
-      };
-    }),
-  );
 };

@@ -50,23 +50,31 @@ export const EndringToFromCard = ({ type, changes }: EndringToFromProps) => {
   return (
     <EndringCard title={getTitleForEndringstype(type)}>
       {changes.map(({ from, to }) => (
-        <ChangeRow key={from.join("-") + "-" + to.join("-")}>
-          {from.map((value) => (
-            <TextWithBadge key={value} badge="utgår">
-              {value}
-            </TextWithBadge>
-          ))}
-          <RightArrow />
-          {to.map((value) => (
-            <TextWithBadge key={value} badge="ny">
-              {value}
-            </TextWithBadge>
-          ))}
-        </ChangeRow>
+        <ChangeToFromRow key={from.join("-") + "-" + to.join("-")} from={from} to={to} />
       ))}
     </EndringCard>
   );
 };
+
+type ChangeToFromRowProps = {
+  from: string[];
+  to: string[];
+};
+export const ChangeToFromRow = ({ from, to }: ChangeToFromRowProps) => (
+  <ChangeRow data-testid="changerow" key={from.join("-") + "-" + to.join("-")}>
+    {from.map((value) => (
+      <TextWithBadge key={value} badge="utgår">
+        {value}
+      </TextWithBadge>
+    ))}
+    <RightArrow />
+    {to.map((value) => (
+      <TextWithBadge key={value} badge="ny">
+        {value}
+      </TextWithBadge>
+    ))}
+  </ChangeRow>
+);
 
 type ValueWithBadgeProps = {
   children: ReactNode;
