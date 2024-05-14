@@ -176,14 +176,10 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         });
       } else if (entry.type === "nygrense") {
         // ny grense er også sær, siden den kan inneholde 1-2 grensedelinger attåt
-        if (
-          "grensedeling" in change.from &&
-          change.from.grensedeling != null &&
-          change.from.grensedeling.length > 0 &&
-          "grensedeling" in change.to &&
-          change.to.grensedeling != null &&
-          change.to.grensedeling.length > 0
-        ) {
+const isGrensedelingValid =
+  change.from?.grensedeling?.length > 0 &&
+  change.to?.grensedeling?.length > 0;
+        if (isGrensedelingValid) {
           const featureIds = removeNil(
             [...change.from.grensedeling, ...change.to.grensedeling].map((f) => f.getId()?.toString()),
           );
