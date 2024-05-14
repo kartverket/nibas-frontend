@@ -54,9 +54,9 @@ const useInteractions = () => {
     map.on("click", select);
     map.on("click", selectPoint);
     map.addInteraction(dragPan);
-    map.addInteraction(dragZoom);
     map.addInteraction(modify);
     map.addInteraction(draw);
+    map.addInteraction(dragZoom);
 
     // snaps må legges til etter modify og draw interactions
     kartlagSnapData.current = createKartlagSnapsData(activeModeTools, activeTool);
@@ -69,9 +69,9 @@ const useInteractions = () => {
       map.un("click", select);
       map.un("click", selectPoint);
       map.removeInteraction(dragPan);
-      map.removeInteraction(dragZoom);
       map.removeInteraction(modify);
       map.removeInteraction(draw);
+      map.removeInteraction(dragZoom);
       if (kartlagSnapData.current)
         Object.values(kartlagSnapData.current).forEach((snapData) => {
           if (snapData?.hover) map.removeInteraction(snapData.hover);

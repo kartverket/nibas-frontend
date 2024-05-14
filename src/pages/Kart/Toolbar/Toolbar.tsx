@@ -215,7 +215,11 @@ const Toolbar = () => {
               isActive={!activeModeTools.includes("move")}
               aria-label="Flytt eller rediger grenser i kartet"
               isDisabled={!isEditing || !anyFeatureIsEditable()}
-              tooltip={{ text: "Flytt eller rediger grenser i kartet", shortcut: "edit" }}
+              tooltip={{
+                text: "Flytt eller rediger grenser i kartet",
+                shortcut: "edit",
+                additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
+              }}
             >
               Flytt / Rediger
             </ToolbarButton>
