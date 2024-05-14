@@ -35,7 +35,7 @@ const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
 const FlatedataPanel = ({ isOpen }: PanelProps) => {
   const [tabIndex, setTabIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
-  const { searchValue, setInputValue } = useSearch();
+  const { inputValue, searchValue, setInputValue, clearSearch } = useSearch();
 
   const { closeOverlayModal } = useOverlayPanel();
   const { inndelinger } = useInndelinger();
@@ -65,13 +65,14 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
   const handleTabsChange = (index: number) => {
     handleDraft(() => setTabIndex(index));
     setIsEditing(false);
+    clearSearch();
   };
 
   const handleCloseModal = () => {
     handleDraft(() => closeOverlayModal());
     setIsEditing(false);
     setTabIndex(0);
-    setInputValue("");
+    clearSearch();
   };
 
   return (
@@ -85,7 +86,11 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
               <InputLeftElement>
                 <Icon icon="search" />
               </InputLeftElement>
-              <Input placeholder="Søk etter navn eller nummer" onChange={(e) => setInputValue(e.currentTarget.value)} />
+              <Input
+                value={inputValue}
+                placeholder="Søk etter navn eller nummer"
+                onChange={(e) => setInputValue(e.currentTarget.value)}
+              />
             </SearchInput>
           </FlatedataPanelHeader>
           <FlatedataTabs size="md" index={tabIndex} onChange={handleTabsChange}>
@@ -104,6 +109,7 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
                   isEditing={isEditing}
                   setIsEditing={setIsEditing}
                   searchValue={searchValue}
+                  clearSearch={clearSearch}
                 />
               ))}
             </FlatedataTabPanels>

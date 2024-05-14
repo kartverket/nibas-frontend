@@ -23,9 +23,10 @@ type Props = {
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
   searchValue: string;
+  clearSearch: () => void;
 };
 
-const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue }: Props) => {
+const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch }: Props) => {
   const { utkast } = useUtkast();
   const isAdministrativEnhet = mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune";
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
@@ -66,6 +67,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue }:
   const inndelingPrefix = isAdministrativEnhet ? "Kommune" : capitalize(mainInndeling.inndelingtype);
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
+    clearSearch();
     const changes = reduceFlatedataChanges(data, previousValues.current, utkastFlatedata, mainInndeling);
 
     if (changes.length > 0) {
@@ -139,7 +141,10 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue }:
           isEditing={isEditing}
           toggleEditing={toggleEditing}
           isDisabled={!isDirty}
-          onSubmit={handleSubmit(submitAndAddHistoryEntry)}
+          onSubmit={(e) => {
+            clearSearch();
+            handleSubmit(submitAndAddHistoryEntry)(e);
+          }}
           hasIcon
         >
           Rediger flatedetaljer
