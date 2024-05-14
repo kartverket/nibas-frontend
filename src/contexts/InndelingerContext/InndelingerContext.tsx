@@ -111,11 +111,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       }
     };
 
-    const removeInndelingFromLayer = (layer: GrenseId, features: Feature<Geometry>[]) => {
-      const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
-      removeFeaturesFromSourceByIds(layer, featureIds);
-    };
-
     const getFeaturesForInndelingAndUtkast = (
       featuresInUtkast: Feature<Geometry>[],
       featuresInInndeling: Feature<Geometry>[],
@@ -212,9 +207,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         );
       }
 
-      if (!currentInndeling.isVisible) {
-        removeInndelingFromLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
-      } else {
+      if (currentInndeling.isVisible) {
         addInndelingToLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
       }
     }
@@ -251,6 +244,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return getAllInndelinger().filter((inndeling) => inndeling.isEditing);
   };
 
+  // Denne tror jeg ikke lenger blir nødvendig med hvordan man nå bygger opp inndelinger
+  // Lar den ligge til nytt flatedatapanel er lagd
   /**
    * Gir deg en inndeling basert på hva inndelinger allerede er. Dersom du for eksempel åpner en inndeling som allerede var åpnet, så vil denne automatisk
    * flippe `isVisible` til `false`.
