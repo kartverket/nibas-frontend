@@ -8,7 +8,13 @@ import { useToast } from "@kvib/react";
 import { useEffect } from "react";
 import { usePrevious } from "hooks/usePrevious";
 import { useGetFeatures } from "./interaction-utils";
-import { isFeatureToBeArchived, isFeatureEditable, isMatrikkelFeature } from "utils/features";
+import {
+  isFeatureToBeArchived,
+  isFeatureEditable,
+  isMatrikkelFeature,
+  getFeatureFremtidigEndringDato,
+} from "utils/features";
+import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
@@ -69,13 +75,22 @@ const useSelect = () => {
       }
 
       // I noen verktøy skal man ikke kunne velge ikke-redigerbare grenser
-      if (
-        !safeTools.includes(activeTool) &&
-        !isFeatureEditable(clickedFeature, isFeatureToBeArchived(clickedFeature))
-      ) {
-        toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
-        event.stopPropagation();
-        return;
+      if (!safeTools.includes(activeTool)) {
+        const fremtidigEndringDato = getFeatureFremtidigEndringDato(clickedFeature);
+
+        if (!isFeatureEditable(clickedFeature, isFeatureToBeArchived(clickedFeature))) {
+          toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
+          event.stopPropagation();
+          return;
+        } else if (fremtidigEndringDato != null) {
+          toast({
+            status: "error",
+            title: "Grensen du har valgt er ikke redigerbar",
+            description: `Grensen har en fremtidig endring og kan ikke endres før den nye endringen har inntruffet. Endringen skal inntreffe ${datestringToFormattedDatestring(fremtidigEndringDato)}`,
+          });
+          event.stopPropagation();
+          return;
+        }
       }
 
       if (activeTool === "split") {

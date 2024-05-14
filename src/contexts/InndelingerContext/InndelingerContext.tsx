@@ -11,6 +11,7 @@ import { Geometry, LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 import useInndelingFeatures from "./useInndelingFeatures";
+import { getFeatureFremtidigEndringDato } from "utils/features";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Inndelingtyper = typeof INNDELINGTYPER;
@@ -59,7 +60,7 @@ const InndelingerContext = createContext<InndelingerContextValue | undefined>(un
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
 
-  const { setFeatureStylesForUtkast } = useFeatureStyle();
+  const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles } = useFeatureStyle();
 
   const previousInndelinger = useRef<Inndelinger>();
   if (previousInndelinger.current == null) previousInndelinger.current = getEmptyInndelinger();
@@ -105,6 +106,14 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             if (layer === "edit") {
               setFeatureStylesForUtkast(changedFeaturesInUtkast, sammenslaaingFeaturesInUtkast);
             }
+            const fremtidigEndringFeatureIds = removeNil(
+              features
+                .filter((feature) => getFeatureFremtidigEndringDato(feature) != null)
+                .map((feature) => feature.getId()?.toString()),
+            );
+
+            setAndSaveFremtidigEndringStyles(fremtidigEndringFeatureIds);
+
             zoomToFeatures(features);
           });
         }
@@ -205,6 +214,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   }, [
     inndelingFeatures,
     selectedInndeling,
+    setAndSaveFremtidigEndringStyles,
     setFeatureStylesForUtkast,
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,

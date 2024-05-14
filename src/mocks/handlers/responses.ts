@@ -45,6 +45,9 @@ export const mockFylker: FylkeResponse[] = [
       },
     },
     version: 0,
+    gyldighet: {
+      gyldigFra: "2022-01-01",
+    },
   },
   {
     id: {
@@ -79,6 +82,9 @@ export const mockFylker: FylkeResponse[] = [
       },
     },
     version: 0,
+    gyldighet: {
+      gyldigFra: "2022-01-01",
+    },
   },
 ];
 
@@ -193,6 +199,9 @@ export const mockKommune: KommuneResponse = {
   fylkeId: "50",
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
+  gyldighet: {
+    gyldigFra: "2022-01-01",
+  },
 };
 
 const mockKommuneGiske: KommuneResponse = {
@@ -215,6 +224,9 @@ const mockKommuneGiske: KommuneResponse = {
   fylkeId: "50",
   oppdateringsdato: "2022-12-31",
   samiskforvaltningsomraade: false,
+  gyldighet: {
+    gyldigFra: "2022-01-01",
+  },
 };
 
 export const mockKommuner = [mockKommune, mockKommuneGiske];
