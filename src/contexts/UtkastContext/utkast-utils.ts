@@ -2,11 +2,10 @@ import { Feature } from "ol";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
 import {
-  GrunnkretsEntry,
+  MetadataEntry,
   HistoryChange,
   HistoryState,
   HistoryTypeValues,
-  StemmekretsEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
@@ -58,17 +57,6 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   return getCombinedEntity(entity, utkastSlice);
 };
 
-const reduceMetadataOperations = (utkastOperations: UtkastOperasjoner, entry: GrunnkretsEntry | StemmekretsEntry) => {
-  switch (entry.type) {
-    case "grunnkrets": {
-      return addKretsChangeToOperations(utkastOperations, entry, "grunnkretsendringer");
-    }
-    case "stemmekrets": {
-      return addKretsChangeToOperations(utkastOperations, entry, "stemmekretsendringer");
-    }
-  }
-};
-
 //Antas at det bare er en entry i changes
 const reduceStemmekretssammenslaingsOperations = (
   operations: StemmekretsSammenslaaingsendringRequest,
@@ -84,28 +72,30 @@ const reduceStemmekretssammenslaingsOperations = (
 
 const addKretsChangeToOperations = (
   operations: UtkastOperasjoner,
-  entry: GrunnkretsEntry | StemmekretsEntry,
-  endringerKey: "grunnkretsendringer" | "stemmekretsendringer",
-) => {
-  entry.changes.forEach((change) => {
+  entry: MetadataEntry,
+  endringerKey: "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer",
+): UtkastOperasjoner => {
+  for (const change of entry.changes) {
     if (change.to != null && operations.metadataendringer[endringerKey] != null) {
       operations.metadataendringer[endringerKey][change.id] = change.to;
     }
-  });
+  }
 
   return operations;
 };
 
+const reduceMetadataOperations = (utkastOperations: UtkastOperasjoner, entry: MetadataEntry) =>
+  addKretsChangeToOperations(utkastOperations, entry, `${entry.type}endringer`);
+
 export const historyToUtkastOperations = (history: HistoryState, previousUtkast?: UtkastResponse) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);
 
+  const metadataEntries: HistoryTypeValues[] = ["kommune", "stemmekrets", "grunnkrets"];
+
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
   const utkastOperations = (
-    historyToCurrentIndex.filter((entry) => entry.type === "stemmekrets" || entry.type === "grunnkrets") as (
-      | GrunnkretsEntry
-      | StemmekretsEntry
-    )[]
-  ).reduce(
+    historyToCurrentIndex.filter((entry) => metadataEntries.includes(entry.type)) as MetadataEntry[]
+  ).reduce<UtkastOperasjoner>(
     reduceMetadataOperations,
     createUtkastOperations({
       ...{
@@ -115,7 +105,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         kretsDelingEndringer: previousUtkast?.operasjoner.kretsDelingEndringer,
       },
     }),
-  ) as UtkastOperasjoner;
+  );
 
   const sammenslaaingsOperations = (
     historyToCurrentIndex.filter(

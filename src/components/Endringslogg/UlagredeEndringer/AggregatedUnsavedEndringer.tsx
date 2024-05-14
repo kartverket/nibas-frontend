@@ -12,6 +12,7 @@ const getAggregatedEndringer = (abstractedHistoryEndringer: AbstractedHistoryEnt
   const aggregatedEndringer: Record<HistoryTypeValues, AbstractedHistoryEntry[]> = {
     grense: [],
     property: [],
+    kommune: [],
     grunnkrets: [],
     stemmekrets: [],
     utkast: [],

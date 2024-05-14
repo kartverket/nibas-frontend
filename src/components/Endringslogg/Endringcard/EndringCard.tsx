@@ -12,7 +12,7 @@ type EndringCardProps = {
   children: ReactNode;
 };
 
-export const EndringCard = ({ title, children }: EndringCardProps) => {
+const EndringCard = ({ title, children }: EndringCardProps) => {
   return (
     <StyledCard>
       <CardTitleText as="h3">{title}</CardTitleText>

@@ -1,4 +1,4 @@
-import { Checkbox, CloseButton, Divider, Menu, MenuDivider, MenuItem, MenuList, Switch } from "@kvib/react";
+import { useDisclosure } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -11,55 +11,41 @@ import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
 import { useState } from "react";
-
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { anyFeatureIsEditable } from "utils/features";
-import MenuButtonWithChevron from "pages/Kart/Toolbar/MenuButtonWithChevron";
+import SnapMenu from "./SnapMenu";
+import ZoomButtons from "./ZoomButtons";
 
 const Toolbar = () => {
+  const { utkast } = useUtkast();
   const { activeTool, activeModeTools, toggleTool, toggleModeTool, enableModeTool, disableModeTool, resetTool } =
     useToolbar();
   const {
     activeOverlayPanel,
-    openOverlayPanel,
     closeOverlayPanel,
     activeOverlayModal,
-    openOverlayModal,
     closeOverlayModal,
+    toggleOverlayPanel,
+    toggleOverlayModal,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
 
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { inndelinger, currentlyEditedInndeling } = useInndelinger();
   const isEditing = currentlyEditedInndeling != null;
+  const flatedataIsAvailable =
+    Object.values(inndelinger)
+      .flatMap((inndelingerMap) => [...inndelingerMap.values()])
+      .filter((inndeling) => inndeling.isVisible || inndeling.isEditing).length > 0;
 
-  const [isSnappingMenuOpen, setIsSnappingMenuOpen] = useState(false);
-
-  const toggleSnapping = () => {
-    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
-    const isNibasToggled = activeModeTools.includes("snap_nibas");
-
-    if (isMatrikkelToggled === isNibasToggled) {
-      toggleModeTool("snap_matrikkel");
-      toggleModeTool("snap_nibas");
-    } else if (isMatrikkelToggled) {
-      toggleModeTool("snap_matrikkel");
-    } else toggleModeTool("snap_nibas");
-  };
+  const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 
   const toggleGrenseinfo = () => {
     toggleTool("grenseinfo");
 
     if (activeOverlayPanel === "grenseinfo") {
       closeOverlayPanel();
-    }
-  };
-
-  const toggleKartlag = () => {
-    if (activeOverlayPanel === "kartlag") {
-      closeOverlayPanel();
-    } else {
-      openOverlayPanel("kartlag");
     }
   };
 
@@ -71,27 +57,6 @@ const Toolbar = () => {
       }
     }
     toggleModeTool("matrikkel");
-  };
-
-  const toggleGoto = () => {
-    if (activeOverlayModal === "navigasjon") {
-      closeOverlayModal();
-      return;
-    }
-
-    openOverlayModal("navigasjon");
-  };
-
-  const toggleSnapMenu = () => {
-    setIsSnappingMenuOpen(!isSnappingMenuOpen);
-  };
-
-  const zoom = (difference: number) => {
-    const view = map.getView();
-    view.animate({
-      zoom: (view.getZoom() ?? 0) + difference,
-      duration: 250,
-    });
   };
 
   const isPanningAllowed = (): boolean => {
@@ -122,13 +87,13 @@ const Toolbar = () => {
     else setPanningEnabled(false);
   });
 
-  useKeyboardShortcut("layers", toggleKartlag);
+  useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
   useKeyboardShortcut("move", () => enableModeTool("move"), panningEnabled);
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
-  useKeyboardShortcut("goto", toggleGoto);
-  useKeyboardShortcut("snap", toggleSnapMenu);
+  useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
+  useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
@@ -160,8 +125,8 @@ const Toolbar = () => {
       return;
     }
 
-    if (isSnappingMenuOpen) {
-      setIsSnappingMenuOpen(false);
+    if (isSnapMenuOpen) {
+      closeSnapMenu();
       return;
     }
 
@@ -193,47 +158,65 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          <ToolbarButton
-            icon="back_hand"
-            onClick={() => enableModeTool("move")}
-            isActive={activeModeTools.includes("move")}
-            isDisabled={!panningEnabled}
-            aria-label="Panorer i kartet"
-            tooltip={{
-              text: "Panorer i kartet",
-              shortcut: "move",
-              holdButton: "ALT-tasten",
-              additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
-            }}
-          >
-            Panorer
-          </ToolbarButton>
-          <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-            <ToolbarButton
-              icon="arrow_selector_tool"
-              onClick={() => disableModeTool("move")}
-              isActive={!activeModeTools.includes("move")}
-              aria-label="Flytt eller rediger grenser i kartet"
-              isDisabled={!isEditing || !anyFeatureIsEditable()}
-              tooltip={{
-                text: "Flytt eller rediger grenser i kartet",
-                shortcut: "edit",
-                additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
-              }}
-            >
-              Flytt / Rediger
-            </ToolbarButton>
-            <ToolbarMenus />
-          </ConditionalHide>
+          {utkast && (
+            <>
+              <ToolbarButton
+                icon="back_hand"
+                onClick={() => enableModeTool("move")}
+                isActive={activeModeTools.includes("move")}
+                isDisabled={!panningEnabled}
+                aria-label="Panorer i kartet"
+                tooltip={{
+                  text: "Panorer i kartet",
+                  shortcut: "move",
+                  holdButton: "ALT-tasten",
+                  additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
+                }}
+              >
+                Panorer
+              </ToolbarButton>
+              <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
+                <ToolbarButton
+                  icon="arrow_selector_tool"
+                  onClick={() => disableModeTool("move")}
+                  isActive={!activeModeTools.includes("move")}
+                  aria-label="Flytt eller rediger grenser i kartet"
+                  isDisabled={!isEditing || !anyFeatureIsEditable()}
+                  tooltip={{
+                    text: "Flytt eller rediger grenser i kartet",
+                    shortcut: "edit",
+                    additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
+                  }}
+                >
+                  Flytt / Rediger
+                </ToolbarButton>
+                <ToolbarMenus />
+              </ConditionalHide>
+            </>
+          )}
           <ToolbarButton
             icon="search"
             isActive={activeOverlayModal === "navigasjon"}
-            onClick={() => (activeOverlayModal === "navigasjon" ? closeOverlayModal() : openOverlayModal("navigasjon"))}
+            onClick={() => toggleOverlayModal("navigasjon")}
             aria-label="Gå til inndeling eller punkt i kartet"
             tooltip={{ text: "Gå til inndeling eller punkt i kartet", shortcut: "goto" }}
           >
             Gå til ...
           </ToolbarButton>
+          <ToolbarButton
+            icon="window"
+            onClick={() => toggleOverlayModal("flatedata")}
+            isActive={activeOverlayModal === "flatedata"}
+            isDisabled={!flatedataIsAvailable}
+            aria-label="Se eller endre flatedetaljer"
+            tooltip={{
+              text: "Se eller endre flatedetaljer",
+              shortcut: "flatedata",
+            }}
+          >
+            Flatedetaljer
+          </ToolbarButton>
+
           <ToolbarButton
             icon="query_stats"
             isActive={activeTool === "grenseinfo"}
@@ -247,7 +230,7 @@ const Toolbar = () => {
             icon="map"
             aria-label="Åpne kartlagsmenyen"
             isActive={activeOverlayPanel === "kartlag"}
-            onClick={toggleKartlag}
+            onClick={() => toggleOverlayPanel("kartlag")}
             tooltip={{ text: "Legg til, endre rekkefølge og fjern kartlag fra kartet.", shortcut: "layers" }}
           >
             Kartlag
@@ -263,82 +246,11 @@ const Toolbar = () => {
               >
                 Matrikkel
               </ToolbarButton>
-              <Menu
-                closeOnSelect={false}
-                closeOnBlur={false}
-                onClose={() => setIsSnappingMenuOpen(false)}
-                isOpen={isSnappingMenuOpen}
-              >
-                {({ isOpen, onClose }) => {
-                  return (
-                    <>
-                      <MenuButtonWithChevron
-                        aria-label="Snap til andre grenser i kartet"
-                        isOpen={isOpen}
-                        onClick={toggleSnapMenu}
-                        icon="align_justify_space_between"
-                        isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
-                        tooltip={{ text: "Skru av/på snapping mot andre grenser.", shortcut: "snap" }}
-                      >
-                        Snap
-                      </MenuButtonWithChevron>
-                      <MenuList minWidth="240px" marginBottom="10px">
-                        <SnappingMenuHeader>
-                          <SnappingToggle>
-                            <Switch
-                              aria-label="Switch medium"
-                              marginRight="5px"
-                              isChecked={
-                                activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")
-                              }
-                              onChange={() => toggleSnapping()}
-                            />
-                            <SnappingTitle>Snapping</SnappingTitle>
-                          </SnappingToggle>
-                          <CloseButton marginRight="8px" onClick={onClose} />
-                        </SnappingMenuHeader>
-                        <MenuDivider />
-                        <MenuItem>
-                          <Checkbox
-                            value="egne"
-                            onChange={() => toggleModeTool("snap_nibas")}
-                            isChecked={activeModeTools.includes("snap_nibas")}
-                          >
-                            Snap til egne grenser
-                          </Checkbox>
-                        </MenuItem>
-                        <MenuItem>
-                          <Checkbox
-                            value="matrikkel"
-                            onChange={() => toggleModeTool("snap_matrikkel")}
-                            isChecked={activeModeTools.includes("snap_matrikkel")}
-                          >
-                            Snap til teiggrenser
-                          </Checkbox>
-                        </MenuItem>
-                      </MenuList>
-                    </>
-                  );
-                }}
-              </Menu>
+              {utkast && <SnapMenu isOpen={isSnapMenuOpen} onClose={closeSnapMenu} onToggle={toggleSnapMenu} />}
             </>
           </ConditionalHide>
         </ToolbarButtons>
-        <ZoomButtons>
-          <ToolbarButton
-            icon="add"
-            onClick={() => zoom(1)}
-            aria-label="Zoom inn på kartet"
-            tooltip={{ text: "Zoom inn på kartet" }}
-          />
-          <Divider />
-          <ToolbarButton
-            icon="remove"
-            onClick={() => zoom(-1)}
-            aria-label="Zoom ut fra kartet"
-            tooltip={{ text: "Zoom ut fra kartet" }}
-          />
-        </ZoomButtons>
+        <ZoomButtons />
       </Container>
     </OuterContainer>
   );
@@ -378,31 +290,6 @@ const ToolbarButtons = styled.div`
   background: white;
   border-radius: 10px;
   box-shadow: var(--kvib-shadows-base);
-`;
-
-const ZoomButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  width: fit-content;
-  border-radius: 10px;
-  background: white;
-  box-shadow: var(--kvib-shadows-base);
-`;
-
-const SnappingTitle = styled.strong`
-  padding-left: 10px;
-`;
-
-const SnappingMenuHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-`;
-
-const SnappingToggle = styled.div`
-  display: flex;
-  padding: 5px 10px;
 `;
 
 export default Toolbar;

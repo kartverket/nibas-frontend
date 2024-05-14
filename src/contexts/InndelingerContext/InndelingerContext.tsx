@@ -9,7 +9,7 @@ import { GrenseId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { FeatureProperties } from "types/api";
+import { FeatureProperties, Spraak } from "types/api";
 import useInndelingFeatures from "./useInndelingFeatures";
 import { getFeatureFremtidigEndringDato } from "utils/features";
 
@@ -17,9 +17,25 @@ export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] 
 type Inndelingtyper = typeof INNDELINGTYPER;
 export type Inndelingtype = Inndelingtyper[number];
 
-export type Inndeling = {
+export const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
+  switch (inndelingtype) {
+    case "fylke":
+    case "kommune":
+      return inndelingtype + "r";
+    case "stemmekrets":
+    case "grunnkrets":
+      return inndelingtype + "er";
+  }
+};
+
+export type BaseInndeling = {
   id: string;
+  nummer: string;
+  navn: Spraak[];
   inndelingtype: Inndelingtype;
+};
+
+export type Inndeling = BaseInndeling & {
   isVisible: boolean;
   isEditing: boolean;
 };
@@ -44,15 +60,12 @@ type InndelingerContextValue = {
   currentlyEditedInndeling: Inndeling | null;
   isLoadingInndeling: boolean;
 
-  getNewInndeling: (id: string, type: Inndelingtype, isEditing: boolean) => Inndeling;
+  getNewInndeling: (baseInndeling: BaseInndeling, isEditing: boolean) => Inndeling;
 
   clearInndelingerAndSources: () => void;
 
   selectedFylkeId: string;
   setSelectedFylkeId: (id: string) => void;
-
-  selectedFlatedataInndeling: Inndeling | null;
-  setSelectedFlatedataInndeling: (inndeling: Inndeling | null) => void;
 };
 
 const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
@@ -67,9 +80,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
   const [selectedInndeling, setSelectedInndeling] = useState<Inndeling | null>(null);
-
-  // TODO: mellomløsning for flatedata i visningsmodus til vi får skrevet det om
-  const [selectedFlatedataInndeling, setSelectedFlatedataInndeling] = useState<Inndeling | null>(null);
 
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
   const { utkast } = useUtkast();
@@ -248,15 +258,19 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
    * flippe `isVisible` til `false`.
    * @returns Inndeling med nye verdier basert på tidligere, eller en default Inndeling
    */
-  const getNewInndeling = (inndelingId: string, inndelingtype: Inndelingtype, isEditing: boolean): Inndeling => {
+  const getNewInndeling = (baseInndeling: BaseInndeling, isEditing: boolean): Inndeling => {
+    const { id, navn, nummer, inndelingtype } = baseInndeling;
+
     const newInndeling: Inndeling = {
-      id: inndelingId,
-      inndelingtype: inndelingtype,
+      id,
+      navn,
+      nummer,
+      inndelingtype,
       isEditing: isEditing,
       isVisible: !isEditing,
     };
 
-    const inndelingIfAlreadySelected = inndelinger[inndelingtype].get(inndelingId);
+    const inndelingIfAlreadySelected = inndelinger[inndelingtype].get(id);
 
     if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
       if (isEditing) {
@@ -318,9 +332,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     selectedFylkeId,
     setSelectedFylkeId,
-
-    selectedFlatedataInndeling,
-    setSelectedFlatedataInndeling,
   };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;
