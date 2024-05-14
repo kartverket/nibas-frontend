@@ -4,9 +4,9 @@ import View from "ol/View";
 import { Extent } from "ol/extent";
 import { defaults } from "ol/interaction/defaults";
 import { fromLonLat } from "ol/proj";
-import { mapProjectionEPSGCode, registerDefaultProjection } from "utils/map/projections";
+import { mapProjectionEPSGCode, registerAllUsedProjections } from "utils/map/projections";
 
-registerDefaultProjection();
+registerAllUsedProjections();
 
 export const norwayExtent: Extent = [
   ...fromLonLat([4, 57], mapProjectionEPSGCode),

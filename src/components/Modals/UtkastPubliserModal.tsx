@@ -113,7 +113,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         setError({
           title: "Ukjent serverfeil",
           description:
-            "En ukjent feil skjedde ved publisering av utkastet. Vennligst forsøk igjen, om problemet fortsetter er det fint om du tar kontakt med Kartverket.",
+            "En ukjent feil skjedde ved publisering av utkastet. Hvis feilen vedvarer, vennligst kontakt Kartverket.",
         });
       }
     }

@@ -5,17 +5,15 @@ import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import { Feature } from "ol";
 import {
   FeatureProperties,
-  GrunnkretsRequest,
-  StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
   KontekstEgenskaper,
+  MetadataRequest,
 } from "types/api";
 
-export type HistoryTypeData =
+type HistoryTypeData =
   | MinimalGrense
   | FeatureProperties
-  | GrunnkretsRequest
-  | StemmekretsRequest
+  | MetadataRequest
   | UtkastRequestWithoutOperations
   | StemmekretsSammenslaaingsendringRequest
   | KontekstEgenskaper[]

@@ -55,7 +55,7 @@ export const projectionDefinitions: EpsgDefinition[] = [
   },
 ];
 
-export const registerDefaultProjection = () => {
+export const registerAllUsedProjections = () => {
   for (const projection of projectionDefinitions) {
     proj4.defs(projection.epsgCode, projection.def);
     register(proj4);

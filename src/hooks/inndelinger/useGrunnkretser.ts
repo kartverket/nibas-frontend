@@ -22,13 +22,3 @@ export const useKommuneGrunnkretser = (kommuneId: string | null) => {
     id: kommuneId!,
   });
 };
-
-export const useToKommunerGrunnkretser = (kommuneAId: string | null, kommuneBId: string | null) => {
-  const { data: grunnkretserA, isLoading: k1Loading } = useKommuneGrunnkretser(kommuneAId);
-  const { data: grunnkretserB, isLoading: k2Loading } = useKommuneGrunnkretser(kommuneBId);
-  return {
-    kommuneA: grunnkretserA,
-    kommuneB: grunnkretserB,
-    grunnkretserIsLoading: k1Loading || k2Loading,
-  };
-};

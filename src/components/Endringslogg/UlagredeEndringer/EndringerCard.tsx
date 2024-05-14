@@ -59,6 +59,11 @@ const getTitleAndDescriptionFragments = (
         title: <EndringTitle>Endring på stemmekretser</EndringTitle>,
         description: <DetailedFlateEndringerList endringer={endringer} />,
       };
+    case "kommune":
+      return {
+        title: <EndringTitle>Endring på kommuner</EndringTitle>,
+        description: <DetailedFlateEndringerList endringer={endringer} />,
+      };
     case "utkast":
       return {
         title: <EndringTitle>Endringer på utkast</EndringTitle>,
@@ -295,7 +300,7 @@ const RightArrow = styled(Icon)`
   vertical-align: middle;
 `;
 
-export const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
+const EndringFraTil = ({ endring, withBadges }: EndringFraTilProps) => (
   <FraTilContainer>
     <EndringAndBadge>
       {endring.fra}

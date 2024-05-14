@@ -16,35 +16,12 @@ type MenuItems = (MenuItemProps & {
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool } = useToolbar();
-  const {
-    activeOverlayPanel,
-    openOverlayPanel,
-    closeOverlayPanel,
-    activeOverlayModal,
-    openOverlayModal,
-    closeOverlayModal,
-  } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel, toggleOverlayPanel } = useOverlayPanel();
 
   const { currentlyEditedInndeling } = useInndelinger();
 
   const isEditing = currentlyEditedInndeling != null;
   const currentlyEditingInndelingtype = currentlyEditedInndeling?.inndelingtype;
-
-  const mergeIsActive = activeOverlayPanel === "sammenslåing";
-  const splitIsActive = activeOverlayPanel === "splitting";
-
-  const flatedetaljerIsActive = activeOverlayModal === "grunnkrets" || activeOverlayModal === "stemmekrets";
-
-  const toggleFlatedetaljer = () => {
-    if (flatedetaljerIsActive) {
-      closeOverlayModal();
-    } else if (
-      (currentlyEditingInndelingtype && currentlyEditingInndelingtype === "grunnkrets") ||
-      currentlyEditingInndelingtype === "stemmekrets"
-    ) {
-      openOverlayModal(currentlyEditingInndelingtype);
-    }
-  };
 
   const toggleMovePoint = () => {
     toggleTool("koordinater");
@@ -54,25 +31,18 @@ const ToolbarMenus = () => {
     }
   };
 
-  const toggleMergePanel = () => {
-    if (mergeIsActive) {
-      closeOverlayPanel();
-    } else {
-      openOverlayPanel("sammenslåing");
-    }
-  };
-
-  const toggleSplitPanel = () => (splitIsActive ? closeOverlayPanel() : openOverlayPanel("splitting"));
-
   useKeyboardShortcut("add", () => toggleTool("add"), isEditing);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditing);
   useKeyboardShortcut("movepoint", toggleMovePoint, isEditing);
-  useKeyboardShortcut("merge", toggleMergePanel, currentlyEditingInndelingtype === "stemmekrets");
+  useKeyboardShortcut(
+    "merge",
+    () => toggleOverlayPanel("sammenslåing"),
+    currentlyEditingInndelingtype === "stemmekrets",
+  );
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
-  useKeyboardShortcut("flateinfo", toggleFlatedetaljer);
-  useKeyboardShortcut("flatesplit", toggleSplitPanel, isEditing);
+  useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditing);
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
@@ -136,30 +106,20 @@ const ToolbarMenus = () => {
   ];
   const flateMenuItems: MenuItems = [
     {
-      label: "Se/endre flatedetaljer",
-      icon: <Icon icon="description" />,
-      command: KeyboardShortcuts["flateinfo"].displayString,
-      // Vi har ikke laget flatedetaljerpaneler for Kommune og Fylke ennå
-      isDisabled: !(currentlyEditingInndelingtype === "stemmekrets" || currentlyEditingInndelingtype === "grunnkrets"),
-      $isActive: flatedetaljerIsActive,
-      onClick: toggleFlatedetaljer,
-      "aria-label": "Se eller endre flatedetaljer for kretsen som redigeres",
-    },
-    {
       label: "Slå sammen flater",
       icon: <Icon icon="cell_merge" />,
       command: KeyboardShortcuts["merge"].displayString,
-      $isActive: mergeIsActive,
+      $isActive: activeOverlayPanel === "sammenslåing",
       isDisabled: currentlyEditingInndelingtype !== "stemmekrets",
-      onClick: toggleMergePanel,
+      onClick: () => toggleOverlayPanel("sammenslåing"),
       "aria-label": "Slå sammen stemmekretser",
     },
     {
       label: "Splitt en flate",
       icon: <Icon icon="splitscreen" />,
-      $isActive: splitIsActive,
+      $isActive: activeOverlayPanel === "splitting",
       isDisabled: !(currentlyEditingInndelingtype === "stemmekrets" || currentlyEditingInndelingtype === "grunnkrets"),
-      onClick: toggleSplitPanel,
+      onClick: () => toggleOverlayPanel("splitting"),
       "aria-label": "Splitt en flate",
       command: KeyboardShortcuts["flatesplit"].displayString,
     },
@@ -173,7 +133,7 @@ const ToolbarMenus = () => {
             label="Grenseverktøy"
             icon="timeline"
             isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
-            isActive={grenseMenuItems.every((gmi) => gmi.isDisabled)}
+            isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
             tooltip="Vis grenseverktøy"
           >
             <MenuList>

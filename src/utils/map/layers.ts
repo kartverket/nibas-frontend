@@ -26,12 +26,6 @@ export const getLayerById = <T extends LayerId>(id: T) => {
   return layersWithId[0] as (typeof kartlagLayers & typeof grenserLayers)[T];
 };
 
-export const getVectorLayers = () => {
-  const layers = getLayersArray();
-
-  return layers.filter((layer) => layer instanceof VectorLayer) as VectorLayer<VectorSource>[];
-};
-
 export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof WMTS;
 };

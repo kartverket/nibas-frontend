@@ -13,6 +13,7 @@ import Text from "ol/style/Text";
 import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
+import { getRepresentasjonspunktId } from "./source";
 
 const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
@@ -104,6 +105,8 @@ const inndelingColors = {
   grunnkrets: "#4D94AF",
   stemmekrets: "#FFAE49FF",
   delomraade: "#5DB9DC",
+  fremtidigEndring: "#B92659",
+  edit: "#000000",
 };
 
 export const grenseStyles = {
@@ -113,10 +116,11 @@ export const grenseStyles = {
   grunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"] }),
   stemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"] }),
   delomraade: lineAndPointStyles({ color: inndelingColors["delomraade"] }),
-  edit: lineAndPointStyles({ color: "#000000" }),
+  edit: lineAndPointStyles({ color: inndelingColors["edit"] }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
   error: lineAndPointStyles({ color: "#FF0000FF" }),
+  fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"] }),
   matrikkel: lineAndPointStyles({ color: "#C0AFFBFF", pointRadius: 1.5, endpointRadius: 2 }),
   sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
   flate: flateStyles,
@@ -192,6 +196,7 @@ export const getArchiveLayerStyle = (feature: FeatureLike): Style[] => {
 export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) => {
   const name = feature.get("name") as string | undefined;
   const number = feature.get("number") as string | undefined;
+  const gyldigTil = feature.get("gyldigTil") as string | undefined;
 
   if (
     feature.get("type") !== "Posisjon" ||
@@ -203,11 +208,17 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) =
     return new Style();
   }
 
+  const getColor = () => {
+    if (gyldigTil != null) return inndelingColors["fremtidigEndring"];
+
+    return inndelingColors[grenseId];
+  };
+
   return new Style({
     text: new Text({
       text: `${number} ${name}`,
       font: "bold 16px Mulish, sans-serif",
-      fill: new Fill({ color: grenseId === "edit" ? "#000000" : inndelingColors[grenseId] }),
+      fill: new Fill({ color: getColor() }),
       stroke: new Stroke({ width: 3, color: "white" }),
       textBaseline: "middle",
       textAlign: "center",
@@ -220,11 +231,11 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) =
   });
 };
 
-export const updateEditFeatureText = (featureId: string, name?: string, number?: string) => {
-  const feature = editSource.getFeatureById(featureId);
+export const updateRepresentasjonspunkt = (inndelingId: string, number?: string, name?: string) => {
+  const feature = editSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   if (feature) {
-    if (name != null) feature.set("name", name);
     if (number != null) feature.set("number", number);
+    if (name != null) feature.set("name", name);
   }
 };
 

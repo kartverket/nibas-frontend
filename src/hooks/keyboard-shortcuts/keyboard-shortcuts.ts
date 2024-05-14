@@ -15,7 +15,7 @@ export type Shortcut =
   | "grensesplit"
   | "archive"
   | "matrikkel"
-  | "flateinfo"
+  | "flatedata"
   | "flatesplit"
   | "draw"
   | "escape"
@@ -89,7 +89,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
 
   // Flate Tools
   merge: createShortcut("m", { control: true }),
-  flateinfo: createShortcut("i", { control: true, shift: true }),
+  flatedata: createShortcut("i", { control: true, shift: true }),
   flatesplit: createShortcut("m", { control: true, shift: true }),
 
   // Misc Toolbar

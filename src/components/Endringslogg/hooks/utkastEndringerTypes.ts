@@ -1,7 +1,7 @@
 import { GrunnkretsResponse, KretsNavnOgNummer, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
-export type Endring = {
+type Endring = {
   fra: string;
   til: string;
 };

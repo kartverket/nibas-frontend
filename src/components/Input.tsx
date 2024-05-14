@@ -13,7 +13,7 @@ type Props = {
 
 const InnerInput = (
   { className, label = "", validationError, ...props }: Props,
-  ref: React.ForwardedRef<HTMLSelectElement>,
+  ref: React.ForwardedRef<HTMLInputElement>,
 ) => (
   <FormControl isInvalid={validationError?.showError}>
     {label && <FormLabel>{label}</FormLabel>}
