@@ -1,14 +1,13 @@
 import React, { createContext, useContext } from "react";
 import { HistoryContextValue, HistoryEntry } from "./types";
 import {
-  setFeatureCoordinatesAndPropertiesForEntry,
   setFeatureCoordinatesForEntry,
   setKontekstEgenskaperForEntry,
   setFeaturePropertiesForEntry,
   redoArchiving,
   undoArchving,
-  undoGrensedeling,
-  redoGrensedeling,
+  handleGrensedeling,
+  handleNyGrense,
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 
@@ -23,7 +22,7 @@ const onUndo = (entry: HistoryEntry) => {
       return setFeaturePropertiesForEntry(entry, "from");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndPropertiesForEntry(entry, "from");
+      return handleNyGrense(entry, "from");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -35,6 +34,13 @@ const onUndo = (entry: HistoryEntry) => {
     case "stemmekrets": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretsUndo", {
+          detail: { entry },
+        }),
+      );
+    }
+    case "kommune": {
+      return document.dispatchEvent(
+        new CustomEvent("kommuneUndo", {
           detail: { entry },
         }),
       );
@@ -60,10 +66,7 @@ const onUndo = (entry: HistoryEntry) => {
       return setKontekstEgenskaperForEntry(entry, "from");
     }
     case "grensedeling": {
-      return undoGrensedeling(
-        entry.changes.flatMap((e) => e.from)[0],
-        entry.changes.flatMap((e) => e.to),
-      );
+      return handleGrensedeling(entry, "from");
     }
   }
 };
@@ -79,7 +82,7 @@ const onRedo = (entry: HistoryEntry) => {
       return setFeaturePropertiesForEntry(entry, "to");
     }
     case "nygrense": {
-      return setFeatureCoordinatesAndPropertiesForEntry(entry, "to");
+      return handleNyGrense(entry, "to");
     }
     case "grunnkrets": {
       return document.dispatchEvent(
@@ -91,6 +94,13 @@ const onRedo = (entry: HistoryEntry) => {
     case "stemmekrets": {
       return document.dispatchEvent(
         new CustomEvent("stemmekretsRedo", {
+          detail: { entry },
+        }),
+      );
+    }
+    case "kommune": {
+      return document.dispatchEvent(
+        new CustomEvent("kommuneRedo", {
           detail: { entry },
         }),
       );
@@ -116,10 +126,7 @@ const onRedo = (entry: HistoryEntry) => {
       return setKontekstEgenskaperForEntry(entry, "to");
     }
     case "grensedeling": {
-      return redoGrensedeling(
-        entry.changes.flatMap((e) => e.from)[0],
-        entry.changes.flatMap((e) => e.to),
-      );
+      return handleGrensedeling(entry, "to");
     }
   }
 };

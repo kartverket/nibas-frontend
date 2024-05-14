@@ -4,14 +4,8 @@ import { fromLonLat } from "ol/proj";
 import View from "ol/View";
 import { defaultProjection, registerProjections } from "utils/map/projections";
 import { defaults } from "ol/interaction/defaults";
-import { Extent } from "ol/extent";
 
 registerProjections();
-
-export const norwayExtent: Extent = [
-  ...fromLonLat([4, 57], defaultProjection),
-  ...fromLonLat([34, 71], defaultProjection),
-];
 
 export const initialMapCenter = fromLonLat([2.757933, 52.911491]);
 export const initialMapZoom = 6;

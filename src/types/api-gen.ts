@@ -312,8 +312,6 @@ export interface components {
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description LokalId for angitt fylke */
       lokalid: string;
-      /** @description UUID til fylkesnummeret */
-      fylkesnummerId: string;
       /** @description Angir om fylket er et samisk forvaltningsområde */
       samiskforvaltningsomraade: boolean;
       /**
@@ -393,8 +391,6 @@ export interface components {
       administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description LokalId for angitt kommune */
       lokalid: string;
-      /** @description UUID til kommunenummeret */
-      kommunenummerId: string;
       /** @description Angir om kommunen er et samisk forvaltningsområde */
       samiskforvaltningsomraade: boolean;
       /**
@@ -866,6 +862,7 @@ export interface components {
       id: components["schemas"]["ObjektIdentifikator"];
       /** @description Liste over navn til nasjon */
       navn: components["schemas"]["AdministrativEnhetNavn"][];
+      gyldighet: components["schemas"]["GyldighetResponse"];
       omraade?: components["schemas"]["MultiPolygon"];
       representasjonspunkt: components["schemas"]["Feature"];
       /**
@@ -888,6 +885,7 @@ export interface components {
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description Kommunenummeret til kommunen */
       nummer: string;
+      gyldighet: components["schemas"]["GyldighetResponse"];
       /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**
@@ -914,6 +912,7 @@ export interface components {
       /** @description Nummeret til inndelingen */
       nummer: string;
       representasjonspunkt: components["schemas"]["Feature"];
+      gyldighet: components["schemas"]["GyldighetResponse"];
     };
     /** @description Representasjon av en grunnkrets */
     GrunnkretsResponse: {
@@ -970,9 +969,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
+      valid?: boolean;
       /** Format: double */
       m?: number;
-      valid?: boolean;
       coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {
@@ -996,6 +995,7 @@ export interface components {
       navn: components["schemas"]["AdministrativEnhetNavn"][];
       /** @description Fylkesnummeret til fylket */
       nummer: string;
+      gyldighet: components["schemas"]["GyldighetResponse"];
       /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
       samiskforvaltningsomraade: boolean;
       /**

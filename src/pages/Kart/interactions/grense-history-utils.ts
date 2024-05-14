@@ -1,11 +1,11 @@
-import { HistoryChange, MinimalGrense } from "contexts/HistoryContext/types";
+import { HistoryChange, MinimalGrense, NyGrense } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { previousCoordinateKey } from "./constants";
 import { GrenseType } from "hooks/layers/types";
-import { FeatureProperties } from "types/api";
 import { getMetadataDiscriminatorFromType } from "utils/grenser";
 import { getDefaultFeatureProperties } from "utils/features";
+import { SplittedFeature } from "./useSplit";
 
 export const createGrenseHistoryChange = (features: Feature[], grenseType?: GrenseType) => {
   const changes: HistoryChange<MinimalGrense>[] = [];
@@ -32,40 +32,41 @@ export const createGrenseHistoryChange = (features: Feature[], grenseType?: Gren
   return changes;
 };
 
-export const createNyGrenseHistoryChanges = (features: Feature[], grenseType: GrenseType) => {
-  const changes: HistoryChange<MinimalGrense & FeatureProperties>[] = [];
+export const createNyGrenseHistoryChange = (
+  feature: Feature,
+  grenseType: GrenseType,
+  splittedFeatures: SplittedFeature[],
+) => {
+  const geometry = feature.getGeometry();
+  if (geometry instanceof LineString) {
+    const grenseDiscriminator = getMetadataDiscriminatorFromType(grenseType);
 
-  for (const feature of features) {
-    const geometry = feature.getGeometry();
-    if (geometry instanceof LineString) {
-      const grenseDiscriminator = getMetadataDiscriminatorFromType(grenseType);
+    const featureId = feature.getId()?.toString();
+    if (featureId === undefined || !grenseDiscriminator) return null;
 
-      const featureId = feature.getId()?.toString();
-      if (featureId === undefined || !grenseDiscriminator) continue;
+    const defaultFeatureProperties = getDefaultFeatureProperties(grenseType);
+    if (!defaultFeatureProperties) return null;
 
-      const defaultFeatureProperties = getDefaultFeatureProperties(grenseType);
-      if (!defaultFeatureProperties) continue;
+    const fromChange: NyGrense = {
+      ...defaultFeatureProperties,
+      coordinates: [],
+      type: grenseType,
+      grensedeling: [...splittedFeatures.map((f) => f.oldFeature)],
+    };
+    const toChange: NyGrense = {
+      ...defaultFeatureProperties,
+      coordinates: geometry.getCoordinates(),
+      type: grenseType,
+      grensedeling: [...splittedFeatures.flatMap((f) => f.newFeatures)],
+    };
 
-      const fromChange: MinimalGrense & FeatureProperties = {
-        ...defaultFeatureProperties,
-        coordinates: [],
-        type: grenseType,
-      };
-      const toChange: MinimalGrense & FeatureProperties = {
-        ...defaultFeatureProperties,
-        coordinates: geometry.getCoordinates(),
-        type: grenseType,
-      };
-
-      changes.push({
-        id: featureId,
-        from: fromChange,
-        to: toChange,
-      });
-
-      feature.unset(previousCoordinateKey);
-    }
+    feature.unset(previousCoordinateKey);
+    return {
+      id: featureId,
+      from: fromChange,
+      to: toChange,
+    };
   }
 
-  return changes;
+  return null;
 };

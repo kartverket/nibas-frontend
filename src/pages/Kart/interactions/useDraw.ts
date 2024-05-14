@@ -9,14 +9,14 @@ import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getTempFeatureId } from "./temp-feature-id-utils";
-import { createNyGrenseHistoryChanges } from "./grense-history-utils";
+import { createNyGrenseHistoryChange } from "./grense-history-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { useGetFeatures } from "./interaction-utils";
 import { equals } from "ol/coordinate";
 import { setDefaultFeatureProperties } from "utils/features";
-import useSplit from "./useSplit";
+import useSplit, { SplittedFeature } from "./useSplit";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { Geometry } from "ol/geom";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
@@ -33,7 +33,7 @@ const useDraw = () => {
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
-  const { performFeatureSplit } = useSplit();
+  const { createNewFeatures, archiveOldFeature } = useSplit();
   const { openAsync } = useConfirmationModal();
 
   const [abortDrawMemoHelper, setAbortDrawMemoHelper] = useState(0);
@@ -111,16 +111,20 @@ const useDraw = () => {
   }, [abortDrawMemoHelper, activeTool, activeModeTools, getLineStringFeaturesAtPixel, toast, endpointToast]);
 
   useEffect(() => {
-    const addDrawToHistory = (drawnFeature: Feature<LineString>) => {
+    const addDrawToHistory = (drawnFeature: Feature<LineString>, splittedFeatures: SplittedFeature[]) => {
       if (currentlyEditingInndelinger.length > 0) return;
 
       // Kan kun redigere én inndelingstype om gangen, så velger bare første
       const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
 
       if (grenseType) {
+        const change = createNyGrenseHistoryChange(drawnFeature, grenseType, splittedFeatures);
+
+        if (change == null) return;
+
         addHistoryEntry({
           type: "nygrense",
-          changes: createNyGrenseHistoryChanges([drawnFeature], grenseType),
+          changes: [change],
         });
       }
     };
@@ -170,9 +174,15 @@ const useDraw = () => {
         });
 
         if (coordinatesToSplitAt.length > 0) {
-          performFeatureSplit(feature, coordinatesToSplitAt);
+          const features = createNewFeatures(feature, coordinatesToSplitAt);
+          if (features != null) {
+            addFeaturesToSource("edit", features.newFeatures);
+            archiveOldFeature(features.oldFeature);
+            return features;
+          }
         }
       }
+      return null;
     };
 
     const onDrawEnd = async (e: DrawEvent) => {
@@ -195,8 +205,10 @@ const useDraw = () => {
 
       const uniqueFeaturesToBeSplit = getUniqueFeaturesToSplitIfExists(drawnFeatureGeometry);
 
+      const splittedFeatures: SplittedFeature[] = [];
       for (const feature of uniqueFeaturesToBeSplit) {
-        splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
+        const features = splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
+        if (features != null) splittedFeatures.push(features);
       }
 
       setDefaultFeatureProperties(
@@ -204,7 +216,7 @@ const useDraw = () => {
         getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype),
       );
 
-      addDrawToHistory(drawnFeature);
+      addDrawToHistory(drawnFeature, splittedFeatures);
       addFeaturesToSource("edit", [drawnFeature]);
 
       toast({
@@ -228,11 +240,12 @@ const useDraw = () => {
     };
   }, [
     addHistoryEntry,
+    archiveOldFeature,
+    createNewFeatures,
     currentlyEditingInndelinger,
     draw,
     openAsync,
     openOverlayPanel,
-    performFeatureSplit,
     selectFeatures,
     selectedFeatures,
     toast,

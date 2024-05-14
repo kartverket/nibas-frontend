@@ -100,7 +100,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     if (!utkast) return null;
 
     const operasjoner = historyToUtkastOperations(history, utkast);
-
     const updatedUtkast: OppdaterUtkastRequest = {
       endringstype: utkast.endringstype,
       navn: utkast.navn,

@@ -40,7 +40,7 @@ export const AuthNotAuthorized = () => (
 export const AuthError = () => (
   <ErrorBox
     title="En feil skjedde ved pålogging."
-    text="Det skjedde en uventet feil under påloggingen. Du kan forsøke å laste siden på nytt, eller logge ut og forsøke å logge inn på nytt. Om feilen vedvarer er det fint om du tar kontakt med Kartverket."
+    text="Det skjedde en uventet feil under påloggingen. Du kan forsøke å laste siden på nytt, eller logge ut og forsøke å logge inn på nytt. Hvis feilen vedvarer, vennligst kontakt Kartverket."
   />
 );
 

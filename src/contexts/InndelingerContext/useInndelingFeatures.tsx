@@ -125,6 +125,7 @@ const useInndelingFeatures = (inndelinger: Inndeling[]) => {
         ...inndelingWithRepresentasjonspunkt.representasjonspunkt.properties,
         name: inndelingName,
         number: inndelingWithRepresentasjonspunkt.nummer,
+        gyldigTil: inndelingWithRepresentasjonspunkt.gyldighet.gyldigTil,
       },
     });
   };

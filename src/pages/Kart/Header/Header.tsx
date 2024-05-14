@@ -21,7 +21,7 @@ import { KommuneResponse } from "types/api";
 const Header = () => {
   const { utkast } = useUtkast();
   const { history } = useHistory();
-  const { activeOverlayModal, closeOverlayModal, openOverlayModal } = useOverlayPanel();
+  const { toggleOverlayModal } = useOverlayPanel();
   const { openAsync } = useConfirmationModal();
 
   const { currentlyEditingInndelinger, selectedFylkeId } = useInndelinger();
@@ -47,14 +47,6 @@ const Header = () => {
     return `${responsesExceptLast.join(", ")} og ${responseLast}`;
   };
 
-  const toggleModal = (modalName: "inndelinger" | "inndelinger-view") => {
-    if (activeOverlayModal === modalName) {
-      closeOverlayModal();
-    } else {
-      openOverlayModal(modalName);
-    }
-  };
-
   const hasUnsavedChangesInHistory = history.entries.length > 0;
 
   const confirmSelectIfDirtyModal = () =>
@@ -66,7 +58,7 @@ const Header = () => {
       declineText: "Gå tilbake",
     });
 
-  useKeyboardShortcut("open", () => toggleModal("inndelinger"));
+  useKeyboardShortcut("open", () => toggleOverlayModal(utkast ? "inndelinger" : "inndelinger-view"));
 
   return (
     <Container>
@@ -86,7 +78,7 @@ const Header = () => {
                   const shouldToggle = await confirmSelectIfDirtyModal();
                   if (!shouldToggle) return;
                 }
-                toggleModal("inndelinger");
+                toggleOverlayModal("inndelinger");
               }}
               tooltip={{
                 text: "Åpne og rediger en inndeling i kartet",
@@ -98,7 +90,7 @@ const Header = () => {
           <HeaderButton
             label="Forhåndsvis en inndeling"
             icon="preview"
-            onClick={() => toggleModal("inndelinger-view")}
+            onClick={() => toggleOverlayModal("inndelinger-view")}
             tooltip={{
               text: "Åpne og se en inndeling i kartet",
             }}

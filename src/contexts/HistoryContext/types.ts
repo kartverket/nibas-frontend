@@ -3,11 +3,13 @@ import { GrenseType } from "hooks/layers/types";
 import {
   FeatureProperties,
   GrunnkretsRequest,
+  KommuneRequest,
   KontekstEgenskaper,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
 import { Feature } from "ol";
+import { Geometry } from "ol/geom";
 
 // Obs: navnsetting for å unngå overlapp med innebygd History type
 export type HistoryState = {
@@ -20,11 +22,13 @@ export type HistoryChange<T> = {
   from: T;
   to: T;
 };
+
 export type HistoryTypeValues =
   | "grense"
   | "property"
   | "grunnkrets"
   | "stemmekrets"
+  | "kommune"
   | "utkast"
   | "stemmekretssammenslaaingsendring"
   | "grensearkivering"
@@ -42,6 +46,10 @@ export type MinimalGrense = {
   type?: GrenseType | undefined;
 };
 
+export type NyGrense = (MinimalGrense & FeatureProperties) & {
+  grensedeling?: Feature<Geometry>[];
+};
+
 export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
 export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
 export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
@@ -50,6 +58,12 @@ export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> 
 export type StemmekretsEntry = BaseHistoryEntry<"stemmekrets", StemmekretsRequest> & {
   kommuneId: string;
 };
+export type KommuneEntry = BaseHistoryEntry<"kommune", KommuneRequest> & {
+  fylkeId: string;
+};
+
+export type MetadataEntry = KommuneEntry | StemmekretsEntry | GrunnkretsEntry;
+
 type UtkastEntry = BaseHistoryEntry<"utkast", UtkastRequestWithoutOperations>;
 
 export type StemmekretsSammenslaaingsendringEntry = BaseHistoryEntry<
@@ -61,15 +75,14 @@ export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering", Featur
 
 export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring", KontekstEgenskaper[]>;
 
-export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & FeatureProperties>;
+export type NyGrenseEntry = BaseHistoryEntry<"nygrense", NyGrense>;
 
 export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling", Feature[]>;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
-  | GrunnkretsEntry
-  | StemmekretsEntry
+  | MetadataEntry
   | UtkastEntry
   | StemmekretsSammenslaaingsendringEntry
   | GrenseArkiveringsEntry

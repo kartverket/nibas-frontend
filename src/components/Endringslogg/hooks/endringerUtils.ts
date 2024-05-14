@@ -19,10 +19,7 @@ import {
 import { getNavnInSpraak } from "utils/language/language";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
-export const getEndredeFeaturesForKretstype = (
-  operasjoner: OperasjonerOrNull,
-  kretstype: KontekstType,
-): FeatureDTO[] => {
+const getEndredeFeaturesForKretstype = (operasjoner: OperasjonerOrNull, kretstype: KontekstType): FeatureDTO[] => {
   const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
 
   if (!endredeFeaturesMap) {
@@ -38,7 +35,7 @@ export const getEndredeFeaturesForKretstype = (
   );
 };
 
-export const getKretserMedGrensejusteringer = (operasjoner: OperasjonerOrNull, kretstype: KontekstType): string[] => {
+const getKretserMedGrensejusteringer = (operasjoner: OperasjonerOrNull, kretstype: KontekstType): string[] => {
   const endredeFeatures = getEndredeFeaturesForKretstype(operasjoner, kretstype);
   return removeNil(
     getUniqueItems(
@@ -56,7 +53,7 @@ export const getKretserMedGrensejusteringer = (operasjoner: OperasjonerOrNull, k
  */
 
 type groupEndringerByKommuneReturnType = { [kommuneid: string]: string[] };
-export function groupEndringerByKommune(
+function groupEndringerByKommune(
   endredeKretser: string[],
   alleKretser: (StemmekretsResponse | GrunnkretsResponse)[],
 ): groupEndringerByKommuneReturnType {
@@ -73,11 +70,11 @@ export function groupEndringerByKommune(
     }, {});
 }
 
-export function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(id: string, kretser: T[]): T {
+function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(id: string, kretser: T[]): T {
   const resultat = kretser.find((krets) => krets.id.lokalid.value === id);
   if (!resultat) {
     throw Error(
-      `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Gjerne ta kontakt med Team Smia om feilen vedvarer.`,
+      `Kunne ikke finne krets med id: ${id}. Dette skal egentlig ikke skje, og kan tyde på feil i implementasjonen. Hvis feilen vedvarer, vennligst kontakt Kartverket.`,
     );
   }
   return resultat;

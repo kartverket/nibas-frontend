@@ -13,3 +13,5 @@ export const isGrenseType = (value: string): value is GrenseType => GRENSETYPER.
 
 export const isLineStringFeature = (feature: FeatureLike): feature is Feature<LineString> =>
   feature.getGeometry() instanceof LineString;
+
+export const isIntegerString = (s: string) => s.match(/^-?\d+$/) !== null;

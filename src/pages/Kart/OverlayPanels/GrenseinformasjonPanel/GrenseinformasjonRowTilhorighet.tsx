@@ -1,10 +1,10 @@
 // TODO Skal slettes i TS-1579, kun brukt som en kopi av den gamle GrenseinformasjonRow slik at vi ikke trenger å lage en midlertidig "smart" GrenseinformasjonRow som håndterer tilhørighet i tillegg
 import { FormControl, FormErrorMessage, Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
 import { styled } from "styled-components";
-import EditAndSaveButton from "../Flatedata/EditAndSaveButton";
 import { useEffect, useState } from "react";
 import { Geometry } from "ol/geom";
 import { Feature } from "ol";
+import EditAndSaveButton from "components/EditAndSaveButton";
 
 interface Props {
   feature: Feature<Geometry>;
@@ -73,6 +73,7 @@ const GrenseinformasjonRow = ({
               isEditing={isEditing}
               size="sm"
               onSubmit={handleSubmit}
+              variant="secondary"
               toggleEditing={() =>
                 setIsEditing((prevState) => {
                   setIsSubmitted(false);
@@ -82,7 +83,9 @@ const GrenseinformasjonRow = ({
                   return !prevState;
                 })
               }
-            />
+            >
+              Rediger
+            </EditAndSaveButton>
           )}
         </Row>
         {isEditing ? (

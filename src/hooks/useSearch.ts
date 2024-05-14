@@ -24,10 +24,16 @@ const useSearch = () => {
     };
   }, [inputValue]);
 
+  const clearSearch = () => {
+    setInputValue("");
+    setSearchValue("");
+  };
+
   return {
     inputValue,
     setInputValue,
     searchValue,
+    clearSearch,
   };
 };
 

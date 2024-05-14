@@ -13,6 +13,7 @@ import { PanelHeader, PanelProps, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import {
   INNDELINGTYPER,
+  BaseInndeling,
   Inndeling,
   Inndelingtype,
   useInndelinger,
@@ -31,12 +32,11 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
   const [activePanelFylkeId, setActivePanelFylkeId] = useState<string>("");
 
-  const { selectInndelinger, getAllInndelinger, setSelectedFylkeId, getNewInndeling, setSelectedFlatedataInndeling } =
-    useInndelinger();
+  const { selectInndelinger, getAllInndelinger, setSelectedFylkeId } = useInndelinger();
 
   const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>(getAllInndelinger());
 
-  const { closeOverlayModal, activeOverlayModal, openOverlayModal } = useOverlayPanel();
+  const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
 
   const { history, clearHistory } = useHistory();
   const { fylker } = useFylker();
@@ -89,17 +89,19 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
     }
   };
 
-  const toggleFylke = (fylkeId: string) => {
+  const toggleFylke = (fylke: BaseInndeling) => {
     if (isEditingPanel) setSelectedInndelinger([]);
 
     if (selectedInndelingtype === "fylke") {
       const isAlreadySelected = selectedInndelinger.findIndex(
-        (inndeling) => inndeling.id === fylkeId && inndeling.inndelingtype === selectedInndelingtype,
+        (inndeling) => inndeling.id === fylke.id && inndeling.inndelingtype === selectedInndelingtype,
       );
 
       if (isAlreadySelected < 0) {
         const newInndeling: Inndeling = {
-          id: fylkeId,
+          navn: fylke.navn,
+          nummer: fylke.nummer,
+          id: fylke.id,
           inndelingtype: selectedInndelingtype,
           isEditing: isEditingPanel,
           isVisible: !isEditingPanel,
@@ -110,15 +112,17 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
 
       setSelectedInndelinger(selectedInndelinger.filter((_, index) => isAlreadySelected !== index));
     } else {
-      setActivePanelFylkeId(fylkeId);
-      setSelectedFylkeId(fylkeId);
+      setActivePanelFylkeId(fylke.id);
+      setSelectedFylkeId(fylke.id);
     }
   };
 
-  const toggleKommune = (kommuneId: string) => {
+  const toggleKommune = (kommune: BaseInndeling) => {
     if (selectedInndelingtype) {
       const newInndeling: Inndeling = {
-        id: kommuneId,
+        navn: kommune.navn,
+        nummer: kommune.nummer,
+        id: kommune.id,
         inndelingtype: selectedInndelingtype,
         isEditing: isEditingPanel,
         isVisible: !isEditingPanel,
@@ -135,7 +139,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
       }
 
       const isAlreadySelected = selectedInndelinger.findIndex(
-        (inndeling) => inndeling.id === kommuneId && inndeling.inndelingtype === selectedInndelingtype,
+        (inndeling) => inndeling.id === kommune.id && inndeling.inndelingtype === selectedInndelingtype,
       );
 
       if (isAlreadySelected === -1) {
@@ -143,15 +147,6 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
         return;
       }
       setSelectedInndelinger(selectedInndelinger.filter((_, index) => isAlreadySelected !== index).concat());
-    }
-  };
-
-  const flatedataIsAvailable = selectedInndelingtype === "stemmekrets" || selectedInndelingtype === "grunnkrets";
-
-  const toggleFlatedetaljer = (inndelingId: string) => {
-    if (flatedataIsAvailable) {
-      setSelectedFlatedataInndeling(getNewInndeling(inndelingId, selectedInndelingtype, isEditingPanel));
-      openOverlayModal(selectedInndelingtype);
     }
   };
 
@@ -189,6 +184,14 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
               {selectedInndelingtype &&
                 fylker?.map((fylke) => {
                   const fylkeId = getIdFromEntity(fylke);
+
+                  const fylkeInndeling: BaseInndeling = {
+                    id: fylkeId,
+                    nummer: fylke.nummer,
+                    navn: fylke.navn,
+                    inndelingtype: "fylke",
+                  };
+
                   return (
                     <InndelingOption
                       isActive={
@@ -197,7 +200,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
                           : activePanelFylkeId === fylkeId
                       }
                       key={fylkeId}
-                      onClick={() => toggleFylke(fylkeId)}
+                      onClick={() => toggleFylke(fylkeInndeling)}
                       rightIcon={selectedInndelingtype !== "fylke" ? "chevron_right" : undefined}
                       type={selectedInndelingtype === "fylke" ? "checkbox" : "button"}
                     >
@@ -210,26 +213,25 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
             <InndelingerList>
               {kommuner ? (
                 activePanelFylkeId &&
+                selectedInndelingtype &&
                 kommuner.map((kommune) => {
                   const kommuneId = getIdFromEntity(kommune);
+
+                  const kommuneInndeling: BaseInndeling = {
+                    id: kommuneId,
+                    nummer: kommune.nummer,
+                    navn: kommune.navn,
+                    inndelingtype: selectedInndelingtype,
+                  };
                   return (
-                    <FlatedataWrapper key={kommuneId}>
-                      <InndelingOption
-                        isActive={isInndelingSelected(selectedInndelingtype, kommuneId)}
-                        onClick={() => toggleKommune(kommuneId)}
-                        type={selectedInndelingtype === "kommune" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"}
-                      >
-                        {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
-                      </InndelingOption>
-                      {flatedataIsAvailable && !isEditingPanel && (
-                        <IconButton
-                          variant="ghost"
-                          icon="feed"
-                          aria-label="Vis informasjon om flatene"
-                          onClick={() => toggleFlatedetaljer(kommuneId)}
-                        />
-                      )}
-                    </FlatedataWrapper>
+                    <InndelingOption
+                      key={kommuneId}
+                      isActive={isInndelingSelected(selectedInndelingtype, kommuneId)}
+                      onClick={() => toggleKommune(kommuneInndeling)}
+                      type={selectedInndelingtype === "kommune" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"}
+                    >
+                      {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
+                    </InndelingOption>
                   );
                 })
               ) : (
@@ -298,12 +300,6 @@ const InndelingerList = styled.section`
   flex-direction: column;
   gap: 8px;
   overflow-y: auto;
-`;
-
-const FlatedataWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
 `;
 
 export default InndelingerPanel;

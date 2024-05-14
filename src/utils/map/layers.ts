@@ -1,12 +1,10 @@
 import BaseLayer from "ol/layer/Base";
 import TileLayer from "ol/layer/Tile";
-import VectorLayer from "ol/layer/Vector";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { map } from "pages/Kart/constants";
 import { kartlagLayers, grenserLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
-import VectorSource from "ol/source/Vector";
 import { WFS } from "ol/format";
 import { getFeaturesFromGeoJson } from "./geoJson";
 import { addFeaturesToSource } from "./source";
@@ -24,12 +22,6 @@ export const getLayerById = <T extends LayerId>(id: T) => {
   }
 
   return layersWithId[0] as (typeof kartlagLayers & typeof grenserLayers)[T];
-};
-
-export const getVectorLayers = () => {
-  const layers = getLayersArray();
-
-  return layers.filter((layer) => layer instanceof VectorLayer) as VectorLayer<VectorSource>[];
 };
 
 export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
