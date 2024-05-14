@@ -8,6 +8,7 @@ import {
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
 import { Feature } from "ol";
+import { Geometry } from "ol/geom";
 
 // Obs: navnsetting for å unngå overlapp med innebygd History type
 export type HistoryState = {
@@ -20,6 +21,7 @@ export type HistoryChange<T> = {
   from: T;
   to: T;
 };
+
 export type HistoryTypeValues =
   | "grense"
   | "property"
@@ -42,6 +44,10 @@ export type MinimalGrense = {
   type?: GrenseType | undefined;
 };
 
+export type NyGrense = (MinimalGrense & FeatureProperties) & {
+  grensedeling?: Feature<Geometry>[];
+};
+
 export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
 export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
 export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
@@ -61,7 +67,7 @@ export type GrenseArkiveringsEntry = BaseHistoryEntry<"grensearkivering", Featur
 
 export type GrenseTilhorighetEntry = BaseHistoryEntry<"grensetilhorighetendring", KontekstEgenskaper[]>;
 
-export type NyGrenseEntry = BaseHistoryEntry<"nygrense", MinimalGrense & FeatureProperties>;
+export type NyGrenseEntry = BaseHistoryEntry<"nygrense", NyGrense>;
 
 export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling", Feature[]>;
 

@@ -152,9 +152,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     if (!feature) return;
 
     const featureAsGeoJson = featureToGeoJson(feature);
-
     const index = editedFeatures.findIndex((geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id);
-
     // Hvis vi allerede har lagt inn featuren tidligere i historikken,
     // ønsker vi å overskrive den hvis den samme featuren endres senere i historikken
     if (index !== -1) {
@@ -176,6 +174,24 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         newFeatures.forEach((id) => {
           addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
         });
+      } else if (entry.type === "nygrense") {
+        // ny grense er også sær, siden den kan inneholde 1-2 grensedelinger attåt
+        if (
+          "grensedeling" in change.from &&
+          change.from.grensedeling != null &&
+          change.from.grensedeling.length > 0 &&
+          "grensedeling" in change.to &&
+          change.to.grensedeling != null &&
+          change.to.grensedeling.length > 0
+        ) {
+          const featureIds = removeNil(
+            [...change.from.grensedeling, ...change.to.grensedeling].map((f) => f.getId()?.toString()),
+          );
+
+          featureIds.forEach((id) => {
+            addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
+          });
+        }
       }
     });
   });
@@ -196,7 +212,7 @@ export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtk
     featureIsNotAnArchivedNewFeature,
   );
 
-  // Fjerner midlertigie ID fra alle nye grenser og deres dokumentasjonsreferanser, da dette ikke er forventet fra backend
+  // Fjerner midlertidige ID fra alle nye grenser og deres dokumentasjonsreferanser, da dette ikke er forventet fra backend
   endredeFeatures.forEach((endretFeature) => {
     if (endretFeature.id != null && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
 
