@@ -141,16 +141,13 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>, allFeatureEndpoints
   const featureEndpointsToCheck = allFeatureEndpoints.filter(
     (featureEndpoint) => featureEndpoint.featureId !== feature.getId()?.toString(),
   );
-
-  const isHeadConnected2 = featureEndpointsToCheck.find(
+  const isHeadConnected = featureEndpointsToCheck.find(
     (featureEndPoint) => equals(featureEndPoint.endpoints.first, head) || equals(featureEndPoint.endpoints.last, head),
   );
-
-  const isTailConnected2 = featureEndpointsToCheck.find(
+  const isTailConnected = featureEndpointsToCheck.find(
     (featureEndPoint) => equals(featureEndPoint.endpoints.first, tail) || equals(featureEndPoint.endpoints.last, tail),
   );
-
-  return !(isHeadConnected2 && isTailConnected2);
+  return !(isHeadConnected && isTailConnected);
 };
 
 const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {

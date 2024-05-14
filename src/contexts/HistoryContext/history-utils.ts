@@ -10,6 +10,8 @@ import {
   GrenseArkiveringsEntry,
   HistoryEntry,
   HistoryState,
+  GrenseDelingEntry,
+  NyGrense,
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -20,7 +22,7 @@ import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { removeNil } from "utils/list-utils";
 import { Geometry } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
-import { getEntriesUpToIndex } from "contexts/FeatureStyleContext/feature-style-utils";
+import { getEntriesUpToIndex, removeDuplicateIds } from "contexts/FeatureStyleContext/feature-style-utils";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -52,7 +54,6 @@ const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, directio
     editSource.removeFeature(feature);
   }
   if (!coordinates) return;
-
   lineString.setCoordinates(coordinates);
 };
 
@@ -72,8 +73,72 @@ const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direc
 
   const properties = change[direction] as FeatureProperties | undefined;
   if (!properties) return;
-
   feature.setProperties(properties);
+};
+
+const createDummyGrensedelingEntry = (delteFeatures: Feature[], newFeatures: Feature[]): GrenseDelingEntry => ({
+  type: "grensedeling",
+  changes: [
+    {
+      id: "temp-ny-grense-grensedeling",
+      to: newFeatures,
+      from: delteFeatures,
+    },
+  ],
+});
+
+export const handleNyGrense = (entry: NyGrenseEntry, direction: HistoryDirection) => {
+  const delteFeatures = removeNil(entry.changes.flatMap((e) => e.from.grensedeling));
+  const newFeatures = removeNil(entry.changes.flatMap((e) => e.to.grensedeling));
+  if (delteFeatures.length > 0) {
+    handleGrensedeling(createDummyGrensedelingEntry(delteFeatures, newFeatures), direction);
+  }
+  if (direction === "to") {
+    redoGrensedeling(delteFeatures, newFeatures);
+  } else if (direction === "from") {
+    undoGrensedeling(delteFeatures, newFeatures);
+  }
+
+  // Vil ikke ha med grensedeling i feature properties, da det skaper problemer ved serialisering av utkast.
+  // Sender derfor med en representasjon uten grensedeling.
+  const serializableEntryCopy = {
+    changes: entry.changes.map((e) => ({
+      from: {
+        coordinates: e.from.coordinates,
+        shouldArchive: e.from.shouldArchive,
+        inndelingerKontekst: e.from.inndelingerKontekst,
+        kontekstEgenskaper: e.from.kontekstEgenskaper,
+        metadata: e.from.metadata,
+        srid: e.from.srid,
+        type: e.from.type,
+        version: e.from.version,
+      },
+      to: {
+        coordinates: e.to.coordinates,
+        shouldArchive: e.to.shouldArchive,
+        inndelingerKontekst: e.to.inndelingerKontekst,
+        kontekstEgenskaper: e.to.kontekstEgenskaper,
+        metadata: e.to.metadata,
+        srid: e.to.srid,
+        type: e.to.type,
+        version: e.to.version,
+      },
+      id: e.id,
+    })),
+    type: entry.type,
+  };
+  setFeatureCoordinatesAndPropertiesForEntry(serializableEntryCopy, direction);
+};
+
+export const handleGrensedeling = (entry: GrenseDelingEntry, direction: HistoryDirection) => {
+  const deltFeature = entry.changes.flatMap((change) => change.from);
+  const newFeaturesFromDeling = entry.changes.flatMap((change) => change.to);
+  if (direction === "to") {
+    redoGrensedeling(deltFeature, newFeaturesFromDeling);
+    return;
+  }
+
+  undoGrensedeling(deltFeature, newFeaturesFromDeling);
 };
 
 export const setFeaturePropertiesForEntry = (entry: PropertyEntry, direction: HistoryDirection) => {
@@ -81,7 +146,7 @@ export const setFeaturePropertiesForEntry = (entry: PropertyEntry, direction: Hi
 };
 
 export const setFeatureCoordinatesAndPropertiesForEntry = (entry: NyGrenseEntry, direction: HistoryDirection) => {
-  entry.changes.forEach((change) => {
+  entry.changes.forEach((change: HistoryChange<FeatureProperties & MinimalGrense>) => {
     setPropertiesFromChange(change, direction);
     setCoordinatesFromChange(change, direction);
   });
@@ -132,38 +197,41 @@ export const undoArchving = (entry: GrenseArkiveringsEntry) => {
   );
 };
 
-export const redoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: Feature[]) => {
-  const properties = deltFeature.getProperties() as FeatureProperties;
-  deltFeature.setProperties({ ...properties, shouldArchive: true });
-  const deltFeatureId = deltFeature.getId()?.toString();
-  if (deltFeatureId != null) {
-    addFeaturesToSource("edit", newFeaturesFromsDeling);
+export const redoGrensedeling = (delteFeatures: Feature[], newFeaturesFromsDeling: Feature[]) => {
+  delteFeatures.forEach((deltFeature) => {
+    const properties = deltFeature.getProperties() as FeatureProperties;
+    deltFeature.setProperties({ ...properties, shouldArchive: true });
+    const deltFeatureId = deltFeature.getId()?.toString();
+    if (deltFeatureId == null) return;
     removeFeaturesFromSourceByIds("edit", [deltFeatureId]);
 
     // Hvis featuren som ble delt er en eksisterende feature vil vi vise den som arkivert
     if (!isTempFeatureId(deltFeatureId)) {
       addFeaturesToSource("archived", [deltFeature]);
     }
-  }
+  });
+  addFeaturesToSource("edit", newFeaturesFromsDeling);
 };
 
-export const undoGrensedeling = (deltFeature: Feature, newFeaturesFromsDeling: Feature[]) => {
-  const idsToRemove = removeNil(newFeaturesFromsDeling.map((feature) => feature.getId()?.toString()));
-  const properties = deltFeature.getProperties() as FeatureProperties;
-  deltFeature.setProperties({ ...properties, shouldArchive: false });
+export const undoGrensedeling = (delteFeatures: Feature[], newFeaturesFromsDeling: Feature[]) => {
+  delteFeatures.forEach((deltFeature) => {
+    const properties = deltFeature.getProperties() as FeatureProperties;
+    deltFeature.setProperties({ ...properties, shouldArchive: false });
+    addFeaturesToSource("edit", [deltFeature]);
 
-  removeFeaturesFromSourceByIds("edit", idsToRemove);
-  addFeaturesToSource("edit", [deltFeature]);
+    const deltFeatureId = deltFeature.getId()?.toString();
+    if (deltFeatureId == null) return;
 
-  const deltFeatureId = deltFeature.getId()?.toString();
-
-  if (deltFeatureId != null) {
+    // Om featuren som ble splittet ikke var en ny grense vises den som arkivert, vi må derfor fjerne den fra archived layer
     if (!isTempFeatureId(deltFeatureId)) {
       removeFeaturesFromSourceByIds("archived", [deltFeatureId]);
     }
-  }
-  // Om featuren som ble splittet ikke var en ny grense vises den som artkivert, vi må derfor fjerne den fra archived layer
+  });
+
+  const idsToRemove = removeNil(newFeaturesFromsDeling.map((feature) => feature.getId()?.toString()));
+  removeFeaturesFromSourceByIds("edit", idsToRemove);
 };
+
 export const getChangeIds = (historyEntry: HistoryEntry): string[] => {
   const changedFeatureIds: string[] = [];
   historyEntry.changes.forEach((change) => {
@@ -173,10 +241,25 @@ export const getChangeIds = (historyEntry: HistoryEntry): string[] => {
       const changesTo = change.to as Feature<Geometry>[];
       const idsToAppend = removeNil(changesTo.map((feature) => feature.getId()?.toString()).filter(Boolean));
       changedFeatureIds.push(...idsToAppend);
+    } else if (historyEntry.type === "nygrense") {
+      const nyGrenseChange = change as HistoryChange<NyGrense>;
+
+      if (
+        nyGrenseChange.from.grensedeling != null &&
+        nyGrenseChange.to.grensedeling != null &&
+        nyGrenseChange.from.grensedeling.length > 0
+      ) {
+        // NyGrense har ikke den gamle IDen for grensedeling satt direkte på en egenskap i endringen (change.id)
+        // på samme måte som grensedeling, må derfor hente fra changeFrom også.
+        const idsToAppend = [...nyGrenseChange.from.grensedeling, ...nyGrenseChange.to.grensedeling]
+          .flatMap((feature) => feature.getId()?.toString() ?? "")
+          .filter(Boolean);
+        changedFeatureIds.push(...removeNil(idsToAppend));
+      }
     }
     changedFeatureIds.push(change.id);
   });
-  return changedFeatureIds;
+  return removeDuplicateIds(changedFeatureIds);
 };
 /**
  * Hjelpefunksjon for å lete etter featureIds til nye grenser som kun eksisterer etter nåværende indexposisjon
