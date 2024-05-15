@@ -101,14 +101,12 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       <Table>
         <thead>
           <tr>
-            <FlatedataTableHeader {...sortHeaderProps("nummer")}>{`${inndelingPrefix}nummer`}</FlatedataTableHeader>
-            <FlatedataTableHeader {...sortHeaderProps("navn")}>{`${inndelingPrefix}navn`}</FlatedataTableHeader>
+            <FlatedataTableHeader text={`${inndelingPrefix}nummer`} {...sortHeaderProps("nummer")} />
+            <FlatedataTableHeader text={`${inndelingPrefix}navn`} {...sortHeaderProps("navn")} />
             {isAdministrativEnhet ? (
-              <FlatedataTableHeader {...sortHeaderProps("samiskforvaltningsomraade")}>Merknad</FlatedataTableHeader>
+              <FlatedataTableHeader text="Merknad" {...sortHeaderProps("samiskforvaltningsomraade")} />
             ) : mainInndeling.inndelingtype === "stemmekrets" ? (
-              <FlatedataTableHeader {...sortHeaderProps("valgdistriktsnummer")}>
-                Valgdistriktsnummer
-              </FlatedataTableHeader>
+              <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
             ) : (
               <th></th>
             )}
@@ -191,7 +189,7 @@ const Table = styled.table`
     border-bottom: 1px solid var(--kvib-colors-chakra-border-color);
 
     &:first-child {
-      padding-left: 24px;
+      padding-left: 16px;
     }
   }
 `;
