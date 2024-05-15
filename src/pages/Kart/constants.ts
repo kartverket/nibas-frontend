@@ -1,11 +1,17 @@
 import { Overlay } from "ol";
 import Map from "ol/Map";
-import { fromLonLat } from "ol/proj";
 import View from "ol/View";
-import { defaultProjection, registerProjections } from "utils/map/projections";
+import { Extent } from "ol/extent";
 import { defaults } from "ol/interaction/defaults";
+import { fromLonLat } from "ol/proj";
+import { mapProjectionEPSGCode, registerAllUsedProjections } from "utils/map/projections";
 
-registerProjections();
+registerAllUsedProjections();
+
+export const norwayExtent: Extent = [
+  ...fromLonLat([4, 57], mapProjectionEPSGCode),
+  ...fromLonLat([34, 71], mapProjectionEPSGCode),
+];
 
 export const initialMapCenter = fromLonLat([2.757933, 52.911491]);
 export const initialMapZoom = 6;
@@ -17,7 +23,7 @@ export const map = new Map({
     minZoom: initialMapZoom,
     maxZoom: 30,
     center: initialMapCenter,
-    projection: defaultProjection,
+    projection: mapProjectionEPSGCode,
   }),
   layers: [],
   controls: [],
