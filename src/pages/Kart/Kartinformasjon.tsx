@@ -5,10 +5,10 @@ import { zindex } from "utils/constants";
 import { map } from "./constants";
 import { EPSGCode, projectionDefinitions } from "utils/map/projections";
 
-export const getCurrentProjection = () => map.getView().getProjection();
+const getProjection = () => map.getView().getProjection();
 
-export const getCurrentProjectionName = (inShort: boolean) => {
-  const projection = getCurrentProjection();
+const getProjectionName = (inShort: boolean) => {
+  const projection = getProjection();
   return projectionDefinitions.find((def) => def.epsgCode === projection.getCode())?.[inShort ? "shortName" : "name"];
 };
 
@@ -49,7 +49,7 @@ const Kartinformasjon = () => {
   return (
     <>
       <Container>
-        <ProjectionSpan>EU89 UTM-33</ProjectionSpan>
+        <ProjectionSpan>{getProjectionName(true)}</ProjectionSpan>
         <Position id="mouse-position" />
       </Container>
       <Scale id="scale-bar" />
