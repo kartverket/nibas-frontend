@@ -158,7 +158,7 @@ const FlatedataTabList = styled(TabList)`
   overflow-x: auto;
   border-bottom: none;
   box-shadow: inset 0 -2px var(--kvib-colors-chakra-border-color);
-  padding-left: 24px;
+  padding-left: 16px;
 
   &::after {
     content: "";
