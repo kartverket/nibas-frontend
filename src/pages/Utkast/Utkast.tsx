@@ -3,7 +3,6 @@ import AlertModal from "components/Modals/AlertModal";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
-import { Endringstype } from "pages/Kart/constants";
 import LandingHeader from "pages/Landing/LandingHeader";
 import PrivacyFooter from "pages/Landing/PrivacyFooter";
 import { Link as RouterLink } from "react-router-dom";
@@ -12,17 +11,6 @@ import { UtkastResponse } from "types/api";
 import { routes } from "utils/routes";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
-
-const endringstypeOrder: Record<Endringstype, "left" | "right"> = {
-  "Vedtatt grensejustering": "left",
-  "Vedtatt sammenslåing": "left",
-  "Vedtatt deling": "left",
-  Fastsetting: "right",
-  Kvalitetsheving: "right",
-  Navneendring: "right",
-  Nummerendring: "right",
-  Retting: "right",
-};
 
 type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
 
@@ -34,17 +22,28 @@ const Utkast = () => {
   const { data: utkasts, isLoading } = useUtkasts();
 
   // Vi deler opp utkast i to kolonner manuelt i et forsøk på å holde lengden jevn
-  const rightColumn: UtkastGroup = {};
-  const leftColumn: UtkastGroup = {};
+  const rightColumn: UtkastGroup = {
+    Fastsetting: [],
+    Kvalitetsheving: [],
+    Navneendring: [],
+    Nummerendring: [],
+    Retting: [],
+  };
 
-  utkasts?.forEach((u) => {
-    // Grupperer utkast etter endringstype
-    if (endringstypeOrder[u.endringstype as Endringstype] === "left") {
-      leftColumn[u.endringstype] = [...(leftColumn[u.endringstype] ?? []), u];
-    } else {
-      rightColumn[u.endringstype] = [...(rightColumn[u.endringstype] ?? []), u];
+  const leftColumn: UtkastGroup = {
+    "Vedtatt grensejustering": [],
+    "Vedtatt sammenslåing": [],
+    "Vedtatt deling": [],
+  };
+
+  // Grupperer utkast etter endringstype
+  for (const utkast of utkasts ?? []) {
+    if (utkast.endringstype in leftColumn) {
+      leftColumn[utkast.endringstype] = [...leftColumn[utkast.endringstype], utkast];
+    } else if (utkast.endringstype in rightColumn) {
+      rightColumn[utkast.endringstype] = [...rightColumn[utkast.endringstype], utkast];
     }
-  });
+  }
 
   return (
     <PageContainer>
@@ -74,9 +73,11 @@ const Utkast = () => {
               .map(([endringstype, utkastsInGroup]) => (
                 <EndringstypeGroup key={endringstype}>
                   <Heading size="md">{endringstype}</Heading>
-                  {utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => (
-                    <UtkastCard key={u.id} utkast={u} />
-                  ))}
+                  {utkastsInGroup.length > 0 ? (
+                    utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => <UtkastCard key={u.id} utkast={u} />)
+                  ) : (
+                    <p>Det finnes ingen utkast av denne utkasttypen.</p>
+                  )}
                 </EndringstypeGroup>
               ))}
           </EndringstypeList>
