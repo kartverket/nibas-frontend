@@ -88,12 +88,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return a.id === b.id && a.inndelingtype === b.inndelingtype;
   };
 
-  const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
-    return (
-      a.id === b.id && a.inndelingtype === b.inndelingtype && a.isVisible === b.isVisible && a.isEditing === b.isEditing
-    );
-  };
-
   /**
    * Denne useEffecten er kjernen av motoren i InndelingerContext og tar for seg det å legge til features fra inndelingen i kartet
    *
@@ -196,7 +190,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     if (inndelingFeatures.length === 0) return;
 
     // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
-    if (activeInndelinger.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
+    if (activeInndelinger.every((inndeling) => inndeling.isEditing)) editSource.clear(true);
     for (const inndeling of activeInndelinger.filter((selectedInndeling) => selectedInndeling.isVisible)) {
       const source = getLayerById(inndeling.inndelingtype).getSource();
       if (source) source.clear(true);
@@ -331,6 +325,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       newInndelinger[newInndeling.inndelingtype].set(newInndeling.id, newInndeling);
     }
 
+    // Rydder opp alle inndelinger som nå verken er synlige eller redigerte, slik at man andre steder i koden ikke trenger å
+    // ta stilling til dette
     const newInndelingerList = Object.values(newInndelinger).flatMap((newInndelingerMap) => [
       ...newInndelingerMap.values(),
     ]);
@@ -340,8 +336,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         newInndelinger[newInndeling.inndelingtype].delete(newInndeling.id);
       }
     }
-
-    console.log("new inndelinger", newInndelinger);
 
     setInndelinger(newInndelinger);
     setActiveInndelinger(inndelingerToSelect);

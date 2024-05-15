@@ -37,7 +37,9 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
 
   useEffect(() => {
     if (isOpen) {
-      isEditingPanel ? setSelectedInndelinger([]) : setSelectedInndelinger(getAllInndelinger());
+      isEditingPanel
+        ? setSelectedInndelinger([])
+        : setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isVisible));
     }
   }, [getAllInndelinger, isEditingPanel, isOpen]);
 
@@ -45,6 +47,7 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
     closeOverlayModal();
     setSelectedInndelingtype(null);
     setActivePanelFylkeId("");
+    setSelectedInndelinger([]);
   };
 
   const selectNewInndelinger = () => {
@@ -136,7 +139,8 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
         setSelectedInndelinger(selectedInndelinger.concat(newInndeling));
         return;
       }
-      setSelectedInndelinger(selectedInndelinger.filter((_, index) => isAlreadySelected !== index).concat());
+
+      setSelectedInndelinger(selectedInndelinger.filter((_, index) => isAlreadySelected !== index));
     }
   };
 
