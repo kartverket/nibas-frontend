@@ -1,13 +1,13 @@
-import { HistoryEntry, HistoryTypeValues, MinimalGrense } from "contexts/HistoryContext/types";
-import { useMemo } from "react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { HistoryChange, HistoryTypeValues, MinimalGrense } from "contexts/HistoryContext/types";
 import { UtkastRequestWithoutOperations } from "contexts/UtkastContext/types";
 import { Feature } from "ol";
+import { useMemo } from "react";
 import {
   FeatureProperties,
-  StemmekretsSammenslaaingsendringRequest,
   KontekstEgenskaper,
   MetadataRequest,
+  StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
 
 type HistoryTypeData =
@@ -27,6 +27,8 @@ export type AbstractedHistoryEntry = {
   to: HistoryTypeData;
 };
 
+type FlatHistoryEntry = { type: HistoryTypeValues; change: HistoryChange<HistoryTypeData> };
+
 export const useUnsavedEndringer = () => {
   const { history } = useHistory();
 
@@ -35,31 +37,36 @@ export const useUnsavedEndringer = () => {
   const abstractedHistory = useMemo(() => {
     const currentHistorySlice = history.entries.slice(0, history.index);
 
-    const firstEntriesForLokalids: Record<string, HistoryEntry> = {};
-    const latestEntriesForLokalids: Record<string, HistoryEntry> = {};
+    const firstEntriesForLokalids: Record<string, FlatHistoryEntry> = {};
+    const latestEntriesForLokalids: Record<string, FlatHistoryEntry> = {};
 
     for (const entry of currentHistorySlice) {
-      const change = entry.changes[0];
-      const key = change.id + "_" + entry.type;
-      if (!(key in firstEntriesForLokalids)) {
-        firstEntriesForLokalids[key] = entry;
+      for (const change of entry.changes) {
+        const key = change.id + "_" + entry.type;
+        if (!(key in firstEntriesForLokalids)) {
+          const flatHistoryEntry = { type: entry.type, change: change };
+          firstEntriesForLokalids[key] = flatHistoryEntry;
+        }
       }
     }
     for (const entry of currentHistorySlice.toReversed()) {
-      const change = entry.changes[0];
-      const key = change.id + "_" + entry.type;
-      if (!(key in latestEntriesForLokalids)) {
-        latestEntriesForLokalids[key] = entry;
+      for (const change of entry.changes) {
+        const key = change.id + "_" + entry.type;
+        if (!(key in latestEntriesForLokalids)) {
+          const flatHistoryEntry = { type: entry.type, change: change };
+          latestEntriesForLokalids[key] = flatHistoryEntry;
+        }
       }
     }
+    const abstractedChanges: AbstractedHistoryEntry[] = Object.entries(firstEntriesForLokalids).map(
+      ([lokalid, entry]) => {
+        const firstFrom = entry.change.from;
+        const lastTo = latestEntriesForLokalids[lokalid].change.to;
+        return { type: entry.type, lokalid: lokalid, from: firstFrom, to: lastTo };
+      },
+    );
 
-    const minimalChanges: AbstractedHistoryEntry[] = Object.entries(firstEntriesForLokalids).map(([lokalid, entry]) => {
-      const firstFrom = entry.changes[0].from;
-      const lastTo = latestEntriesForLokalids[lokalid].changes[0].to;
-      return { type: entry.type, lokalid: lokalid, from: firstFrom, to: lastTo };
-    });
-
-    return minimalChanges;
+    return abstractedChanges;
   }, [history.entries, history.index]);
 
   return abstractedHistory;
