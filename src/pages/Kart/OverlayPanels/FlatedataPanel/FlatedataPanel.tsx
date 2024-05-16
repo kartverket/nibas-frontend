@@ -76,7 +76,7 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
   };
 
   return (
-    <Modal isOpen={true} onClose={handleCloseModal} scrollBehavior="inside">
+    <Modal isOpen={true} blockScrollOnMount={isOpen} onClose={handleCloseModal} scrollBehavior="inside">
       <ConditionalModalContainer $isOpen={isOpen}>
         <ModalOverlay onClick={handleCloseModal} />
         <ModalContent as={FlatedataPanelContent}>
