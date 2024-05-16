@@ -110,6 +110,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             ) : (
               <th></th>
             )}
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -167,7 +168,7 @@ const Container = styled(TabPanel)`
 
 const Table = styled.table`
   display: grid;
-  grid-template-columns: auto auto 1fr;
+  grid-template-columns: auto auto 1fr auto;
   grid-auto-rows: max-content;
   width: 100%;
   overflow: auto;

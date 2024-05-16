@@ -13,6 +13,40 @@ import { getIdFromEntity } from "utils/api";
 import { css, styled } from "styled-components";
 import { FlatedataInputs } from "./flatedata-utils";
 import { ValidationError } from "components/Input";
+import { getFeatureIfExistsInAnyLayer } from "utils/features";
+import { getRepresentasjonspunktId } from "utils/map/source";
+import { Icon, Tooltip } from "@kvib/react";
+import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
+
+type FremtidigEndringIconProps = {
+  formattedDate: string | undefined;
+};
+
+const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
+  return (
+    formattedDate != null && (
+      <Tooltip
+        label={`Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`}
+        placement="left"
+        hasArrow
+      >
+        <IconContainer>
+          <Icon
+            color="var(--kvib-colors-blue-500)"
+            aria-label="Inndelingen har fremtidig endring"
+            icon="lock_clock"
+          ></Icon>
+        </IconContainer>
+      </Tooltip>
+    )
+  );
+};
+
+const IconContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 type Props = {
   inndelingtype: Inndelingtype;
@@ -55,6 +89,12 @@ const FlatedataTableRow = ({
     previousValues.current = structuredClone(getValues());
   };
 
+  // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
+  // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
+  const disabledDate = getFeatureIfExistsInAnyLayer(getRepresentasjonspunktId(inndelingId))?.get("gyldigTil") as
+    | string
+    | undefined;
+
   useHistoryFormSync<MetadataEntry>({
     entityId: inndelingId,
     redoEventKey: `${inndelingtype}Redo`,
@@ -70,6 +110,7 @@ const FlatedataTableRow = ({
           <TableCell>{getNavnInSpraak(inndeling.navn, "nor")}</TableCell>
           <MerknadCell
             isEditing={isEditing}
+            isDisabled={disabledDate != null}
             data={getValues(`${inndelingId}.samiskforvaltningsomraade`) ?? inndeling.samiskforvaltningsomraade}
             validationError={
               inndelingErrors && "samiskforvaltningsomraade" in inndelingErrors
@@ -78,11 +119,17 @@ const FlatedataTableRow = ({
             }
             {...register(`${inndelingId}.samiskforvaltningsomraade`)}
           />
+          <TableCell>
+            <FremtidigEndringIcon
+              formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}
+            />
+          </TableCell>
         </>
       ) : (
         <>
           <InputCell
             isEditing={isEditing}
+            isDisabled={disabledDate != null}
             data={getValues(`${inndelingId}.nummer`) ?? inndeling.nummer}
             validationError={
               inndelingErrors && "nummer" in inndelingErrors ? validationError(inndelingErrors.nummer) : undefined
@@ -94,6 +141,7 @@ const FlatedataTableRow = ({
           />
           <InputCell
             isEditing={isEditing}
+            isDisabled={disabledDate != null}
             data={getValues(`${inndelingId}.navn`) ?? inndeling.navn}
             validationError={
               inndelingErrors && "navn" in inndelingErrors ? validationError(inndelingErrors.navn) : undefined
@@ -101,6 +149,11 @@ const FlatedataTableRow = ({
             {...register(`${inndelingId}.navn`, isStemmekretsInndeling(inndeling) ? registerOptions.navn : undefined)}
           />
           <TableCell>{isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer ?? "" : ""}</TableCell>
+          <TableCell>
+            <FremtidigEndringIcon
+              formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}
+            />
+          </TableCell>
         </>
       )}
     </Row>
