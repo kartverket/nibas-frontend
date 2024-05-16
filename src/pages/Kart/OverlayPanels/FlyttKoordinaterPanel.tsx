@@ -1,21 +1,28 @@
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { PanelHeader, PanelProps, AbsolutePanel } from "./Panel";
+import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, Select, useToast } from "@kvib/react";
 import Input from "components/Input";
-import { useForm } from "react-hook-form";
-import { styled } from "styled-components";
-import LineString from "ol/geom/LineString";
-import { useCallback, useEffect, useState } from "react";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { HistoryChange, MinimalGrense, HistoryDirection, GrenseEntry } from "contexts/HistoryContext/types";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
-import Point from "ol/geom/Point";
-import { Button, FormControl, FormErrorMessage, Spacer, useToast } from "@kvib/react";
-import { editSource } from "hooks/layers/constants";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { GrenseEntry, HistoryChange, HistoryDirection, MinimalGrense } from "contexts/HistoryContext/types";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
-import { Feature } from "ol";
+import { editSource } from "hooks/layers/constants";
 import useNibasApi from "hooks/useNibasApi";
-import { isPointInsideMultiPolygon } from "./NavigasjonPanel/koordinater-utils";
+import { Feature } from "ol";
+import LineString from "ol/geom/LineString";
+import Point from "ol/geom/Point";
+import { useCallback, useEffect, useState } from "react";
+import { ChangeHandler, useForm } from "react-hook-form";
+import { styled } from "styled-components";
+import { EPSGCode, mapProjectionEPSGCode, projectionDefinitions } from "utils/map/projections";
+import { getLabelsFromProjection } from "../Kartinformasjon";
+import {
+  decimalCoordinatePattern,
+  dmsCoordinatePattern,
+  isPointInsideMultiPolygon,
+  transformCoordinatesToProjection,
+} from "./NavigasjonPanel/koordinater-utils";
+import { AbsolutePanel, PanelHeader, PanelProps } from "./Panel";
 
 type KoordinaterFormData = {
   north: number;
@@ -25,9 +32,14 @@ type KoordinaterFormData = {
 const Form = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 24px;
   padding-bottom: 16px;
+`;
+
+const SpacedFormControl = styled(FormControl)`
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 `;
 
 const InputRow = styled.div`
@@ -36,8 +48,12 @@ const InputRow = styled.div`
   gap: 16px;
 `;
 
-export const coordinateDecimalPattern = /^-?\d+(\.\d+)?$/;
-export const coordinateDecimalPatternHelperText = "Koordinatet ditt må være et tall med eventuell punktum-separator";
+const ButtonRow = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 16px;
+  justify-content: flex-end;
+`;
 
 const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
@@ -45,6 +61,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
   const { resetTool } = useToolbar();
   const { addHistoryEntry } = useHistory();
   const toast = useToast();
+  const [projectionOfCoordinates, setProjectionOfCoordinates] = useState<EPSGCode>(mapProjectionEPSGCode);
 
   const defaultValues = (punkt: SelectedPoint) => {
     if (!punkt) {
@@ -66,7 +83,8 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
     handleSubmit,
     getValues,
     reset,
-    formState: { isDirty },
+    clearErrors,
+    formState: { isDirty, errors: formErrors },
   } = useForm<KoordinaterFormData>({
     defaultValues: defaultValues(selectedPoint),
   });
@@ -132,12 +150,13 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
   // Tilbakestill defaultverdier når man endrer eller oppdaterer valgt punkt
   useEffect(() => {
     reset(defaultValues(selectedPoint));
+    setProjectionOfCoordinates(mapProjectionEPSGCode);
   }, [selectedPoint, reset, selectedFeatures]);
 
-  const movePoint = () => {
+  const movePoint = (newCoordinates: [number, number]) => {
     if (selectedPoint) {
       // getValues skal returnere et tall, men den returnerer string for en eller annen grunn
-      const newCoordinates = [+getValues("east"), +getValues("north")];
+      // Transformerer gitte koordinater til det kartet bruker
       const oldGeometry = selectedPoint.getGeometry() as Point;
       const oldCoordinates = oldGeometry.getCoordinates();
 
@@ -188,27 +207,63 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
 
   const onKoordinaterPanelClose = () => {
     closeOverlayPanel();
-    setError(null);
+    setGlobalFormError(null);
     reset();
     resetTool();
   };
 
   const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
-  const [error, setError] = useState<string | null>();
+  const [globalFormError, setGlobalFormError] = useState<string | null>();
 
-  const moveToCoordinate = () => {
-    if (nasjonFetchError != null) {
-      movePoint();
-    } else if (
-      isLoading === false &&
-      nasjon?.omraade?.coordinates != null &&
-      isPointInsideMultiPolygon(getValues("east"), getValues("north"), nasjon?.omraade?.coordinates)
-    ) {
-      setError(null);
-      movePoint();
+  const movePointToCoordinates = () => {
+    setGlobalFormError(null);
+    const [east, north] = [getValues("east"), getValues("north")];
+    const transformedCoordinates = transformCoordinatesToProjection(
+      east,
+      north,
+      projectionOfCoordinates,
+      mapProjectionEPSGCode,
+    );
+    if (transformedCoordinates != null) {
+      if (nasjonFetchError != null) {
+        movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
+      } else if (
+        isLoading === false &&
+        nasjon?.omraade?.coordinates != null &&
+        isPointInsideMultiPolygon(transformedCoordinates[0], transformedCoordinates[1], nasjon?.omraade?.coordinates)
+      ) {
+        movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
+      } else {
+        setGlobalFormError("Koordinatene må være innenfor Norge sine grenser");
+      }
     } else {
-      setError("Koordinatene må være innenfor Norge sine grenser");
+      setGlobalFormError(
+        "Koordinatene er ikke på samme format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+      );
     }
+  };
+
+  const coordinateFieldValidator = {
+    required: `Du må skrive inn et koordinat`,
+    pattern: {
+      value: new RegExp(`(${decimalCoordinatePattern.source})|(${dmsCoordinatePattern.source})`),
+      message:
+        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+    },
+  };
+
+  const registerWithClearErrorsOnChange = (field: keyof KoordinaterFormData) => {
+    const { onChange, ...rest } = register(field, coordinateFieldValidator);
+    const handleOnChange: ChangeHandler = (value) => {
+      clearErrors(field);
+      setGlobalFormError(null);
+      return onChange(value);
+    };
+
+    return {
+      onChange: handleOnChange,
+      ...rest,
+    };
   };
 
   return (
@@ -216,37 +271,58 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
       <PanelHeader onClose={onKoordinaterPanelClose} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>
-      <Form onSubmit={handleSubmit(moveToCoordinate)}>
-        <FormControl isInvalid={error != null}>
+      <Form onSubmit={handleSubmit(movePointToCoordinates)}>
+        <SpacedFormControl isInvalid={globalFormError != null && formErrors != null}>
+          <Select
+            isInvalid={false}
+            value={projectionOfCoordinates}
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              setProjectionOfCoordinates(e.target.value as EPSGCode)
+            }
+          >
+            {projectionDefinitions.map((projection) => (
+              <option value={projection.epsgCode} key={projection.epsgCode}>
+                {projection.name}
+              </option>
+            ))}
+          </Select>
+          {projectionOfCoordinates !== mapProjectionEPSGCode && (
+            <Alert>
+              <AlertIcon />
+              Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
+              transformert til kartet sitt koordinatsystem.
+            </Alert>
+          )}
           <InputRow>
             <Input
               type="text"
-              inputMode="decimal"
-              pattern={coordinateDecimalPattern.source}
-              title={coordinateDecimalPatternHelperText}
-              label="Nord"
-              {...register("north")}
+              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
+              {...registerWithClearErrorsOnChange("east")}
+              validationError={{
+                showError: !!formErrors.east,
+                message: formErrors.east?.message ?? "",
+              }}
             />
             <Input
               type="text"
-              inputMode="decimal"
-              pattern={coordinateDecimalPattern.source}
-              title={coordinateDecimalPatternHelperText}
-              label="Øst"
-              {...register("east")}
+              label={getLabelsFromProjection(projectionOfCoordinates).y ?? ""}
+              {...registerWithClearErrorsOnChange("north")}
+              validationError={{
+                showError: !!formErrors.north,
+                message: formErrors.north?.message ?? "",
+              }}
             />
           </InputRow>
-          {error != null && <FormErrorMessage>{error}</FormErrorMessage>}
-        </FormControl>
-        <InputRow>
-          <Spacer />
+          {globalFormError != null && <FormErrorMessage>{globalFormError}</FormErrorMessage>}
+        </SpacedFormControl>
+        <ButtonRow>
           <Button variant="tertiary" onClick={onKoordinaterPanelClose}>
             Avbryt
           </Button>
           <Button type="submit" isDisabled={!isDirty}>
             Flytt punkt til koordinater
           </Button>
-        </InputRow>
+        </ButtonRow>
       </Form>
     </AbsolutePanel>
   );

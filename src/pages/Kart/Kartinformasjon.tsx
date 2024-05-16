@@ -1,9 +1,20 @@
-import { styled } from "styled-components";
-import { map } from "./constants";
-import { useEffect } from "react";
 import { MousePosition, ScaleLine } from "ol/control";
+import { useEffect } from "react";
+import { styled } from "styled-components";
 import { zindex } from "utils/constants";
-import { defaultProjection } from "utils/map/projections";
+import { map } from "./constants";
+import { EPSGCode, projectionDefinitions } from "utils/map/projections";
+
+const getProjection = () => map.getView().getProjection();
+
+const getProjectionName = (inShort: boolean) => {
+  const projection = getProjection();
+  return projectionDefinitions.find((def) => def.epsgCode === projection.getCode())?.[inShort ? "shortName" : "name"];
+};
+
+export const getLabelsFromProjection = (projectionEPSGCode: EPSGCode) => {
+  return projectionDefinitions.find((def) => def.epsgCode === projectionEPSGCode)?.xyLabel ?? { x: null, y: null };
+};
 
 const Kartinformasjon = () => {
   useEffect(() => {
@@ -11,9 +22,8 @@ const Kartinformasjon = () => {
       const mousePosition = new MousePosition({
         coordinateFormat: (coordinates) => {
           if (!coordinates) return "";
-          return `${coordinates[1].toFixed(2)}N  ${coordinates[0].toFixed(2)}Ø`;
+          return `${coordinates[0].toFixed(2)}Ø  ${coordinates[1].toFixed(2)}N`;
         },
-        projection: defaultProjection,
         target: document.getElementById("mouse-position") ?? "",
       });
 
@@ -38,11 +48,12 @@ const Kartinformasjon = () => {
 
   return (
     <>
-      <ScaleIndicator id="scale-line" />
       <Container>
+        <ProjectionSpan>{getProjectionName(true)}</ProjectionSpan>
         <Position id="mouse-position" />
-        <Scale id="scale-bar" />
       </Container>
+      <Scale id="scale-bar" />
+      <ScaleIndicator id="scale-line" />
     </>
   );
 };
@@ -51,11 +62,12 @@ const Container = styled.div`
   position: absolute;
   top: 6px;
   left: 8px;
-
+  align-items: center;
   display: flex;
+  justify-content: space-between;
   padding: 2px 8px;
+  width: fit-content;
   gap: 12px;
-
   background: white;
   box-shadow: var(--kvib-shadows-base);
   font-size: var(--kvib-fontSizes-sm);
@@ -65,7 +77,7 @@ const Container = styled.div`
 
 const ScaleIndicator = styled.span`
   position: absolute;
-  bottom: 8px;
+  bottom: 40px;
   left: 8px;
   z-index: ${zindex.farBack};
 
@@ -74,10 +86,13 @@ const ScaleIndicator = styled.span`
   text-align: center;
 `;
 
-const Scale = styled.section`
+const Scale = styled(Container)`
   display: flex;
   align-items: center;
   gap: 8px;
+  top: unset;
+  bottom: 8px;
+  left: 8px;
 
   /* Vi hindrer OpenLayers sin innebygde styling fra å sette bredde ved å bare ha inline-elementer */
   .ol-scale-bar-inner {
@@ -99,6 +114,10 @@ const Position = styled.span`
   div {
     white-space: pre;
   }
+`;
+
+const ProjectionSpan = styled.span`
+  color: var(--kvib-colors-gray-700);
 `;
 
 export default Kartinformasjon;

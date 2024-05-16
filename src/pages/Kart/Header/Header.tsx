@@ -54,8 +54,8 @@ const Header = () => {
       title: "Ulagrede endringer i utkast",
       description:
         "Du har ulagrede endringer i utkastet ditt. Å redigere en ny inndeling vil forkaste endringene i utkastet. Ønsker du å fortsette?",
-      acceptText: "Ja",
-      declineText: "Gå tilbake",
+      acceptText: "Forkast endringene",
+      declineText: "Gå tilbake til redigering",
     });
 
   useKeyboardShortcut("open", () => toggleOverlayModal(utkast ? "inndelinger" : "inndelinger-view"));

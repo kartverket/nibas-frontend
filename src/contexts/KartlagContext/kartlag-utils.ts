@@ -1,9 +1,9 @@
-import { getLayerById } from "utils/map/layers";
-import { MappedLayer } from "./KartlagContext";
 import TileLayer from "ol/layer/Tile";
 import TileSource from "ol/source/Tile";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
+import { getLayerById } from "utils/map/layers";
+import { MappedLayer } from "./KartlagContext";
 
 /**
  * Navigerer rekursivt gjennom kartlagene for å finne laget som skal endres

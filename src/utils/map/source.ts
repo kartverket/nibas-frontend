@@ -1,12 +1,12 @@
+import { archivedSource } from "hooks/layers/constants";
+import { LayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import VectorLayer from "ol/layer/Vector";
-import { getLayerById } from "./layers";
-import { LayerId } from "hooks/layers/types";
 import VectorSource from "ol/source/Vector";
-import { FeatureProperties } from "../../types/api";
 import { isFeatureToBeArchived } from "utils/features";
-import { archivedSource } from "hooks/layers/constants";
+import { FeatureProperties } from "../../types/api";
+import { getLayerById } from "./layers";
 
 export const addEditedFeaturesToSource = (features: Feature<Geometry>[], callback?: () => void) => {
   const editedFeatured = features.filter((f) => !(f.getProperties() as FeatureProperties).shouldArchive);
@@ -56,7 +56,6 @@ export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometr
         return;
       }
     }
-
     newFeatures.push(feature);
   });
 
