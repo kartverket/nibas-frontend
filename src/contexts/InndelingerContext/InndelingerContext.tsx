@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { addFeaturesToSource } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
@@ -345,7 +345,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     inndelinger,
     selectInndelinger,
 
-    getAllInndelinger,
+    getAllInndelinger: useCallback(getAllInndelinger, [inndelinger]),
     currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
 
     clearInndelingerAndSources,
