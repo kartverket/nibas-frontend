@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { addFeaturesToSource } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
@@ -79,9 +79,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles } = useFeatureStyle();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
-  const [activeInndelinger, setActiveInndelinger] = useState<Inndeling[]>([]);
+  const [inndelingerToFetch, setInndelingerToFetch] = useState<Inndeling[]>([]);
 
-  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(activeInndelinger);
+  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(inndelingerToFetch);
   const { utkast } = useUtkast();
 
   const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
@@ -190,14 +190,14 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     if (inndelingFeatures.length === 0) return;
 
     // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
-    if (activeInndelinger.every((inndeling) => inndeling.isEditing)) editSource.clear(true);
-    for (const inndeling of activeInndelinger.filter((selectedInndeling) => selectedInndeling.isVisible)) {
+    if (inndelingerToFetch.every((inndeling) => inndeling.isEditing)) editSource.clear(true);
+    for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isVisible)) {
       const source = getLayerById(inndeling.inndelingtype).getSource();
       if (source) source.clear(true);
     }
 
     for (const inndelingWithFeatures of inndelingFeatures) {
-      const currentInndeling = activeInndelinger.find((inndeling) => {
+      const currentInndeling = inndelingerToFetch.find((inndeling) => {
         return inndeling.id === inndelingWithFeatures.id && inndeling.inndelingtype === inndeling.inndelingtype;
       });
 
@@ -240,11 +240,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
     // Dette sikrer også at featurene man får hentet fra inndelingene er tomme, og useEffecten ikke kjører flere ganger
-    setActiveInndelinger([]);
+    setInndelingerToFetch([]);
   }, [
     inndelingFeatures,
     setAndSaveFremtidigEndringStyles,
-    activeInndelinger,
+    inndelingerToFetch,
     setFeatureStylesForUtkast,
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,
@@ -255,7 +255,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       const source = layer.getSource();
       source?.clear(true);
     }
-    setActiveInndelinger([]);
+    setInndelingerToFetch([]);
     setInndelinger(getEmptyInndelinger());
   };
 
@@ -338,17 +338,17 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     }
 
     setInndelinger(newInndelinger);
-    setActiveInndelinger(inndelingerToSelect);
+    setInndelingerToFetch(inndelingerToSelect);
   };
 
   const value = {
     inndelinger,
     selectInndelinger,
 
-    getAllInndelinger: useCallback(getAllInndelinger, [inndelinger]),
+    getAllInndelinger,
     currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
 
-    clearInndelingerAndSources: useCallback(clearInndelingerAndSources, []),
+    clearInndelingerAndSources,
 
     selectedFylkeId,
     setSelectedFylkeId,
