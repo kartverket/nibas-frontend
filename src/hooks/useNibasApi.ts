@@ -41,10 +41,10 @@ type ResponseType<Path extends ApiPath> = paths[Path] extends {
   ? ResType
   : never;
 
-export const getModifiedUrl = <Path extends ApiPath>(url: string | null, params: GetParameters<Path>) => {
+export const getUrlWithParameters = <Path extends ApiPath>(url: Path | null, params: GetParameters<Path>) => {
   if (params == null || url == null) return url;
 
-  let modifiedUrl = url;
+  let modifiedUrl = url.toString();
 
   const pathRegex = /{(\w+)}/i;
   const paramKeys = Object.keys(params);
@@ -101,7 +101,7 @@ const useNibasApi = <Path extends ApiPath>(
 ) => {
   const auth = useAuthentication();
 
-  const urlWithOptionalParams = params ? getModifiedUrl(url, params) : url;
+  const urlWithOptionalParams = params ? getUrlWithParameters(url, params) : url;
 
   return useSWR<ResponseType<Path>>([urlWithOptionalParams, auth.token], fetcherWithToken, swrOptions);
 };

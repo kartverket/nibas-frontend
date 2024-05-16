@@ -1,5 +1,5 @@
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { getModifiedUrl } from "hooks/useNibasApi";
+import { getUrlWithParameters } from "hooks/useNibasApi";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { useMemo } from "react";
 import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
@@ -72,13 +72,13 @@ const inndelingWithGrenseFetcher = async ([inndelinger, token]: [Inndeling[], st
   const promises: Promise<InndelingWithFeatureCollection>[] = inndelinger.map(async (inndeling) => {
     const grenserUrl = getGrenserRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
     const geoJSONFeatures = await fetcherWithToken([
-      getModifiedUrl<typeof grenserUrl>(grenserUrl, { id: inndeling.id }),
+      getUrlWithParameters<typeof grenserUrl>(grenserUrl, { id: inndeling.id }),
       token,
     ]);
 
     const inndelingUrl = getInndelingRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
     const inndelingerResponses = await fetcherWithToken([
-      getModifiedUrl<typeof inndelingUrl>(inndelingUrl, { id: inndeling.id }),
+      getUrlWithParameters<typeof inndelingUrl>(inndelingUrl, { id: inndeling.id }),
       token,
     ]);
 
