@@ -1,16 +1,17 @@
 import { Badge, Card, Icon, Text } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
-import { HistoryTypeValues } from "contexts/HistoryContext/types";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { ReactNode, useEffect, useState } from "react";
-import { styled } from "styled-components";
-import { getUrlForPath } from "utils/api";
-import { removeNil } from "utils/list-utils";
-import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
 import {
   getBodyTextForNumericChange,
   getTitleForEndringstype,
 } from "components/Endringslogg/Endringcard/EndringCardUtils";
+import { HistoryTypeValues } from "contexts/HistoryContext/types";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { ReactNode, useEffect, useState } from "react";
+import { styled } from "styled-components";
+import { FylkeRequest, KommuneRequest } from "types/api";
+import { getUrlForPath } from "utils/api";
+import { removeNil } from "utils/list-utils";
+import { AbstractedHistoryEntry } from "../hooks/useUnsavedEndringer";
 
 type Endring = {
   fra: ReactNode;
@@ -62,7 +63,7 @@ const getTitleAndDescriptionFragments = (
     case "kommune":
       return {
         title: <EndringTitle>Endring på kommuner</EndringTitle>,
-        description: <DetailedFlateEndringerList endringer={endringer} />,
+        description: <DetailedAdministrativFlateEndringerList endringer={endringer} />,
       };
     case "utkast":
       return {
@@ -123,6 +124,66 @@ const DetailedFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
             <EndringFraTil
               key={i}
               endring={{ fra: `${fraFlate.nummer} ${fraFlate.navn}`, til: `${tilFlate.nummer} ${tilFlate.navn}` }}
+              withBadges
+            />
+          );
+        }
+      })}
+    </Container>
+  );
+};
+
+const AdministrativEnhetDisplay = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+const Merknad = styled(Badge)`
+  display: inline-flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 8px;
+  text-transform: unset;
+  vertical-align: unset;
+  border-radius: 6px;
+  background: var(--kvib-colors-orange-100);
+`;
+
+const DetailedAdministrativFlateEndringerList = ({ endringer }: DetailedEndringerPorps) => {
+  const isAdministrativEnhet = (value: object): value is KommuneRequest | FylkeRequest => {
+    if (!(("administrativenhetsnavn" && "samiskforvaltningsomraade") in value)) return false;
+    return true;
+  };
+  return (
+    <Container>
+      {endringer.map((endring, i) => {
+        const fraFlate = endring.from;
+        const tilFlate = endring.to;
+        if (isAdministrativEnhet(fraFlate) && isAdministrativEnhet(tilFlate)) {
+          return (
+            <EndringFraTil
+              key={i}
+              endring={{
+                fra: (
+                  <AdministrativEnhetDisplay>
+                    {fraFlate.administrativenhetnavn
+                      .sort((a, b) => (a.rekkefoelge ?? 0) - (b.rekkefoelge ?? 0))
+                      .map((obj) => obj.navn)
+                      .join(" - ")}
+                    {fraFlate.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>}
+                  </AdministrativEnhetDisplay>
+                ),
+                til: (
+                  <AdministrativEnhetDisplay>
+                    {tilFlate.administrativenhetnavn
+                      .sort((a, b) => (a.rekkefoelge ?? 0) - (b.rekkefoelge ?? 0))
+                      .map((obj) => obj.navn)
+                      .join(" - ")}
+                    {tilFlate.samiskforvaltningsomraade && <Merknad>Samisk forvaltningsområde</Merknad>}
+                  </AdministrativEnhetDisplay>
+                ),
+              }}
               withBadges
             />
           );
