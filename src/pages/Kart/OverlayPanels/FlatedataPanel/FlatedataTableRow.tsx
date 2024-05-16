@@ -89,6 +89,8 @@ const FlatedataTableRow = ({
     previousValues.current = structuredClone(getValues());
   };
 
+  // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
+  // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
   const disabledDate = getFeatureIfExistsInAnyLayer(getRepresentasjonspunktId(inndelingId))?.get("gyldigTil") as
     | string
     | undefined;
