@@ -30,18 +30,19 @@ const CenteredText = styled.span`
 type MerknadCellProps = {
   data: boolean;
   isEditing: boolean;
+  isDisabled: boolean;
   validationError?: ValidationError;
 };
 
 export const MerknadCell = forwardRef<HTMLInputElement, MerknadCellProps>(function MerknadCell(
-  { data, isEditing, validationError, ...inputProps }: MerknadCellProps,
+  { data, isEditing, validationError, isDisabled, ...inputProps }: MerknadCellProps,
   ref,
 ) {
   return (
     <TableCell>
       {isEditing ? (
         <FormControl isInvalid={validationError?.showError}>
-          <Checkbox ref={ref} {...inputProps} defaultChecked={data}>
+          <Checkbox isDisabled={isDisabled} ref={ref} {...inputProps} defaultChecked={data}>
             Samisk forvaltningsområde
           </Checkbox>
           <FormErrorMessage>{validationError?.message}</FormErrorMessage>

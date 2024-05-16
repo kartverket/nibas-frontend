@@ -13,6 +13,8 @@ import { getIdFromEntity } from "utils/api";
 import { css, styled } from "styled-components";
 import { FlatedataInputs } from "./flatedata-utils";
 import { ValidationError } from "components/Input";
+import { getFeatureIfExistsInAnyLayer } from "utils/features";
+import { getRepresentasjonspunktId } from "utils/map/source";
 
 type Props = {
   inndelingtype: Inndelingtype;
@@ -55,6 +57,9 @@ const FlatedataTableRow = ({
     previousValues.current = structuredClone(getValues());
   };
 
+  const isInndelingDisabled =
+    getFeatureIfExistsInAnyLayer(getRepresentasjonspunktId(inndelingId))?.get("gyldigTil") != null;
+
   useHistoryFormSync<MetadataEntry>({
     entityId: inndelingId,
     redoEventKey: `${inndelingtype}Redo`,
@@ -70,6 +75,7 @@ const FlatedataTableRow = ({
           <TableCell>{getNavnInSpraak(inndeling.navn, "nor")}</TableCell>
           <MerknadCell
             isEditing={isEditing}
+            isDisabled={isInndelingDisabled}
             data={getValues(`${inndelingId}.samiskforvaltningsomraade`) ?? inndeling.samiskforvaltningsomraade}
             validationError={
               inndelingErrors && "samiskforvaltningsomraade" in inndelingErrors
@@ -83,6 +89,7 @@ const FlatedataTableRow = ({
         <>
           <InputCell
             isEditing={isEditing}
+            isDisabled={isInndelingDisabled}
             data={getValues(`${inndelingId}.nummer`) ?? inndeling.nummer}
             validationError={
               inndelingErrors && "nummer" in inndelingErrors ? validationError(inndelingErrors.nummer) : undefined
@@ -94,6 +101,7 @@ const FlatedataTableRow = ({
           />
           <InputCell
             isEditing={isEditing}
+            isDisabled={isInndelingDisabled}
             data={getValues(`${inndelingId}.navn`) ?? inndeling.navn}
             validationError={
               inndelingErrors && "navn" in inndelingErrors ? validationError(inndelingErrors.navn) : undefined
