@@ -28,6 +28,7 @@
     "dev": "vite --debug",
     "serve": "vite preview",
     "test": "vitest run --passWithNoTests",
+    "test:watch": "vitest watch --passWithNoTests",
     "test:coverage": "npm test -- src/* --coverage",
     "lint": "eslint src --max-warnings 0 && stylelint src --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",

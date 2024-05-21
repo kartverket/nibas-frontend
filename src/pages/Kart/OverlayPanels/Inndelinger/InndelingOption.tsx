@@ -19,8 +19,8 @@ const RadioInput = styled(Radio)`
 const CheckOrRadio = ({ isActive, type }: CheckOrRadioProps) => {
   return (
     <>
-      {type === "checkbox" && <CheckboxInput pointerEvents="none" isChecked={isActive} />}
-      {type === "radio" && <RadioInput pointerEvents="none" isChecked={isActive} />}
+      {type === "checkbox" && <CheckboxInput data-testid="checkbox_input" pointerEvents="none" isChecked={isActive} />}
+      {type === "radio" && <RadioInput data-testid="radio_input" pointerEvents="none" isChecked={isActive} />}
     </>
   );
 };
