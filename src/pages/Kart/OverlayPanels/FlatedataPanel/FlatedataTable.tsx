@@ -7,7 +7,7 @@ import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
 import FlatedataTableHeader from "./FlatedataTableHeader";
-import { useForm } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import { MetadataResponse } from "types/api";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -24,9 +24,10 @@ type Props = {
   setIsEditing: (isEditing: boolean) => void;
   searchValue: string;
   clearSearch: () => void;
+  formMethods: UseFormReturn<FlatedataInputs>;
 };
 
-const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch }: Props) => {
+const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch, formMethods }: Props) => {
   const { utkast } = useUtkast();
   const isAdministrativEnhet = mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune";
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
@@ -38,7 +39,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     `${mainInndeling.inndelingtype === "fylke" ? "kommune" : mainInndeling.inndelingtype}endringer`,
   ) ?? []) as MetadataResponse[];
 
-  const formMethods = useForm<FlatedataInputs>();
   const {
     reset,
     getValues,
