@@ -75,7 +75,8 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
 
   const handleCloseModal = () => {
     handleDraft(() => {
-      closeOverlayModal(), reset();
+      closeOverlayModal();
+      reset();
     });
     setIsEditing(false);
     setTabIndex(0);

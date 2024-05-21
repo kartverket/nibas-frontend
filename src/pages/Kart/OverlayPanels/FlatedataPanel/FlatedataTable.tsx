@@ -24,7 +24,7 @@ type Props = {
   setIsEditing: (isEditing: boolean) => void;
   searchValue: string;
   clearSearch: () => void;
-  formMethods: UseFormReturn<FlatedataInputs, unknown, undefined>;
+  formMethods: UseFormReturn<FlatedataInputs>;
 };
 
 const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch, formMethods }: Props) => {
