@@ -21,6 +21,8 @@ import { capitalize } from "utils/string-utils";
 import { useState } from "react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSearch from "hooks/useSearch";
+import { useForm } from "react-hook-form";
+import { FlatedataInputs } from "./flatedata-utils";
 
 const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
   const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
@@ -40,6 +42,9 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayModal } = useOverlayPanel();
   const { inndelinger } = useInndelinger();
   const { open } = useConfirmationModal();
+
+  const formMethods = useForm<FlatedataInputs>();
+  const { reset } = formMethods;
 
   const allInndelinger = Object.values(inndelinger)
     .flatMap((inndelingerMap) => [...inndelingerMap.values()])
@@ -69,7 +74,9 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
   };
 
   const handleCloseModal = () => {
-    handleDraft(() => closeOverlayModal());
+    handleDraft(() => {
+      closeOverlayModal(), reset();
+    });
     setIsEditing(false);
     setTabIndex(0);
     clearSearch();
@@ -110,6 +117,7 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
                   setIsEditing={setIsEditing}
                   searchValue={searchValue}
                   clearSearch={clearSearch}
+                  formMethods={formMethods}
                 />
               ))}
             </FlatedataTabPanels>
