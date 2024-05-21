@@ -30,7 +30,7 @@ describe("InndelingOption", () => {
       </InndelingOption>,
     );
 
-    expect(container.querySelector("input")?.type).toBeUndefined();
+    expect(container.querySelector("input")).toBeNull();
   });
 
   it("should have a checked input field if isActive is true", () => {
