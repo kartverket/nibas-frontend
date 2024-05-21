@@ -293,22 +293,27 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     const isNewEditingInndelinger = inndelingerToSelect.some((inndeling) => inndeling.isEditing);
 
     for (const inndeling of getAllInndelinger()) {
-      const inndelingIsInSelected = inndelingerToSelect.some(
-        (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
-      );
+      // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes.
+      // I tilfellet inndelingen har isVisible, så kan vi ikke fjerne den plent, og må bare flippe isEditing til false.
+      // Dersom isEditing og isVisible begge blir false fjernes inndelingen senere
+      if (isNewEditingInndelinger && inndeling.isEditing) {
+        const notEditingInndeling: Inndeling = {
+          ...inndeling,
+          isEditing: false,
+        };
 
-      if (!inndelingIsInSelected) {
-        // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
-        if (isNewEditingInndelinger && inndeling.isEditing) {
-          const notEditingInndeling: Inndeling = {
-            ...inndeling,
-            isEditing: false,
-          };
+        newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
+      }
 
-          newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
-        }
+      // Likt som over, så må vi forsikre oss om at alle inndelinger med isVisible fjernes dersom de ikke var med i innsendingen av nye inndelinger
+      // Også her, siden den kan ha isEditing true, kan vi ikke bare fjerne den plent
+      // Siden visningpanelet er additivt og ikke ekslusivt så forsikrer vi oss om å kun flippe inndelingen hvis den ikke er med i inndelingene vi har sendt inn
+      if (!isNewEditingInndelinger && inndeling.isVisible) {
+        const inndelingIsInSelected = inndelingerToSelect.some(
+          (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
+        );
 
-        if (!isNewEditingInndelinger && inndeling.isVisible) {
+        if (!inndelingIsInSelected) {
           const notVisibleInndeling: Inndeling = {
             ...inndeling,
             isVisible: false,
