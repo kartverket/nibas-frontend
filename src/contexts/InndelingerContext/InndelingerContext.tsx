@@ -54,7 +54,7 @@ const getEmptyInndelinger = (): Inndelinger => {
   return inndelinger as Inndelinger;
 };
 
-type InndelingerContextValue = {
+export type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndelinger: (inndelinger: Inndeling[]) => void;
 
@@ -71,7 +71,7 @@ type InndelingerContextValue = {
   isSameInndelinger: (a: Inndeling, b: Inndeling) => boolean;
 };
 
-const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
+export const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
 
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
