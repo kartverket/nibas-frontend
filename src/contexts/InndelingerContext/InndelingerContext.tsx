@@ -1,5 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { addFeaturesToSource } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
@@ -9,7 +9,7 @@ import { GrenseId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { FeatureProperties, Spraak } from "types/api";
+import { AdministrativEnhetNavn, FeatureProperties } from "types/api";
 import useInndelingFeatures from "./useInndelingFeatures";
 import { getFeatureFremtidigEndringDato } from "utils/features";
 
@@ -31,7 +31,7 @@ export const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
 export type BaseInndeling = {
   id: string;
   nummer: string;
-  navn: Spraak[];
+  navn: AdministrativEnhetNavn;
   inndelingtype: Inndelingtype;
 };
 
@@ -56,16 +56,19 @@ const getEmptyInndelinger = (): Inndelinger => {
 
 type InndelingerContextValue = {
   inndelinger: Inndelinger;
-  selectInndeling: (inndeling: Inndeling) => void;
-  currentlyEditedInndeling: Inndeling | null;
+  selectInndelinger: (inndelinger: Inndeling[]) => void;
+
+  currentlyEditingInndelinger: Inndeling[];
   isLoadingInndeling: boolean;
 
-  getNewInndeling: (baseInndeling: BaseInndeling, isEditing: boolean) => Inndeling;
+  getAllInndelinger: () => Inndeling[];
 
   clearInndelingerAndSources: () => void;
 
   selectedFylkeId: string;
   setSelectedFylkeId: (id: string) => void;
+
+  isSameInndelinger: (a: Inndeling, b: Inndeling) => boolean;
 };
 
 const InndelingerContext = createContext<InndelingerContextValue | undefined>(undefined);
@@ -75,25 +78,22 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles } = useFeatureStyle();
 
-  const previousInndelinger = useRef<Inndelinger>();
-  if (previousInndelinger.current == null) previousInndelinger.current = getEmptyInndelinger();
-
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
-  const [selectedInndeling, setSelectedInndeling] = useState<Inndeling | null>(null);
+  const [inndelingerToFetch, setInndelingerToFetch] = useState<Inndeling[]>([]);
 
-  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(selectedInndeling);
+  const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(inndelingerToFetch);
   const { utkast } = useUtkast();
 
   const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
     return a.id === b.id && a.inndelingtype === b.inndelingtype;
   };
 
-  const isEqualInndelinger = (a: Inndeling, b: Inndeling): boolean => {
-    return (
-      a.id === b.id && a.inndelingtype === b.inndelingtype && a.isVisible === b.isVisible && a.isEditing === b.isEditing
-    );
-  };
-
+  /**
+   * Denne useEffecten er kjernen av motoren i InndelingerContext og tar for seg det å legge til features fra inndelingen i kartet
+   *
+   * Etter at bruker velger inndelinger i InndelingerPanel så blir alle features i inndelingen og utkastet hentet med useInndelingFeatures,
+   * og så beregner vi hvordan disse skal legges inn i kartet gjennom denne useEffecten
+   */
   useEffect(() => {
     const addInndelingToLayer = (
       layer: GrenseId,
@@ -123,108 +123,128 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             );
 
             setAndSaveFremtidigEndringStyles(fremtidigEndringFeatureIds);
-
-            zoomToFeatures(features);
           });
         }
       }
     };
 
-    const removeInndelingFromLayer = (layer: GrenseId, features: Feature<Geometry>[]) => {
-      const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
-      removeFeaturesFromSourceByIds(layer, featureIds);
+    const getFeaturesForInndelingAndUtkast = (
+      featuresInUtkast: Feature<Geometry>[],
+      featuresInInndeling: Feature<Geometry>[],
+    ): Feature<Geometry>[] => {
+      const featuresInInndelingWithoutUtkastDuplicates: Feature<Geometry>[] = [...featuresInUtkast];
+
+      for (const feature of featuresInInndeling) {
+        const featureIfInUtkast = featuresInInndelingWithoutUtkastDuplicates.find(
+          (featureFromUtkast) => featureFromUtkast.getId()?.toString() === feature.getId()?.toString(),
+        );
+
+        if (!featureIfInUtkast) {
+          featuresInInndelingWithoutUtkastDuplicates.push(feature);
+        }
+      }
+
+      return featuresInInndelingWithoutUtkastDuplicates;
     };
 
-    if (!selectedInndeling) return;
+    const getSammenslaaingsFeaturesWithDuplicates = (
+      featuresInInndeling: Feature<Geometry>[],
+      inndelingType: Inndelingtype,
+    ): Feature<Geometry>[] => {
+      if (inndelingType !== "stemmekrets") return [];
 
-    if (inndelingFeatures.length > 0) {
-      const defaultPreviousinndeling = {
-        id: selectedInndeling.id,
-        inndelingtype: selectedInndeling.inndelingtype,
-        isEditing: false,
-        isVisible: false,
-      };
+      const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
 
-      const previousInndeling = previousInndelinger.current
-        ? previousInndelinger.current[selectedInndeling.inndelingtype].get(selectedInndeling.id) ??
-          defaultPreviousinndeling
-        : defaultPreviousinndeling;
+      const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+      if (sammenslaaing != null) {
+        const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
+          (stemmekrets) => stemmekrets.lokalId,
+        );
 
-      if (
-        previousInndeling.inndelingtype !== selectedInndeling.inndelingtype ||
-        previousInndeling.isEditing !== selectedInndeling.isEditing
-      ) {
-        editSource.clear(true);
-        if (selectedInndeling.isEditing) {
-          // TODO Kan man unngå så mye looping her? Er det en potensiell performance save?
-          const inndelingFeaturesExcludedUtkastFeatures: Feature<Geometry>[] = [...utkastFeaturesInInndeling];
+        const stemmekretsInSammenslaaingIds = [
+          sammenslaaing.viderefoertStemmekrets.lokalId,
+          ...innlemmedeStemmekretsIder,
+        ];
 
-          for (const inndelingFeature of inndelingFeatures) {
-            const featureIfInUtkast = inndelingFeaturesExcludedUtkastFeatures.find(
-              (featureFromUtkast) => featureFromUtkast.getId()?.toString() === inndelingFeature.getId()?.toString(),
+        for (const feature of featuresInInndeling) {
+          const geometry = feature.getGeometry();
+
+          // Filtrerer ut representasjonspunkt
+          if (geometry instanceof LineString) {
+            const properties = feature.getProperties() as FeatureProperties;
+
+            const kontekstEgenskapIds = removeNil(
+              properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
             );
 
-            if (!featureIfInUtkast) {
-              inndelingFeaturesExcludedUtkastFeatures.push(inndelingFeature);
+            for (const id of kontekstEgenskapIds) {
+              if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
             }
           }
-
-          const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
-
-          if (selectedInndeling.inndelingtype === "stemmekrets") {
-            const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
-            if (sammenslaaing != null) {
-              const innlemmedeStemmekretsIder = sammenslaaing.stemmekretserTilSammenslaaing.map(
-                (stemmekrets) => stemmekrets.lokalId,
-              );
-
-              const stemmekretsInSammenslaaingIds = [
-                sammenslaaing.viderefoertStemmekrets.lokalId,
-                ...innlemmedeStemmekretsIder,
-              ];
-
-              for (const feature of inndelingFeatures) {
-                const geometry = feature.getGeometry();
-
-                // Filtrerer ut representasjonspunkt
-                if (geometry instanceof LineString) {
-                  const properties = feature.getProperties() as FeatureProperties;
-
-                  const kontekstEgenskapIds = removeNil(
-                    properties.kontekstEgenskaper.flatMap((egenskap) => egenskap.id?.lokalid.value),
-                  );
-
-                  for (const id of kontekstEgenskapIds) {
-                    if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
-                  }
-                }
-              }
-            }
-          }
-
-          addInndelingToLayer(
-            "edit",
-            inndelingFeaturesExcludedUtkastFeatures,
-            utkastFeaturesInInndeling,
-            sammenslaaingFeaturesWithDuplicates,
-          );
         }
       }
 
-      if (previousInndeling.isVisible !== selectedInndeling.isVisible) {
-        if (!selectedInndeling.isVisible) {
-          removeInndelingFromLayer(selectedInndeling.inndelingtype, inndelingFeatures);
-        } else {
-          addInndelingToLayer(selectedInndeling.inndelingtype, inndelingFeatures);
-        }
-      }
+      return sammenslaaingFeaturesWithDuplicates;
+    };
 
-      setSelectedInndeling(null);
+    if (inndelingFeatures.length === 0) return;
+
+    // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
+    if (inndelingerToFetch.every((inndeling) => inndeling.isEditing)) editSource.clear(true);
+    for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isVisible)) {
+      const source = getLayerById(inndeling.inndelingtype).getSource();
+      if (source) source.clear(true);
     }
+
+    for (const inndelingWithFeatures of inndelingFeatures) {
+      const currentInndeling = inndelingerToFetch.find((inndeling) => {
+        return inndeling.id === inndelingWithFeatures.id && inndeling.inndelingtype === inndeling.inndelingtype;
+      });
+
+      // Dette skal i praksis ikke skje, da inndelingFeatures er bygd opp basert på selectedInndelinger
+      // Må uansett sjekke casen sånn at TypeScript vet at currentInndeling ikke er null videre
+      if (!currentInndeling) continue;
+
+      /**
+       * Når vi legger inn inndelinger som redigeres må vi i tillegg til å deale med de vanlige featurene i inndelingen, deale med featurene som kommer fra utkastet
+       * Det som må bli gjort er følgende:
+       * 1. Beregne en union av features fra utkast og features fra inndeling uten duplikater, hvor features fra utkast får prioritet
+       * 2. Hente alle features som ble påvirket av eventuelle stemmekretssammenslåinger
+       * 3. Sette korrekt styling på ikke-redigerte features, utkastfeatures og sammmenslåingsfeatures
+       */
+      if (currentInndeling.isEditing) {
+        const featuresInInndelingWithoutUtkastDuplicates = getFeaturesForInndelingAndUtkast(
+          utkastFeaturesInInndeling,
+          inndelingWithFeatures.features,
+        );
+
+        const sammenslaaingsFeaturesWithDuplicates = getSammenslaaingsFeaturesWithDuplicates(
+          inndelingWithFeatures.features,
+          currentInndeling.inndelingtype,
+        );
+
+        addInndelingToLayer(
+          "edit",
+          featuresInInndelingWithoutUtkastDuplicates,
+          utkastFeaturesInInndeling,
+          sammenslaaingsFeaturesWithDuplicates,
+        );
+      }
+
+      if (currentInndeling.isVisible) {
+        addInndelingToLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
+      }
+    }
+
+    zoomToFeatures(inndelingFeatures.flatMap((inndelingWithFeatures) => inndelingWithFeatures.features));
+
+    // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
+    // Dette sikrer også at featurene man får hentet fra inndelingene er tomme, og useEffecten ikke kjører flere ganger
+    setInndelingerToFetch([]);
   }, [
     inndelingFeatures,
-    selectedInndeling,
     setAndSaveFremtidigEndringStyles,
+    inndelingerToFetch,
     setFeatureStylesForUtkast,
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,
@@ -235,42 +255,24 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       const source = layer.getSource();
       source?.clear(true);
     }
-    setSelectedInndeling(null);
+    setInndelingerToFetch([]);
     setInndelinger(getEmptyInndelinger());
   };
 
-  /**
-   * Sjekker om det er en inndeling som redigeres
-   * @returns Inndelingen som redigeres dersom den finnes, null ellers
-   */
-  const getCurrentlyEditingInndeling = (): Inndeling | null => {
-    for (const inndelingerType of Object.values(inndelinger)) {
-      for (const [, inndeling] of inndelingerType) {
-        if (inndeling.isEditing) return inndeling;
-      }
-    }
-
-    return null;
+  const getAllInndelinger = (): Inndeling[] => {
+    return Object.values(inndelinger).flatMap((inndelingerMap) => [...inndelingerMap.values()]);
   };
 
   /**
-   * Gir deg en inndeling basert på hva inndelinger allerede er. Dersom du for eksempel åpner en inndeling som allerede var åpnet, så vil denne automatisk
-   * flippe `isVisible` til `false`.
-   * @returns Inndeling med nye verdier basert på tidligere, eller en default Inndeling
+   * Sjekker hvilke inndelinger som redigeres
+   * @returns Inndelingene som redigeres dersom de finnes, tom liste ellers
    */
-  const getNewInndeling = (baseInndeling: BaseInndeling, isEditing: boolean): Inndeling => {
-    const { id, navn, nummer, inndelingtype } = baseInndeling;
+  const getCurrentlyEditingInndelinger = (): Inndeling[] => {
+    return getAllInndelinger().filter((inndeling) => inndeling.isEditing);
+  };
 
-    const newInndeling: Inndeling = {
-      id,
-      navn,
-      nummer,
-      inndelingtype,
-      isEditing: isEditing,
-      isVisible: !isEditing,
-    };
-
-    const inndelingIfAlreadySelected = inndelinger[inndelingtype].get(id);
+  const getNewInndeling = (newInndeling: Inndeling, isEditing: boolean): Inndeling => {
+    const inndelingIfAlreadySelected = inndelinger[newInndeling.inndelingtype].get(newInndeling.id);
 
     if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
       if (isEditing) {
@@ -285,53 +287,74 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return newInndeling;
   };
 
-  const getInndelingerWithNewInndeling = (newInndeling: Inndeling): Inndelinger => {
-    const newInndelinger: Inndelinger = structuredClone(inndelinger);
+  const selectInndelinger = (inndelingerToSelect: Inndeling[]) => {
+    const newInndelinger = structuredClone(inndelinger);
 
-    newInndelinger[newInndeling.inndelingtype].set(newInndeling.id, newInndeling);
+    const isNewEditingInndelinger = inndelingerToSelect.some((inndeling) => inndeling.isEditing);
 
-    return newInndelinger;
-  };
+    for (const inndeling of getAllInndelinger()) {
+      const inndelingIsInSelected = inndelingerToSelect.some(
+        (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
+      );
 
-  const selectInndeling = (inndeling: Inndeling) => {
-    const inndelingIfExists = inndelinger[inndeling.inndelingtype].get(inndeling.id);
+      if (!inndelingIsInSelected) {
+        // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes
+        if (isNewEditingInndelinger && inndeling.isEditing) {
+          const notEditingInndeling: Inndeling = {
+            ...inndeling,
+            isEditing: false,
+          };
 
-    if (inndelingIfExists != null) {
-      if (isEqualInndelinger(inndelingIfExists, inndeling)) {
-        return;
+          newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
+        }
+
+        if (!isNewEditingInndelinger && inndeling.isVisible) {
+          const notVisibleInndeling: Inndeling = {
+            ...inndeling,
+            isVisible: false,
+          };
+
+          newInndelinger[notVisibleInndeling.inndelingtype].set(notVisibleInndeling.id, notVisibleInndeling);
+        }
       }
     }
 
-    const newInndelinger: Inndelinger = getInndelingerWithNewInndeling(inndeling);
+    for (const inndeling of inndelingerToSelect) {
+      const newInndeling = getNewInndeling(inndeling, isNewEditingInndelinger);
 
-    if (inndeling.isEditing) {
-      const currentlyEditingInndeling = getCurrentlyEditingInndeling();
+      newInndelinger[newInndeling.inndelingtype].set(newInndeling.id, newInndeling);
+    }
 
-      if (currentlyEditingInndeling && currentlyEditingInndeling.id !== inndeling.id) {
-        newInndelinger[currentlyEditingInndeling.inndelingtype].set(currentlyEditingInndeling.id, {
-          ...currentlyEditingInndeling,
-          isEditing: false,
-        });
+    // Rydder opp alle inndelinger som nå verken er synlige eller redigerte, slik at man andre steder i koden ikke trenger å
+    // ta stilling til dette
+    const newInndelingerList = Object.values(newInndelinger).flatMap((newInndelingerMap) => [
+      ...newInndelingerMap.values(),
+    ]);
+
+    for (const newInndeling of newInndelingerList) {
+      if (!newInndeling.isEditing && !newInndeling.isVisible) {
+        newInndelinger[newInndeling.inndelingtype].delete(newInndeling.id);
       }
     }
 
-    previousInndelinger.current = inndelinger;
-    setSelectedInndeling(inndeling);
     setInndelinger(newInndelinger);
+    setInndelingerToFetch(inndelingerToSelect);
   };
 
   const value = {
     inndelinger,
-    selectInndeling,
-    currentlyEditedInndeling: getCurrentlyEditingInndeling(),
-    isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
+    selectInndelinger,
 
-    getNewInndeling,
+    getAllInndelinger: useCallback(getAllInndelinger, [inndelinger]),
+    currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
 
-    clearInndelingerAndSources: useCallback(clearInndelingerAndSources, []),
+    clearInndelingerAndSources,
 
     selectedFylkeId,
     setSelectedFylkeId,
+
+    isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
+    isSameInndelinger,
   };
 
   return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;

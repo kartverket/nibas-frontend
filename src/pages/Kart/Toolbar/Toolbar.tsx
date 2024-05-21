@@ -32,12 +32,12 @@ const Toolbar = () => {
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
 
-  const { inndelinger, currentlyEditedInndeling } = useInndelinger();
-  const isEditing = currentlyEditedInndeling != null;
+  const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
+  const isEditing = currentlyEditingInndelinger.length > 0;
+
+  // TODO Sjekk om vi kan fjerne ubrukte inndelinger
   const flatedataIsAvailable =
-    Object.values(inndelinger)
-      .flatMap((inndelingerMap) => [...inndelingerMap.values()])
-      .filter((inndeling) => inndeling.isVisible || inndeling.isEditing).length > 0;
+    getAllInndelinger().filter((inndeling) => inndeling.isVisible || inndeling.isEditing).length > 0;
 
   const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 

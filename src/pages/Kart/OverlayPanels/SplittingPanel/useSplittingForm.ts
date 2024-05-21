@@ -60,16 +60,23 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     name: "nyeKretser",
   });
 
-  const { currentlyEditedInndeling } = useInndelinger();
-  const inndelingtype = currentlyEditedInndeling?.inndelingtype;
+  const { currentlyEditingInndelinger } = useInndelinger();
+  const inndelingtype = currentlyEditingInndelinger.length > 0 ? currentlyEditingInndelinger[0].inndelingtype : null;
 
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
   const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null);
   const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null);
-  const opprinneligFlateOptions =
-    inndelingtype === "grunnkrets"
-      ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
-      : mapStemmekretResponseToKrets(stemmekretser ?? []);
+
+  const getFlateOptionsFromInndelingType = () => {
+    if (inndelingtype != null) {
+      if (inndelingtype === "grunnkrets") return mapGrunnkretsResponseToKrets(grunnkretser ?? []);
+      if (inndelingtype === "stemmekrets") return mapStemmekretResponseToKrets(stemmekretser ?? []);
+    }
+
+    return [];
+  };
+
+  const opprinneligFlateOptions = getFlateOptionsFromInndelingType();
 
   // Vi ønsker å håndtere opprinnelig krets som en "ny del", og derfor vil vi at den skal vises sammen med de nye kretsene også.
   const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

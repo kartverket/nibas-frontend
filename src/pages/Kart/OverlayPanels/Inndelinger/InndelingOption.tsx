@@ -1,15 +1,41 @@
 import { styled } from "styled-components";
-import { Button, MaterialSymbol } from "@kvib/react";
+import { Button, Checkbox, MaterialSymbol, Radio } from "@kvib/react";
+
+type InndelingButtonType = "checkbox" | "radio" | "button";
+
+type CheckOrRadioProps = {
+  isActive: boolean;
+  type: InndelingButtonType;
+};
+
+const CheckboxInput = styled(Checkbox)`
+  margin-right: 8px;
+`;
+
+const RadioInput = styled(Radio)`
+  margin-right: 8px;
+`;
+
+const CheckOrRadio = ({ isActive, type }: CheckOrRadioProps) => {
+  return (
+    <>
+      {type === "checkbox" && <CheckboxInput data-testid="checkbox_input" pointerEvents="none" isChecked={isActive} />}
+      {type === "radio" && <RadioInput data-testid="radio_input" pointerEvents="none" isChecked={isActive} />}
+    </>
+  );
+};
 
 type Props = {
   onClick: () => void;
   rightIcon?: MaterialSymbol;
   children: React.ReactNode;
   isActive: boolean;
+  type: InndelingButtonType;
 };
 
-const InndelingOption = ({ onClick, rightIcon, children, isActive }: Props) => (
+const InndelingOption = ({ onClick, rightIcon, children, isActive, type }: Props) => (
   <InndelingButton isActive={isActive} variant="ghost" rightIcon={rightIcon} onClick={onClick}>
+    <CheckOrRadio type={type} isActive={isActive} />
     {children}
   </InndelingButton>
 );
