@@ -274,13 +274,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const getNewInndeling = (newInndeling: Inndeling, isEditing: boolean): Inndeling => {
     const inndelingIfAlreadySelected = inndelinger[newInndeling.inndelingtype].get(newInndeling.id);
 
-    if (inndelingIfAlreadySelected && isSameInndelinger(newInndeling, inndelingIfAlreadySelected)) {
+    if (inndelingIfAlreadySelected) {
       if (isEditing) {
-        newInndeling.isEditing = !inndelingIfAlreadySelected.isEditing;
         newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
       } else {
         newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
-        newInndeling.isVisible = !inndelingIfAlreadySelected.isVisible;
       }
     }
 
@@ -309,8 +307,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       // Også her, siden den kan ha isEditing true, kan vi ikke bare fjerne den plent
       // Siden visningpanelet er additivt og ikke ekslusivt så forsikrer vi oss om å kun flippe inndelingen hvis den ikke er med i inndelingene vi har sendt inn
       if (!isNewEditingInndelinger && inndeling.isVisible) {
-        const inndelingIsInSelected = inndelingerToSelect.some(
-          (toSelectInndeling) => inndeling.id === toSelectInndeling.id,
+        const inndelingIsInSelected = inndelingerToSelect.some((toSelectInndeling) =>
+          isSameInndelinger(inndeling, toSelectInndeling),
         );
 
         if (!inndelingIsInSelected) {
