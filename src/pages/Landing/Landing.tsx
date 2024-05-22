@@ -17,24 +17,25 @@ const Landing = () => {
   const { resetKartlag } = useKartlag();
   const { resetTool, resetModeTools } = useToolbar();
   const { activeOverlayPanel, closeOverlayPanel, activeOverlayModal, closeOverlayModal } = useOverlayPanel();
-  const { clearInndelingerAndSources } = useInndelinger();
+  const { getAllInndelinger, clearInndelingerAndSources } = useInndelinger();
 
   useEffect(() => {
     resetMapView();
     resetKartlag();
     resetTool();
     resetModeTools();
-    clearInndelingerAndSources();
 
-    // Disse to krever ekstra sjekking for å unngå uendelig useEffekt-løkke
+    // Disse krever ekstra sjekking for å unngå uendelig useEffekt-løkke
     if (activeOverlayPanel) closeOverlayPanel();
     if (activeOverlayModal) closeOverlayModal();
+    if (getAllInndelinger().length > 0) clearInndelingerAndSources();
   }, [
     activeOverlayModal,
     activeOverlayPanel,
     clearInndelingerAndSources,
     closeOverlayModal,
     closeOverlayPanel,
+    getAllInndelinger,
     resetKartlag,
     resetModeTools,
     resetTool,
