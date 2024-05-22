@@ -1,67 +1,67 @@
 import { Stack, Text } from "@kvib/react";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
-import { Geometry } from "ol/geom";
+import { Geometry, LineString } from "ol/geom";
+import { TilhorighetSearch } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/TilhorighetSearch";
+import { useTilhorighetIkkeRedigerbar } from "pages/Kart/OverlayPanels/hooks/useTilhorighetIkkeRedigerbar";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { styled } from "styled-components";
+import { FeatureProperties } from "types/api";
+import { isFeatureEditable, isFeatureToBeArchived } from "utils/features";
 import { isAdministrativGrense, isKommuneGrense } from "utils/grenser";
+import { capitalize } from "utils/string-utils";
+import { isGrenseType } from "utils/type-utils";
 import {
-  formatKretsNavn,
   KontekstType,
   Tilhorighet,
   TilhorighetChoice,
   TilhorighetOptions,
   UseTilhorighet,
+  formatKretsNavn,
+  getKontekstTypeForFeature,
 } from "../hooks/tilhorighet-utils";
-import { useTilhorighetKommune } from "../hooks/useTilhorighetKommune";
-import { useTilhorighet } from "../hooks/useTilhorighet";
-import { isFeatureEditable, isFeatureToBeArchived } from "utils/features";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
+import { useTilhorighet } from "../hooks/useTilhorighet";
+import { useTilhorighetKommune } from "../hooks/useTilhorighetKommune";
+import { EditGrenseInfoButton } from "./GrenseinformasjonForm";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
-import { isGrenseType } from "utils/type-utils";
-import { useTilhorighetIkkeRedigerbar } from "pages/Kart/OverlayPanels/hooks/useTilhorighetIkkeRedigerbar";
-import { TilhorighetSearch } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/TilhorighetSearch";
+import { addKontekstEntryFromFeature } from "./grenseinformasjon-utils";
 
 type TilhorighetRowProps = {
   feature: Feature;
   useTilhorighet: UseTilhorighet;
   isDisabled?: boolean;
+  isValid: boolean;
+  isSubmitted: boolean;
+  isEditing: boolean;
 };
 
 const TilhorighetRow = ({
   feature,
-  useTilhorighet: {
-    kontekstType,
-    tilhorighetOptions,
-    isDirty,
-    resetTilhorighet,
-    updateDraftFromFeature,
-    formState,
-    setValue,
-    isLoading,
-  },
-  isDisabled,
+  useTilhorighet: { kontekstType, tilhorighetOptions, resetTilhorighet, formState, setValue, isLoading },
+  isSubmitted,
+  isValid,
+  isEditing,
 }: TilhorighetRowProps) => {
   useEffect(() => {
     resetTilhorighet();
   }, [resetTilhorighet]);
 
-  const isValid = formState[kontekstType][Tilhorighet.A] != null && formState[kontekstType][Tilhorighet.B] != null;
-
   return (
     <GrenseinformasjonRowTilhorighet
-      feature={feature}
-      name={`Tilhørighet (${kontekstType.toLocaleLowerCase()})`}
+      isEditing={isEditing}
+      isSubmitted={isSubmitted}
+      name={capitalize(kontekstType.toLocaleLowerCase()) + "er"}
       valueLabel={
         getTilhorighetValuesFormatted(formState[kontekstType], tilhorighetOptions) ??
         (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
       }
-      onMetadataSubmit={() => updateDraftFromFeature()}
-      isDisabled={isDisabled}
-      isDirty={isDirty}
       isValid={isValid}
       isLoading={isLoading}
-      reset={resetTilhorighet}
-      tooltipLabel="Definerer hvilke inndelinger grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer."
+      tooltipLabel={`
+      Definerer hvilke ${kontekstType.toLocaleLowerCase()}er grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer.
+      `}
     >
       <Stack>
         {Object.values(Tilhorighet).map((tilhorighet) => (
@@ -90,29 +90,226 @@ type TilhorighetProps = {
 };
 
 const CommonTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
-  return <TilhorighetRow feature={feature} useTilhorighet={useTilhorighet(feature)} isDisabled={isDisabled} />;
+  const { addHistoryEntry } = useHistory();
+  const commonTilhorighet = useTilhorighet(feature);
+  const featureProperties = feature.getProperties() as FeatureProperties;
+  const kontekstType = getKontekstTypeForFeature(featureProperties.kontekstEgenskaper, featureProperties);
+  const isValid =
+    commonTilhorighet.formState[kontekstType][Tilhorighet.A] != null &&
+    commonTilhorighet.formState[kontekstType][Tilhorighet.B] != null;
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const submit = () => {
+    const oppdaterteKontekster = commonTilhorighet.getCurrentOppdaterteKontekstEgenskaper();
+    if (oppdaterteKontekster != null) {
+      addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekster, addHistoryEntry);
+    }
+  };
+
+  const isDirty = commonTilhorighet.isDirty;
+  useEffect(() => {
+    setIsEditing(false);
+  }, [feature]);
+  const handleSubmit = () => {
+    if (isDirty && isValid) {
+      setIsSubmitted(true);
+      submit();
+    } else setIsSubmitted(false);
+  };
+  return (
+    <>
+      <TilhorighetFieldHeader>
+        <Text as={"b"} fontSize={"lg"}>
+          Tilhørighet
+        </Text>
+        <EditGrenseInfoButton
+          isEditing={isEditing}
+          handleSubmit={handleSubmit}
+          toggleEdit={() =>
+            setIsEditing((prevState) => {
+              if (isEditing && !isDirty) {
+                commonTilhorighet.resetTilhorighet();
+                setIsSubmitted(false);
+              }
+              return !prevState;
+            })
+          }
+        />
+      </TilhorighetFieldHeader>
+      <TilhorighetRow
+        isEditing={isEditing}
+        isSubmitted={isSubmitted}
+        isValid={isValid}
+        feature={feature}
+        useTilhorighet={commonTilhorighet}
+        isDisabled={isDisabled}
+      />
+    </>
+  );
 };
 
 const KommunegrenseTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
+  const { addHistoryEntry } = useHistory();
   const useTilhorighetGrunnkrets = useTilhorighetKommune(feature, KontekstType.GRUNNKRETS);
   const useTilhorighetStemmekrets = useTilhorighetKommune(feature, KontekstType.STEMMEKRETS);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const isDirty = useTilhorighetGrunnkrets.isDirty || useTilhorighetStemmekrets.isDirty;
+  const isValid =
+    useTilhorighetGrunnkrets.formState[KontekstType.GRUNNKRETS][Tilhorighet.A] != null &&
+    useTilhorighetGrunnkrets.formState[KontekstType.GRUNNKRETS][Tilhorighet.B] != null &&
+    useTilhorighetStemmekrets.formState[KontekstType.STEMMEKRETS][Tilhorighet.A] != null &&
+    useTilhorighetStemmekrets.formState[KontekstType.STEMMEKRETS][Tilhorighet.B] != null;
+
+  useEffect(() => {
+    setIsEditing(false);
+  }, [feature]);
+
+  const submitAll = () => {
+    const oppdaterteGrunnkretsTilhorigheter = useTilhorighetGrunnkrets.getCurrentOppdaterteKontekstEgenskaper();
+    const oppdaterteStemmekretsTilhorigheter = useTilhorighetStemmekrets.getCurrentOppdaterteKontekstEgenskaper();
+    if (oppdaterteGrunnkretsTilhorigheter != null && oppdaterteStemmekretsTilhorigheter != null) {
+      addKontekstEntryFromFeature(
+        feature as Feature<LineString>,
+        [...oppdaterteGrunnkretsTilhorigheter, ...oppdaterteStemmekretsTilhorigheter],
+        addHistoryEntry,
+      );
+    }
+  };
+
+  const resetAll = () => {
+    useTilhorighetGrunnkrets.resetTilhorighet();
+    useTilhorighetStemmekrets.resetTilhorighet();
+  };
+
+  const handleSubmit = () => {
+    if (isDirty && isValid) {
+      setIsSubmitted(true);
+      submitAll();
+    } else setIsSubmitted(false);
+  };
 
   return (
     <>
-      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetGrunnkrets} isDisabled={isDisabled} />
-      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetStemmekrets} isDisabled={isDisabled} />
+      <TilhorighetFieldHeader>
+        <Text as={"b"} fontSize={"lg"}>
+          Tilhørighet
+        </Text>
+        <EditGrenseInfoButton
+          isEditing={isEditing}
+          handleSubmit={handleSubmit}
+          toggleEdit={() =>
+            setIsEditing((prevState) => {
+              if (isEditing && !isDirty) {
+                resetAll();
+                setIsSubmitted(false);
+              }
+              return !prevState;
+            })
+          }
+        />
+      </TilhorighetFieldHeader>
+
+      <TilhorighetRow
+        isEditing={isEditing}
+        isSubmitted={isSubmitted}
+        isValid={isValid}
+        feature={feature}
+        useTilhorighet={useTilhorighetGrunnkrets}
+        isDisabled={isDisabled}
+      />
+      <TilhorighetRow
+        isEditing={isEditing}
+        isSubmitted={isSubmitted}
+        isValid={isValid}
+        feature={feature}
+        useTilhorighet={useTilhorighetStemmekrets}
+        isDisabled={isDisabled}
+      />
     </>
   );
 };
 
 const IkkeRedigerbarAdministrativGrense = ({ feature }: TilhorighetProps) => {
+  const { addHistoryEntry } = useHistory();
   const useTilhorighetGrunnkrets = useTilhorighetIkkeRedigerbar(feature, KontekstType.GRUNNKRETS);
   const useTilhorighetStemmekrets = useTilhorighetIkkeRedigerbar(feature, KontekstType.STEMMEKRETS);
+  const [isEditing, setIsEditing] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const isDirty = useTilhorighetGrunnkrets.isDirty || useTilhorighetStemmekrets.isDirty;
+  const isValid =
+    useTilhorighetGrunnkrets.formState[KontekstType.GRUNNKRETS][Tilhorighet.A] != null &&
+    useTilhorighetGrunnkrets.formState[KontekstType.GRUNNKRETS][Tilhorighet.B] != null &&
+    useTilhorighetStemmekrets.formState[KontekstType.STEMMEKRETS][Tilhorighet.A] != null &&
+    useTilhorighetStemmekrets.formState[KontekstType.STEMMEKRETS][Tilhorighet.B] != null;
+
+  useEffect(() => {
+    setIsEditing(false);
+  }, [feature]);
+
+  const submitAll = () => {
+    const oppdaterteGrunnkretsTilhorigheter = useTilhorighetGrunnkrets.getCurrentOppdaterteKontekstEgenskaper();
+    const oppdaterteStemmekretsTilhorigheter = useTilhorighetStemmekrets.getCurrentOppdaterteKontekstEgenskaper();
+    if (oppdaterteGrunnkretsTilhorigheter != null && oppdaterteStemmekretsTilhorigheter != null) {
+      addKontekstEntryFromFeature(
+        feature as Feature<LineString>,
+        [...oppdaterteGrunnkretsTilhorigheter, ...oppdaterteStemmekretsTilhorigheter],
+        addHistoryEntry,
+      );
+    }
+  };
+
+  const resetAll = () => {
+    useTilhorighetGrunnkrets.resetTilhorighet();
+    useTilhorighetStemmekrets.resetTilhorighet();
+  };
+
+  const handleSubmit = () => {
+    if (isDirty && isValid) {
+      setIsSubmitted(true);
+      submitAll();
+    } else setIsSubmitted(false);
+  };
 
   return (
     <>
-      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetGrunnkrets} isDisabled />
-      <TilhorighetRow feature={feature} useTilhorighet={useTilhorighetStemmekrets} isDisabled />
+      <TilhorighetFieldHeader>
+        <Text as={"b"} fontSize={"lg"}>
+          Tilhørighet
+        </Text>
+        <EditGrenseInfoButton
+          isEditing={isEditing}
+          handleSubmit={handleSubmit}
+          toggleEdit={() =>
+            setIsEditing((prevState) => {
+              if (isEditing && !isDirty) {
+                resetAll();
+                setIsSubmitted(false);
+              }
+              return !prevState;
+            })
+          }
+        />
+      </TilhorighetFieldHeader>
+      <TilhorighetRow
+        isEditing={isEditing}
+        isSubmitted={isSubmitted}
+        isValid={isValid}
+        feature={feature}
+        useTilhorighet={useTilhorighetGrunnkrets}
+        isDisabled={true}
+      />
+      <TilhorighetRow
+        isEditing={isEditing}
+        isSubmitted={isSubmitted}
+        isValid={isValid}
+        feature={feature}
+        useTilhorighet={useTilhorighetStemmekrets}
+        isDisabled={true}
+      />
     </>
   );
 };
@@ -158,3 +355,9 @@ const getTilhorighetValuesFormatted = (
     }
   }
 };
+
+const TilhorighetFieldHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;

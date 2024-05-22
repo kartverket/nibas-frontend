@@ -45,7 +45,7 @@ export const useTilhorighetIkkeRedigerbar = (feature: Feature, kontekstType: Kon
     setValue,
     isDirty,
     resetTilhorighet,
-    updateDraftFromFeature,
+    getCurrentOppdaterteKontekstEgenskaper,
   } = useTilhorighetForm(feature, kontekstType);
 
   const { token } = useAuthentication();
@@ -67,9 +67,9 @@ export const useTilhorighetIkkeRedigerbar = (feature: Feature, kontekstType: Kon
     tilhorighetOptions,
     isDirty,
     resetTilhorighet,
-    updateDraftFromFeature,
     formState,
     setValue,
     isLoading,
+    getCurrentOppdaterteKontekstEgenskaper,
   };
 };

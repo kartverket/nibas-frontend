@@ -1,58 +1,30 @@
 // TODO Skal slettes i TS-1579, kun brukt som en kopi av den gamle GrenseinformasjonRow slik at vi ikke trenger å lage en midlertidig "smart" GrenseinformasjonRow som håndterer tilhørighet i tillegg
 import { FormControl, FormErrorMessage, Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
+import { useState } from "react";
 import { styled } from "styled-components";
-import { useEffect, useState } from "react";
-import { Geometry } from "ol/geom";
-import { Feature } from "ol";
-import EditAndSaveButton from "components/EditAndSaveButton";
 
 interface Props {
-  feature: Feature<Geometry>;
   name: string;
   valueLabel?: React.ReactNode;
   tooltipLabel: string;
   children: React.ReactNode;
-  onMetadataSubmit: () => void;
-  isDisabled?: boolean;
-  isDirty: boolean;
   isValid: boolean;
-  isUneditable?: boolean;
   isLoading?: boolean;
-  reset: () => void;
+  isEditing: boolean;
+  isSubmitted: boolean;
 }
 
 const GrenseinformasjonRow = ({
-  feature,
   name,
   tooltipLabel,
   valueLabel,
   children,
-  onMetadataSubmit,
-  isDisabled,
-  isDirty,
   isValid,
-  isUneditable = false,
   isLoading = false,
-  reset,
+  isEditing,
+  isSubmitted,
 }: Props) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [iconHovered, setIconHovered] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-
-  useEffect(() => {
-    setIsEditing(false);
-  }, [feature]);
-
-  const handleSubmit = () => {
-    setIsSubmitted(true);
-    if (isDirty && isValid) {
-      onMetadataSubmit();
-      setIsEditing(false);
-    }
-    if (!isDirty) {
-      setIsEditing(false);
-    }
-  };
 
   return (
     <Container>
@@ -66,27 +38,6 @@ const GrenseinformasjonRow = ({
               </InfoIcon>
             </TextWithIcon>
           </Tooltip>
-
-          {!isUneditable && (
-            <EditAndSaveButton
-              isDisabled={isDisabled}
-              isEditing={isEditing}
-              size="sm"
-              onSubmit={handleSubmit}
-              variant="secondary"
-              toggleEditing={() =>
-                setIsEditing((prevState) => {
-                  setIsSubmitted(false);
-                  if (isEditing) {
-                    reset();
-                  }
-                  return !prevState;
-                })
-              }
-            >
-              Rediger
-            </EditAndSaveButton>
-          )}
         </Row>
         {isEditing ? (
           <FormControl isInvalid={!isValid && isSubmitted}>

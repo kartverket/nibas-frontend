@@ -1,34 +1,21 @@
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import useNibasApi from "hooks/useNibasApi";
+import { Feature } from "ol";
 import { useCallback, useMemo, useState } from "react";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
 import {
   CustomOption,
-  getKommunerIdFromKontekstEgenskaper,
-  getTilhorighetData,
-  getUpdatedKontekstEgenskaper,
   KontekstType,
   Krets,
   Tilhorighet,
   TilhorighetForm,
   TilhorighetOptions,
+  getKommunerIdFromKontekstEgenskaper,
+  getKontekstTypeForFeature,
+  getTilhorighetData,
+  getUpdatedKontekstEgenskaper,
 } from "./tilhorighet-utils";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { Feature } from "ol";
-import { LineString } from "ol/geom";
-import { addKontekstEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { isGrenseType } from "utils/type-utils";
-import { GrenseType } from "hooks/layers/types";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import useNibasApi from "hooks/useNibasApi";
-
-const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
-  switch (grenseType) {
-    case "Stemmekretsgrense":
-      return KontekstType.STEMMEKRETS;
-    default:
-      return KontekstType.GRUNNKRETS;
-  }
-};
 
 const getKretserFromKretsDelingEndringer = (
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -86,18 +73,7 @@ const getIdForKontekstEgenskaper = (
   }
 };
 
-const getKontekstTypeForFeature = (
-  kontekstgenskaper: KontekstEgenskaper[],
-  featureProperties: FeatureProperties,
-): KontekstType => {
-  return (
-    kontekstgenskaper.map((k) => k.type as KontekstType)[0] ??
-    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type))
-  );
-};
-
 export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: KontekstType) => {
-  const { addHistoryEntry } = useHistory();
   const { data: kommuneResponses } = useNibasApi("/v1/kommuner");
   const { utkast } = useUtkast();
 
@@ -173,15 +149,14 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     setFormState(getTilhorighetData(kontekstEgenskaper));
   }, [kontekstEgenskaper]);
 
-  const updateDraftFromFeature = () => {
+  const getCurrentOppdaterteKontekstEgenskaper = () => {
     if (tilhorighetOptions) {
-      const oppdaterteKontekstEgenskaper = getUpdatedKontekstEgenskaper(
+      return getUpdatedKontekstEgenskaper(
         kontekstType,
         formState[kontekstType],
         tilhorighetOptions,
         kontekstEgenskaper,
       );
-      addKontekstEntryFromFeature(feature as Feature<LineString>, oppdaterteKontekstEgenskaper, addHistoryEntry);
     }
   };
 
@@ -192,8 +167,8 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     setValue,
     isDirty,
     resetTilhorighet,
-    updateDraftFromFeature,
     kommunerId,
     kontekstType,
+    getCurrentOppdaterteKontekstEgenskaper,
   };
 };

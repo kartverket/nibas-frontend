@@ -34,7 +34,7 @@ type EditGrenseInfoButtonProps = {
   toggleEdit: () => void;
 };
 
-const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrenseInfoButtonProps) => {
+export const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrenseInfoButtonProps) => {
   return isEditing ? (
     <Button
       onClick={() => {

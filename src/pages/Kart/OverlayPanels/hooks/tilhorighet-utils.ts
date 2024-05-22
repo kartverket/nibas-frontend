@@ -1,4 +1,12 @@
-import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
+import { GrenseType } from "hooks/layers/types";
+import {
+  FeatureProperties,
+  GrunnkretsResponse,
+  KontekstEgenskaper,
+  ObjektIdentifikator,
+  StemmekretsResponse,
+} from "types/api";
+import { isGrenseType } from "utils/type-utils";
 
 export enum Tilhorighet {
   A = "a",
@@ -44,10 +52,10 @@ export interface UseTilhorighet {
   tilhorighetOptions: TilhorighetOptions | undefined;
   isDirty: boolean;
   resetTilhorighet: () => void;
-  updateDraftFromFeature: () => void;
   formState: TilhorighetForm;
   setValue: (tilhorighet: Tilhorighet, value: string | undefined) => void;
   isLoading: boolean;
+  getCurrentOppdaterteKontekstEgenskaper: () => KontekstEgenskaper[] | undefined;
 }
 
 const getDefaultTilhorighetData = () => ({
@@ -174,4 +182,23 @@ export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[
       type: KontekstType.STEMMEKRETS,
     })),
   );
+};
+
+export const getKontekstTypeForFeature = (
+  kontekstgenskaper: KontekstEgenskaper[],
+  featureProperties: FeatureProperties,
+): KontekstType => {
+  return (
+    kontekstgenskaper.map((k) => k.type as KontekstType)[0] ??
+    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type))
+  );
+};
+
+const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
+  switch (grenseType) {
+    case "Stemmekretsgrense":
+      return KontekstType.STEMMEKRETS;
+    default:
+      return KontekstType.GRUNNKRETS;
+  }
 };
