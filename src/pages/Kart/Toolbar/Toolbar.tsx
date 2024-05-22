@@ -211,6 +211,7 @@ const Toolbar = () => {
             aria-label="Se eller endre flatedetaljer"
             tooltip={{
               text: "Se eller endre flatedetaljer",
+              additionalInfo: !flatedataIsAvailable ? "Velg en inndeling for å aktivere verktøyet" : undefined,
               shortcut: "flatedata",
             }}
           >
