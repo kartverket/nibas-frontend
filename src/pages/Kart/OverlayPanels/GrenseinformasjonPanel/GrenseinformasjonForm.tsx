@@ -165,7 +165,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
       >
         <Select {...register("grenseType")}>
-          {getPossibleGrenseTypesFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype).map((type) => (
+          {getPossibleGrenseTypesFromInndelingtype(currentlyEditingInndelinger[0]?.inndelingtype).map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

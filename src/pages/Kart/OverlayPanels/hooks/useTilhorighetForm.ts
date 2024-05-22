@@ -115,7 +115,7 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
       getKommunerIdFromKontekstEgenskaper(
         kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
         kontekstType,
-      ) ?? [currentlyEditingInndelinger != null ? currentlyEditingInndelinger[0].id : ""],
+      ) ?? [currentlyEditingInndelinger?.[0] != null ? currentlyEditingInndelinger[0].id : ""],
     [kontekstType, currentlyEditingInndelinger, kontekstEgenskaper],
   );
 
