@@ -14,7 +14,7 @@ import {
 } from "../hooks/tilhorighet-utils";
 import { useTilhorighetKommune } from "../hooks/useTilhorighetKommune";
 import { useTilhorighet } from "../hooks/useTilhorighet";
-import { isFeatureEditable, isFeatureToBeArchived } from "utils/features";
+import { getFeatureFremtidigEndringDato, isFeatureEditable, isFeatureToBeArchived } from "utils/features";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 import { isGrenseType } from "utils/type-utils";
@@ -122,8 +122,7 @@ export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetPro
   const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
   const featureProperties = feature.getProperties() as FeatureProperties;
-  const metadata = featureProperties.metadata as Metadata | undefined;
-  const gyldigTilDato = metadata?.common?.gyldigTil;
+  const gyldigTilDato = getFeatureFremtidigEndringDato(feature);
 
   const featureType = featureProperties.type;
   const shouldBeDisabled = isDisabled || isGrensePanelDisabled || gyldigTilDato != null;
