@@ -20,7 +20,7 @@ import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 import { isGrenseType } from "utils/type-utils";
 import { useTilhorighetIkkeRedigerbar } from "pages/Kart/OverlayPanels/hooks/useTilhorighetIkkeRedigerbar";
 import { TilhorighetSearch } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/TilhorighetSearch";
-import { FeatureProperties, Metadata } from "types/api";
+import { FeatureProperties } from "types/api";
 
 type TilhorighetRowProps = {
   feature: Feature;
