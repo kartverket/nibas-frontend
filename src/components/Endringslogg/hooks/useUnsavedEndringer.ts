@@ -158,8 +158,10 @@ const combineMetadataChangesForSameId = (metadataendringer: MetadataendringerWit
     const lastChangeForKrets = metadataendringer.findLast((endring) => endring.id === kretsId);
 
     if (firstChangeForKrets == null || lastChangeForKrets == null) {
-      throw Error(
-        "Noe gikk galt med oppbygning av endringsloggen. Klarte ikke finne igjen endringen for kretsen. Dette brude ikke kunne skje.",
+      // Dette skal egentlig aldri kunne skje - så dette er egentlig mest for å gjøre typescript glad. Oppstår
+      // denne situsjonen har det blir gjort en kodeendring som innførte en feil.
+      throw new Error(
+        "Noe gikk galt ved oppbygning av endringsloggen. Klarte ikke finne igjen endringen for kretsen. Dette burde ikke kunne skje.",
       );
     }
 

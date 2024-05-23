@@ -96,9 +96,11 @@ const mergeKretsdelingOperations = (
   kretsdelingerFromUtkast: KretsDelingEndringRequest[],
   kretsdelingerFromHistory: KretsDelingEndringRequest[],
 ): KretsDelingEndringRequest[] => {
-  const overwrittenKretsendringer = kretsdelingerFromHistory.map((kretsdeling) => kretsdeling.opprinneligKrets.lokalId);
+  const kretsIdsForKretserSplittedOnHistory = kretsdelingerFromHistory.map(
+    (kretsdeling) => kretsdeling.opprinneligKrets.lokalId,
+  );
   const kretdelingerInUtkastNotOverwritten = kretsdelingerFromUtkast.filter(
-    (kretsdeling) => !overwrittenKretsendringer.includes(kretsdeling.opprinneligKrets.lokalId),
+    (kretsdeling) => !kretsIdsForKretserSplittedOnHistory.includes(kretsdeling.opprinneligKrets.lokalId),
   );
   return [...kretdelingerInUtkastNotOverwritten, ...kretsdelingerFromHistory];
 };
