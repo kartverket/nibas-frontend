@@ -139,7 +139,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         <FlatedataFooter
           isEditing={isEditing}
           toggleEditing={toggleEditing}
-          isDisabled={!isDirty}
+          canSave={isDirty}
           onSubmit={(e) => {
             clearSearch();
             handleSubmit(submitAndAddHistoryEntry)(e);
