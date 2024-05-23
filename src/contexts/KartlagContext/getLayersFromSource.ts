@@ -102,7 +102,7 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
         type: "wmts",
         sourceId: layerId,
         id: layerId,
-        title: json.ServiceIdentification.Title ?? source.getLayer(),
+        title: json.Contents.Layer[0].Title ?? source.getLayer(),
         sublayers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, layerId)),
         isVisible: false,
       };
