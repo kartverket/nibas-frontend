@@ -6,6 +6,7 @@ import {
   HistoryChange,
   HistoryState,
   HistoryTypeValues,
+  KretsdelingEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
@@ -84,11 +85,37 @@ const addKretsChangeToOperations = (
   return operations;
 };
 
+export const historyToKretsdelingOperations = (kretsdelingEntries: KretsdelingEntry[]): KretsDelingEndringRequest[] => {
+  const kretsdelingerMap = kretsdelingEntries
+    .flatMap((entry) => entry.changes)
+    .reduce((accumulator, currentValue) => ({ ...accumulator, [currentValue.id]: currentValue.to }), {});
+  return Object.values(kretsdelingerMap);
+};
+
+const mergeKretsdelingOperations = (
+  kretsdelingerFromUtkast: KretsDelingEndringRequest[],
+  kretsdelingerFromHistory: KretsDelingEndringRequest[],
+): KretsDelingEndringRequest[] => {
+  const kretsIdsForKretserSplittedOnHistory = kretsdelingerFromHistory.map(
+    (kretsdeling) => kretsdeling.opprinneligKrets.lokalId,
+  );
+  const kretdelingerInUtkastNotOverwritten = kretsdelingerFromUtkast.filter(
+    (kretsdeling) => !kretsIdsForKretserSplittedOnHistory.includes(kretsdeling.opprinneligKrets.lokalId),
+  );
+  return [...kretdelingerInUtkastNotOverwritten, ...kretsdelingerFromHistory];
+};
+
 const reduceMetadataOperations = (utkastOperations: UtkastOperasjoner, entry: MetadataEntry) =>
   addKretsChangeToOperations(utkastOperations, entry, `${entry.type}endringer`);
 
 export const historyToUtkastOperations = (history: HistoryState, previousUtkast?: UtkastResponse) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);
+
+  const allKretsdelingHistoryEntries = historyToCurrentIndex.filter(
+    (entry) => entry.type === "kretsdelingendring",
+  ) as KretsdelingEntry[];
+
+  const kretsdelingOperations = historyToKretsdelingOperations(allKretsdelingHistoryEntries);
 
   const metadataEntries: HistoryTypeValues[] = ["kommune", "stemmekrets", "grunnkrets"];
 
@@ -102,7 +129,10 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         ...previousUtkast?.operasjoner.grenseendringer,
         ...previousUtkast?.operasjoner.metadataendringer,
         stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
-        kretsDelingEndringer: previousUtkast?.operasjoner.kretsDelingEndringer,
+        kretsDelingEndringer: mergeKretsdelingOperations(
+          previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
+          kretsdelingOperations,
+        ),
       },
     }),
   );

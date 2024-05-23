@@ -12,7 +12,7 @@ const HeaderHistoryOperations = () => {
   const { canSave, undo, redo } = useHistory();
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const unsavedEndringer = useUnsavedEndringer();
+  const { antallEndringer } = useUnsavedEndringer();
 
   const handleSave = () => {
     if (utkast && canSave) {
@@ -65,7 +65,7 @@ const HeaderHistoryOperations = () => {
         tooltip={{
           text: "Se en liste over alle lagrede og ulagrede endringer som er gjort i dette utkastet",
         }}
-        alert={unsavedEndringer.length > 0 && <AlertIcon count={unsavedEndringer.length} />}
+        alert={antallEndringer > 0 && <AlertIcon count={antallEndringer} />}
       />
       <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
     </HeaderSection>

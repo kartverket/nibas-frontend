@@ -14,7 +14,6 @@ import { UtkastResponse } from "types/api";
 import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCollapse";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
-import { EndringList } from "components/Endringslogg/EndringerList";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type Props = {
@@ -42,7 +41,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
           <Stack spacing={6}>
             <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
             {!harLastetData && <Spinner size="xl" />}
-            <EndringList>
+            <EndringUnstyledList>
               {stemmekretsendringer?.map((endringer) => (
                 <EndringerForKommune
                   key={endringer.kommune.id}
@@ -57,7 +56,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
                   kretstype={KontekstType.GRUNNKRETS}
                 />
               ))}
-            </EndringList>
+            </EndringUnstyledList>
           </Stack>
         </ModalBody>
       </ModalContent>
@@ -67,6 +66,10 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
 
 const Empty = styled.div`
   margin-bottom: 16px;
+`;
+
+const EndringUnstyledList = styled.ul`
+  list-style: none;
 `;
 
 export default EndringsloggModal;
