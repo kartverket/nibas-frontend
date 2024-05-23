@@ -112,7 +112,9 @@ const useDraw = () => {
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>, splittedFeatures: SplittedFeature[]) => {
-      if (currentlyEditingInndelinger.length > 0) return;
+      if (currentlyEditingInndelinger.length === 0) {
+        return;
+      }
 
       // Kan kun redigere én inndelingstype om gangen, så velger bare første
       const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
