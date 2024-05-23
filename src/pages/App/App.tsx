@@ -24,7 +24,6 @@ import {
   AuthNotAuthorized,
 } from "components/Authentication/Authentication";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
-import { Spinner } from "@kvib/react";
 
 const App = () => {
   const { token } = useAuthentication();

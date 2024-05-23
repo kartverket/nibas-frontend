@@ -1,4 +1,4 @@
-import { Badge, Tag, Checkbox, FormControl, FormErrorMessage } from "@kvib/react";
+import { Tag, Checkbox, FormControl, FormErrorMessage } from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
 import { styled } from "styled-components";

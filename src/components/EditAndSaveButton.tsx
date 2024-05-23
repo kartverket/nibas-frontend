@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { ButtonGroup, IconButton, Button } from "@kvib/react";
+import { ButtonGroup, Button } from "@kvib/react";
 
 type Props = {
   className?: string;
