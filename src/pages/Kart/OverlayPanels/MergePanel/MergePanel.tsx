@@ -17,6 +17,7 @@ import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, 
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { getInndelingFremtidigEndringDato } from "utils/features";
 
 const Form = styled.form`
   display: flex;
@@ -215,11 +216,19 @@ const MergePanel = ({ isOpen }: PanelProps) => {
                   </option>
                   {utkastStemmekretser
                     .sort((a, b) => parseInt(a.nummer) - parseInt(b.nummer))
-                    .map((stemmekrets) => (
-                      <option key={stemmekrets.id.lokalid.value} value={stemmekrets.nummer}>
-                        {`${stemmekrets.nummer} - ${stemmekrets.navn}`}
-                      </option>
-                    ))}
+                    .map((stemmekrets) => {
+                      const fremtidigEndringDato = getInndelingFremtidigEndringDato(stemmekrets.id.lokalid.value);
+
+                      return fremtidigEndringDato != null ? (
+                        <option key={stemmekrets.id.lokalid.value} value={stemmekrets.nummer} disabled>
+                          {`${stemmekrets.nummer} - ${stemmekrets.navn} (fremtidig endring, kan ikke sammenslås)`}
+                        </option>
+                      ) : (
+                        <option key={stemmekrets.id.lokalid.value} value={stemmekrets.nummer}>
+                          {`${stemmekrets.nummer} - ${stemmekrets.navn}`}
+                        </option>
+                      );
+                    })}
                 </Select>
               </FormControl>
               <Alert>

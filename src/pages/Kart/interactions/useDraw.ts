@@ -15,7 +15,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import LineString from "ol/geom/LineString";
 import { useGetFeatures } from "./interaction-utils";
 import { equals } from "ol/coordinate";
-import { setDefaultFeatureProperties } from "utils/features";
+import { getFeatureFremtidigEndringDato, setDefaultFeatureProperties } from "utils/features";
 import useSplit, { SplittedFeature } from "./useSplit";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { Geometry } from "ol/geom";
@@ -24,6 +24,7 @@ import useToastUnique from "hooks/toast/useToastUnique";
 import { addFeaturesToSource } from "utils/map/source";
 import { editSource } from "hooks/layers/constants";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
@@ -90,6 +91,15 @@ const useDraw = () => {
             );
 
             if (!isClickedPointEndPoint) {
+              const gyldigTilDato = getFeatureFremtidigEndringDato(feature);
+
+              if (gyldigTilDato != null) {
+                toast({
+                  status: "error",
+                  title: `Grensen har en fremtidig endring og kan ikke endres før den nye endringen har inntruffet. Endringen skal inntreffe ${datestringToFormattedDatestring(gyldigTilDato)}`,
+                });
+                return false;
+              }
               endpointToast();
             }
           }
