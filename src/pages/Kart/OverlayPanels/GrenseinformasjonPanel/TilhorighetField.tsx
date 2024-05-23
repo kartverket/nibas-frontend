@@ -130,7 +130,7 @@ const TilhorighetFieldController = ({
 
   const reset = () => {
     grunnkretsTilhorighetForm?.resetTilhorighet();
-    grunnkretsTilhorighetForm?.resetTilhorighet();
+    stemmekretsTilhorighetForm?.resetTilhorighet();
   };
 
   useEffect(() => {
