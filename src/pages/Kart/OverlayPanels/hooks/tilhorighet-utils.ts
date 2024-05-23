@@ -112,13 +112,11 @@ export const getUpdatedKontekstEgenskaper = (
   kontekstType: KontekstType,
   newKretsIds: TilhorighetChoice,
   kretsOptions: TilhorighetOptions,
-  existingKontekstEgenskaper: KontekstEgenskaper[],
 ): KontekstEgenskaper[] => {
   const allPossibleOptions = kretsOptions.a.concat(kretsOptions.b);
   const kretser = Object.values(newKretsIds).map(
     (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kontekstType),
   );
-  const kontekstEgenskaperToKeep = existingKontekstEgenskaper.filter((k) => kontekstType.valueOf() !== k.type);
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
     id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
     kommuneId: krets.kommuneId,
@@ -126,7 +124,7 @@ export const getUpdatedKontekstEgenskaper = (
     type: krets.type,
     version: krets.version,
   }));
-  return kontekstEgenskaperToKeep.concat(nyeKontekstEgenskaper);
+  return nyeKontekstEgenskaper;
 };
 
 export const formatKretsNavn = (krets: Krets | null | undefined): string => {

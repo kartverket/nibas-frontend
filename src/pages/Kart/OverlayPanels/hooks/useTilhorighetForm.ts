@@ -151,12 +151,7 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
 
   const getCurrentOppdaterteKontekstEgenskaper = () => {
     if (tilhorighetOptions) {
-      return getUpdatedKontekstEgenskaper(
-        kontekstType,
-        formState[kontekstType],
-        tilhorighetOptions,
-        kontekstEgenskaper,
-      );
+      return getUpdatedKontekstEgenskaper(kontekstType, formState[kontekstType], tilhorighetOptions);
     }
   };
 
