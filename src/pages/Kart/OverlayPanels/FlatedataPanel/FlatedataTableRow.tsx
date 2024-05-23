@@ -13,8 +13,7 @@ import { getIdFromEntity } from "utils/api";
 import { css, styled } from "styled-components";
 import { FlatedataInputs } from "./flatedata-utils";
 import { ValidationError } from "components/Input";
-import { getFeatureIfExistsInAnyLayer } from "utils/features";
-import { getRepresentasjonspunktId } from "utils/map/source";
+import { getInndelingFremtidigEndringDato } from "utils/features";
 import { Icon, Tooltip } from "@kvib/react";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 
@@ -91,9 +90,7 @@ const FlatedataTableRow = ({
 
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
-  const disabledDate = getFeatureIfExistsInAnyLayer(getRepresentasjonspunktId(inndelingId))?.get("gyldigTil") as
-    | string
-    | undefined;
+  const disabledDate = getInndelingFremtidigEndringDato(inndelingId);
 
   useHistoryFormSync<MetadataEntry>({
     entityId: inndelingId,

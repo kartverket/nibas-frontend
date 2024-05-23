@@ -274,6 +274,10 @@ export const getFeatureFremtidigEndringDato = (feature: FeatureLike) => {
   return metadata?.common?.gyldigTil;
 };
 
+export const getInndelingFremtidigEndringDato = (inndelingId: string) => {
+  return getFeatureIfExistsInAnyLayer(getRepresentasjonspunktId(inndelingId))?.get("gyldigTil") as string | undefined;
+};
+
 export const getFlateRepresentasjonpunkterWithFremtidigEndring = (feature: FeatureLike) => {
   const properties = feature.getProperties() as FeatureProperties | undefined;
   if (!properties) return [];

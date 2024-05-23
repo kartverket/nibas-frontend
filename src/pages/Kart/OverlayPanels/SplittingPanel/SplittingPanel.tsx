@@ -18,6 +18,7 @@ import { CustomOption } from "../hooks/tilhorighet-utils";
 import { ChangeEvent, useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { getInndelingFremtidigEndringDato } from "utils/features";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -156,12 +157,24 @@ export const SplittingPanel = ({ isOpen }: PanelProps) => {
             }}
           >
             <option value={CustomOption.NOT_CHOSEN}>{`Velg ${inndelingtype}`}</option>
-            {opprinneligFlateOptions?.map((krets) => (
-              <option
-                value={krets.id.lokalid.value}
-                key={krets.id.lokalid.value}
-              >{`${krets.nummer} ${krets.navn}`}</option>
-            ))}
+            {opprinneligFlateOptions
+              ?.sort((a, b) => parseInt(a.nummer) - parseInt(b.nummer))
+              .map((krets) => {
+                const fremtidigEndringDato = getInndelingFremtidigEndringDato(krets.id.lokalid.value);
+
+                return fremtidigEndringDato != null ? (
+                  <option
+                    disabled
+                    value={krets.id.lokalid.value}
+                    key={krets.id.lokalid.value}
+                  >{`${krets.nummer} ${krets.navn} (fremtidig endring, kan ikke splittes)`}</option>
+                ) : (
+                  <option
+                    value={krets.id.lokalid.value}
+                    key={krets.id.lokalid.value}
+                  >{`${krets.nummer} ${krets.navn}`}</option>
+                );
+              })}
           </Select>
         </FormControl>
 
