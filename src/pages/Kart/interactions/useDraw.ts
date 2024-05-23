@@ -27,7 +27,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoryEntry } = useHistory();
   const { openOverlayPanel } = useOverlayPanel();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
@@ -112,8 +112,12 @@ const useDraw = () => {
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>, splittedFeatures: SplittedFeature[]) => {
-      if (currentlyEditedInndeling == null) return;
-      const grenseType = getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype);
+      if (currentlyEditingInndelinger.length === 0) {
+        return;
+      }
+
+      // Kan kun redigere én inndelingstype om gangen, så velger bare første
+      const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
 
       if (grenseType) {
         const change = createNyGrenseHistoryChange(drawnFeature, grenseType, splittedFeatures);
@@ -189,7 +193,7 @@ const useDraw = () => {
 
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
       if (
-        !currentlyEditedInndeling ||
+        currentlyEditingInndelinger.length === 0 ||
         !drawnFeatureGeometry ||
         drawnFeatureGeometry.getLength() === 0 ||
         drawnFeatureGeometry.getCoordinates().length < 2
@@ -209,7 +213,10 @@ const useDraw = () => {
         if (features != null) splittedFeatures.push(features);
       }
 
-      setDefaultFeatureProperties(drawnFeature, getGrensetypeFromInndelingtype(currentlyEditedInndeling.inndelingtype));
+      setDefaultFeatureProperties(
+        drawnFeature,
+        getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype),
+      );
 
       addDrawToHistory(drawnFeature, splittedFeatures);
       addFeaturesToSource("edit", [drawnFeature]);
@@ -237,7 +244,7 @@ const useDraw = () => {
     addHistoryEntry,
     archiveOldFeature,
     createNewFeatures,
-    currentlyEditedInndeling,
+    currentlyEditingInndelinger,
     draw,
     openAsync,
     openOverlayPanel,

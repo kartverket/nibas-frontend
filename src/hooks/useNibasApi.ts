@@ -41,6 +41,42 @@ type ResponseType<Path extends ApiPath> = paths[Path] extends {
   ? ResType
   : never;
 
+export const getUrlWithParameters = <Path extends ApiPath>(url: Path | null, params: GetParameters<Path>) => {
+  if (params == null || url == null) return url;
+
+  let modifiedUrl = url.toString();
+
+  const pathRegex = /{(\w+)}/i;
+  const paramKeys = Object.keys(params);
+  let pathParams = "";
+
+  for (let replaceIndex = 0; replaceIndex < paramKeys.length; replaceIndex++) {
+    const match = pathRegex.exec(modifiedUrl);
+
+    if (match) {
+      // hvis match, bytt ut {} med faktisk verdi i url
+      modifiedUrl = modifiedUrl.replace(match[0], params[match[1]] as string);
+    } else {
+      // hvis ikke match, legg på query parameter
+      if (pathParams) {
+        pathParams = pathParams.concat("&");
+      } else {
+        pathParams = "?";
+      }
+
+      const key = paramKeys[replaceIndex];
+      const parameter = params[key];
+
+      // hvis parameteret er undefined, ikke send det med i requesten
+      if (parameter != null) {
+        pathParams = pathParams.concat(`${key}=${parameter}`);
+      }
+    }
+  }
+
+  return modifiedUrl.concat(pathParams);
+};
+
 /**
  * Hjelpehook for å gjøre det lettere å kjøre API-kall til nibas APIet
  * @param url Url for data
@@ -65,42 +101,9 @@ const useNibasApi = <Path extends ApiPath>(
 ) => {
   const auth = useAuthentication();
 
-  let modifiedUrl: string | null = url;
+  const urlWithOptionalParams = params ? getUrlWithParameters(url, params) : url;
 
-  // gå gjennom alle parametere til Path og bytt de ut i urlen
-  if (params && modifiedUrl !== null) {
-    const pathRegex = /{(\w+)}/i;
-    const paramKeys = Object.keys(params);
-    let pathParams = "";
-
-    for (let replaceIndex = 0; replaceIndex < paramKeys.length; replaceIndex++) {
-      const match = pathRegex.exec(modifiedUrl);
-
-      if (match) {
-        // hvis match, bytt ut {} med faktisk verdi i url
-        modifiedUrl = modifiedUrl.replace(match[0], params[match[1]] as string);
-      } else {
-        // hvis ikke match, legg på query parameter
-        if (pathParams) {
-          pathParams = pathParams.concat("&");
-        } else {
-          pathParams = "?";
-        }
-
-        const key = paramKeys[replaceIndex];
-        const parameter = params[key];
-
-        // hvis parameteret er undefined, ikke send det med i requesten
-        if (parameter != null) {
-          pathParams = pathParams.concat(`${key}=${parameter}`);
-        }
-      }
-    }
-
-    modifiedUrl = modifiedUrl.concat(pathParams);
-  }
-
-  return useSWR<ResponseType<Path>>([modifiedUrl, auth.token], fetcherWithToken, swrOptions);
+  return useSWR<ResponseType<Path>>([urlWithOptionalParams, auth.token], fetcherWithToken, swrOptions);
 };
 
 export default useNibasApi;

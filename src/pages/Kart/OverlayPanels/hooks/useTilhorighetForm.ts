@@ -1,5 +1,8 @@
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { HistoryState, KretsdelingEntry } from "contexts/HistoryContext/types";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { historyToKretsdelingOperations } from "contexts/UtkastContext/utkast-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import { useCallback, useMemo, useState } from "react";
@@ -73,7 +76,24 @@ const getIdForKontekstEgenskaper = (
   }
 };
 
+const getKretserFromHistory = (
+  history: HistoryState,
+  kommunerIdOgNummer: { id: string; nummer: string }[],
+  kontekstType: KontekstType,
+): Krets[] => {
+  const kretsdelingerEntries = history.entries
+    .slice(0, history.index)
+    .filter((entry) => entry.type === "kretsdelingendring") as KretsdelingEntry[];
+
+  const kretsdelingOperations = historyToKretsdelingOperations(kretsdelingerEntries).filter(
+    (kretsdeling) => kretsdeling.flatetype === kontekstType,
+  );
+
+  return getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
+};
+
 export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: KontekstType) => {
+  const { history } = useHistory();
   const { data: kommuneResponses } = useNibasApi("/v1/kommuner");
   const { utkast } = useUtkast();
 
@@ -83,15 +103,16 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     [featureProperties.kontekstEgenskaper, utkast],
   );
   const kontekstType = kontekstTypeOverride ?? getKontekstTypeForFeature(kontekstEgenskaper, featureProperties);
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
 
+  // Her aner jeg ikke hvordan vi skal håndtere flere potensielle aktivt redigerte inndelinger
   const kommunerId = useMemo(
     () =>
       getKommunerIdFromKontekstEgenskaper(
         kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
         kontekstType,
-      ) ?? [currentlyEditedInndeling != null ? currentlyEditedInndeling.id : ""],
-    [kontekstType, currentlyEditedInndeling, kontekstEgenskaper],
+      ) ?? [currentlyEditingInndelinger?.[0] != null ? currentlyEditingInndelinger[0].id : ""],
+    [kontekstType, currentlyEditingInndelinger, kontekstEgenskaper],
   );
 
   const kommunerIdOgNummer: { id: string; nummer: string }[] = useMemo(() => {
@@ -114,15 +135,24 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
           kommunerIdOgNummer,
           utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kontekstType),
         );
+        const tihorighetOptionsFromHistory = getKretserFromHistory(history, kommunerIdOgNummer, kontekstType);
         setTilhorighetValg({
-          [Tilhorighet.A]: [...commonOptions[Tilhorighet.A], ...tilhorighetOptionsFromUtkast],
-          [Tilhorighet.B]: [...commonOptions[Tilhorighet.B], ...tilhorighetOptionsFromUtkast],
+          [Tilhorighet.A]: [
+            ...commonOptions[Tilhorighet.A],
+            ...tilhorighetOptionsFromUtkast,
+            ...tihorighetOptionsFromHistory,
+          ],
+          [Tilhorighet.B]: [
+            ...commonOptions[Tilhorighet.B],
+            ...tilhorighetOptionsFromUtkast,
+            ...tihorighetOptionsFromHistory,
+          ],
         });
       } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);
       }
     },
-    [kommunerIdOgNummer, kontekstType, utkast],
+    [kommunerIdOgNummer, kontekstType, utkast, history],
   );
 
   const [formState, setFormState] = useState<TilhorighetForm>(getTilhorighetData(kontekstEgenskaper));

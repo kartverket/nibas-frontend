@@ -44,9 +44,15 @@ const MergePanel = ({ isOpen }: PanelProps) => {
   const auth = useAuthentication();
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
 
-  const { data: stemmekretserByKommune } = useKommuneStemmekretser(currentlyEditedInndeling?.id ?? null);
+  const currentlyEditingStemmekrets = currentlyEditingInndelinger.find(
+    (inndeling) => inndeling.inndelingtype === "stemmekrets",
+  );
+
+  const { data: stemmekretserByKommune } = useKommuneStemmekretser(
+    currentlyEditingStemmekrets != null ? currentlyEditingStemmekrets.id : null,
+  );
 
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
     | StemmekretsResponse[]

@@ -1,4 +1,3 @@
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useForm, useFieldArray } from "react-hook-form";
 import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse } from "types/api";
 import {
@@ -13,6 +12,8 @@ import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
 import { useCallback } from "react";
 import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
 
 type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -38,7 +39,6 @@ const getKommuneIdentifikatorFromOptions = (
 };
 
 export const useSplittingForm = (inndeling: Inndeling | null) => {
-  const { utkast, updateUtkast, getUpdateUtkastRequestFromHistory } = useUtkast();
   const toast = useToast();
 
   const {
@@ -60,16 +60,24 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     name: "nyeKretser",
   });
 
-  const { currentlyEditedInndeling } = useInndelinger();
-  const inndelingtype = currentlyEditedInndeling?.inndelingtype;
+  const { currentlyEditingInndelinger } = useInndelinger();
+  const { addHistoryEntry, getHistoryEntries } = useHistory();
+  const inndelingtype = currentlyEditingInndelinger.length > 0 ? currentlyEditingInndelinger[0].inndelingtype : null;
 
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
   const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null);
   const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null);
-  const opprinneligFlateOptions =
-    inndelingtype === "grunnkrets"
-      ? mapGrunnkretsResponseToKrets(grunnkretser ?? [])
-      : mapStemmekretResponseToKrets(stemmekretser ?? []);
+
+  const getFlateOptionsFromInndelingType = () => {
+    if (inndelingtype != null) {
+      if (inndelingtype === "grunnkrets") return mapGrunnkretsResponseToKrets(grunnkretser ?? []);
+      if (inndelingtype === "stemmekrets") return mapStemmekretResponseToKrets(stemmekretser ?? []);
+    }
+
+    return [];
+  };
+
+  const opprinneligFlateOptions = getFlateOptionsFromInndelingType();
 
   // Vi ønsker å håndtere opprinnelig krets som en "ny del", og derfor vil vi at den skal vises sammen med de nye kretsene også.
   const handleOpprinneligKretsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -88,10 +96,16 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     }
   };
 
+  const hasAlreadySplittedKrets = (krets: Krets): boolean => {
+    const currentHistoryEntires = getHistoryEntries();
+    return getKretsDelingEntries(currentHistoryEntires)
+      .flatMap((entry) => entry.changes)
+      .some((change) => change.id === krets.id.lokalid.value);
+  };
+
   const showSplittingSuccessToast = (
     opprinneligKretsInfo: Krets,
     nyeKretser: { kretsNavn: string; kretsNummer: string }[],
-    isUpdateOfPreviouslyPerformedSplit: boolean,
   ) => {
     const nyeKretserFormatted = nyeKretser.map((k) => `"${k.kretsNummer} ${k.kretsNavn}"`);
     const allButLastKretserFormatted = nyeKretserFormatted.slice(0, nyeKretserFormatted.length - 1);
@@ -104,16 +118,16 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     toast({
       status: "success",
       title: "Splitting utført",
-      description: !isUpdateOfPreviouslyPerformedSplit
-        ? `Du opprettet ${nyeKretserString} ved å splitte "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}"`
-        : `Oppdaterte splittingen av "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}" til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`,
+      description: hasAlreadySplittedKrets(opprinneligKretsInfo)
+        ? `Oppdaterte splittingen av "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}" til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`
+        : `Du opprettet ${nyeKretserString} ved å splitte "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}"`,
     });
   };
 
   // en del if-tester her for å forsikre typescript om at variablene vi bruker ikke er null.
   // (hadde ikke vært mulig å komme seg hit hvis noe var null, men typescript er typescript)
-  const updateDraftWithSplittingRequest = async () => {
-    if (inndelingtype && grunnkretser && stemmekretser) {
+  const addSplittingRequestToHistory = async () => {
+    if (inndelingtype != null && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
       const opprinneligKretsInfo = opprinneligFlateOptions.find(
         (krets) => krets.id.lokalid.value === opprinneligKrets.lokalId,
@@ -141,34 +155,17 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
           nyeKretser: exclusivelyNewKretser,
         };
 
-        const latestOperasjoner = getUpdateUtkastRequestFromHistory()?.operasjoner; // Vi vil lagre utkastet med de eksisterende endringene også
-        if (utkast && latestOperasjoner) {
-          const isUpdateOfPreviouslyPerformedSplit = // hvis vi allerede har en splitting på samme krets ønsker vi å erstatte den med den nye splittingen
-            latestOperasjoner.kretsDelingEndringer.some(
-              (splitting) => splitting.opprinneligKrets.lokalId === opprinneligKrets.lokalId,
-            );
-          const previousSplitsWithoutSplitOnCurrentOpprinneligKrets = [
-            ...utkast.operasjoner.kretsDelingEndringer.filter(
-              (splitting) =>
-                splitting.opprinneligKrets.lokalId !== newKretsDelingEndringRequest.opprinneligKrets.lokalId,
-            ),
-          ];
-
-          const updateUtkastSuccessfull = await updateUtkast(utkast.id, {
-            ...utkast,
-            operasjoner: {
-              ...latestOperasjoner,
-              kretsDelingEndringer: [
-                ...previousSplitsWithoutSplitOnCurrentOpprinneligKrets,
-                newKretsDelingEndringRequest,
-              ],
+        addHistoryEntry({
+          type: "kretsdelingendring",
+          changes: [
+            {
+              id: opprinneligKrets.lokalId,
+              from: newKretsDelingEndringRequest,
+              to: newKretsDelingEndringRequest,
             },
-          });
-
-          if (updateUtkastSuccessfull) {
-            showSplittingSuccessToast(opprinneligKretsInfo, exclusivelyNewKretser, isUpdateOfPreviouslyPerformedSplit);
-          }
-        }
+          ],
+        });
+        showSplittingSuccessToast(opprinneligKretsInfo, exclusivelyNewKretser);
       }
     }
   };
@@ -185,7 +182,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     append,
     remove,
     resetSplitting,
-    updateDraftWithSplittingRequest,
+    addSplittingRequestToHistory,
     setValue,
     getValues,
     handleOpprinneligKretsChange,

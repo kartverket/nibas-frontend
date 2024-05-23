@@ -8,7 +8,6 @@ import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { FeatureProperties } from "types/api";
-import { isFeatureEditable, isFeatureToBeArchived } from "utils/features";
 import { isAdministrativGrense, isKommuneGrense } from "utils/grenser";
 import { capitalize } from "utils/string-utils";
 import { isGrenseType } from "utils/type-utils";
@@ -21,6 +20,7 @@ import {
   formatKretsNavn,
   getKontekstTypeForFeature,
 } from "../hooks/tilhorighet-utils";
+import { getFeatureFremtidigEndringDato, isFeatureEditable, isFeatureToBeArchived } from "utils/features";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetKommune } from "../hooks/useTilhorighetKommune";
@@ -267,17 +267,20 @@ const IkkeRedigerbarAdministrativGrense = ({ feature }: TilhorighetProps) => {
 export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetProps) => {
   const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
 
-  const featureType = feature.getProperties().type;
+  const featureProperties = feature.getProperties() as FeatureProperties;
+  const gyldigTilDato = getFeatureFremtidigEndringDato(feature);
+
+  const featureType = featureProperties.type;
+  const shouldBeDisabled = isDisabled || isGrensePanelDisabled || gyldigTilDato != null;
 
   if (isGrenseType(featureType) && isKommuneGrense(featureType)) {
     const isEditable = isFeatureEditable(feature, isFeatureToBeArchived(feature), false);
-    const shouldBeDisabled = isDisabled || isGrensePanelDisabled || !isEditable;
-    return <KommunegrenseTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
+
+    return <KommunegrenseTilhorighetField feature={feature} isDisabled={shouldBeDisabled || !isEditable} />;
   } else if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
     return <IkkeRedigerbarAdministrativGrense feature={feature} />;
   }
 
-  const shouldBeDisabled = isDisabled || isGrensePanelDisabled;
   return <CommonTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
 };
 

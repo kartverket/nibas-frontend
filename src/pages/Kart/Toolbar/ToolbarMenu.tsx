@@ -9,9 +9,18 @@ type ToolbarMenuProps = {
   isActive: boolean;
   tooltip: string;
   children: ReactNode;
+  additionalTooltip?: string;
 };
 
-export const ToolbarMenu = ({ label, icon, isDisabled, isActive, tooltip, children }: ToolbarMenuProps) => (
+export const ToolbarMenu = ({
+  label,
+  icon,
+  isDisabled,
+  isActive,
+  tooltip,
+  additionalTooltip,
+  children,
+}: ToolbarMenuProps) => (
   <Menu autoSelect={false}>
     {({ isOpen }) => (
       <>
@@ -21,7 +30,7 @@ export const ToolbarMenu = ({ label, icon, isDisabled, isActive, tooltip, childr
           icon={icon}
           isDisabled={isDisabled}
           isActive={isActive}
-          tooltip={{ text: tooltip }}
+          tooltip={{ text: tooltip, additionalInfo: additionalTooltip }}
         >
           {label}
         </MenuButtonWithChevron>

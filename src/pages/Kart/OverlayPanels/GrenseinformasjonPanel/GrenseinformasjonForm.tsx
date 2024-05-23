@@ -52,7 +52,7 @@ export const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: Ed
 
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
@@ -165,7 +165,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
       >
         <Select {...register("grenseType")}>
-          {getPossibleGrenseTypesFromInndelingtype(currentlyEditedInndeling?.inndelingtype).map((type) => (
+          {getPossibleGrenseTypesFromInndelingtype(currentlyEditingInndelinger[0]?.inndelingtype).map((type) => (
             <option key={type} value={type}>
               {type}
             </option>

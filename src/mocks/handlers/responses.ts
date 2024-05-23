@@ -255,7 +255,7 @@ export const mockDetailedGrunnkrets1: GrunnkretsResponse = {
   kommuneIdentifikator: {
     gyldighetsdato: "2022-06-16",
     lokalid: {
-      value: "2",
+      value: "1",
     },
   },
 };

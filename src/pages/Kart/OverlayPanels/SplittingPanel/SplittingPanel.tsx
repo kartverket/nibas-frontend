@@ -53,7 +53,7 @@ const StyledList = styled.ul`
 
 export const SplittingPanel = ({ isOpen }: PanelProps) => {
   const { closeOverlayPanel } = useOverlayPanel();
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
   const {
     inndelingtype,
     opprinneligFlateOptions,
@@ -62,18 +62,18 @@ export const SplittingPanel = ({ isOpen }: PanelProps) => {
     append,
     remove,
     resetSplitting,
-    updateDraftWithSplittingRequest,
+    addSplittingRequestToHistory,
     getValues,
     handleOpprinneligKretsChange,
     handleSubmit,
     errors,
     trigger,
     isSubmitted,
-  } = useSplittingForm(currentlyEditedInndeling);
+  } = useSplittingForm(currentlyEditingInndelinger[0]);
 
   useEffect(() => {
     resetSplitting();
-  }, [currentlyEditedInndeling, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
+  }, [currentlyEditingInndelinger, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
 
   const closeAndResetForm = () => {
     closeOverlayPanel();
@@ -231,7 +231,7 @@ export const SplittingPanel = ({ isOpen }: PanelProps) => {
                 Avbryt
               </Button>
               <Button
-                onClick={handleSubmit(updateDraftWithSplittingRequest)}
+                onClick={handleSubmit(addSplittingRequestToHistory)}
                 isDisabled={getValues("nyeKretser").slice(1).length < 1}
               >
                 Splitt

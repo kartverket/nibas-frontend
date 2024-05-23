@@ -12,6 +12,9 @@ import {
   HistoryState,
   GrenseDelingEntry,
   NyGrense,
+  StemmekretsEntry,
+  GrunnkretsEntry,
+  KretsdelingEntry,
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -272,4 +275,24 @@ export const newFeatureOnlyExistsAfterIndex = (featureId: string, history: Histo
   const idsUpToIndex = getEntriesUpToIndex(history).flatMap(getChangeIds);
 
   return !idsUpToIndex.includes(featureId) && isTempFeatureId(featureId);
+};
+
+// Filter er dum, så selv om man hadde bruke en type-guard inne i filter-funksjonen så hadde den ikke forstått
+// at listene kun ville inneholdt den korrekte entry-typen. Men tenker det er greit siden det her er veldig
+// tydelig hva typen skulle vært og kan derfor caste for å spisse typen. I praksis fungerer disse som en kombinasjon
+// av et filter og en typeguard.
+export const getGrenseDelingEntries = (entries: HistoryEntry[]): GrenseDelingEntry[] => {
+  return entries.filter((entry) => entry.type === "grensedeling") as GrenseDelingEntry[];
+};
+
+export const getStemmekretsMetadataEntries = (entries: HistoryEntry[]): StemmekretsEntry[] => {
+  return entries.filter((entry) => entry.type === "stemmekrets") as StemmekretsEntry[];
+};
+
+export const getGrunnkretsMetadataEntries = (entries: HistoryEntry[]): GrunnkretsEntry[] => {
+  return entries.filter((entry) => entry.type === "grunnkrets") as GrunnkretsEntry[];
+};
+
+export const getKretsDelingEntries = (entries: HistoryEntry[]): KretsdelingEntry[] => {
+  return entries.filter((entry) => entry.type === "kretsdelingendring") as KretsdelingEntry[];
 };

@@ -52,7 +52,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const { mutate } = useSWRConfig();
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
-  const abstractedHistory = useUnsavedEndringer();
+  const { antallEndringer } = useUnsavedEndringer();
 
   const { clearInndelingerAndSources } = useInndelinger();
 
@@ -160,7 +160,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
             )
           }
 
-          {abstractedHistory.length > 0 && <UnsavedEndringerCollapse />}
+          {antallEndringer > 0 && <UnsavedEndringerCollapse />}
           <EndringsloggAccordion utkast={utkast} />
           <Datepickerlabel>
             Fra hvilken dato skal endringene utkastet tre i kraft?

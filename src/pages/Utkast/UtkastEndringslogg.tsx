@@ -14,7 +14,6 @@ import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndri
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
-import { EndringList } from "components/Endringslogg/EndringerList";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 type Props = {
@@ -48,7 +47,7 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
           {!harEndringer && harLastetData && <div>Det er ingen endringer i dette utkastet</div>}
 
           {!harLastetData && <Spinner size="xl" />}
-          <EndringList>
+          <ListWithNoDot>
             {stemmekretsendringer?.map((endringer) => (
               <EndringerForKommune
                 key={endringer.kommune.id}
@@ -64,7 +63,7 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
                 endringer={endringer}
               />
             ))}
-          </EndringList>
+          </ListWithNoDot>
         </AccordionPanel>
       </EndringsloggAccordionItem>
     </Accordion>
@@ -81,6 +80,10 @@ const EndringsloggAccordionButton = styled(AccordionButton)`
   display: flex;
   justify-content: space-between;
   font-weight: var(--kvib-fontWeights-bold);
+`;
+
+const ListWithNoDot = styled.ul`
+  list-style: none;
 `;
 
 export default UtkastEndringslogg;

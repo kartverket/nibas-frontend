@@ -18,10 +18,17 @@ const ToolbarMenus = () => {
   const { activeTool, toggleTool } = useToolbar();
   const { activeOverlayPanel, closeOverlayPanel, toggleOverlayPanel } = useOverlayPanel();
 
-  const { currentlyEditedInndeling } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
 
-  const isEditing = currentlyEditedInndeling != null;
-  const currentlyEditingInndelingtype = currentlyEditedInndeling?.inndelingtype;
+  const isEditing = currentlyEditingInndelinger.length > 0;
+
+  const flatedetaljerIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
+    return inndeling.inndelingtype === "stemmekrets" || inndeling.inndelingtype === "grunnkrets";
+  });
+
+  const mergeIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
+    return inndeling.inndelingtype === "stemmekrets";
+  });
 
   const toggleMovePoint = () => {
     toggleTool("koordinater");
@@ -34,11 +41,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("add", () => toggleTool("add"), isEditing);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditing);
   useKeyboardShortcut("movepoint", toggleMovePoint, isEditing);
-  useKeyboardShortcut(
-    "merge",
-    () => toggleOverlayPanel("sammenslåing"),
-    currentlyEditingInndelingtype === "stemmekrets",
-  );
+  useKeyboardShortcut("merge", () => toggleOverlayPanel("sammenslåing"), mergeIsAvailable);
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
@@ -110,7 +113,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="cell_merge" />,
       command: KeyboardShortcuts["merge"].displayString,
       $isActive: activeOverlayPanel === "sammenslåing",
-      isDisabled: currentlyEditingInndelingtype !== "stemmekrets",
+      isDisabled: !mergeIsAvailable,
       onClick: () => toggleOverlayPanel("sammenslåing"),
       "aria-label": "Slå sammen stemmekretser",
     },
@@ -118,7 +121,7 @@ const ToolbarMenus = () => {
       label: "Splitt en flate",
       icon: <Icon icon="splitscreen" />,
       $isActive: activeOverlayPanel === "splitting",
-      isDisabled: !(currentlyEditingInndelingtype === "stemmekrets" || currentlyEditingInndelingtype === "grunnkrets"),
+      isDisabled: !flatedetaljerIsAvailable,
       onClick: () => toggleOverlayPanel("splitting"),
       "aria-label": "Splitt en flate",
       command: KeyboardShortcuts["flatesplit"].displayString,
@@ -130,11 +133,12 @@ const ToolbarMenus = () => {
       <Hide below="xl">
         <ConditionalHide above="xl" condition={!!activeOverlayPanel}>
           <ToolbarMenu
-            label="Grenseverktøy"
+            label="Grense"
             icon="timeline"
             isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
             isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
             tooltip="Vis grenseverktøy"
+            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
               {grenseMenuItems.map((gmi) => (
@@ -150,6 +154,7 @@ const ToolbarMenus = () => {
             isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
             isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
             tooltip="Vis punktverktøy"
+            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
               {punktMenuItems.map((pmi) => (
@@ -165,6 +170,11 @@ const ToolbarMenus = () => {
             isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
             isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
             tooltip="Vis flateverktøy"
+            additionalTooltip={
+              mergeIsAvailable || flatedetaljerIsAvailable
+                ? undefined
+                : "Rediger en stemme- eller grunnkrets for å aktivere verktøyet"
+            }
           >
             <MenuList>
               {flateMenuItems.map((fmi) => (
