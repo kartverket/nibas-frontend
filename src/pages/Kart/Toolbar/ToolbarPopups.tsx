@@ -179,7 +179,7 @@ const ToolbarPopups = () => {
       {activeModeTools.includes("matrikkel") && (
         <ToolbarPopup
           text="Hent og vis eiendomsgrenser fra matrikkelen"
-          subtext="Grensene hentes ut basert på kartutsnittet du ser på. Flytt kartet til hvor du ønsker å hente frem eiendomsgrensene."
+          subtext="Grensene hentes ut basert på kartutsnittet du ser på."
           buttonText="Hent grenser"
           secondaryButtonText="Nullstill"
           onClick={handleMatrikkel}

@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Divider, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
+import { Button, Link, ButtonGroup, Divider, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 import { PanelHeader, PanelProps, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { INNDELINGTYPER, BaseInndeling } from "contexts/InndelingerContext/InndelingerContext";
@@ -124,11 +124,11 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
           </InndelingerLayout>
           <Divider></Divider>
           <ButtonContainer>
-            <Button variant="ghost" size={"md"} onClick={resetSelection}>
+            <Link size={"md"} onClick={resetSelection}>
               Nullstill markering
-            </Button>
+            </Link>
             <ButtonGroup>
-              <Button variant="secondary" size={"md"} onClick={closeOverlayModal}>
+              <Button variant="tertiary" size={"md"} onClick={closeOverlayModal}>
                 Avbryt
               </Button>
               <Button size={"md"} isDisabled={!isSelectionAvailable} onClick={selectNewInndelinger}>
@@ -159,6 +159,7 @@ const Content = styled(ModalBody)`
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 12px 0;
 `;
 

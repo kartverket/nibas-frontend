@@ -1,4 +1,4 @@
-import { Badge, Checkbox, FormControl, FormErrorMessage } from "@kvib/react";
+import { Badge, Tag, Checkbox, FormControl, FormErrorMessage } from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
 import { styled } from "styled-components";
@@ -48,21 +48,14 @@ export const MerknadCell = forwardRef<HTMLInputElement, MerknadCellProps>(functi
           <FormErrorMessage>{validationError?.message}</FormErrorMessage>
         </FormControl>
       ) : (
-        data && <Merknad>Samisk forvaltningsområde</Merknad>
+        data && (
+          <Tag colorScheme="gray" size="md">
+            Samisk forvaltningsområde
+          </Tag>
+        )
       )}
     </TableCell>
   );
 });
-
-const Merknad = styled(Badge)`
-  display: inline-flex;
-  align-items: center;
-  height: 100%;
-  padding: 0 8px;
-  text-transform: unset;
-  vertical-align: unset;
-  border-radius: 6px;
-  background: var(--kvib-colors-orange-100);
-`;
 
 export default InputCell;

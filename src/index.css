@@ -7,4 +7,5 @@ body {
 
 #root {
   height: 100%;
+  background-color: var(--kvib-colors-gray-50);
 }

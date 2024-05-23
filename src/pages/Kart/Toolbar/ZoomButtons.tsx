@@ -17,6 +17,7 @@ const ZoomButtons = () => {
       <ToolbarButton
         icon="add"
         onClick={() => zoom(1)}
+        variant="tertiary"
         aria-label="Zoom inn på kartet"
         tooltip={{ text: "Zoom inn på kartet" }}
       />
@@ -24,6 +25,7 @@ const ZoomButtons = () => {
       <ToolbarButton
         icon="remove"
         onClick={() => zoom(-1)}
+        variant="tertiary"
         aria-label="Zoom ut fra kartet"
         tooltip={{ text: "Zoom ut fra kartet" }}
       />
@@ -39,7 +41,7 @@ const Container = styled.div`
   width: fit-content;
   border-radius: 10px;
   background: white;
-  box-shadow: var(--kvib-shadows-base);
+  box-shadow: var(--kvib-shadows-sm);
 `;
 
 export default ZoomButtons;

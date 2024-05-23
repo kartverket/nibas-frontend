@@ -27,7 +27,7 @@ const ToolbarPopup = ({
   return (
     <ToolbarPopupBody>
       <TextRows>
-        <Text as="b" fontSize="md">
+        <Text as="b" fontSize="sm">
           {text}
         </Text>
         {subtext && <Text fontSize="sm">{subtext}</Text>}
@@ -43,8 +43,8 @@ const ToolbarPopup = ({
         </Button>
       )}
       {onClose != null && (
-        <Button size="sm" variant="ghost" onClick={onClose}>
-          Lukk
+        <Button size="sm" variant="tertiary" onClick={onClose}>
+          Lukk (Esc)
         </Button>
       )}
     </ToolbarPopupBody>
@@ -60,8 +60,8 @@ const ToolbarPopupBody = styled.div`
   gap: 16px;
   padding: 12px 20px;
   border-radius: 8px;
-  background: var(--kvib-colors-chakra-body-bg);
-  box-shadow: var(--kvib-shadows-base);
+  background: var(--kvib-colors-orange-200);
+  box-shadow: var(--kvib-shadows-sm);
 `;
 
 const TextRows = styled.div`

@@ -30,6 +30,8 @@ const Container = styled.div`
   padding: 24px 64px;
   justify-content: space-between;
   background: var(--kvib-colors-white);
+  box-shadow: var(--kvib-shadows-sm);
+  z-index: var(--kvib-zIndices-base);
 `;
 
 const Section = styled.section`

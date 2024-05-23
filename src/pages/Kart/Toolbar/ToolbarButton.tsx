@@ -28,6 +28,7 @@ const ButtonContainer = styled(FormControl)`
 
 const Label = styled(FormLabel)`
   font-weight: normal;
+  color: var(--kvib-colors-gray-800);
   margin: 0;
   font-size: var(--kvib-fontSizes-sm);
 `;

@@ -70,9 +70,7 @@ const Panel = styled.div<{ $isOpen: boolean }>`
   width: 100%;
   padding: 0 var(--panel-padding);
   background: white;
-  border: 2px solid var(--kvib-colors-gray-50);
-  border-radius: 12px;
-  box-shadow: 4px 4px 12px 0 rgba(0, 0, 0, 15%);
+  box-shadow: var(--kvib-shadows-sm);
   overflow: auto;
   ${(props) => !props.$isOpen && "display: none"};
   z-index: ${zindex.panel};
@@ -105,6 +103,8 @@ export const AbsolutePanel = styled(Panel)`
   width: unset;
   max-width: 450px;
   height: fit-content;
+  box-shadow: var(--kvib-shadows-sm);
+  border-radius: 8px;
   margin: 16px;
   animation: ${slideIn} 0.25s ease-in-out;
 `;

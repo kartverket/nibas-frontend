@@ -29,8 +29,12 @@ const EditAndSaveButton = ({
   <Container className={className}>
     {isEditing ? (
       <CombinedButton>
-        <IconButton variant="ghost" aria-label="Forkast endringer" onClick={toggleEditing} icon="close" size={size} />
-        <IconButton aria-label="Lagre endringer" onClick={onSubmit} icon="check" isDisabled={!canSave} size={size} />
+        <Button variant="tertiary" aria-label="Forkast endringer" onClick={toggleEditing} size={size}>
+          Avbryt
+        </Button>
+        <Button aria-label="Lagre endringer" onClick={onSubmit} isDisabled={!canSave} size={size}>
+          Bekreft
+        </Button>
       </CombinedButton>
     ) : (
       <EditButton

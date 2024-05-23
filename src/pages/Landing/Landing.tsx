@@ -49,7 +49,7 @@ const Landing = () => {
         <ActionCard
           title="Gjør en eller flere endringer"
           description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."
-          icon="edit_location_alt"
+          icon="draw"
           onClick={() => navigate(routes.utkast)}
         />
         <ActionCard

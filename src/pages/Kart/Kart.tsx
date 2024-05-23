@@ -72,9 +72,9 @@ const KartTarget = styled.div`
   /* dragzoom kan kun få style via vanlig css tydeligvis */
   .ol-dragzoom {
     background: var(--kvib-colors-blue-200);
-    opacity: 0.25;
+    opacity: 0.3;
     border-radius: 6px;
-    border: solid 2px var(--kvib-colors-blue-700);
+    border: solid 2px var(--kvib-colors-blue-500);
   }
 `;
 
@@ -84,7 +84,7 @@ const SpinnerBackground = styled.div`
   background: white;
   padding: 12px;
   border-radius: 50%;
-  box-shadow: var(--kvib-shadows-md);
+  box-shadow: var(--kvib-shadows-base);
   margin: auto;
 `;
 
