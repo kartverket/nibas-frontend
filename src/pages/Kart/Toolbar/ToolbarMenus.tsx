@@ -138,6 +138,7 @@ const ToolbarMenus = () => {
             isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
             isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
             tooltip="Vis grenseverktøy"
+            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
               {grenseMenuItems.map((gmi) => (
@@ -153,6 +154,7 @@ const ToolbarMenus = () => {
             isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
             isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
             tooltip="Vis punktverktøy"
+            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
               {punktMenuItems.map((pmi) => (
@@ -168,6 +170,11 @@ const ToolbarMenus = () => {
             isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
             isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
             tooltip="Vis flateverktøy"
+            additionalTooltip={
+              mergeIsAvailable || flatedetaljerIsAvailable
+                ? undefined
+                : "Rediger en stemme- eller grunnkrets for å aktivere verktøyet"
+            }
           >
             <MenuList>
               {flateMenuItems.map((fmi) => (
