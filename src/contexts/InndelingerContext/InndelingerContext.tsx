@@ -341,7 +341,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     }
 
     setInndelinger(newInndelinger);
-    setInndelingerToFetch(inndelingerToSelect);
+    setInndelingerToFetch(newInndelingerList);
   };
 
   const value = {
