@@ -22,15 +22,38 @@ type WMTSResponseLayer = {
   Title: string;
 };
 
+// Funksjon som gir vårt egendefinerte navn på et kartlag hvis vi har definert det
+export const getKartlagCustomTitle = (layerId: KartlagId) => {
+  const kartlagTitles: Record<KartlagId, string | null> = {
+    topo: null,
+    toporaster: null,
+    topograatone: null,
+    matrikkelenWMS: null,
+    administrativeGrenser: "Administrative enheter WMS",
+    administrativeGrenserHistorisk: null,
+    grunnkretserWMS: null,
+    stedsnavn: null,
+    stedsnavnSSR: null,
+    kartbladinndelinger: "Kartblad WMS",
+    sjokartDybdedata: "Dybdedata",
+    n5Raster2: "N5 Raster WMS",
+    historiskeKart: null,
+    norgeIBilder: "Norge i bilder (NIB) - EUREF89 UTM33",
+    norgesMaritimeGrenser: null,
+    sjokartElektroniske: null,
+  };
+
+  return kartlagTitles[layerId];
+};
+
 const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
   const sublayers =
     responseLayer.Layer?.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId)) ?? [];
-
   const mappedLayer: MappedLayer = {
     type: "wms",
     sourceId,
     id: responseLayer.Name,
-    title: responseLayer.Title,
+    title: getKartlagCustomTitle(sourceId) ?? responseLayer.Title,
     sublayers,
     isVisible: false,
   };
@@ -42,7 +65,7 @@ const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): Ma
   type: "wmts",
   sourceId: sourceId,
   id: responseLayer.Identifier,
-  title: responseLayer.Title,
+  title: getKartlagCustomTitle(sourceId) ?? responseLayer.Title,
   sublayers: [],
   isVisible: false,
 });
@@ -102,7 +125,7 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
         type: "wmts",
         sourceId: layerId,
         id: layerId,
-        title: json.Contents.Layer[0].Title ?? source.getLayer(),
+        title: getKartlagCustomTitle(layerId) ?? json.Contents.Layer[0].Title ?? source.getLayer(),
         sublayers: json.Contents.Layer.map((l: WMTSResponseLayer) => mapWMTSLayer(l, layerId)),
         isVisible: false,
       };
