@@ -113,7 +113,7 @@ const UtkastOpprett = () => {
                 <FormSection isInvalid={!!errors.endringstype}>
                   <FormLabel>Endringstype</FormLabel>
                   <FormHelperText>
-                    Velg en passende endringstype. Prøv å begrens endringene i hvert utkast til den valgte typen.
+                    Velg en passende endringstype. Prøv å begrense endringene i hvert utkast til den valgte typen.
                   </FormHelperText>
                   <Select
                     placeholder="Velg en endringstype fra listen"
