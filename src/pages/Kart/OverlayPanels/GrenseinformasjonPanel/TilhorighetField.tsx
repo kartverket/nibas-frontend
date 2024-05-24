@@ -1,4 +1,5 @@
 import { Stack, Text } from "@kvib/react";
+import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
@@ -8,6 +9,7 @@ import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { FeatureProperties } from "types/api";
+import { getFeatureFremtidigEndringDato, isFeatureEditable, isFeatureToBeArchived } from "utils/features";
 import { isAdministrativGrense, isKommuneGrense } from "utils/grenser";
 import { capitalize } from "utils/string-utils";
 import { isGrenseType } from "utils/type-utils";
@@ -20,11 +22,9 @@ import {
   formatKretsNavn,
   getKontekstTypeForFeature,
 } from "../hooks/tilhorighet-utils";
-import { getFeatureFremtidigEndringDato, isFeatureEditable, isFeatureToBeArchived } from "utils/features";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import { useTilhorighetKommune } from "../hooks/useTilhorighetKommune";
-import { EditGrenseInfoButton } from "./GrenseinformasjonForm";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 import { addKontekstEntryFromFeature } from "./grenseinformasjon-utils";
 
@@ -84,7 +84,10 @@ const TilhorighetRow = ({
   );
 };
 
-type ParentPassedProps = Pick<TilhorighetRowProps, "isEditing" | "isSubmitted" | "isValid">;
+type ParentPassedProps = Pick<TilhorighetRowProps, "isEditing" | "isSubmitted"> & {
+  isStemmekretserValid: boolean;
+  isGrunnkretserValid: boolean;
+};
 type TilhorighetFieldControllerProps = {
   feature: Feature<Geometry>;
   grunnkretsTilhorighetForm: UseTilhorighet | null;
@@ -99,15 +102,15 @@ const TilhorighetFieldController = ({
   renderChildren,
 }: TilhorighetFieldControllerProps) => {
   const { addHistoryEntry } = useHistory();
-  const featureProperties = feature.getProperties() as FeatureProperties;
-  const kontekstType = getKontekstTypeForFeature(featureProperties.kontekstEgenskaper, featureProperties);
+
   const isGrunnkretserValid =
-    grunnkretsTilhorighetForm?.formState[kontekstType][Tilhorighet.A] != null &&
-    grunnkretsTilhorighetForm?.formState[kontekstType][Tilhorighet.B] != null;
+    grunnkretsTilhorighetForm?.formState[KontekstType.GRUNNKRETS][Tilhorighet.A] != null &&
+    grunnkretsTilhorighetForm?.formState[KontekstType.GRUNNKRETS][Tilhorighet.B] != null;
   const isStemmekretserValid =
-    stemmekretsTilhorighetForm?.formState[kontekstType][Tilhorighet.A] != null &&
-    stemmekretsTilhorighetForm?.formState[kontekstType][Tilhorighet.B] != null;
-  const isValid =
+    stemmekretsTilhorighetForm?.formState[KontekstType.STEMMEKRETS][Tilhorighet.A] != null &&
+    stemmekretsTilhorighetForm?.formState[KontekstType.STEMMEKRETS][Tilhorighet.B] != null;
+
+  const isAllValid =
     (stemmekretsTilhorighetForm != null ? isStemmekretserValid : true) &&
     (grunnkretsTilhorighetForm != null ? isGrunnkretserValid : true);
 
@@ -138,10 +141,14 @@ const TilhorighetFieldController = ({
   }, [feature]);
 
   const handleSubmit = () => {
-    if (isDirty && isValid) {
-      setIsSubmitted(true);
+    setIsSubmitted(true);
+    if (isDirty && isAllValid) {
       submit();
-    } else setIsSubmitted(false);
+      setIsEditing(false);
+    }
+    if (!isDirty) {
+      setIsEditing(false);
+    }
   };
 
   return (
@@ -150,21 +157,30 @@ const TilhorighetFieldController = ({
         <Text as={"b"} fontSize={"lg"}>
           Tilhørighet
         </Text>
-        <EditGrenseInfoButton
+        <EditAndSaveButton
           isEditing={isEditing}
-          handleSubmit={handleSubmit}
-          toggleEdit={() =>
+          size="sm"
+          onSubmit={handleSubmit}
+          variant="secondary"
+          toggleEditing={() =>
             setIsEditing((prevState) => {
-              if (isEditing && !isDirty) {
+              setIsSubmitted(false);
+              if (isEditing) {
                 reset();
-                setIsSubmitted(false);
               }
               return !prevState;
             })
           }
-        />
+        >
+          Rediger
+        </EditAndSaveButton>
       </TilhorighetFieldHeader>
-      {renderChildren({ isEditing, isSubmitted, isValid })}
+      {renderChildren({
+        isEditing,
+        isSubmitted,
+        isGrunnkretserValid,
+        isStemmekretserValid,
+      })}
     </>
   );
 };
@@ -184,11 +200,11 @@ const CommonTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
       feature={feature}
       grunnkretsTilhorighetForm={kontekstType === KontekstType.GRUNNKRETS ? commonTilhorighet : null}
       stemmekretsTilhorighetForm={kontekstType === KontekstType.STEMMEKRETS ? commonTilhorighet : null}
-      renderChildren={({ isEditing, isSubmitted, isValid }) => (
+      renderChildren={({ isEditing, isSubmitted, isGrunnkretserValid, isStemmekretserValid }) => (
         <TilhorighetRow
           isEditing={isEditing}
           isSubmitted={isSubmitted}
-          isValid={isValid}
+          isValid={kontekstType === KontekstType.GRUNNKRETS ? isGrunnkretserValid : isStemmekretserValid}
           feature={feature}
           useTilhorighet={commonTilhorighet}
           isDisabled={isDisabled}
@@ -207,12 +223,12 @@ const KommunegrenseTilhorighetField = ({ feature, isDisabled }: TilhorighetProps
       feature={feature}
       grunnkretsTilhorighetForm={useTilhorighetGrunnkrets}
       stemmekretsTilhorighetForm={useTilhorighetStemmekrets}
-      renderChildren={({ isEditing, isSubmitted, isValid }) => (
+      renderChildren={({ isEditing, isSubmitted, isGrunnkretserValid, isStemmekretserValid }) => (
         <>
           <TilhorighetRow
             isEditing={isEditing}
             isSubmitted={isSubmitted}
-            isValid={isValid}
+            isValid={isGrunnkretserValid}
             feature={feature}
             useTilhorighet={useTilhorighetGrunnkrets}
             isDisabled={isDisabled}
@@ -220,7 +236,7 @@ const KommunegrenseTilhorighetField = ({ feature, isDisabled }: TilhorighetProps
           <TilhorighetRow
             isEditing={isEditing}
             isSubmitted={isSubmitted}
-            isValid={isValid}
+            isValid={isStemmekretserValid}
             feature={feature}
             useTilhorighet={useTilhorighetStemmekrets}
             isDisabled={isDisabled}
@@ -240,12 +256,12 @@ const IkkeRedigerbarAdministrativGrense = ({ feature }: TilhorighetProps) => {
       feature={feature}
       grunnkretsTilhorighetForm={useTilhorighetGrunnkrets}
       stemmekretsTilhorighetForm={useTilhorighetStemmekrets}
-      renderChildren={({ isEditing, isSubmitted, isValid }) => (
+      renderChildren={({ isEditing, isSubmitted, isGrunnkretserValid, isStemmekretserValid }) => (
         <>
           <TilhorighetRow
             isEditing={isEditing}
             isSubmitted={isSubmitted}
-            isValid={isValid}
+            isValid={isGrunnkretserValid}
             feature={feature}
             useTilhorighet={useTilhorighetGrunnkrets}
             isDisabled={true}
@@ -253,7 +269,7 @@ const IkkeRedigerbarAdministrativGrense = ({ feature }: TilhorighetProps) => {
           <TilhorighetRow
             isEditing={isEditing}
             isSubmitted={isSubmitted}
-            isValid={isValid}
+            isValid={isStemmekretserValid}
             feature={feature}
             useTilhorighet={useTilhorighetStemmekrets}
             isDisabled={true}
