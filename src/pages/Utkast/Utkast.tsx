@@ -76,7 +76,7 @@ const Utkast = () => {
                   {utkastsInGroup.length > 0 ? (
                     utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => <UtkastCard key={u.id} utkast={u} />)
                   ) : (
-                    <p>Det finnes ingen utkast av denne utkasttypen.</p>
+                    <IngenUtkastText>Det finnes ingen utkast av denne utkasttypen.</IngenUtkastText>
                   )}
                 </EndringstypeGroup>
               ))}
@@ -128,7 +128,7 @@ const LoadingSkeleton = styled(SkeletonText)`
   padding: 24px;
   border-radius: 8px;
   background: var(--kvib-colors-chakra-body-bg);
-  box-shadow: var(--kvib-shadows-base);
+  box-shadow: var(--kvib-shadows-sm);
   cursor: not-allowed;
 `;
 
@@ -143,6 +143,11 @@ const EndringstypeGroup = styled.section`
   display: flex;
   flex-direction: column;
   gap: 16px;
+`;
+
+const IngenUtkastText = styled.p`
+  color: var(--kvib-colors-gray-500);
+  font-size: var(--kvib-fontSizes-sm);
 `;
 
 const ReturnButton = styled(Link).attrs({ as: RouterLink })`

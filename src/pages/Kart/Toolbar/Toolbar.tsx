@@ -177,7 +177,7 @@ const Toolbar = () => {
               </ToolbarButton>
               <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
                 <ToolbarButton
-                  icon="arrow_selector_tool"
+                  icon="highlight_mouse_cursor"
                   onClick={() => disableModeTool("move")}
                   isActive={!activeModeTools.includes("move")}
                   aria-label="Flytt eller rediger grenser i kartet"
@@ -188,7 +188,7 @@ const Toolbar = () => {
                     additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
                   }}
                 >
-                  Flytt / Rediger
+                  Flytt/Rediger
                 </ToolbarButton>
                 <ToolbarMenus />
               </ConditionalHide>
@@ -290,7 +290,7 @@ const ToolbarButtons = styled.div`
   padding: 16px 20px;
   background: white;
   border-radius: 10px;
-  box-shadow: var(--kvib-shadows-base);
+  box-shadow: var(--kvib-shadows-sm);
 `;
 
 export default Toolbar;

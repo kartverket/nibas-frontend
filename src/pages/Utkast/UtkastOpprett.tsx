@@ -112,7 +112,9 @@ const UtkastOpprett = () => {
                 </FormSection>
                 <FormSection isInvalid={!!errors.endringstype}>
                   <FormLabel>Endringstype</FormLabel>
-                  <FormHelperText>Typen påvirker hvilke verktøy som er tilgjengelig under redigeringen.</FormHelperText>
+                  <FormHelperText>
+                    Velg en passende endringstype. Prøv å begrense endringene i hvert utkast til den valgte typen.
+                  </FormHelperText>
                   <Select
                     placeholder="Velg en endringstype fra listen"
                     {...register("endringstype", { required: "Du må velge en endringstype for utkastet" })}

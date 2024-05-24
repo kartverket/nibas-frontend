@@ -11,6 +11,7 @@ export const TegnforklaringButton = () => {
         onClick={() => toggleOverlayPanel("tegnforklaring")}
         aria-label="Åpne og lukke tegnforklaring"
         icon="question_mark"
+        size="sm"
       />
     </Tooltip>
   );
@@ -19,7 +20,7 @@ export const TegnforklaringButton = () => {
 const RoundButton = styled(IconButton)`
   position: absolute;
   top: 12px;
-  right: 12px;
+  right: 14px;
   border-radius: 50%;
-  box-shadow: var(--kvib-shadows-base);
+  box-shadow: var(--kvib-shadows-sm);
 `;

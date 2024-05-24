@@ -35,8 +35,8 @@ export const EndringerForKommune = ({ kretstype, endringer }: EndringerForKommun
 };
 
 const KommuneHeading = styled(Heading)`
-  font-size: var(--kvib-fontSizes-xl);
-  font-weight: 900;
+  font-size: var(--kvib-fontSizes-lg);
+  font-weight: 800;
   margin-bottom: 1rem;
 `;
 

@@ -67,7 +67,9 @@ const Container = styled(AbsolutePanel)`
   transform: translateX(-50%);
   max-width: unset;
   width: 800px;
-  padding: 24px;
+  padding: 24px 24px 8px;
+  border-radius: 8px;
+  box-shadow: var(--kvib-shadows-lg);
   animation: ${fadeIn} 0.25s ease-in-out;
   overflow: visible;
 `;

@@ -20,9 +20,23 @@ export const mapProjectionEPSGCode: EPSGCode = "EPSG:25833";
 export const projectionDefinitions: EpsgDefinition[] = [
   {
     name: "EUREF89 - UTM-sone 33",
-    shortName: "EU89 UTM-33",
+    shortName: "EU89 UTM33",
     epsgCode: mapProjectionEPSGCode,
     def: "+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
+    xyLabel: { x: "Øst", y: "Nord" },
+  },
+  {
+    name: "EUREF89 - UTM-sone 32",
+    shortName: "EU89 UTM32",
+    epsgCode: "EPSG:25832",
+    def: "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
+    xyLabel: { x: "Øst", y: "Nord" },
+  },
+  {
+    name: "EUREF89 - UTM-sone 35",
+    shortName: "EU89 UTM35",
+    epsgCode: "EPSG:25835",
+    def: "+proj=utm +zone=35 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
     xyLabel: { x: "Øst", y: "Nord" },
   },
   {
@@ -38,20 +52,6 @@ export const projectionDefinitions: EpsgDefinition[] = [
     epsgCode: "EPSG:4326",
     def: "+proj=longlat +datum=WGS84 +no_defs +type=crs",
     xyLabel: { x: "E (Øst)", y: "N (Nord)" },
-  },
-  {
-    name: "EUREF89 - UTM-sone 32",
-    shortName: "EU89 UTM-32",
-    epsgCode: "EPSG:25832",
-    def: "+proj=utm +zone=32 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
-    xyLabel: { x: "Øst", y: "Nord" },
-  },
-  {
-    name: "EUREF89 - UTM-sone 35",
-    shortName: "EU89 UTM-35",
-    epsgCode: "EPSG:25835",
-    def: "+proj=utm +zone=35 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs +type=crs",
-    xyLabel: { x: "Øst", y: "Nord" },
   },
 ];
 

@@ -140,9 +140,10 @@ const InndelingText = styled(Text)<{ $isBold?: boolean }>`
 `;
 
 const Container = styled.header`
-  box-shadow: var(--kvib-shadows-base);
+  box-shadow: var(--kvib-shadows-sm);
   z-index: ${zindex.mapHeader};
   font-size: var(--kvib-fontSizes-sm);
+  background: white;
 `;
 
 const Bar = styled.article`

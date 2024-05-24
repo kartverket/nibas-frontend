@@ -51,7 +51,7 @@ const App = () => {
   );
 
   return (
-    <Suspense fallback={<Loading isLoading={true} />}>
+    <Suspense fallback={<Loading />}>
       <EnvironmentOverlay>
         <RouterProvider router={router} />
       </EnvironmentOverlay>
@@ -75,7 +75,7 @@ const ProtectedPage = () => {
   }, [isAuthenticated, checkAuthorization, navigate]);
 
   if (isLoading) {
-    return <Loading isLoading={true} />;
+    return <Loading />;
   }
 
   if (!isAuthenticated) {

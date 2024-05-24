@@ -144,7 +144,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             clearSearch();
             handleSubmit(submitAndAddHistoryEntry)(e);
           }}
-          hasIcon
         >
           Rediger flatedetaljer
         </FlatedataFooter>

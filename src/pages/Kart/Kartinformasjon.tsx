@@ -51,8 +51,9 @@ const Kartinformasjon = () => {
       <Container>
         <ProjectionSpan>{getProjectionName(true)}</ProjectionSpan>
         <Position id="mouse-position" />
+        <Scale id="scale-bar" />
       </Container>
-      <Scale id="scale-bar" />
+
       <ScaleIndicator id="scale-line" />
     </>
   );
@@ -69,31 +70,25 @@ const Container = styled.div`
   width: fit-content;
   gap: 12px;
   background: white;
-  box-shadow: var(--kvib-shadows-base);
-  font-size: var(--kvib-fontSizes-sm);
-  border-radius: 8px;
+  box-shadow: var(--kvib-shadows-sm);
+  font-size: var(--kvib-fontSizes-xs);
+  border-radius: 4px;
   z-index: ${zindex.farBack};
 `;
 
 const ScaleIndicator = styled.span`
   position: absolute;
-  bottom: 40px;
+  bottom: 8px;
   left: 8px;
   z-index: ${zindex.farBack};
 
   border: 2px solid var(--kvib-colors-gray-700);
+  font-size: var(--kvib-fontSizes-xs);
   border-top: none;
   text-align: center;
 `;
 
-const Scale = styled(Container)`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  top: unset;
-  bottom: 8px;
-  left: 8px;
-
+const Scale = styled.div`
   /* Vi hindrer OpenLayers sin innebygde styling fra å sette bredde ved å bare ha inline-elementer */
   .ol-scale-bar-inner {
     display: inline;

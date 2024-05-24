@@ -23,15 +23,15 @@ const Container = styled(Button).attrs({ variant: "ghost" })`
   text-align: left;
   height: unset;
   border: 2px solid transparent;
-  transition: border-color 0.25s;
+  transition: box-shadow 0.2s ease;
   cursor: pointer;
 
   background: var(--kvib-colors-chakra-body-bg);
   color: inherit;
-  box-shadow: var(--kvib-shadows-base);
+  box-shadow: var(--kvib-shadows-sm);
 
   &:hover {
-    border-color: var(--kvib-colors-blue-500);
+    box-shadow: var(--kvib-shadows-lg);
     background: white;
     color: inherit;
   }
@@ -54,7 +54,8 @@ const Title = styled(Heading)`
 `;
 
 const Description = styled(Text)`
-  font-size: 14px;
+  font-size: var(--kvib-fontSizes-sm);
+  font-weight: var(--kvib-fontWeights-normal);
   color: var(--kvib-colors-gray-500);
 `;
 

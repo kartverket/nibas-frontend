@@ -25,7 +25,7 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
         <Heading as="h3" size="sm">
           {utkast.navn}
         </Heading>
-        <Date fontSize="xs">{`Opprettet: ${datestringToFormattedDatestring(utkast.opprettetDato)}`}</Date>
+        <Date fontSize="xs">{`Opprettet: ${datestringToFormattedDatestring(utkast.opprettetDato)} (Oppdatert: ${datestringToFormattedDatestring(utkast.auditInfoResponse.oppdateringsdato)})`}</Date>
       </Info>
       <Menu>
         <MenuButton
@@ -53,13 +53,12 @@ const Container = styled.article`
   padding: 24px;
   border-radius: 8px;
   background: var(--kvib-colors-chakra-body-bg);
-  box-shadow: var(--kvib-shadows-base);
-  border: 2px solid transparent;
-  transition: border-color 0.1s;
+  box-shadow: var(--kvib-shadows-sm);
+  transition: box-shadow 0.2s ease;
   cursor: pointer;
 
   &:hover {
-    border-color: var(--kvib-colors-blue-500);
+    box-shadow: var(--kvib-shadows-lg);
   }
 `;
 

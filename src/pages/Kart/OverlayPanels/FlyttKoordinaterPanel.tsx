@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, Select, useToast } from "@kvib/react";
+import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, FormLabel, Select, useToast } from "@kvib/react";
 import Input from "components/Input";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
@@ -39,13 +39,17 @@ const Form = styled.form`
 const SpacedFormControl = styled(FormControl)`
   display: flex;
   flex-direction: column;
-  gap: 24px;
+`;
+
+const CoordinatesAlert = styled(Alert)`
+  margin-top: 8px;
 `;
 
 const InputRow = styled.div`
   display: flex;
   width: 100%;
   gap: 16px;
+  margin: 16px 0 0;
 `;
 
 const ButtonRow = styled.div`
@@ -273,6 +277,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
       </PanelHeader>
       <Form onSubmit={handleSubmit(movePointToCoordinates)}>
         <SpacedFormControl isInvalid={globalFormError != null && formErrors != null}>
+          <FormLabel>Koordinatsystem</FormLabel>
           <Select
             isInvalid={false}
             value={projectionOfCoordinates}
@@ -287,11 +292,11 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
             ))}
           </Select>
           {projectionOfCoordinates !== mapProjectionEPSGCode && (
-            <Alert>
+            <CoordinatesAlert>
               <AlertIcon />
               Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
               transformert til kartet sitt koordinatsystem.
-            </Alert>
+            </CoordinatesAlert>
           )}
           <InputRow>
             <Input

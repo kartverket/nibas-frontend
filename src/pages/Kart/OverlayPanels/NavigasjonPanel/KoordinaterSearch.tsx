@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, InputGroup, Select } from "@kvib/react";
+import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, FormLabel, InputGroup, Select } from "@kvib/react";
 import Input from "components/Input";
 import useNibasApi from "hooks/useNibasApi";
 import { getLabelsFromProjection } from "pages/Kart/Kartinformasjon";
@@ -17,12 +17,16 @@ import {
 const StyledFormControl = styled(FormControl)`
   display: flex;
   flex-direction: column;
-  row-gap: 16px;
 `;
 
 const InputContainer = styled.div`
   display: flex;
   column-gap: 16px;
+  margin: 22px 0 28px;
+`;
+
+const CoordinatesAlert = styled(Alert)`
+  margin-top: 8px;
 `;
 
 const StyledFormErrorMessage = styled(FormErrorMessage)`
@@ -121,6 +125,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
   return (
     <form onSubmit={handleSubmit(gotoCoordinates)}>
       <StyledFormControl isInvalid={formErrors.globalErrorDummyField != null}>
+        <FormLabel htmlFor="select">Koordinatsystem</FormLabel>
         <Select
           isInvalid={false}
           value={projectionOfCoordinates}
@@ -133,11 +138,11 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
           ))}
         </Select>
         {projectionOfCoordinates !== mapProjectionEPSGCode && (
-          <Alert>
+          <CoordinatesAlert>
             <AlertIcon />
             Du har valgt et annet koordinatsystem enn hva kartet bruker. Koordinatene du har skrevet inn blir derfor
             transformert til kartet sitt koordinatsystem.
-          </Alert>
+          </CoordinatesAlert>
         )}
         <InputContainer>
           <InputGroup>
