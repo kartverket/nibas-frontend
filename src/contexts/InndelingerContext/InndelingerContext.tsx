@@ -77,7 +77,7 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
 
-  const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles } = useFeatureStyle();
+  const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles, addDirtyStyles } = useFeatureStyle();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
   const [inndelingerToFetch, setInndelingerToFetch] = useState<Inndeling[]>([]);
@@ -85,7 +85,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(inndelingerToFetch);
   const { utkast } = useUtkast();
 
-  const { reapplyCurrentEntries } = useHistory();
+  const { reapplyCurrentEntries, getHistoryEntries } = useHistory();
 
   const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
     return a.id === b.id && a.inndelingtype === b.inndelingtype;
@@ -118,6 +118,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           addFeaturesToSource(layer, features, () => {
             if (layer === "edit") {
               setFeatureStylesForUtkast(changedFeaturesInUtkast, sammenslaaingFeaturesInUtkast);
+
+              const idsOfFeaturesInHistory = getHistoryEntries().flatMap((entry) =>
+                entry.changes.map((change) => change.id),
+              );
+              addDirtyStyles(idsOfFeaturesInHistory);
             }
             const fremtidigEndringFeatureIds = removeNil(
               features
@@ -255,6 +260,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,
     reapplyCurrentEntries,
+    getHistoryEntries,
+    addDirtyStyles,
   ]);
 
   const clearInndelingerAndSources = () => {
