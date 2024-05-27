@@ -12,6 +12,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { AdministrativEnhetNavn, FeatureProperties } from "types/api";
 import useInndelingFeatures from "./useInndelingFeatures";
 import { getFeatureFremtidigEndringDato } from "utils/features";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Inndelingtyper = typeof INNDELINGTYPER;
@@ -83,6 +84,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(inndelingerToFetch);
   const { utkast } = useUtkast();
+
+  const { reapplyCurrentEntries } = useHistory();
 
   const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
     return a.id === b.id && a.inndelingtype === b.inndelingtype;
@@ -236,6 +239,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       }
     }
 
+    // Reapply historikken slik at eventuelle features som har blitt endret på siden siste lagring er i sync med historikken
+    reapplyCurrentEntries();
+
     zoomToFeatures(inndelingFeatures.flatMap((inndelingWithFeatures) => inndelingWithFeatures.features));
 
     // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
@@ -248,6 +254,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setFeatureStylesForUtkast,
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,
+    reapplyCurrentEntries,
   ]);
 
   const clearInndelingerAndSources = () => {
