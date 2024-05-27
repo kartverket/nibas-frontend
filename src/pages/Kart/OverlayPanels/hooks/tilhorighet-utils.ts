@@ -1,4 +1,12 @@
-import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
+import { GrenseType } from "hooks/layers/types";
+import {
+  FeatureProperties,
+  GrunnkretsResponse,
+  KontekstEgenskaper,
+  ObjektIdentifikator,
+  StemmekretsResponse,
+} from "types/api";
+import { isGrenseType } from "utils/type-utils";
 
 export enum Tilhorighet {
   A = "a",
@@ -44,10 +52,10 @@ export interface UseTilhorighet {
   tilhorighetOptions: TilhorighetOptions | undefined;
   isDirty: boolean;
   resetTilhorighet: () => void;
-  updateDraftFromFeature: () => void;
   formState: TilhorighetForm;
   setValue: (tilhorighet: Tilhorighet, value: string | undefined) => void;
   isLoading: boolean;
+  getCurrentOppdaterteKontekstEgenskaper: () => KontekstEgenskaper[] | undefined;
 }
 
 const getDefaultTilhorighetData = () => ({
@@ -104,13 +112,11 @@ export const getUpdatedKontekstEgenskaper = (
   kontekstType: KontekstType,
   newKretsIds: TilhorighetChoice,
   kretsOptions: TilhorighetOptions,
-  existingKontekstEgenskaper: KontekstEgenskaper[],
 ): KontekstEgenskaper[] => {
   const allPossibleOptions = kretsOptions.a.concat(kretsOptions.b);
   const kretser = Object.values(newKretsIds).map(
     (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kontekstType),
   );
-  const kontekstEgenskaperToKeep = existingKontekstEgenskaper.filter((k) => kontekstType.valueOf() !== k.type);
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
     id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
     kommuneId: krets.kommuneId,
@@ -118,7 +124,7 @@ export const getUpdatedKontekstEgenskaper = (
     type: krets.type,
     version: krets.version,
   }));
-  return kontekstEgenskaperToKeep.concat(nyeKontekstEgenskaper);
+  return nyeKontekstEgenskaper;
 };
 
 export const formatKretsNavn = (krets: Krets | null | undefined): string => {
@@ -174,4 +180,23 @@ export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[
       type: KontekstType.STEMMEKRETS,
     })),
   );
+};
+
+export const getKontekstTypeForFeature = (
+  kontekstgenskaper: KontekstEgenskaper[],
+  featureProperties: FeatureProperties,
+): KontekstType => {
+  return (
+    kontekstgenskaper.map((k) => k.type as KontekstType)[0] ??
+    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type))
+  );
+};
+
+const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
+  switch (grenseType) {
+    case "Stemmekretsgrense":
+      return KontekstType.STEMMEKRETS;
+    default:
+      return KontekstType.GRUNNKRETS;
+  }
 };
