@@ -296,3 +296,7 @@ export const getGrunnkretsMetadataEntries = (entries: HistoryEntry[]): Grunnkret
 export const getKretsDelingEntries = (entries: HistoryEntry[]): KretsdelingEntry[] => {
   return entries.filter((entry) => entry.type === "kretsdelingendring") as KretsdelingEntry[];
 };
+
+export const getGrenseTilhorighetEntries = (entries: HistoryEntry[]): GrenseTilhorighetEntry[] => {
+  return entries.filter((entry) => entry.type === "grensetilhorighetendring") as GrenseTilhorighetEntry[];
+};
