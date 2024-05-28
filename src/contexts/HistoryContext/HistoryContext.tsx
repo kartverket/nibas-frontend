@@ -8,6 +8,7 @@ import {
   undoArchving,
   handleGrensedeling,
   handleNyGrense,
+  setRepresentasjonspunktForEntry,
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 
@@ -25,6 +26,7 @@ const onUndo = (entry: HistoryEntry) => {
       return handleNyGrense(entry, "from");
     }
     case "grunnkrets": {
+      setRepresentasjonspunktForEntry(entry, "from");
       return document.dispatchEvent(
         new CustomEvent("grunnkretsUndo", {
           detail: { entry },
@@ -32,6 +34,7 @@ const onUndo = (entry: HistoryEntry) => {
       );
     }
     case "stemmekrets": {
+      setRepresentasjonspunktForEntry(entry, "from");
       return document.dispatchEvent(
         new CustomEvent("stemmekretsUndo", {
           detail: { entry },
@@ -92,6 +95,7 @@ const onRedo = (entry: HistoryEntry) => {
       return handleNyGrense(entry, "to");
     }
     case "grunnkrets": {
+      setRepresentasjonspunktForEntry(entry, "to");
       return document.dispatchEvent(
         new CustomEvent("grunnkretsRedo", {
           detail: { entry },
@@ -99,6 +103,7 @@ const onRedo = (entry: HistoryEntry) => {
       );
     }
     case "stemmekrets": {
+      setRepresentasjonspunktForEntry(entry, "to");
       return document.dispatchEvent(
         new CustomEvent("stemmekretsRedo", {
           detail: { entry },

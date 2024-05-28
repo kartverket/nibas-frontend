@@ -14,14 +14,15 @@ import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-
 
 const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
-  const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
+  const { closeOverlayPanel } = useOverlayPanel();
   const { history } = useHistory();
   const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
+
   useEffect(() => {
-    if (activeOverlayPanel === "grenseinfo" && selectedFeatures.length === 0) {
+    if (selectedFeatures.length === 0) {
       closeOverlayPanel();
     }
-  }, [activeOverlayPanel, closeOverlayPanel, selectedFeatures.length]);
+  }, [closeOverlayPanel, selectedFeatures.length]);
 
   const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
 

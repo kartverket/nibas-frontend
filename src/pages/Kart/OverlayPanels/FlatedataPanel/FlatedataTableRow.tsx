@@ -4,7 +4,6 @@ import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { FieldError, RegisterOptions, UseFormReturn } from "react-hook-form";
 import { MetadataResponse } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import InputCell, { TableCell, MerknadCell } from "./FlatedataTableCells";
@@ -83,7 +82,6 @@ const FlatedataTableRow = ({
     } else {
       setValue(`${inndelingChange.identifikasjon.lokalid}.nummer`, inndelingChange.nummer ?? "");
       setValue(`${inndelingChange.identifikasjon.lokalid}.navn`, inndelingChange.navn ?? "");
-      updateRepresentasjonspunkt(inndelingChange.identifikasjon.lokalid, inndelingChange.nummer, inndelingChange.navn);
     }
     previousValues.current = structuredClone(getValues());
   };
