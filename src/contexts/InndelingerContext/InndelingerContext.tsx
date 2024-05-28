@@ -119,9 +119,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             if (layer === "edit") {
               setFeatureStylesForUtkast(changedFeaturesInUtkast, sammenslaaingFeaturesInUtkast);
 
-              const idsOfFeaturesInHistory = getHistoryEntries().flatMap((entry) =>
-                entry.changes.map((change) => change.id),
-              );
+              const idsOfFeaturesInHistory = getHistoryEntries()
+                .flatMap((entry) => [...entry.changes])
+                .map((change) => change.id);
               addDirtyStyles(idsOfFeaturesInHistory);
             }
             const fremtidigEndringFeatureIds = removeNil(
