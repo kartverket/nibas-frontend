@@ -4,13 +4,16 @@ import { renderHook } from "test/test-utils";
 import { act } from "@testing-library/react";
 import { MockFeatureStyleProvider } from "mocks/contexts/FeatureStyleContextMock";
 import { MockUtkastProvider } from "mocks/contexts/UtkastContextMock";
+import { MockHistoryProvider } from "mocks/contexts/HistoryContextMock";
 
 const AllProviders = ({ children }: { children: React.ReactNode }) => (
-  <MockUtkastProvider>
-    <MockFeatureStyleProvider>
-      <InndelingerProvider>{children}</InndelingerProvider>
-    </MockFeatureStyleProvider>
-  </MockUtkastProvider>
+  <MockHistoryProvider>
+    <MockUtkastProvider>
+      <MockFeatureStyleProvider>
+        <InndelingerProvider>{children}</InndelingerProvider>
+      </MockFeatureStyleProvider>
+    </MockUtkastProvider>
+  </MockHistoryProvider>
 );
 
 vi.mock("./useInndelingFeatures.tsx", async (importOriginal) => {

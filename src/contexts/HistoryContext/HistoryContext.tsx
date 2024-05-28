@@ -160,6 +160,12 @@ export const HistoryProvider = ({ children, initialHistory }: HistoryProviderPro
 
   const getHistoryEntries = () => history.entries.slice(0, history.index);
 
+  const reapplyCurrentEntries = () => {
+    for (const entry of getHistoryEntries()) {
+      onRedo(entry);
+    }
+  };
+
   const value = {
     history,
     clearHistory,
@@ -168,6 +174,7 @@ export const HistoryProvider = ({ children, initialHistory }: HistoryProviderPro
     undo: history.index > 0 ? undo : undefined,
     redo: history.entries.length > 0 && history.index < history.entries.length ? redo : undefined,
     addHistoryEntry,
+    reapplyCurrentEntries,
   };
 
   return <HistoryContext.Provider value={value}>{children}</HistoryContext.Provider>;

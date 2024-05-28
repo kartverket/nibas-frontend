@@ -101,10 +101,10 @@ export type HistoryContextValue = {
   history: HistoryState;
   clearHistory: () => void;
   getHistoryEntries: () => HistoryEntry[];
-
   canSave: boolean;
   undo: (() => void) | undefined;
   redo: (() => void) | undefined;
+  reapplyCurrentEntries: () => void;
 };
 
 export type HistoryDirection = "from" | "to";
