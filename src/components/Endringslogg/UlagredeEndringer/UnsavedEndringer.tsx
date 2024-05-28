@@ -1,7 +1,7 @@
 import { Text } from "@kvib/react";
 import { styled } from "styled-components";
 import { Kretsendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import { EndringerCardList } from "components/Endringslogg/EndringerCardList";
+import { EndringerKommuneCardList } from "components/Endringslogg/EndringerKommuneCardList";
 
 type UnsavedEndringerProps = {
   antall: number;
@@ -14,7 +14,7 @@ export const UnsavedEndringer = ({ antall, endringer }: UnsavedEndringerProps) =
       <Text fontSize={"sm"} marginBottom="8px">
         {`Publiserer du uten å lagre først vil ${antall > 1 ? "endringene" : "endringen"} nedenfor ikke bli med.`}
       </Text>
-      <EndringerCardList endringer={endringer} />
+      <EndringerKommuneCardList endringer={endringer} />
     </Container>
   );
 };

@@ -27,6 +27,19 @@ export type KretsendringerForKommune = Kretsendringer & {
   };
 };
 
+export type KommuneendringerForFylke = {
+  nummer: string;
+  navn: string;
+  kommuneendringer: Kommuneendringer[];
+};
+
+export type Kommuneendringer = {
+  nummer: string;
+  gammeltNavn: string;
+  nyttNavn?: string;
+  samiskforvaltningsomraade?: boolean;
+};
+
 export type Kretsendringer = {
   metadataendringer: Metadataendringer[];
   antallArkiverteGrenser: number;

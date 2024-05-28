@@ -13,10 +13,10 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { inndelingResponseNavnToString } from "contexts/InndelingerContext/inndelinger-utils";
 import { Breadcrumb, BreadcrumbItem, Hide, Text, Tooltip } from "@kvib/react";
 import { capitalize } from "utils/string-utils";
 import { KommuneResponse } from "types/api";
+import { inndelingResponseNavnToString } from "utils/language/language";
 
 const Header = () => {
   const { utkast } = useUtkast();

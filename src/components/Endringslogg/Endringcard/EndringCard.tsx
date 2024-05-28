@@ -12,7 +12,7 @@ type EndringCardProps = {
   children: ReactNode;
 };
 
-const EndringCard = ({ title, children }: EndringCardProps) => {
+export const EndringCard = ({ title, children }: EndringCardProps) => {
   return (
     <StyledCard>
       <CardTitleText as="h3">{title}</CardTitleText>
@@ -73,6 +73,18 @@ export const ChangeToFromRow = ({ from, to }: ChangeToFromRowProps) => (
         {value}
       </TextWithBadge>
     ))}
+  </ChangeRow>
+);
+
+type ChangeToFromRowNoBadgeProps = {
+  from: string;
+  to: string;
+};
+export const ChangeToFromRowNoBadge = ({ from, to }: ChangeToFromRowNoBadgeProps) => (
+  <ChangeRow data-testid="changerownobadge">
+    {from}
+    <RightArrow />
+    {to}
   </ChangeRow>
 );
 
