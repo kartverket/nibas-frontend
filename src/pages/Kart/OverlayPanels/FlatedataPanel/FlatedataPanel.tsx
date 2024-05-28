@@ -1,4 +1,4 @@
-import { css, styled } from "styled-components";
+import { styled } from "styled-components";
 import {
   Icon,
   Input,
@@ -12,7 +12,7 @@ import {
   TabPanels,
   Tabs,
 } from "@kvib/react";
-import { ModalPanel, PanelHeader, PanelProps } from "../Panel";
+import { ModalPanel, PanelHeader } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import FlatedataTable from "./FlatedataTable";
 import { Inndeling, pluralizeInndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -34,7 +34,7 @@ const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
   return nameAndNumber + inndelingType + isEditable;
 };
 
-const FlatedataPanel = ({ isOpen }: PanelProps) => {
+const FlatedataPanel = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const [isEditing, setIsEditing] = useState(false);
   const { inputValue, searchValue, setInputValue, clearSearch } = useSearch();
@@ -84,60 +84,48 @@ const FlatedataPanel = ({ isOpen }: PanelProps) => {
   };
 
   return (
-    <Modal isOpen={true} blockScrollOnMount={isOpen} onClose={handleCloseModal} scrollBehavior="inside">
-      <ConditionalModalContainer $isOpen={isOpen}>
-        <ModalOverlay onClick={handleCloseModal} />
-        <ModalContent as={FlatedataPanelContent}>
-          <FlatedataPanelHeader onClose={handleCloseModal}>
-            <span>Flateinformasjon</span>
-            <SearchInput>
-              <InputLeftElement>
-                <Icon icon="search" />
-              </InputLeftElement>
-              <Input
-                value={inputValue}
-                placeholder="Søk etter navn eller nummer"
-                onChange={(e) => setInputValue(e.currentTarget.value)}
+    <Modal isOpen={true} onClose={handleCloseModal} scrollBehavior="inside">
+      <ModalOverlay onClick={handleCloseModal} />
+      <ModalContent as={FlatedataPanelContent}>
+        <FlatedataPanelHeader onClose={handleCloseModal}>
+          <span>Flateinformasjon</span>
+          <SearchInput>
+            <InputLeftElement>
+              <Icon icon="search" />
+            </InputLeftElement>
+            <Input
+              value={inputValue}
+              placeholder="Søk etter navn eller nummer"
+              onChange={(e) => setInputValue(e.currentTarget.value)}
+            />
+          </SearchInput>
+        </FlatedataPanelHeader>
+        <FlatedataTabs size="md" index={tabIndex} onChange={handleTabsChange}>
+          <FlatedataTabList>
+            {allInndelinger.map((inndeling) => (
+              <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>
+                {getTabText(inndeling, allInndelinger)}
+              </FlatedataTab>
+            ))}
+          </FlatedataTabList>
+          <FlatedataTabPanels>
+            {allInndelinger.map((inndeling) => (
+              <FlatedataTable
+                key={inndeling.id + inndeling.inndelingtype}
+                mainInndeling={inndeling}
+                isEditing={isEditing}
+                setIsEditing={setIsEditing}
+                searchValue={searchValue}
+                clearSearch={clearSearch}
+                formMethods={formMethods}
               />
-            </SearchInput>
-          </FlatedataPanelHeader>
-          <FlatedataTabs size="md" index={tabIndex} onChange={handleTabsChange}>
-            <FlatedataTabList>
-              {allInndelinger.map((inndeling) => (
-                <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>
-                  {getTabText(inndeling, allInndelinger)}
-                </FlatedataTab>
-              ))}
-            </FlatedataTabList>
-            <FlatedataTabPanels>
-              {allInndelinger.map((inndeling) => (
-                <FlatedataTable
-                  key={inndeling.id + inndeling.inndelingtype}
-                  mainInndeling={inndeling}
-                  isEditing={isEditing}
-                  setIsEditing={setIsEditing}
-                  searchValue={searchValue}
-                  clearSearch={clearSearch}
-                  formMethods={formMethods}
-                />
-              ))}
-            </FlatedataTabPanels>
-          </FlatedataTabs>
-        </ModalContent>
-      </ConditionalModalContainer>
+            ))}
+          </FlatedataTabPanels>
+        </FlatedataTabs>
+      </ModalContent>
     </Modal>
   );
 };
-
-// Chakra unmounter modaler som fjerner state vi er avhengig av, så vi skjuler manuelt med CSS
-const ConditionalModalContainer = styled.div<{ $isOpen: boolean }>`
-  ${(props) =>
-    !props.$isOpen &&
-    css`
-      display: none;
-      pointer-events: none;
-    `};
-`;
 
 const FlatedataPanelContent = styled(ModalPanel)`
   display: grid;

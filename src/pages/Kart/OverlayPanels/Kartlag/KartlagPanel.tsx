@@ -1,16 +1,16 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { PanelHeader, PanelProps, SidePanel } from "../Panel";
+import { PanelHeader, SidePanel } from "../Panel";
 import { styled } from "styled-components";
 import Kartlag from "./Kartlag";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { Spinner } from "@kvib/react";
 
-const KartlagPanel = ({ isOpen }: PanelProps) => {
+const KartlagPanel = () => {
   const { mappedLayers } = useKartlag();
   const { closeOverlayPanel } = useOverlayPanel();
 
   return (
-    <SidePanel $isOpen={isOpen}>
+    <SidePanel>
       <PanelHeader onClose={closeOverlayPanel}>Kartlag</PanelHeader>
       <KartlagList>
         {mappedLayers.length > 0 ? (

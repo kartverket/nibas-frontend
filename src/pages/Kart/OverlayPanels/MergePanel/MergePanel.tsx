@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { PanelHeader, PanelProps, SidePanel } from "../Panel";
+import { PanelHeader, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import { StemmekretsResponse, StemmekretsSammenslaaingsendringRequest } from "types/api";
@@ -38,7 +38,7 @@ const Buttons = styled.div`
   margin-top: auto;
 `;
 
-const MergePanel = ({ isOpen }: PanelProps) => {
+const MergePanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast, utkastHarEndringer } = useUtkast();
@@ -184,7 +184,7 @@ const MergePanel = ({ isOpen }: PanelProps) => {
     setValue("nummer", selectedStemmekrets?.nummer ?? "");
   };
   return (
-    <SidePanel $isOpen={isOpen}>
+    <SidePanel>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
       {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() ? (
         <Alert>

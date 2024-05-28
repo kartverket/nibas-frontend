@@ -1,5 +1,5 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { PanelProps, SidePanel } from "../Panel";
+import { SidePanel } from "../Panel";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 import GrenseinformasjonForm from "./GrenseinformasjonForm";
@@ -12,7 +12,7 @@ import { styled } from "styled-components";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
 
-const GrenseinformasjonPanel = ({ isOpen }: PanelProps) => {
+const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
   const { activeOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { history } = useHistory();
@@ -29,8 +29,8 @@ const GrenseinformasjonPanel = ({ isOpen }: PanelProps) => {
     if (selectedFeature?.getId() === undefined || selectedFeature?.getId() === null) return;
 
     const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature!.getId()!.toString(), history);
-    if (isFeatureGone && isOpen) closeOverlayPanel();
-  }, [closeOverlayPanel, history, isOpen, selectedFeature]);
+    if (isFeatureGone) closeOverlayPanel();
+  }, [closeOverlayPanel, history, selectedFeature]);
 
   useEffect(() => {
     if (history.index < history.entries.length) closeGrenseinfoIfFeatureRemoved();
@@ -39,7 +39,7 @@ const GrenseinformasjonPanel = ({ isOpen }: PanelProps) => {
   return (
     selectedFeature &&
     !isMatrikkelFeature(selectedFeature) && (
-      <SidePanel $isOpen={isOpen}>
+      <SidePanel>
         {selectedProperties ? (
           <GrensePanelContent>
             <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />

@@ -2,10 +2,6 @@ import { CloseButton, Heading, Text } from "@kvib/react";
 import { styled, keyframes } from "styled-components";
 import { zindex } from "utils/constants";
 
-export type PanelProps = {
-  isOpen: boolean;
-};
-
 type PanelHeaderProps = {
   onClose: () => void;
   children: React.ReactNode;
@@ -65,14 +61,13 @@ const slideIn = keyframes`
   }
 `;
 
-const Panel = styled.div<{ $isOpen: boolean }>`
+const Panel = styled.div`
   --panel-padding: 16px;
   width: 100%;
   padding: 0 var(--panel-padding);
   background: white;
   box-shadow: var(--kvib-shadows-sm);
   overflow: auto;
-  ${(props) => !props.$isOpen && "display: none"};
   z-index: ${zindex.panel};
 `;
 

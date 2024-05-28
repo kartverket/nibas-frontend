@@ -1,5 +1,5 @@
 import { Button, Link, ButtonGroup, Divider, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
-import { PanelHeader, PanelProps, ModalPanel } from "../Panel";
+import { PanelHeader, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { INNDELINGTYPER, BaseInndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { getIdFromEntity } from "utils/api";
@@ -11,7 +11,9 @@ import InndelingOption from "./InndelingOption";
 import { capitalize } from "utils/string-utils";
 import useInndelingerPanel from "./useInndelingerPanel";
 
-const InndelingerPanel = ({ isOpen }: PanelProps) => {
+const InndelingerPanel = () => {
+  const { closeOverlayModal } = useOverlayPanel();
+
   const {
     activePanelFylkeId,
     selectedInndelingtype,
@@ -24,17 +26,15 @@ const InndelingerPanel = ({ isOpen }: PanelProps) => {
     isSelectionAvailable,
     selectNewInndelinger,
     resetSelection,
-  } = useInndelingerPanel(isOpen);
+  } = useInndelingerPanel();
 
   const { fylker } = useFylker();
   const { kommuner } = useKommuner(activePanelFylkeId);
 
-  const { closeOverlayModal } = useOverlayPanel();
-
   return (
-    <Modal isOpen={isOpen} onClose={resetInndelingerPanel} scrollBehavior="inside">
+    <Modal isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">
       <ModalOverlay />
-      <ModalContent as={ModalPanel} $isOpen={isOpen}>
+      <ModalContent as={ModalPanel}>
         <PanelHeader
           onClose={resetInndelingerPanel}
           subHeading={
