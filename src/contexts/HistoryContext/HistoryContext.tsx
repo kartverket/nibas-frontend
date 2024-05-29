@@ -8,6 +8,7 @@ import {
   undoArchving,
   handleGrensedeling,
   handleNyGrense,
+  setRepresentasjonspunktForEntry,
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 
@@ -25,6 +26,7 @@ const onUndo = (entry: HistoryEntry) => {
       return handleNyGrense(entry, "from");
     }
     case "grunnkrets": {
+      setRepresentasjonspunktForEntry(entry, "from");
       return document.dispatchEvent(
         new CustomEvent("grunnkretsUndo", {
           detail: { entry },
@@ -32,6 +34,7 @@ const onUndo = (entry: HistoryEntry) => {
       );
     }
     case "stemmekrets": {
+      setRepresentasjonspunktForEntry(entry, "from");
       return document.dispatchEvent(
         new CustomEvent("stemmekretsUndo", {
           detail: { entry },
@@ -92,6 +95,7 @@ const onRedo = (entry: HistoryEntry) => {
       return handleNyGrense(entry, "to");
     }
     case "grunnkrets": {
+      setRepresentasjonspunktForEntry(entry, "to");
       return document.dispatchEvent(
         new CustomEvent("grunnkretsRedo", {
           detail: { entry },
@@ -99,6 +103,7 @@ const onRedo = (entry: HistoryEntry) => {
       );
     }
     case "stemmekrets": {
+      setRepresentasjonspunktForEntry(entry, "to");
       return document.dispatchEvent(
         new CustomEvent("stemmekretsRedo", {
           detail: { entry },
@@ -152,7 +157,7 @@ type HistoryProviderProps = {
   initialHistory?: HistoryEntry[];
 };
 export const HistoryProvider = ({ children, initialHistory }: HistoryProviderProps) => {
-  const { history, addHistoryEntry, clearHistory, undo, redo } = useHistoryState({
+  const { history, addHistoryEntry, clearHistory, undo, redo, restoreHistoryState } = useHistoryState({
     onUndo,
     onRedo,
     initialState: initialHistory,
@@ -160,7 +165,14 @@ export const HistoryProvider = ({ children, initialHistory }: HistoryProviderPro
 
   const getHistoryEntries = () => history.entries.slice(0, history.index);
 
+  const reapplyCurrentEntries = () => {
+    for (const entry of getHistoryEntries()) {
+      onRedo(entry);
+    }
+  };
+
   const value = {
+    restoreHistoryState,
     history,
     clearHistory,
     getHistoryEntries,
@@ -168,6 +180,7 @@ export const HistoryProvider = ({ children, initialHistory }: HistoryProviderPro
     undo: history.index > 0 ? undo : undefined,
     redo: history.entries.length > 0 && history.index < history.entries.length ? redo : undefined,
     addHistoryEntry,
+    reapplyCurrentEntries,
   };
 
   return <HistoryContext.Provider value={value}>{children}</HistoryContext.Provider>;

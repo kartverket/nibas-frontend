@@ -13,7 +13,7 @@ import {
 } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { styled } from "styled-components";
-import { PanelHeader, PanelProps, SidePanel } from "../Panel";
+import { PanelHeader, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
 import { ChangeEvent, useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
@@ -52,7 +52,7 @@ const StyledList = styled.ul`
   list-style-type: none;
 `;
 
-export const SplittingPanel = ({ isOpen }: PanelProps) => {
+export const SplittingPanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { currentlyEditingInndelinger } = useInndelinger();
   const {
@@ -138,7 +138,7 @@ export const SplittingPanel = ({ isOpen }: PanelProps) => {
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
 
   return (
-    <SidePanel $isOpen={isOpen}>
+    <SidePanel>
       <PanelHeader
         onClose={closeAndResetForm}
         subHeading="Ved å splitte en flate kan du opprette en eller flere nye flater"

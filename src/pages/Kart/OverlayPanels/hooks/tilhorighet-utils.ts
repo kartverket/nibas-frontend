@@ -1,4 +1,12 @@
-import { GrunnkretsResponse, KontekstEgenskaper, ObjektIdentifikator, StemmekretsResponse } from "types/api";
+import { GrenseType } from "hooks/layers/types";
+import {
+  FeatureProperties,
+  GrunnkretsResponse,
+  KontekstEgenskaper,
+  ObjektIdentifikator,
+  StemmekretsResponse,
+} from "types/api";
+import { isGrenseType } from "utils/type-utils";
 
 export enum Tilhorighet {
   A = "a",
@@ -44,10 +52,10 @@ export interface UseTilhorighet {
   tilhorighetOptions: TilhorighetOptions | undefined;
   isDirty: boolean;
   resetTilhorighet: () => void;
-  updateDraftFromFeature: () => void;
   formState: TilhorighetForm;
   setValue: (tilhorighet: Tilhorighet, value: string | undefined) => void;
   isLoading: boolean;
+  getCurrentOppdaterteKontekstEgenskaper: () => KontekstEgenskaper[] | undefined;
 }
 
 const getDefaultTilhorighetData = () => ({
@@ -58,26 +66,39 @@ const getDefaultTilhorighetData = () => ({
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
 export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm => {
   if (tilhorigheter && tilhorigheter.length > 0) {
-    const grunnkretser = tilhorigheter
-      .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.GRUNNKRETS)
-      .map((grunnkrets) => grunnkrets.id?.lokalid.value);
-    const stemmekretser = tilhorigheter
-      .filter((kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.STEMMEKRETS)
-      .map((stemmekrets) => stemmekrets.id?.lokalid.value);
+    const grunnkretser = tilhorigheter.filter(
+      (kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.GRUNNKRETS,
+    );
+    const stemmekretser = tilhorigheter.filter(
+      (kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.STEMMEKRETS,
+    );
     if (grunnkretser.length > 0 || stemmekretser.length > 0) {
       return {
         [KontekstType.GRUNNKRETS]: {
-          [Tilhorighet.A]: grunnkretser[0],
-          [Tilhorighet.B]: grunnkretser.length > 1 ? grunnkretser[1] : "NOT_CHOSEN",
+          [Tilhorighet.A]: getKretsIdFromKontekstegenskaper(grunnkretser[0]),
+          [Tilhorighet.B]: grunnkretser.length > 1 ? getKretsIdFromKontekstegenskaper(grunnkretser[1]) : "NOT_CHOSEN",
         },
         [KontekstType.STEMMEKRETS]: {
-          [Tilhorighet.A]: stemmekretser[0],
-          [Tilhorighet.B]: stemmekretser.length > 1 ? stemmekretser[1] : "NOT_CHOSEN",
+          [Tilhorighet.A]: getKretsIdFromKontekstegenskaper(stemmekretser[0]),
+          [Tilhorighet.B]: stemmekretser.length > 1 ? getKretsIdFromKontekstegenskaper(stemmekretser[1]) : "NOT_CHOSEN",
         },
       };
     }
   }
   return getDefaultTilhorighetData();
+};
+
+export const getKretsIdFromKontekstegenskaper = (
+  kontekstegenskaper: KontekstEgenskaper | undefined,
+): string | undefined => {
+  if (kontekstegenskaper == null) {
+    return undefined;
+  }
+
+  if (kontekstegenskaper.id == null) {
+    return getIdForTilhorhetNyKrets(kontekstegenskaper.kretsNummer, kontekstegenskaper.kommuneId?.lokalid.value);
+  }
+  return kontekstegenskaper.id.lokalid.value;
 };
 
 // Gir en krets med lokalid lik Default option slik at default verdien kan sendes som data slik som vanlige kretser.
@@ -104,13 +125,11 @@ export const getUpdatedKontekstEgenskaper = (
   kontekstType: KontekstType,
   newKretsIds: TilhorighetChoice,
   kretsOptions: TilhorighetOptions,
-  existingKontekstEgenskaper: KontekstEgenskaper[],
 ): KontekstEgenskaper[] => {
   const allPossibleOptions = kretsOptions.a.concat(kretsOptions.b);
   const kretser = Object.values(newKretsIds).map(
     (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kontekstType),
   );
-  const kontekstEgenskaperToKeep = existingKontekstEgenskaper.filter((k) => kontekstType.valueOf() !== k.type);
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
     id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
     kommuneId: krets.kommuneId,
@@ -118,7 +137,7 @@ export const getUpdatedKontekstEgenskaper = (
     type: krets.type,
     version: krets.version,
   }));
-  return kontekstEgenskaperToKeep.concat(nyeKontekstEgenskaper);
+  return nyeKontekstEgenskaper;
 };
 
 export const formatKretsNavn = (krets: Krets | null | undefined): string => {
@@ -148,6 +167,9 @@ const sortKretserOptionsByFormattedName = (kretser: Krets[] | undefined): Krets[
   return kretser.sort((a, b) => formatKretsNavn(a).localeCompare(formatKretsNavn(b)));
 };
 
+export const getIdForTilhorhetNyKrets = (kretsnummer: string | undefined, kommuneId: string | undefined) =>
+  `NY_KRETS_${kretsnummer}_${kommuneId}`;
+
 export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[]): Krets[] => {
   return sortKretserOptionsByFormattedName(
     grunnkretser.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
@@ -174,4 +196,23 @@ export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[
       type: KontekstType.STEMMEKRETS,
     })),
   );
+};
+
+export const getKontekstTypeForFeature = (
+  kontekstgenskaper: KontekstEgenskaper[],
+  featureProperties: FeatureProperties,
+): KontekstType => {
+  return (
+    kontekstgenskaper.map((k) => k.type as KontekstType)[0] ??
+    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type))
+  );
+};
+
+const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
+  switch (grenseType) {
+    case "Stemmekretsgrense":
+      return KontekstType.STEMMEKRETS;
+    default:
+      return KontekstType.GRUNNKRETS;
+  }
 };

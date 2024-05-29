@@ -8,7 +8,7 @@ import {
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useEffect, useState } from "react";
 
-const useInndelingerPanel = (isOpen: boolean) => {
+const useInndelingerPanel = () => {
   const { selectInndelinger, getAllInndelinger, setSelectedFylkeId } = useInndelinger();
 
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
@@ -22,12 +22,10 @@ const useInndelingerPanel = (isOpen: boolean) => {
   const hasUnsavedChangesInHistory = history.entries.length > 0;
 
   useEffect(() => {
-    if (isOpen) {
-      isEditingPanel
-        ? setSelectedInndelinger([])
-        : setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isVisible));
-    }
-  }, [getAllInndelinger, isEditingPanel, isOpen]);
+    isEditingPanel
+      ? setSelectedInndelinger([])
+      : setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isVisible));
+  }, [getAllInndelinger, isEditingPanel]);
 
   const resetSelection = () => {
     setSelectedInndelinger([]);

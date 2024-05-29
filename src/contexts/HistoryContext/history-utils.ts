@@ -26,6 +26,7 @@ import { removeNil } from "utils/list-utils";
 import { Geometry } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
 import { getEntriesUpToIndex, removeDuplicateIds } from "contexts/FeatureStyleContext/feature-style-utils";
+import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -68,6 +69,19 @@ export const setFeatureCoordinatesForEntry = (entry: GrenseEntry, direction: His
       detail: { entry },
     }),
   );
+};
+
+export const setRepresentasjonspunktForEntry = (
+  entry: StemmekretsEntry | GrunnkretsEntry,
+  direction: HistoryDirection,
+) => {
+  for (const change of entry.changes) {
+    updateRepresentasjonspunkt(
+      change[direction].identifikasjon.lokalid,
+      change[direction].nummer,
+      change[direction].navn,
+    );
+  }
 };
 
 const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direction: HistoryDirection) => {
@@ -295,4 +309,8 @@ export const getGrunnkretsMetadataEntries = (entries: HistoryEntry[]): Grunnkret
 
 export const getKretsDelingEntries = (entries: HistoryEntry[]): KretsdelingEntry[] => {
   return entries.filter((entry) => entry.type === "kretsdelingendring") as KretsdelingEntry[];
+};
+
+export const getGrenseTilhorighetEntries = (entries: HistoryEntry[]): GrenseTilhorighetEntry[] => {
+  return entries.filter((entry) => entry.type === "grensetilhorighetendring") as GrenseTilhorighetEntry[];
 };

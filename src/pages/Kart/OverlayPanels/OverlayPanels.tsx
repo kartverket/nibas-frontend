@@ -10,22 +10,60 @@ import NavigasjonPanel from "./NavigasjonPanel/NavigasjonPanel";
 import FlatedataPanel from "./FlatedataPanel/FlatedataPanel";
 
 const OverlayPanels = () => {
-  const { activeOverlayPanel, activeOverlayModal } = useOverlayPanel();
-
   return (
     <>
-      <GrenseinformasjonPanel isOpen={activeOverlayPanel === "grenseinfo"} />
-      <MergePanel isOpen={activeOverlayPanel === "sammenslåing"} />
-      <SplittingPanel isOpen={activeOverlayPanel === "splitting"} />
-      <FlyttKoordinaterPanel isOpen={activeOverlayPanel === "koordinater"} />
-      <TegnforklaringPanel isOpen={activeOverlayPanel === "tegnforklaring"} />
-      <KartlagPanel isOpen={activeOverlayPanel === "kartlag"} />
-
-      <InndelingerPanel isOpen={activeOverlayModal === "inndelinger" || activeOverlayModal === "inndelinger-view"} />
-      <NavigasjonPanel isOpen={activeOverlayModal === "navigasjon"} />
-      <FlatedataPanel isOpen={activeOverlayModal === "flatedata"} />
+      <OverlayPanel />
+      <OverlayModal />
     </>
   );
+};
+
+const OverlayPanel = () => {
+  const { activeOverlayPanel } = useOverlayPanel();
+
+  switch (activeOverlayPanel) {
+    case null: {
+      return null;
+    }
+    case "grenseinfo": {
+      return <GrenseinformasjonPanel />;
+    }
+    case "sammenslåing": {
+      return <MergePanel />;
+    }
+    case "splitting": {
+      return <SplittingPanel />;
+    }
+    case "tegnforklaring": {
+      return <TegnforklaringPanel />;
+    }
+    case "koordinater": {
+      return <FlyttKoordinaterPanel />;
+    }
+    case "kartlag": {
+      return <KartlagPanel />;
+    }
+  }
+};
+
+const OverlayModal = () => {
+  const { activeOverlayModal } = useOverlayPanel();
+
+  switch (activeOverlayModal) {
+    case null: {
+      return null;
+    }
+    case "inndelinger":
+    case "inndelinger-view": {
+      return <InndelingerPanel />;
+    }
+    case "flatedata": {
+      return <FlatedataPanel />;
+    }
+    case "navigasjon": {
+      return <NavigasjonPanel />;
+    }
+  }
 };
 
 export default OverlayPanels;

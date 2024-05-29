@@ -52,6 +52,10 @@ export type NyGrense = (MinimalGrense & FeatureProperties) & {
   grensedeling?: Feature<Geometry>[];
 };
 
+export type SerializableNyGrense = Omit<NyGrense, "grensedeling"> & {
+  grensedeling: string;
+};
+
 export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
 export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
 export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
@@ -101,10 +105,11 @@ export type HistoryContextValue = {
   history: HistoryState;
   clearHistory: () => void;
   getHistoryEntries: () => HistoryEntry[];
-
+  restoreHistoryState: (historyState: HistoryState) => void;
   canSave: boolean;
   undo: (() => void) | undefined;
   redo: (() => void) | undefined;
+  reapplyCurrentEntries: () => void;
 };
 
 export type HistoryDirection = "from" | "to";

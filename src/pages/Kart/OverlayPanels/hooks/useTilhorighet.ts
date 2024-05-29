@@ -41,9 +41,9 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     setValue,
     isDirty,
     resetTilhorighet,
-    updateDraftFromFeature,
     kommunerId,
     kontekstType,
+    getCurrentOppdaterteKontekstEgenskaper,
   } = useTilhorighetForm(feature);
 
   const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretser(kommunerId[0] ?? null);
@@ -60,9 +60,9 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     tilhorighetOptions,
     isDirty,
     resetTilhorighet,
-    updateDraftFromFeature,
     formState,
     setValue,
     isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
+    getCurrentOppdaterteKontekstEgenskaper,
   };
 };

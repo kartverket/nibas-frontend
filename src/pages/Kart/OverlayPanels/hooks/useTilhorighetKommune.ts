@@ -13,7 +13,7 @@ export const useTilhorighetKommune = (feature: Feature, kontekstType: KontekstTy
     setValue,
     isDirty,
     resetTilhorighet,
-    updateDraftFromFeature,
+    getCurrentOppdaterteKontekstEgenskaper,
   } = useTilhorighetForm(feature, kontekstType);
   const { selectedFylkeId } = useInndelinger();
 
@@ -33,9 +33,9 @@ export const useTilhorighetKommune = (feature: Feature, kontekstType: KontekstTy
     tilhorighetOptions,
     isDirty,
     resetTilhorighet,
-    updateDraftFromFeature,
     formState,
     setValue,
     isLoading,
+    getCurrentOppdaterteKontekstEgenskaper,
   };
 };

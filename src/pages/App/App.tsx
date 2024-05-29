@@ -24,6 +24,7 @@ import {
   AuthNotAuthorized,
 } from "components/Authentication/Authentication";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { AuthRenewError } from "components/Authentication/AuthRenewError";
 
 const App = () => {
   const { token } = useAuthentication();
@@ -52,9 +53,11 @@ const App = () => {
 
   return (
     <Suspense fallback={<Loading />}>
-      <EnvironmentOverlay>
-        <RouterProvider router={router} />
-      </EnvironmentOverlay>
+      <Providers>
+        <EnvironmentOverlay>
+          <RouterProvider router={router} />
+        </EnvironmentOverlay>
+      </Providers>
     </Suspense>
   );
 };
@@ -62,17 +65,17 @@ const App = () => {
 const ProtectedPage = () => {
   const outlet = useOutlet();
   const navigate = useNavigate();
-  const { isAuthenticated, checkAuthorization, isLoading } = useAuthentication();
-
+  const { isAuthenticated, checkAuthorization, isLoading, user } = useAuthentication();
   useEffect(() => {
     if (isAuthenticated) {
       checkAuthorization().then((result) => {
-        if (!result) {
+        if (!result && user == null) {
+          // TODO: Sjekke exp. på token
           navigate(`${routes.authentication}/${routes.notAuthorized}`);
         }
       });
     }
-  }, [isAuthenticated, checkAuthorization, navigate]);
+  }, [isAuthenticated, checkAuthorization, navigate, user]);
 
   if (isLoading) {
     return <Loading />;
@@ -82,7 +85,7 @@ const ProtectedPage = () => {
     return <Navigate to={routes.authentication} replace={true} />;
   }
 
-  return <Providers>{outlet}</Providers>;
+  return <AuthRenewError>{outlet}</AuthRenewError>;
 };
 
 export default App;
