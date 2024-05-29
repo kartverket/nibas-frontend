@@ -22,7 +22,7 @@ import {
   isPointInsideMultiPolygon,
   transformCoordinatesToProjection,
 } from "./NavigasjonPanel/koordinater-utils";
-import { AbsolutePanel, PanelHeader, PanelProps } from "./Panel";
+import { AbsolutePanel, PanelHeader } from "./Panel";
 
 type KoordinaterFormData = {
   north: number;
@@ -59,7 +59,7 @@ const ButtonRow = styled.div`
   justify-content: flex-end;
 `;
 
-const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
+const FlyttKoordinaterPanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { selectedPoint, selectedFeatures, selectPointOnFeature } = useFeatureStyle();
   const { resetTool } = useToolbar();
@@ -271,7 +271,7 @@ const FlyttKoordinaterPanel = ({ isOpen }: PanelProps) => {
   };
 
   return (
-    <AbsolutePanel $isOpen={isOpen}>
+    <AbsolutePanel>
       <PanelHeader onClose={onKoordinaterPanelClose} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>

@@ -2,7 +2,7 @@ import { CloseButton, Spacer, Tab, TabList, TabPanel, TabPanels, Tabs } from "@k
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { keyframes, styled } from "styled-components";
 import { map } from "../../constants";
-import { AbsolutePanel, PanelProps } from "../Panel";
+import { AbsolutePanel } from "../Panel";
 import { InndelingSearch } from "./InndelingSearch";
 import { KoordinaterSearch } from "./KoordinaterSearch";
 import { useState } from "react";
@@ -11,7 +11,7 @@ export type NavigasjonProps = {
   onSelect: (north: number | null, east: number | null) => void;
 };
 
-const NavigasjonPanel = ({ isOpen }: PanelProps) => {
+const NavigasjonPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
 
   const [currentTabIndex, setCurrentTabIndex] = useState(0);
@@ -25,7 +25,7 @@ const NavigasjonPanel = ({ isOpen }: PanelProps) => {
   };
 
   return (
-    <Container $isOpen={isOpen}>
+    <Container>
       <CustomTabs size="md">
         <TabList>
           <Tab onClick={() => setCurrentTabIndex(0)}>Gå til inndeling</Tab>
@@ -35,7 +35,7 @@ const NavigasjonPanel = ({ isOpen }: PanelProps) => {
         </TabList>
         <TabPanels>
           <StyledTabPanel>
-            <InndelingSearch onSelect={centerOnCoordinate} isOpen={isOpen && currentTabIndex === 0} />
+            <InndelingSearch onSelect={centerOnCoordinate} isOpen={currentTabIndex === 0} />
           </StyledTabPanel>
           <StyledTabPanel>
             <KoordinaterSearch onSelect={centerOnCoordinate} />

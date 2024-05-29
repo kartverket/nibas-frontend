@@ -1,14 +1,14 @@
 import React from "react";
-import { PanelHeader, PanelProps, SidePanel } from "../Panel";
+import { PanelHeader, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tegnforklaring } from "./Tegnforklaring";
 import { tegnforklaringer } from "./tegnforklaring-styles";
 import { Divider } from "@kvib/react";
 
-export const TegnforklaringPanel = ({ isOpen }: PanelProps) => {
+export const TegnforklaringPanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
   return (
-    <SidePanel $isOpen={isOpen}>
+    <SidePanel>
       <PanelHeader onClose={closeOverlayPanel}>Tegnforklaring</PanelHeader>
       {tegnforklaringer.map((group, index) => (
         <React.Fragment key={`group-${index}`}>
