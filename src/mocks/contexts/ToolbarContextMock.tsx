@@ -1,4 +1,3 @@
-import { OverlayPanelContext } from "contexts/OverlayPanelContext";
 import { ToolbarContext } from "contexts/ToolbarContext";
 import { ReactNode } from "react";
 
