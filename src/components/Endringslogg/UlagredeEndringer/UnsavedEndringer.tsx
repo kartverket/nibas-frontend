@@ -1,20 +1,23 @@
 import { Text } from "@kvib/react";
 import { styled } from "styled-components";
-import { Kretsendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import { EndringerCardList } from "components/Endringslogg/EndringerCardList";
+import { Kommuneendringer, Kretsendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { EndringerKommuneCardList } from "components/Endringslogg/EndringerKommuneCardList";
+import { EndringerFylkeCardList } from "components/Endringslogg/EndringerFylkeCardList";
 
 type UnsavedEndringerProps = {
   antall: number;
-  endringer: Kretsendringer;
+  kretsendringer: Kretsendringer;
+  kommuneendringer: Kommuneendringer[];
 };
 
-export const UnsavedEndringer = ({ antall, endringer }: UnsavedEndringerProps) => {
+export const UnsavedEndringer = ({ antall, kretsendringer, kommuneendringer }: UnsavedEndringerProps) => {
   return (
     <Container>
       <Text fontSize={"sm"} marginBottom="8px">
         {`Publiserer du uten å lagre først vil ${antall > 1 ? "endringene" : "endringen"} nedenfor ikke bli med.`}
       </Text>
-      <EndringerCardList endringer={endringer} />
+      <EndringerKommuneCardList endringer={kretsendringer} />
+      <EndringerFylkeCardList endringer={kommuneendringer} />
     </Container>
   );
 };

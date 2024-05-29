@@ -31,9 +31,7 @@ import { styled } from "styled-components";
 import { useSWRConfig } from "swr";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
-import { isAdministrativGrense } from "utils/grenser";
 import { routes } from "utils/routes";
-import { isGrenseType } from "utils/type-utils";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 type Props = {
@@ -119,16 +117,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     }
   };
 
-  const utkastHarEndringAdministrativeGrenser = (): boolean => {
-    const endredeFeatures = utkast.operasjoner.grenseendringer.endredeFeatures;
-
-    return Object.values(endredeFeatures).some(
-      (feature) => isGrenseType(feature.properties.type) && isAdministrativGrense(feature.properties.type),
-    );
-  };
-
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="3xl">
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Publiser utkast</ModalHeader>
@@ -143,22 +133,6 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
               </AlertDescription>
             </div>
           </Alert>
-
-          {
-            // TODO Fjern når vi har delt geometri?
-            utkastHarEndringAdministrativeGrenser() && (
-              <Alert status="warning">
-                <AlertIcon />
-                <div>
-                  <AlertTitle>Utkastet ditt inneholder endringer på administrative grenser</AlertTitle>
-                  <AlertDescription>
-                    Pass på at du er sikker på endringene dine, og husk å gjøre tilsvarende endring for både
-                    grunnkretsgrense og stemmekretsgrense.
-                  </AlertDescription>
-                </div>
-              </Alert>
-            )
-          }
 
           {antallEndringer > 0 && <UnsavedEndringerCollapse />}
           <EndringsloggAccordion utkast={utkast} />

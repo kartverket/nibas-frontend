@@ -10,7 +10,7 @@ type Props = {
 
 export const UnsavedEndringerCollapse = ({ expandedByDefault = false }: Props) => {
   const [isExpanded, setIsExpanded] = useState(expandedByDefault);
-  const { antallEndringer, endringer } = useUnsavedEndringer();
+  const { antallEndringer, kretsendringer, kommuneendringer } = useUnsavedEndringer();
 
   return (
     antallEndringer > 0 && (
@@ -31,7 +31,11 @@ export const UnsavedEndringerCollapse = ({ expandedByDefault = false }: Props) =
           </CustomButton>
         </AlertWithButton>
         <EndringerContent>
-          <UnsavedEndringer antall={antallEndringer} endringer={endringer} />
+          <UnsavedEndringer
+            antall={antallEndringer}
+            kretsendringer={kretsendringer}
+            kommuneendringer={kommuneendringer}
+          />
         </EndringerContent>
       </CustomCollapse>
     )

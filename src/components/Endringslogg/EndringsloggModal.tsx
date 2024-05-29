@@ -15,6 +15,7 @@ import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCo
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
+import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
 
 type Props = {
   isOpen: boolean;
@@ -23,13 +24,14 @@ type Props = {
 };
 
 const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
-  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer } = useUtkastEndringer(utkast);
+  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer } =
+    useUtkastEndringer(utkast);
   const { history } = useHistory();
   const harUlagredeEndringer = history.index > 0;
-  const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
+  const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer || !!kommunendringer;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered scrollBehavior="inside">
+    <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Endringslogg</ModalHeader>
@@ -56,6 +58,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
                   kretstype={KontekstType.GRUNNKRETS}
                 />
               ))}
+              {kommunendringer?.map((endringer) => <EndringerForFylke key={endringer.nummer} endringer={endringer} />)}
             </EndringUnstyledList>
           </Stack>
         </ModalBody>

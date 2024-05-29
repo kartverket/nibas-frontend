@@ -1,47 +1,70 @@
 import {
+  Kommuneendringer,
   Kretsendringer,
   KretsSplittingEndring,
   Metadataendringer,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { GrunnkretsEntry, HistoryChange, HistoryEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
-import { getUniqueItems } from "utils/list-utils";
+import { getUniqueItems, removeNil } from "utils/list-utils";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
-import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse } from "../../../types/api";
+import {
+  GrunnkretsResponse,
+  KommuneResponse,
+  KretsDelingEndringRequest,
+  StemmekretsResponse,
+} from "../../../types/api";
 import {
   getGrenseDelingEntries,
   getGrunnkretsMetadataEntries,
+  getKommuneMetadataEntries,
   getKretsDelingEntries,
   getStemmekretsMetadataEntries,
 } from "contexts/HistoryContext/history-utils";
+import { inndelingResponseNavnToString } from "utils/language/language";
+import useKommuner from "hooks/inndelinger/useKommuner";
 
 type UseUnsavedEndringerReturnType = {
   harEndringer: boolean;
   antallEndringer: number;
-  endringer: Kretsendringer;
+  kretsendringer: Kretsendringer;
+  kommuneendringer: Kommuneendringer[];
   laster: boolean;
 };
 
 export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
   const { getHistoryEntries } = useHistory();
   const history = getHistoryEntries();
+  const { isLoading: lasterKommuner, kommuner: alleKommuner } = useKommuner();
 
   const antallNyeGrenser = countNewGrenser(history);
   const antallArkiverteGrenser = countArchivedGrenser(history);
   const antallEndredeGrenser = countChangedGrenser(history);
   const metadataendringer = getMetadataChanges(history);
   const { laster: lasterDelinger, endringer: kretsdelinger } = useKretsdelingChanges(history);
+  const kommuneendringer = getKommuneendringer(history, alleKommuner);
+
+  const antallKommuneNavnendringer = kommuneendringer.filter((k) => k.nyttNavn != null).length;
+  const antallKommuneEndringSamiskForvaltningsomraade = kommuneendringer.filter(
+    (k) => k.samiskforvaltningsomraade != null,
+  ).length;
 
   const antallEndringer =
-    antallNyeGrenser + antallArkiverteGrenser + antallEndredeGrenser + metadataendringer.length + kretsdelinger.length;
+    antallNyeGrenser +
+    antallArkiverteGrenser +
+    antallEndredeGrenser +
+    metadataendringer.length +
+    kretsdelinger.length +
+    antallKommuneNavnendringer +
+    antallKommuneEndringSamiskForvaltningsomraade;
 
   return {
     harEndringer: antallEndringer > 0,
     antallEndringer,
-    laster: lasterDelinger,
-    endringer: {
+    laster: lasterDelinger || lasterKommuner,
+    kretsendringer: {
       metadataendringer,
       antallArkiverteGrenser,
       antallNyeGrenser,
@@ -49,7 +72,42 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
       sammenslaaing: null, // Sammenslåing blir lagret med en gang
       delinger: kretsdelinger,
     },
+    kommuneendringer: kommuneendringer,
   };
+};
+
+const getKommuneendringer = (
+  entries: HistoryEntry[],
+  alleKommuner: KommuneResponse[] | undefined,
+): Kommuneendringer[] => {
+  const kommuneentries = getKommuneMetadataEntries(entries);
+  const kommunechanges = kommuneentries.flatMap((entry) => entry.changes);
+
+  const kommunerMedEndringer = getUniqueItems(kommunechanges.map((change) => change.id));
+
+  return removeNil(
+    kommunerMedEndringer.map((kommuneid) => {
+      const firstChange = kommunechanges.find((change) => change.id === kommuneid)!;
+      const lastChange = kommunechanges.findLast((change) => change.id === kommuneid)!;
+
+      const kommune = alleKommuner?.find((kommuneResponse) => kommuneResponse.id.lokalid.value === kommuneid);
+      const fromNavn = inndelingResponseNavnToString(firstChange.from.administrativenhetnavn);
+      const toNavn = inndelingResponseNavnToString(lastChange.to.administrativenhetnavn);
+      const fromSamiskForvalt = firstChange.from.samiskforvaltningsomraade;
+      const toSamiskForvalt = lastChange.to.samiskforvaltningsomraade;
+
+      if (fromNavn === toNavn && fromSamiskForvalt === toSamiskForvalt) {
+        return null;
+      }
+
+      return {
+        gammeltNavn: fromNavn,
+        nummer: kommune?.nummer ?? "",
+        nyttNavn: fromNavn !== toNavn ? toNavn : undefined,
+        samiskforvaltningsomraade: fromSamiskForvalt !== toSamiskForvalt ? toSamiskForvalt : undefined,
+      };
+    }),
+  );
 };
 
 const countNewGrenser = (entries: HistoryEntry[]): number => {
