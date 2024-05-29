@@ -51,10 +51,6 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
     (k) => k.samiskforvaltningsomraade != null,
   ).length;
 
-  console.log("ENDRINGER FUNNET:", kommuneendringer);
-  console.log("antallKommuneNavnendringer:", antallKommuneNavnendringer);
-  console.log("antallKommuneEndringSamiskForvaltningsomraade:", antallKommuneEndringSamiskForvaltningsomraade);
-
   const antallEndringer =
     antallNyeGrenser +
     antallArkiverteGrenser +
@@ -89,8 +85,6 @@ const getKommuneendringer = (
 
   const kommunerMedEndringer = getUniqueItems(kommunechanges.map((change) => change.id));
 
-  console.log("KOMMUNER MED ENDRINGER:", kommunerMedEndringer);
-
   return removeNil(
     kommunerMedEndringer.map((kommuneid) => {
       const firstChange = kommunechanges.find((change) => change.id === kommuneid)!;
@@ -102,13 +96,9 @@ const getKommuneendringer = (
       const fromSamiskForvalt = firstChange.from.samiskforvaltningsomraade;
       const toSamiskForvalt = lastChange.to.samiskforvaltningsomraade;
 
-      console.log("CHANGE?!", fromNavn, toNavn, fromSamiskForvalt, toSamiskForvalt);
-
       if (fromNavn === toNavn && fromSamiskForvalt === toSamiskForvalt) {
         return null;
       }
-
-      console.log("DETTE ER EN ENDRING", kommuneid);
 
       return {
         gammeltNavn: fromNavn,
