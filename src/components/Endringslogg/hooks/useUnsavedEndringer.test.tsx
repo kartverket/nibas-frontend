@@ -238,17 +238,76 @@ describe("useUnsavedEndringer", () => {
   });
 
   describe("kommuneendringer", () => {
-    it("skal returnere hvor mange kommuner som har endret samisk forvaltningsområde", () => {});
+    it("skal returnere hvor mange kommuner som har endret samisk forvaltningsområde", () => {
+      const entries = [
+        createKommuneMetadataEntry("1", { from: "test", to: "test" }, { from: false, to: true }),
+        createKommuneMetadataEntry("2", { from: "test", to: "test" }, { from: false, to: true }),
+      ];
+      const { result } = renderHookWithHistory(entries);
 
-    it("skal returnere hvor mange kommuner som har endret navn", () => {});
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(2);
+      expect(result.current.kommuneendringer.length).toBe(2);
+      expect(result.current.kommuneendringer[0].samiskforvaltningsomraade).toBeTruthy;
+      expect(result.current.kommuneendringer[1].samiskforvaltningsomraade).toBeTruthy;
+      expect(result.current.kommuneendringer[0].nyttNavn).toBeNull;
+      expect(result.current.kommuneendringer[1].nyttNavn).toBeNull;
+    });
 
-    it("om samme kommune endrer navn og samisk forvaltningsområde skal det telles som 2 endringer", () => {});
+    it("skal returnere hvor mange kommuner som har endret navn", () => {
+      const entries = [
+        createKommuneMetadataEntry("1", { from: "test1", to: "test11" }, { from: false, to: false }),
+        createKommuneMetadataEntry("2", { from: "test2", to: "test22" }, { from: false, to: false }),
+      ];
+      const { result } = renderHookWithHistory(entries);
 
-    it("om samme kommune endrer navn og samisk forvaltningsområde skal det telles som 2 endringer", () => {});
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(2);
+      expect(result.current.kommuneendringer.length).toBe(2);
+      expect(result.current.kommuneendringer[0].gammeltNavn).toBe("test1");
+      expect(result.current.kommuneendringer[0].nyttNavn).toBe("test11");
+      expect(result.current.kommuneendringer[1].gammeltNavn).toBe("test2");
+      expect(result.current.kommuneendringer[1].nyttNavn).toBe("test22");
+      expect(result.current.kommuneendringer[0].samiskforvaltningsomraade).toBeNull;
+      expect(result.current.kommuneendringer[1].samiskforvaltningsomraade).toBeNull;
+    });
 
-    it("om man endrer navn 2 ganger på samme kommune skal det telles som 1 endring", () => {});
+    it("om samme kommune endrer navn og samisk forvaltningsområde skal det telles som 2 endringer", () => {
+      const entries = [createKommuneMetadataEntry("1", { from: "test1", to: "test11" }, { from: false, to: true })];
+      const { result } = renderHookWithHistory(entries);
 
-    it("om man endrer samisk forvalntningområde frem og tilabke i 2 endringer skal det ikke telles som en endring", () => {});
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(2);
+      expect(result.current.kommuneendringer[0].gammeltNavn).toBe("test1");
+      expect(result.current.kommuneendringer[0].nyttNavn).toBe("test11");
+      expect(result.current.kommuneendringer[0].samiskforvaltningsomraade).toBe(true);
+    });
+
+    it("om man endrer navn 2 ganger på samme kommune skal det telles som 1 endring", () => {
+      const entries = [
+        createKommuneMetadataEntry("1", { from: "test1", to: "test11" }, { from: false, to: false }),
+        createKommuneMetadataEntry("1", { from: "test11", to: "test111" }, { from: false, to: false }),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(1);
+      expect(result.current.kommuneendringer.length).toBe(1);
+      expect(result.current.kommuneendringer[0].gammeltNavn).toBe("test1");
+      expect(result.current.kommuneendringer[0].nyttNavn).toBe("test111");
+    });
+
+    it("om man endrer samisk forvalntningområde frem og tilabke i 2 endringer skal det ikke telles som en endring", () => {
+      const entries = [
+        createKommuneMetadataEntry("1", { from: "test1", to: "test1" }, { from: false, to: true }),
+        createKommuneMetadataEntry("1", { from: "test1", to: "test1" }, { from: true, to: false }),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeFalsy;
+      expect(result.current.antallEndringer).toBe(0);
+      expect(result.current.kommuneendringer.length).toBe(0);
+    });
   });
 });
 
@@ -284,6 +343,7 @@ function createNyGrenseHistoryEntry(id: string): NyGrenseEntry {
 }
 
 function createKommuneMetadataEntry(
+  kommuneid: string,
   navn: { from: string; to: string },
   samiskforvaltning: { from: boolean; to: boolean },
 ): KommuneEntry {
@@ -292,16 +352,16 @@ function createKommuneMetadataEntry(
     fylkeId: "11",
     changes: [
       {
-        id: "123",
+        id: kommuneid,
         from: {
           administrativenhetnavn: [{ rekkefoelge: undefined, navn: navn.from, version: 1, spraak: "NO" }],
-          lokalid: "123",
+          lokalid: kommuneid,
           samiskforvaltningsomraade: samiskforvaltning.from,
           version: 1,
         },
         to: {
           administrativenhetnavn: [{ rekkefoelge: undefined, navn: navn.to, version: 1, spraak: "NO" }],
-          lokalid: "123",
+          lokalid: kommuneid,
           samiskforvaltningsomraade: samiskforvaltning.to,
           version: 1,
         },

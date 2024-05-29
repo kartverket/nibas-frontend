@@ -128,7 +128,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="3xl">
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Publiser utkast</ModalHeader>

@@ -28,10 +28,10 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
     useUtkastEndringer(utkast);
   const { history } = useHistory();
   const harUlagredeEndringer = history.index > 0;
-  const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
+  const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer || !!kommunendringer;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="3xl" isCentered scrollBehavior="inside">
+    <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered scrollBehavior="inside">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Endringslogg</ModalHeader>
