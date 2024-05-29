@@ -25,18 +25,6 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { map } from "pages/Kart/constants";
 
-// TODO: Fjernes i egen PR sammen med selve knappen med en gang funksjonalitet er testet!
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    Nibas: any;
-  }
-}
-// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-window.Nibas = window.Nibas || {};
-
-window.Nibas.enableLoginAgainBtn = false;
-
 export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { signIn, clear, events } = useAuthentication();

@@ -8,6 +8,7 @@ import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEnd
 import { styled } from "styled-components";
 import { statusCode } from "utils/api";
 import { useAuthRenewError } from "components/Authentication/AuthRenewError";
+import FeatureToggle from "components/FeatureToggle";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
@@ -33,14 +34,14 @@ const HeaderHistoryOperations = () => {
 
   return (
     <HeaderSection>
-      {window.Nibas.enableLoginAgainBtn === true && (
+      <FeatureToggle feature={"REAUTH_BTN"}>
         <HeaderButton
           tooltip={{ text: "" }}
           label="logg inn på nytt"
           icon="save"
           onClick={() => setAuthRenewError(true)}
         />
-      )}
+      </FeatureToggle>
 
       <HeaderButton
         label="Angre"
