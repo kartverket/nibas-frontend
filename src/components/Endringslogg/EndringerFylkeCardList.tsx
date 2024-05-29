@@ -1,5 +1,5 @@
 import { Kommuneendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import { ChangeToFromRow, ChangeToFromRowNoBadge, EndringCard } from "components/Endringslogg/Endringcard/EndringCard";
+import { ChangeToFromRow, EndringCard } from "components/Endringslogg/Endringcard/EndringCard";
 
 type EndringerFylkeListProps = {
   endringer: Kommuneendringer[];
@@ -17,23 +17,24 @@ export const EndringerFylkeCardList = ({ endringer }: EndringerFylkeListProps) =
     <EndringCard title="Endring av flatedetaljer">
       {nameChanges.map((namechange) => (
         <ChangeToFromRow
+          withBadge
           key={namechange.nummer}
           from={[`${namechange.nummer} ${namechange.gammeltNavn}`]}
           to={[`${namechange.nummer} ${namechange.nyttNavn}`]}
         />
       ))}
       {addedSamiskForvaltningsomraade.map((endring) => (
-        <ChangeToFromRowNoBadge
+        <ChangeToFromRow
           key={endring.nummer}
-          from={`${endring.nummer} ${endring.gammeltNavn}`}
-          to={"Lagt til markering som samisk forvaltningsområde"}
+          from={[`${endring.nummer} ${endring.gammeltNavn}`]}
+          to={["Lagt til markering som samisk forvaltningsområde"]}
         />
       ))}
       {removedSamiskForvalntningsomraade.map((endring) => (
-        <ChangeToFromRowNoBadge
+        <ChangeToFromRow
           key={endring.nummer}
-          from={`${endring.nummer} ${endring.gammeltNavn}`}
-          to={"Fjernet markering som samisk forvaltningsområde"}
+          from={[`${endring.nummer} ${endring.gammeltNavn}`]}
+          to={["Fjernet markering som samisk forvaltningsområde"]}
         />
       ))}
     </EndringCard>
