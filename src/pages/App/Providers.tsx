@@ -15,17 +15,17 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
       <ConfirmationModalProvider>
         <HistoryProvider>
           <FeatureStyleProvider>
-            <AuthRenewProvider>
-              <ToolbarProvider>
-                <OverlayPanelProvider>
+            <OverlayPanelProvider>
+              <AuthRenewProvider>
+                <ToolbarProvider>
                   <KartlagProvider>
                     <UtkastProvider>
                       <InndelingerProvider>{children}</InndelingerProvider>
                     </UtkastProvider>
                   </KartlagProvider>
-                </OverlayPanelProvider>
-              </ToolbarProvider>
-            </AuthRenewProvider>
+                </ToolbarProvider>
+              </AuthRenewProvider>
+            </OverlayPanelProvider>
           </FeatureStyleProvider>
         </HistoryProvider>
       </ConfirmationModalProvider>
