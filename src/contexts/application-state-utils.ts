@@ -6,7 +6,6 @@ import {
   HistoryTypeValues,
   NyGrense,
   NyGrenseEntry,
-  SerializableNyGrense,
 } from "contexts/HistoryContext/types";
 import { SelectedPoint } from "./FeatureStyleContext/types";
 import { LineString, Point } from "ol/geom";
@@ -67,12 +66,16 @@ type SerializableHistoryChange<T> = HistoryChange<T>;
 
 type SerializableHistoryTypeValues = HistoryTypeValues | "serializablenygrense" | "serializablegrensedeling";
 
+type SerializableNyGrense = Omit<NyGrense, "grensedeling"> & {
+  grensedeling: string;
+};
+
+type SerializableGrensedelingEntry = SerializableBaseHistoryEntry<"serializablegrensedeling", string>;
+
 type SerializableBaseHistoryEntry<HistoryType extends SerializableHistoryTypeValues, Model> = {
   type: HistoryType;
   changes: SerializableHistoryChange<Model>[];
 };
-
-type SerializableGrensedelingEntry = SerializableBaseHistoryEntry<"serializablegrensedeling", string>;
 
 type SerializableNyGrenseEntry = SerializableBaseHistoryEntry<"serializablenygrense", SerializableNyGrense>;
 

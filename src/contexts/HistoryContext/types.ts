@@ -52,10 +52,6 @@ export type NyGrense = (MinimalGrense & FeatureProperties) & {
   grensedeling?: Feature<Geometry>[];
 };
 
-export type SerializableNyGrense = Omit<NyGrense, "grensedeling"> & {
-  grensedeling: string;
-};
-
 export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
 export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
 export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {

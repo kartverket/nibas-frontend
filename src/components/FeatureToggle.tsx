@@ -30,7 +30,7 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   REAUTH_BTN: {
     prod: false,
     test: true,
-    dev: getLocalEnvironmentOverride("REAUTH_BTN"),
+    dev: true,
   },
 };
 
