@@ -1,4 +1,5 @@
 import {
+  Kommuneendringer,
   Kretsendringer,
   KretsSplittingEndring,
   Metadataendringer,
@@ -20,7 +21,8 @@ import {
 type UseUnsavedEndringerReturnType = {
   harEndringer: boolean;
   antallEndringer: number;
-  endringer: Kretsendringer;
+  kretsendringer: Kretsendringer;
+  kommuneendringer: Kommuneendringer[];
   laster: boolean;
 };
 
@@ -41,7 +43,7 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
     harEndringer: antallEndringer > 0,
     antallEndringer,
     laster: lasterDelinger,
-    endringer: {
+    kretsendringer: {
       metadataendringer,
       antallArkiverteGrenser,
       antallNyeGrenser,
@@ -49,6 +51,7 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
       sammenslaaing: null, // Sammenslåing blir lagret med en gang
       delinger: kretsdelinger,
     },
+    kommuneendringer: [],
   };
 };
 
