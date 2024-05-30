@@ -20,6 +20,7 @@ import { Geometry } from "ol/geom";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
 import { Coordinate, equals } from "ol/coordinate";
+import BaseEvent from "ol/events/Event";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -138,6 +139,16 @@ const useModify = () => {
   ]);
 
   useEffect(() => {
+    const createAddPointGrenseEntry = (ev: BaseEvent) => {
+      const changedFeature = ev.target as Feature<Geometry>;
+      if (changedFeature.getGeometry() instanceof LineString) {
+        addHistoryEntry({
+          type: "grense",
+          changes: createGrenseHistoryChange([changedFeature]),
+        });
+      }
+    };
+
     const saveCoordinatesBeforeModification = (e: ModifyEvent) => {
       e.features.forEach((feature) => {
         const featureId = feature.getId()?.toString();
@@ -146,16 +157,15 @@ const useModify = () => {
         const geometry = feature.getGeometry();
         if (geometry instanceof LineString) {
           feature.set(previousCoordinateKey, geometry.getCoordinates());
+          // Når vi legger til en vertex på en feature avfyres det ikke et modifyend-event (pointerup) når vertexen har blitt lagt på, så vi må derfor lytte på featuren i stedet for.
+          if (activeTool === "add" && !e.mapBrowserEvent.dragging) {
+            feature.once("change", createAddPointGrenseEntry);
+            return () => {
+              feature.un("change", createAddPointGrenseEntry);
+            };
+          }
         }
       });
-
-      // insertVertex utløser ikke pointerup-events, som gjør at vi må gjøre history-endringen for å legge til punkt her
-      if (activeTool === "add" && !e.mapBrowserEvent.dragging) {
-        addHistoryEntry({
-          type: "grense",
-          changes: createGrenseHistoryChange(e.features.getArray()),
-        });
-      }
     };
     modify.on("modifystart", saveCoordinatesBeforeModification);
 
