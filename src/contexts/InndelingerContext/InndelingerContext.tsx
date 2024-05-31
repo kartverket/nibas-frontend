@@ -18,7 +18,7 @@ import {
   fetchHistoryFromSessionStorage,
   fetchSelectedFeaturesFromSessionStorage,
   fetchSelectedPointFromSessionStorage,
-  fetchViewFromSessionStorage,
+  fetchMapPositionFromSessionStorage,
 } from "contexts/application-state-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -127,11 +127,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     // TODO: Selected feature/point virker ikke.
     const selectedFeatures = fetchSelectedFeaturesFromSessionStorage();
     if (selectedFeatures != null && selectedFeatures.length > 0) {
-      const view = fetchViewFromSessionStorage();
+      const mapPosition = fetchMapPositionFromSessionStorage();
 
       map.getView().animate({
-        center: view?.center,
-        zoom: view?.zoom,
+        center: mapPosition?.center,
+        zoom: mapPosition?.zoom,
       });
       if (exclusiveSelectTools.includes(activeTool)) {
         selectFeatures(selectedFeatures);

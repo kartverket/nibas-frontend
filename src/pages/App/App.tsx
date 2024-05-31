@@ -70,7 +70,6 @@ const ProtectedPage = () => {
     if (isAuthenticated) {
       checkAuthorization().then((result) => {
         if (!result && user == null) {
-          // TODO: Sjekke exp. på token
           navigate(`${routes.authentication}/${routes.notAuthorized}`);
         }
       });

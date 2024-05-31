@@ -269,7 +269,7 @@ export const saveApplicationStateToSessionStorage = (applicationState: Applicati
   sessionStorage.setItem(sessionStorageKeys.mapPosition, JSON.stringify(applicationState.mapPosition));
 };
 
-export const fetchViewFromSessionStorage = (): MapPosition | null => {
+export const fetchMapPositionFromSessionStorage = (): MapPosition | null => {
   const serializedView = sessionStorage.getItem(sessionStorageKeys.mapPosition);
 
   if (serializedView == null) return null;

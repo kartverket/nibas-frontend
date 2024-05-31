@@ -8,7 +8,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  useDisclosure,
   Accordion,
   AccordionButton,
   AccordionPanel,
@@ -26,7 +25,6 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { map } from "pages/Kart/constants";
 
 export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { signIn, clear, events } = useAuthentication();
   const { utkast } = useUtkast();
   const { history } = useHistory();
@@ -35,12 +33,6 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   const { selectedPoint, selectedFeatures } = useFeatureStyle();
   const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayModal, activeOverlayPanel } = useOverlayPanel();
-
-  useEffect(() => {
-    if (authRenewError === true) {
-      onOpen();
-    }
-  }, [authRenewError, history, onOpen, selectedFeatures, selectedPoint]);
 
   useEffect(() => {
     const silentRenewCleanupFn = events.addSilentRenewError(() => {
@@ -84,7 +76,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Modal blockScrollOnMount={false} isOpen={isOpen} onClose={onClose}>
+      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Du har automatisk blitt logget ut</ModalHeader>
@@ -112,7 +104,6 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
               mr={3}
               onClick={() => {
                 setAuthRenewError(false);
-                onClose();
               }}
             >
               Lukk
