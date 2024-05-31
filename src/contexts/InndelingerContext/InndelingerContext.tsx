@@ -77,10 +77,6 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
 
-  useEffect(() => {
-    console.log(inndelinger);
-  }, [inndelinger]);
-
   const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles, addDirtyStyles } = useFeatureStyle();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
