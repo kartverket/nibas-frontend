@@ -77,6 +77,10 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
 
+  useEffect(() => {
+    console.log(inndelinger);
+  }, [inndelinger]);
+
   const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles, addDirtyStyles } = useFeatureStyle();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState("");
@@ -198,7 +202,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     if (inndelingFeatures.length === 0) return;
 
     // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
-    if (inndelingerToFetch.every((inndeling) => inndeling.isEditing)) editSource.clear(true);
+    if (inndelingerToFetch.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
     for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isVisible)) {
       const source = getLayerById(inndeling.inndelingtype).getSource();
       if (source) source.clear(true);
