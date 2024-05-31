@@ -91,6 +91,14 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return a.id === b.id && a.inndelingtype === b.inndelingtype;
   };
 
+  const getAllInndelinger = useCallback((): Inndeling[] => {
+    return Object.values(inndelinger).flatMap((inndelingerMap) => [...inndelingerMap.values()]);
+  }, [inndelinger]);
+
+  const getAllInndelingerId = useCallback((): string[] => {
+    return getAllInndelinger().map((inndeling) => inndeling.id);
+  }, [getAllInndelinger]);
+
   /**
    * Denne useEffecten er kjernen av motoren i InndelingerContext og tar for seg det å legge til features fra inndelingen i kartet
    *
@@ -198,7 +206,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     if (inndelingFeatures.length === 0) return;
 
     // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
-    if (inndelingerToFetch.every((inndeling) => inndeling.isEditing)) editSource.clear(true);
+    if (inndelingerToFetch.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
     for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isVisible)) {
       const source = getLayerById(inndeling.inndelingtype).getSource();
       if (source) source.clear(true);
@@ -247,7 +255,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     // Reapply historikken slik at eventuelle features som har blitt endret på siden siste lagring er i sync med historikken
     reapplyCurrentEntries();
 
-    zoomToFeatures(inndelingFeatures.flatMap((inndelingWithFeatures) => inndelingWithFeatures.features));
+    zoomToFeatures(
+      inndelingFeatures
+        .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
+        .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
+    );
 
     // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
     // Dette sikrer også at featurene man får hentet fra inndelingene er tomme, og useEffecten ikke kjører flere ganger
@@ -262,6 +274,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     reapplyCurrentEntries,
     getHistoryEntries,
     addDirtyStyles,
+    getAllInndelingerId,
   ]);
 
   const clearInndelingerAndSources = () => {
@@ -271,10 +284,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     }
     setInndelingerToFetch([]);
     setInndelinger(getEmptyInndelinger());
-  };
-
-  const getAllInndelinger = (): Inndeling[] => {
-    return Object.values(inndelinger).flatMap((inndelingerMap) => [...inndelingerMap.values()]);
   };
 
   /**
@@ -362,7 +371,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     inndelinger,
     selectInndelinger,
 
-    getAllInndelinger: useCallback(getAllInndelinger, [inndelinger]),
+    getAllInndelinger,
     currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
 
     clearInndelingerAndSources,
