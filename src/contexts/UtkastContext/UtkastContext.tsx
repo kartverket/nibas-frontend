@@ -15,17 +15,13 @@ import useNibasApi from "hooks/useNibasApi";
 import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { statusCode } from "utils/api";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useToast } from "@kvib/react";
 import { routes } from "utils/routes";
-import { useToolbar } from "contexts/ToolbarContext";
-import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
-import { resetMapView } from "utils/map/map-utils";
 import { removeNil } from "utils/list-utils";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
@@ -37,11 +33,8 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
-  const { closeOverlayPanel, closeOverlayModal } = useOverlayPanel();
   const { setError } = useErrorHandling();
-  const { resetTool, resetModeTools } = useToolbar();
   const toast = useToast();
-  const { resetKartlag } = useKartlag();
 
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
@@ -73,15 +66,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   // Når utkast lukkes ønsker vi å tilbakestille store deler av applikasjonen
   const closeUtkast = useCallback(() => {
     setUtkast(undefined);
-    resetMapView();
-    resetKartlag();
     clearHistory();
     clearFeatureStyles();
-    closeOverlayPanel();
-    closeOverlayModal();
-    resetModeTools();
-    resetTool();
-  }, [clearFeatureStyles, clearHistory, closeOverlayModal, closeOverlayPanel, resetKartlag, resetModeTools, resetTool]);
+  }, [clearFeatureStyles, clearHistory]);
 
   useEffect(() => {
     if (fetchedUtkast && !utkast) {
