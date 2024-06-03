@@ -22,10 +22,13 @@ export const getTitleForEndringstype = (endringstype: AllEndringTypes): string =
 
 export const getBodyTextForNumericChange = (value: number, endringstype: NumericEndringType): string => {
   switch (endringstype) {
-    case "grenseendring":
-      return `${value} ${value > 1 ? "grenseendringer" : "grenseendring"} er gjennomført `;
+    case "grenseendring": {
+      const grenseendring = value > 1 ? "grenseendringer" : "grenseendring";
+      const metadataendring = value > 1 ? "metadataendringer" : "metadataendring";
+      return `${value} ${grenseendring} eller ${metadataendring} har blitt gjennomført `;
+    }
     case "arkiveringer":
-      return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} er arkivert`;
+      return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} har blitt arkivert`;
     case "grenseinformasjon":
       return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} har fått endret informasjon`;
     case "nyegrenser":
