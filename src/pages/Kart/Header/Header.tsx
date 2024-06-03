@@ -47,7 +47,7 @@ const Header = () => {
     return `${responsesExceptLast.join(", ")} og ${responseLast}`;
   };
 
-  const hasUnsavedChangesInHistory = history.entries.length > 0;
+  const hasUnsavedChangesInHistory = history.index > 0;
 
   const confirmSelectIfDirtyModal = () =>
     openAsync({
