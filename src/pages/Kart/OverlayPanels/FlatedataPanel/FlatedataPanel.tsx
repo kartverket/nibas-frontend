@@ -48,7 +48,7 @@ const FlatedataPanel = () => {
 
   const allInndelinger = Object.values(inndelinger)
     .flatMap((inndelingerMap) => [...inndelingerMap.values()])
-    .filter((inndeling) => inndeling.isVisible || inndeling.isEditing)
+    .filter((inndeling) => inndeling.isViewing || inndeling.isEditing)
     .toSorted((a, b) => (a.isEditing === b.isEditing ? 0 : a.isEditing ? -1 : 1));
 
   // Dersom brukeren lukker panelet med ulagrede endringer ønsker vi en bekreftelse

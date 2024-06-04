@@ -24,7 +24,7 @@ const useInndelingerPanel = () => {
   useEffect(() => {
     isEditingPanel
       ? setSelectedInndelinger([])
-      : setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isVisible));
+      : setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isViewing));
   }, [getAllInndelinger, isEditingPanel]);
 
   const resetSelection = () => {
@@ -32,7 +32,7 @@ const useInndelingerPanel = () => {
   };
 
   const isSelectionAvailable = selectedInndelinger.some((inndeling) =>
-    isEditingPanel ? inndeling.isEditing : inndeling.isVisible,
+    isEditingPanel ? inndeling.isEditing : inndeling.isViewing,
   );
 
   const selectNewInndelinger = () => {
@@ -52,7 +52,7 @@ const useInndelingerPanel = () => {
     });
 
     if (inndelingIfSelected != null) {
-      return isEditingPanel ? inndelingIfSelected.isEditing : inndelingIfSelected.isVisible;
+      return isEditingPanel ? inndelingIfSelected.isEditing : inndelingIfSelected.isViewing;
     }
 
     return false;
@@ -89,7 +89,7 @@ const useInndelingerPanel = () => {
           id: fylke.id,
           inndelingtype: selectedInndelingtype,
           isEditing: isEditingPanel,
-          isVisible: !isEditingPanel,
+          isViewing: !isEditingPanel,
         };
         setSelectedInndelinger(selectedInndelinger.concat(newInndeling));
         return;
@@ -110,7 +110,7 @@ const useInndelingerPanel = () => {
         id: kommune.id,
         inndelingtype: selectedInndelingtype,
         isEditing: isEditingPanel,
-        isVisible: !isEditingPanel,
+        isViewing: !isEditingPanel,
       };
 
       if (isEditingPanel) {
