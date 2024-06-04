@@ -16,7 +16,7 @@ import {
   OperasjonerOrNull,
   ResponseTypeFromKretstype,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import { getNavnInSpraak } from "utils/language/language";
+import { getNavnInSpraak, inndelingResponseNavnToString } from "utils/language/language";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 const getEndredeFeaturesForKretstype = (operasjoner: OperasjonerOrNull, kretstype: KontekstType): FeatureDTO[] => {
@@ -234,6 +234,55 @@ const getMetadataEndringer = (
       nummer: kretsendringer?.[krets]?.nummer?.trim(),
     };
   });
+};
+
+export const getSamiskforvaltningsomraadednring = (
+  kommuneId: string,
+  operasjoner: UtkastOperasjoner,
+  alleKommuner: KommuneResponse[] | null | undefined,
+): boolean | undefined => {
+  if (alleKommuner == null) {
+    return undefined;
+  }
+
+  const endringForKommune = operasjoner.metadataendringer.kommuneendringer[kommuneId];
+  const kommune = alleKommuner.find((k) => k.id.lokalid.value === kommuneId);
+
+  if (endringForKommune == null || kommune == null) {
+    return undefined;
+  }
+
+  if (kommune.samiskforvaltningsomraade === endringForKommune.samiskforvaltningsomraade) {
+    return undefined;
+  }
+
+  return endringForKommune.samiskforvaltningsomraade;
+};
+
+export const getNavnendringForKommune = (
+  kommuneId: string,
+  operasjoner: UtkastOperasjoner,
+  alleKommuner: KommuneResponse[] | undefined | null,
+): string | undefined => {
+  if (alleKommuner == null) {
+    return undefined;
+  }
+
+  const endringForKommune = operasjoner.metadataendringer.kommuneendringer[kommuneId];
+  const kommune = alleKommuner.find((k) => k.id.lokalid.value === kommuneId);
+
+  if (endringForKommune == null || kommune == null) {
+    return undefined;
+  }
+
+  const oldName = inndelingResponseNavnToString(kommune.navn);
+  const newName = inndelingResponseNavnToString(endringForKommune.administrativenhetnavn);
+
+  if (oldName === newName) {
+    return undefined;
+  }
+
+  return newName;
 };
 
 const getEndringerForKommune = <T extends KontekstType>(

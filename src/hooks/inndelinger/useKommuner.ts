@@ -1,9 +1,14 @@
 import useNibasApi from "../useNibasApi";
 
-const useKommuner = (fylkeId: string, shouldFetch = true) => {
-  const { data: kommuner, ...rest } = useNibasApi(shouldFetch ? "/v1/kommuner" : null, {
-    fylkeid: fylkeId,
-  });
+const useKommuner = (fylkeId: string | null = null, shouldFetch = true) => {
+  const { data: kommuner, ...rest } = useNibasApi(
+    shouldFetch ? "/v1/kommuner" : null,
+    fylkeId != null
+      ? {
+          fylkeid: fylkeId,
+        }
+      : undefined,
+  );
 
   const sortedKommuner = kommuner?.sort((a, b) => {
     return Number(a.nummer) - Number(b.nummer);

@@ -1,45 +1,20 @@
 import ActionCard from "components/ActionCard";
 import { Page, PageContainer } from "components/Page";
-import { useKartlag } from "contexts/KartlagContext/KartlagContext";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useToolbar } from "contexts/ToolbarContext";
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { resetMapView } from "utils/map/map-utils";
 import { routes } from "utils/routes";
 import Greeting from "./Greeting";
 import LandingHeader from "./LandingHeader";
 import PrivacyFooter from "./PrivacyFooter";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useMapReset from "hooks/useMapReset";
+import { useEffect } from "react";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { resetKartlag } = useKartlag();
-  const { resetTool, resetModeTools } = useToolbar();
-  const { activeOverlayPanel, closeOverlayPanel, activeOverlayModal, closeOverlayModal } = useOverlayPanel();
-  const { getAllInndelinger, clearInndelingerAndSources } = useInndelinger();
+  const resetMap = useMapReset();
 
   useEffect(() => {
-    resetMapView();
-    resetKartlag();
-    resetTool();
-    resetModeTools();
-
-    // Disse krever ekstra sjekking for å unngå uendelig useEffekt-løkke
-    if (activeOverlayPanel) closeOverlayPanel();
-    if (activeOverlayModal) closeOverlayModal();
-    if (getAllInndelinger().length > 0) clearInndelingerAndSources();
-  }, [
-    activeOverlayModal,
-    activeOverlayPanel,
-    clearInndelingerAndSources,
-    closeOverlayModal,
-    closeOverlayPanel,
-    getAllInndelinger,
-    resetKartlag,
-    resetModeTools,
-    resetTool,
-  ]);
+    resetMap();
+  }, [resetMap]);
 
   return (
     <PageContainer>

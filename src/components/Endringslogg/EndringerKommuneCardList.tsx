@@ -2,10 +2,10 @@ import { Kretsendringer } from "components/Endringslogg/hooks/utkastEndringerTyp
 import { EndringNumericCard, EndringToFromCard } from "components/Endringslogg/Endringcard/EndringCard";
 import { getNavnOgNummerChanges } from "components/Endringslogg/Endringcard/EndringCardUtils";
 
-type EndringerListProps = {
+type EndringerKommuneListProps = {
   endringer: Kretsendringer;
 };
-export const EndringerCardList = ({ endringer }: EndringerListProps) => {
+export const EndringerKommuneCardList = ({ endringer }: EndringerKommuneListProps) => {
   const { metadataendringer, antallArkiverteGrenser, antallEndredeGrenser, antallNyeGrenser, delinger, sammenslaaing } =
     endringer;
   const navnOgNummerChanges = getNavnOgNummerChanges(metadataendringer);

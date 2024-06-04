@@ -12,7 +12,7 @@ type EndringCardProps = {
   children: ReactNode;
 };
 
-const EndringCard = ({ title, children }: EndringCardProps) => {
+export const EndringCard = ({ title, children }: EndringCardProps) => {
   return (
     <StyledCard>
       <CardTitleText as="h3">{title}</CardTitleText>
@@ -50,7 +50,7 @@ export const EndringToFromCard = ({ type, changes }: EndringToFromProps) => {
   return (
     <EndringCard title={getTitleForEndringstype(type)}>
       {changes.map(({ from, to }) => (
-        <ChangeToFromRow key={from.join("-") + "-" + to.join("-")} from={from} to={to} />
+        <ChangeToFromRow withBadge key={from.join("-") + "-" + to.join("-")} from={from} to={to} />
       ))}
     </EndringCard>
   );
@@ -59,17 +59,18 @@ export const EndringToFromCard = ({ type, changes }: EndringToFromProps) => {
 type ChangeToFromRowProps = {
   from: string[];
   to: string[];
+  withBadge?: boolean;
 };
-export const ChangeToFromRow = ({ from, to }: ChangeToFromRowProps) => (
+export const ChangeToFromRow = ({ from, to, withBadge = false }: ChangeToFromRowProps) => (
   <ChangeRow data-testid="changerow" key={from.join("-") + "-" + to.join("-")}>
     {from.map((value) => (
-      <TextWithBadge key={value} badge="utgår">
+      <TextWithBadge key={value} badge={withBadge ? "utgår" : undefined}>
         {value}
       </TextWithBadge>
     ))}
     <RightArrow />
     {to.map((value) => (
-      <TextWithBadge key={value} badge="ny">
+      <TextWithBadge key={value} badge={withBadge ? "ny" : undefined}>
         {value}
       </TextWithBadge>
     ))}
@@ -78,16 +79,18 @@ export const ChangeToFromRow = ({ from, to }: ChangeToFromRowProps) => (
 
 type ValueWithBadgeProps = {
   children: ReactNode;
-  badge: "ny" | "utgår";
+  badge: "ny" | "utgår" | null | undefined;
 };
 
 const TextWithBadge = ({ children, badge }: ValueWithBadgeProps) => {
   return (
     <TextWithBadgeContainer>
       {children}
-      <Badge ml="4px" variant={"subtle"} colorScheme={badge === "ny" ? "green" : "gray"}>
-        {badge}
-      </Badge>
+      {badge != null && (
+        <Badge ml="4px" variant={"subtle"} colorScheme={badge === "ny" ? "green" : "gray"}>
+          {badge}
+        </Badge>
+      )}
     </TextWithBadgeContainer>
   );
 };

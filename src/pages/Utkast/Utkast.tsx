@@ -11,6 +11,8 @@ import { UtkastResponse } from "types/api";
 import { routes } from "utils/routes";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
+import useMapReset from "hooks/useMapReset";
+import { useEffect } from "react";
 
 type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
 
@@ -20,6 +22,12 @@ const sortUtkastByCreatedDesc = (a: UtkastResponse, b: UtkastResponse): number =
 const Utkast = () => {
   const { error, setError } = useErrorHandling();
   const { data: utkasts, isLoading } = useUtkasts();
+
+  const resetMap = useMapReset();
+
+  useEffect(() => {
+    resetMap();
+  }, [resetMap]);
 
   // Vi deler opp utkast i to kolonner manuelt i et forsøk på å holde lengden jevn
   const rightColumn: UtkastGroup = {

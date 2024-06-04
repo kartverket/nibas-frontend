@@ -15,6 +15,7 @@ import {
   StemmekretsEntry,
   GrunnkretsEntry,
   KretsdelingEntry,
+  KommuneEntry,
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -305,6 +306,10 @@ export const getStemmekretsMetadataEntries = (entries: HistoryEntry[]): Stemmekr
 
 export const getGrunnkretsMetadataEntries = (entries: HistoryEntry[]): GrunnkretsEntry[] => {
   return entries.filter((entry) => entry.type === "grunnkrets") as GrunnkretsEntry[];
+};
+
+export const getKommuneMetadataEntries = (entries: HistoryEntry[]): KommuneEntry[] => {
+  return entries.filter((entry) => entry.type === "kommune") as KommuneEntry[];
 };
 
 export const getKretsDelingEntries = (entries: HistoryEntry[]): KretsdelingEntry[] => {

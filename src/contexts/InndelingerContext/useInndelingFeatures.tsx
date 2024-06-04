@@ -14,8 +14,7 @@ import { fetcherWithToken } from "utils/api";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import useSWR from "swr";
 import { getRepresentasjonspunktId } from "utils/map/source";
-
-import { inndelingResponseNavnToString } from "./inndelinger-utils";
+import { inndelingResponseNavnToString } from "utils/language/language";
 
 type InndelingGrenserRequestPath = Pick<
   paths,
@@ -172,15 +171,14 @@ const useInndelingFeatures = (inndelinger: Inndeling[]) => {
           .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features)
           .map((feature) => feature.getId()?.toString()),
       );
-      const featuresInUtkastAndInndeling = featuresInUtkast.filter((feature) => {
+
+      return featuresInUtkast.filter((feature) => {
         const featureId = feature.getId()?.toString();
 
         if (featureId != null) {
           return isTempFeatureId(featureId) || inndelingFeatureIds.includes(featureId);
         }
       });
-
-      return featuresInUtkastAndInndeling;
     }
 
     return [];

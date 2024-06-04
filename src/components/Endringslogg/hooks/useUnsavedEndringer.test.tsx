@@ -7,6 +7,7 @@ import {
   GrenseEntry,
   GrenseTilhorighetEntry,
   HistoryEntry,
+  KommuneEntry,
   KretsdelingEntry,
   NyGrenseEntry,
   PropertyEntry,
@@ -21,217 +22,292 @@ import { Feature } from "ol";
 import { MockAuthProvider } from "../../../mocks/contexts/AuthContextMock";
 
 describe("useUnsavedEndringer", () => {
-  it("skal returnere hvor mange nye grenser som er på history", () => {
-    const entries = [createNyGrenseHistoryEntry("id1"), createNyGrenseHistoryEntry("id2")];
-    const { result } = renderHookWithHistory(entries);
+  describe("kretsendringer", () => {
+    it("skal returnere hvor mange nye grenser som er på history", () => {
+      const entries = [createNyGrenseHistoryEntry("id1"), createNyGrenseHistoryEntry("id2")];
+      const { result } = renderHookWithHistory(entries);
 
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.antallNyeGrenser).toBe(2);
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.antallNyeGrenser).toBe(2);
+    });
+
+    it("nye grenser skal inkludere nye grenser fra en grensedeling", () => {
+      const entries = [
+        createNyGrenseHistoryEntry("id1"),
+        createNyGrenseHistoryEntry("id2"),
+        createGrensedelingHistoryEntry("id3", ["delt1", "delt2"]),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.antallNyeGrenser).toBe(4);
+    });
+
+    it("skal returnere hvor mange arkiverte grenser som er på history", () => {
+      const entries = [createArchivedGrenseHistoryEntry("id1"), createArchivedGrenseHistoryEntry("id2")];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.antallArkiverteGrenser).toBe(2);
+    });
+
+    it("arkiverte grenser skal inkluderer grenser som er akivert i forbindelse med en grensedeling", () => {
+      const entries = [
+        createArchivedGrenseHistoryEntry("id1"),
+        createArchivedGrenseHistoryEntry("id2"),
+        createGrensedelingHistoryEntry("id3", ["delt1", "delt2"]),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.antallArkiverteGrenser).toBe(3);
+    });
+
+    it("skal returnere hvor mange grenser som har endringer på history", () => {
+      const entries = [createEditedGrenseHistoryEntry("id1"), createEditedGrenseHistoryEntry("id2")];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.antallEndredeGrenser).toBe(2);
+    });
+
+    it("flere endringer på samme grense skal kun telles 1 gang", () => {
+      const entries = [
+        createEditedGrenseHistoryEntry("id1"),
+        createEditedGrenseHistoryEntry("id2"),
+        createEditedGrenseHistoryEntry("id1"),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.antallEndredeGrenser).toBe(2);
+    });
+
+    it("grenseendringer skal inkludere endringer på koordinater, featureproperties og tilhørigheter", () => {
+      const entries = [
+        createEditedGrenseHistoryEntry("id1"),
+        createEditedGrenseTilhorigheterHistoryEntry("id2"),
+        createEditedGrensePropertiesHistoryEntry("id3"),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.antallEndredeGrenser).toBe(3);
+    });
+
+    it("skal summere opp flere ulike typer endringer i antall endringer", () => {
+      const entries = [
+        createArchivedGrenseHistoryEntry("id1"),
+        createArchivedGrenseHistoryEntry("id2"),
+        createEditedGrenseHistoryEntry("id3"),
+        createEditedGrenseHistoryEntry("id4"),
+        createNyGrenseHistoryEntry("id5"),
+        createNyGrenseHistoryEntry("id6"),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(6);
+    });
+
+    it("skal returnere alle metadataendringer som er gjort", () => {
+      const entries = [
+        createMetadataendringHistoryEntry(
+          "id1",
+          { navn: "gammelt navn1", nummer: "11" },
+          { navn: "nytt navn1", nummer: "12" },
+        ),
+        createMetadataendringHistoryEntry(
+          "id2",
+          { navn: "gammelt navn2", nummer: "21" },
+          { navn: "nytt navn2", nummer: "22" },
+        ),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.metadataendringer.length).toBe(2);
+
+      const endring1 = result.current.kretsendringer.metadataendringer.find(
+        (endring) => endring.opprinneligKrets.navn === "gammelt navn1",
+      );
+      const endring2 = result.current.kretsendringer.metadataendringer.find(
+        (endring) => endring.opprinneligKrets.navn === "gammelt navn2",
+      );
+
+      expect(endring1?.opprinneligKrets.navn).toBe("gammelt navn1");
+      expect(endring1?.opprinneligKrets.nummer).toBe("11");
+      expect(endring1?.navn).toBe("nytt navn1");
+      expect(endring1?.nummer).toBe("12");
+
+      expect(endring2?.opprinneligKrets.navn).toBe("gammelt navn2");
+      expect(endring2?.opprinneligKrets.nummer).toBe("21");
+      expect(endring2?.navn).toBe("nytt navn2");
+      expect(endring2?.nummer).toBe("22");
+    });
+
+    it("metadataendringer på samme krets skal slåes sammen til 1 endring", () => {
+      const entries = [
+        createMetadataendringHistoryEntry(
+          "id1",
+          { navn: "gammelt navn1", nummer: "11" },
+          { navn: "nytt navn1", nummer: "12" },
+        ),
+        createMetadataendringHistoryEntry(
+          "id1",
+          { navn: "nytt navn1", nummer: "12" },
+          { navn: "nytt navn2", nummer: "13" },
+        ),
+        createMetadataendringHistoryEntry(
+          "id1",
+          { navn: "nytt navn2", nummer: "13" },
+          { navn: "nytt navn3", nummer: "14" },
+        ),
+      ];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.metadataendringer.length).toBe(1);
+
+      const endring1 = result.current.kretsendringer.metadataendringer[0];
+      expect(endring1?.opprinneligKrets.navn).toBe("gammelt navn1");
+      expect(endring1?.opprinneligKrets.nummer).toBe("11");
+      expect(endring1?.navn).toBe("nytt navn3");
+      expect(endring1?.nummer).toBe("14");
+    });
+
+    it("kresdeling skal liste opp alle kretsen som er delt", async () => {
+      const entries = [
+        createKretsdelingEntry(mockStemmekrets1.id.lokalid.value, [
+          { navn: "ny1", nummer: "1" },
+          { navn: "ny2", nummer: "2" },
+        ]),
+      ];
+
+      const { result } = renderHookWithHistory(entries);
+      await waitFor(() => expect(result.current.laster).toBeFalsy);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.delinger?.length).toBe(1);
+
+      const kretsdeling = result.current.kretsendringer.delinger![0];
+
+      expect(kretsdeling.opprinneligKrets.kretsNavn).toBe(mockStemmekrets1.navn);
+      expect(kretsdeling.opprinneligKrets.kretsNummer).toBe(mockStemmekrets1.nummer);
+
+      expect(kretsdeling.nyeKretser.length).toBe(3);
+      expect(kretsdeling.nyeKretser[0].kretsNavn).toBe("ny1");
+      expect(kretsdeling.nyeKretser[0].kretsNummer).toBe("1");
+      expect(kretsdeling.nyeKretser[1].kretsNavn).toBe("ny2");
+      expect(kretsdeling.nyeKretser[1].kretsNummer).toBe("2");
+      expect(kretsdeling.nyeKretser[2].kretsNavn).toBe(mockStemmekrets1.navn);
+      expect(kretsdeling.nyeKretser[2].kretsNummer).toBe(mockStemmekrets1.nummer);
+    });
+
+    it("ved kretsdeling av samme krets flere ganger skal kun den siste være gjeldende", async () => {
+      const entries = [
+        createKretsdelingEntry(mockStemmekrets1.id.lokalid.value, [
+          { navn: "ny1", nummer: "1" },
+          { navn: "ny2", nummer: "2" },
+        ]),
+        createKretsdelingEntry(mockStemmekrets1.id.lokalid.value, [
+          { navn: "ny3", nummer: "3" },
+          { navn: "ny4", nummer: "4" },
+        ]),
+      ];
+
+      const { result } = renderHookWithHistory(entries);
+      await waitFor(() => expect(result.current.laster).toBeFalsy);
+
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.kretsendringer.delinger?.length).toBe(1);
+
+      const kretsdeling = result.current.kretsendringer.delinger![0];
+
+      expect(kretsdeling.opprinneligKrets.kretsNavn).toBe(mockStemmekrets1.navn);
+      expect(kretsdeling.opprinneligKrets.kretsNummer).toBe(mockStemmekrets1.nummer);
+
+      expect(kretsdeling.nyeKretser.length).toBe(3);
+      expect(kretsdeling.nyeKretser[0].kretsNavn).toBe("ny3");
+      expect(kretsdeling.nyeKretser[0].kretsNummer).toBe("3");
+      expect(kretsdeling.nyeKretser[1].kretsNavn).toBe("ny4");
+      expect(kretsdeling.nyeKretser[1].kretsNummer).toBe("4");
+      expect(kretsdeling.nyeKretser[2].kretsNavn).toBe(mockStemmekrets1.navn);
+      expect(kretsdeling.nyeKretser[2].kretsNummer).toBe(mockStemmekrets1.nummer);
+    });
   });
 
-  it("nye grenser skal inkludere nye grenser fra en grensedeling", () => {
-    const entries = [
-      createNyGrenseHistoryEntry("id1"),
-      createNyGrenseHistoryEntry("id2"),
-      createGrensedelingHistoryEntry("id3", ["delt1", "delt2"]),
-    ];
-    const { result } = renderHookWithHistory(entries);
+  describe("kommuneendringer", () => {
+    it("skal returnere hvor mange kommuner som har endret samisk forvaltningsområde", () => {
+      const entries = [
+        createKommuneMetadataEntry("1", { from: "test", to: "test" }, { from: false, to: true }),
+        createKommuneMetadataEntry("2", { from: "test", to: "test" }, { from: false, to: true }),
+      ];
+      const { result } = renderHookWithHistory(entries);
 
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.antallNyeGrenser).toBe(4);
-  });
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(2);
+      expect(result.current.kommuneendringer.length).toBe(2);
+      expect(result.current.kommuneendringer[0].samiskforvaltningsomraade).toBeTruthy;
+      expect(result.current.kommuneendringer[1].samiskforvaltningsomraade).toBeTruthy;
+      expect(result.current.kommuneendringer[0].nyttNavn).toBeNull;
+      expect(result.current.kommuneendringer[1].nyttNavn).toBeNull;
+    });
 
-  it("skal returnere hvor mange arkiverte grenser som er på history", () => {
-    const entries = [createArchivedGrenseHistoryEntry("id1"), createArchivedGrenseHistoryEntry("id2")];
-    const { result } = renderHookWithHistory(entries);
+    it("skal returnere hvor mange kommuner som har endret navn", () => {
+      const entries = [
+        createKommuneMetadataEntry("1", { from: "test1", to: "test11" }, { from: false, to: false }),
+        createKommuneMetadataEntry("2", { from: "test2", to: "test22" }, { from: false, to: false }),
+      ];
+      const { result } = renderHookWithHistory(entries);
 
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.antallArkiverteGrenser).toBe(2);
-  });
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(2);
+      expect(result.current.kommuneendringer.length).toBe(2);
+      expect(result.current.kommuneendringer[0].gammeltNavn).toBe("test1");
+      expect(result.current.kommuneendringer[0].nyttNavn).toBe("test11");
+      expect(result.current.kommuneendringer[1].gammeltNavn).toBe("test2");
+      expect(result.current.kommuneendringer[1].nyttNavn).toBe("test22");
+      expect(result.current.kommuneendringer[0].samiskforvaltningsomraade).toBeNull;
+      expect(result.current.kommuneendringer[1].samiskforvaltningsomraade).toBeNull;
+    });
 
-  it("arkiverte grenser skal inkluderer grenser som er akivert i forbindelse med en grensedeling", () => {
-    const entries = [
-      createArchivedGrenseHistoryEntry("id1"),
-      createArchivedGrenseHistoryEntry("id2"),
-      createGrensedelingHistoryEntry("id3", ["delt1", "delt2"]),
-    ];
-    const { result } = renderHookWithHistory(entries);
+    it("om samme kommune endrer navn og samisk forvaltningsområde skal det telles som 2 endringer", () => {
+      const entries = [createKommuneMetadataEntry("1", { from: "test1", to: "test11" }, { from: false, to: true })];
+      const { result } = renderHookWithHistory(entries);
 
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.antallArkiverteGrenser).toBe(3);
-  });
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(2);
+      expect(result.current.kommuneendringer[0].gammeltNavn).toBe("test1");
+      expect(result.current.kommuneendringer[0].nyttNavn).toBe("test11");
+      expect(result.current.kommuneendringer[0].samiskforvaltningsomraade).toBe(true);
+    });
 
-  it("skal returnere hvor mange grenser som har endringer på history", () => {
-    const entries = [createEditedGrenseHistoryEntry("id1"), createEditedGrenseHistoryEntry("id2")];
-    const { result } = renderHookWithHistory(entries);
+    it("om man endrer navn 2 ganger på samme kommune skal det telles som 1 endring", () => {
+      const entries = [
+        createKommuneMetadataEntry("1", { from: "test1", to: "test11" }, { from: false, to: false }),
+        createKommuneMetadataEntry("1", { from: "test11", to: "test111" }, { from: false, to: false }),
+      ];
+      const { result } = renderHookWithHistory(entries);
 
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.antallEndredeGrenser).toBe(2);
-  });
+      expect(result.current.harEndringer).toBeTruthy;
+      expect(result.current.antallEndringer).toBe(1);
+      expect(result.current.kommuneendringer.length).toBe(1);
+      expect(result.current.kommuneendringer[0].gammeltNavn).toBe("test1");
+      expect(result.current.kommuneendringer[0].nyttNavn).toBe("test111");
+    });
 
-  it("flere endringer på samme grense skal kun telles 1 gang", () => {
-    const entries = [
-      createEditedGrenseHistoryEntry("id1"),
-      createEditedGrenseHistoryEntry("id2"),
-      createEditedGrenseHistoryEntry("id1"),
-    ];
-    const { result } = renderHookWithHistory(entries);
+    it("om man endrer samisk forvalntningområde frem og tilabke i 2 endringer skal det ikke telles som en endring", () => {
+      const entries = [
+        createKommuneMetadataEntry("1", { from: "test1", to: "test1" }, { from: false, to: true }),
+        createKommuneMetadataEntry("1", { from: "test1", to: "test1" }, { from: true, to: false }),
+      ];
+      const { result } = renderHookWithHistory(entries);
 
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.antallEndredeGrenser).toBe(2);
-  });
-
-  it("grenseendringer skal inkludere endringer på koordinater, featureproperties og tilhørigheter", () => {
-    const entries = [
-      createEditedGrenseHistoryEntry("id1"),
-      createEditedGrenseTilhorigheterHistoryEntry("id2"),
-      createEditedGrensePropertiesHistoryEntry("id3"),
-    ];
-    const { result } = renderHookWithHistory(entries);
-
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.antallEndredeGrenser).toBe(3);
-  });
-
-  it("skal summere opp flere ulike typer endringer i antall endringer", () => {
-    const entries = [
-      createArchivedGrenseHistoryEntry("id1"),
-      createArchivedGrenseHistoryEntry("id2"),
-      createEditedGrenseHistoryEntry("id3"),
-      createEditedGrenseHistoryEntry("id4"),
-      createNyGrenseHistoryEntry("id5"),
-      createNyGrenseHistoryEntry("id6"),
-    ];
-    const { result } = renderHookWithHistory(entries);
-
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.antallEndringer).toBe(6);
-  });
-
-  it("skal returnere alle metadataendringer som er gjort", () => {
-    const entries = [
-      createMetadataendringHistoryEntry(
-        "id1",
-        { navn: "gammelt navn1", nummer: "11" },
-        { navn: "nytt navn1", nummer: "12" },
-      ),
-      createMetadataendringHistoryEntry(
-        "id2",
-        { navn: "gammelt navn2", nummer: "21" },
-        { navn: "nytt navn2", nummer: "22" },
-      ),
-    ];
-    const { result } = renderHookWithHistory(entries);
-
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.metadataendringer.length).toBe(2);
-
-    const endring1 = result.current.endringer.metadataendringer.find(
-      (endring) => endring.opprinneligKrets.navn === "gammelt navn1",
-    );
-    const endring2 = result.current.endringer.metadataendringer.find(
-      (endring) => endring.opprinneligKrets.navn === "gammelt navn2",
-    );
-
-    expect(endring1?.opprinneligKrets.navn).toBe("gammelt navn1");
-    expect(endring1?.opprinneligKrets.nummer).toBe("11");
-    expect(endring1?.navn).toBe("nytt navn1");
-    expect(endring1?.nummer).toBe("12");
-
-    expect(endring2?.opprinneligKrets.navn).toBe("gammelt navn2");
-    expect(endring2?.opprinneligKrets.nummer).toBe("21");
-    expect(endring2?.navn).toBe("nytt navn2");
-    expect(endring2?.nummer).toBe("22");
-  });
-
-  it("metadataendringer på samme krets skal slåes sammen til 1 endring", () => {
-    const entries = [
-      createMetadataendringHistoryEntry(
-        "id1",
-        { navn: "gammelt navn1", nummer: "11" },
-        { navn: "nytt navn1", nummer: "12" },
-      ),
-      createMetadataendringHistoryEntry(
-        "id1",
-        { navn: "nytt navn1", nummer: "12" },
-        { navn: "nytt navn2", nummer: "13" },
-      ),
-      createMetadataendringHistoryEntry(
-        "id1",
-        { navn: "nytt navn2", nummer: "13" },
-        { navn: "nytt navn3", nummer: "14" },
-      ),
-    ];
-    const { result } = renderHookWithHistory(entries);
-
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.metadataendringer.length).toBe(1);
-
-    const endring1 = result.current.endringer.metadataendringer[0];
-    expect(endring1?.opprinneligKrets.navn).toBe("gammelt navn1");
-    expect(endring1?.opprinneligKrets.nummer).toBe("11");
-    expect(endring1?.navn).toBe("nytt navn3");
-    expect(endring1?.nummer).toBe("14");
-  });
-
-  it("kresdeling skal liste opp alle kretsen som er delt", async () => {
-    const entries = [
-      createKretsdelingEntry(mockStemmekrets1.id.lokalid.value, [
-        { navn: "ny1", nummer: "1" },
-        { navn: "ny2", nummer: "2" },
-      ]),
-    ];
-
-    const { result } = renderHookWithHistory(entries);
-    await waitFor(() => expect(result.current.laster).toBeFalsy);
-
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.delinger?.length).toBe(1);
-
-    const kretsdeling = result.current.endringer.delinger![0];
-
-    expect(kretsdeling.opprinneligKrets.kretsNavn).toBe(mockStemmekrets1.navn);
-    expect(kretsdeling.opprinneligKrets.kretsNummer).toBe(mockStemmekrets1.nummer);
-
-    expect(kretsdeling.nyeKretser.length).toBe(3);
-    expect(kretsdeling.nyeKretser[0].kretsNavn).toBe("ny1");
-    expect(kretsdeling.nyeKretser[0].kretsNummer).toBe("1");
-    expect(kretsdeling.nyeKretser[1].kretsNavn).toBe("ny2");
-    expect(kretsdeling.nyeKretser[1].kretsNummer).toBe("2");
-    expect(kretsdeling.nyeKretser[2].kretsNavn).toBe(mockStemmekrets1.navn);
-    expect(kretsdeling.nyeKretser[2].kretsNummer).toBe(mockStemmekrets1.nummer);
-  });
-
-  it("ved kretsdeling av samme krets flere ganger skal kun den siste være gjeldende", async () => {
-    const entries = [
-      createKretsdelingEntry(mockStemmekrets1.id.lokalid.value, [
-        { navn: "ny1", nummer: "1" },
-        { navn: "ny2", nummer: "2" },
-      ]),
-      createKretsdelingEntry(mockStemmekrets1.id.lokalid.value, [
-        { navn: "ny3", nummer: "3" },
-        { navn: "ny4", nummer: "4" },
-      ]),
-    ];
-
-    const { result } = renderHookWithHistory(entries);
-    await waitFor(() => expect(result.current.laster).toBeFalsy);
-
-    expect(result.current.harEndringer).toBeTruthy;
-    expect(result.current.endringer.delinger?.length).toBe(1);
-
-    const kretsdeling = result.current.endringer.delinger![0];
-
-    expect(kretsdeling.opprinneligKrets.kretsNavn).toBe(mockStemmekrets1.navn);
-    expect(kretsdeling.opprinneligKrets.kretsNummer).toBe(mockStemmekrets1.nummer);
-
-    expect(kretsdeling.nyeKretser.length).toBe(3);
-    expect(kretsdeling.nyeKretser[0].kretsNavn).toBe("ny3");
-    expect(kretsdeling.nyeKretser[0].kretsNummer).toBe("3");
-    expect(kretsdeling.nyeKretser[1].kretsNavn).toBe("ny4");
-    expect(kretsdeling.nyeKretser[1].kretsNummer).toBe("4");
-    expect(kretsdeling.nyeKretser[2].kretsNavn).toBe(mockStemmekrets1.navn);
-    expect(kretsdeling.nyeKretser[2].kretsNummer).toBe(mockStemmekrets1.nummer);
+      expect(result.current.harEndringer).toBeFalsy;
+      expect(result.current.antallEndringer).toBe(0);
+      expect(result.current.kommuneendringer.length).toBe(0);
+    });
   });
 });
 
@@ -260,6 +336,34 @@ function createNyGrenseHistoryEntry(id: string): NyGrenseEntry {
             [2, 2],
           ],
           type: "STEMMEKRETS",
+        },
+      },
+    ],
+  };
+}
+
+function createKommuneMetadataEntry(
+  kommuneid: string,
+  navn: { from: string; to: string },
+  samiskforvaltning: { from: boolean; to: boolean },
+): KommuneEntry {
+  return {
+    type: "kommune",
+    fylkeId: "11",
+    changes: [
+      {
+        id: kommuneid,
+        from: {
+          administrativenhetnavn: [{ rekkefoelge: undefined, navn: navn.from, version: 1, spraak: "NO" }],
+          lokalid: kommuneid,
+          samiskforvaltningsomraade: samiskforvaltning.from,
+          version: 1,
+        },
+        to: {
+          administrativenhetnavn: [{ rekkefoelge: undefined, navn: navn.to, version: 1, spraak: "NO" }],
+          lokalid: kommuneid,
+          samiskforvaltningsomraade: samiskforvaltning.to,
+          version: 1,
         },
       },
     ],
