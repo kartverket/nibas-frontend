@@ -15,6 +15,7 @@ import { OverlayModal, OverlayPanel, isOverlayModal, isOverlayPanel } from "./Ov
 import { GeoJSON } from "ol/format";
 import { Inndeling, isInndeling } from "./InndelingerContext/InndelingerContext";
 import { Coordinate } from "ol/coordinate";
+import { FeatureProperties } from "types/api";
 
 export const sessionStorageKeys = {
   history: "history",
@@ -61,14 +62,22 @@ type SerializableHistoryState = Omit<HistoryState, "entries"> & {
   type: "serializable";
 };
 
-// TODO: Trenger eegentlig ikke denne. Men er det greit å skille de ved navn allikevel?
 type SerializableHistoryChange<T> = HistoryChange<T>;
 
-type SerializableHistoryTypeValues = HistoryTypeValues | "serializablenygrense" | "serializablegrensedeling";
+type SerializableHistoryTypeValues =
+  | Exclude<HistoryTypeValues, "nygrense" | "grensedeling" | "property">
+  | "serializablenygrense"
+  | "serializablegrensedeling"
+  | "serializableproperty";
 
 type SerializableNyGrense = Omit<NyGrense, "grensedeling"> & {
   grensedeling: string;
 };
+
+type SerializableFeatureProperties = Omit<FeatureProperties, "geometry"> & {
+  geometry: string;
+};
+type SerializablePropertyChange = SerializableBaseHistoryEntry<"serializableproperty", SerializableFeatureProperties>;
 
 type SerializableGrensedelingEntry = SerializableBaseHistoryEntry<"serializablegrensedeling", string>;
 
@@ -79,7 +88,10 @@ type SerializableBaseHistoryEntry<HistoryType extends SerializableHistoryTypeVal
 
 type SerializableNyGrenseEntry = SerializableBaseHistoryEntry<"serializablenygrense", SerializableNyGrense>;
 
-type SerializableHistoryEntry = HistoryEntry | SerializableGrensedelingEntry | SerializableNyGrenseEntry;
+type SerializableHistoryEntry =
+  | Exclude<HistoryEntry, NyGrense | Feature[]>
+  | SerializableGrensedelingEntry
+  | SerializableNyGrenseEntry;
 
 const isSerializableHistoryState = (historyState: unknown): historyState is SerializableHistoryState => {
   if (

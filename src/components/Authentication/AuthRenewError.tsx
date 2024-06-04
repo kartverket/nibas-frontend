@@ -67,6 +67,10 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
           zoom: map.getView().getZoom(),
         },
       };
+      window.onbeforeunload = function (e) {
+        console.log(appState);
+        return true;
+      };
       saveApplicationStateToSessionStorage(appState);
       clear();
       setAuthRenewError(false);
