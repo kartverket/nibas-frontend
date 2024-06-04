@@ -248,7 +248,13 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       }
 
       if (currentInndeling.isVisible) {
-        addInndelingToLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
+        // I det tilfellet en inndeling skal vises og redigeres samtidig må features klones slik at de får en unik openlayers-id (ol_uid).
+        const clonedFeatures = inndelingWithFeatures.features.map((feature) => {
+          const clone = feature.clone();
+          clone.setId(feature.getId());
+          return clone;
+        });
+        addInndelingToLayer(currentInndeling.inndelingtype, clonedFeatures);
       }
     }
 
