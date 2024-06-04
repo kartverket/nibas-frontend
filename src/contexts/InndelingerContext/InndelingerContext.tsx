@@ -121,10 +121,18 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const { openOverlayModal, openOverlayPanel } = useOverlayPanel();
   const { activeTool } = useToolbar();
 
+  const getAllInndelinger = useCallback((): Inndeling[] => {
+    return Object.values(inndelinger).flatMap((inndelingerMap) => [...inndelingerMap.values()]);
+  }, [inndelinger]);
+
+  const getAllInndelingerId = useCallback((): string[] => {
+    return getAllInndelinger().map((inndeling) => inndeling.id);
+  }, [getAllInndelinger]);
+
   const restoreApplicationState = useCallback(() => {
     const sessionStorageHistory = fetchHistoryFromSessionStorage();
 
-    // TODO: Selected feature/point virker ikke.
+    // TODO: Selected feature/point style virker ikke.
     const selectedFeatures = fetchSelectedFeaturesFromSessionStorage();
     if (selectedFeatures != null && selectedFeatures.length > 0) {
       const mapPosition = fetchMapPositionFromSessionStorage();
@@ -139,7 +147,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         addToSelection(selectedFeatures[0]);
       }
     } else {
-      zoomToFeatures(inndelingFeatures.flatMap((inndelingWithFeatures) => inndelingWithFeatures.features));
+      zoomToFeatures(
+        inndelingFeatures
+          .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
+          .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
+      );
     }
 
     const selectedPointFromSessionStorage = fetchSelectedPointFromSessionStorage();
@@ -167,6 +179,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   }, [
     activeTool,
     addToSelection,
+    getAllInndelingerId,
     inndelingFeatures,
     openOverlayModal,
     openOverlayPanel,
@@ -174,14 +187,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     selectFeatures,
     selectPointOnFeature,
   ]);
-
-  const getAllInndelinger = useCallback((): Inndeling[] => {
-    return Object.values(inndelinger).flatMap((inndelingerMap) => [...inndelingerMap.values()]);
-  }, [inndelinger]);
-
-  const getAllInndelingerId = useCallback((): string[] => {
-    return getAllInndelinger().map((inndeling) => inndeling.id);
-  }, [getAllInndelinger]);
 
   /**
    * Denne useEffecten er kjernen av motoren i InndelingerContext og tar for seg det å legge til features fra inndelingen i kartet
@@ -338,13 +343,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     // Reapply historikken slik at eventuelle features som har blitt endret på siden siste lagring er i sync med historikken
     reapplyCurrentEntries();
-
-    zoomToFeatures(
-      inndelingFeatures
-        .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
-        .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
-    );
-
     restoreApplicationState();
     // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
     // Dette sikrer også at featurene man får hentet fra inndelingene er tomme, og useEffecten ikke kjører flere ganger
