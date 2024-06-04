@@ -15,7 +15,6 @@ import { OverlayModal, OverlayPanel, isOverlayModal, isOverlayPanel } from "./Ov
 import { GeoJSON } from "ol/format";
 import { Inndeling, isInndeling } from "./InndelingerContext/InndelingerContext";
 import { Coordinate } from "ol/coordinate";
-import { FeatureProperties } from "types/api";
 
 export const sessionStorageKeys = {
   history: "history",
@@ -73,11 +72,6 @@ type SerializableHistoryTypeValues =
 type SerializableNyGrense = Omit<NyGrense, "grensedeling"> & {
   grensedeling: string;
 };
-
-type SerializableFeatureProperties = Omit<FeatureProperties, "geometry"> & {
-  geometry: string;
-};
-type SerializablePropertyChange = SerializableBaseHistoryEntry<"serializableproperty", SerializableFeatureProperties>;
 
 type SerializableGrensedelingEntry = SerializableBaseHistoryEntry<"serializablegrensedeling", string>;
 
