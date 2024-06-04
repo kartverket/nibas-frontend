@@ -9,6 +9,7 @@ import { map } from "pages/Kart/constants";
 import { getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
 import { kartlagSources } from "./kartlagSources";
 import { GrenseId, KartlagId } from "./types";
+import { Feature } from "ol";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, options?: Options<WMTS | TileWMS>) => {
   const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity, ...options });
@@ -54,7 +55,7 @@ const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
   return newLayer;
 };
 
-export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource>> = {
+export const grenserLayers: Record<GrenseId, VectorLayer<Feature>> = {
   matrikkel: createVectorLayer("matrikkel"),
   fylke: createVectorLayer("fylke"),
   kommune: createVectorLayer("kommune"),

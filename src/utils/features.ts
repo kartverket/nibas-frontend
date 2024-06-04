@@ -79,18 +79,18 @@ export const getFeaturesConnectedToFeatureAtEndpoints = (connectedToFeature: Fea
     for (const feature of source.getFeatures()) {
       if (feature.getId() !== connectedToFeature.getId()) {
         const featureToCheckGeometry = feature.getGeometry();
-        if (!featureToCheckGeometry || !(featureToCheckGeometry instanceof LineString)) continue;
+        if (featureToCheckGeometry instanceof LineString) {
+          const firstCoordFeatureToCheck = featureToCheckGeometry.getFirstCoordinate();
+          const lastCoordFeatureToCheck = featureToCheckGeometry.getLastCoordinate();
 
-        const firstCoordFeatureToCheck = featureToCheckGeometry.getFirstCoordinate();
-        const lastCoordFeatureToCheck = featureToCheckGeometry.getLastCoordinate();
-
-        if (
-          equals(firstCoordConnectedFeature, firstCoordFeatureToCheck) ||
-          equals(firstCoordConnectedFeature, lastCoordFeatureToCheck) ||
-          equals(lastCoordConnectedFeature, firstCoordFeatureToCheck) ||
-          equals(lastCoordConnectedFeature, lastCoordFeatureToCheck)
-        ) {
-          connectedFeatures.push(feature);
+          if (
+            equals(firstCoordConnectedFeature, firstCoordFeatureToCheck) ||
+            equals(firstCoordConnectedFeature, lastCoordFeatureToCheck) ||
+            equals(lastCoordConnectedFeature, firstCoordFeatureToCheck) ||
+            equals(lastCoordConnectedFeature, lastCoordFeatureToCheck)
+          ) {
+            connectedFeatures.push(feature);
+          }
         }
       }
     }
