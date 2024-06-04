@@ -221,6 +221,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       // Må uansett sjekke casen sånn at TypeScript vet at currentInndeling ikke er null videre
       if (!currentInndeling) continue;
 
+      // Først sjekker vi om en inndeling skal vises. Dette ønsker vi å gjøre før vi eventuelt legger features i edit-laget slik at vi ikke kopierer features som har fått edit-layer-styling på seg.
       if (currentInndeling.isViewing) {
         // I det tilfellet en inndeling skal vises og redigeres samtidig må features klones slik at de får en unik openlayers-id (ol_uid).
         const clonedFeatures = inndelingWithFeatures.features.map((feature) => {
