@@ -8,7 +8,7 @@ import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { getTempFeatureId } from "./temp-feature-id-utils";
+import { getTempFeatureId } from "./feature-id-utils";
 import { createNyGrenseHistoryChange } from "./grense-history-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";

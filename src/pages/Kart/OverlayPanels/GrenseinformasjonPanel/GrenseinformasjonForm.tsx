@@ -6,7 +6,6 @@ import { styled } from "styled-components";
 import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
@@ -16,6 +15,11 @@ import { Controller } from "react-hook-form";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import {
+  isTempFeatureId,
+  isNonEditableFeatureId,
+  getNonEditableFeatureId,
+} from "pages/Kart/interactions/feature-id-utils";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -142,6 +146,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
         valueLabel={(() => {
           if (isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
+          if (isNonEditableFeatureId(featureId)) return getNonEditableFeatureId(feature);
           return featureId;
         })()}
       />

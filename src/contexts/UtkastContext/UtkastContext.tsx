@@ -23,11 +23,11 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
 import { resetMapView } from "utils/map/map-utils";
 import { removeNil } from "utils/list-utils";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
