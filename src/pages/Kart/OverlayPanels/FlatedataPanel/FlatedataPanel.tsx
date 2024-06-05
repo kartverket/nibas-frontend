@@ -43,9 +43,6 @@ const FlatedataPanel = () => {
   const { inndelinger } = useInndelinger();
   const { open } = useConfirmationModal();
 
-  const formMethods = useForm<FlatedataInputs>();
-  const { reset } = formMethods;
-
   const allInndelinger = Object.values(inndelinger)
     .flatMap((inndelingerMap) => [...inndelingerMap.values()])
     .filter((inndeling) => inndeling.isVisible || inndeling.isEditing)
@@ -68,19 +65,20 @@ const FlatedataPanel = () => {
   };
 
   const handleTabsChange = (index: number) => {
-    handleDraft(() => setTabIndex(index));
-    setIsEditing(false);
-    clearSearch();
+    handleDraft(() => {
+      setTabIndex(index);
+      setIsEditing(false);
+      clearSearch();
+    });
   };
 
   const handleCloseModal = () => {
     handleDraft(() => {
       closeOverlayModal();
-      reset();
+      setIsEditing(false);
+      setTabIndex(0);
+      clearSearch();
     });
-    setIsEditing(false);
-    setTabIndex(0);
-    clearSearch();
   };
 
   return (
@@ -117,7 +115,6 @@ const FlatedataPanel = () => {
                 setIsEditing={setIsEditing}
                 searchValue={searchValue}
                 clearSearch={clearSearch}
-                formMethods={formMethods}
               />
             ))}
           </FlatedataTabPanels>
