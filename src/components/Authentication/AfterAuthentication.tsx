@@ -9,6 +9,8 @@ import { useEffect } from "react";
 import { User } from "oidc-client-ts";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { fetchInndelingFromSessionStorage } from "contexts/application-state-utils";
+import { featureEnabled } from "components/FeatureToggle";
+import Providers from "pages/App/Providers";
 
 const getUtkastIdFromUser = (user?: User | null): string | null => {
   if (user?.state == null) return null;
@@ -19,7 +21,7 @@ const getUtkastIdFromUser = (user?: User | null): string | null => {
   return null;
 };
 
-export const AfterAuthentication = () => {
+const AfterAuthenticationBody = () => {
   const { isAuthenticated, isLoading, checkAuthorization, hasError, token, user } = useAuthentication();
   const navigate = useNavigate();
   const { selectInndelinger, setSelectedFylkeId } = useInndelinger();
@@ -33,12 +35,14 @@ export const AfterAuthentication = () => {
         if (result != null && utkastId != null) {
           navigate(`${routes.utkast}/${utkastId}`, { replace: true });
 
-          const selectedInndelingerFromSessionStorage = fetchInndelingFromSessionStorage();
-          if (selectedInndelingerFromSessionStorage != null) {
-            selectInndelinger(selectedInndelingerFromSessionStorage.inndelinger);
-            setSelectedFylkeId(selectedInndelingerFromSessionStorage.selectedFylkeId);
-            if (user?.state != null && user.state instanceof Object && "utkastId" in user.state) {
-              user.state.utkastId = undefined;
+          if (featureEnabled("SAVE_STATE_ON_REAUTH")) {
+            const selectedInndelingerFromSessionStorage = fetchInndelingFromSessionStorage();
+            if (selectedInndelingerFromSessionStorage != null) {
+              selectInndelinger(selectedInndelingerFromSessionStorage.inndelinger);
+              setSelectedFylkeId(selectedInndelingerFromSessionStorage.selectedFylkeId);
+              if (user?.state != null && user.state instanceof Object && "utkastId" in user.state) {
+                user.state.utkastId = undefined;
+              }
             }
           }
         } else if (result != null) {
@@ -65,6 +69,14 @@ export const AfterAuthentication = () => {
       <Text>Vennligst vent, du blir logget inn...</Text>
       <PrivacyFooter />
     </AuthenticationPage>
+  );
+};
+
+export const AfterAuthentication = () => {
+  return (
+    <Providers>
+      <AfterAuthenticationBody />
+    </Providers>
   );
 };
 

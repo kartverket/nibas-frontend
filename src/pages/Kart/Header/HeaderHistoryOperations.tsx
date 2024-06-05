@@ -34,7 +34,7 @@ const HeaderHistoryOperations = () => {
 
   return (
     <HeaderSection>
-      <FeatureToggle feature={"REAUTH_BTN"}>
+      <FeatureToggle feature={"SAVE_STATE_ON_REAUTH"}>
         <HeaderButton
           tooltip={{ text: "" }}
           label="logg inn på nytt"

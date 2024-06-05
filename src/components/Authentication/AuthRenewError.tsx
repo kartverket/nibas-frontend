@@ -23,6 +23,7 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { map } from "pages/Kart/constants";
+import FeatureToggle, { featureEnabled } from "components/FeatureToggle";
 
 export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   const { signIn, clear, events } = useAuthentication();
@@ -35,16 +36,18 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   const { activeOverlayModal, activeOverlayPanel } = useOverlayPanel();
 
   useEffect(() => {
-    const silentRenewCleanupFn = events.addSilentRenewError(() => {
-      setAuthRenewError(true);
-    });
-    const expiredTokenCleanupFn = events.addAccessTokenExpired(() => {
-      setAuthRenewError(true);
-    });
-    return () => {
-      silentRenewCleanupFn();
-      expiredTokenCleanupFn();
-    };
+    if (featureEnabled("SAVE_STATE_ON_REAUTH")) {
+      const silentRenewCleanupFn = events.addSilentRenewError(() => {
+        setAuthRenewError(true);
+      });
+      const expiredTokenCleanupFn = events.addAccessTokenExpired(() => {
+        setAuthRenewError(true);
+      });
+      return () => {
+        silentRenewCleanupFn();
+        expiredTokenCleanupFn();
+      };
+    }
   }, [events, setAuthRenewError]);
 
   const onLogin = () => {
@@ -77,44 +80,46 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Du har automatisk blitt logget ut</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Text fontWeight="bold" mb="1rem">
-              Du har automatisk blitt logget ut, og må logge inn på nytt hos IDPorten for å fortsette endringene Dersom
-              du bytter nettleser i mellomtiden risikerer du å miste eventuelle ulagrede endringer
-            </Text>
+      <FeatureToggle feature={"SAVE_STATE_ON_REAUTH"}>
+        <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Du har automatisk blitt logget ut</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Text fontWeight="bold" mb="1rem">
+                Du har automatisk blitt logget ut, og må logge inn på nytt hos IDPorten for å fortsette endringene
+                Dersom du bytter nettleser i mellomtiden risikerer du å miste eventuelle ulagrede endringer
+              </Text>
 
-            <Accordion>
-              <AccordionItem>
-                <AccordionButton>Hvorfor ble jeg logget ut?</AccordionButton>
-                <AccordionPanel>
-                  På grunn av en begrensning hos IDporten vil man kun være logget inn i to timer om gangen. Om du ikke
-                  hadde lagret de siste endringene dine idet du ble logget ut kan vi gjenopprette det etter du har
-                  logget inn på nytt, så fremt du ikke bytter nettleser i mellomtiden.
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="blue"
-              mr={3}
-              onClick={() => {
-                setAuthRenewError(false);
-              }}
-            >
-              Lukk
-            </Button>
-            <Button variant="ghost" onClick={onLogin}>
-              Logg inn på nytt
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+              <Accordion>
+                <AccordionItem>
+                  <AccordionButton>Hvorfor ble jeg logget ut?</AccordionButton>
+                  <AccordionPanel>
+                    På grunn av en begrensning hos IDporten vil man kun være logget inn i to timer om gangen. Om du ikke
+                    hadde lagret de siste endringene dine idet du ble logget ut kan vi gjenopprette det etter du har
+                    logget inn på nytt, så fremt du ikke bytter nettleser i mellomtiden.
+                  </AccordionPanel>
+                </AccordionItem>
+              </Accordion>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                colorScheme="blue"
+                mr={3}
+                onClick={() => {
+                  setAuthRenewError(false);
+                }}
+              >
+                Lukk
+              </Button>
+              <Button variant="ghost" onClick={onLogin}>
+                Logg inn på nytt
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </FeatureToggle>
       {children}
     </>
   );

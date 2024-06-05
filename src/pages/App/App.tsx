@@ -53,11 +53,9 @@ const App = () => {
 
   return (
     <Suspense fallback={<Loading />}>
-      <Providers>
-        <EnvironmentOverlay>
-          <RouterProvider router={router} />
-        </EnvironmentOverlay>
-      </Providers>
+      <EnvironmentOverlay>
+        <RouterProvider router={router} />
+      </EnvironmentOverlay>
     </Suspense>
   );
 };
@@ -84,7 +82,11 @@ const ProtectedPage = () => {
     return <Navigate to={routes.authentication} replace={true} />;
   }
 
-  return <AuthRenewError>{outlet}</AuthRenewError>;
+  return (
+    <Providers>
+      <AuthRenewError>{outlet}</AuthRenewError>
+    </Providers>
+  );
 };
 
 export default App;

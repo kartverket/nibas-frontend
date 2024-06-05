@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { matchPath } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity, UtkastRequestWithoutOperations } from "./types";
 import {
@@ -30,12 +30,13 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(undef
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
   const auth = useAuthentication();
+
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { setError } = useErrorHandling();
   const toast = useToast();
 
-  const utkastPathMatch = matchPath(`${routes.utkast}/${routes.utkastId}`, window.location.pathname);
+  const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
     "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
   );
