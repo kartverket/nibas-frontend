@@ -1,16 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
 import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
-const overlayPanelValues = [
-  "grenseinfo",
-  "sammenslåing",
-  "splitting",
-  "tegnforklaring",
-  "koordinater",
-  "kartlag",
-] as const;
-export type OverlayPanel = (typeof overlayPanelValues)[number];
-const overlayModalValues = ["inndelinger", "inndelinger-view", "flatedata", "navigasjon"] as const;
-export type OverlayModal = (typeof overlayModalValues)[number];
+
+type OverlayPanel = "grenseinfo" | "sammenslåing" | "splitting" | "tegnforklaring" | "koordinater" | "kartlag";
+type OverlayModal = "inndelinger" | "inndelinger-view" | "flatedata" | "navigasjon";
 
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
@@ -22,20 +14,6 @@ export type OverlayPanelContextValue = {
   openOverlayModal: (overlayModal: OverlayModal) => void;
   closeOverlayModal: () => void;
   toggleOverlayModal: (overlayModal: OverlayModal) => void;
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isOverlayPanel = (value: any): value is OverlayPanel => {
-  const allowedValues: OverlayPanel[] = overlayPanelValues.slice();
-
-  return allowedValues.includes(value);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isOverlayModal = (value: any): value is OverlayModal => {
-  const allowedValues: OverlayModal[] = overlayModalValues.slice();
-
-  return allowedValues.includes(value);
 };
 
 export const OverlayPanelContext = createContext<OverlayPanelContextValue | undefined>(undefined);

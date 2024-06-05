@@ -28,17 +28,6 @@ const updateFeatureWithNewProperties = (feature: Feature<LineString>, newPropert
   });
 };
 
-/** Fjerner OL-egenskaper som ikke er med i vår FeatureProperties-DTO **/
-const extractPropertiesFromOLProperties = (olProperties: FeatureProperties) => ({
-  type: olProperties.type,
-  srid: olProperties.srid,
-  metadata: olProperties.metadata,
-  kontekstEgenskaper: olProperties.kontekstEgenskaper,
-  version: olProperties.version,
-  shouldArchive: olProperties.shouldArchive,
-  inndelingerKontekst: olProperties.inndelingerKontekst,
-});
-
 export const addFeaturePropertiesEntryFromFeature = (
   feature: Feature<LineString>,
   addHistoryEntry: (entry: PropertyEntry) => void,
@@ -50,13 +39,14 @@ export const addFeaturePropertiesEntryFromFeature = (
   const oldFeatureProperties = feature.getProperties() as FeatureProperties;
 
   updateFeatureWithNewProperties(feature as Feature<LineString>, updatedFeatureProperties);
+
   addHistoryEntry({
     type: "property",
     changes: [
       {
         id: id,
-        from: extractPropertiesFromOLProperties(oldFeatureProperties),
-        to: extractPropertiesFromOLProperties(updatedFeatureProperties),
+        from: oldFeatureProperties,
+        to: updatedFeatureProperties,
       },
     ],
   });

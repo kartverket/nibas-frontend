@@ -33,7 +33,6 @@ import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { routes } from "utils/routes";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 
 type Props = {
   isOpen: boolean;
@@ -52,7 +51,6 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const { antallEndringer } = useUnsavedEndringer();
-  const { setAuthRenewError } = useAuthRenewError();
 
   const { clearInndelingerAndSources } = useInndelinger();
 
@@ -103,9 +101,6 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         description:
           "Det oppstod en konflikt ved publisering av utkastet. Dette kan oppstå om to eller flere personer har jobbet samtidig på det samme utkastet, eller om utkastet allerede er publisert.\n\n Vennligst oppdater siden og forsøk publiseringen på nytt.",
       });
-    } else if (statusCode.isForbidden(response.status)) {
-      // antakelse om utløpt token
-      setAuthRenewError(true);
     } else {
       try {
         const wrapper = (await response.json()) as ApiErrorResponse;

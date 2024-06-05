@@ -6,49 +6,22 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useEffect } from "react";
-import { User } from "oidc-client-ts";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { fetchInndelingFromSessionStorage } from "contexts/application-state-utils";
-
-const getUtkastIdFromUser = (user?: User | null): string | null => {
-  if (user?.state == null) return null;
-
-  if (user.state instanceof Object && "utkastId" in user.state && typeof user.state.utkastId === "string") {
-    return user.state.utkastId;
-  }
-  return null;
-};
 
 export const AfterAuthentication = () => {
-  const { isAuthenticated, isLoading, checkAuthorization, hasError, token, user } = useAuthentication();
+  const { isAuthenticated, isLoading, checkAuthorization, hasError } = useAuthentication();
   const navigate = useNavigate();
-  const { selectInndelinger, setSelectedFylkeId } = useInndelinger();
 
   useEffect(() => {
-    const utkastId = getUtkastIdFromUser(user);
-
     if (isAuthenticated && !isLoading) {
       checkAuthorization().then((result) => {
-        // Her har vi blitt sendt tilbake etter et utgått refresh token
-        if (result != null && utkastId != null) {
-          navigate(`${routes.utkast}/${utkastId}`, { replace: true });
-
-          const selectedInndelingerFromSessionStorage = fetchInndelingFromSessionStorage();
-          if (selectedInndelingerFromSessionStorage != null) {
-            selectInndelinger(selectedInndelingerFromSessionStorage.inndelinger);
-            setSelectedFylkeId(selectedInndelingerFromSessionStorage.selectedFylkeId);
-            if (user?.state != null && user.state instanceof Object && "utkastId" in user.state) {
-              user.state.utkastId = undefined;
-            }
-          }
-        } else if (result != null) {
+        if (result) {
           navigate(routes.index, { replace: true });
         } else {
           navigate(`${routes.authentication}/${routes.notAuthorized}`, { replace: true });
         }
       });
     }
-  }, [isAuthenticated, isLoading, checkAuthorization, navigate, user, token, selectInndelinger, setSelectedFylkeId]);
+  }, [isAuthenticated, isLoading, checkAuthorization, navigate]);
 
   if (hasError) {
     return <Navigate to={`${routes.authentication}/${routes.authError}`} replace={true} />;

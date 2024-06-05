@@ -22,7 +22,6 @@ import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
-import { statusCode } from "utils/api";
 
 type Props = {
   isOpen: boolean;
@@ -59,13 +58,11 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const editUtkast = async () => {
     setIsLoading(true);
-    const updatedUtkastStatusCode = await updateUtkast(
+    const isUpdateSuccessfull = await updateUtkast(
       utkast.id,
       { ...utkast, navn: getValues("navn"), endringstype: getValues("endringstype") },
       false,
     );
-
-    const isUpdateSuccessfull = updatedUtkastStatusCode != null && statusCode.isSuccessful(updatedUtkastStatusCode);
     setIsLoading(false);
     if (isUpdateSuccessfull) {
       mutate();

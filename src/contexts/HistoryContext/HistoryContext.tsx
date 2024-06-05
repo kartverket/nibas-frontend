@@ -157,7 +157,7 @@ type HistoryProviderProps = {
   initialHistory?: HistoryEntry[];
 };
 export const HistoryProvider = ({ children, initialHistory }: HistoryProviderProps) => {
-  const { history, addHistoryEntry, clearHistory, undo, redo, restoreHistoryState } = useHistoryState({
+  const { history, addHistoryEntry, clearHistory, undo, redo } = useHistoryState({
     onUndo,
     onRedo,
     initialState: initialHistory,
@@ -172,7 +172,6 @@ export const HistoryProvider = ({ children, initialHistory }: HistoryProviderPro
   };
 
   const value = {
-    restoreHistoryState,
     history,
     clearHistory,
     getHistoryEntries,

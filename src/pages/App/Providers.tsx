@@ -7,7 +7,6 @@ import { FeatureStyleProvider } from "contexts/FeatureStyleContext/FeatureStyleC
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
 import { InndelingerProvider } from "contexts/InndelingerContext/InndelingerContext";
-import { AuthRenewProvider } from "components/Authentication/AuthRenewError";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -15,17 +14,15 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
       <ConfirmationModalProvider>
         <HistoryProvider>
           <FeatureStyleProvider>
-            <OverlayPanelProvider>
-              <AuthRenewProvider>
-                <ToolbarProvider>
-                  <KartlagProvider>
-                    <UtkastProvider>
-                      <InndelingerProvider>{children}</InndelingerProvider>
-                    </UtkastProvider>
-                  </KartlagProvider>
-                </ToolbarProvider>
-              </AuthRenewProvider>
-            </OverlayPanelProvider>
+            <ToolbarProvider>
+              <OverlayPanelProvider>
+                <KartlagProvider>
+                  <UtkastProvider>
+                    <InndelingerProvider>{children}</InndelingerProvider>
+                  </UtkastProvider>
+                </KartlagProvider>
+              </OverlayPanelProvider>
+            </ToolbarProvider>
           </FeatureStyleProvider>
         </HistoryProvider>
       </ConfirmationModalProvider>

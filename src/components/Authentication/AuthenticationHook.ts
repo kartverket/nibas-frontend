@@ -1,5 +1,4 @@
 import { useAuth } from "react-oidc-context";
-import { User, SigninRedirectArgs, UserManagerEvents } from "oidc-client-ts";
 import { fetcherWithToken } from "utils/api";
 import { useCallback } from "react";
 import { isAuthDisabled, isAuthEnabled } from "components/Authentication/AuthenticationConfig";
@@ -10,12 +9,9 @@ type UseAuthenticationReturnType = {
   hasError: boolean;
   token?: string;
   userId?: string;
-  signIn: (args?: SigninRedirectArgs) => unknown;
-  clear: () => void;
+  signIn: () => unknown;
   signOut: () => unknown;
-  user?: User | null;
   checkAuthorization: () => Promise<boolean>;
-  events: UserManagerEvents;
 };
 
 export const useAuthentication = (): UseAuthenticationReturnType => {
@@ -45,15 +41,12 @@ export const useAuthentication = (): UseAuthenticationReturnType => {
   const userId = isAuthEnabled() ? auth.user?.profile["pid"] : "Mock-bruker";
 
   return {
-    events: auth.events,
     isAuthenticated: isAuthenticated,
     isLoading: auth.isLoading,
     hasError: auth.error != null,
-    clear: () => auth.removeUser(),
-    user: auth.user,
     token: auth.user?.access_token,
     userId: userId as string | undefined,
-    signIn: (args?: SigninRedirectArgs) => auth.signinRedirect(args),
+    signIn: () => auth.signinRedirect(),
     signOut: () => auth.signoutRedirect({ post_logout_redirect_uri: signOutRedirectUrl }),
     checkAuthorization: checkAuthorization,
   };
