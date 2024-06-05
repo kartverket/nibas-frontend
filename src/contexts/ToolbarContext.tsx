@@ -1,25 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { fetchActiveModeToolsFromSessionStorage, fetchActiveToolFromSessionStorage } from "./application-state-utils";
+import React, { createContext, useContext, useState } from "react";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isModeTool = (value: any): value is ModeTool => {
-  const allowedValues: ModeTool[] = modeToolValues.slice();
-  return allowedValues.includes(value);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isTool = (value: any): value is Tool => {
-  const allowedValues: Tool[] = toolValues.slice();
-  return allowedValues.includes(value);
-};
-
-export const toolValues = ["add", "remove", "draw", "split", "grenseinfo", "koordinater", "archive", null] as const;
-export type Tool = (typeof toolValues)[number];
+export type Tool = null | "add" | "remove" | "draw" | "split" | "grenseinfo" | "koordinater" | "archive";
 
 const editTools: Tool[] = ["add", "remove", "draw", "split", "koordinater", "archive"];
 
-export const modeToolValues = ["move", "matrikkel", "snap_nibas", "snap_matrikkel"] as const;
-export type ModeTool = (typeof modeToolValues)[number];
+type SnapType = "snap_nibas" | "snap_matrikkel";
+export type ModeTool = "move" | "matrikkel" | SnapType;
 
 export type ToolbarContextValue = {
   activeTool: Tool;
@@ -41,21 +27,6 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
 
   const defaultModeTools: ModeTool[] = ["move", "snap_matrikkel", "snap_nibas"];
   const [activeModeTools, setActiveModeTools] = useState<ModeTool[]>(defaultModeTools);
-
-  useEffect(() => {
-    const modeTools = fetchActiveModeToolsFromSessionStorage();
-
-    if (modeTools == null) return;
-
-    setActiveModeTools(modeTools);
-  }, []);
-
-  useEffect(() => {
-    const tool = fetchActiveToolFromSessionStorage();
-
-    if (tool == null) return;
-    setActiveTool(tool);
-  }, []);
 
   const toggleTool = (tool: Tool) => {
     if (tool === activeTool) {

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { matchPath } from "react-router-dom";
+import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity, UtkastRequestWithoutOperations } from "./types";
 import {
@@ -30,16 +30,18 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(undef
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
   const auth = useAuthentication();
+
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { setError } = useErrorHandling();
   const toast = useToast();
 
-  const utkastPathMatch = matchPath(`${routes.utkast}/${routes.utkastId}`, window.location.pathname);
+  const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
     "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
   );
   const utkastId = utkastIdMatches ? utkastIdMatches[0] : null;
+
   const { mutate: globalMutate } = useSWRConfig();
   const {
     data: fetchedUtkast,
@@ -111,12 +113,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     return updatedUtkast;
   };
 
-  const updateUtkast = async (
-    id: string,
-    newUtkast: OppdaterUtkastRequest,
-    shouldClearHistory: boolean = true,
-  ): Promise<number> => {
+  const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest, shouldClearHistory: boolean = true) => {
     const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), auth.token);
+
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
@@ -164,9 +163,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setUtkast(updatedUtkast);
-    } else if (statusCode.isForbidden(response.status)) {
-      // Håndterer som at token er utløpt
-      return response.status;
     } else if (statusCode.isConflict(response.status)) {
       setError({
         title: "Konflikt ved lagring av utkast",
@@ -188,19 +184,17 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       });
     }
 
-    return response.status;
+    return statusCode.isSuccessful(response.status);
   };
 
   const updateUtkastWithHistory = async () => {
     const updatedUtkast = getUpdateUtkastRequestFromHistory();
 
-    if (!updatedUtkast || !utkast) return -1;
+    if (!updatedUtkast || !utkast) return;
 
-    const updateUtkastStatus = await updateUtkast(utkast.id, updatedUtkast);
-    if (statusCode.isSuccessful(updateUtkastStatus)) {
+    if (await updateUtkast(utkast.id, updatedUtkast)) {
       toast({ status: "success", title: "Utkastet er lagret" });
     }
-    return updateUtkastStatus;
   };
 
   /**
