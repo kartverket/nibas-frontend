@@ -16,6 +16,7 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
+import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenTilhorighet";
 
 type Props = {
   isOpen: boolean;
@@ -24,7 +25,7 @@ type Props = {
 };
 
 const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
-  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer } =
+  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer, endringerutentilhorighet } =
     useUtkastEndringer(utkast);
   const { history } = useHistory();
   const harUlagredeEndringer = history.index > 0;
@@ -59,6 +60,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
                 />
               ))}
               {kommunendringer?.map((endringer) => <EndringerForFylke key={endringer.nummer} endringer={endringer} />)}
+              {endringerutentilhorighet && <EndringerUtenTilhorighet endringer={endringerutentilhorighet} />}
             </EndringUnstyledList>
           </Stack>
         </ModalBody>

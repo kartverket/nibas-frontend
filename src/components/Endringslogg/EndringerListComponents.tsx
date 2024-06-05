@@ -2,6 +2,8 @@ import { styled } from "styled-components";
 import { Heading } from "@kvib/react";
 
 export const ListHeading = styled(Heading)`
+  display: flex;
+  align-items: center;
   font-size: var(--kvib-fontSizes-lg);
   font-weight: 800;
   margin-bottom: 1rem;

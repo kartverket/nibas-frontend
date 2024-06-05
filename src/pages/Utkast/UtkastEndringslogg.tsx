@@ -16,6 +16,7 @@ import { UtkastResponse } from "types/api";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
+import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenTilhorighet";
 
 type Props = {
   utkast: UtkastResponse;
@@ -34,7 +35,7 @@ const UtkastEndringslogg = ({ utkast }: Props) => {
 };
 
 export const EndringsloggAccordion = ({ utkast }: Props) => {
-  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer } =
+  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer, endringerutentilhorighet } =
     useUtkastEndringer(utkast);
   const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
@@ -66,6 +67,7 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
               />
             ))}
             {kommunendringer?.map((endringer) => <EndringerForFylke key={endringer.nummer} endringer={endringer} />)}
+            {endringerutentilhorighet && <EndringerUtenTilhorighet endringer={endringerutentilhorighet} />}
           </ListWithNoDot>
         </AccordionPanel>
       </EndringsloggAccordionItem>
