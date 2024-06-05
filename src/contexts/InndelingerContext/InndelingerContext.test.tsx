@@ -5,15 +5,21 @@ import { act } from "@testing-library/react";
 import { MockFeatureStyleProvider } from "mocks/contexts/FeatureStyleContextMock";
 import { MockUtkastProvider } from "mocks/contexts/UtkastContextMock";
 import { MockHistoryProvider } from "mocks/contexts/HistoryContextMock";
+import { MockOverlayPanelProvider } from "mocks/contexts/OverlayPanelContextMock";
+import { MockToolbarContextProvider } from "mocks/contexts/ToolbarContextMock";
 
 const AllProviders = ({ children }: { children: React.ReactNode }) => (
-  <MockHistoryProvider>
-    <MockUtkastProvider>
-      <MockFeatureStyleProvider>
-        <InndelingerProvider>{children}</InndelingerProvider>
-      </MockFeatureStyleProvider>
-    </MockUtkastProvider>
-  </MockHistoryProvider>
+  <MockOverlayPanelProvider>
+    <MockToolbarContextProvider>
+      <MockHistoryProvider>
+        <MockUtkastProvider>
+          <MockFeatureStyleProvider>
+            <InndelingerProvider>{children}</InndelingerProvider>
+          </MockFeatureStyleProvider>
+        </MockUtkastProvider>
+      </MockHistoryProvider>
+    </MockToolbarContextProvider>
+  </MockOverlayPanelProvider>
 );
 
 vi.mock("./useInndelingFeatures.tsx", async (importOriginal) => {
