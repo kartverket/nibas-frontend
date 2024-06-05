@@ -19,18 +19,13 @@ const environmentByUrl: Record<string, Environment> = {
 // noe som `type Keys = "flagg1" | "flagg2" | ...`
 // features som skal fjernes kan slettes fra denne listen
 // hvis det ikke er noen keys skal Keys være av typen `never`
-type Keys = "EKSEMPEL_TOGGLE" | "REAUTH_BTN";
+type Keys = "EKSEMPEL_TOGGLE";
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   EKSEMPEL_TOGGLE: {
     prod: false,
     test: false,
     dev: getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
-  },
-  REAUTH_BTN: {
-    prod: false,
-    test: true,
-    dev: true,
   },
 };
 

@@ -8,7 +8,6 @@ import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEnd
 import { styled } from "styled-components";
 import { statusCode } from "utils/api";
 import { useAuthRenewError } from "components/Authentication/AuthRenewError";
-import FeatureToggle from "components/FeatureToggle";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
@@ -20,7 +19,7 @@ const HeaderHistoryOperations = () => {
   const handleSave = async () => {
     if (utkast && canSave) {
       const responseCode = await updateUtkastWithHistory();
-      if (statusCode.isForbidden(responseCode)) {
+      if (statusCode.isForbidden(responseCode) === true) {
         setAuthRenewError(true);
       }
     }
@@ -34,15 +33,6 @@ const HeaderHistoryOperations = () => {
 
   return (
     <HeaderSection>
-      <FeatureToggle feature={"REAUTH_BTN"}>
-        <HeaderButton
-          tooltip={{ text: "" }}
-          label="logg inn på nytt"
-          icon="save"
-          onClick={() => setAuthRenewError(true)}
-        />
-      </FeatureToggle>
-
       <HeaderButton
         label="Angre"
         icon="undo"
