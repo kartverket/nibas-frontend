@@ -25,6 +25,8 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   return coordinates[middle];
 };
 
+export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
+
 const useSelect = () => {
   const toast = useToast();
   const { activeTool, activeModeTools } = useToolbar();
@@ -37,7 +39,6 @@ const useSelect = () => {
   const disallowedTools: Tool[] = ["draw", "koordinater"];
   const safeTools: Tool[] = ["grenseinfo"];
   const pointTools: Tool[] = ["add", "remove", "split"];
-  const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 
   // Dersom man bytter verktøy ønsker vi å cleare selection
   useEffect(() => {

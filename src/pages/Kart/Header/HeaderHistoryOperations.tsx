@@ -6,17 +6,23 @@ import { Badge, useDisclosure } from "@kvib/react";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 import { styled } from "styled-components";
+import { statusCode } from "utils/api";
+import { useAuthRenewError } from "components/Authentication/AuthRenewError";
+import FeatureToggle from "components/FeatureToggle";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { canSave, undo, redo } = useHistory();
   const { isOpen, onClose, onOpen } = useDisclosure();
-
+  const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (utkast && canSave) {
-      updateUtkastWithHistory();
+      const responseCode = await updateUtkastWithHistory();
+      if (statusCode.isForbidden(responseCode)) {
+        setAuthRenewError(true);
+      }
     }
   };
 
@@ -28,6 +34,15 @@ const HeaderHistoryOperations = () => {
 
   return (
     <HeaderSection>
+      <FeatureToggle feature={"REAUTH_BTN"}>
+        <HeaderButton
+          tooltip={{ text: "" }}
+          label="logg inn på nytt"
+          icon="save"
+          onClick={() => setAuthRenewError(true)}
+        />
+      </FeatureToggle>
+
       <HeaderButton
         label="Angre"
         icon="undo"

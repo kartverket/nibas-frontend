@@ -50,6 +50,16 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     setHistory({ index: 0, entries: [] });
   };
 
+  const restoreHistoryState = useCallback(
+    (historyState: HistoryState) => {
+      for (let i = 0; i < historyState.index; i++) {
+        onRedo(historyState.entries[i]);
+      }
+      setHistory(historyState);
+    },
+    [onRedo],
+  );
+
   const revert = (amount: number) => {
     const { index, entries } = history;
 
@@ -90,10 +100,12 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
 
   return {
     history,
+    restoreHistoryState,
     addHistoryEntry,
     clearHistory,
     undo,
     redo,
+    reapply,
   };
 };
 
