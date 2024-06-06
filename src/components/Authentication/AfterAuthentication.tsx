@@ -7,7 +7,6 @@ import { routes } from "utils/routes";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useEffect } from "react";
 import { User } from "oidc-client-ts";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 const getUtkastIdFromUser = (user?: User | null): string | null => {
   if (user?.state == null) return null;
