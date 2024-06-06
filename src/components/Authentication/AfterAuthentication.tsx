@@ -8,9 +8,6 @@ import { useAuthentication } from "components/Authentication/AuthenticationHook"
 import { useEffect } from "react";
 import { User } from "oidc-client-ts";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { fetchInndelingFromSessionStorage } from "contexts/application-state-utils";
-import { featureEnabled } from "components/FeatureToggle";
-import Providers from "pages/App/Providers";
 
 const getUtkastIdFromUser = (user?: User | null): string | null => {
   if (user?.state == null) return null;
@@ -21,30 +18,17 @@ const getUtkastIdFromUser = (user?: User | null): string | null => {
   return null;
 };
 
-const AfterAuthenticationBody = () => {
+export const AfterAuthentication = () => {
   const { isAuthenticated, isLoading, checkAuthorization, hasError, token, user } = useAuthentication();
   const navigate = useNavigate();
-  const { selectInndelinger, setSelectedFylkeId } = useInndelinger();
 
   useEffect(() => {
     const utkastId = getUtkastIdFromUser(user);
 
     if (isAuthenticated && !isLoading) {
       checkAuthorization().then((result) => {
-        // Her har vi blitt sendt tilbake etter et utgått refresh token
         if (result != null && utkastId != null) {
           navigate(`${routes.utkast}/${utkastId}`, { replace: true });
-
-          if (featureEnabled("SAVE_STATE_ON_REAUTH")) {
-            const selectedInndelingerFromSessionStorage = fetchInndelingFromSessionStorage();
-            if (selectedInndelingerFromSessionStorage != null) {
-              selectInndelinger(selectedInndelingerFromSessionStorage.inndelinger);
-              setSelectedFylkeId(selectedInndelingerFromSessionStorage.selectedFylkeId);
-              if (user?.state != null && user.state instanceof Object && "utkastId" in user.state) {
-                user.state.utkastId = undefined;
-              }
-            }
-          }
         } else if (result != null) {
           navigate(routes.index, { replace: true });
         } else {
@@ -52,7 +36,7 @@ const AfterAuthenticationBody = () => {
         }
       });
     }
-  }, [isAuthenticated, isLoading, checkAuthorization, navigate, user, token, selectInndelinger, setSelectedFylkeId]);
+  }, [isAuthenticated, isLoading, checkAuthorization, navigate, user, token]);
 
   if (hasError) {
     return <Navigate to={`${routes.authentication}/${routes.authError}`} replace={true} />;
@@ -69,14 +53,6 @@ const AfterAuthenticationBody = () => {
       <Text>Vennligst vent, du blir logget inn...</Text>
       <PrivacyFooter />
     </AuthenticationPage>
-  );
-};
-
-export const AfterAuthentication = () => {
-  return (
-    <Providers>
-      <AfterAuthenticationBody />
-    </Providers>
   );
 };
 

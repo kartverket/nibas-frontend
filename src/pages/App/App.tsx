@@ -25,6 +25,7 @@ import {
 } from "components/Authentication/Authentication";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { AuthRenewError } from "components/Authentication/AuthRenewError";
+import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
 
 const App = () => {
   const { token } = useAuthentication();
@@ -41,7 +42,7 @@ const App = () => {
         <Route path={routes.logout} element={<Navigate to={routes.index} replace={true} />} />
         <Route element={<ProtectedPage />}>
           <Route index element={<Landing />} />
-          <Route path={routes.utkast}>
+          <Route path={routes.utkast} element={<UtkastRestoreAfterReauth />}>
             <Route index element={<Utkast />} />
             <Route path={routes.utkastId} element={<PageLayout />} />
           </Route>

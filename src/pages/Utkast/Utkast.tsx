@@ -13,6 +13,10 @@ import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
 import useMapReset from "hooks/useMapReset";
 import { useEffect } from "react";
+import { featureEnabled } from "components/FeatureToggle";
+import { fetchInndelingFromSessionStorage } from "contexts/application-state-utils";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
 
@@ -22,7 +26,6 @@ const sortUtkastByCreatedDesc = (a: UtkastResponse, b: UtkastResponse): number =
 const Utkast = () => {
   const { error, setError } = useErrorHandling();
   const { data: utkasts, isLoading } = useUtkasts();
-
   const resetMap = useMapReset();
 
   useEffect(() => {
