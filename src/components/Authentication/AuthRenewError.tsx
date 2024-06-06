@@ -50,7 +50,8 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
     }
   }, [events, setAuthRenewError]);
 
-  const onLogin = () => {
+  const onRelog = () => {
+    console.log("relogger");
     if (utkast?.id != null) {
       const appState: ApplicationState = {
         historyState: history,
@@ -113,7 +114,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
               >
                 Lukk
               </Button>
-              <Button variant="ghost" onClick={onLogin}>
+              <Button variant="ghost" onClick={onRelog}>
                 Logg inn på nytt
               </Button>
             </ModalFooter>

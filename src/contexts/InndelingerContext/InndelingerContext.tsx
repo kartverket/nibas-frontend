@@ -142,7 +142,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         center: mapPosition?.center,
         zoom: mapPosition?.zoom,
       });
-      if (exclusiveSelectTools.includes(activeTool)) {
+      if (exclusiveSelectTools.includes(activeTool) === true) {
         selectFeatures(selectedFeatures);
       } else {
         addToSelection(selectedFeatures[0]);

@@ -118,6 +118,7 @@ const isSelectedInndelinger = (
 };
 
 const serializeHistory = (history: HistoryState) => {
+  console.log("får inn denne historikken", history);
   const geoJson = new GeoJSON();
 
   const tempHistory: SerializableHistoryState = {
@@ -169,20 +170,23 @@ const serializeHistory = (history: HistoryState) => {
 
         tmpEntry.changes.push(serializableChange);
       });
+      tempHistory.entries.push(tmpEntry); // TODO: skal vi ikke legge på delingen etter serialisering??
     } else {
       tempHistory.entries.push(entry);
     }
   });
 
-  return JSON.stringify(tempHistory);
+  const partiallySerializedHistory = JSON.stringify(tempHistory);
+  console.log(partiallySerializedHistory);
+  return partiallySerializedHistory;
 };
 
 const deserializeHistory = (serializedHistoryEntry: string): HistoryState | null => {
   const geoJson = new GeoJSON();
-  const partiallyDeserializedHistory = JSON.parse(serializedHistoryEntry);
-  if (isSerializableHistoryState(partiallyDeserializedHistory)) {
+  const partiallySerializedHistory = JSON.parse(serializedHistoryEntry);
+  if (isSerializableHistoryState(partiallySerializedHistory)) {
     const historyState: HistoryState = {
-      index: partiallyDeserializedHistory.index,
+      index: partiallySerializedHistory.index,
       entries: [],
     };
 
@@ -190,7 +194,7 @@ const deserializeHistory = (serializedHistoryEntry: string): HistoryState | null
      * Her går vi i motsatt rekkefølge som `serializeHistory`. Først parses hele objektet, før vi kan gå igjennom
      * endringer som har serialiserte features, og parse de med GeoJSON.
      */
-    partiallyDeserializedHistory.entries.forEach((entry) => {
+    partiallySerializedHistory.entries.forEach((entry) => {
       if (entry.type === "serializablenygrense") {
         const tmpEntry: NyGrenseEntry = {
           type: "nygrense",
@@ -227,6 +231,7 @@ const deserializeHistory = (serializedHistoryEntry: string): HistoryState | null
 
           tmpEntry.changes.push(serializableChange);
         });
+        historyState.entries.push(tmpEntry); //TODO: skal vi ikke legge den til i history staten??
       } else {
         historyState.entries.push(entry);
       }
@@ -238,7 +243,7 @@ const deserializeHistory = (serializedHistoryEntry: string): HistoryState | null
 
 export const saveApplicationStateToSessionStorage = (applicationState: ApplicationState) => {
   const geoJson = new GeoJSON();
-
+  console.log(applicationState.historyState);
   if (applicationState.historyState != null) {
     sessionStorage.setItem(sessionStorageKeys.history, serializeHistory(applicationState.historyState));
   }
@@ -313,7 +318,7 @@ export const fetchActiveOverlayModalFromSessionStorage = (): OverlayModal | null
 
   const deserializedOverlayModal = JSON.parse(serializedOverlayModal);
 
-  if (isOverlayModal(deserializedOverlayModal)) {
+  if (isOverlayModal(deserializedOverlayModal) === true) {
     removeApplicationStateFromSessionStorage(sessionStorageKeys.overlayModal);
     return deserializedOverlayModal;
   }
@@ -326,7 +331,7 @@ export const fetchActiveOverlayPanelFromSessionStorage = (): OverlayPanel | null
   if (serializedOverlayPanel == null) return null;
 
   const deserializedOverlayPanel = JSON.parse(serializedOverlayPanel);
-  if (isOverlayPanel(deserializedOverlayPanel)) {
+  if (isOverlayPanel(deserializedOverlayPanel) === true) {
     removeApplicationStateFromSessionStorage(sessionStorageKeys.overlayPanel);
     return deserializedOverlayPanel;
   }
