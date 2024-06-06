@@ -51,7 +51,6 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   }, [events, setAuthRenewError]);
 
   const onRelog = () => {
-    console.log("relogger");
     if (utkast?.id != null) {
       const appState: ApplicationState = {
         historyState: history,
