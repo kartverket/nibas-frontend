@@ -219,9 +219,10 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
       if (featureId != null) {
         const properties = endretFeature.getProperties() as FeatureProperties | undefined;
+        const shouldArchive = properties?.shouldArchive;
 
         // Avgjør hvilken type endringsfarge featuren skal ha
-        if (properties != null && properties.shouldArchive) {
+        if (shouldArchive !== undefined && shouldArchive) {
           archivedFeatureIds.push(featureId);
 
           const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(endretFeature);

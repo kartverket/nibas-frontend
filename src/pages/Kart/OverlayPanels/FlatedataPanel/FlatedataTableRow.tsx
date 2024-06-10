@@ -15,6 +15,7 @@ import { ValidationError } from "components/Input";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { Icon, Tooltip } from "@kvib/react";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
+import { memo } from "react";
 
 type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
@@ -193,4 +194,4 @@ const Row = styled.tr<{ $isSearchMatch: boolean }>`
     `};
 `;
 
-export default FlatedataTableRow;
+export default memo(FlatedataTableRow);
