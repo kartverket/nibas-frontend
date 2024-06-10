@@ -44,17 +44,14 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
 
   useEffect(() => {
     const modeTools = fetchActiveModeToolsFromSessionStorage();
+    const tools = fetchActiveToolFromSessionStorage();
 
-    if (modeTools == null) return;
-
-    setActiveModeTools(modeTools);
-  }, []);
-
-  useEffect(() => {
-    const tool = fetchActiveToolFromSessionStorage();
-
-    if (tool == null) return;
-    setActiveTool(tool);
+    if (tools !== null) {
+      setActiveTool(tools);
+    }
+    if (modeTools !== null) {
+      setActiveModeTools(modeTools);
+    }
   }, []);
 
   const toggleTool = (tool: Tool) => {

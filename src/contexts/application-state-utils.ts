@@ -360,20 +360,17 @@ export const fetchInndelingFromSessionStorage = (): SelectedInndelinger | null =
   return null;
 };
 
-export const fetchActiveModeToolsFromSessionStorage = (): ModeTool[] => {
+export const fetchActiveModeToolsFromSessionStorage = (): ModeTool[] | null => {
   const serializedModeTools = sessionStorage.getItem(sessionStorageKeys.activeModeTools);
-  if (serializedModeTools == null) return [];
+  if (serializedModeTools == null) return null;
 
   const deserializedModeTools = JSON.parse(serializedModeTools);
 
-  if (deserializedModeTools instanceof Array && deserializedModeTools.length < 1) return [];
-
-  if (deserializedModeTools.every(isModeTool) === true) {
-    removeApplicationStateFromSessionStorage(sessionStorageKeys.activeModeTools);
+  if (deserializedModeTools instanceof Array && deserializedModeTools.every(isModeTool) === true) {
     return deserializedModeTools;
   }
 
-  return [];
+  return null;
 };
 
 export const fetchActiveToolFromSessionStorage = (): Tool | null => {
