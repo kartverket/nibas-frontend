@@ -21,8 +21,6 @@ import { capitalize } from "utils/string-utils";
 import { useState } from "react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSearch from "hooks/useSearch";
-import { useForm } from "react-hook-form";
-import { FlatedataInputs } from "./flatedata-utils";
 
 const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
   const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
