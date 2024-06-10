@@ -176,7 +176,6 @@ const useModify = () => {
 
   useEffect(() => {
     const addModificationToHistory = (features: Feature<Geometry>[]) => {
-      console.log("legger til entry");
       if (features.length > 0) {
         addHistoryEntry({
           type: "grense",
@@ -237,11 +236,9 @@ const useModify = () => {
                 equals(coordinates, nearbyVertex) &&
                 (index === 0 || index === nonSelectedActiveFeatureCoordinates.length - 1),
             );
-            if (nearbyVertexIsEndpoint === true) {
-              console.log("la grensen på et endepunkt");
-            } else {
+            if (!nearbyVertexIsEndpoint) {
               if (
-                equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0]) ||
+                (!nearbyVertexIsEndpoint && equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0])) ||
                 equals(
                   nearbyVertex,
                   nonSelectedActiveFeatureCoordinates[nonSelectedActiveFeatureCoordinates.length - 1],
