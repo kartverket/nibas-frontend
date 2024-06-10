@@ -319,3 +319,11 @@ export const getKretsDelingEntries = (entries: HistoryEntry[]): KretsdelingEntry
 export const getGrenseTilhorighetEntries = (entries: HistoryEntry[]): GrenseTilhorighetEntry[] => {
   return entries.filter((entry) => entry.type === "grensetilhorighetendring") as GrenseTilhorighetEntry[];
 };
+
+export const getNyGrenserEntriesEntries = (entries: HistoryEntry[]): NyGrenseEntry[] => {
+  return entries.filter((entry) => entry.type === "nygrense") as NyGrenseEntry[];
+};
+
+export const getGrenseArkiveringEntries = (entries: HistoryEntry[]): GrenseArkiveringsEntry[] => {
+  return entries.filter((entry) => entry.type === "grensearkivering") as GrenseArkiveringsEntry[];
+};

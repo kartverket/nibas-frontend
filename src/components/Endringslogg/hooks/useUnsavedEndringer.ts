@@ -17,10 +17,12 @@ import {
   StemmekretsResponse,
 } from "../../../types/api";
 import {
+  getGrenseArkiveringEntries,
   getGrenseDelingEntries,
   getGrunnkretsMetadataEntries,
   getKommuneMetadataEntries,
   getKretsDelingEntries,
+  getNyGrenserEntriesEntries,
   getStemmekretsMetadataEntries,
 } from "contexts/HistoryContext/history-utils";
 import { inndelingResponseNavnToString } from "utils/language/language";
@@ -39,12 +41,20 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
   const history = getHistoryEntries();
   const { isLoading: lasterKommuner, kommuner: alleKommuner } = useKommuner();
 
-  const antallNyeGrenser = countNewGrenser(history);
-  const antallArkiverteGrenser = countArchivedGrenser(history);
-  const antallEndredeGrenser = countChangedGrenser(history);
+  const nyeGrenser = getNyeGrenser(history);
+  const arkiverteGrenser = getArkiverteGrenser(history);
+  const endredeGrenser = getEndredeGrenser(history);
   const metadataendringer = getMetadataChanges(history);
   const { laster: lasterDelinger, endringer: kretsdelinger } = useKretsdelingChanges(history);
   const kommuneendringer = getKommuneendringer(history, alleKommuner);
+
+  const antallNyeGrenserArkivert = nyeGrenser.filter((id) => arkiverteGrenser.includes(id)).length;
+  const antallNyeGrenserEndret = nyeGrenser.filter((id) => endredeGrenser.includes(id)).length;
+  const antallEndredeGrenserArkivert = arkiverteGrenser.filter((id) => endredeGrenser.includes(id)).length;
+
+  const antallNyeGrenser = nyeGrenser.length - antallNyeGrenserArkivert;
+  const antallArkiverteGrenser = arkiverteGrenser.length - antallNyeGrenserArkivert;
+  const antallEndredeGrenser = endredeGrenser.length - antallNyeGrenserEndret - antallEndredeGrenserArkivert;
 
   const antallKommuneNavnendringer = kommuneendringer.filter((k) => k.nyttNavn != null).length;
   const antallKommuneEndringSamiskForvaltningsomraade = kommuneendringer.filter(
@@ -110,30 +120,44 @@ const getKommuneendringer = (
   );
 };
 
-const countNewGrenser = (entries: HistoryEntry[]): number => {
-  const nyeGrenserFraTegning = entries.filter((entry) => entry.type === "nygrense").length;
-  const nyeGrenseFraDeling = getGrenseDelingEntries(entries)
+const getArkiverteGrenser = (entries: HistoryEntry[]): string[] => {
+  const arkiverteGrenser = getGrenseArkiveringEntries(entries)
     .flatMap((entry) => entry.changes)
-    .flatMap((change) => change.to).length;
+    .map((change) => change.id);
 
-  return nyeGrenserFraTegning + nyeGrenseFraDeling;
+  const arikiverteGrenserFraGrensedelinger = removeNil(
+    getGrenseDelingEntries(entries)
+      .flatMap((entry) => entry.changes)
+      .flatMap((change) => change.from)
+      .map((feature) => feature.getId()?.toString()),
+  );
+
+  return getUniqueItems(arkiverteGrenser.concat(arikiverteGrenserFraGrensedelinger));
 };
 
-const countArchivedGrenser = (entries: HistoryEntry[]): number => {
-  const arkiverteGrenser = entries.filter((entry) => entry.type === "grensearkivering").length;
-  const arkiverteGrenserFraDeling = getGrenseDelingEntries(entries)
+const getNyeGrenser = (entries: HistoryEntry[]): string[] => {
+  const nyeGrenser = getNyGrenserEntriesEntries(entries)
     .flatMap((entry) => entry.changes)
-    .flatMap((change) => change.from).length;
+    .map((change) => change.id);
 
-  return arkiverteGrenser + arkiverteGrenserFraDeling;
+  const nyeGrenserFraGrensedelinger = removeNil(
+    getGrenseDelingEntries(entries)
+      .flatMap((entry) => entry.changes)
+      .flatMap((change) => {
+        return change.to;
+      })
+      .map((feature) => feature.getId()?.toString()),
+  );
+
+  return getUniqueItems(nyeGrenser.concat(nyeGrenserFraGrensedelinger));
 };
 
-const countChangedGrenser = (entries: HistoryEntry[]) => {
+const getEndredeGrenser = (entries: HistoryEntry[]): string[] => {
   const changedGrenserTypes = ["grense", "property", "grensetilhorighetendring"];
   const changedGrenseIds = entries
     .filter((entry) => changedGrenserTypes.includes(entry.type))
     .flatMap((entry) => entry.changes.map((c) => c.id));
-  return getUniqueItems(changedGrenseIds).length;
+  return getUniqueItems(changedGrenseIds);
 };
 
 type UseKretsdelingChangesReturnType = {
