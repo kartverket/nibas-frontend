@@ -64,7 +64,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
       false,
     );
     setIsLoading(false);
-    if (isUpdateSuccessfull) {
+    if (isUpdateSuccessfull === true) {
       mutate();
       reset(getValues());
       onClose();
