@@ -67,8 +67,10 @@ const ProtectedPage = () => {
   useEffect(() => {
     if (isAuthenticated) {
       checkAuthorization().then((result) => {
-        if (!result) {
+        if (result === "NOT_AUTHORIZED") {
           navigate(`${routes.authentication}/${routes.notAuthorized}`);
+        } else if (result === "ERROR") {
+          navigate(`${routes.authentication}/${routes.authError}`);
         }
       });
     }

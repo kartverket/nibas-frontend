@@ -9,6 +9,7 @@ import {
   UtkastOperasjoner,
 } from "../../../types/api";
 import {
+  Kretsendringer,
   KretsendringerForKommune,
   KretsSammenslaaingEndring,
   KretsSplittingEndring,
@@ -318,6 +319,24 @@ const getEndringerForKommune = <T extends KontekstType>(
     antallNyeGrenser,
     sammenslaaing: getSammenslaaingEndring(kretserMedEndringer, operasjoner, alleKretser),
     delinger: getKretsdelinger(kommune?.id.lokalid.value, operasjoner, alleKretser, kretstype),
+  };
+};
+
+export const getGrenserndringerUtenTilhorighet = (operasjoner: UtkastOperasjoner): Kretsendringer => {
+  const featuresUtenTilhorighet = operasjoner.grenseendringer.endredeFeatures.filter(
+    (feature) => feature.properties.kontekstEgenskaper.length === 0,
+  );
+
+  const antallNyeGrenser = featuresUtenTilhorighet.filter((feature) => feature.id == null).length;
+  const antallEndredeGrenser = featuresUtenTilhorighet.filter((feature) => feature.id != null).length;
+
+  return {
+    metadataendringer: [],
+    antallEndredeGrenser,
+    antallArkiverteGrenser: 0,
+    antallNyeGrenser,
+    sammenslaaing: null,
+    delinger: null,
   };
 };
 
