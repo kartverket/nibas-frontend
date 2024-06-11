@@ -84,7 +84,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
 
   const getUpdateUtkastRequestFromHistory = (): OppdaterUtkastRequest | null => {
-    if (!utkast) return null;
+    if (!utkast) {
+      return null;
+    }
 
     const operasjoner = historyToUtkastOperations(history, utkast);
     const updatedUtkast: OppdaterUtkastRequest = {
@@ -120,7 +122,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
       await globalMutate(["/v1/utkast", auth.token]);
-      if (shouldClearHistory) clearHistory();
+      if (shouldClearHistory) {
+        clearHistory();
+      }
 
       // Ved lagring av utkast ble det mismatch mellom state i OpenLayers og state i react
       // For å forhindre dette sletter vi alle grenser med midlertidig id fra det gamle utkastet, slik at disse ikke lenger kan redigeres i OL
@@ -190,7 +194,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const updateUtkastWithHistory = async () => {
     const updatedUtkast = getUpdateUtkastRequestFromHistory();
 
-    if (!updatedUtkast || !utkast) return;
+    if (!updatedUtkast || !utkast) {
+      return;
+    }
 
     if (await updateUtkast(utkast.id, updatedUtkast)) {
       toast({ status: "success", title: "Utkastet er lagret" });
@@ -202,9 +208,13 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
    * @returns Hvorvidt utkastet har lagrede endringer eller ei
    */
   const utkastHarEndringer = () => {
-    if (!utkast?.operasjoner) return false;
+    if (!utkast?.operasjoner) {
+      return false;
+    }
     const endredeFeatures = utkast.operasjoner.grenseendringer.endredeFeatures;
-    if (Object.keys(endredeFeatures).length > 0) return true;
+    if (Object.keys(endredeFeatures).length > 0) {
+      return true;
+    }
 
     // Går gjennom metadataendringsobjektene og sjekker om de er tomme
     for (const endringstype of Object.values(utkast.operasjoner.metadataendringer)) {
@@ -243,7 +253,9 @@ export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityU
   const { utkast } = useUtkast();
 
   return useMemo(() => {
-    if (!entity || !utkast) return entity;
+    if (!entity || !utkast) {
+      return entity;
+    }
 
     return applyNonFeatureUtkast(entity, utkast, type);
   }, [entity, utkast, type]);

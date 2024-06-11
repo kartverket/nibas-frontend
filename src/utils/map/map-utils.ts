@@ -19,7 +19,9 @@ const calculateFeaturesExtent = (features: Feature<Geometry>[]) => {
   const extent = features.reduce<number[] | null>((acc, feature) => {
     const featureExtent = feature.getGeometry()?.getExtent();
 
-    if (!featureExtent) return acc;
+    if (!featureExtent) {
+      return acc;
+    }
 
     if (!acc) {
       return [featureExtent[0], featureExtent[1], featureExtent[2], featureExtent[3]];
@@ -42,7 +44,9 @@ export const zoomToFeatures = (features: Feature<Geometry>[]) => {
   }
   const extent = calculateFeaturesExtent(features);
 
-  if (!extent) return;
+  if (!extent) {
+    return;
+  }
 
   const view = map.getView();
   view.fit(extent, {

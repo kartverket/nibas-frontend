@@ -17,9 +17,15 @@ const useMapReset = () => {
     resetKartlag();
 
     // Disse krever ekstra sjekking for å unngå uendelig useEffekt-løkke
-    if (activeOverlayPanel) closeOverlayPanel();
-    if (activeOverlayModal) closeOverlayModal();
-    if (getAllInndelinger().length > 0) clearInndelingerAndSources();
+    if (activeOverlayPanel) {
+      closeOverlayPanel();
+    }
+    if (activeOverlayModal) {
+      closeOverlayModal();
+    }
+    if (getAllInndelinger().length > 0) {
+      clearInndelingerAndSources();
+    }
   };
 
   return resetMap;

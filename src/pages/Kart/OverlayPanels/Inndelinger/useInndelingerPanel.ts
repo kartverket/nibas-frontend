@@ -45,7 +45,9 @@ const useInndelingerPanel = () => {
   };
 
   const isInndelingSelected = (inndelingtype: Inndelingtype | null, inndelingId: string) => {
-    if (inndelingtype == null) return false;
+    if (inndelingtype == null) {
+      return false;
+    }
 
     const inndelingIfSelected = selectedInndelinger.find((inndeling) => {
       return inndeling.inndelingtype === inndelingtype && inndeling.id === inndelingId;
@@ -66,7 +68,9 @@ const useInndelingerPanel = () => {
   };
 
   const selectInndelingtype = (inndelingtype: Inndelingtype) => {
-    if (isEditingPanel) resetSelection();
+    if (isEditingPanel) {
+      resetSelection();
+    }
 
     if (selectedInndelingtype !== inndelingtype) {
       setSelectedInndelingtype(inndelingtype);
@@ -75,7 +79,9 @@ const useInndelingerPanel = () => {
   };
 
   const toggleFylke = (fylke: BaseInndeling) => {
-    if (isEditingPanel) resetSelection();
+    if (isEditingPanel) {
+      resetSelection();
+    }
 
     if (selectedInndelingtype === "fylke") {
       const isAlreadySelected = selectedInndelinger.findIndex(

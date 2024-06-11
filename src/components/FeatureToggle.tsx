@@ -39,9 +39,13 @@ export const featureEnabled = (key: Keys): boolean => {
   const { NODE_ENV } = import.meta.env;
 
   // skru på alle toggles i test, for å sikre at tester kjører
-  if (NODE_ENV === "test") return true;
+  if (NODE_ENV === "test") {
+    return true;
+  }
 
-  if (!environment) return false;
+  if (!environment) {
+    return false;
+  }
 
   return featureToggles[key][environment];
 };

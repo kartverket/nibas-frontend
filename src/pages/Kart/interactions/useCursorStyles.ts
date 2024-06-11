@@ -103,11 +103,15 @@ export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: C
     };
 
     if (isEnabled) {
-      if (eventsAndCursor) addEventListeners(eventsAndCursor);
+      if (eventsAndCursor) {
+        addEventListeners(eventsAndCursor);
+      }
       mapViewportStyle.cursor = defaultCursor ? defaultCursor() : "";
     }
     return () => {
-      if (eventsAndCursor) removeEventListeners(eventsAndCursor);
+      if (eventsAndCursor) {
+        removeEventListeners(eventsAndCursor);
+      }
       mapViewportStyle.cursor = "";
     };
   }, [defaultCursor, eventsAndCursor, isEnabled, mapViewportStyle]);

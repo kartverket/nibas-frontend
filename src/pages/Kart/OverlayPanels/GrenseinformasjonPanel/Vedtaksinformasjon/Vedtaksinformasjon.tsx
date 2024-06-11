@@ -52,7 +52,9 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
     onClose();
   };
 
-  if (!metadata || !(isGrenseType(properties.type) && isAdministrativGrense(properties.type))) return;
+  if (!metadata || !(isGrenseType(properties.type) && isAdministrativGrense(properties.type))) {
+    return;
+  }
 
   return (
     <>

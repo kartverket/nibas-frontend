@@ -49,8 +49,12 @@ const useModify = () => {
       features: new Collection(selectedFeatures),
       pixelTolerance: pixelTolerance,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
-        if (activeModeTools.includes("move")) return false;
-        if (disallowedPointModes.includes(activeTool)) return false;
+        if (activeModeTools.includes("move")) {
+          return false;
+        }
+        if (disallowedPointModes.includes(activeTool)) {
+          return false;
+        }
 
         const activeFeatures = getLineStringFeaturesAtPixel(event, "edit");
 
@@ -83,7 +87,9 @@ const useModify = () => {
         return false;
       },
       deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
-        if (activeModeTools.includes("move")) return false;
+        if (activeModeTools.includes("move")) {
+          return false;
+        }
 
         if (activeTool === "remove" && click(event)) {
           const activeFeatures = getLineStringFeaturesAtPixel(event, "edit");
@@ -152,7 +158,9 @@ const useModify = () => {
     const saveCoordinatesBeforeModification = (e: ModifyEvent) => {
       e.features.forEach((feature) => {
         const featureId = feature.getId()?.toString();
-        if (featureId === undefined) return;
+        if (featureId === undefined) {
+          return;
+        }
 
         const geometry = feature.getGeometry();
         if (geometry instanceof LineString) {
@@ -197,7 +205,9 @@ const useModify = () => {
       // Hvis man har valgt én feature kan det føre til løsriving
       if (selectedFeatures.length === 1) {
         const selectedFeature = selectedFeatures[0];
-        if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) return;
+        if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) {
+          return;
+        }
 
         const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, "edit");
 
@@ -220,7 +230,9 @@ const useModify = () => {
           const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
           const nonSelectedActiveFeatureGeometry = nonSelectedActiveFeature.getGeometry();
 
-          if (!nonSelectedActiveFeatureGeometry) return;
+          if (!nonSelectedActiveFeatureGeometry) {
+            return;
+          }
 
           const nearbyVertex = findNearbyVertexOnFeature(
             nonSelectedActiveFeatureGeometry,

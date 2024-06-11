@@ -17,7 +17,9 @@ export const mapFromFormToApi = (
   dokrefs: Referanse[] | undefined,
   internrefs: Referanse[] | undefined,
 ): DokumentasjonsreferanseDTO => {
-  if (!formValues.vedtakGyldigFra) throw Error("Gyldig fra er påkrevd!");
+  if (!formValues.vedtakGyldigFra) {
+    throw Error("Gyldig fra er påkrevd!");
+  }
 
   return {
     shouldArchive: false,
@@ -88,7 +90,9 @@ const addMetadataEntryFromFeature = (
   const id = feature.getId()?.toString();
   const oldProperties = feature.getProperties() as FeatureProperties;
 
-  if (id == null) return;
+  if (id == null) {
+    return;
+  }
 
   updateFeatureWithNewMetadata(feature as Feature<LineString>, updatedMetadata);
 
@@ -144,14 +148,18 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const { addHistoryEntry } = useHistory();
 
   const deleteOrArchive = async (): Promise<boolean> => {
-    if (selectedVedtaksinfoId == null) return false;
+    if (selectedVedtaksinfoId == null) {
+      return false;
+    }
     const metadata = feature.getProperties().metadata as Metadata;
     const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
       ? metadata.dokumentasjonsreferanser
       : [];
 
     const selectedDokref = oldDokrefs.find((dokref) => dokref.id === selectedVedtaksinfoId);
-    if (!selectedDokref) return false;
+    if (!selectedDokref) {
+      return false;
+    }
 
     const isDeleting = isTempDokrefId(selectedDokref.id);
 
@@ -162,7 +170,9 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
       declineText: "Avbryt",
     });
 
-    if (!shouldDeleteOrArchive) return false;
+    if (!shouldDeleteOrArchive) {
+      return false;
+    }
 
     if (isTempDokrefId(selectedDokref.id)) {
       // Vedtaksinformasjonen er ikke tidligere publisert. Fjern fra front end
@@ -175,7 +185,9 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
       // Arkiver eksisterende dokumentasjonsreferanse
       const dokrefsCopy = structuredClone(oldDokrefs);
       const selectedVedtakIndex = dokrefsCopy.findIndex((dokref) => dokref.id === selectedVedtaksinfoId);
-      if (dokrefsCopy[selectedVedtakIndex] != null) dokrefsCopy[selectedVedtakIndex].shouldArchive = true;
+      if (dokrefsCopy[selectedVedtakIndex] != null) {
+        dokrefsCopy[selectedVedtakIndex].shouldArchive = true;
+      }
       addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
         ...metadata,
         dokumentasjonsreferanser: dokrefsCopy,

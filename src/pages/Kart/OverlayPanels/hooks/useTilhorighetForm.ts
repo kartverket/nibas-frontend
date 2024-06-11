@@ -65,7 +65,7 @@ const getIdForKontekstEgenskaper = (
         },
       };
       // hvis det finnes en ny krets med nummer og kommuneid lik en ny krets i utkastet OG kontekstegenskaper har id lik undefined lager vi en unik referanse til denne kretsen
-    } else
+    } else {
       return {
         ...kontekstEgenskaper,
         id: {
@@ -78,6 +78,7 @@ const getIdForKontekstEgenskaper = (
           gyldighetsdato: "",
         },
       };
+    }
   }
 };
 

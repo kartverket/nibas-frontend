@@ -15,7 +15,9 @@ export const createGrenseHistoryChange = (features: Feature[], grenseType?: Gren
     const geometry = feature.getGeometry();
     if (geometry instanceof LineString) {
       const featureId = feature.getId()?.toString();
-      if (featureId === undefined) return;
+      if (featureId === undefined) {
+        return;
+      }
 
       changes.push({
         id: featureId,
@@ -42,10 +44,14 @@ export const createNyGrenseHistoryChange = (
     const grenseDiscriminator = getMetadataDiscriminatorFromType(grenseType);
 
     const featureId = feature.getId()?.toString();
-    if (featureId === undefined || !grenseDiscriminator) return null;
+    if (featureId === undefined || !grenseDiscriminator) {
+      return null;
+    }
 
     const defaultFeatureProperties = getDefaultFeatureProperties(grenseType);
-    if (!defaultFeatureProperties) return null;
+    if (!defaultFeatureProperties) {
+      return null;
+    }
 
     const fromChange: NyGrense = {
       ...defaultFeatureProperties,

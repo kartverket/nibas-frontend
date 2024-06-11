@@ -56,7 +56,9 @@ export const getMatrikkelFeatures = async () => {
       method: "POST",
       body: new XMLSerializer().serializeToString(request),
     });
-    if (!response.ok) throw new Error("Feil i response: " + response);
+    if (!response.ok) {
+      throw new Error("Feil i response: " + response);
+    }
 
     const json = await response.json();
     const fetchedFeatures = getFeaturesFromGeoJson(json);

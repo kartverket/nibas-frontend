@@ -27,14 +27,20 @@ const GrenseinformasjonPanel = () => {
   const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
 
   const closeGrenseinfoIfFeatureRemoved = useCallback(() => {
-    if (selectedFeature?.getId() === undefined || selectedFeature?.getId() === null) return;
+    if (selectedFeature?.getId() === undefined || selectedFeature?.getId() === null) {
+      return;
+    }
 
     const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature!.getId()!.toString(), history);
-    if (isFeatureGone) closeOverlayPanel();
+    if (isFeatureGone) {
+      closeOverlayPanel();
+    }
   }, [closeOverlayPanel, history, selectedFeature]);
 
   useEffect(() => {
-    if (history.index < history.entries.length) closeGrenseinfoIfFeatureRemoved();
+    if (history.index < history.entries.length) {
+      closeGrenseinfoIfFeatureRemoved();
+    }
   }, [closeGrenseinfoIfFeatureRemoved, history.entries.length, history.index]);
 
   return (

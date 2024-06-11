@@ -167,7 +167,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       featuresInInndeling: Feature<Geometry>[],
       inndelingType: Inndelingtype,
     ): Feature<Geometry>[] => {
-      if (inndelingType !== "stemmekrets") return [];
+      if (inndelingType !== "stemmekrets") {
+        return [];
+      }
 
       const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
 
@@ -194,7 +196,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             );
 
             for (const id of kontekstEgenskapIds) {
-              if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
+              if (stemmekretsInSammenslaaingIds.includes(id)) {
+                sammenslaaingFeaturesWithDuplicates.push(feature);
+              }
             }
           }
         }
@@ -203,13 +207,19 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       return sammenslaaingFeaturesWithDuplicates;
     };
 
-    if (inndelingFeatures.length === 0) return;
+    if (inndelingFeatures.length === 0) {
+      return;
+    }
 
     // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
-    if (inndelingerToFetch.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
+    if (inndelingerToFetch.some((inndeling) => inndeling.isEditing)) {
+      editSource.clear(true);
+    }
     for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isViewing)) {
       const source = getLayerById(inndeling.inndelingtype).getSource();
-      if (source) source.clear(true);
+      if (source) {
+        source.clear(true);
+      }
     }
 
     for (const inndelingWithFeatures of inndelingFeatures) {
@@ -219,7 +229,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
       // Dette skal i praksis ikke skje, da inndelingFeatures er bygd opp basert på selectedInndelinger
       // Må uansett sjekke casen sånn at TypeScript vet at currentInndeling ikke er null videre
-      if (!currentInndeling) continue;
+      if (!currentInndeling) {
+        continue;
+      }
 
       // Først sjekker vi om en inndeling skal vises. Dette ønsker vi å gjøre før vi eventuelt legger features i edit-laget slik at vi ikke kopierer features som har fått edit-layer styling på seg.
       if (currentInndeling.isViewing) {

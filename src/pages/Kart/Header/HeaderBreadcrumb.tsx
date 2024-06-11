@@ -30,7 +30,9 @@ const HeaderBreadcrumb = () => {
     }
   };
 
-  if (!utkast) return null;
+  if (!utkast) {
+    return null;
+  }
 
   return (
     <HeaderSection>
