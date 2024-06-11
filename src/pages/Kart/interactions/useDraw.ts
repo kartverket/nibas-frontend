@@ -57,7 +57,9 @@ const useDraw = () => {
       style: grenseStyles.select,
       freehandCondition: () => false,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
-        if (!noModifierKeys(event) || activeTool !== "draw" || activeModeTools.includes("move")) return false;
+        if (!noModifierKeys(event) || activeTool !== "draw" || activeModeTools.includes("move")) {
+          return false;
+        }
 
         const featuresAtPixel = getLineStringFeaturesAtPixel(event, "edit");
 
@@ -132,7 +134,9 @@ const useDraw = () => {
       if (grenseType) {
         const change = createNyGrenseHistoryChange(drawnFeature, grenseType, splittedFeatures);
 
-        if (change == null) return;
+        if (change == null) {
+          return;
+        }
 
         addHistoryEntry({
           type: "nygrense",
@@ -161,8 +165,12 @@ const useDraw = () => {
 
       // Hvis det er akkurat én feature på koordinatet til halen/hodet til den nye featuren, så betyr det at koordinatet treffer et punkt som ikke er endepunkt
       const featuresToBeSplit: Feature<Geometry>[] = [];
-      if (featuresAtHead.length === 1) featuresToBeSplit.push(featuresAtHead[0]);
-      if (featuresAtTail.length === 1) featuresToBeSplit.push(featuresAtTail[0]);
+      if (featuresAtHead.length === 1) {
+        featuresToBeSplit.push(featuresAtHead[0]);
+      }
+      if (featuresAtTail.length === 1) {
+        featuresToBeSplit.push(featuresAtTail[0]);
+      }
 
       return featuresToBeSplit.filter(
         (feature, index, allFeatures) => allFeatures.map((f) => f.getId()).indexOf(feature.getId()) === index,
@@ -220,7 +228,9 @@ const useDraw = () => {
       const splittedFeatures: SplittedFeature[] = [];
       for (const feature of uniqueFeaturesToBeSplit) {
         const features = splitFeatureAtDrawnFeatureEndpoints(feature, drawnFeatureGeometry);
-        if (features != null) splittedFeatures.push(features);
+        if (features != null) {
+          splittedFeatures.push(features);
+        }
       }
 
       setDefaultFeatureProperties(

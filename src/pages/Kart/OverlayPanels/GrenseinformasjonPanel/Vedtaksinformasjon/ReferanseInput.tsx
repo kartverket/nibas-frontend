@@ -67,8 +67,11 @@ export const ReferanseInput = ({
                   placeholder={placeholder}
                   backgroundColor="white"
                   onChange={(e) => {
-                    if (field.value === "") setAppendButtonDisabled(true);
-                    else setAppendButtonDisabled(false);
+                    if (field.value === "") {
+                      setAppendButtonDisabled(true);
+                    } else {
+                      setAppendButtonDisabled(false);
+                    }
                     field.onChange(e.target.value);
                   }}
                   onKeyDown={(e) => {
@@ -103,7 +106,9 @@ const InputContainer = styled.div`
   flex-direction: column;
 `;
 const inputIsValid = (input: string, pattern?: RegExp) => {
-  if (!pattern) return true;
+  if (!pattern) {
+    return true;
+  }
   return input.match(pattern) !== null;
 };
 const LeggTilKnapp = styled(Button)`

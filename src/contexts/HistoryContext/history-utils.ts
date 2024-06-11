@@ -50,7 +50,9 @@ const getFeatureIfExists = (featureId: string) => {
 
 const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const feature = getFeatureFromChange(change, direction);
-  if (!feature) return;
+  if (!feature) {
+    return;
+  }
 
   const lineString = feature.getGeometry() as LineString;
   const coordinates = change[direction].coordinates as Coordinate[] | undefined;
@@ -58,7 +60,9 @@ const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, directio
   if (direction === "from" && !coordinates) {
     editSource.removeFeature(feature);
   }
-  if (!coordinates) return;
+  if (!coordinates) {
+    return;
+  }
   lineString.setCoordinates(coordinates);
 };
 
@@ -87,10 +91,14 @@ export const setRepresentasjonspunktForEntry = (
 
 const setPropertiesFromChange = (change: HistoryChange<FeatureProperties>, direction: HistoryDirection) => {
   const feature = getFeatureIfExists(change.id);
-  if (!feature) return;
+  if (!feature) {
+    return;
+  }
 
   const properties = change[direction] as FeatureProperties | undefined;
-  if (!properties) return;
+  if (!properties) {
+    return;
+  }
   feature.setProperties(properties);
 };
 
@@ -173,11 +181,15 @@ export const setFeatureCoordinatesAndPropertiesForEntry = (entry: NyGrenseEntry,
 export const setKontekstEgenskaperForEntry = (entry: GrenseTilhorighetEntry, direction: HistoryDirection) => {
   entry.changes.forEach((change) => {
     const feature = getFeatureIfExists(change.id);
-    if (!feature) return;
+    if (!feature) {
+      return;
+    }
 
     const kontekstEgenskaper = change[direction] as KontekstEgenskaper[] | undefined;
 
-    if (!kontekstEgenskaper) return;
+    if (!kontekstEgenskaper) {
+      return;
+    }
 
     feature.setProperties({ ...feature.getProperties(), kontekstEgenskaper });
   });
@@ -220,7 +232,9 @@ export const redoGrensedeling = (delteFeatures: Feature[], newFeaturesFromsDelin
     const properties = deltFeature.getProperties() as FeatureProperties;
     deltFeature.setProperties({ ...properties, shouldArchive: true });
     const deltFeatureId = deltFeature.getId()?.toString();
-    if (deltFeatureId == null) return;
+    if (deltFeatureId == null) {
+      return;
+    }
     removeFeaturesFromSourceByIds("edit", [deltFeatureId]);
 
     // Hvis featuren som ble delt er en eksisterende feature vil vi vise den som arkivert
@@ -238,7 +252,9 @@ export const undoGrensedeling = (delteFeatures: Feature[], newFeaturesFromsDelin
     addFeaturesToSource("edit", [deltFeature]);
 
     const deltFeatureId = deltFeature.getId()?.toString();
-    if (deltFeatureId == null) return;
+    if (deltFeatureId == null) {
+      return;
+    }
 
     // Om featuren som ble splittet ikke var en ny grense vises den som arkivert, vi må derfor fjerne den fra archived layer
     if (!isTempFeatureId(deltFeatureId)) {
@@ -253,7 +269,9 @@ export const undoGrensedeling = (delteFeatures: Feature[], newFeaturesFromsDelin
 export const getChangeIds = (historyEntry: HistoryEntry): string[] => {
   const changedFeatureIds: string[] = [];
   historyEntry.changes.forEach((change) => {
-    if (change.to == null) return;
+    if (change.to == null) {
+      return;
+    }
 
     if (historyEntry.type === "grensedeling") {
       const changesTo = change.to as Feature<Geometry>[];

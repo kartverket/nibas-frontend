@@ -24,7 +24,9 @@ const createSnapDataForSource = (
   activeTool: Tool,
 ): SnapData | null => {
   const source = getSourceFromGrenselayer(grenseId)?.getSource();
-  if (!source) return null;
+  if (!source) {
+    return null;
+  }
 
   const config = getSnapDataConfig(grenseId, activeModeTools, activeTool);
   const snap = new Snap({ source, pixelTolerance });
@@ -86,7 +88,9 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
   }
 
   // Default er av hvis snapping er av
-  if (!snapTypes.includesNibas && !snapTypes.includesMatrikkel) return config;
+  if (!snapTypes.includesNibas && !snapTypes.includesMatrikkel) {
+    return config;
+  }
 
   if (activeTool === "grenseinfo" && snapTypes.includesNibas && !snapTypes.includesMatrikkel) {
     config.hoverEnabled = true;

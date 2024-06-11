@@ -60,14 +60,18 @@ const Toolbar = () => {
   };
 
   const isPanningAllowed = (): boolean => {
-    if (!isEditing) return false;
+    if (!isEditing) {
+      return false;
+    }
 
     const drawInteraction = map
       .getInteractions()
       .getArray()
       .find((interaction) => interaction instanceof Draw);
 
-    if (activeTool === "draw" && !drawInteraction) return true;
+    if (activeTool === "draw" && !drawInteraction) {
+      return true;
+    }
     if (drawInteraction) {
       const revision = drawInteraction.getRevision();
       if (revision) {
@@ -81,10 +85,15 @@ const Toolbar = () => {
   const [panningEnabled, setPanningEnabled] = useState(true);
 
   addEventListener("mouseup", () => {
-    if (activeTool == null || activeTool !== "draw") return;
+    if (activeTool == null || activeTool !== "draw") {
+      return;
+    }
 
-    if (isPanningAllowed()) setPanningEnabled(true);
-    else setPanningEnabled(false);
+    if (isPanningAllowed()) {
+      setPanningEnabled(true);
+    } else {
+      setPanningEnabled(false);
+    }
   });
 
   useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));

@@ -21,7 +21,9 @@ const Kartinformasjon = () => {
     if (map.getControls().getLength() === 0) {
       const mousePosition = new MousePosition({
         coordinateFormat: (coordinates) => {
-          if (!coordinates) return "";
+          if (!coordinates) {
+            return "";
+          }
           return `${coordinates[0].toFixed(2)}Ø  ${coordinates[1].toFixed(2)}N`;
         },
         target: document.getElementById("mouse-position") ?? "",

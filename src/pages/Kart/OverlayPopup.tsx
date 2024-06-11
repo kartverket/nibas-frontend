@@ -8,7 +8,9 @@ const OverlayPopup = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!overlayRef.current) return;
+    if (!overlayRef.current) {
+      return;
+    }
 
     overlayPopup.setElement(overlayRef.current);
 

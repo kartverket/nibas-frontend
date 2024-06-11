@@ -26,8 +26,9 @@ export const mapAffectedFeaturesForErrorEntries = (entry: HistoryEntry) => {
   for (const change of changes) {
     const feature = getFeatureIfExistsInAnyLayer(change.id);
 
-    if (!feature) continue;
-    else if (entry.type === "grense" || entry.type === "nygrense") {
+    if (!feature) {
+      continue;
+    } else if (entry.type === "grense" || entry.type === "nygrense") {
       accumulator.push(feature);
     } else if (entry.type === "grensearkivering") {
       accumulator.push(...getFeaturesConnectedToFeatureAtEndpoints(feature));

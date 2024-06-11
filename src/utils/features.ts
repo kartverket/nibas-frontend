@@ -13,10 +13,14 @@ import { isGrenseType, isNotNil } from "./type-utils";
 import { isNonEditableFeatureId, isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
-  if (!grenseType) return;
+  if (!grenseType) {
+    return;
+  }
 
   const properties = getDefaultFeatureProperties(grenseType);
-  if (!properties) return;
+  if (!properties) {
+    return;
+  }
 
   feature.setProperties({
     ...properties,
@@ -35,7 +39,9 @@ export const getFeatureIfExistsInAnyLayer = (featureId: string) => {
     if (source) {
       const feature = source.getFeatureById(featureId);
 
-      if (feature) return feature as Feature<Geometry>;
+      if (feature) {
+        return feature as Feature<Geometry>;
+      }
     }
   }
 
@@ -66,7 +72,9 @@ export const removeFeatureFromAllLayers = (featureId: string) => {
 export const getFeaturesConnectedToFeatureAtEndpoints = (connectedToFeature: Feature<Geometry>) => {
   const connectedFeatures: Feature<Geometry>[] = [];
   const geometry = connectedToFeature.getGeometry();
-  if (!geometry || !(geometry instanceof LineString)) return [];
+  if (!geometry || !(geometry instanceof LineString)) {
+    return [];
+  }
 
   const firstCoordConnectedFeature = geometry.getFirstCoordinate();
   const lastCoordConnectedFeature = geometry.getLastCoordinate();
@@ -74,7 +82,9 @@ export const getFeaturesConnectedToFeatureAtEndpoints = (connectedToFeature: Fea
   for (const layer of Object.values(grenserLayers)) {
     const source = layer.getSource();
 
-    if (!source) continue;
+    if (!source) {
+      continue;
+    }
 
     for (const feature of source.getFeatures()) {
       if (feature.getId() !== connectedToFeature.getId()) {
@@ -102,18 +112,23 @@ export const getFeaturesConnectedToFeatureAtEndpoints = (connectedToFeature: Fea
 export const getAllFeatureEndPointCoordinates = (layerIdsToFilter: LayerId[]): (FeatureIdWithEndpoints | null)[] => {
   return Object.entries(grenserLayers)
     .flatMap(([key, layer]) => {
-      if (layerIdsToFilter.includes(key as LayerId)) return [];
+      if (layerIdsToFilter.includes(key as LayerId)) {
+        return [];
+      }
 
       const source = layer.getSource();
-      if (source) return source.getFeatures();
+      if (source) {
+        return source.getFeatures();
+      }
 
       return [];
     })
     .flatMap((f) => {
       const geom = f.getGeometry();
       const id = f.getId()?.toString();
-      if (geom && geom instanceof LineString && id != null)
+      if (geom && geom instanceof LineString && id != null) {
         return { featureId: id, endpoints: { first: geom.getFirstCoordinate(), last: geom.getLastCoordinate() } };
+      }
 
       return null;
     });
@@ -173,7 +188,9 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
   const metadataDiscriminator = getMetadataDiscriminatorFromType(grenseType);
   const inndelingtype = getInndelingtypeFromGrensetype(grenseType);
 
-  if (!metadataDiscriminator || !inndelingtype) return null;
+  if (!metadataDiscriminator || !inndelingtype) {
+    return null;
+  }
 
   const metadata: Metadata = getDefaultFeatureMetadata(metadataDiscriminator);
 
@@ -199,19 +216,25 @@ export const isFeatureEditable = (
   isArchived = false,
   requireAllContextsVisible: boolean = true,
 ) => {
-  if (isNonEditableFeatureId(feature.getId())) return false;
+  if (isNonEditableFeatureId(feature.getId())) {
+    return false;
+  }
 
   const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
 
   const featureType = feature.get("type");
 
   if (isGrenseType(featureType) && isAdministrativGrense(featureType) && requireAllContextsVisible) {
-    if (isTempFeatureId(feature.getId())) return true;
+    if (isTempFeatureId(feature.getId())) {
+      return true;
+    }
 
     const properties = feature.getProperties() as FeatureProperties;
     const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
 
-    if (kontekstEgenskaper.length === 0) return false;
+    if (kontekstEgenskaper.length === 0) {
+      return false;
+    }
 
     const layerSources = Object.values(grenserLayers)
       .map((layer) => layer.getSource())
@@ -223,13 +246,17 @@ export const isFeatureEditable = (
     // Dersom den er tilgjengelig, kan vi anta at kretsen er synlig
     const alleKretserIKontekstEgenskaperErSynlig = kontekstEgenskaper.every((egenskap) => {
       const lokalId = egenskap.id?.lokalid.value;
-      if (lokalId === undefined) return false;
+      if (lokalId === undefined) {
+        return false;
+      }
 
       // TODO Velge riktig layerSource basert på kontekstegenskaptype?
       return layerSources.some((source) => source.getFeatureById(getRepresentasjonspunktId(lokalId)) !== null);
     });
 
-    if (!alleKretserIKontekstEgenskaperErSynlig) return false;
+    if (!alleKretserIKontekstEgenskaperErSynlig) {
+      return false;
+    }
   }
 
   return isMetadataEditable;
@@ -247,7 +274,9 @@ export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString
 
   if (previousFeatureCoordinates && currentFeatureCoordinates) {
     for (let i = 0; i < previousFeatureCoordinates.length; i++) {
-      if (equals(previousFeatureCoordinates[i], currentFeatureCoordinates[i])) continue;
+      if (equals(previousFeatureCoordinates[i], currentFeatureCoordinates[i])) {
+        continue;
+      }
 
       return false;
     }
@@ -269,7 +298,9 @@ export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.
 
 export const getFeatureFremtidigEndringDato = (feature: FeatureLike) => {
   const properties = feature.getProperties() as FeatureProperties | undefined;
-  if (!properties) return;
+  if (!properties) {
+    return;
+  }
 
   const metadata = properties.metadata as Metadata | undefined;
 
@@ -282,7 +313,9 @@ export const getInndelingFremtidigEndringDato = (inndelingId: string) => {
 
 export const getFlateRepresentasjonpunkterWithFremtidigEndring = (feature: FeatureLike) => {
   const properties = feature.getProperties() as FeatureProperties | undefined;
-  if (!properties) return [];
+  if (!properties) {
+    return [];
+  }
 
   const relevantRepresentasjonspunkter = removeNil(
     properties.kontekstEgenskaper.map((kontekstEgenskap) =>

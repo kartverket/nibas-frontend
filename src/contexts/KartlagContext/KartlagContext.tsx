@@ -102,8 +102,12 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     // Skru av alle kartlagene i OpenLayers
     Object.values(kartlagLayers).forEach((layer, index) => {
       layer.setZIndex(-index);
-      if (isWMSLayer(layer)) resetWMSLayer(layer);
-      if (isWMTSLayer(layer)) resetWMTSLayer(layer);
+      if (isWMSLayer(layer)) {
+        resetWMSLayer(layer);
+      }
+      if (isWMTSLayer(layer)) {
+        resetWMTSLayer(layer);
+      }
     });
 
     // Obs! Hardkodet toggling av defaultlaget vårt

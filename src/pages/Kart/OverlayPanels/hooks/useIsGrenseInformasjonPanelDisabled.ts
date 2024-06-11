@@ -5,7 +5,9 @@ import { editSource } from "hooks/layers/constants";
 const useIsGrenseinformasjonPanelDisabled = (feature: Feature) => {
   const isMetadataEditable = isFeatureMetadataEditable(feature, isFeatureToBeArchived(feature));
 
-  if (!isMetadataEditable) return true;
+  if (!isMetadataEditable) {
+    return true;
+  }
 
   const isFeatureInEditLayer = editSource.getFeatures().some((editFeature) => editFeature.getId() === feature.getId());
 

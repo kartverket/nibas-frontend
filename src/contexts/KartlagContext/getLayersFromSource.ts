@@ -73,7 +73,9 @@ const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): Ma
 export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | WMTS) => {
   const urls = source.getUrls();
 
-  if (!urls || urls.length === 0) return null;
+  if (!urls || urls.length === 0) {
+    return null;
+  }
 
   const url = urls[0];
 
@@ -109,7 +111,9 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
 
     if (source instanceof TileWMS) {
       json = WMSParser.read(xml);
-      if (json?.Capability == null) return null;
+      if (json?.Capability == null) {
+        return null;
+      }
 
       const mainLayer = json.Capability.Layer;
 
@@ -119,7 +123,9 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
     if (source instanceof WMTS) {
       json = WMTSParser.read(xml);
 
-      if (json?.Contents == null) return null;
+      if (json?.Contents == null) {
+        return null;
+      }
 
       const mappedWMTSLayer: MappedLayer = {
         type: "wmts",

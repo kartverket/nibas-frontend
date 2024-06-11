@@ -49,7 +49,9 @@ export const applyNonFeatureUtkast = <T extends NonNullable<UtkastEntity>>(
   type: EntityUtkastType,
 ) => {
   const utkastSlice = utkast.operasjoner.metadataendringer?.[type];
-  if (utkastSlice == null) return entity;
+  if (utkastSlice == null) {
+    return entity;
+  }
 
   if (Array.isArray(entity)) {
     return entity.map((e) => getCombinedEntity(e, utkastSlice));
@@ -64,7 +66,9 @@ const reduceStemmekretssammenslaingsOperations = (
   entry: StemmekretsSammenslaaingsendringEntry,
 ): StemmekretsSammenslaaingsendringRequest => {
   entry.changes.forEach((change) => {
-    if (change.to == null) return operations;
+    if (change.to == null) {
+      return operations;
+    }
 
     operations = change.to;
   });
@@ -169,7 +173,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     const archivedFeature = archivedSource.getFeatureById(featureId);
     const feature = editFeature ?? archivedFeature;
 
-    if (!feature) return;
+    if (!feature) {
+      return;
+    }
 
     const featureAsGeoJson = featureToGeoJson(feature);
     const index = editedFeatures.findIndex((geoJsonFeature) => featureAsGeoJson.id === geoJsonFeature.id);
@@ -185,7 +191,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
   relevantHistoryEntries.forEach((entry) => {
     entry.changes.forEach((change) => {
-      if (change.to == null) return;
+      if (change.to == null) {
+        return;
+      }
       addFeatureToEditedFeaturesIfNotAlreadyAdded(change.id);
 
       if (entry.type === "grensedeling") {
@@ -234,13 +242,17 @@ export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtk
 
   // Fjerner midlertidige ID fra alle nye grenser og deres dokumentasjonsreferanser, da dette ikke er forventet fra backend
   endredeFeatures.forEach((endretFeature) => {
-    if (endretFeature.id != null && isTempFeatureId(endretFeature.id)) endretFeature.id = undefined;
+    if (endretFeature.id != null && isTempFeatureId(endretFeature.id)) {
+      endretFeature.id = undefined;
+    }
 
     const properties = endretFeature.properties as FeatureProperties;
     const metadata = properties.metadata as Metadata;
 
     metadata.dokumentasjonsreferanser?.forEach((dokref) => {
-      if (isTempDokrefId(dokref.id)) dokref.id = undefined;
+      if (isTempDokrefId(dokref.id)) {
+        dokref.id = undefined;
+      }
     });
   });
 
