@@ -20,10 +20,10 @@ import { useToast } from "@kvib/react";
 import { routes } from "utils/routes";
 import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 

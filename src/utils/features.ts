@@ -1,16 +1,16 @@
-import { GrenseType, LayerId, editableGrenseTypes, getInndelingtypeFromGrensetype } from "hooks/layers/types";
-import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
-import { Feature } from "ol";
-import { Geometry, LineString } from "ol/geom";
-import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
-import { FeatureLike } from "ol/Feature";
 import { editSource, grenserLayers } from "hooks/layers/constants";
-import { getRepresentasjonspunktId } from "./map/source";
-import { previousCoordinateKey } from "pages/Kart/interactions/constants";
+import { GrenseType, LayerId, editableGrenseTypes, getInndelingtypeFromGrensetype } from "hooks/layers/types";
+import { Feature } from "ol";
+import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
-import { isGrenseType, isNotNil } from "./type-utils";
+import { Geometry, LineString } from "ol/geom";
+import { previousCoordinateKey } from "pages/Kart/interactions/constants";
+import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
+import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { removeNil } from "./list-utils";
+import { getRepresentasjonspunktId } from "./map/source";
+import { isGrenseType, isNotNil } from "./type-utils";
+import { isNonEditableFeatureId, isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) return;
@@ -199,6 +199,8 @@ export const isFeatureEditable = (
   isArchived = false,
   requireAllContextsVisible: boolean = true,
 ) => {
+  if (isNonEditableFeatureId(feature.getId())) return false;
+
   const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
 
   const featureType = feature.get("type");

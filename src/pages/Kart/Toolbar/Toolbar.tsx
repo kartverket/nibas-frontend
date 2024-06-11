@@ -37,7 +37,7 @@ const Toolbar = () => {
 
   // TODO Sjekk om vi kan fjerne ubrukte inndelinger
   const flatedataIsAvailable =
-    getAllInndelinger().filter((inndeling) => inndeling.isVisible || inndeling.isEditing).length > 0;
+    getAllInndelinger().filter((inndeling) => inndeling.isViewing || inndeling.isEditing).length > 0;
 
   const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 

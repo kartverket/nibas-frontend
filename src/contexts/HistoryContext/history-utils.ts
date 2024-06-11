@@ -22,12 +22,12 @@ import { Feature } from "ol";
 import { setDefaultFeatureProperties } from "utils/features";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { removeNil } from "utils/list-utils";
 import { Geometry } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
 import { getEntriesUpToIndex, removeDuplicateIds } from "contexts/FeatureStyleContext/feature-style-utils";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
