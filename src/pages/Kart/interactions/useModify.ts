@@ -242,28 +242,41 @@ const useModify = () => {
           if (nearbyVertex) {
             const nonSelectedActiveFeatureCoordinates = nonSelectedActiveFeatureGeometry.getCoordinates();
 
+            //hvis vi er på et endepunkt trenger vi ikke å dele
+            const nearbyVertexIsEndpoint = nonSelectedActiveFeatureCoordinates.some(
+              (coordinates, index) =>
+                equals(coordinates, nearbyVertex) &&
+                (index === 0 || index === nonSelectedActiveFeatureCoordinates.length - 1),
+            );
+            if (!nearbyVertexIsEndpoint) {
+              if (
+                (!nearbyVertexIsEndpoint && equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0])) ||
+                equals(
+                  nearbyVertex,
+                  nonSelectedActiveFeatureCoordinates[nonSelectedActiveFeatureCoordinates.length - 1],
+                )
+              ) {
+                return;
+              }
+
+              // spør om bruker ønsker å dele hvis nearbyVertex ikke er endepunkt
+              const isAccepted = await confirmationModal.openAsync({
+                title: "Deling av grense",
+                description:
+                  "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
+                acceptText: "Del grense",
+                declineText: "Avbryt",
+              });
+
+              if (isAccepted) {
+                performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
+              } else {
+                setPreviousCoordinatesForFeature(selectedFeature);
+                return;
+              }
+            }
+
             // Vi trenger ikke gjøre noe hvis man ender opp på samme punkt som man løsrev fra
-            if (
-              equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0]) ||
-              equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[nonSelectedActiveFeatureCoordinates.length - 1])
-            ) {
-              return;
-            }
-
-            const isAccepted = await confirmationModal.openAsync({
-              title: "Deling av grense",
-              description:
-                "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
-              acceptText: "Del grense",
-              declineText: "Avbryt",
-            });
-
-            if (isAccepted) {
-              performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
-            } else {
-              setPreviousCoordinatesForFeature(selectedFeature);
-              return;
-            }
           } else {
             setPreviousCoordinatesForFeature(selectedFeature);
             toast({ title: "Løsrevede punkter kan kun plasseres på andre punkter", status: "warning" });
