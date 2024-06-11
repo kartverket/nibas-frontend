@@ -18,7 +18,7 @@ import {
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { getNavnInSpraak, inndelingResponseNavnToString } from "utils/language/language";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 const getEndredeFeaturesForKretstype = (operasjoner: OperasjonerOrNull, kretstype: KontekstType): FeatureDTO[] => {
   const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
