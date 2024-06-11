@@ -166,7 +166,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   );
 
   // hent grenseendringer og gjør endringene om til en liste av features
-  const editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
+  let editedFeatures: GeoJSONFeature[] = utkastOperations.grenseendringer.endredeFeatures;
 
   const addFeatureToEditedFeaturesIfNotAlreadyAdded = (featureId: string) => {
     const editFeature = editSource.getFeatureById(featureId);
@@ -189,6 +189,10 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     editedFeatures.push(featureAsGeoJson);
   };
 
+  const removeFeatureFromEditedFeatures = (featureId: string) => {
+    editedFeatures = editedFeatures.filter((feature) => feature.id !== featureId);
+  };
+
   relevantHistoryEntries.forEach((entry) => {
     entry.changes.forEach((change) => {
       if (change.to == null) {
@@ -199,6 +203,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
       if (entry.type === "grensedeling") {
         // Grensedeling er en litt sær grense-endring siden den påvirker flere features på en gang og trenger derfor egen implementasjon
         const newFeatures = removeNil((change as HistoryChange<Feature[]>).to.map((f) => f.getId()?.toString()));
+        const removedFeatures = removeNil((change as HistoryChange<Feature[]>).from.map((f) => f.getId()?.toString()));
+        removedFeatures.filter(isTempFeatureId).forEach((id) => removeFeatureFromEditedFeatures(id));
         newFeatures.forEach((id) => {
           addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
         });
@@ -212,11 +218,11 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
           change.to.grensedeling != null &&
           change.to.grensedeling.length > 0
         ) {
-          const featureIds = removeNil(
-            [...change.from.grensedeling, ...change.to.grensedeling].map((f) => f.getId()?.toString()),
-          );
+          const newFeatures = removeNil(change.to.grensedeling.map((f) => f.getId()?.toString()));
+          const removedFeatures = removeNil(change.from.grensedeling.map((f) => f.getId()?.toString()));
 
-          featureIds.forEach((id) => {
+          removedFeatures.filter(isTempFeatureId).forEach((id) => removeFeatureFromEditedFeatures(id));
+          newFeatures.forEach((id) => {
             addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
           });
         }
