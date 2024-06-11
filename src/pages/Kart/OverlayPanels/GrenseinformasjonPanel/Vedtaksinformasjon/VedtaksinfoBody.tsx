@@ -51,7 +51,9 @@ export const VedtaksinfoBody = ({
     setDokref((prevState) => {
       if (prevState != null) {
         return [...prevState, lenke];
-      } else return [lenke];
+      } else {
+        return [lenke];
+      }
     });
   };
 
@@ -59,7 +61,9 @@ export const VedtaksinfoBody = ({
     setInternref((prevState) => {
       if (prevState != null) {
         return [...prevState, lenke];
-      } else return [lenke];
+      } else {
+        return [lenke];
+      }
     });
   };
 

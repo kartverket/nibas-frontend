@@ -21,12 +21,13 @@ const highlightFormatter = (option: OptionType, formatOptionLabelMeta: FormatOpt
   const labelRegExp = new RegExp(`(.*)(${escapedInputValue})(.*)`, "i");
   const matches = option.label.match(labelRegExp);
 
-  if (!matches)
+  if (!matches) {
     return (
       <OptionContainer>
         <Text>{option.label}</Text>
       </OptionContainer>
     );
+  }
 
   return (
     <OptionContainer>

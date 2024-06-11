@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
 import { HistoryState, HistoryEntry } from "./types";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { getChangeIds } from "./history-utils";
 import { removeFeatureFromAllLayers } from "utils/features";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 type Options = {
   onUndo: (entry: HistoryEntry) => void;
@@ -19,7 +19,9 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
   // Dersom applikasjonen er i tilstanden endring -> angre -> endring, kan man ende opp med features i en source
   // som ikke er representert i hverken history eller database. Dette vil lage "usynlig" geometri som skaper bugs i beregninger.
   const clearFeaturesAfterIndex = useCallback(() => {
-    if (history.entries.length === 0) return;
+    if (history.entries.length === 0) {
+      return;
+    }
 
     const entriesBeforeIndex = history.entries.slice(0, history.index);
     const entriesAfterIndex = history.entries.slice(history.index);
@@ -53,7 +55,9 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
   const revert = (amount: number) => {
     const { index, entries } = history;
 
-    if (index === 0 || entries.length === 0) return;
+    if (index === 0 || entries.length === 0) {
+      return;
+    }
 
     const newIndex = index - (amount > index ? index : amount);
 
@@ -69,7 +73,9 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
   const reapply = (amount: number) => {
     const { index, entries } = history;
 
-    if (index >= entries.length) return;
+    if (index >= entries.length) {
+      return;
+    }
 
     const newIndex = index + amount > entries.length ? entries.length : index + amount;
 

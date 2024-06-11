@@ -30,7 +30,9 @@ export function getDuplicateItemsBy<T>(list: T[], predicate: (item: T) => Primit
       const duplicateIsAdded = duplicateItems.find(
         (duplicateItem) => predicate(duplicateItem) === predicate(duplicate),
       );
-      if (duplicateIsAdded == null) duplicateItems.push(duplicate);
+      if (duplicateIsAdded == null) {
+        duplicateItems.push(duplicate);
+      }
     } else {
       seenItems.push(item);
     }

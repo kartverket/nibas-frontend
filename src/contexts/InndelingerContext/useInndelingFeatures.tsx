@@ -8,13 +8,13 @@ import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import { FeatureCollection, FullInndelingResponse, SimpleInndelingResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/api";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import useSWR from "swr";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { inndelingResponseNavnToString } from "utils/language/language";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 type InndelingGrenserRequestPath = Pick<
   paths,

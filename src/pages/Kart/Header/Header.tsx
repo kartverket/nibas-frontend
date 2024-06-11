@@ -39,7 +39,9 @@ const Header = () => {
       (response) => `${response.nummer} ${inndelingResponseNavnToString(response.navn)}`,
     );
 
-    if (responsesToString.length === 1) return responsesToString[0];
+    if (responsesToString.length === 1) {
+      return responsesToString[0];
+    }
 
     const responsesExceptLast = responsesToString.slice(0, -1);
     const responseLast = responsesToString.slice(-1);
@@ -76,7 +78,9 @@ const Header = () => {
               onClick={async () => {
                 if (hasUnsavedChangesInHistory) {
                   const shouldToggle = await confirmSelectIfDirtyModal();
-                  if (!shouldToggle) return;
+                  if (!shouldToggle) {
+                    return;
+                  }
                 }
                 toggleOverlayModal("inndelinger");
               }}

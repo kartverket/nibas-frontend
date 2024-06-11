@@ -81,7 +81,9 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: Inndel
     const labelRegExp = new RegExp(`(.*)(${escapedInputValue})(.*)`, "i");
     const matches = inndeling.label.match(labelRegExp);
 
-    if (!matches) return <FormattedOption label={inndeling.label} type={inndeling.type} />;
+    if (!matches) {
+      return <FormattedOption label={inndeling.label} type={inndeling.type} />;
+    }
 
     return (
       <FormattedOption

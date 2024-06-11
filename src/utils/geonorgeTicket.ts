@@ -23,7 +23,9 @@ export const getSrcWithTicket = async (tjenesteId: string, src: string) => {
 };
 
 const fetchNewTicket = async (tjenesteId: string) => {
-  if (!ticketConfigSetUpCorrectly) return "*";
+  if (!ticketConfigSetUpCorrectly) {
+    return "*";
+  }
 
   try {
     const ticketResponse = await fetch(getUrlForPath(`/skbaatts/req?tjenesteid=${tjenesteId}`));

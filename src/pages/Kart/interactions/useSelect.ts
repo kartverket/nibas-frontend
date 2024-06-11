@@ -20,7 +20,9 @@ import { removeNil } from "utils/list-utils";
 
 const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
-  if (coordinates.length < 2) return;
+  if (coordinates.length < 2) {
+    return;
+  }
   const middle = Math.floor((coordinates.length - 1) / 2);
   return coordinates[middle];
 };

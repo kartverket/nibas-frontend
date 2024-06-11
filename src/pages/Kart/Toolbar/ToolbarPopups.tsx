@@ -82,11 +82,12 @@ const ToolbarPopups = () => {
   };
 
   const handleClearMatrikkel = () => {
-    if (clearMatrikkelLayer())
+    if (clearMatrikkelLayer()) {
       toast({
         status: "success",
         title: "Teiggrensene ble fjernet fra kartet",
       });
+    }
   };
 
   const getActiveToolPopup = () => {
@@ -115,9 +116,10 @@ const ToolbarPopups = () => {
         );
 
       case "split":
-        if (selectedFeatures.length === 0)
+        if (selectedFeatures.length === 0) {
           return <ToolbarPopup text="Velg grensen du ønsker å dele" onClose={resetTool} />;
-        if (selectedFeatures.length === 1)
+        }
+        if (selectedFeatures.length === 1) {
           return (
             <ToolbarPopup
               text="Velg hvilket punkt du ønsker å dele grensen på"
@@ -127,6 +129,7 @@ const ToolbarPopups = () => {
               onClose={resetTool}
             />
           );
+        }
         break;
 
       case "grenseinfo":

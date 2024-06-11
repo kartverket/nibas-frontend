@@ -39,13 +39,17 @@ const setSharedIndexIfFeatureInSource = (source: VectorSource, featureId: string
 export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometry>[], callback?: () => void) => {
   const layer = getLayerById(sourceId) as VectorLayer<Feature>;
   const source = layer.getSource();
-  if (!source) return;
+  if (!source) {
+    return;
+  }
 
   const newFeatures: Feature<Geometry>[] = [];
 
   features.forEach((feature) => {
     const id = feature.getId();
-    if (id == null) return;
+    if (id == null) {
+      return;
+    }
 
     const shouldBeArchived = isFeatureToBeArchived(feature);
     if (shouldBeArchived) {
@@ -60,18 +64,24 @@ export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometr
   });
 
   source.addFeatures(newFeatures);
-  if (callback) callback();
+  if (callback) {
+    callback();
+  }
 };
 
 export const removeFeaturesFromSourceByIds = (sourceId: LayerId, featureIds: string[]) => {
   const layer = getLayerById(sourceId) as VectorLayer<Feature>;
   const source = layer.getSource();
-  if (!source) return;
+  if (!source) {
+    return;
+  }
 
   const removeFeature = (featureId: string) => {
     const featureToRemove = source.getFeatureById(featureId) as Feature<Geometry> | null;
 
-    if (!featureToRemove) return null;
+    if (!featureToRemove) {
+      return null;
+    }
 
     // hvis delt, ikke slett
     const sharedIndex = featureToRemove.get("sharedIndex");

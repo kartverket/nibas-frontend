@@ -61,8 +61,12 @@ const useInteractions = () => {
     // snaps må legges til etter modify og draw interactions
     kartlagSnapData.current = createKartlagSnapsData(activeModeTools, activeTool);
     Object.values(kartlagSnapData.current).forEach((snapData) => {
-      if (snapData?.snap) map.addInteraction(snapData.snap);
-      if (snapData?.hover) map.addInteraction(snapData.hover);
+      if (snapData?.snap) {
+        map.addInteraction(snapData.snap);
+      }
+      if (snapData?.hover) {
+        map.addInteraction(snapData.hover);
+      }
     });
 
     return () => {
@@ -72,11 +76,16 @@ const useInteractions = () => {
       map.removeInteraction(modify);
       map.removeInteraction(draw);
       map.removeInteraction(dragZoom);
-      if (kartlagSnapData.current)
+      if (kartlagSnapData.current) {
         Object.values(kartlagSnapData.current).forEach((snapData) => {
-          if (snapData?.hover) map.removeInteraction(snapData.hover);
-          if (snapData?.snap) map.removeInteraction(snapData.snap);
+          if (snapData?.hover) {
+            map.removeInteraction(snapData.hover);
+          }
+          if (snapData?.snap) {
+            map.removeInteraction(snapData.snap);
+          }
         });
+      }
     };
   }, [activeModeTools, activeTool, dragPan, dragZoom, draw, modify, select, selectPoint]);
 };

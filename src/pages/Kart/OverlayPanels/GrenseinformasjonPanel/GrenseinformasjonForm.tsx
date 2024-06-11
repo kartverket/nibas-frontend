@@ -6,7 +6,6 @@ import { styled } from "styled-components";
 import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
-import { isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
@@ -16,6 +15,11 @@ import { Controller } from "react-hook-form";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import {
+  isTempFeatureId,
+  isNonEditableFeatureId,
+  getNonEditableFeatureId,
+} from "pages/Kart/interactions/feature-id-utils";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -68,7 +72,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled || metadata?.common?.gyldigTil != null;
 
   const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
-    if (id === undefined || id.length === 0) return "Ikke spesifisert";
+    if (id === undefined || id.length === 0) {
+      return "Ikke spesifisert";
+    }
 
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
     if (maalemetode) {
@@ -114,7 +120,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             acceptText: "Gå tilbake til redigering",
             declineText: "Forkast endringene",
           });
-          if (!shouldNotClose) onClose();
+          if (!shouldNotClose) {
+            onClose();
+          }
         }}
         subHeading={`${isTempFeatureId(featureId) ? "" : `Sist oppdatert: ${getSistOppdatert()}`}`}
         noMargin
@@ -141,7 +149,12 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Grensen sin unike identifikator"
         isRequired
         valueLabel={(() => {
-          if (isTempFeatureId(featureId)) return `Ny grense - ID blir satt ved publisering`;
+          if (isTempFeatureId(featureId)) {
+            return `Ny grense - ID blir satt ved publisering`;
+          }
+          if (isNonEditableFeatureId(featureId)) {
+            return getNonEditableFeatureId(feature);
+          }
           return featureId;
         })()}
       />
@@ -151,7 +164,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
         isRequired
         valueLabel={(() => {
-          if (isTempFeatureId(featureId)) return "Ny grense - Dato blir satt ved publisering";
+          if (isTempFeatureId(featureId)) {
+            return "Ny grense - Dato blir satt ved publisering";
+          }
           const date = metadata.common?.gyldigFra;
           return date !== undefined ? datestringToFormattedDatestring(date) : null;
         })()}
@@ -194,7 +209,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         valueLabel={(() => {
           const date = getValues("datafangstDato");
 
-          if (date) return dateToFormattedDatestring(date);
+          if (date) {
+            return dateToFormattedDatestring(date);
+          }
         })()}
         isEditing={isEditing}
       >
