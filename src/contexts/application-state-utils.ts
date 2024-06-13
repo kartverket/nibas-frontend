@@ -279,7 +279,9 @@ export const saveApplicationStateToSessionStorage = (applicationState: Applicati
 export const fetchMapPositionFromSessionStorage = (): MapPosition | null => {
   const serializedView = sessionStorage.getItem(sessionStorageKeys.mapPosition);
 
-  if (serializedView == null) return null;
+  if (serializedView == null) {
+    return null;
+  }
 
   const deserializedView = JSON.parse(serializedView);
 
@@ -288,7 +290,9 @@ export const fetchMapPositionFromSessionStorage = (): MapPosition | null => {
 
 export const fetchSelectedPointFromSessionStorage = (): Feature<Point> | null => {
   const serializedPoint = sessionStorage.getItem(sessionStorageKeys.selectedPoint);
-  if (serializedPoint == null || serializedPoint === "null") return null;
+  if (serializedPoint == null || serializedPoint === "null") {
+    return null;
+  }
 
   const geoJson = new GeoJSON();
   const deserializedPoint = geoJson.readFeature(serializedPoint);
@@ -299,7 +303,9 @@ export const fetchSelectedPointFromSessionStorage = (): Feature<Point> | null =>
 
 export const fetchSelectedFeaturesFromSessionStorage = (): Feature<LineString>[] => {
   const serializedFeatures = sessionStorage.getItem(sessionStorageKeys.selectedFeatures);
-  if (serializedFeatures == null) return [];
+  if (serializedFeatures == null) {
+    return [];
+  }
 
   const geoJson = new GeoJSON();
   const deserializedFeatures = geoJson.readFeatures(serializedFeatures);
@@ -310,7 +316,9 @@ export const fetchSelectedFeaturesFromSessionStorage = (): Feature<LineString>[]
 
 export const fetchActiveOverlayModalFromSessionStorage = (): OverlayModal | null => {
   const serializedOverlayModal = sessionStorage.getItem(sessionStorageKeys.overlayModal);
-  if (serializedOverlayModal == null) return null;
+  if (serializedOverlayModal == null) {
+    return null;
+  }
 
   const deserializedOverlayModal = JSON.parse(serializedOverlayModal);
 
@@ -324,7 +332,9 @@ export const fetchActiveOverlayModalFromSessionStorage = (): OverlayModal | null
 
 export const fetchActiveOverlayPanelFromSessionStorage = (): OverlayPanel | null => {
   const serializedOverlayPanel = sessionStorage.getItem(sessionStorageKeys.overlayPanel);
-  if (serializedOverlayPanel == null) return null;
+  if (serializedOverlayPanel == null) {
+    return null;
+  }
 
   const deserializedOverlayPanel = JSON.parse(serializedOverlayPanel);
   if (isOverlayPanel(deserializedOverlayPanel) === true) {
@@ -337,7 +347,9 @@ export const fetchActiveOverlayPanelFromSessionStorage = (): OverlayPanel | null
 
 export const fetchHistoryFromSessionStorage = (): HistoryState | null => {
   const serializedHistory = sessionStorage.getItem(sessionStorageKeys.history);
-  if (serializedHistory == null) return null;
+  if (serializedHistory == null) {
+    return null;
+  }
 
   const deserializedHistory = deserializeHistory(serializedHistory);
   if (deserializedHistory != null) {
@@ -349,7 +361,9 @@ export const fetchHistoryFromSessionStorage = (): HistoryState | null => {
 
 export const fetchInndelingFromSessionStorage = (): SelectedInndelinger | null => {
   const serializedInndelinger = sessionStorage.getItem(sessionStorageKeys.inndeling);
-  if (serializedInndelinger == null) return null;
+  if (serializedInndelinger == null) {
+    return null;
+  }
 
   const deserializedInndelinger = JSON.parse(serializedInndelinger);
   if (isSelectedInndelinger(deserializedInndelinger)) {
@@ -362,7 +376,9 @@ export const fetchInndelingFromSessionStorage = (): SelectedInndelinger | null =
 
 export const fetchActiveModeToolsFromSessionStorage = (): ModeTool[] | null => {
   const serializedModeTools = sessionStorage.getItem(sessionStorageKeys.activeModeTools);
-  if (serializedModeTools == null) return null;
+  if (serializedModeTools == null) {
+    return null;
+  }
 
   const deserializedModeTools = JSON.parse(serializedModeTools);
 
@@ -375,7 +391,9 @@ export const fetchActiveModeToolsFromSessionStorage = (): ModeTool[] | null => {
 
 export const fetchActiveToolFromSessionStorage = (): Tool | null => {
   const serializedTool = sessionStorage.getItem(sessionStorageKeys.activeTool);
-  if (serializedTool == null) return null;
+  if (serializedTool == null) {
+    return null;
+  }
 
   const deserializedTool = JSON.parse(serializedTool);
 

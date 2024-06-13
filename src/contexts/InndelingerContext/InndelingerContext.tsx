@@ -59,7 +59,7 @@ export const isInndeling = (inndeling: Inndeling): inndeling is Inndeling => {
     inndeling instanceof Object &&
     "id" in inndeling &&
     "inndelingtype" in inndeling &&
-    "isVisible" in inndeling &&
+    "isViewing" in inndeling &&
     "isEditing" in inndeling
   ) {
     return true;
