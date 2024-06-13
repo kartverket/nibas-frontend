@@ -209,7 +209,9 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) =
   }
 
   const getColor = () => {
-    if (gyldigTil != null) return inndelingColors["fremtidigEndring"];
+    if (gyldigTil != null) {
+      return inndelingColors["fremtidigEndring"];
+    }
 
     return inndelingColors[grenseId];
   };
@@ -234,8 +236,12 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) =
 export const updateRepresentasjonspunkt = (inndelingId: string, number?: string, name?: string) => {
   const feature = editSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   if (feature) {
-    if (number != null) feature.set("number", number);
-    if (name != null) feature.set("name", name);
+    if (number != null) {
+      feature.set("number", number);
+    }
+    if (name != null) {
+      feature.set("name", name);
+    }
   }
 };
 

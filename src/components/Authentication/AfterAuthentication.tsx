@@ -4,12 +4,14 @@ import { Logo, Spinner, Text } from "@kvib/react";
 import PrivacyFooter from "pages/Landing/PrivacyFooter";
 import { Navigate, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useEffect } from "react";
 import { User } from "oidc-client-ts";
+import { useAuthentication } from "./AuthenticationHook";
 
 const getUtkastIdFromUser = (user?: User | null): string | null => {
-  if (user?.state == null) return null;
+  if (user?.state == null) {
+    return null;
+  }
 
   if (user.state instanceof Object && "utkastId" in user.state && typeof user.state.utkastId === "string") {
     return user.state.utkastId;

@@ -49,7 +49,9 @@ export const ReferanserPaginated = ({ referanser, urlMode, deleteRef, formViewSt
             height="24px"
             isDisabled={page === 0}
             onClick={() => {
-              if (page <= 0) return;
+              if (page <= 0) {
+                return;
+              }
               setPage(page - 1);
             }}
           >
@@ -67,7 +69,9 @@ export const ReferanserPaginated = ({ referanser, urlMode, deleteRef, formViewSt
             icon="chevron_right"
             isDisabled={page === numberOfPages - 1}
             onClick={() => {
-              if (page + 1 >= numberOfPages) return;
+              if (page + 1 >= numberOfPages) {
+                return;
+              }
               setPage(page + 1);
             }}
           >

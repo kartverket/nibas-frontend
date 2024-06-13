@@ -30,7 +30,9 @@ const HeaderHistoryOperations = () => {
   useKeyboardShortcut("undo", undo, !!undo);
   useKeyboardShortcut("redo", redo, !!redo);
 
-  if (!utkast) return null;
+  if (!utkast) {
+    return null;
+  }
 
   return (
     <HeaderSection>

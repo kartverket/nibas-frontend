@@ -67,7 +67,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
 
     const isUpdateSuccessfull = updatedUtkastStatusCode != null && statusCode.isSuccessful(updatedUtkastStatusCode);
     setIsLoading(false);
-    if (isUpdateSuccessfull) {
+    if (isUpdateSuccessfull === true) {
       mutate();
       reset(getValues());
       onClose();

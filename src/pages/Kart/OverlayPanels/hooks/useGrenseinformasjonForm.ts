@@ -50,7 +50,9 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
       const metadataDiscriminator = getMetadataDiscriminatorFromType(data.grenseType);
       const commonMetadata = metadata.common;
 
-      if (!metadataDiscriminator || !commonMetadata) return; // errorhåndtering på noe vis her
+      if (!metadataDiscriminator || !commonMetadata) {
+        return;
+      } // errorhåndtering på noe vis her
 
       // Vi trenger sårt MetadataRequest/MetadataUpdate her. Merker det er veldig knotete å sende inn en request på metadata for felter som backenden *egentlig*
       // ikke trenger blir likevel satt som påkrevd fra klienten. Må gjøre unødvendig spreading på common og sette en fallback på maalemetode.href på grunn av dette

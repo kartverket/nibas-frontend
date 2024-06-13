@@ -45,7 +45,9 @@ export const addFeaturePropertiesEntryFromFeature = (
   updatedFeatureProperties: FeatureProperties,
 ) => {
   const id = feature.getId()?.toString();
-  if (id == null) return;
+  if (id == null) {
+    return;
+  }
 
   const oldFeatureProperties = feature.getProperties() as FeatureProperties;
 
@@ -69,7 +71,9 @@ export const addArchivingEntryFromFeatureList = (
   const changeEntries: HistoryChange<FeatureProperties>[] = removeNil(
     features.map((feature) => {
       const id = feature.getId()?.toString();
-      if (id == null) return;
+      if (id == null) {
+        return;
+      }
 
       const oldProperties = feature.getProperties() as FeatureProperties;
       const newProperties: FeatureProperties = {
@@ -98,7 +102,9 @@ export const addKontekstEntryFromFeature = (
   addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
 ) => {
   const id = feature.getId()?.toString();
-  if (id == null) return;
+  if (id == null) {
+    return;
+  }
 
   const oldProperties = feature.getProperties() as FeatureProperties;
   const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;

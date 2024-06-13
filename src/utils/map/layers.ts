@@ -11,6 +11,7 @@ import { map } from "pages/Kart/constants";
 import { getFeaturesFromGeoJson } from "./geoJson";
 import { mapProjectionEPSGCode } from "./projections";
 import { addFeaturesToSource } from "./source";
+import { Feature } from "ol";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -34,7 +35,7 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
-export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<VectorSource> => {
+export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<Feature> => {
   return layer instanceof VectorLayer && layer.getSource() instanceof VectorSource;
 };
 
@@ -55,7 +56,9 @@ export const getMatrikkelFeatures = async () => {
       method: "POST",
       body: new XMLSerializer().serializeToString(request),
     });
-    if (!response.ok) throw new Error("Feil i response: " + response);
+    if (!response.ok) {
+      throw new Error("Feil i response: " + response);
+    }
 
     const json = await response.json();
     const fetchedFeatures = getFeaturesFromGeoJson(json);

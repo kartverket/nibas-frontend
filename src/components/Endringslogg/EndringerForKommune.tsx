@@ -1,4 +1,4 @@
-import { KretsendringerForKommune } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { Kretsendringer, KretsendringerForKommune } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { EndringerKommuneCardList } from "components/Endringslogg/EndringerKommuneCardList";
 import { EndringListItem, ListHeading } from "components/Endringslogg/EndringerListComponents";
@@ -8,7 +8,7 @@ type EndringerForKommuneProps = {
   endringer: KretsendringerForKommune;
 };
 
-const harEndringer = (endringer: KretsendringerForKommune) =>
+export const harEndringer = (endringer: Kretsendringer) =>
   endringer.antallArkiverteGrenser > 0 ||
   endringer.antallNyeGrenser > 0 ||
   endringer.antallEndredeGrenser > 0 ||

@@ -95,7 +95,9 @@ export const VedtaksinfoDetaljer = ({
   };
 
   const onSubmit = (data: VedtakinfoForm) => {
-    if (!isFormValidOnSubmit(data)) return;
+    if (!isFormValidOnSubmit(data)) {
+      return;
+    }
 
     updateFeature(data);
     if (formViewState === "editing") {
@@ -115,7 +117,9 @@ export const VedtaksinfoDetaljer = ({
     onClose();
   };
 
-  if (!metadata) return;
+  if (!metadata) {
+    return;
+  }
 
   if (isOpen && selectedVedtaksinfoId != null) {
     const dokumentasjonsRef = metadata.dokumentasjonsreferanser;
@@ -172,7 +176,9 @@ export const VedtaksinfoDetaljer = ({
                 onClose={closeModal}
                 deleteOrArchive={async () => {
                   const didDeleteOrArchive = await deleteOrArchive();
-                  if (didDeleteOrArchive) closeModal();
+                  if (didDeleteOrArchive) {
+                    closeModal();
+                  }
                 }}
                 vedtaksinfoIsPersisted={isVedtakPersisted(selectedVedtaksinfoId, metadata)}
               />
@@ -201,8 +207,9 @@ const VedtaksFooter = ({
   vedtaksinfoIsPersisted,
   onAvbryt,
 }: FooterProps) => {
-  if (formViewState === "viewing") return <VisVedtakFooter toggleEndreVedtak={toggleEndreVedtak} />;
-  else if (formViewState === "editing")
+  if (formViewState === "viewing") {
+    return <VisVedtakFooter toggleEndreVedtak={toggleEndreVedtak} />;
+  } else if (formViewState === "editing") {
     return (
       <EndreVedtakFooter
         onAvbryt={onAvbryt}
@@ -210,7 +217,9 @@ const VedtaksFooter = ({
         vedtaksinfoIsPersisted={vedtaksinfoIsPersisted}
       />
     );
-  else return <NyttVedtakFooter onClose={onClose} />;
+  } else {
+    return <NyttVedtakFooter onClose={onClose} />;
+  }
 };
 
 const VisVedtakFooter = ({ toggleEndreVedtak }: { toggleEndreVedtak: () => void }) => {
@@ -313,8 +322,12 @@ const VedtakFooterRight = styled.div`
 `;
 
 function isVedtakPersisted(selectedVedtaksinfoId: string | undefined, metadata: Metadata) {
-  if (selectedVedtaksinfoId == null) return false;
-  if (metadata.dokumentasjonsreferanser == null) return false;
+  if (selectedVedtaksinfoId == null) {
+    return false;
+  }
+  if (metadata.dokumentasjonsreferanser == null) {
+    return false;
+  }
 
   const dokref = metadata.dokumentasjonsreferanser.find((ref) => ref.id === selectedVedtaksinfoId);
 

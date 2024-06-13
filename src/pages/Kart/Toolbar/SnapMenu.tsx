@@ -22,7 +22,9 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
       toggleModeTool("snap_nibas");
     } else if (isMatrikkelToggled) {
       toggleModeTool("snap_matrikkel");
-    } else toggleModeTool("snap_nibas");
+    } else {
+      toggleModeTool("snap_nibas");
+    }
   };
 
   useKeyboardShortcut("snap", onToggle);

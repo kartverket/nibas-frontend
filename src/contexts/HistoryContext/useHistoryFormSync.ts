@@ -23,7 +23,9 @@ export const useHistoryFormSync = <EntryType extends HistoryEntry>({
 
       const changeForThisId = getChangeForId(entry, entityId);
 
-      if (!changeForThisId) return;
+      if (!changeForThisId) {
+        return;
+      }
 
       setFormValues(changeForThisId, "from");
     }) as EventListener;
@@ -41,7 +43,9 @@ export const useHistoryFormSync = <EntryType extends HistoryEntry>({
 
       const changeForThisId = getChangeForId(entry, entityId);
 
-      if (!changeForThisId) return;
+      if (!changeForThisId) {
+        return;
+      }
 
       setFormValues(changeForThisId, "to");
     }) as EventListener;

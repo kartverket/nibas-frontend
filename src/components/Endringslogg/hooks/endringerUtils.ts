@@ -9,6 +9,7 @@ import {
   UtkastOperasjoner,
 } from "../../../types/api";
 import {
+  Kretsendringer,
   KretsendringerForKommune,
   KretsSammenslaaingEndring,
   KretsSplittingEndring,
@@ -18,6 +19,7 @@ import {
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { getNavnInSpraak, inndelingResponseNavnToString } from "utils/language/language";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 const getEndredeFeaturesForKretstype = (operasjoner: OperasjonerOrNull, kretstype: KontekstType): FeatureDTO[] => {
   const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
@@ -298,7 +300,9 @@ const getEndringerForKommune = <T extends KontekstType>(
   );
 
   const antallArkiverteGrenser = endredeFeatures.filter((feature) => feature.properties.shouldArchive).length;
-  const antallNyeGrenser = endredeFeatures.filter((feature) => feature.id == null).length;
+  const antallNyeGrenser = endredeFeatures.filter(
+    (feature) => feature.id == null || isTempFeatureId(feature.id),
+  ).length;
   const antallEndredeGrenser = endredeFeatures.length - (antallArkiverteGrenser + antallNyeGrenser);
 
   const kommune = alleKommuner.find((kommuneResponse) => kommuneResponse.id.lokalid.value === kommuneId);
@@ -315,6 +319,24 @@ const getEndringerForKommune = <T extends KontekstType>(
     antallNyeGrenser,
     sammenslaaing: getSammenslaaingEndring(kretserMedEndringer, operasjoner, alleKretser),
     delinger: getKretsdelinger(kommune?.id.lokalid.value, operasjoner, alleKretser, kretstype),
+  };
+};
+
+export const getGrenserndringerUtenTilhorighet = (operasjoner: UtkastOperasjoner): Kretsendringer => {
+  const featuresUtenTilhorighet = operasjoner.grenseendringer.endredeFeatures.filter(
+    (feature) => feature.properties.kontekstEgenskaper.length === 0,
+  );
+
+  const antallNyeGrenser = featuresUtenTilhorighet.filter((feature) => feature.id == null).length;
+  const antallEndredeGrenser = featuresUtenTilhorighet.filter((feature) => feature.id != null).length;
+
+  return {
+    metadataendringer: [],
+    antallEndredeGrenser,
+    antallArkiverteGrenser: 0,
+    antallNyeGrenser,
+    sammenslaaing: null,
+    delinger: null,
   };
 };
 

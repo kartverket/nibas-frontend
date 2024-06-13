@@ -22,7 +22,9 @@ const Kart = () => {
   useEffect(() => {
     // mapRef kan egentlig ikke være null her,
     // MapTarget blir rendret før denne useEffect'en blir kjørt
-    if (!mapRef.current) return;
+    if (!mapRef.current) {
+      return;
+    }
 
     map.setTarget(mapRef.current);
 

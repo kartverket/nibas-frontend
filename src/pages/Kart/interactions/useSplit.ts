@@ -4,11 +4,11 @@ import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/so
 import { useToolbar } from "contexts/ToolbarContext";
 import { Point } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/temp-feature-id-utils";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import { Coordinate } from "ol/coordinate";
 import { equals } from "ol/array";
+import { getTempFeatureId, isTempFeatureId } from "./feature-id-utils";
 
 export type SplittedFeature = {
   oldFeatureId: string;
@@ -33,7 +33,9 @@ const useSplit = () => {
       const allFeatureCoordinates = oldGeometry.getCoordinates();
       const oldFeatureId = oldFeature.getId()?.toString();
 
-      if (oldFeatureId === undefined) return;
+      if (oldFeatureId === undefined) {
+        return;
+      }
 
       // Ikke vits å gjøre splitting med mindre du har en linje med minst tre punkter
       if (allFeatureCoordinates.length > 2) {
@@ -99,7 +101,9 @@ const useSplit = () => {
   const archiveOldFeature = (oldFeature: Feature<Geometry>) => {
     const properties = oldFeature.getProperties();
     const oldFeatureId = oldFeature.getId()?.toString();
-    if (oldFeatureId == null) return;
+    if (oldFeatureId == null) {
+      return;
+    }
 
     oldFeature.setProperties({ ...properties, shouldArchive: true });
     removeFeaturesFromSourceByIds("edit", [oldFeatureId]);
@@ -112,7 +116,9 @@ const useSplit = () => {
 
   const performFeatureSplit = (featureToSplit: Feature<Geometry>, coordinatesToSplit: Coordinate[]) => {
     const features = createNewFeatures(featureToSplit, coordinatesToSplit);
-    if (features == null) return;
+    if (features == null) {
+      return;
+    }
 
     addFeaturesToSource("edit", features.newFeatures);
     archiveOldFeature(features.oldFeature);

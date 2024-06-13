@@ -120,7 +120,9 @@ const MergePanel = () => {
 
   const mergeStemmekrets = async () => {
     // Man kommer seg ikke hit uten utkast uansett, men for typesikringens del:
-    if (!utkast) return;
+    if (!utkast) {
+      return;
+    }
 
     const selectedStemmekretsValue = getValues("stemmekrets");
     const stemmekretsNummerTilSammenslaaing: string[] = getValues("nummerTilSammenslaaing").map((s) => s.value);

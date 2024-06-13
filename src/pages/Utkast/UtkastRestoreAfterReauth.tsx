@@ -1,9 +1,9 @@
 import { useOutlet } from "react-router-dom";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useEffect } from "react";
 import { featureEnabled } from "components/FeatureToggle";
 import { fetchInndelingFromSessionStorage } from "contexts/application-state-utils";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 export const UtkastRestoreAfterReauth = () => {
   const outlet = useOutlet();

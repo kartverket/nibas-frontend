@@ -2,7 +2,6 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { addFeaturesToSource } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { removeNil } from "utils/list-utils";
 import { getLayerById } from "utils/map/layers";
 import { GrenseId } from "hooks/layers/types";
@@ -26,6 +25,7 @@ import { exclusiveSelectTools } from "pages/Kart/interactions/useSelect";
 import { useToolbar } from "contexts/ToolbarContext";
 import { map } from "pages/Kart/constants";
 import { featureEnabled } from "components/FeatureToggle";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Inndelingtyper = typeof INNDELINGTYPER;
@@ -50,7 +50,7 @@ export type BaseInndeling = {
 };
 
 export type Inndeling = BaseInndeling & {
-  isVisible: boolean;
+  isViewing: boolean;
   isEditing: boolean;
 };
 
@@ -158,7 +158,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     const selectedPointFromSessionStorage = fetchSelectedPointFromSessionStorage();
     if (selectedPointFromSessionStorage != null) {
       const coords = selectedPointFromSessionStorage.getGeometry()?.getCoordinates();
-      if (coords == null) return;
+      if (coords == null) {
+        return;
+      }
       selectPointOnFeature(coords, selectedFeatures);
     }
 
@@ -257,7 +259,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       featuresInInndeling: Feature<Geometry>[],
       inndelingType: Inndelingtype,
     ): Feature<Geometry>[] => {
-      if (inndelingType !== "stemmekrets") return [];
+      if (inndelingType !== "stemmekrets") {
+        return [];
+      }
 
       const sammenslaaingFeaturesWithDuplicates: Feature<Geometry>[] = [];
 
@@ -284,7 +288,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             );
 
             for (const id of kontekstEgenskapIds) {
-              if (stemmekretsInSammenslaaingIds.includes(id)) sammenslaaingFeaturesWithDuplicates.push(feature);
+              if (stemmekretsInSammenslaaingIds.includes(id)) {
+                sammenslaaingFeaturesWithDuplicates.push(feature);
+              }
             }
           }
         }
@@ -293,13 +299,19 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       return sammenslaaingFeaturesWithDuplicates;
     };
 
-    if (inndelingFeatures.length === 0) return;
+    if (inndelingFeatures.length === 0) {
+      return;
+    }
 
     // Tøm alle sources som blir brukt, vi skal uansett legge til alle features på nytt for å sikre at ting er riktig
-    if (inndelingerToFetch.some((inndeling) => inndeling.isEditing)) editSource.clear(true);
-    for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isVisible)) {
+    if (inndelingerToFetch.some((inndeling) => inndeling.isEditing)) {
+      editSource.clear(true);
+    }
+    for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isViewing)) {
       const source = getLayerById(inndeling.inndelingtype).getSource();
-      if (source) source.clear(true);
+      if (source) {
+        source.clear(true);
+      }
     }
 
     for (const inndelingWithFeatures of inndelingFeatures) {
@@ -309,8 +321,20 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
       // Dette skal i praksis ikke skje, da inndelingFeatures er bygd opp basert på selectedInndelinger
       // Må uansett sjekke casen sånn at TypeScript vet at currentInndeling ikke er null videre
-      if (!currentInndeling) continue;
+      if (!currentInndeling) {
+        continue;
+      }
 
+      // Først sjekker vi om en inndeling skal vises. Dette ønsker vi å gjøre før vi eventuelt legger features i edit-laget slik at vi ikke kopierer features som har fått edit-layer styling på seg.
+      if (currentInndeling.isViewing) {
+        // I det tilfellet en inndeling skal vises og redigeres samtidig må features klones slik at de får en unik openlayers-id (ol_uid).
+        const clonedFeatures = inndelingWithFeatures.features.map((feature) => {
+          const clone = feature.clone();
+          clone.setId(feature.getId()?.toString().concat("_isViewing"));
+          return clone;
+        });
+        addInndelingToLayer(currentInndeling.inndelingtype, clonedFeatures);
+      }
       /**
        * Når vi legger inn inndelinger som redigeres må vi i tillegg til å deale med de vanlige featurene i inndelingen, deale med featurene som kommer fra utkastet
        * Det som må bli gjort er følgende:
@@ -335,10 +359,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           utkastFeaturesInInndeling,
           sammenslaaingsFeaturesWithDuplicates,
         );
-      }
-
-      if (currentInndeling.isVisible) {
-        addInndelingToLayer(currentInndeling.inndelingtype, inndelingWithFeatures.features);
       }
     }
 
@@ -392,7 +412,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     if (inndelingIfAlreadySelected) {
       if (isEditing) {
-        newInndeling.isVisible = inndelingIfAlreadySelected.isVisible;
+        newInndeling.isViewing = inndelingIfAlreadySelected.isViewing;
       } else {
         newInndeling.isEditing = inndelingIfAlreadySelected.isEditing;
       }
@@ -408,8 +428,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     for (const inndeling of getAllInndelinger()) {
       // Dersom man redigerer nye inndelinger så skal alle gamle inndelinger som er i redigeringsmodus fjernes.
-      // I tilfellet inndelingen har isVisible, så kan vi ikke fjerne den plent, og må bare flippe isEditing til false.
-      // Dersom isEditing og isVisible begge blir false fjernes inndelingen senere
+      // I tilfellet inndelingen har isViewing, så kan vi ikke fjerne den plent, og må bare flippe isEditing til false.
+      // Dersom isEditing og isViewing begge blir false fjernes inndelingen senere
       if (isNewEditingInndelinger && inndeling.isEditing) {
         const notEditingInndeling: Inndeling = {
           ...inndeling,
@@ -419,10 +439,10 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         newInndelinger[notEditingInndeling.inndelingtype].set(notEditingInndeling.id, notEditingInndeling);
       }
 
-      // Likt som over, så må vi forsikre oss om at alle inndelinger med isVisible fjernes dersom de ikke var med i innsendingen av nye inndelinger
+      // Likt som over, så må vi forsikre oss om at alle inndelinger med isViewing fjernes dersom de ikke var med i innsendingen av nye inndelinger
       // Også her, siden den kan ha isEditing true, kan vi ikke bare fjerne den plent
       // Siden visningpanelet er additivt og ikke ekslusivt så forsikrer vi oss om å kun flippe inndelingen hvis den ikke er med i inndelingene vi har sendt inn
-      if (!isNewEditingInndelinger && inndeling.isVisible) {
+      if (!isNewEditingInndelinger && inndeling.isViewing) {
         const inndelingIsInSelected = inndelingerToSelect.some((toSelectInndeling) =>
           isSameInndelinger(inndeling, toSelectInndeling),
         );
@@ -430,7 +450,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!inndelingIsInSelected) {
           const notVisibleInndeling: Inndeling = {
             ...inndeling,
-            isVisible: false,
+            isViewing: false,
           };
 
           newInndelinger[notVisibleInndeling.inndelingtype].set(notVisibleInndeling.id, notVisibleInndeling);
@@ -451,7 +471,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     ]);
 
     for (const newInndeling of newInndelingerList) {
-      if (!newInndeling.isEditing && !newInndeling.isVisible) {
+      if (!newInndeling.isEditing && !newInndeling.isViewing) {
         newInndelinger[newInndeling.inndelingtype].delete(newInndeling.id);
       }
     }

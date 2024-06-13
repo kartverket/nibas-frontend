@@ -70,8 +70,12 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
 
   const getFlateOptionsFromInndelingType = () => {
     if (inndelingtype != null) {
-      if (inndelingtype === "grunnkrets") return mapGrunnkretsResponseToKrets(grunnkretser ?? []);
-      if (inndelingtype === "stemmekrets") return mapStemmekretResponseToKrets(stemmekretser ?? []);
+      if (inndelingtype === "grunnkrets") {
+        return mapGrunnkretsResponseToKrets(grunnkretser ?? []);
+      }
+      if (inndelingtype === "stemmekrets") {
+        return mapStemmekretResponseToKrets(stemmekretser ?? []);
+      }
     }
 
     return [];

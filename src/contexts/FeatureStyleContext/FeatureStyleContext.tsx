@@ -143,7 +143,9 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
     if (history.entries.length === 0) {
       for (const customStyle of customStyles) {
-        if (customStyle.customFeatureIds.length !== 0) customStyle.saveCustomStyles();
+        if (customStyle.customFeatureIds.length !== 0) {
+          customStyle.saveCustomStyles();
+        }
       }
       // Forhindre uendelig løkke når history er tom
       return;
@@ -219,9 +221,10 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
       if (featureId != null) {
         const properties = endretFeature.getProperties() as FeatureProperties | undefined;
+        const shouldArchive = properties?.shouldArchive;
 
         // Avgjør hvilken type endringsfarge featuren skal ha
-        if (properties != null && properties.shouldArchive) {
+        if (shouldArchive !== undefined && shouldArchive) {
           archivedFeatureIds.push(featureId);
 
           const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(endretFeature);
@@ -229,10 +232,13 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
           for (const connectedFeature of connectedFeatures) {
             const connectedFeatureId = connectedFeature.getId()?.toString();
             const connectedFeatureProperties = connectedFeature.getProperties() as FeatureProperties | undefined;
-            if (connectedFeatureId == null || !connectedFeatureProperties) continue;
+            if (connectedFeatureId == null || !connectedFeatureProperties) {
+              continue;
+            }
 
-            if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints))
+            if (!connectedFeatureProperties.shouldArchive && isFeatureDeadEnd(connectedFeature, allFeatureEndpoints)) {
               errorFeatureIds.push(connectedFeatureId);
+            }
           }
         } else if (isFeatureDeadEnd(endretFeature, allFeatureEndpoints)) {
           errorFeatureIds.push(featureId);

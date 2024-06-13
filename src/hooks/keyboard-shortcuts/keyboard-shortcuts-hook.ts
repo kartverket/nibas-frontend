@@ -53,7 +53,9 @@ export const useHoldButtonToggle = (
       const isKeyDownEvent = event.type === "keydown";
 
       if (event.key?.toLowerCase() === button.toLowerCase() && isValidTarget(event.target)) {
-        if (condition && !condition()) return;
+        if (condition && !condition()) {
+          return;
+        }
 
         event.stopPropagation();
         event.preventDefault();

@@ -143,7 +143,9 @@ const findMappedLayer = (
 const removeLayer = (layers: string, layerId: string) => {
   const commaRegex = new RegExp(`(,?)(${layerId})(,?)`, "i");
   const matches = commaRegex.exec(layers);
-  if (!matches) return layers;
+  if (!matches) {
+    return layers;
+  }
 
   const hasLeadingComma = matches.at(1) === ",";
   const hasTrailingComma = matches.at(3) === ",";
@@ -174,7 +176,9 @@ const setWMSLayerVisibility = (layer: TileLayer<TileSource>, willBeVisible: bool
     } else {
       const newLayers = removeLayer(layers, layerId);
       source.updateParams({ LAYERS: newLayers });
-      if (!newLayers) layer.setVisible(false);
+      if (!newLayers) {
+        layer.setVisible(false);
+      }
     }
   }
 };

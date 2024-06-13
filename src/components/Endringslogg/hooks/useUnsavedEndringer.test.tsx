@@ -20,6 +20,8 @@ import { FeatureProperties, KretsDelingEndringRequest } from "../../../types/api
 import { mockStemmekrets1 } from "../../../mocks/handlers/responses";
 import { Feature } from "ol";
 import { MockAuthProvider } from "../../../mocks/contexts/AuthContextMock";
+import Geometry from "ol/geom/Geometry";
+import LineString from "ol/geom/LineString";
 
 describe("useUnsavedEndringer", () => {
   describe("kretsendringer", () => {
@@ -235,6 +237,37 @@ describe("useUnsavedEndringer", () => {
       expect(kretsdeling.nyeKretser[2].kretsNavn).toBe(mockStemmekrets1.navn);
       expect(kretsdeling.nyeKretser[2].kretsNummer).toBe(mockStemmekrets1.nummer);
     });
+
+    it("om du deler samme grense 2 ganger skal det føre til 1 arkivering og 3 nye grenser", async () => {
+      // Den opprinnelig grensen blir delt i 2: 1 arkivering, 2 nye grenser
+      // Vi deler så en av de nye grensene i 2. Dette arkiverer en "ny" grense så denne blir bare slettet, og man
+      // får 2 nye for totalt 3 grenser.
+
+      const entries = [createGrensedelingEntry("id1", ["id2", "id3"]), createGrensedelingEntry("id2", ["id4", "id5"])];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.antallEndringer).toBe(4);
+      expect(result.current.kretsendringer.antallNyeGrenser).toBe(3);
+      expect(result.current.kretsendringer.antallArkiverteGrenser).toBe(1);
+    });
+
+    it("om du tegner en ny grense og så endrer på grensen skal det kun telles som en ny grense", async () => {
+      const entries = [createNyGrenseHistoryEntry("id1"), createEditedGrenseHistoryEntry("id1")];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.antallEndringer).toBe(1);
+      expect(result.current.kretsendringer.antallNyeGrenser).toBe(1);
+      expect(result.current.kretsendringer.antallEndredeGrenser).toBe(0);
+    });
+
+    it("om du endrer en grense og så arkiverer den skal den kun telles som en arkivering", async () => {
+      const entries = [createEditedGrenseHistoryEntry("id1"), createArchivedGrenseHistoryEntry("id1")];
+      const { result } = renderHookWithHistory(entries);
+
+      expect(result.current.antallEndringer).toBe(1);
+      expect(result.current.kretsendringer.antallEndredeGrenser).toBe(0);
+      expect(result.current.kretsendringer.antallArkiverteGrenser).toBe(1);
+    });
   });
 
   describe("kommuneendringer", () => {
@@ -376,8 +409,8 @@ function createGrensedelingHistoryEntry(id: string, nyeIDer: string[]): GrenseDe
     changes: [
       {
         id,
-        from: [new Feature({ id })],
-        to: nyeIDer.map((newId) => new Feature({ id: newId })),
+        from: [createFeatureWithId(id)],
+        to: nyeIDer.map((newId) => createFeatureWithId(newId)),
       },
     ],
   };
@@ -493,6 +526,19 @@ function createMetadataendringHistoryEntry(id: string, from: NavnOgNummer, to: N
   };
 }
 
+function createGrensedelingEntry(fromId: string, toIds: string[]): GrenseDelingEntry {
+  return {
+    type: "grensedeling",
+    changes: [
+      {
+        id: fromId,
+        from: [createFeatureWithId(fromId)],
+        to: toIds.map((toId) => createFeatureWithId(toId)),
+      },
+    ],
+  };
+}
+
 function createKretsdelingEntry(id: string, to: NavnOgNummer[]): KretsdelingEntry {
   const kretsdelingrequest: KretsDelingEndringRequest = {
     opprinneligKrets: {
@@ -514,4 +560,15 @@ function createKretsdelingEntry(id: string, to: NavnOgNummer[]): KretsdelingEntr
       },
     ],
   };
+}
+
+function createFeatureWithId(id: string): Feature<Geometry> {
+  const feature = new Feature({
+    geometry: new LineString([
+      [0, 0],
+      [1, 1],
+    ]),
+  });
+  feature.setId(id);
+  return feature;
 }

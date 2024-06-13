@@ -79,9 +79,13 @@ export const reduceFlatedataChanges = (
     if (oldValues) {
       // Dersom inndelingen er uendret skal vi ikke lage en endring i history
       if (isKommuneInput(oldValues)) {
-        if (newValues.samiskforvaltningsomraade === oldValues.samiskforvaltningsomraade) return accumulator;
+        if (newValues.samiskforvaltningsomraade === oldValues.samiskforvaltningsomraade) {
+          return accumulator;
+        }
       } else {
-        if (newValues.nummer === oldValues.nummer && newValues.navn === oldValues.navn) return accumulator;
+        if (newValues.nummer === oldValues.nummer && newValues.navn === oldValues.navn) {
+          return accumulator;
+        }
       }
 
       const changedInndeling = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);

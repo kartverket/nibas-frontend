@@ -21,8 +21,6 @@ import { capitalize } from "utils/string-utils";
 import { useState } from "react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSearch from "hooks/useSearch";
-import { useForm } from "react-hook-form";
-import { FlatedataInputs } from "./flatedata-utils";
 
 const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
   const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
@@ -43,12 +41,9 @@ const FlatedataPanel = () => {
   const { inndelinger } = useInndelinger();
   const { open } = useConfirmationModal();
 
-  const formMethods = useForm<FlatedataInputs>();
-  const { reset } = formMethods;
-
   const allInndelinger = Object.values(inndelinger)
     .flatMap((inndelingerMap) => [...inndelingerMap.values()])
-    .filter((inndeling) => inndeling.isVisible || inndeling.isEditing)
+    .filter((inndeling) => inndeling.isViewing || inndeling.isEditing)
     .toSorted((a, b) => (a.isEditing === b.isEditing ? 0 : a.isEditing ? -1 : 1));
 
   // Dersom brukeren lukker panelet med ulagrede endringer ønsker vi en bekreftelse
@@ -68,19 +63,20 @@ const FlatedataPanel = () => {
   };
 
   const handleTabsChange = (index: number) => {
-    handleDraft(() => setTabIndex(index));
-    setIsEditing(false);
-    clearSearch();
+    handleDraft(() => {
+      setTabIndex(index);
+      setIsEditing(false);
+      clearSearch();
+    });
   };
 
   const handleCloseModal = () => {
     handleDraft(() => {
       closeOverlayModal();
-      reset();
+      setIsEditing(false);
+      setTabIndex(0);
+      clearSearch();
     });
-    setIsEditing(false);
-    setTabIndex(0);
-    clearSearch();
   };
 
   return (
@@ -117,7 +113,6 @@ const FlatedataPanel = () => {
                 setIsEditing={setIsEditing}
                 searchValue={searchValue}
                 clearSearch={clearSearch}
-                formMethods={formMethods}
               />
             ))}
           </FlatedataTabPanels>

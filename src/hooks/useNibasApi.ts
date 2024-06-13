@@ -42,7 +42,9 @@ type ResponseType<Path extends ApiPath> = paths[Path] extends {
   : never;
 
 export const getUrlWithParameters = <Path extends ApiPath>(url: Path | null, params: GetParameters<Path>) => {
-  if (params == null || url == null) return url;
+  if (params == null || url == null) {
+    return url;
+  }
 
   let modifiedUrl = url.toString();
 

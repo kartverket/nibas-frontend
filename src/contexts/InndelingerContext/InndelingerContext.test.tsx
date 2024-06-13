@@ -39,7 +39,7 @@ const isEditingStemmekrets1: Inndeling = {
   id: "e-1",
   inndelingtype: "stemmekrets",
   isEditing: true,
-  isVisible: false,
+  isViewing: false,
   navn: [
     {
       navn: "e-1",
@@ -54,7 +54,7 @@ const isEditingStemmekrets2: Inndeling = {
   id: "e-2",
   inndelingtype: "stemmekrets",
   isEditing: true,
-  isVisible: false,
+  isViewing: false,
   navn: [
     {
       navn: "e-2",
@@ -69,7 +69,7 @@ const isEditingStemmekrets3: Inndeling = {
   id: "e-3",
   inndelingtype: "stemmekrets",
   isEditing: true,
-  isVisible: false,
+  isViewing: false,
   navn: [
     {
       navn: "e-3",
@@ -84,7 +84,7 @@ const isVisibleKommune1: Inndeling = {
   id: "v-1",
   inndelingtype: "kommune",
   isEditing: false,
-  isVisible: true,
+  isViewing: true,
   navn: [
     {
       navn: "v-1",
@@ -146,7 +146,7 @@ describe("InndelingerContext", () => {
 
     const isVisibleInndelingerAfterSelectIds = result.current
       .getAllInndelinger()
-      .filter((inndeling) => inndeling.isVisible)
+      .filter((inndeling) => inndeling.isViewing)
       .map((inndeling) => inndeling.id);
 
     expect(isVisibleInndelingerAfterSelectIds.sort()).toEqual(["v-1"].sort());
@@ -155,7 +155,7 @@ describe("InndelingerContext", () => {
   it("should not overwrite the view mode if selecting it in edit mode", () => {
     const newIsVisibleKommune1: Inndeling = {
       ...isVisibleKommune1,
-      isVisible: false,
+      isViewing: false,
       isEditing: true,
     };
 
@@ -171,14 +171,14 @@ describe("InndelingerContext", () => {
 
     expect(inndelingToCheck).toBeTruthy();
     expect(inndelingToCheck?.isEditing).toEqual(true);
-    expect(inndelingToCheck?.isVisible).toEqual(true);
+    expect(inndelingToCheck?.isViewing).toEqual(true);
   });
 
   it("should not overwrite the edit mode if selecting it in view mode", () => {
     const newIsEditingStemmekrets1: Inndeling = {
       ...isEditingStemmekrets1,
       isEditing: false,
-      isVisible: true,
+      isViewing: true,
     };
 
     const inndelingerToSelect: Inndeling[] = [newIsEditingStemmekrets1];
@@ -193,7 +193,7 @@ describe("InndelingerContext", () => {
 
     expect(inndelingToCheck).toBeTruthy();
     expect(inndelingToCheck?.isEditing).toEqual(true);
-    expect(inndelingToCheck?.isVisible).toEqual(true);
+    expect(inndelingToCheck?.isViewing).toEqual(true);
   });
 
   it("should remove inndelinger which are neither in edit or view mode", () => {
@@ -203,7 +203,7 @@ describe("InndelingerContext", () => {
 
     const shouldBeRemovedInndelinger = result.current
       .getAllInndelinger()
-      .filter((inndeling) => !inndeling.isVisible && !inndeling.isEditing);
+      .filter((inndeling) => !inndeling.isViewing && !inndeling.isEditing);
 
     expect(shouldBeRemovedInndelinger.length).toEqual(0);
   });
@@ -218,7 +218,7 @@ describe("InndelingerContext", () => {
       result.current.selectInndelinger([isVisibleKommune1, newIsVisibleKommune1]);
     });
 
-    const isVisibleInndelinger = result.current.getAllInndelinger().filter((inndeling) => inndeling.isVisible);
+    const isVisibleInndelinger = result.current.getAllInndelinger().filter((inndeling) => inndeling.isViewing);
 
     expect(isVisibleInndelinger.length).toEqual(2);
     expect(isVisibleInndelinger[0].inndelingtype).toEqual("kommune");

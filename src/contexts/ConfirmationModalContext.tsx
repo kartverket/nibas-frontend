@@ -33,12 +33,16 @@ export const ConfirmationModalProvider = ({ children }: { children: React.ReactN
     return {
       ...modalOptions,
       onAccept: () => {
-        if (modalOptions.onAccept) modalOptions.onAccept();
+        if (modalOptions.onAccept) {
+          modalOptions.onAccept();
+        }
 
         setModal(null);
       },
       onDecline: () => {
-        if (modalOptions.onDecline) modalOptions.onDecline();
+        if (modalOptions.onDecline) {
+          modalOptions.onDecline();
+        }
 
         setModal(null);
       },
@@ -54,7 +58,9 @@ export const ConfirmationModalProvider = ({ children }: { children: React.ReactN
       const props = getModalPropsFromOptions(modalOptions);
 
       props.onAccept = () => {
-        if (modalOptions.onAccept) modalOptions.onAccept();
+        if (modalOptions.onAccept) {
+          modalOptions.onAccept();
+        }
 
         setModal(null);
 
@@ -62,7 +68,9 @@ export const ConfirmationModalProvider = ({ children }: { children: React.ReactN
       };
 
       props.onDecline = () => {
-        if (modalOptions.onDecline) modalOptions.onDecline();
+        if (modalOptions.onDecline) {
+          modalOptions.onDecline();
+        }
 
         setModal(null);
 
