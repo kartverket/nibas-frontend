@@ -24,6 +24,8 @@ import {
   AuthNotAuthorized,
 } from "components/Authentication/Authentication";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { AuthRenewError } from "components/Authentication/AuthRenewError";
+import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
 
 const App = () => {
   const { token } = useAuthentication();
@@ -40,7 +42,7 @@ const App = () => {
         <Route path={routes.logout} element={<Navigate to={routes.index} replace={true} />} />
         <Route element={<ProtectedPage />}>
           <Route index element={<Landing />} />
-          <Route path={routes.utkast}>
+          <Route path={routes.utkast} element={<UtkastRestoreAfterReauth />}>
             <Route index element={<Utkast />} />
             <Route path={routes.utkastId} element={<PageLayout />} />
           </Route>
@@ -62,8 +64,7 @@ const App = () => {
 const ProtectedPage = () => {
   const outlet = useOutlet();
   const navigate = useNavigate();
-  const { isAuthenticated, checkAuthorization, isLoading } = useAuthentication();
-
+  const { isAuthenticated, checkAuthorization, isLoading, user } = useAuthentication();
   useEffect(() => {
     if (isAuthenticated) {
       checkAuthorization().then((result) => {
@@ -74,7 +75,7 @@ const ProtectedPage = () => {
         }
       });
     }
-  }, [isAuthenticated, checkAuthorization, navigate]);
+  }, [isAuthenticated, checkAuthorization, navigate, user]);
 
   if (isLoading) {
     return <Loading />;
@@ -84,7 +85,11 @@ const ProtectedPage = () => {
     return <Navigate to={routes.authentication} replace={true} />;
   }
 
-  return <Providers>{outlet}</Providers>;
+  return (
+    <Providers>
+      <AuthRenewError>{outlet}</AuthRenewError>
+    </Providers>
+  );
 };
 
 export default App;

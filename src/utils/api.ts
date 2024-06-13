@@ -20,8 +20,6 @@ export const getIdFromEntity = (entity: ApiEntity | ApiEntityWithIdentifikasjon)
   } else {
     return entity.id.lokalid.value;
   }
-
-  return "";
 };
 
 class ResponseError extends Error {
@@ -78,8 +76,10 @@ export const isApiError = (err: any): err is ApiErrorResponse => {
 export const statusCode = {
   isInformational: (code: number) => code >= 100 && code < 200,
   isSuccessful: (code: number) => code >= 200 && code < 300,
-  isConflict: (code: number) => code === 409,
   isRedirection: (code: number) => code >= 300 && code < 400,
+  isUnauhtorized: (code: number) => code === 401,
+  isForbidden: (code: number) => code === 403,
+  isConflict: (code: number) => code === 409,
   isClientError: (code: number) => code >= 400 && code < 500,
   isServerError: (code: number) => code >= 500 && code < 600,
   isError: (code: number) => code >= 400 && code < 600,

@@ -3,16 +3,16 @@ import AlertModal from "components/Modals/AlertModal";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
+import useMapReset from "hooks/useMapReset";
 import LandingHeader from "pages/Landing/LandingHeader";
 import PrivacyFooter from "pages/Landing/PrivacyFooter";
+import { useEffect } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { routes } from "utils/routes";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
-import useMapReset from "hooks/useMapReset";
-import { useEffect } from "react";
 
 type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
 
@@ -22,7 +22,6 @@ const sortUtkastByCreatedDesc = (a: UtkastResponse, b: UtkastResponse): number =
 const Utkast = () => {
   const { error, setError } = useErrorHandling();
   const { data: utkasts, isLoading } = useUtkasts();
-
   const resetMap = useMapReset();
 
   useEffect(() => {

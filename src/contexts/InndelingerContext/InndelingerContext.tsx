@@ -2,7 +2,6 @@ import { createContext, useCallback, useContext, useEffect, useState } from "rea
 import { addFeaturesToSource } from "utils/map/source";
 import { zoomToFeatures } from "utils/map/map-utils";
 import { editSource, grenserLayers } from "hooks/layers/constants";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { removeNil } from "utils/list-utils";
 import { getLayerById } from "utils/map/layers";
 import { GrenseId } from "hooks/layers/types";
@@ -12,7 +11,21 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { AdministrativEnhetNavn, FeatureProperties } from "types/api";
 import useInndelingFeatures from "./useInndelingFeatures";
 import { getFeatureFremtidigEndringDato } from "utils/features";
+import {
+  fetchActiveOverlayModalFromSessionStorage,
+  fetchActiveOverlayPanelFromSessionStorage,
+  fetchHistoryFromSessionStorage,
+  fetchSelectedFeaturesFromSessionStorage,
+  fetchSelectedPointFromSessionStorage,
+  fetchMapPositionFromSessionStorage,
+} from "contexts/application-state-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { exclusiveSelectTools } from "pages/Kart/interactions/useSelect";
+import { useToolbar } from "contexts/ToolbarContext";
+import { map } from "pages/Kart/constants";
+import { featureEnabled } from "components/FeatureToggle";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 type Inndelingtyper = typeof INNDELINGTYPER;
@@ -39,6 +52,19 @@ export type BaseInndeling = {
 export type Inndeling = BaseInndeling & {
   isViewing: boolean;
   isEditing: boolean;
+};
+
+export const isInndeling = (inndeling: Inndeling): inndeling is Inndeling => {
+  if (
+    inndeling instanceof Object &&
+    "id" in inndeling &&
+    "inndelingtype" in inndeling &&
+    "isViewing" in inndeling &&
+    "isEditing" in inndeling
+  ) {
+    return true;
+  }
+  return false;
 };
 
 type Inndelinger = {
@@ -91,6 +117,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return a.id === b.id && a.inndelingtype === b.inndelingtype;
   };
 
+  const { restoreHistoryState } = useHistory();
+  const { selectPointOnFeature, addToSelection, selectFeatures } = useFeatureStyle();
+  const { openOverlayModal, openOverlayPanel } = useOverlayPanel();
+  const { activeTool } = useToolbar();
+
   const getAllInndelinger = useCallback((): Inndeling[] => {
     return Object.values(inndelinger).flatMap((inndelingerMap) => [...inndelingerMap.values()]);
   }, [inndelinger]);
@@ -98,6 +129,67 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const getAllInndelingerId = useCallback((): string[] => {
     return getAllInndelinger().map((inndeling) => inndeling.id);
   }, [getAllInndelinger]);
+
+  const restoreApplicationState = useCallback(() => {
+    const sessionStorageHistory = fetchHistoryFromSessionStorage();
+
+    // TODO: Selected feature/point style virker ikke.
+    const selectedFeatures = fetchSelectedFeaturesFromSessionStorage();
+    if (selectedFeatures != null && selectedFeatures.length > 0) {
+      const mapPosition = fetchMapPositionFromSessionStorage();
+
+      map.getView().animate({
+        center: mapPosition?.center,
+        zoom: mapPosition?.zoom,
+      });
+      if (exclusiveSelectTools.includes(activeTool) === true) {
+        selectFeatures(selectedFeatures);
+      } else {
+        addToSelection(selectedFeatures[0]);
+      }
+    } else {
+      zoomToFeatures(
+        inndelingFeatures
+          .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
+          .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
+      );
+    }
+
+    const selectedPointFromSessionStorage = fetchSelectedPointFromSessionStorage();
+    if (selectedPointFromSessionStorage != null) {
+      const coords = selectedPointFromSessionStorage.getGeometry()?.getCoordinates();
+      if (coords == null) {
+        return;
+      }
+      selectPointOnFeature(coords, selectedFeatures);
+    }
+
+    if (sessionStorageHistory != null) {
+      restoreHistoryState(sessionStorageHistory);
+    }
+
+    const activeModalFromSessionStorage = fetchActiveOverlayModalFromSessionStorage();
+
+    if (activeModalFromSessionStorage != null) {
+      openOverlayModal(activeModalFromSessionStorage);
+    }
+
+    const activePanelFromSessionStorage = fetchActiveOverlayPanelFromSessionStorage();
+
+    if (activePanelFromSessionStorage != null) {
+      openOverlayPanel(activePanelFromSessionStorage);
+    }
+  }, [
+    activeTool,
+    addToSelection,
+    getAllInndelingerId,
+    inndelingFeatures,
+    openOverlayModal,
+    openOverlayPanel,
+    restoreHistoryState,
+    selectFeatures,
+    selectPointOnFeature,
+  ]);
 
   /**
    * Denne useEffecten er kjernen av motoren i InndelingerContext og tar for seg det å legge til features fra inndelingen i kartet
@@ -272,13 +364,15 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     // Reapply historikken slik at eventuelle features som har blitt endret på siden siste lagring er i sync med historikken
     reapplyCurrentEntries();
-
-    zoomToFeatures(
-      inndelingFeatures
-        .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
-        .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
-    );
-
+    if (featureEnabled("SAVE_STATE_ON_REAUTH")) {
+      restoreApplicationState();
+    } else {
+      zoomToFeatures(
+        inndelingFeatures
+          .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
+          .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
+      );
+    }
     // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
     // Dette sikrer også at featurene man får hentet fra inndelingene er tomme, og useEffecten ikke kjører flere ganger
     setInndelingerToFetch([]);
@@ -290,6 +384,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
     utkastFeaturesInInndeling,
     reapplyCurrentEntries,
+    restoreApplicationState,
     getHistoryEntries,
     addDirtyStyles,
     getAllInndelingerId,

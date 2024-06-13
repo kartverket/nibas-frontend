@@ -41,7 +41,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}",
   );
   const utkastId = utkastIdMatches ? utkastIdMatches[0] : null;
-
   const { mutate: globalMutate } = useSWRConfig();
   const {
     data: fetchedUtkast,
@@ -115,9 +114,12 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     return updatedUtkast;
   };
 
-  const updateUtkast = async (id: string, newUtkast: OppdaterUtkastRequest, shouldClearHistory: boolean = true) => {
+  const updateUtkast = async (
+    id: string,
+    newUtkast: OppdaterUtkastRequest,
+    shouldClearHistory: boolean = true,
+  ): Promise<number> => {
     const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), auth.token);
-
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
@@ -167,6 +169,9 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       setUtkast(updatedUtkastWithTempFeatureIds);
+    } else if (statusCode.isForbidden(response.status)) {
+      // Håndterer som at token er utløpt
+      return response.status;
     } else if (statusCode.isConflict(response.status)) {
       setError({
         title: "Konflikt ved lagring av utkast",
@@ -188,19 +193,21 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       });
     }
 
-    return statusCode.isSuccessful(response.status);
+    return response.status;
   };
 
   const updateUtkastWithHistory = async () => {
     const updatedUtkast = getUpdateUtkastRequestFromHistory();
 
     if (!updatedUtkast || !utkast) {
-      return;
+      return -1;
     }
 
-    if (await updateUtkast(utkast.id, updatedUtkast)) {
+    const updateUtkastStatus = await updateUtkast(utkast.id, updatedUtkast);
+    if (statusCode.isSuccessful(updateUtkastStatus)) {
       toast({ status: "success", title: "Utkastet er lagret" });
     }
+    return updateUtkastStatus;
   };
 
   /**

@@ -6,15 +6,18 @@ import { styled } from "styled-components";
 import { ErrorBox } from "./AuthenticationErrorBox";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useOutlet } from "react-router-dom";
+import Providers from "pages/App/Providers";
 
 export const AuthenticationWrapper = () => {
   const outlet = useOutlet();
   return (
-    <AuthenticationPage>
-      <Logo />
-      {outlet}
-      <PrivacyFooter />
-    </AuthenticationPage>
+    <Providers>
+      <AuthenticationPage>
+        <Logo />
+        {outlet}
+        <PrivacyFooter />
+      </AuthenticationPage>
+    </Providers>
   );
 };
 

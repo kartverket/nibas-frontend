@@ -8,6 +8,7 @@ import {
   HistoryTypeValues,
   KretsdelingEntry,
   StemmekretsSammenslaaingsendringEntry,
+  NyGrense,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
@@ -210,14 +211,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         });
       } else if (entry.type === "nygrense") {
         // ny grense er også sær, siden den kan inneholde 1-2 grensedelinger attåt
-        if (
-          "grensedeling" in change.from &&
-          change.from.grensedeling != null &&
-          change.from.grensedeling.length > 0 &&
-          "grensedeling" in change.to &&
-          change.to.grensedeling != null &&
-          change.to.grensedeling.length > 0
-        ) {
+        if (isNyGrenseChange(change) && change.from.grensedeling != null && change.to.grensedeling != null) {
           const newFeatures = removeNil(change.to.grensedeling.map((f) => f.getId()?.toString()));
           const removedFeatures = removeNil(change.from.grensedeling.map((f) => f.getId()?.toString()));
 
@@ -236,6 +230,23 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   return utkastOperations;
 };
 
+const isNyGrenseChange = (change: unknown): change is HistoryChange<NyGrense> => {
+  if (!(change instanceof Object) || !("from" in change) || !("to" in change)) {
+    return false;
+  }
+
+  if (
+    change.from instanceof Object &&
+    "grensedeling" in change.from &&
+    change.from.grensedeling != null &&
+    change.to instanceof Object &&
+    "grensedeling" in change.to &&
+    change.to.grensedeling != null
+  ) {
+    return true;
+  }
+  return false;
+};
 export const toCleanUtkast = (utkastToClean: OppdaterUtkastRequest): OppdaterUtkastRequest => {
   const utkastCopy = structuredClone(utkastToClean);
   const featureIsNotAnArchivedNewFeature = (feature: GeoJSONFeature): boolean =>
