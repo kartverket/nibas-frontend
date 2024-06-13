@@ -132,7 +132,7 @@ const FlatedataTableRow = ({
             }
             {...register(
               `${inndelingId}.nummer`,
-              isStemmekretsInndeling(inndeling) ? registerOptions.nummer : undefined,
+              isStemmekretsInndeling(inndeling) && disabledDate == null ? registerOptions.nummer : undefined,
             )}
           />
           <InputCell
@@ -142,7 +142,10 @@ const FlatedataTableRow = ({
             validationError={
               inndelingErrors && "navn" in inndelingErrors ? validationError(inndelingErrors.navn) : undefined
             }
-            {...register(`${inndelingId}.navn`, isStemmekretsInndeling(inndeling) ? registerOptions.navn : undefined)}
+            {...register(
+              `${inndelingId}.navn`,
+              isStemmekretsInndeling(inndeling) && disabledDate == null ? registerOptions.navn : undefined,
+            )}
           />
           <TableCell>{isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer ?? "" : ""}</TableCell>
           <TableCell>
