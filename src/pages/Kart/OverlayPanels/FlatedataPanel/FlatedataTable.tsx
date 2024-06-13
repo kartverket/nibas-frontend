@@ -9,9 +9,8 @@ import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSo
 import FlatedataTableHeader from "./FlatedataTableHeader";
 import { useForm } from "react-hook-form";
 import { useEffect, useRef } from "react";
-import { MetadataResponse } from "types/api";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import FlatedataTableRow from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
@@ -33,10 +32,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const { addHistoryEntry } = useHistory();
 
   const flatedata = useFlatedata(mainInndeling) ?? [];
-  const utkastFlatedata = (useUtkastEntity(
-    flatedata,
-    `${mainInndeling.inndelingtype === "fylke" ? "kommune" : mainInndeling.inndelingtype}endringer`,
-  ) ?? []) as MetadataResponse[];
 
   const formMethods = useForm<FlatedataInputs>();
   const {
@@ -68,7 +63,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
-    const changes = reduceFlatedataChanges(data, previousValues.current, utkastFlatedata, mainInndeling);
+    const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
 
     if (changes.length > 0) {
       // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
@@ -114,7 +109,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
           </tr>
         </thead>
         <tbody>
-          {orderInndelingerBy(utkastFlatedata, sortProperty, sortOrder).map((inndeling) => {
+          {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((inndeling) => {
             const inndelingId = getIdFromEntity(inndeling);
 
             const isSearchMatch =

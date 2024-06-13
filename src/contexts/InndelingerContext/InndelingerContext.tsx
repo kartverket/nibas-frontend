@@ -15,7 +15,7 @@ import { getFeatureFremtidigEndringDato } from "utils/features";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
-type Inndelingtyper = typeof INNDELINGTYPER;
+export type Inndelingtyper = typeof INNDELINGTYPER;
 export type Inndelingtype = Inndelingtyper[number];
 
 export const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
