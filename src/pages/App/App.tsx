@@ -6,6 +6,7 @@ import {
   createRoutesFromElements,
   RouterProvider,
   useNavigate,
+  matchRoutes,
 } from "react-router-dom";
 import Providers from "./Providers";
 import PageLayout from "../Kart/PageLayout";
@@ -26,6 +27,31 @@ import {
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { AuthRenewError } from "components/Authentication/AuthRenewError";
 import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
+import {
+  getWebInstrumentations,
+  initializeFaro,
+  ReactIntegration,
+  ReactRouterVersion,
+  withFaroRouterInstrumentation,
+} from "@grafana/faro-react";
+
+initializeFaro({
+  url: "http://faro.atkv3-sandbox.kartverket.cloud/collect",
+  app: {
+    name: "nibas-frontend",
+  },
+  instrumentations: [
+    ...getWebInstrumentations(),
+    new ReactIntegration({
+      router: {
+        version: ReactRouterVersion.V6_data_router,
+        dependencies: {
+          matchRoutes,
+        },
+      },
+    }),
+  ],
+});
 
 const App = () => {
   const { token } = useAuthentication();
@@ -52,10 +78,12 @@ const App = () => {
     ),
   );
 
+  const instrumentedRouter = withFaroRouterInstrumentation(router);
+
   return (
     <Suspense fallback={<Loading />}>
       <EnvironmentOverlay>
-        <RouterProvider router={router} />
+        <RouterProvider router={instrumentedRouter} />
       </EnvironmentOverlay>
     </Suspense>
   );

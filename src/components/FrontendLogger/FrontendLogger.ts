@@ -1,5 +1,4 @@
 import { getUrlForPath } from "utils/api";
-import StackTrace from "stacktrace-js";
 
 type LogLevels = "INFO" | "WARN" | "ERROR";
 
@@ -28,12 +27,7 @@ class FrontendLogger {
     error: Error | null | undefined,
     authToken?: string | null,
   ) => {
-    if (!error) {
-      this.sendLogToRemote(message, level, null, authToken);
-    } else {
-      const parsedStackFrames = await StackTrace.fromError(error);
-      this.sendLogToRemote(message, level, parsedStackFrames.map((frame) => frame.toString()).join("\n  "), authToken);
-    }
+    // NOOP
   };
 
   private sendLogToRemote = (
