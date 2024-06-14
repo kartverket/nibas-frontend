@@ -1,6 +1,7 @@
 import { HttpHandler, HttpResponse, http } from "msw";
 import * as mocks from "./responses";
 import { GrunnkretsResponse, StemmekretsResponse, UtkastRef, UtkastResponse } from "types/api";
+import { mockUtkast, mockUtkastIngenEndringer } from "./responses";
 
 export const nibasApiHandlers: HttpHandler[] = [
   http.get("/v1/fylker", () => HttpResponse.json(mocks.mockFylker, { status: 200 })),
@@ -22,6 +23,10 @@ export const nibasApiHandlers: HttpHandler[] = [
   http.get("/v1/stemmekretser/2", () => HttpResponse.json(mocks.mockStemmekrets2, { status: 200 })),
   http.post("/v1/utkast", () => HttpResponse.json({ id: "1" }, { status: 201 })),
   http.get("/v1/utkast/1", () => HttpResponse.json<UtkastResponse>(mocks.mockUtkast, { status: 200 })),
+  http.get(`/v1/utkast/${mockUtkast.id}`, () => HttpResponse.json<UtkastResponse>(mocks.mockUtkast, { status: 200 })),
+  http.get(`/v1/utkast/${mockUtkastIngenEndringer.id}`, () =>
+    HttpResponse.json<UtkastResponse>(mocks.mockUtkastIngenEndringer, { status: 200 }),
+  ),
   http.get("/v1/utkast", () =>
     HttpResponse.json<UtkastRef[]>([mocks.mockUtkastRef1, mocks.mockUtkastRef2], {
       status: 200,

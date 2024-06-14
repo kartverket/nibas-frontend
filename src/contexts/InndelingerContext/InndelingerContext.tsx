@@ -28,7 +28,7 @@ import { featureEnabled } from "components/FeatureToggle";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
-type Inndelingtyper = typeof INNDELINGTYPER;
+export type Inndelingtyper = typeof INNDELINGTYPER;
 export type Inndelingtype = Inndelingtyper[number];
 
 export const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {

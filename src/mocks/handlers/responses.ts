@@ -361,7 +361,7 @@ export const mockStemmekretser: StemmekretsResponse[] = [mockStemmekrets1, mockS
 export const mockUtkast: UtkastResponse = {
   navn: "Mock utkast",
   endringstype: "Retting",
-  id: "1",
+  id: "34c5b69e-0667-4229-82f2-f4377dde3bf3",
   status: "Ikke publisert",
   opprettetDato: "2022-01-01",
   version: 1,
@@ -373,7 +373,7 @@ export const mockUtkast: UtkastResponse = {
       "1": {
         ...mockDetailedGrunnkrets1,
         navn: "Utkast grunnkrets",
-        nummer: mockDetailedGrunnkrets1.nummer,
+        nummer: "123",
         version: 2,
         identifikasjon: {
           lokalid: mockDetailedGrunnkrets1.id.lokalid.value,
@@ -384,6 +384,7 @@ export const mockUtkast: UtkastResponse = {
       "1": {
         ...mockStemmekrets1,
         navn: "Utkast stemmekrets",
+        nummer: "123",
         version: 2,
         kommunenummer: mockStemmekrets1.kommunenummer.kodeverdi,
         identifikasjon: {
@@ -392,6 +393,23 @@ export const mockUtkast: UtkastResponse = {
       },
     },
     endredeFeatures: [mockGeoJsonFeatureResponse.features[0]],
+  }),
+};
+
+export const mockUtkastIngenEndringer: UtkastResponse = {
+  navn: "Mock utkast",
+  endringstype: "Retting",
+  id: "2c89f344-4afe-4b1b-a3e4-3158ce7a19ee",
+  status: "Ikke publisert",
+  opprettetDato: "2022-01-01",
+  version: 1,
+  auditInfoResponse: {
+    oppdateringsdato: "2022-06-01",
+  },
+  operasjoner: createUtkastOperations({
+    grunnkretsendringer: {},
+    stemmekretsendringer: {},
+    endredeFeatures: [],
   }),
 };
 
