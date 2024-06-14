@@ -93,6 +93,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       cleanUpUtkast();
       closeUtkast();
       clearInndelingerAndSources();
+      throw Error("en feil jeg gjorde med vilje!");
 
       if (utkastPathMatch) {
         navigate(routes.utkast);

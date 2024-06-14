@@ -36,7 +36,7 @@ import {
 } from "@grafana/faro-react";
 
 initializeFaro({
-  url: "http://faro.atkv3-sandbox.kartverket.cloud/collect",
+  url: "https://faro.atkv3-sandbox.kartverket.cloud/collect",
   app: {
     name: "nibas-frontend",
   },
