@@ -59,18 +59,9 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const cleanUpUtkast = () => {
     mutate(["/v1/utkast", token]);
 
-    // Mutate alle grense-ressurser som kan ha vært endret
+    // Mutate alle ressurser som kan ha vært endret
     // revalidate: false gjør at grensedata er satt til undefined når man forsøker å hente grensene på nytt igjen
-    mutate(
-      (key) =>
-        Array.isArray(key) &&
-        typeof key[0] === "string" &&
-        (key[0].endsWith("/grenser") ||
-          key[0].endsWith("/stemmekretsgrenser") ||
-          key[0].endsWith("/grunnkretsgrenser")),
-      undefined,
-      { revalidate: false },
-    );
+    mutate(() => true, undefined, { revalidate: false });
   };
 
   const publiserUtkast = async () => {
