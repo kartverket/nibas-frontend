@@ -316,7 +316,9 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     for (const inndelingWithFeatures of inndelingFeatures) {
       const currentInndeling = inndelingerToFetch.find((inndeling) => {
-        return inndeling.id === inndelingWithFeatures.id && inndeling.inndelingtype === inndeling.inndelingtype;
+        return (
+          inndeling.id === inndelingWithFeatures.id && inndelingWithFeatures.inndelingtype === inndeling.inndelingtype
+        );
       });
 
       // Dette skal i praksis ikke skje, da inndelingFeatures er bygd opp basert på selectedInndelinger
