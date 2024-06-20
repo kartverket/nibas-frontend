@@ -28,8 +28,8 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
     dev: getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
   },
   SAVE_STATE_ON_REAUTH: {
-    prod: false,
-    test: false,
+    prod: true,
+    test: true,
     dev: true,
   },
 };
