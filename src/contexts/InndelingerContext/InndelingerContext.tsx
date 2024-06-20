@@ -217,6 +217,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!everyFetchedFeatureIsInSource) {
           addFeaturesToSource(layer, features, () => {
             if (layer === "edit") {
+              // denne virker som at utkastFeatures ikke er filtrert fordi den er fra eigersund men dukker opp på stavanger
               setFeatureStylesForUtkast(changedFeaturesInUtkast, sammenslaaingFeaturesInUtkast);
 
               const idsOfFeaturesInHistory = getHistoryEntries()
@@ -345,8 +346,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
        * 3. Sette korrekt styling på ikke-redigerte features, utkastfeatures og sammmenslåingsfeatures
        */
       if (currentInndeling.isEditing) {
+        const utkastFeaturesForCurrentInndeling = utkastFeaturesInInndeling.filter((feature) => {
+          return inndelingWithFeatures.features.map((f) => f.getId() as string).includes(feature.getId() as string);
+        });
         const featuresInInndelingWithoutUtkastDuplicates = getFeaturesForInndelingAndUtkast(
-          utkastFeaturesInInndeling,
+          utkastFeaturesForCurrentInndeling,
           inndelingWithFeatures.features,
         );
 
@@ -354,11 +358,10 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           inndelingWithFeatures.features,
           currentInndeling.inndelingtype,
         );
-
         addInndelingToLayer(
           "edit",
           featuresInInndelingWithoutUtkastDuplicates,
-          utkastFeaturesInInndeling,
+          utkastFeaturesForCurrentInndeling,
           sammenslaaingsFeaturesWithDuplicates,
         );
       }
