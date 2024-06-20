@@ -217,7 +217,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         if (!everyFetchedFeatureIsInSource) {
           addFeaturesToSource(layer, features, () => {
             if (layer === "edit") {
-              // denne virker som at utkastFeatures ikke er filtrert fordi den er fra eigersund men dukker opp på stavanger
               setFeatureStylesForUtkast(changedFeaturesInUtkast, sammenslaaingFeaturesInUtkast);
 
               const idsOfFeaturesInHistory = getHistoryEntries()
