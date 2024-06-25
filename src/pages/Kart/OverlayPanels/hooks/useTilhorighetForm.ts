@@ -5,7 +5,7 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { historyToKretsdelingOperations } from "contexts/UtkastContext/utkast-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { FeatureProperties, KontekstEgenskaper, KretsDelingEndringRequest, UtkastOperasjoner } from "types/api";
 import {
   CustomOption,
@@ -21,6 +21,7 @@ import {
   TilhorighetOptions,
 } from "./tilhorighet-utils";
 import { getGrenseTilhorighetEntries, getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
+import { usePrevious } from "hooks/usePrevious";
 
 const getKretserFromKretsDelingEndringer = (
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -100,6 +101,7 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
   const { getHistoryEntries } = useHistory();
   const { data: kommuneResponses } = useNibasApi("/v1/kommuner");
   const { utkast } = useUtkast();
+  const previousFeature = usePrevious(feature);
 
   const featureProperties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = useMemo(
@@ -194,6 +196,12 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
       setFormState(getTilhorighetData(kontekstEgenskaper));
     }
   }, [feature, getHistoryEntries, kontekstEgenskaper]);
+
+  useEffect(() => {
+    if (previousFeature?.getId() !== feature.getId()) {
+      resetTilhorighet();
+    }
+  }, [feature, previousFeature, resetTilhorighet]);
 
   const getCurrentOppdaterteKontekstEgenskaper = () => {
     if (tilhorighetOptions) {
