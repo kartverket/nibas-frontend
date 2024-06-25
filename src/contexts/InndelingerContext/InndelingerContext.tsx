@@ -24,7 +24,6 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { exclusiveSelectTools } from "pages/Kart/interactions/useSelect";
 import { useToolbar } from "contexts/ToolbarContext";
 import { map } from "pages/Kart/constants";
-import { featureEnabled } from "components/FeatureToggle";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
@@ -368,15 +367,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     // Reapply historikken slik at eventuelle features som har blitt endret på siden siste lagring er i sync med historikken
     reapplyCurrentEntries();
-    if (featureEnabled("SAVE_STATE_ON_REAUTH")) {
-      restoreApplicationState();
-    } else {
-      zoomToFeatures(
-        inndelingFeatures
-          .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
-          .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
-      );
-    }
+    restoreApplicationState();
     // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
     // Dette sikrer også at featurene man får hentet fra inndelingene er tomme, og useEffecten ikke kjører flere ganger
     setInndelingerToFetch([]);

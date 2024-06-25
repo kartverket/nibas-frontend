@@ -70,7 +70,7 @@ export const fetcherWithToken = async ([url, token]: [string | null, string | un
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isApiError = (err: any): err is ApiErrorResponse => {
-  return err.errorCode !== null && err.errorDescription !== null;
+  return err.errorCode != null && err.errorDescription != null;
 };
 
 export const statusCode = {
