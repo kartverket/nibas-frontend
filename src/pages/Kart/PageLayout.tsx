@@ -9,10 +9,12 @@ import { ApiErrorResponse } from "../../types/api";
 import Header from "./Header/Header";
 import frontendLogger from "components/FrontendLogger/FrontendLogger";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 
 const PageLayout = () => {
   const { error, setError } = useErrorHandling();
   const { token } = useAuthentication();
+  const { setAuthRenewError } = useAuthRenewError();
 
   return (
     <Grid>
@@ -21,7 +23,9 @@ const PageLayout = () => {
           fetcher: (url) => fetch(url).then((res) => res.json()),
           onError: (err) => {
             frontendLogger.error("Noe gikk galt med kall til baksystem", err, token);
-            if (statusCode.isError(err.response?.status) && isApiError(err)) {
+            if (statusCode.isForbidden(err.response?.status) || statusCode.isUnauhtorized(err.response?.status)) {
+              setAuthRenewError(true);
+            } else if (statusCode.isError(err.response?.status) && isApiError(err)) {
               const wrapper = err as ApiErrorResponse;
               setError({
                 ...wrapper.errorDescription,
