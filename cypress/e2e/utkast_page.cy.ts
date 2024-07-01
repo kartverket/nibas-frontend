@@ -62,6 +62,9 @@ describe("kart page", () => {
     });
 
     cy.saveUtkast();
-    cy.publiserUtkast();
+  });
+
+  afterEach(() => {
+    cy.deleteUtkast();
   });
 });
