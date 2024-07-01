@@ -10,7 +10,6 @@ const sidepanelValues = ["splitt", "sammenslaaing", "kartlag"] as const;
 type Tool = (typeof toolValues)[number];
 type ModeTool = (typeof modeToolValues)[number];
 type Sidepanel = (typeof sidepanelValues)[number];
-
 declare namespace Cypress {
   interface Chainable {
     setupTestingGlobal: (globalKey: string) => void;

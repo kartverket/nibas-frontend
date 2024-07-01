@@ -28,6 +28,12 @@ describe("kart page", () => {
       // klikker på grensen sitt punkt for å velge å splitte den på punktet
       cy.clickAtCoordinate(map, [251343, 6627657]);
       cy.contains("Del grense").click();
+      cy.escape();
+
+      cy.toggleTool("split");
+      // klikker på grensen sitt punkt for å velge å splitte den på punktet
+      cy.clickAtCoordinate(map, [257099.81, 6627826.09]);
+      cy.contains("Del grense").click();
 
       const nyGrenseCoordinates = [
         [251343, 6627657],
