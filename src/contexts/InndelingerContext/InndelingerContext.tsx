@@ -344,11 +344,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
        * 3. Sette korrekt styling på ikke-redigerte features, utkastfeatures og sammmenslåingsfeatures
        */
       if (currentInndeling.isEditing) {
-        const utkastFeaturesForCurrentInndeling = utkastFeaturesInInndeling.filter((feature) => {
-          return inndelingWithFeatures.features.map((f) => f.getId() as string).includes(feature.getId() as string);
-        });
         const featuresInInndelingWithoutUtkastDuplicates = getFeaturesForInndelingAndUtkast(
-          utkastFeaturesForCurrentInndeling,
+          utkastFeaturesInInndeling,
           inndelingWithFeatures.features,
         );
 
@@ -359,7 +356,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         addInndelingToLayer(
           "edit",
           featuresInInndelingWithoutUtkastDuplicates,
-          utkastFeaturesForCurrentInndeling,
+          utkastFeaturesInInndeling,
           sammenslaaingsFeaturesWithDuplicates,
         );
       }
@@ -472,7 +469,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     }
 
     setInndelinger(newInndelinger);
-    setInndelingerToFetch(newInndelingerList);
+    setInndelingerToFetch(newInndelingerList.filter((inndeling) => inndeling.isEditing || inndeling.isViewing));
   };
 
   const value = {
