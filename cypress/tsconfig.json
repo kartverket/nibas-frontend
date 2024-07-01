@@ -5,5 +5,5 @@
     "types": ["cypress", "node"],
     "strictNullChecks": true
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", "../src", "../types/global.d.ts"]
 }
