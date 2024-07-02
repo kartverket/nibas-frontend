@@ -26,6 +26,7 @@ import {
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { AuthRenewError } from "components/Authentication/AuthRenewError";
 import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
+import "cypress-globals";
 
 const App = () => {
   const { token } = useAuthentication();

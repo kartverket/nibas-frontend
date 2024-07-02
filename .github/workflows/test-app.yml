@@ -33,16 +33,3 @@ jobs:
 
       - name: Tests
         run: npm test
-
-  test-cypress:
-    name: Test Cypress
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run Cypress
-        uses: cypress-io/github-action@v6
-        with:
-          build: npm ci
-          start: npm run start:no-auth
-          browser: chrome

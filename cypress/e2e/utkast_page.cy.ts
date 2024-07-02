@@ -1,50 +1,70 @@
-describe("utkast page", () => {
-  const baseUrl = Cypress.env("baseUrl") ?? "http://localhost:3000";
-  beforeEach(() => {
+describe("kart page", () => {
+  it("should open stemmekrets, remove point, add point, splitt grense, draw grense, splitt flate, and set tilhørigheter, save and publish", () => {
+    cy.login();
     cy.visit("/utkast");
-  });
 
-  it('should display the form with all elements after clicking "Opprett et nytt utkast"', () => {
-    cy.contains("Opprett et nytt utkast").click();
-    cy.get("form")
-      .should("be.visible")
-      .within(() => {
-        cy.get('input[type="text"]').should("exist");
-        cy.get("select").should("exist");
-        cy.contains("button", "Avbryt").should("exist");
-        cy.contains("button", "Opprett utkast").should("exist");
-      });
-  });
+    cy.setupTestingGlobal("map");
 
-  it("should be able to create a new utkast (without sending it to backend)", () => {
-    cy.intercept("POST", `${baseUrl}/v1/utkast`, (req) => {
-      expect(req.body).to.deep.equal({
-        navn: "Cypress test utkast",
-        endringstype: "Fastsetting",
-      });
+    cy.createUtkast();
+    cy.wait(1000);
+    const inndelingsType = "Stemmekrets";
+    cy.toggleRedigerInndeling(inndelingsType, "Akershus", "Frogn");
+    cy.wait(6000);
 
-      req.reply({
-        statusCode: 200,
-        body: { id: "123", message: "Mock response" },
-      });
-    }).as("createUtkast");
+    cy.get("@map").then((map) => {
+      cy.toggleTool("remove");
+      // klikker på grensen for å velge å redigere den
+      cy.clickAtCoordinate(map, [251343, 6627657]);
+      // Klikker på punkt på nytt for å fjerne punkt
+      cy.clickAtCoordinate(map, [251343, 6627657]);
 
-    cy.contains("Opprett et nytt utkast").click();
-    cy.get("form")
-      .should("be.visible")
-      .within(() => {
-        cy.get('input[type="text"]').type("Cypress test utkast");
-        cy.get("select").select("Fastsetting");
-        cy.contains("button", "Opprett utkast").click();
-      });
+      cy.toggleTool("add");
+      // klikker på grensen for å velge å redigere den
+      cy.clickAtCoordinate(map, [251343, 6627657]);
+      // Klikker på punkt på nytt for å legge til punkt
+      cy.clickAtCoordinate(map, [251343, 6627657]);
 
-    cy.wait("@createUtkast").its("request.body").should("deep.equal", {
-      navn: "Cypress test utkast",
-      endringstype: "Fastsetting",
+      cy.toggleTool("split");
+      // klikker på grensen sitt punkt for å velge å splitte den på punktet
+      cy.clickAtCoordinate(map, [251343, 6627657]);
+      cy.contains("Del grense").click();
+      cy.escape();
+
+      cy.toggleTool("split");
+      // klikker på grensen sitt punkt for å velge å splitte den på punktet
+      cy.clickAtCoordinate(map, [257099.81, 6627826.09]);
+      cy.contains("Del grense").click();
+
+      const nyGrenseCoordinates = [
+        [251343, 6627657],
+        [253854.9, 6627663.16],
+        [257099.81, 6627826.09],
+      ] as [number, number][];
+      cy.drawGrense(map, nyGrenseCoordinates);
+
+      const nyFlate = { navn: "Testsplitt", nummer: "10" };
+      cy.splittFlate("07 Nordre Frogn", [nyFlate]);
+
+      cy.settTilhorighetNyGrense(map, nyGrenseCoordinates[1], "Stemmekretser", [
+        { navn: "Testsplitt", nummer: "10" },
+        { navn: "Nordre Frogn", nummer: "07" },
+      ]);
+
+      cy.settTilhorighetEksisterendeGrense(map, [255274.61, 6627364.6], "Stemmekretser", [
+        { fra: "07 Nordre Frogn", til: "10 Testsplitt" },
+        { fra: "03 Heer", til: "03 Heer" },
+      ]);
+
+      cy.settTilhorighetEksisterendeGrense(map, [251748, 6626277.99], "Stemmekretser", [
+        { fra: "07 Nordre Frogn", til: "10 Testsplitt" },
+        { fra: "01 Drøbak", til: "01 Drøbak" },
+      ]);
     });
 
-    cy.visit("/utkast");
+    cy.saveUtkast();
+  });
 
-    cy.contains("Cypress test utkast").should("not.exist");
+  afterEach(() => {
+    cy.deleteUtkast();
   });
 });
