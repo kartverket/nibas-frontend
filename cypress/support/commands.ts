@@ -18,7 +18,9 @@ declare namespace Cypress {
     saveUtkast: () => void;
     publiserUtkast: () => void;
     deleteUtkast: () => void;
+    toggleKommunerRedigering: (fylke: string, kommuner: string[]) => void;
     toggleRedigerInndeling: (inndelingsType: InndelingsType, fylke: string, kommune: string) => void;
+    toggleVisningInndelinger: (inndelingsType: InndelingsType, fylke: string, kommuner: string[]) => void;
     toggleTool: (tool: Tool) => void;
     toggleModeTool: (tool: ModeTool) => void;
     toggleSidePanel: (sidepanel: Sidepanel) => void;
@@ -39,6 +41,14 @@ declare namespace Cypress {
       fraTil: [{ fra: string; til: string }, { fra: string; til: string }],
     ) => void;
     clickOnFeature: (map, layer: string, id: string, coordinateIndex: number) => object;
+    undoEndring: () => void;
+    redoEndring: () => void;
+    slaasammenStemmekretser: (
+      utgangspunktKretsNavn: string,
+      kretserNavnTilSammenslaaing: string[],
+      resultNavn: string,
+      resultNummer: string,
+    ) => void;
   }
 }
 
@@ -91,6 +101,42 @@ Cypress.Commands.add("toggleRedigerInndeling", (inndelingsType, fylke, kommune) 
   cy.contains(fylke).click();
 
   cy.contains(kommune).click();
+
+  cy.contains("Rediger valgte inndelinger").click();
+});
+
+Cypress.Commands.add("toggleVisningInndelinger", (inndelingsType, fylke, kommuner) => {
+  cy.contains("Forhåndsvis en inndeling").click();
+  cy.contains(inndelingsType).click();
+  cy.contains(fylke).click();
+
+  kommuner.forEach((kommune, i) => {
+    if (i > 0) {
+      cy.get(`@toggleKommune-${i - 1}`).then(() => {
+        cy.contains(kommune).click().as(`toggleKommune-${i}`);
+      });
+    } else {
+      cy.contains(kommune).click().as(`toggleKommune-${i}`);
+    }
+  });
+
+  cy.contains("Rediger valgte inndelinger").click();
+});
+
+Cypress.Commands.add("toggleKommunerRedigering", (fylke, kommuner) => {
+  cy.contains("Rediger en inndeling").click();
+  cy.contains("Kommune").click();
+  cy.contains(fylke).click();
+
+  kommuner.forEach((kommune, i) => {
+    if (i > 0) {
+      cy.get(`@toggleKommune-${i - 1}`).then(() => {
+        cy.contains(kommune).click().as(`toggleKommune-${i}`);
+      });
+    } else {
+      cy.contains(kommune).click().as(`toggleKommune-${i}`);
+    }
+  });
 
   cy.contains("Rediger valgte inndelinger").click();
 });
@@ -316,3 +362,32 @@ Cypress.Commands.add("clickOnFeature", (map, layer, id, coordinateIndex) => {
   const coordinates = feature.getGeometry().getCoordinates();
   cy.clickAtCoordinate(map, coordinates[coordinateIndex]);
 });
+
+Cypress.Commands.add("undoEndring", () => {
+  cy.contains("Angre").click();
+});
+Cypress.Commands.add("redoEndring", () => {
+  cy.contains("Gjør om").click();
+});
+
+Cypress.Commands.add(
+  "slaasammenStemmekretser",
+  (opprinneligFlateName, kretserNavnTilSammenslaaing, resultNavn, resultNummer) => {
+    cy.toggleSidePanel("sammenslaaing");
+    cy.get("select").first().select(opprinneligFlateName);
+    kretserNavnTilSammenslaaing.forEach((kretsNavn, i) => {
+      if (i > 0) {
+        cy.get(`select-${i - 1}`).then(() => {
+          cy.get("button").contains("Legg til flere sammenslåinger").click();
+          cy.get("select").last().select(kretsNavn).as(`select-${i}`);
+        });
+      } else {
+        cy.get("select").last().select(kretsNavn).as(`select-${i}`);
+      }
+    });
+    cy.contains("Stemmekretsnummer").siblings().type(resultNummer);
+    cy.contains("Stemmekretsnavn").siblings().type(resultNavn);
+
+    cy.get("button").contains("Slå sammen").click();
+  },
+);
