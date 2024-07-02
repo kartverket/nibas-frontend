@@ -13,7 +13,7 @@ import {
   SimpleInndelingResponse,
   UtkastResponse,
 } from "types/api";
-import { getUniqueItems, removeNil } from "utils/list-utils";
+import { removeNil } from "utils/list-utils";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/api";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
@@ -224,19 +224,36 @@ const featureHasInndelingAsTilhorighet = (feature: Feature, inndelinger: Inndeli
     // Vi sjekker og om vi er har valgt korrekt inndelingstype for grensetype. Om vi har valgt "fylke" eller "kommune"
     // så vises alle grenser i utkastet som har korrekt tilhorighet. Men har man valgt å se "grunnkrets" eller "stemmekrets"
     // så vises kun grenser som har minst 1 tilhorighet til denne type kretser.
-    const inndelingstype = inndelinger[0]?.inndelingtype || "kommune";
-    const inndelingstyperShowAllUtkastGrenser = ["fylke", "kommune"];
-    const kommuneIdForValgteInndelinger = getUniqueItems(inndelinger.map((i) => i.id));
-
-    return properties.kontekstEgenskaper
-      .filter(
-        (tilhorighet) =>
-          inndelingstyperShowAllUtkastGrenser.includes(inndelingstype) ||
-          inndelingstype === tilhorighet.type.toLocaleLowerCase(),
-      )
-      .some((tilhorighet) =>
-        kommuneIdForValgteInndelinger.some((kommuneId) => tilhorighet.kommuneId?.lokalid.value === kommuneId),
+    return properties.kontekstEgenskaper.some((tilhorighet) => {
+      const relevanteInndelingerForTilhorighet = getRelevanteInndelingerForTilhorighetstype(
+        tilhorighet.type,
+        inndelinger,
       );
+      const kommuneIdForRelevanteInndelinger = relevanteInndelingerForTilhorighet.map((inndeling) => inndeling.id);
+      return kommuneIdForRelevanteInndelinger.some((kommuneId) => tilhorighet.kommuneId?.lokalid.value === kommuneId);
+    });
+  }
+};
+
+const getRelevanteInndelingerForTilhorighetstype = (
+  konteksttype: "GRUNNKRETS" | "STEMMEKRETS",
+  inndelinger: Inndeling[],
+): Inndeling[] => {
+  return inndelinger.filter((inndeling) => erRelevantInndelingForTilhorighetstype(konteksttype, inndeling));
+};
+
+const erRelevantInndelingForTilhorighetstype = (
+  konteksttype: "GRUNNKRETS" | "STEMMEKRETS",
+  inndeling: Inndeling,
+): boolean => {
+  switch (inndeling.inndelingtype) {
+    case "kommune":
+    case "fylke":
+      return true;
+    case "stemmekrets":
+      return konteksttype === "STEMMEKRETS";
+    case "grunnkrets":
+      return konteksttype === "GRUNNKRETS";
   }
 };
 
