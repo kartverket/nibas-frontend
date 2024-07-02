@@ -2,7 +2,7 @@ import { Button, Icon, Text, Tooltip, useDisclosure } from "@kvib/react";
 import { styled } from "styled-components";
 import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
-import { FeatureProperties, Metadata } from "types/api";
+import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/api";
 import { useState } from "react";
 import useIsGrenseinformasjonPanelDisabled from "../../hooks/useIsGrenseInformasjonPanelDisabled";
 import { isAdministrativGrense } from "utils/grenser";
@@ -39,7 +39,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [formViewState, setFormViewState] = useState<FormViewState>("creating");
   const [iconHovered, setIconHovered] = useState(false);
-  const [selectedVedtaksinfoId, setSelectedVedtaksinfoId] = useState<string | undefined>(undefined);
+  const [selectedVedtak, setSelectedVedtak] = useState<DokumentasjonsreferanseDTO | undefined>(undefined);
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata | undefined;
   const vedtaksinfoCollection = metadata?.dokumentasjonsreferanser;
@@ -48,7 +48,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
 
   const closeModal = () => {
     setFormViewState("creating");
-    setSelectedVedtaksinfoId(undefined);
+    setSelectedVedtak(undefined);
     onClose();
   };
 
@@ -90,7 +90,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
             date={vedtak.fastsettingsdato}
             onClick={() => {
               setFormViewState("viewing");
-              setSelectedVedtaksinfoId(vedtak.id);
+              setSelectedVedtak(vedtak);
               onOpen();
             }}
           />
@@ -98,7 +98,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
       <VedtaksinfoDetaljer
         setFormViewState={setFormViewState}
         formViewState={formViewState}
-        selectedVedtaksinfoId={selectedVedtaksinfoId}
+        vedtak={selectedVedtak}
         isOpen={isOpen}
         onClose={closeModal}
         feature={feature}

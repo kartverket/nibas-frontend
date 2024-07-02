@@ -8,7 +8,6 @@ import { PropertyEntry } from "contexts/HistoryContext/types";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import {
   createUniqueIshValue,
-  getDokumentasjonsReferanseFromFeature,
   isTempDokrefId,
 } from "../GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 
@@ -108,14 +107,10 @@ const addMetadataEntryFromFeature = (
   });
 };
 
-export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: string) => {
+export const useVedtaksinfoForm = (feature: Feature, vedtak?: DokumentasjonsreferanseDTO) => {
   const getFormValues = (): VedtakinfoForm => {
-    if (selectedVedtaksinfoId != null) {
-      const dokrefFromFeature = getDokumentasjonsReferanseFromFeature(feature, selectedVedtaksinfoId);
-
-      if (dokrefFromFeature) {
-        return mapFromApiToForm(dokrefFromFeature);
-      }
+    if (vedtak != null) {
+      return mapFromApiToForm(vedtak);
     }
 
     return emptyVedtaksinformasjon;
@@ -148,7 +143,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const { addHistoryEntry } = useHistory();
 
   const deleteOrArchive = async (): Promise<boolean> => {
-    if (selectedVedtaksinfoId == null) {
+    if (vedtak == null) {
       return false;
     }
     const metadata = feature.getProperties().metadata as Metadata;
@@ -156,12 +151,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
       ? metadata.dokumentasjonsreferanser
       : [];
 
-    const selectedDokref = oldDokrefs.find((dokref) => dokref.id === selectedVedtaksinfoId);
-    if (!selectedDokref) {
-      return false;
-    }
-
-    const isDeleting = isTempDokrefId(selectedDokref.id);
+    const isDeleting = isTempDokrefId(vedtak.id);
 
     const shouldDeleteOrArchive = await openAsync({
       title: `${isDeleting ? "Sletting" : "Arkivering"} av referanse`,
@@ -174,9 +164,9 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
       return false;
     }
 
-    if (isTempDokrefId(selectedDokref.id)) {
+    if (isTempDokrefId(vedtak.id)) {
       // Vedtaksinformasjonen er ikke tidligere publisert. Fjern fra front end
-      const updatedDokrefs = oldDokrefs.filter((dokref) => dokref.id !== selectedVedtaksinfoId);
+      const updatedDokrefs = oldDokrefs.filter((dokref) => dokref.id !== vedtak.id);
       addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
         ...metadata,
         dokumentasjonsreferanser: updatedDokrefs,
@@ -184,7 +174,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
     } else {
       // Arkiver eksisterende dokumentasjonsreferanse
       const dokrefsCopy = structuredClone(oldDokrefs);
-      const selectedVedtakIndex = dokrefsCopy.findIndex((dokref) => dokref.id === selectedVedtaksinfoId);
+      const selectedVedtakIndex = dokrefsCopy.findIndex((dokref) => dokref.id === vedtak.id);
       if (dokrefsCopy[selectedVedtakIndex] != null) {
         dokrefsCopy[selectedVedtakIndex].shouldArchive = true;
       }
@@ -200,7 +190,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
   const updateDraftFromFeature = (vedtaksinfo: DokumentasjonsreferanseDTO) => {
     const metadata = feature.getProperties().metadata as Metadata;
 
-    if (selectedVedtaksinfoId == null) {
+    if (vedtak == null) {
       // Implisitt en ny dokumentasjonsreferanse ved mangel av index.
       const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
         ? metadata.dokumentasjonsreferanser
@@ -219,7 +209,7 @@ export const useVedtaksinfoForm = (feature: Feature, selectedVedtaksinfoId?: str
         ? metadata.dokumentasjonsreferanser
         : [];
       const dokrefsCopy = structuredClone(oldDokrefs);
-      const selectedVedtakIndex = dokrefsCopy.findIndex((dokref) => dokref.id === selectedVedtaksinfoId);
+      const selectedVedtakIndex = dokrefsCopy.findIndex((dokref) => dokref.id === vedtak.id);
       dokrefsCopy[selectedVedtakIndex] = vedtaksinfo;
 
       addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
