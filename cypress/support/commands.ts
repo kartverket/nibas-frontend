@@ -86,7 +86,7 @@ Cypress.Commands.add("login", () => {
     cy.contains("TestID").click();
   });
   cy.origin("https://testid.test.idporten.no", () => {
-    cy.contains("Hent tilfeldig person").click();
+    cy.get("#pid").type("05865396092");
     cy.wait(200);
     cy.get("#pid").invoke("val").should("have.length", 11);
     cy.contains("Autentiser").click();
@@ -377,7 +377,7 @@ Cypress.Commands.add(
     cy.get("select").first().select(opprinneligFlateName);
     kretserNavnTilSammenslaaing.forEach((kretsNavn, i) => {
       if (i > 0) {
-        cy.get(`select-${i - 1}`).then(() => {
+        cy.get(`@select-${i - 1}`).then(() => {
           cy.get("button").contains("Legg til flere sammenslåinger").click();
           cy.get("select").last().select(kretsNavn).as(`select-${i}`);
         });
@@ -385,8 +385,8 @@ Cypress.Commands.add(
         cy.get("select").last().select(kretsNavn).as(`select-${i}`);
       }
     });
-    cy.contains("Stemmekretsnummer").siblings().type(resultNummer);
-    cy.contains("Stemmekretsnavn").siblings().type(resultNavn);
+    cy.contains("Stemmekretsnummer").siblings().clear().type(resultNummer);
+    cy.contains("Stemmekretsnavn").siblings().clear().type(resultNavn);
 
     cy.get("button").contains("Slå sammen").click();
   },

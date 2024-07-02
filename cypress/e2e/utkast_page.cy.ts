@@ -9,9 +9,7 @@ describe("kart page", () => {
     cy.wait(1000);
     const inndelingsType = "Stemmekrets";
     cy.toggleRedigerInndeling(inndelingsType, "Akershus", "Frogn");
-
     cy.wait(6000);
-    cy.slaasammenStemmekretser("07 - Nordre Frogn", ["01 - Drøbak", "03 - Heer"], "TEST", "10");
 
     cy.get("@map").then((map) => {
       const punktPaaGrense = [251343, 6627657];
@@ -64,6 +62,22 @@ describe("kart page", () => {
     });
 
     cy.saveUtkast();
+  });
+
+  it("should slå sammen stemmekretser", () => {
+    cy.login();
+    cy.visit("/utkast");
+
+    cy.setupTestingGlobal("map");
+
+    cy.createUtkast();
+    cy.wait(1000);
+    const inndelingsType = "Stemmekrets";
+    cy.toggleRedigerInndeling(inndelingsType, "Akershus", "Frogn");
+
+    cy.wait(6000);
+    cy.slaasammenStemmekretser("07 - Nordre Frogn", ["01 - Drøbak", "03 - Heer"], "TEST", "10");
+    cy.wait(4000);
   });
 
   afterEach(() => {
