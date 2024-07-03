@@ -1,8 +1,7 @@
 import { Datepicker, Grid, Input } from "@kvib/react";
-import { Feature } from "ol";
 import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
 import { VedtakinfoField } from "./VedtakinfoField";
-import { Metadata } from "types/api";
+import { DokumentasjonsreferanseDTO } from "types/api";
 import { styled } from "styled-components";
 import {
   Control,
@@ -20,8 +19,7 @@ type ReferanseBodyProps = {
   deleteDokref: (index: number) => void;
   control: Control<VedtakinfoForm>;
   errors: FieldErrors<VedtakinfoForm>;
-  feature: Feature;
-  vedtaksinfoId?: string;
+  vedtak?: DokumentasjonsreferanseDTO;
   register: UseFormRegister<VedtakinfoForm>;
   dokref?: Referanse[];
   setDokref: React.Dispatch<React.SetStateAction<Referanse[] | undefined>>;
@@ -33,8 +31,7 @@ type ReferanseBodyProps = {
 
 export const VedtaksinfoBody = ({
   formViewState,
-  feature,
-  vedtaksinfoId,
+  vedtak,
   register,
   internref,
   dokref,
@@ -67,10 +64,6 @@ export const VedtaksinfoBody = ({
     });
   };
 
-  const metadata = feature.getProperties().metadata as Metadata;
-  const vedtaksinformasjon =
-    vedtaksinfoId != null ? metadata.dokumentasjonsreferanser?.find((ref) => ref.id === vedtaksinfoId) : undefined;
-
   return (
     <VedtakinfoContainer templateColumns="4fr 3fr">
       <Vedtaksfelter>
@@ -80,7 +73,7 @@ export const VedtaksinfoBody = ({
             formViewState={formViewState}
             tooltipLabel="Navn på lov, forskrift, vedtak, dom eller traktat."
             title="Vedtakstittel"
-            value={vedtaksinformasjon?.rettskildeTittel}
+            value={vedtak?.rettskildeTittel}
             isRequired
           >
             <Input
@@ -112,8 +105,8 @@ export const VedtaksinfoBody = ({
                     title="Fastsettingsdato"
                     isRequired
                     value={
-                      vedtaksinformasjon?.fastsettingsdato != null
-                        ? new Date(vedtaksinformasjon?.fastsettingsdato).toLocaleDateString("nb-NO")
+                      vedtak?.fastsettingsdato != null
+                        ? new Date(vedtak?.fastsettingsdato).toLocaleDateString("nb-NO")
                         : undefined
                     }
                   >
@@ -135,7 +128,7 @@ export const VedtaksinfoBody = ({
               formViewState={formViewState}
               tooltipLabel="Referanse til lov, forskrift, vedtak, dom eller traktat i form av kode som angir type dokument, dato og nummer For eksempel: LOV-2012-09-07-65."
               title="Rettskilde-ID"
-              value={vedtaksinformasjon?.rettskildeId ?? "Ingen ID satt."}
+              value={vedtak?.rettskildeId ?? "Ingen ID satt."}
             >
               <Input {...register("rettskildeId")} backgroundColor="white" placeholder="Ikke spesifisert" />
             </VedtakinfoField>
@@ -156,8 +149,8 @@ export const VedtaksinfoBody = ({
                     title="Gyldig fra"
                     isRequired
                     value={
-                      vedtaksinformasjon?.vedtakGyldigFra != null
-                        ? new Date(vedtaksinformasjon?.vedtakGyldigFra).toLocaleDateString("nb-NO")
+                      vedtak?.vedtakGyldigFra != null
+                        ? new Date(vedtak?.vedtakGyldigFra).toLocaleDateString("nb-NO")
                         : "Ingen gyldig fra satt."
                     }
                   >
@@ -186,8 +179,8 @@ export const VedtaksinfoBody = ({
                     tooltipLabel="Tidspunktet når objektet opphørte å eksistere i den virkelige verden"
                     title="Gyldig til"
                     value={
-                      vedtaksinformasjon?.vedtakGyldigTil != null
-                        ? new Date(vedtaksinformasjon?.vedtakGyldigTil).toLocaleDateString("nb-NO")
+                      vedtak?.vedtakGyldigTil != null
+                        ? new Date(vedtak?.vedtakGyldigTil).toLocaleDateString("nb-NO")
                         : "Ingen gyldig til satt."
                     }
                   >
@@ -230,7 +223,7 @@ export const VedtaksinfoBody = ({
             formViewState={formViewState}
             tooltipLabel="Lov som rettskilden er begrunnet i."
             title="Hjemmel"
-            value={vedtaksinformasjon?.hjemmel ?? "Ingen hjemmel satt."}
+            value={vedtak?.hjemmel ?? "Ingen hjemmel satt."}
           >
             <Input {...register("hjemmel")} backgroundColor="white" placeholder="Ikke spesifisert" />
           </VedtakinfoField>
@@ -242,7 +235,7 @@ export const VedtaksinfoBody = ({
             formViewState={formViewState}
             tooltipLabel="Offentlig instans som har fastsatt en grense."
             title="Fastsettingsmyndighet"
-            value={vedtaksinformasjon?.fastsettingsmyndighet ?? "Ingen myndighet satt"}
+            value={vedtak?.fastsettingsmyndighet ?? "Ingen myndighet satt"}
           >
             <Input {...register("fastsettingsmyndighet")} backgroundColor="white" placeholder="Ikke spesifisert" />
           </VedtakinfoField>
