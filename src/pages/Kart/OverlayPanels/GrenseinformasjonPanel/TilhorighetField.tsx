@@ -38,15 +38,11 @@ type TilhorighetRowProps = {
 
 const TilhorighetRow = ({
   feature,
-  useTilhorighet: { kontekstType, tilhorighetOptions, resetTilhorighet, formState, setValue, isLoading },
+  useTilhorighet: { kontekstType, tilhorighetOptions, formState, setValue, isLoading },
   isSubmitted,
   isValid,
   isEditing,
 }: TilhorighetRowProps) => {
-  useEffect(() => {
-    resetTilhorighet();
-  }, [resetTilhorighet]);
-
   return (
     <GrenseinformasjonRowTilhorighet
       isEditing={isEditing}

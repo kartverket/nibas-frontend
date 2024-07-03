@@ -142,7 +142,7 @@ const useSelect = () => {
         if (coordinates.length <= 2) {
           toast({
             status: "error",
-            title: "Grensen er for liten til å splittes",
+            title: "Grensen har for få punkter til å deles",
           });
           event.stopPropagation();
           return;

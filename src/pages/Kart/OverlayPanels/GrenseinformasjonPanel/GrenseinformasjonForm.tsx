@@ -84,14 +84,16 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   };
 
   const getPossibleGrenseTypesFromInndelingtype = (inndelingtype: Inndelingtype | undefined): GrenseType[] => {
-    if (inndelingtype === "stemmekrets") {
-      return ["Stemmekretsgrense", "Kommunegrense"];
+    switch (inndelingtype) {
+      case "stemmekrets":
+        return ["Stemmekretsgrense", "Kommunegrense"];
+      case "grunnkrets":
+        return ["Grunnkretsgrense", "Delområdegrense", "Kommunegrense"];
+      case "kommune":
+        return ["Kommunegrense", "Delområdegrense", "Grunnkretsgrense", "Stemmekretsgrense"];
+      default:
+        return [];
     }
-    if (inndelingtype === "grunnkrets") {
-      return ["Grunnkretsgrense", "Delområdegrense", "Kommunegrense"];
-    }
-
-    return [];
   };
 
   const getSistOppdatert = () => {
