@@ -18,7 +18,9 @@ declare namespace Cypress {
     saveUtkast: () => void;
     publiserUtkast: () => void;
     deleteUtkast: () => void;
+    toggleKommunerRedigering: (fylke: string, kommuner: string[]) => void;
     toggleRedigerInndeling: (inndelingsType: InndelingsType, fylke: string, kommune: string) => void;
+    toggleVisningInndelinger: (inndelingsType: InndelingsType, fylke: string, kommuner: string[]) => void;
     toggleTool: (tool: Tool) => void;
     toggleModeTool: (tool: ModeTool) => void;
     toggleSidePanel: (sidepanel: Sidepanel) => void;
@@ -39,10 +41,35 @@ declare namespace Cypress {
       fraTil: [{ fra: string; til: string }, { fra: string; til: string }],
     ) => void;
     clickOnFeature: (map, layer: string, id: string, coordinateIndex: number) => object;
+    undoEndring: () => void;
+    redoEndring: () => void;
+    slaasammenStemmekretser: (
+      utgangspunktKretsNavn: string,
+      kretserNavnTilSammenslaaing: string[],
+      resultNavn: string,
+      resultNummer: string,
+    ) => void;
+    toggleFlatedetaljerModal: () => void;
+    endreFlatedetaljer: (
+      endringer: { fra: { navn: string; nummer: string }; til: { navn: string; nummer: string } }[],
+    ) => void;
+    endreUtkastDetaljer: (nyttNavn: string | null, nyEndringstype: string | null) => void;
   }
 }
 
 const baseUrl = Cypress.env("baseUrl") ?? "http://localhost:3000";
+const utkastName = "Cypress_utkast";
+
+// Metode for å utføre ting i cypress i en loop og samtidig forsikre seg om at forrige handling er ferdig før man begynner på neste iterasjon
+const asyncForEach = (iterable, callback) => {
+  iterable.forEach((item, i) => {
+    if (i > 0) {
+      cy.get(`@${i - 1}`).then(() => callback(item, i).as(`${i}`));
+    } else {
+      callback(item, i).as(`${i}`);
+    }
+  });
+};
 
 // Sjekker om det finnes en global testing variable med navn lik globalKey, og setter denne med samme navn hvis den finnes, ellers venter den 100ms og sjekker på nytt.
 Cypress.Commands.add("setupTestingGlobal", (globalKey) => {
@@ -76,7 +103,7 @@ Cypress.Commands.add("login", () => {
     cy.contains("TestID").click();
   });
   cy.origin("https://testid.test.idporten.no", () => {
-    cy.contains("Hent tilfeldig person").click();
+    cy.get("#pid").type("05865396092");
     cy.wait(200);
     cy.get("#pid").invoke("val").should("have.length", 11);
     cy.contains("Autentiser").click();
@@ -95,7 +122,35 @@ Cypress.Commands.add("toggleRedigerInndeling", (inndelingsType, fylke, kommune) 
   cy.contains("Rediger valgte inndelinger").click();
 });
 
-const utkastName = "Cypress_utkast";
+Cypress.Commands.add("toggleVisningInndelinger", (inndelingsType, fylke, kommuner) => {
+  cy.contains("Forhåndsvis en inndeling").click();
+  cy.contains(inndelingsType).click();
+  cy.contains(fylke).click();
+
+  kommuner.forEach((kommune, i) => {
+    if (i > 0) {
+      cy.get(`@toggleKommune-${i - 1}`).then(() => {
+        cy.contains(kommune).click().as(`toggleKommune-${i}`);
+      });
+    } else {
+      cy.contains(kommune).click().as(`toggleKommune-${i}`);
+    }
+  });
+
+  cy.contains("Rediger valgte inndelinger").click();
+});
+
+Cypress.Commands.add("toggleKommunerRedigering", (fylke, kommuner) => {
+  cy.contains("Rediger en inndeling").click();
+  cy.contains("Kommune").click();
+  cy.contains(fylke).click();
+
+  asyncForEach(kommuner, (kommune) => {
+    return cy.contains(kommune).click();
+  });
+
+  cy.contains("Rediger valgte inndelinger").click();
+});
 
 Cypress.Commands.add("createUtkast", () => {
   cy.contains("Opprett et nytt utkast").click();
@@ -206,56 +261,36 @@ Cypress.Commands.add("publiserUtkast", () => {
 
 Cypress.Commands.add("drawGrense", (map, coordinates) => {
   cy.toggleTool("draw");
-  coordinates.forEach((coordinate, i) => {
-    cy.wait(250); // Wait for å kunne se at grensa tegnes
-    if (i > 0) {
-      cy.get(`@drawGrensepunkt-${i - 1}`).then(() => {
-        if (i === coordinates.length - 1) {
-          cy.clickAtCoordinate(map, coordinate, true).as(`drawGrensepunkt-${i}`);
-        } else {
-          cy.clickAtCoordinate(map, coordinate).as(`drawGrensepunkt-${i}`);
-        }
-      });
-    } else {
-      cy.clickAtCoordinate(map, coordinate).as(`drawGrensepunkt-${i}`);
-    }
+
+  asyncForEach(coordinates, (coordinate, i) => {
+    return i === coordinates.length - 1
+      ? cy.clickAtCoordinate(map, coordinate, true)
+      : cy.clickAtCoordinate(map, coordinate);
   });
-  cy.get(`@drawGrensepunkt-${coordinates.length - 1}`).then(() => {
-    // lukker grenseinfopanel etter opprettng av ny grense
-    cy.escape();
-    // lukker tegning
-    cy.toggleTool("draw");
-  });
+
+  cy.escape();
+  cy.toggleTool("draw");
 });
 
 Cypress.Commands.add("splittFlate", (opprinneligFlateName, nyeFlater) => {
   cy.toggleSidePanel("splitt");
   cy.get("select").select(opprinneligFlateName);
 
-  nyeFlater.forEach((nyFlate, i) => {
-    const fillOutNyFlateInputs = () => {
-      cy.contains("button", "Legg til ny splitt").click();
-      cy.get("label")
-        .filter(":contains(Nytt nummer)")
-        .last()
-        .siblings()
-        .type(nyFlate.nummer)
-        .then(() => {
-          cy.get("label").filter(":contains(Nytt navn)").last().siblings().type(nyFlate.navn);
-        })
-        .as(`split-${i}`);
-    };
-    if (i > 0) {
-      cy.get(`@split-${i - 1}`).then(fillOutNyFlateInputs);
-    } else {
-      fillOutNyFlateInputs();
-    }
+  asyncForEach(nyeFlater, (nyFlate) => {
+    cy.contains("button", "Legg til ny splitt").click();
+    return cy
+      .get("label")
+      .filter(":contains(Nytt nummer)")
+      .last()
+      .siblings()
+      .type(nyFlate.nummer)
+      .then(() => {
+        cy.get("label").filter(":contains(Nytt navn)").last().siblings().type(nyFlate.navn);
+      });
   });
 
-  cy.get(`@split-${nyeFlater.length - 1}`).then(() => {
-    cy.contains("button", "Splitt").click();
-    cy.escape();
-  });
+  cy.contains("button", "Splitt").click();
+  cy.escape();
 });
 
 Cypress.Commands.add("settTilhorighetNyGrense", (map, grensepunkt, inndelingsType, flater) => {
@@ -315,4 +350,64 @@ Cypress.Commands.add("clickOnFeature", (map, layer, id, coordinateIndex) => {
   const feature = editSource.getFeatureById(id);
   const coordinates = feature.getGeometry().getCoordinates();
   cy.clickAtCoordinate(map, coordinates[coordinateIndex]);
+});
+
+Cypress.Commands.add("undoEndring", () => {
+  cy.contains("Angre").click();
+});
+Cypress.Commands.add("redoEndring", () => {
+  cy.contains("Gjør om").click();
+});
+
+Cypress.Commands.add(
+  "slaasammenStemmekretser",
+  (opprinneligFlateName, kretserNavnTilSammenslaaing, resultNavn, resultNummer) => {
+    cy.toggleSidePanel("sammenslaaing");
+    cy.get("select").first().select(opprinneligFlateName);
+
+    asyncForEach(kretserNavnTilSammenslaaing, (kretsNavn, i) => {
+      i > 0 && cy.get("button").contains("Legg til flere sammenslåinger").click();
+      return cy.get("select").last().select(kretsNavn);
+    });
+
+    cy.contains("Stemmekretsnummer").siblings().clear().type(resultNummer);
+    cy.contains("Stemmekretsnavn").siblings().clear().type(resultNavn);
+
+    cy.get("button").contains("Slå sammen").click();
+  },
+);
+
+Cypress.Commands.add("toggleFlatedetaljerModal", () => {
+  cy.get("body").type("{ctrl}{shift}I");
+});
+
+Cypress.Commands.add("endreFlatedetaljer", (endringer) => {
+  cy.toggleFlatedetaljerModal();
+  cy.get("button").contains("Rediger flatedetaljer").click();
+
+  asyncForEach(endringer, (endring) => {
+    return cy
+      .get("input")
+      .filter(`[value*="${endring.fra.nummer}"]`)
+      .clear()
+      .type(endring.til.nummer)
+      .then(() => {
+        cy.get("input").filter(`[value*="${endring.fra.navn}"]`).clear().type(endring.til.navn);
+      });
+  });
+
+  cy.get("button").contains("Bekreft").click();
+  cy.toggleFlatedetaljerModal();
+});
+
+Cypress.Commands.add("endreUtkastDetaljer", (nyttNavn, nyEndringstype) => {
+  cy.get(`[aria-label="Rediger utkast"]`).click();
+  if (nyttNavn != null) {
+    cy.get(`[aria-label="utkast navn"]`).clear().type(nyttNavn);
+  }
+  if (nyEndringstype != null) {
+    cy.get("select").select(nyEndringstype);
+  }
+  cy.get("button").contains("Endre detaljer").click();
+  cy.wait(1000);
 });

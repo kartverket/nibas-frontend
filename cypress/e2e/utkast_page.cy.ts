@@ -12,21 +12,25 @@ describe("kart page", () => {
     cy.wait(6000);
 
     cy.get("@map").then((map) => {
+      const punktPaaGrense = [251343, 6627657];
       cy.toggleTool("remove");
       // klikker på grensen for å velge å redigere den
-      cy.clickAtCoordinate(map, [251343, 6627657]);
+      cy.clickAtCoordinate(map, punktPaaGrense);
       // Klikker på punkt på nytt for å fjerne punkt
-      cy.clickAtCoordinate(map, [251343, 6627657]);
+      cy.clickAtCoordinate(map, punktPaaGrense);
 
       cy.toggleTool("add");
       // klikker på grensen for å velge å redigere den
-      cy.clickAtCoordinate(map, [251343, 6627657]);
+      cy.clickAtCoordinate(map, punktPaaGrense);
       // Klikker på punkt på nytt for å legge til punkt
-      cy.clickAtCoordinate(map, [251343, 6627657]);
+      cy.clickAtCoordinate(map, punktPaaGrense);
+
+      cy.undoEndring();
+      cy.redoEndring();
 
       cy.toggleTool("split");
       // klikker på grensen sitt punkt for å velge å splitte den på punktet
-      cy.clickAtCoordinate(map, [251343, 6627657]);
+      cy.clickAtCoordinate(map, punktPaaGrense);
       cy.contains("Del grense").click();
       cy.escape();
 
@@ -35,11 +39,10 @@ describe("kart page", () => {
       cy.clickAtCoordinate(map, [257099.81, 6627826.09]);
       cy.contains("Del grense").click();
 
-      const nyGrenseCoordinates = [
-        [251343, 6627657],
-        [253854.9, 6627663.16],
-        [257099.81, 6627826.09],
-      ] as [number, number][];
+      const nyGrenseCoordinates = [punktPaaGrense, [253854.9, 6627663.16], [257099.81, 6627826.09]] as [
+        number,
+        number,
+      ][];
       cy.drawGrense(map, nyGrenseCoordinates);
 
       const nyFlate = { navn: "Testsplitt", nummer: "10" };
@@ -62,6 +65,47 @@ describe("kart page", () => {
     });
 
     cy.saveUtkast();
+  });
+
+  it("should slå sammen stemmekretser", () => {
+    cy.login();
+    cy.visit("/utkast");
+
+    cy.createUtkast();
+    cy.wait(1000);
+    const inndelingsType = "Stemmekrets";
+    cy.toggleRedigerInndeling(inndelingsType, "Akershus", "Frogn");
+
+    cy.wait(6000);
+    cy.slaasammenStemmekretser("07 - Nordre Frogn", ["01 - Drøbak", "03 - Heer"], "TEST", "10");
+    cy.wait(4000);
+  });
+
+  it("should change name and endringstype", () => {
+    cy.login();
+    cy.visit("/utkast");
+
+    cy.createUtkast();
+    cy.wait(1000);
+
+    cy.endreUtkastDetaljer("Nytt navn", "Kvalitetsheving");
+  });
+
+  it("should endre flatedetlajer", () => {
+    cy.login();
+    cy.visit("/utkast");
+
+    cy.createUtkast();
+    cy.wait(1000);
+    const inndelingsType = "Stemmekrets";
+    cy.toggleRedigerInndeling(inndelingsType, "Akershus", "Frogn");
+
+    cy.wait(6000);
+
+    cy.endreFlatedetaljer([
+      { fra: { nummer: "03", navn: "Heer" }, til: { nummer: "10", navn: "Drøbak 2" } },
+      { fra: { nummer: "07", navn: "Nordre Frogn" }, til: { nummer: "11", navn: "Drøbak 3" } },
+    ]);
   });
 
   afterEach(() => {
