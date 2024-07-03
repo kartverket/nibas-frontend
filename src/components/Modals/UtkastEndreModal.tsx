@@ -89,6 +89,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
                   Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
                 </FormHelperText>
                 <Input
+                  aria-label="utkast navn"
                   placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
                   {...register("navn", { required: "Utkastet må ha et navn" })}
                 />
