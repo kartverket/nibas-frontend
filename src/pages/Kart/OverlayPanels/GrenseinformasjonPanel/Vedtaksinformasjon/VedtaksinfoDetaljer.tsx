@@ -80,15 +80,15 @@ export const VedtaksinfoDetaljer = ({
         setError("vedtakGyldigTil", {
           message: "Gyldig til må være satt til en dato etter gyldig fra dato.",
         });
+        return false;
       }
 
       if (new Date() >= data.vedtakGyldigTil) {
         setError("vedtakGyldigTil", {
           message: "Kan ikke sette gyldighetsdato til dagens dato eller tidligere.",
         });
+        return false;
       }
-
-      return false;
     }
 
     return true;
