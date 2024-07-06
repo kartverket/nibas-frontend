@@ -18,6 +18,7 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getInndelingFremtidigEndringDato } from "utils/features";
+import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 
 const Form = styled.form`
   display: flex;
@@ -75,22 +76,6 @@ const MergePanel = () => {
 
   const stemmekretsnavnValidator = {
     required: "Stemmekretsnavn er obligatorisk",
-  };
-
-  const stemmekretsnummerValidator = {
-    required: "Stemmekretsnummer er obligatorisk",
-    pattern: {
-      value: /^\d+$/,
-      message: "Stemmekretsnummeret må være et gyldig positivt tall",
-    },
-    minValue: {
-      value: 1,
-      message: "Stemmekretsnummeret må være et gyldig positivt tall",
-    },
-    maxLength: {
-      value: 4,
-      message: "Stemmekretsnummeret kan ikke være lengre enn 4 tegn",
-    },
   };
 
   const getStemmekretsByNummer = useCallback(
@@ -185,6 +170,18 @@ const MergePanel = () => {
     setValue("navn", selectedStemmekrets?.navn ?? "");
     setValue("nummer", selectedStemmekrets?.nummer ?? "");
   };
+
+  const existingStemmekretsnummere = utkastStemmekretser
+    ? utkastStemmekretser
+        .filter(
+          (stemmekrets) =>
+            ![getValues("stemmekrets"), ...getValues("nummerTilSammenslaaing").map((n) => n.value)].includes(
+              stemmekrets.nummer,
+            ),
+        )
+        .map((inndeling) => inndeling.nummer)
+    : [];
+
   return (
     <SidePanel>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
@@ -252,7 +249,12 @@ const MergePanel = () => {
               <InputsWrapper>
                 <Input
                   label="Stemmekretsnummer"
-                  {...register("nummer", stemmekretsnummerValidator)}
+                  {...register(
+                    "nummer",
+                    getNumberValidatorFunctionForInndelingType("stemmekrets")({
+                      shouldNotBeEqualWith: existingStemmekretsnummere,
+                    }),
+                  )}
                   validationError={{
                     showError: !!errors?.nummer,
                     message: errors.nummer?.message ?? "",
