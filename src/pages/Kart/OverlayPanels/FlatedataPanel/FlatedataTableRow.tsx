@@ -1,11 +1,10 @@
 import { MetadataEntry, HistoryDirection } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
-import { FieldError, RegisterOptions, UseFormReturn } from "react-hook-form";
+import { FieldError, UseFormReturn } from "react-hook-form";
 import { MetadataResponse } from "types/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
-import { isIntegerString } from "utils/type-utils";
 import InputCell, { TableCell, MerknadCell } from "./FlatedataTableCells";
 import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 import { getIdFromEntity } from "utils/api";
@@ -15,7 +14,7 @@ import { ValidationError } from "components/Input";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { Icon, Tooltip } from "@kvib/react";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { memo } from "react";
+import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 
 type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
@@ -54,15 +53,17 @@ type Props = {
   isEditing: boolean;
   formMethods: UseFormReturn<FlatedataInputs>;
   previousValues: React.MutableRefObject<FlatedataInputs | undefined>;
+  allInndelinger: MetadataResponse[];
 };
 
-const FlatedataTableRow = ({
+export const FlatedataTableRow = ({
   inndelingtype,
   inndeling,
   isSearchMatch,
   isEditing,
   formMethods,
   previousValues,
+  allInndelinger,
 }: Props) => {
   const {
     setValue,
@@ -73,7 +74,18 @@ const FlatedataTableRow = ({
 
   const inndelingId = getIdFromEntity(inndeling);
   const inndelingErrors = errors[inndelingId];
-  const registerOptions = getRegisterOptions(inndelingtype);
+
+  const existingInndelingtypeNumbers = allInndelinger
+    .filter((item) => item.id !== inndeling.id)
+    .map((item) => item.nummer);
+  const prefixNumber = "kommunenummer" in inndeling ? inndeling.kommunenummer.kodeverdi : undefined;
+  const validateInndelingNumber = getNumberValidatorFunctionForInndelingType(inndelingtype);
+  const registerOptions = {
+    nummer: validateInndelingNumber(existingInndelingtypeNumbers, prefixNumber),
+    navn: {
+      required: `${capitalize(inndelingtype)}navn kan ikke være tomt`,
+    },
+  };
 
   // Ved undo og redo må grensesnittet oppdateres med riktig informasjon
   const setFormValues = (change: MetadataEntry["changes"][number], direction: HistoryDirection) => {
@@ -128,24 +140,20 @@ const FlatedataTableRow = ({
             isDisabled={disabledDate != null}
             data={getValues(`${inndelingId}.nummer`) ?? inndeling.nummer}
             validationError={
-              inndelingErrors && "nummer" in inndelingErrors ? validationError(inndelingErrors.nummer) : undefined
+              inndelingErrors != null && "nummer" in inndelingErrors
+                ? validationError(inndelingErrors.nummer)
+                : undefined
             }
-            {...register(
-              `${inndelingId}.nummer`,
-              isStemmekretsInndeling(inndeling) && disabledDate == null ? registerOptions.nummer : undefined,
-            )}
+            {...register(`${inndelingId}.nummer`, registerOptions.nummer)}
           />
           <InputCell
             isEditing={isEditing}
             isDisabled={disabledDate != null}
             data={getValues(`${inndelingId}.navn`) ?? inndeling.navn}
             validationError={
-              inndelingErrors && "navn" in inndelingErrors ? validationError(inndelingErrors.navn) : undefined
+              inndelingErrors != null && "navn" in inndelingErrors ? validationError(inndelingErrors.navn) : undefined
             }
-            {...register(
-              `${inndelingId}.navn`,
-              isStemmekretsInndeling(inndeling) && disabledDate == null ? registerOptions.navn : undefined,
-            )}
+            {...register(`${inndelingId}.navn`, registerOptions.navn)}
           />
           <TableCell>{isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer ?? "" : ""}</TableCell>
           <TableCell>
@@ -168,27 +176,6 @@ const validationError = (error: FieldError | undefined | null) => {
   }
 };
 
-const getRegisterOptions = (inndelingtype: Inndelingtype): Record<string, RegisterOptions> => {
-  const inndelingPrefix = inndelingtype === "fylke" ? "Kommune" : capitalize(inndelingtype);
-  return {
-    nummer: {
-      required: `${inndelingPrefix}nummer kan ikke være tomt`,
-      validate: (nummer: string) => {
-        if (!isIntegerString(nummer) || nummer.length > 4 || parseInt(nummer) > 9999) {
-          return `${inndelingPrefix}nummer må kun inneholde siffer (maks 4)`;
-        }
-        if (parseInt(nummer) <= 0) {
-          return `${inndelingPrefix}nummer kan ikke være 0 eller et negativt tall`;
-        }
-        return true;
-      },
-    },
-    navn: {
-      required: `${inndelingPrefix}navn kan ikke være tomt`,
-    },
-  };
-};
-
 const Row = styled.tr<{ $isSearchMatch: boolean }>`
   ${(props) =>
     !props.$isSearchMatch &&
@@ -196,5 +183,3 @@ const Row = styled.tr<{ $isSearchMatch: boolean }>`
       display: none !important;
     `};
 `;
-
-export default memo(FlatedataTableRow);
