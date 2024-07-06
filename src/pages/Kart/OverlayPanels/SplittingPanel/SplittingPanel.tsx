@@ -19,6 +19,7 @@ import { ChangeEvent, useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getInndelingFremtidigEndringDato } from "utils/features";
+import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -81,46 +82,6 @@ export const SplittingPanel = () => {
     resetSplitting();
   };
 
-  const validateNotDuplicateKretsnummer = (value: string) => {
-    const conflictingKrets = opprinneligFlateOptions.find((krets) => krets.nummer === value);
-    if (conflictingKrets) {
-      return `Nytt ${inndelingtype}nummer er allerede i bruk av ${conflictingKrets.nummer} ${conflictingKrets.navn}`;
-    }
-
-    const nyeKretsNummere = getValues("nyeKretser").map((k) => k.kretsNummer);
-    const indexOfCurrentNummer = nyeKretsNummere.findIndex((n) => n === value);
-    nyeKretsNummere.splice(indexOfCurrentNummer, 1); // fjerner value fra lista
-    if (nyeKretsNummere.includes(value)) {
-      // hvis et nummer lik value fremdeles er i lista har vi duplikat for value
-      return `Nytt ${inndelingtype}nummer er allerede i bruk i denne splittingen`;
-    }
-
-    return true;
-  };
-
-  const kretsNumberValidator = {
-    required: `Ny ${inndelingtype} må ha et nummer`,
-    pattern: {
-      value: /^\d+$/,
-      message: `Nytt ${inndelingtype}nummer må være et gyldig positivt tall`,
-    },
-    minValue: {
-      value: 1,
-      message: `Nytt ${inndelingtype}nummer må være et gyldig positivt tall`,
-    },
-    minLength: {
-      value: inndelingtype === "stemmekrets" ? 1 : 8,
-      message: `Nytt ${inndelingtype}nummer må være ${
-        inndelingtype === "stemmekrets" ? "minst 1 tegn langt" : "nøyaktig 8 tegn langt"
-      }`,
-    },
-    maxLength: {
-      value: inndelingtype === "stemmekrets" ? 4 : 8,
-      message: `Nytt ${inndelingtype}nummer kan ikke være lengre enn ${inndelingtype === "stemmekrets" ? 4 : 8} tegn`,
-    },
-    validate: validateNotDuplicateKretsnummer,
-  };
-
   const triggerRevalidateOnChangeAfterSubmit = ({ onChange, ...restProps }: InputProps) => {
     return {
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
@@ -136,6 +97,28 @@ export const SplittingPanel = () => {
   };
 
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
+
+  const validateNotDuplicateNewKretsnummere = (value: string) => {
+    const nyeKretsNummere = getValues("nyeKretser").map((k) => k.kretsNummer);
+    const indexOfCurrentNummer = nyeKretsNummere.findIndex((n) => n === value);
+    nyeKretsNummere.splice(indexOfCurrentNummer, 1); // fjerner value fra lista
+    if (nyeKretsNummere.includes(value)) {
+      // hvis et nummer lik value fremdeles er i lista har vi duplikat for value
+      return `Nytt ${inndelingtype}nummer er allerede i bruk i denne splittingen`;
+    }
+
+    return true;
+  };
+  const kommunenummer = opprinneligFlateOptions[0].kommunenummer;
+  const existingInndelingNummere = opprinneligFlateOptions.map((inndeling) => inndeling.nummer);
+  const getInndelingNummerRegisterOptions = inndelingtype && getNumberValidatorFunctionForInndelingType(inndelingtype);
+  const nummerRegisterOptions =
+    getInndelingNummerRegisterOptions &&
+    getInndelingNummerRegisterOptions({
+      shouldNotBeEqualWith: existingInndelingNummere,
+      prefixNumber: kommunenummer,
+      additionalValidation: validateNotDuplicateNewKretsnummere,
+    });
 
   return (
     <SidePanel>
@@ -191,7 +174,10 @@ export const SplittingPanel = () => {
                         disabled={index === 0}
                         type="number"
                         {...triggerRevalidateOnChangeAfterSubmit(
-                          register(`nyeKretser.${index}.kretsNummer`, index !== 0 ? kretsNumberValidator : {}),
+                          register(
+                            `nyeKretser.${index}.kretsNummer`,
+                            index !== 0 ? (nummerRegisterOptions ? nummerRegisterOptions : {}) : {},
+                          ),
                         )}
                       />
                     </FormControl>
