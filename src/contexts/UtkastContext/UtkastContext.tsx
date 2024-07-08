@@ -125,7 +125,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       await mutate(updatedUtkast);
       await globalMutate(["/v1/utkast", auth.token]);
       if (shouldClearHistory) {
-        clearHistory();
+        clearHistory(true);
       }
 
       // Ved lagring av utkast ble det mismatch mellom state i OpenLayers og state i react

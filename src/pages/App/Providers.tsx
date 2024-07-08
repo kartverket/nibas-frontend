@@ -13,8 +13,8 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ErrorHandlingProvider>
       <ConfirmationModalProvider>
-        <HistoryProvider>
-          <FeatureStyleProvider>
+        <FeatureStyleProvider>
+          <HistoryProvider>
             <OverlayPanelProvider>
               <AuthRenewProvider>
                 <ToolbarProvider>
@@ -26,8 +26,8 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
                 </ToolbarProvider>
               </AuthRenewProvider>
             </OverlayPanelProvider>
-          </FeatureStyleProvider>
-        </HistoryProvider>
+          </HistoryProvider>
+        </FeatureStyleProvider>
       </ConfirmationModalProvider>
     </ErrorHandlingProvider>
   );

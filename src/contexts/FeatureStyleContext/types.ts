@@ -3,6 +3,7 @@ import { Coordinate } from "ol/coordinate";
 import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
+import { HistoryEntry } from "contexts/HistoryContext/types";
 
 export type SelectedPoint = Feature<Point> | null;
 
@@ -27,5 +28,7 @@ export type FeatureStyleContextValue = {
   setAndSaveSammenslaaingStyles: (features: string[]) => void;
   setAndSaveSammenslaaingOverlappingStyles: (features: string[]) => void;
 
+  saveFeatureStyles: () => void;
   clearFeatureStyles: () => void;
+  updateFeatureStyles: (historyEntries: HistoryEntry[]) => void;
 };
