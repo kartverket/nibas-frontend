@@ -6,8 +6,8 @@
   "dependencies": {
     "@kvib/react": "^4.3.0",
     "date-fns": "^3.6.0",
-    "material-symbols": "^0.19.0",
     "lodash.get": "^4.4.2",
+    "material-symbols": "^0.19.0",
     "ol": "^9.2.4",
     "proj4": "~2.11.0",
     "react": "~18.3.1",
@@ -15,7 +15,6 @@
     "react-hook-form": "~7.51.5",
     "react-oidc-context": "^3.1.0",
     "react-router-dom": "~6.23.1",
-    "stacktrace-js": "^2.0.2",
     "styled-components": "^6.1.11",
     "swr": "~2.2.5"
   },
@@ -55,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@grafana/faro-react": "^1.8.1",
     "@testing-library/jest-dom": "~6.4.5",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
