@@ -41,9 +41,7 @@ const useSplit = () => {
       if (allFeatureCoordinates.length > 2) {
         const splitIndices = coordinatesToSplit
           .map((coordinateToSplit) => {
-            const splitIndex = allFeatureCoordinates.findIndex((coordinate) => equals(coordinate, coordinateToSplit));
-
-            return splitIndex;
+            return allFeatureCoordinates.findIndex((coordinate) => equals(coordinate, coordinateToSplit));
           })
           .sort();
 
@@ -57,7 +55,7 @@ const useSplit = () => {
 
           for (let i = 0; i < splitIndices.length + 1; i++) {
             if (i === 0) {
-              newIndices.push([0, splitIndices[0] + 1]);
+              newIndices.push([0, splitIndices[0]]);
             } else if (i === splitIndices.length) {
               newIndices.push([splitIndices[splitIndices.length - 1], allFeatureCoordinates.length]);
             } else {
@@ -65,9 +63,9 @@ const useSplit = () => {
             }
           }
 
-          const newFeatures = newIndices.map((indices) => {
-            return createCloneOfFeatureWithPartsOfCoordinates(oldFeature, indices[0], indices[1]);
-          });
+          const newFeatures = newIndices.map((indices) =>
+            createCloneOfFeatureWithPartsOfCoordinates(oldFeature, indices[0], indices[1]),
+          );
 
           return {
             newFeatures,
@@ -91,7 +89,7 @@ const useSplit = () => {
     if (newGeometry instanceof LineString) {
       // Siden OL er mutable og vi ikke ønsker å mutere den eksisterende geometrien
       const coordinates = [...newGeometry.getCoordinates()];
-      const newCoordinates = coordinates.splice(startIndex, endIndex);
+      const newCoordinates = coordinates.slice(startIndex, endIndex + 1);
       newFeature.setId(newFeatureId);
       newGeometry.setCoordinates(newCoordinates);
     }
