@@ -4,7 +4,10 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import useSplit from "../interactions/useSplit";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToast } from "@kvib/react";
-import { addArchivingEntryFromFeatureList } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import {
+  addArchivingEntryFromFeatureList,
+  addGrenseDeleteEntryFromFeatureList,
+} from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
@@ -12,6 +15,7 @@ import { useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { removeNil } from "utils/list-utils";
 import { anyFeatureIsEditable } from "utils/features";
+import { isTempFeatureId } from "../interactions/feature-id-utils";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
@@ -36,6 +40,31 @@ const ToolbarPopups = () => {
       status: "success",
       title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble arkivert`,
       description: "Husk å eventuelt sette tilhørighet på berørte grenser",
+    });
+  };
+
+  const deleteFeatures = () => {
+    const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
+
+    const selectedFeaturesContainsExistingGrenser = !selectedFeatureIds.every((id) => isTempFeatureId(id));
+
+    if (selectedFeaturesContainsExistingGrenser) {
+      toast({
+        status: "error",
+        title: "Kan ikke slette eksisterende grenser",
+        description: "Ønsker du å fjerne en eksisterende grense må du bruke arkivering",
+      });
+      return;
+    }
+
+    clearSelection();
+    removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
+
+    addGrenseDeleteEntryFromFeatureList(selectedFeatures, addHistoryEntry);
+
+    toast({
+      status: "success",
+      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble slettet`,
     });
   };
 
@@ -141,6 +170,17 @@ const ToolbarPopups = () => {
             text="Velg en eller flere grenser du ønsker å arkivere"
             buttonText="Arkiver"
             onClick={archiveFeatures}
+            isDisabled={selectedFeatures.length === 0}
+            onClose={resetTool}
+          />
+        );
+
+      case "delete":
+        return (
+          <ToolbarPopup
+            text="Velg en eller flere grenser du ønsker å slette"
+            buttonText="Slett"
+            onClick={deleteFeatures}
             isDisabled={selectedFeatures.length === 0}
             onClose={resetTool}
           />

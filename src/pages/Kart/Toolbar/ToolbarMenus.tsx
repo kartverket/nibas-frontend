@@ -77,6 +77,15 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("archive"),
       "aria-label": "Arkiver grense",
     },
+    {
+      label: "Slett grense",
+      icon: <Icon icon="delete" />,
+      command: KeyboardShortcuts["delete"].displayString,
+      $isActive: activeTool === "delete",
+      isDisabled: !isEditing,
+      onClick: () => toggleTool("delete"),
+      "aria-label": "Slett grense",
+    },
   ];
   const punktMenuItems: MenuItems = [
     {

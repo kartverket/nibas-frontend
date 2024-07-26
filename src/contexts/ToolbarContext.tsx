@@ -13,7 +13,17 @@ export const isTool = (value: any): value is Tool => {
   return allowedValues.includes(value);
 };
 
-export const toolValues = ["add", "remove", "draw", "split", "grenseinfo", "koordinater", "archive", null] as const;
+export const toolValues = [
+  "add",
+  "remove",
+  "draw",
+  "split",
+  "grenseinfo",
+  "koordinater",
+  "archive",
+  "delete",
+  null,
+] as const;
 export type Tool = (typeof toolValues)[number];
 
 const editTools: Tool[] = ["add", "remove", "draw", "split", "koordinater", "archive"];

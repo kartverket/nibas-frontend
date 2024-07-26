@@ -9,6 +9,8 @@ import {
   handleGrensedeling,
   handleNyGrense,
   setRepresentasjonspunktForEntry,
+  undoDelete,
+  redoDelete,
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 
@@ -64,6 +66,9 @@ const onUndo = (entry: HistoryEntry) => {
     }
     case "grensearkivering": {
       return undoArchving(entry);
+    }
+    case "grensedelete": {
+      return undoDelete(entry);
     }
     case "kretsdelingendring": {
       return document.dispatchEvent(
@@ -140,6 +145,9 @@ const onRedo = (entry: HistoryEntry) => {
     }
     case "grensearkivering": {
       return redoArchiving(entry);
+    }
+    case "grensedelete": {
+      return redoDelete(entry);
     }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "to");
