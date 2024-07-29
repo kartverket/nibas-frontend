@@ -60,6 +60,8 @@ const ToolbarPopups = () => {
     clearSelection();
     removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
 
+    // Oppretter entry som sier at grensen blir slettet, denne blir tatt i bruk ved lagring for å fjerne grenser man har slettet.
+    // Denne entrien blir selv slettet (ignorert) ved lagring da den ikke skal med i utkastet.
     addGrenseDeleteEntryFromFeatureList(selectedFeatures, addHistoryEntry);
 
     toast({
