@@ -119,11 +119,6 @@ export const handleNyGrense = (entry: NyGrenseEntry, direction: HistoryDirection
   if (delteFeatures.length > 0) {
     handleGrensedeling(createDummyGrensedelingEntry(delteFeatures, newFeatures), direction);
   }
-  if (direction === "to") {
-    redoGrensedeling(delteFeatures, newFeatures);
-  } else if (direction === "from") {
-    undoGrensedeling(delteFeatures, newFeatures);
-  }
 
   // Vil ikke ha med grensedeling i feature properties, da det skaper problemer ved serialisering av utkast.
   // Sender derfor med en representasjon uten grensedeling.
