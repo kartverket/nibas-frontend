@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import useNibasApi from "hooks/useNibasApi";
 import { UtkastResponse } from "types/api";
@@ -18,8 +18,6 @@ type useUtkastKretsEndringerReturnType = {
 };
 
 export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkastKretsEndringerReturnType => {
-  const [endringer, setEndringer] = useState<KretsendringerForKommune[] | null>(null);
-
   const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner");
   const operasjoner = utkast.operasjoner;
 
@@ -31,11 +29,12 @@ export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkast
 
   const lasterData = lasterStemmekretser || lasterKommuner;
 
-  useEffect(() => {
+  const endringer = useMemo(() => {
     if (!lasterData && stemmekretser && kommuner) {
-      setEndringer(getStemmekretsEndringer(stemmekretserMedEndringer, operasjoner, stemmekretser, kommuner));
+      return getStemmekretsEndringer(stemmekretserMedEndringer, operasjoner, stemmekretser, kommuner);
     }
-  }, [stemmekretserMedEndringer, operasjoner, kommuner, lasterData, stemmekretser]);
+    return null;
+  }, [lasterData, stemmekretserMedEndringer, stemmekretser, kommuner, operasjoner]);
 
   return {
     harEndringer: stemmekretserMedEndringer.length > 0,
@@ -45,8 +44,6 @@ export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkast
 };
 
 export const useUtkastGrunnkretsEndringer = (utkast: UtkastResponse): useUtkastKretsEndringerReturnType => {
-  const [endringer, setEndringer] = useState<KretsendringerForKommune[] | null>(null);
-
   const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner");
   const operasjoner = utkast.operasjoner;
 
@@ -58,11 +55,12 @@ export const useUtkastGrunnkretsEndringer = (utkast: UtkastResponse): useUtkastK
 
   const lasterData = lasterGrunnkretser || lasterKommuner;
 
-  useEffect(() => {
+  const endringer = useMemo(() => {
     if (!lasterData && grunnkretser && kommuner) {
-      setEndringer(getGrunnkretsEndringer(grunnkretserMedEndringer, operasjoner, grunnkretser, kommuner));
+      return getGrunnkretsEndringer(grunnkretserMedEndringer, operasjoner, grunnkretser, kommuner);
     }
-  }, [grunnkretserMedEndringer, operasjoner, kommuner, lasterData, grunnkretser]);
+    return null;
+  }, [lasterData, grunnkretserMedEndringer, grunnkretser, kommuner, operasjoner]);
 
   return {
     harEndringer: grunnkretserMedEndringer.length > 0,

@@ -22,6 +22,7 @@ import { Feature } from "ol";
 import { MockAuthProvider } from "../../../mocks/contexts/AuthContextMock";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
+import { FeatureStyleProvider } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 describe("useUnsavedEndringer", () => {
   describe("kretsendringer", () => {
@@ -347,7 +348,9 @@ describe("useUnsavedEndringer", () => {
 function renderHookWithHistory(entries: HistoryEntry[]) {
   const wrapper = ({ children }: PropsWithChildren) => (
     <MockAuthProvider>
-      <HistoryProvider initialHistory={entries}>{children}</HistoryProvider>
+      <FeatureStyleProvider>
+        <HistoryProvider initialHistory={entries}>{children}</HistoryProvider>
+      </FeatureStyleProvider>
     </MockAuthProvider>
   );
   return renderHook(() => useUnsavedEndringer(), { wrapper });
