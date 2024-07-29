@@ -2,11 +2,12 @@ import {
   Route,
   Navigate,
   useOutlet,
-  createBrowserRouter,
   createRoutesFromElements,
+  createBrowserRouter,
   RouterProvider,
   useNavigate,
 } from "react-router-dom";
+import { withFaroRouterInstrumentation } from "@grafana/faro-react";
 import Providers from "./Providers";
 import PageLayout from "../Kart/PageLayout";
 import { Suspense, useEffect } from "react";
@@ -15,7 +16,6 @@ import Landing from "pages/Landing/Landing";
 import { routes } from "utils/routes";
 import Utkast from "pages/Utkast/Utkast";
 import EnvironmentOverlay from "./EnvironmentOverlay";
-import { ErrorBoundaryWithFrontendLogger } from "components/FrontendLogger/FrontendLoggerErrorBoundry";
 import { AfterAuthentication } from "components/Authentication/AfterAuthentication";
 import {
   AuthenticationWrapper,
@@ -27,29 +27,30 @@ import { useAuthentication } from "components/Authentication/AuthenticationHook"
 import { AuthRenewError } from "components/Authentication/AuthRenewError";
 import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
 import "cypress-globals";
+import { FullPageErrorWithFaroErrorBoundry } from "components/FullPageError";
 
 const App = () => {
-  const { token } = useAuthentication();
-
-  const router = createBrowserRouter(
-    createRoutesFromElements(
-      <Route element={<ErrorBoundaryWithFrontendLogger authToken={token} />}>
-        <Route path={routes.authentication} element={<AuthenticationWrapper />}>
-          <Route index element={<AuthLogIn />} />
-          <Route path={routes.notAuthorized} element={<AuthNotAuthorized />} />
-          <Route path={routes.authError} element={<AuthError />} />
-        </Route>
-        <Route path={routes.afterAuthentication} element={<AfterAuthentication />} />
-        <Route path={routes.logout} element={<Navigate to={routes.index} replace={true} />} />
-        <Route element={<ProtectedPage />}>
-          <Route index element={<Landing />} />
-          <Route path={routes.utkast} element={<UtkastRestoreAfterReauth />}>
-            <Route index element={<Utkast />} />
-            <Route path={routes.utkastId} element={<PageLayout />} />
+  const router = withFaroRouterInstrumentation(
+    createBrowserRouter(
+      createRoutesFromElements(
+        <Route element={<FullPageErrorWithFaroErrorBoundry />}>
+          <Route path={routes.authentication} element={<AuthenticationWrapper />}>
+            <Route index element={<AuthLogIn />} />
+            <Route path={routes.notAuthorized} element={<AuthNotAuthorized />} />
+            <Route path={routes.authError} element={<AuthError />} />
           </Route>
-          <Route path={routes.kart} element={<PageLayout />} />
-        </Route>
-      </Route>,
+          <Route path={routes.afterAuthentication} element={<AfterAuthentication />} />
+          <Route path={routes.logout} element={<Navigate to={routes.index} replace={true} />} />
+          <Route element={<ProtectedPage />}>
+            <Route index element={<Landing />} />
+            <Route path={routes.utkast} element={<UtkastRestoreAfterReauth />}>
+              <Route index element={<Utkast />} />
+              <Route path={routes.utkastId} element={<PageLayout />} />
+            </Route>
+            <Route path={routes.kart} element={<PageLayout />} />
+          </Route>
+        </Route>,
+      ),
     ),
   );
 
