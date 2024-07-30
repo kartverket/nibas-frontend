@@ -22,19 +22,13 @@ type AuthConfig = {
 const prodConfig = {
   authority: "https://idporten.no",
   client_id: "1a81c073-b363-4dce-b452-819cb7f38c2a",
-  redirect_uri: "https://nibas.prod.skip.statkart.no/authenticated",
-};
-
-const testConfig = {
-  authority: "https://test.idporten.no",
-  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-  redirect_uri: "https://nibas.test.skip.statkart.no/authenticated",
+  redirect_uri: "https://nibas.atkv3-prod.kartverket-intern.cloud/authenticated",
 };
 
 const devConfig = {
   authority: "https://test.idporten.no",
   client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-  redirect_uri: "https://nibas.dev.skip.statkart.no/authenticated",
+  redirect_uri: "https://nibas.atkv3-dev.kartverket-intern.cloud/authenticated",
 };
 
 const localConfig = {
@@ -48,8 +42,6 @@ export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
   switch (environment) {
     case "dev":
       return isLocalhost() ? localConfig : devConfig;
-    case "test":
-      return testConfig;
     case "prod":
       return prodConfig;
   }

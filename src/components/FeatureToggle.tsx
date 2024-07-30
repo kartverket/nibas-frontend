@@ -6,13 +6,12 @@ const getLocalEnvironmentOverride = (envKey: string) => {
   return import.meta.env[envKey] === "true";
 };
 
-export type Environment = "prod" | "test" | "dev";
+export type Environment = "prod" | "dev";
 
 const environmentByUrl: Record<string, Environment> = {
   localhost: "dev",
-  "nibas.dev.skip.statkart.no": "dev",
-  "nibas.test.skip.statkart.no": "test",
-  "nibas.prod.skip.statkart.no": "prod",
+  "nibas.atkv3-dev.kartverket-intern.cloud": "dev",
+  "nibas.atkv3-prod.kartverket-intern.cloud": "prod",
 };
 
 // denne utvides etterhvert som vi får flere flagg
@@ -24,7 +23,6 @@ type Keys = "EKSEMPEL_TOGGLE";
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   EKSEMPEL_TOGGLE: {
     prod: false,
-    test: false,
     dev: getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
   },
 };
