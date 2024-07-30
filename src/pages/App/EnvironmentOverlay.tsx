@@ -4,10 +4,6 @@ import { zindex } from "utils/constants";
 
 type EnvironmentStyle = { label: string; color: string };
 const styles: Record<Environment, EnvironmentStyle> = {
-  test: {
-    label: "Testmiljø",
-    color: "var(--kvib-colors-orange-300)",
-  },
   dev: {
     label: "Utviklingsmiljø",
     color: "var(--kvib-colors-purple-200)",
