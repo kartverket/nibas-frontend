@@ -22,7 +22,7 @@ type AuthConfig = {
 const prodConfig = {
   authority: "https://idporten.no",
   client_id: "1a81c073-b363-4dce-b452-819cb7f38c2a",
-  redirect_uri: "https://nibas.atkv3-prod.kartverket-intern.cloud/authenticated",
+  redirect_uri: "https://nibas.kartverket-intern.cloud/authenticated",
 };
 
 const devConfig = {
