@@ -16,6 +16,7 @@ import {
   GrunnkretsEntry,
   KretsdelingEntry,
   KommuneEntry,
+  NyGrenseDeleteEntry,
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -220,6 +221,16 @@ export const undoArchving = (entry: GrenseArkiveringsEntry) => {
       detail: { entry },
     }),
   );
+};
+
+export const redoDelete = (entry: NyGrenseDeleteEntry) => {
+  const allIdsToBeDeleted = entry.changes.map((change) => change.id);
+  removeFeaturesFromSourceByIds("edit", allIdsToBeDeleted);
+};
+
+export const undoDelete = (entry: NyGrenseDeleteEntry) => {
+  const featuresToAddBack: Feature<Geometry>[] = removeNil(entry.changes.map((change) => change.from));
+  addFeaturesToSource("edit", featuresToAddBack);
 };
 
 export const redoGrensedeling = (delteFeatures: Feature[], newFeaturesFromsDeling: Feature[]) => {

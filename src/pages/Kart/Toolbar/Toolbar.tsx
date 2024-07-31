@@ -1,4 +1,4 @@
-import { useDisclosure } from "@kvib/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, useDisclosure } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -164,6 +164,19 @@ const Toolbar = () => {
 
   return (
     <OuterContainer>
+      <ToolInfoAlert $isOpen={activeTool === "delete"}>
+        <AlertIcon />
+        <div>
+          <AlertTitle>Sletting og arkivering</AlertTitle>
+          <AlertDescription>
+            {`
+          Merk at sletteverktøyet kun er ment for grenser som er opprettet i utkatset ved en feiltagelse, og ikke
+          eksisterende (dvs. allerede publiserte) grenser. Ønsker du å fjerne disse, bruk heller "Arkiver
+          grenser"-verktøyet.
+          `}
+          </AlertDescription>
+        </div>
+      </ToolInfoAlert>
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
@@ -265,6 +278,15 @@ const Toolbar = () => {
     </OuterContainer>
   );
 };
+
+const ToolInfoAlert = styled(Alert)<{ $isOpen?: boolean }>`
+  ${(props) => props.$isOpen === false && "display: none"};
+  position: absolute;
+  top: 10px;
+  width: 800px;
+  border-radius: var(--kvib-space-2);
+  box-shadow: var(--kvib-shadows-lg);
+`;
 
 const OuterContainer = styled.div`
   grid-area: toolbar;
