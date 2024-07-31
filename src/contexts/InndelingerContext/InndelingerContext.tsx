@@ -110,13 +110,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(inndelingerToFetch);
   const { utkast } = useUtkast();
 
-  const { reapplyCurrentEntries, getHistoryEntries } = useHistory();
+  const { reapplyCurrentEntries, getHistoryEntries, restoreHistoryState } = useHistory();
 
   const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
     return a.id === b.id && a.inndelingtype === b.inndelingtype;
   };
 
-  const { restoreHistoryState } = useHistory();
   const { selectPointOnFeature, addToSelection, selectFeatures } = useFeatureStyle();
   const { openOverlayModal, openOverlayPanel } = useOverlayPanel();
   const { activeTool } = useToolbar();
