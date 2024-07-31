@@ -8,6 +8,7 @@ import {
   Controller,
   FieldErrors,
   UseFormClearErrors,
+  UseFormGetValues,
   UseFormRegister,
   UseFormSetError,
 } from "react-hook-form";
@@ -27,11 +28,11 @@ type ReferanseBodyProps = {
   setInternref: React.Dispatch<React.SetStateAction<Referanse[] | undefined>>;
   setError: UseFormSetError<VedtakinfoForm>;
   clearErrors: UseFormClearErrors<VedtakinfoForm>;
+  values: UseFormGetValues<VedtakinfoForm>;
 };
 
 export const VedtaksinfoBody = ({
   formViewState,
-  vedtak,
   register,
   internref,
   dokref,
@@ -43,6 +44,7 @@ export const VedtaksinfoBody = ({
   setError,
   clearErrors,
   control,
+  values,
 }: ReferanseBodyProps) => {
   const addDokumentlenke = (lenke: Referanse) => {
     setDokref((prevState) => {
@@ -73,7 +75,7 @@ export const VedtaksinfoBody = ({
             formViewState={formViewState}
             tooltipLabel="Navn på lov, forskrift, vedtak, dom eller traktat."
             title="Vedtakstittel"
-            value={vedtak?.rettskildeTittel}
+            value={values("rettskildeTittel")}
             isRequired
           >
             <Input
@@ -105,8 +107,8 @@ export const VedtaksinfoBody = ({
                     title="Fastsettingsdato"
                     isRequired
                     value={
-                      vedtak?.fastsettingsdato != null
-                        ? new Date(vedtak?.fastsettingsdato).toLocaleDateString("nb-NO")
+                      values("fastsettingsdato") != null
+                        ? new Date(values("fastsettingsdato")).toLocaleDateString("nb-NO")
                         : undefined
                     }
                   >
@@ -128,7 +130,7 @@ export const VedtaksinfoBody = ({
               formViewState={formViewState}
               tooltipLabel="Referanse til lov, forskrift, vedtak, dom eller traktat i form av kode som angir type dokument, dato og nummer For eksempel: LOV-2012-09-07-65."
               title="Rettskilde-ID"
-              value={vedtak?.rettskildeId ?? "Ingen ID satt."}
+              value={values("rettskildeId") ?? "Ingen ID satt."}
             >
               <Input {...register("rettskildeId")} backgroundColor="white" placeholder="Ikke spesifisert" />
             </VedtakinfoField>
@@ -149,8 +151,8 @@ export const VedtaksinfoBody = ({
                     title="Gyldig fra"
                     isRequired
                     value={
-                      vedtak?.vedtakGyldigFra != null
-                        ? new Date(vedtak?.vedtakGyldigFra).toLocaleDateString("nb-NO")
+                      values("vedtakGyldigFra") != null
+                        ? values("vedtakGyldigFra")?.toLocaleDateString("nb-NO")
                         : "Ingen gyldig fra satt."
                     }
                   >
@@ -179,8 +181,8 @@ export const VedtaksinfoBody = ({
                     tooltipLabel="Tidspunktet når objektet opphørte å eksistere i den virkelige verden"
                     title="Gyldig til"
                     value={
-                      vedtak?.vedtakGyldigTil != null
-                        ? new Date(vedtak?.vedtakGyldigTil).toLocaleDateString("nb-NO")
+                      values("vedtakGyldigTil") != null
+                        ? values("vedtakGyldigTil")?.toLocaleDateString("nb-NO")
                         : "Ingen gyldig til satt."
                     }
                   >
@@ -223,7 +225,7 @@ export const VedtaksinfoBody = ({
             formViewState={formViewState}
             tooltipLabel="Lov som rettskilden er begrunnet i."
             title="Hjemmel"
-            value={vedtak?.hjemmel ?? "Ingen hjemmel satt."}
+            value={values("hjemmel") ?? "Ingen hjemmel satt."}
           >
             <Input {...register("hjemmel")} backgroundColor="white" placeholder="Ikke spesifisert" />
           </VedtakinfoField>
@@ -235,7 +237,7 @@ export const VedtaksinfoBody = ({
             formViewState={formViewState}
             tooltipLabel="Offentlig instans som har fastsatt en grense."
             title="Fastsettingsmyndighet"
-            value={vedtak?.fastsettingsmyndighet ?? "Ingen myndighet satt"}
+            value={values("fastsettingsmyndighet") ?? "Ingen myndighet satt"}
           >
             <Input {...register("fastsettingsmyndighet")} backgroundColor="white" placeholder="Ikke spesifisert" />
           </VedtakinfoField>
