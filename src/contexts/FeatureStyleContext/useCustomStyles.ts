@@ -1,6 +1,7 @@
 import Style, { StyleFunction } from "ol/style/Style";
 import { useState } from "react";
 import { setFeatureStyle } from "utils/map/layerStyles";
+import { getUniqueItems } from "utils/list-utils";
 
 // Hjelpehook som holder styr på hvilke features som har en gitt custom stil
 const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
@@ -8,7 +9,7 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
   const [savedCustomFeatureIds, setSavedCustomFeatureIds] = useState<string[]>([]);
 
   const renderCustomStyles = (featureIds: string[]) => {
-    for (const featureId of featureIds) {
+    for (const featureId of getUniqueItems(featureIds)) {
       setFeatureStyle(featureId, customStyle);
     }
   };

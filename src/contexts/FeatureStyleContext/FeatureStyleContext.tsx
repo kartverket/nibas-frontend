@@ -1,5 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo } from "react";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import React, { createContext, useContext, useMemo } from "react";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
@@ -13,17 +12,16 @@ import {
   getFeaturesConnectedToFeatureAtEndpoints,
   isFeatureDeadEnd,
 } from "utils/features";
-import { HistoryTypeValues } from "contexts/HistoryContext/types";
-import { filterOnlyDeadEnds, getEntriesUpToIndex, mapAffectedFeaturesForErrorEntries } from "./feature-style-utils";
-import { newFeatureOnlyExistsAfterIndex, getChangeIds } from "contexts/HistoryContext/history-utils";
+import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
+import { filterOnlyDeadEnds, mapAffectedFeaturesForErrorEntries } from "./feature-style-utils";
+import { getChangeIds } from "contexts/HistoryContext/history-utils";
 import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
-import { getDuplicateItems, removeNil } from "utils/list-utils";
+import { getDuplicateItems, getUniqueItems, removeNil } from "utils/list-utils";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
 export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }) => {
-  const { history } = useHistory();
   const {
     selectedPoint,
     selectFeatures: selectFeaturesInternal,
@@ -111,25 +109,42 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     selectPointOnFeatureInternal(coordinate);
   };
 
-  const undoFeatureStyles = useCallback(
-    (featureIds: string[]) => {
-      for (const featureId of featureIds) {
-        if (customStyles.every((cs) => !cs.savedCustomFeatureIds.includes(featureId))) {
-          setFeatureStyle(featureId, grenseStyles.edit);
-        }
-      }
+  const getFeaturesThatNeedToResetStyles = (featureIdsToNotReset: string[]): string[] => {
+    const featuresWithCustomStyles = customStyles.flatMap((customStyle) => [
+      ...customStyle.customFeatureIds,
+      ...customStyle.savedCustomFeatureIds,
+    ]);
+    return getUniqueItems(featuresWithCustomStyles.filter((f) => !featureIdsToNotReset.includes(f)));
+  };
 
-      if (featureIds.length > 0) {
-        for (const customStyle of customStyles) {
-          customStyle.renderSavedCustomStyles();
-          customStyle.removeCustomStyles(featureIds);
-        }
+  const resetFeatureStyles = (featureIdsToReset: string[]) => {
+    for (const featureId of featureIdsToReset) {
+      setFeatureStyle(featureId, grenseStyles.edit);
+      const savedCustomStyleForFeature = customStyles.find((cs) => cs.savedCustomFeatureIds.includes(featureId));
+      if (savedCustomStyleForFeature != null) {
+        setFeatureStyle(featureId, savedCustomStyleForFeature.customStyle);
+      } else {
+        setFeatureStyle(featureId, grenseStyles.edit);
       }
-    },
-    [customStyles],
-  );
+    }
 
-  useEffect(() => {
+    if (featureIdsToReset.length > 0) {
+      for (const customStyle of customStyles) {
+        customStyle.renderSavedCustomStyles();
+        customStyle.removeCustomStyles(featureIdsToReset);
+      }
+    }
+  };
+
+  const saveFeatureStyles = () => {
+    for (const customStyle of customStyles) {
+      if (customStyle.customFeatureIds.length !== 0) {
+        customStyle.saveCustomStyles();
+      }
+    }
+  };
+
+  const updateFeatureStyles = (historyEntries: HistoryEntry[]) => {
     const dirtyHistoryTypes: HistoryTypeValues[] = [
       "grense",
       "property",
@@ -140,66 +155,34 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
     const errorHistoryTypes: HistoryTypeValues[] = ["grense", "nygrense", "grensearkivering"];
 
-    // Når vi lagrer blir history entries tømt, så vi lagrer stilene som er satt
-    if (history.entries.length === 0) {
-      for (const customStyle of customStyles) {
-        if (customStyle.customFeatureIds.length !== 0) {
-          customStyle.saveCustomStyles();
-        }
-      }
-      // Forhindre uendelig løkke når history er tom
-      return;
-    }
-
-    const allFeatureIds = history.entries.flatMap(getChangeIds);
-    // Finn IDer som er med i historikken etter index, men ikke før
-    const featureIdsToIgnore = allFeatureIds.filter((id) => newFeatureOnlyExistsAfterIndex(id, history));
-
     const featureEndpointsToCheck = getAllFeatureEndPointCoordinates(["matrikkel", "archived"]).filter(
-      (featureEndpoint) => featureEndpoint != null && !featureIdsToIgnore.includes(featureEndpoint.featureId),
+      (featureEndpoint) => featureEndpoint != null,
     ) as FeatureIdWithEndpoints[];
 
     const archivedFeatures = archivedSource.getFeatures().map((f) => f.getId()?.toString() ?? "");
-    const errorFeatures = getEntriesUpToIndex(history, (entry) => errorHistoryTypes.includes(entry.type))
+    const errorFeatures = historyEntries
+      .filter((entry) => errorHistoryTypes.includes(entry.type))
       .flatMap(mapAffectedFeaturesForErrorEntries)
       .filter(filterOnlyDeadEnds(featureEndpointsToCheck, archivedFeatures))
       .map((feature) => feature.getId()?.toString() ?? "");
+
     // Entries før index skal fargelegges basert på endringen som er gjort
-    const dirtyFeatures = getEntriesUpToIndex(history, (entry) => dirtyHistoryTypes.includes(entry.type))
+    const dirtyFeatures = historyEntries
+      .filter((entry) => dirtyHistoryTypes.includes(entry.type))
       .flatMap(getChangeIds)
       .filter((id) => !errorFeatures.includes(id));
 
-    // For å forhindre uendelig løkke
-    if (
-      dirtyStyleFunctions.customFeatureIds.length === dirtyFeatures.length &&
-      archivedStyleFunctions.customFeatureIds.length === archivedFeatures.length &&
-      errorStyleFunctions.customFeatureIds.length === errorFeatures.length
-    ) {
-      return;
-    }
-
-    // Først må vi fjerne alle satte styles, slik at vi ikke må beregne oss til en differense
-    const allStyledFeatures = dirtyStyleFunctions.customFeatureIds
-      .concat(archivedStyleFunctions.customFeatureIds)
-      .concat(errorStyleFunctions.customFeatureIds);
-
-    undoFeatureStyles(allStyledFeatures);
+    // Om vi har features med customstyles som ikke lenger er i "historyEntries" betyr det at endringen
+    // ikke lenger er gjeldende, og vi må resette stylingen på featuren.
+    const allFeaturesWithChanges = getUniqueItems([...archivedFeatures, ...errorFeatures, ...dirtyFeatures]);
+    resetFeatureStyles(getFeaturesThatNeedToResetStyles(allFeaturesWithChanges));
 
     // Obs: sammenslåing skal egentlig være her også, men den lagres umiddelbart og kan uansett ikke angres
     dirtyStyleFunctions.setCustomStyles(dirtyFeatures);
     archivedStyleFunctions.setCustomStyles(archivedFeatures);
     errorStyleFunctions.setCustomStyles(errorFeatures);
     renderSelectStyles(selectedFeatures);
-  }, [
-    archivedStyleFunctions,
-    customStyles,
-    dirtyStyleFunctions,
-    errorStyleFunctions,
-    history,
-    renderSelectStyles,
-    selectedFeatures,
-    undoFeatureStyles,
-  ]);
+  };
 
   const clearFeatureStyles = () => {
     for (const customStyle of customStyles) {
@@ -295,7 +278,9 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     setAndSaveSammenslaaingStyles: sammenslaaingStyleFunctions.setAndSaveCustomStyles,
     setAndSaveSammenslaaingOverlappingStyles: sammenslaaingOverlappingStyleFunctions.setAndSaveCustomStyles,
 
+    saveFeatureStyles,
     clearFeatureStyles,
+    updateFeatureStyles,
   };
 
   return <FeatureStyleContext.Provider value={value}>{children}</FeatureStyleContext.Provider>;

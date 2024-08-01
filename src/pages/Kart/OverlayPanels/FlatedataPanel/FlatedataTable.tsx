@@ -16,6 +16,7 @@ import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
+import { getInndelingFremtidigEndringDato } from "utils/features";
 
 type Props = {
   mainInndeling: Inndeling;
@@ -32,6 +33,10 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const { addHistoryEntry } = useHistory();
 
   const flatedata = useFlatedata(mainInndeling) ?? [];
+
+  const allInndelingerHasFremtidigEndring = flatedata.every(
+    (inndeling) => getInndelingFremtidigEndringDato(inndeling?.id.lokalid.value) != null,
+  );
 
   const formMethods = useForm<FlatedataInputs>({ mode: "onSubmit", reValidateMode: "onChange" });
   const {
@@ -134,12 +139,18 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       {utkast && mainInndeling.isEditing && (
         <FlatedataFooter
           isEditing={isEditing}
+          isDisabled={allInndelingerHasFremtidigEndring}
           toggleEditing={toggleEditing}
           canSave={isDirty}
           onSubmit={(e) => {
             clearSearch();
             handleSubmit(submitAndAddHistoryEntry)(e);
           }}
+          tooltip={
+            allInndelingerHasFremtidigEndring
+              ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
+              : null
+          }
         >
           Rediger flatedetaljer
         </FlatedataFooter>

@@ -43,6 +43,7 @@ export const VedtaksinfoDetaljer = ({
     deleteOrArchive,
     setError,
     clearErrors,
+    getValues,
   } = useVedtaksinfoForm(feature, vedtak);
 
   const deleteDokref = (index: number) => {
@@ -158,7 +159,7 @@ export const VedtaksinfoDetaljer = ({
               setInternref={setInternref}
               deleteInternref={deleteInternref}
               deleteDokref={deleteDokref}
-              vedtak={vedtak}
+              values={getValues}
             />
           </ModalBody>
 

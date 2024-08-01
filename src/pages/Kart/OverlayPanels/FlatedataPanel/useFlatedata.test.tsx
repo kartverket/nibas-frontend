@@ -95,8 +95,8 @@ describe("useFlatedata", () => {
 function renderHookWithHistoryAndUtkast(medUtkastEndringer: boolean, entries: HistoryEntry[]) {
   const wrapper = ({ children }: PropsWithChildren) => (
     <MockAuthProvider>
-      <HistoryProvider initialHistory={entries}>
-        <FeatureStyleProvider>
+      <FeatureStyleProvider>
+        <HistoryProvider initialHistory={entries}>
           <MemoryRouter
             initialEntries={[`/utkast/${medUtkastEndringer ? mockUtkast.id : mockUtkastIngenEndringer.id}`]}
           >
@@ -104,8 +104,8 @@ function renderHookWithHistoryAndUtkast(medUtkastEndringer: boolean, entries: Hi
               <UtkastProvider>{children}</UtkastProvider>
             </ErrorHandlingProvider>
           </MemoryRouter>
-        </FeatureStyleProvider>
-      </HistoryProvider>
+        </HistoryProvider>
+      </FeatureStyleProvider>
     </MockAuthProvider>
   );
 

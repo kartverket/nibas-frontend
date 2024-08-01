@@ -22,7 +22,7 @@ const useInteractions = () => {
   const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
 
   const crosshairCursorTools: Tool[] = ["draw", "add", "remove", null];
-  const pointerCursorTools: Tool[] = ["archive", "grenseinfo", "koordinater", "split"];
+  const pointerCursorTools: Tool[] = ["archive", "grenseinfo", "koordinater", "split", "delete"];
 
   useCursorStyles({
     isEnabled: !activeModeTools.includes("move") && crosshairCursorTools.includes(activeTool),

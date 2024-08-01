@@ -9,6 +9,7 @@ import {
   KretsdelingEntry,
   StemmekretsSammenslaaingsendringEntry,
   NyGrense,
+  NyGrenseDeleteEntry,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
@@ -29,7 +30,7 @@ import {
 import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
 import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
-import { removeNil } from "utils/list-utils";
+import { getUniqueItems, removeNil } from "utils/list-utils";
 import { isTempFeatureId, getTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 const getCombinedEntity = <T extends ResponseWithId>(
@@ -213,9 +214,17 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         // ny grense er også sær, siden den kan inneholde 1-2 grensedelinger attåt
         if (isNyGrenseChange(change) && change.from.grensedeling != null && change.to.grensedeling != null) {
           const newFeatures = removeNil(change.to.grensedeling.map((f) => f.getId()?.toString()));
-          const removedFeatures = removeNil(change.from.grensedeling.map((f) => f.getId()?.toString()));
+          const removedFeatures = getUniqueItems(removeNil(change.from.grensedeling.map((f) => f.getId()?.toString())));
 
-          removedFeatures.filter(isTempFeatureId).forEach((id) => removeFeatureFromEditedFeatures(id));
+          removedFeatures.forEach((id) => {
+            if (isTempFeatureId(id)) {
+              // Hvis det er en ny grense som ble delt bare fjerner vi den fra redigerte grenser
+              removeFeatureFromEditedFeatures(id);
+            } else {
+              // Om det er en eksisterende grense som ble delt må den legges til som "til arkivering"
+              addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
+            }
+          });
           newFeatures.forEach((id) => {
             addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
           });
@@ -224,9 +233,17 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     });
   });
 
+  const nyeGrenserSomSkalSlettesId = historyToCurrentIndex
+    .filter((entry) => entry.type === "grensedelete")
+    .flatMap((entry) => (entry as NyGrenseDeleteEntry).changes.map((change) => change.id));
+  editedFeatures = editedFeatures.filter(
+    (feature) => !("id" in feature && nyeGrenserSomSkalSlettesId.includes(feature.id)),
+  );
+
   utkastOperations.grenseendringer = {
     endredeFeatures: editedFeatures,
   };
+
   return utkastOperations;
 };
 

@@ -36,7 +36,8 @@ export type HistoryTypeValues =
   | "grensearkivering"
   | "grensetilhorighetendring"
   | "nygrense"
-  | "grensedeling";
+  | "grensedeling"
+  | "grensedelete";
 
 export type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
   type: HistoryType;
@@ -83,6 +84,8 @@ export type NyGrenseEntry = BaseHistoryEntry<"nygrense", NyGrense>;
 
 export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling", Feature[]>;
 
+export type NyGrenseDeleteEntry = BaseHistoryEntry<"grensedelete", Feature<Geometry> | null>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -94,12 +97,13 @@ export type HistoryEntry =
   | GrenseTilhorighetEntry
   | GrenseDelingEntry
   | NyGrenseEntry
-  | PropertyEntry;
+  | PropertyEntry
+  | NyGrenseDeleteEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
   history: HistoryState;
-  clearHistory: () => void;
+  clearHistory: (historySaved?: boolean) => void;
   getHistoryEntries: () => HistoryEntry[];
   restoreHistoryState: (historyState: HistoryState) => void;
   canSave: boolean;

@@ -1,5 +1,6 @@
 import { styled } from "styled-components";
-import { ButtonGroup, Button } from "@kvib/react";
+import { ButtonGroup, Button, Tooltip } from "@kvib/react";
+import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 
 type Props = {
   className?: string;
@@ -12,6 +13,7 @@ type Props = {
   variant?: "primary" | "secondary";
   hasIcon?: boolean;
   children: React.ReactNode;
+  tooltip?: string | null;
 };
 
 const EditAndSaveButton = ({
@@ -25,9 +27,10 @@ const EditAndSaveButton = ({
   toggleEditing,
   onSubmit,
   size,
-}: Props) => (
-  <Container className={className}>
-    {isEditing ? (
+  tooltip,
+}: Props) => {
+  const renderButton = () =>
+    isEditing ? (
       <CombinedButton>
         <Button variant="tertiary" aria-label="Forkast endringer" onClick={toggleEditing} size={size}>
           Avbryt
@@ -47,9 +50,20 @@ const EditAndSaveButton = ({
       >
         {children}
       </EditButton>
-    )}
-  </Container>
-);
+    );
+
+  return (
+    <Container className={className}>
+      {tooltip != null ? (
+        <Tooltip hasArrow label={<TooltipBody text={tooltip} />}>
+          {renderButton()}
+        </Tooltip>
+      ) : (
+        renderButton()
+      )}
+    </Container>
+  );
+};
 
 const Container = styled.div`
   display: flex;

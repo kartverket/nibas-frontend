@@ -8,10 +8,6 @@ import {
   isFeatureDeadEnd,
 } from "utils/features";
 
-/**
- * @param filter valgfritt filter for history entries
- * @returns En delmengde av HistoryEntries i historikken opp til nåværende index.
- */
 export const getEntriesUpToIndex = (
   history: HistoryState,
   filter?: (value: HistoryEntry, index: number, array: HistoryEntry[]) => boolean,

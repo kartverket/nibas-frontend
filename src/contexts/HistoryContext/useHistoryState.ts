@@ -3,6 +3,7 @@ import { HistoryState, HistoryEntry } from "./types";
 import { getChangeIds } from "./history-utils";
 import { removeFeatureFromAllLayers } from "utils/features";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 type Options = {
   onUndo: (entry: HistoryEntry) => void;
@@ -15,6 +16,8 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     index: initialState?.length ?? 0,
     entries: initialState,
   });
+
+  const { updateFeatureStyles, saveFeatureStyles } = useFeatureStyle();
 
   // Dersom applikasjonen er i tilstanden endring -> angre -> endring, kan man ende opp med features i en source
   // som ikke er representert i hverken history eller database. Dette vil lage "usynlig" geometri som skaper bugs i beregninger.
@@ -40,16 +43,22 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
   const addHistoryEntry = useCallback(
     (entry: HistoryEntry) => {
       clearFeaturesAfterIndex();
-      setHistory((prevHistory) => ({
-        index: prevHistory.index + 1,
-        entries: [...prevHistory.entries.slice(0, prevHistory.index), entry],
-      }));
+      const entries = [...history.entries.slice(0, history.index), entry];
+      updateFeatureStyles(entries);
+      setHistory({
+        index: history.index + 1,
+        entries,
+      });
     },
-    [clearFeaturesAfterIndex],
+    [clearFeaturesAfterIndex, history.entries, history.index, updateFeatureStyles],
   );
 
-  const clearHistory = () => {
+  const clearHistory = (historySaved: boolean = false) => {
+    if (historySaved) {
+      saveFeatureStyles();
+    }
     setHistory({ index: 0, entries: [] });
+    updateFeatureStyles([]);
   };
 
   const restoreHistoryState = useCallback(
@@ -58,8 +67,9 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
         onRedo(historyState.entries[i]);
       }
       setHistory(historyState);
+      updateFeatureStyles(historyState.entries);
     },
-    [onRedo],
+    [onRedo, updateFeatureStyles],
   );
 
   const revert = (amount: number) => {
@@ -77,6 +87,7 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
       onUndo(history.entries[i]);
     }
 
+    updateFeatureStyles(entries.slice(0, newIndex));
     setHistory({ index: newIndex, entries });
   };
 
@@ -93,6 +104,7 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
       onRedo(history.entries[i]);
     }
 
+    updateFeatureStyles(entries.slice(0, newIndex));
     setHistory({ index: newIndex, entries });
   };
 

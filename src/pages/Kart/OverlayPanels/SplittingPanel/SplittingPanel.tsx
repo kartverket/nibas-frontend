@@ -73,6 +73,7 @@ export const SplittingPanel = () => {
     isSubmitted,
   } = useSplittingForm(currentlyEditingInndelinger[0]);
 
+  // TODO: Kan vi trigge reset på en bedre måte enn useEffect her? Bruk av useEffect til dette gjør at vi trenger fler rerenders og kan fort føre til bugs og dårlig ytelse
   useEffect(() => {
     resetSplitting();
   }, [currentlyEditingInndelinger, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling

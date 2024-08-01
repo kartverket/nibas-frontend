@@ -99,6 +99,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: Inndel
     );
   };
 
+  // TODO: Dette burde ikke være en useEffect. Dette burde helles trigges samtidig som `isOpen` settes til true så man slipper ekstra rerender her
   useEffect(() => {
     const searchElement = searchRef.current;
     if (isOpen && searchElement != null) {

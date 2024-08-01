@@ -152,6 +152,8 @@ const FlyttKoordinaterPanel = () => {
   }, [setFormValues]);
 
   // Tilbakestill defaultverdier når man endrer eller oppdaterer valgt punkt
+  // TODO: Dette burde ikke være en useEffect. Burde bruke events eller callbacks
+  // At dette er en useEffect fører til flere rerenders enn nødvendig. I till
   useEffect(() => {
     reset(defaultValues(selectedPoint));
     setProjectionOfCoordinates(mapProjectionEPSGCode);
