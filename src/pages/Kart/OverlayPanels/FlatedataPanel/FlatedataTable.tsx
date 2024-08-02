@@ -11,7 +11,7 @@ import { useForm } from "react-hook-form";
 import { useEffect, useRef } from "react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import FlatedataTableRow from "./FlatedataTableRow";
+import { FlatedataTableRow } from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
 import EditAndSaveButton from "components/EditAndSaveButton";
@@ -38,7 +38,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     (inndeling) => getInndelingFremtidigEndringDato(inndeling?.id.lokalid.value) != null,
   );
 
-  const formMethods = useForm<FlatedataInputs>();
+  const formMethods = useForm<FlatedataInputs>({ mode: "onSubmit", reValidateMode: "onChange" });
   const {
     reset,
     getValues,
@@ -130,6 +130,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 isEditing={isEditing}
                 formMethods={formMethods}
                 previousValues={previousValues}
+                allInndelinger={flatedata}
               />
             );
           })}

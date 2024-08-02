@@ -5,10 +5,12 @@ import {
   GrenseArkiveringsEntry,
   GrenseTilhorighetEntry,
   HistoryChange,
+  NyGrenseDeleteEntry,
 } from "contexts/HistoryContext/types";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isDate } from "date-fns";
+import { Geometry } from "ol/geom";
 
 export const datestringToFormattedDatestring = (dateString: string) => {
   const date = new Date(dateString);
@@ -93,6 +95,30 @@ export const addArchivingEntryFromFeatureList = (
   addHistoryEntry({
     type: "grensearkivering",
     changes: changeEntries,
+  });
+};
+
+export const addGrenseDeleteEntryFromFeatureList = (
+  features: Feature<Geometry>[],
+  addHistoryEntry: (entry: NyGrenseDeleteEntry) => void,
+) => {
+  const deleteFeaturesChanges = removeNil(
+    features.map((feature) => {
+      const id = feature.getId()?.toString();
+      if (id == null) {
+        return;
+      }
+      const change: HistoryChange<Feature<Geometry> | null> = {
+        id: id,
+        from: feature,
+        to: null,
+      };
+      return change;
+    }),
+  );
+  addHistoryEntry({
+    type: "grensedelete",
+    changes: deleteFeaturesChanges,
   });
 };
 

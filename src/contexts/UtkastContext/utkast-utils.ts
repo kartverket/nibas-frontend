@@ -9,6 +9,7 @@ import {
   KretsdelingEntry,
   StemmekretsSammenslaaingsendringEntry,
   NyGrense,
+  NyGrenseDeleteEntry,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
@@ -232,9 +233,17 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     });
   });
 
+  const nyeGrenserSomSkalSlettesId = historyToCurrentIndex
+    .filter((entry) => entry.type === "grensedelete")
+    .flatMap((entry) => (entry as NyGrenseDeleteEntry).changes.map((change) => change.id));
+  editedFeatures = editedFeatures.filter(
+    (feature) => !("id" in feature && nyeGrenserSomSkalSlettesId.includes(feature.id)),
+  );
+
   utkastOperations.grenseendringer = {
     endredeFeatures: editedFeatures,
   };
+
   return utkastOperations;
 };
 
