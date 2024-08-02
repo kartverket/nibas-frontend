@@ -51,7 +51,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
     if (utkast?.id != null) {
       const appState: ApplicationState = {
         historyState: history,
-        utkastId: utkast.id,
+        utkast: utkast,
         selectedInndelinger: {
           inndelinger: currentlyEditingInndelinger,
           selectedFylkeId,

@@ -24,12 +24,16 @@ import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDead
 import { removeNil } from "utils/list-utils";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
+import { sessionStorageKeys } from "contexts/application-state-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
-  const auth = useAuthentication();
+  const { token } = useAuthentication();
+
+  const sessionUtkastJSON = sessionStorage.getItem(sessionStorageKeys.utkast);
+  const sessionUtkast = sessionUtkastJSON != null ? (JSON.parse(sessionUtkastJSON) as UtkastResponse) : null;
 
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
@@ -70,17 +74,21 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   }, [clearFeatureStyles, clearHistory]);
 
   useEffect(() => {
-    if (fetchedUtkast && !utkast) {
+    if (sessionUtkast && !utkast) {
+      setUtkast(sessionUtkast);
+    }
+    if (fetchedUtkast && !utkast && sessionUtkast == null) {
       setUtkast(addTempFeatureIdToNewFeaturesInUtkast(fetchedUtkast));
     }
 
     // fjern utkast hvis utkastid ikke er i url
     if (utkastId == null && utkast) {
+      sessionStorage.removeItem(sessionStorageKeys.utkast);
       setUtkast(undefined);
       closeUtkast();
       mutate();
     }
-  }, [fetchedUtkast, utkastId, mutate, utkast, closeUtkast]);
+  }, [fetchedUtkast, utkast, utkastId, closeUtkast, mutate, sessionUtkast]);
 
   const getUpdateUtkastRequestFromHistory = (): OppdaterUtkastRequest | null => {
     if (!utkast) {
@@ -119,11 +127,11 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     newUtkast: OppdaterUtkastRequest,
     shouldClearHistory: boolean = true,
   ): Promise<number> => {
-    const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), auth.token);
+    const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), token);
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
-      await globalMutate(["/v1/utkast", auth.token]);
+      await globalMutate(["/v1/utkast", token]);
       if (shouldClearHistory) {
         clearHistory(true);
       }

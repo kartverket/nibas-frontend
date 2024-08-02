@@ -15,8 +15,10 @@ import { SelectedPoint } from "./FeatureStyleContext/types";
 import { Inndeling, isInndeling } from "./InndelingerContext/InndelingerContext";
 import { OverlayModal, OverlayPanel, isOverlayModal, isOverlayPanel } from "./OverlayPanelContext";
 import { ModeTool, Tool, isModeTool, isTool } from "./ToolbarContext";
+import { UtkastResponse } from "types/api";
 
 export const sessionStorageKeys = {
+  utkast: "utkast",
   history: "history",
   inndeling: "inndeling",
   activeModeTools: "mode-tool",
@@ -33,7 +35,7 @@ type SessionStorageKeys = typeof sessionStorageKeys;
 export type SessionStorageKey = SessionStorageKeys[keyof SessionStorageKeys];
 
 export type ApplicationState = {
-  utkastId: string;
+  utkast: UtkastResponse;
   selectedInndelinger: SelectedInndelinger;
   historyState: HistoryState | null;
   selectedPoint: SelectedPoint | null;
@@ -240,6 +242,9 @@ const deserializeHistory = (serializedHistoryEntry: string): HistoryState | null
 
 export const saveApplicationStateToSessionStorage = (applicationState: ApplicationState) => {
   const geoJson = new GeoJSON();
+  if (applicationState.utkast != null) {
+    sessionStorage.setItem(sessionStorageKeys.utkast, JSON.stringify(applicationState.utkast));
+  }
   if (applicationState.historyState != null) {
     sessionStorage.setItem(sessionStorageKeys.history, serializeHistory(applicationState.historyState));
   }
