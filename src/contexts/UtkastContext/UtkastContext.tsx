@@ -31,10 +31,8 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(undef
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
   const { token } = useAuthentication();
-
   const sessionUtkastJSON = sessionStorage.getItem(sessionStorageKeys.utkast);
   const sessionUtkast = sessionUtkastJSON != null ? (JSON.parse(sessionUtkastJSON) as UtkastResponse) : null;
-
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { setError } = useErrorHandling();
@@ -51,7 +49,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     mutate,
     isValidating,
   } = useNibasApi(
-    utkastId != null ? "/v1/utkast/{id}" : null,
+    sessionUtkast == null && utkastId != null ? "/v1/utkast/{id}" : null,
     {
       // id blir ikke brukt før den er truthy, så vi kan trygt si at den
       // ikke er null her
@@ -76,8 +74,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (sessionUtkast && !utkast) {
       setUtkast(sessionUtkast);
-    }
-    if (fetchedUtkast && !utkast && sessionUtkast == null) {
+    } else if (fetchedUtkast && !utkast) {
       setUtkast(addTempFeatureIdToNewFeaturesInUtkast(fetchedUtkast));
     }
 
