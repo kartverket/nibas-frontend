@@ -317,6 +317,15 @@ export const saveApplicationStateToSessionStorage = (applicationState: Applicati
   sessionStorage.setItem(sessionStorageKeys.mapPosition, JSON.stringify(applicationState.mapPosition));
 };
 
+export const fetchUtkastFromSessionStorage = (): UtkastResponse | null => {
+  const serializedUtkast = sessionStorage.getItem(sessionStorageKeys.utkast);
+  if (serializedUtkast == null) {
+    return null;
+  }
+
+  return JSON.parse(serializedUtkast);
+};
+
 export const fetchMapPositionFromSessionStorage = (): MapPosition | null => {
   const serializedView = sessionStorage.getItem(sessionStorageKeys.mapPosition);
 

@@ -34,6 +34,10 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayModal, activeOverlayPanel } = useOverlayPanel();
 
+  const auth = useAuthRenewError();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (window as any).forceAutomatiskUtlogging = () => auth.setAuthRenewError(true);
+
   useEffect(() => {
     const silentRenewCleanupFn = events.addSilentRenewError(() => {
       setAuthRenewError(true);

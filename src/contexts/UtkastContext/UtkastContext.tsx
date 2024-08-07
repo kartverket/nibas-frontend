@@ -24,15 +24,14 @@ import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDead
 import { removeNil } from "utils/list-utils";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { sessionStorageKeys } from "contexts/application-state-utils";
+import { fetchUtkastFromSessionStorage, sessionStorageKeys } from "contexts/application-state-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
   const { token } = useAuthentication();
-  const sessionUtkastJSON = sessionStorage.getItem(sessionStorageKeys.utkast);
-  const sessionUtkast = sessionUtkastJSON != null ? (JSON.parse(sessionUtkastJSON) as UtkastResponse) : null;
+  const sessionUtkast = fetchUtkastFromSessionStorage();
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { setError } = useErrorHandling();
