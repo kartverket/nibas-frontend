@@ -5,18 +5,21 @@ import {
   HistoryState,
   HistoryTypeValues,
   NyGrense,
+  NyGrenseDeleteEntry,
   NyGrenseEntry,
 } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { GeoJSON } from "ol/format";
-import { LineString, Point } from "ol/geom";
+import { Geometry, LineString, Point } from "ol/geom";
 import { SelectedPoint } from "./FeatureStyleContext/types";
 import { Inndeling, isInndeling } from "./InndelingerContext/InndelingerContext";
 import { OverlayModal, OverlayPanel, isOverlayModal, isOverlayPanel } from "./OverlayPanelContext";
 import { ModeTool, Tool, isModeTool, isTool } from "./ToolbarContext";
+import { UtkastResponse } from "types/api";
 
 export const sessionStorageKeys = {
+  utkast: "utkast",
   history: "history",
   inndeling: "inndeling",
   activeModeTools: "mode-tool",
@@ -33,7 +36,7 @@ type SessionStorageKeys = typeof sessionStorageKeys;
 export type SessionStorageKey = SessionStorageKeys[keyof SessionStorageKeys];
 
 export type ApplicationState = {
-  utkastId: string;
+  utkast: UtkastResponse;
   selectedInndelinger: SelectedInndelinger;
   historyState: HistoryState | null;
   selectedPoint: SelectedPoint | null;
@@ -64,10 +67,11 @@ type SerializableHistoryState = Omit<HistoryState, "entries"> & {
 type SerializableHistoryChange<T> = HistoryChange<T>;
 
 type SerializableHistoryTypeValues =
-  | Exclude<HistoryTypeValues, "nygrense" | "grensedeling" | "property">
+  | Exclude<HistoryTypeValues, "nygrense" | "grensedeling" | "property" | "grensedelete">
   | "serializablenygrense"
   | "serializablegrensedeling"
-  | "serializableproperty";
+  | "serializableproperty"
+  | "serializablegrensedelete";
 
 type SerializableNyGrense = Omit<NyGrense, "grensedeling"> & {
   grensedeling: string;
@@ -82,10 +86,13 @@ type SerializableBaseHistoryEntry<HistoryType extends SerializableHistoryTypeVal
 
 type SerializableNyGrenseEntry = SerializableBaseHistoryEntry<"serializablenygrense", SerializableNyGrense>;
 
+type SerializableNyGrenseDeleteEntry = SerializableBaseHistoryEntry<"serializablegrensedelete", string | null>;
+
 type SerializableHistoryEntry =
   | Exclude<HistoryEntry, NyGrense | Feature[]>
   | SerializableGrensedelingEntry
-  | SerializableNyGrenseEntry;
+  | SerializableNyGrenseEntry
+  | SerializableNyGrenseDeleteEntry;
 
 const isSerializableHistoryState = (historyState: unknown): historyState is SerializableHistoryState => {
   if (
@@ -170,6 +177,23 @@ const serializeHistory = (history: HistoryState) => {
         tmpEntry.changes.push(serializableChange);
       });
       tempHistory.entries.push(tmpEntry);
+    } else if (entry.type === "grensedelete") {
+      const tmpEntry: SerializableNyGrenseDeleteEntry = {
+        type: "serializablegrensedelete",
+        changes: [],
+      };
+      entry.changes.forEach((change: HistoryChange<Feature<Geometry> | null>) => {
+        if (change.from == null) {
+          return;
+        }
+        const serializableChange: SerializableHistoryChange<string | null> = {
+          id: change.id,
+          from: geoJson.writeFeature(change.from),
+          to: null,
+        };
+        tmpEntry.changes.push(serializableChange);
+      });
+      tempHistory.entries.push(tmpEntry);
     } else {
       tempHistory.entries.push(entry);
     }
@@ -229,6 +253,20 @@ const deserializeHistory = (serializedHistoryEntry: string): HistoryState | null
           tmpEntry.changes.push(serializableChange);
         });
         historyState.entries.push(tmpEntry);
+      } else if (entry.type === "serializablegrensedelete") {
+        const tmpEntry: NyGrenseDeleteEntry = {
+          type: "grensedelete",
+          changes: [],
+        };
+        entry.changes.forEach((change) => {
+          const serializableChange: HistoryChange<Feature<Geometry> | null> = {
+            id: change.id,
+            from: geoJson.readFeature(change.from),
+            to: null,
+          };
+          tmpEntry.changes.push(serializableChange);
+        });
+        historyState.entries.push(tmpEntry);
       } else {
         historyState.entries.push(entry);
       }
@@ -240,6 +278,9 @@ const deserializeHistory = (serializedHistoryEntry: string): HistoryState | null
 
 export const saveApplicationStateToSessionStorage = (applicationState: ApplicationState) => {
   const geoJson = new GeoJSON();
+  if (applicationState.utkast != null) {
+    sessionStorage.setItem(sessionStorageKeys.utkast, JSON.stringify(applicationState.utkast));
+  }
   if (applicationState.historyState != null) {
     sessionStorage.setItem(sessionStorageKeys.history, serializeHistory(applicationState.historyState));
   }
@@ -274,6 +315,15 @@ export const saveApplicationStateToSessionStorage = (applicationState: Applicati
   }
 
   sessionStorage.setItem(sessionStorageKeys.mapPosition, JSON.stringify(applicationState.mapPosition));
+};
+
+export const fetchUtkastFromSessionStorage = (): UtkastResponse | null => {
+  const serializedUtkast = sessionStorage.getItem(sessionStorageKeys.utkast);
+  if (serializedUtkast == null) {
+    return null;
+  }
+
+  return JSON.parse(serializedUtkast);
 };
 
 export const fetchMapPositionFromSessionStorage = (): MapPosition | null => {
