@@ -29,7 +29,6 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
     useUtkastEndringer(utkast);
   const { history } = useHistory();
   const harUlagredeEndringer = history.index > 0;
-  const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer || !!kommunendringer;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered scrollBehavior="inside">
@@ -38,12 +37,10 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalHeader>Endringslogg</ModalHeader>
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
-          {!harEndringer && !harUlagredeEndringer && harLastetData && (
-            <Empty>Det er ingen endringer i dette utkastet</Empty>
-          )}
+          {!harEndringer && !harUlagredeEndringer && !laster && <Empty>Det er ingen endringer i dette utkastet</Empty>}
           <Stack spacing={6}>
             <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
-            {!harLastetData && <Spinner size="xl" />}
+            {laster && <Spinner size="xl" />}
             <EndringUnstyledList>
               {stemmekretsendringer?.map((endringer) => (
                 <EndringerForKommune
