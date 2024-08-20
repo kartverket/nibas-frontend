@@ -11,6 +11,7 @@ import {
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 import { GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 // Tar api respons for grunnkretser og stemmekretser og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
 const getMuligeKretserForCommonGrense = (
@@ -45,9 +46,16 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     kontekstType,
     getCurrentOppdaterteKontekstEgenskaper,
   } = useTilhorighetForm(feature);
+  const { gyldighetsdato } = useValgtGyldighetsdato();
 
-  const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretser(kommunerId[0] ?? null);
-  const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretser(kommunerId[0] ?? null);
+  const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretser(
+    kommunerId[0] ?? null,
+    gyldighetsdato,
+  );
+  const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretser(
+    kommunerId[0] ?? null,
+    gyldighetsdato,
+  );
 
   useEffect(() => {
     if (grunnkretser && stemmekretser) {

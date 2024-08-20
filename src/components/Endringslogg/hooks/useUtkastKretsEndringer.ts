@@ -18,14 +18,19 @@ type useUtkastKretsEndringerReturnType = {
 };
 
 export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkastKretsEndringerReturnType => {
-  const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner");
+  const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner", {
+    gyldighetsdato: utkast.gyldigFra,
+  });
   const operasjoner = utkast.operasjoner;
 
   const stemmekretserMedEndringer = useMemo(() => {
     return getKretserAvTypeMedEndringer(operasjoner, KontekstType.STEMMEKRETS);
   }, [operasjoner]);
 
-  const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(stemmekretserMedEndringer);
+  const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(
+    stemmekretserMedEndringer,
+    utkast.gyldigFra,
+  );
 
   const lasterData = lasterStemmekretser || lasterKommuner;
 
@@ -44,14 +49,19 @@ export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkast
 };
 
 export const useUtkastGrunnkretsEndringer = (utkast: UtkastResponse): useUtkastKretsEndringerReturnType => {
-  const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner");
+  const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner", {
+    gyldighetsdato: utkast.gyldigFra,
+  });
   const operasjoner = utkast.operasjoner;
 
   const grunnkretserMedEndringer = useMemo(() => {
     return getKretserAvTypeMedEndringer(operasjoner, KontekstType.GRUNNKRETS);
   }, [operasjoner]);
 
-  const { data: grunnkretser, isValidating: lasterGrunnkretser } = useGrunnkretser(grunnkretserMedEndringer);
+  const { data: grunnkretser, isValidating: lasterGrunnkretser } = useGrunnkretser(
+    grunnkretserMedEndringer,
+    utkast.gyldigFra,
+  );
 
   const lasterData = lasterGrunnkretser || lasterKommuner;
 

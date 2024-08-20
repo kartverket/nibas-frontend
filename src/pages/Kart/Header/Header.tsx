@@ -17,17 +17,20 @@ import { Breadcrumb, BreadcrumbItem, Hide, Text, Tooltip } from "@kvib/react";
 import { capitalize } from "utils/string-utils";
 import { KommuneResponse } from "types/api";
 import { inndelingResponseNavnToString } from "utils/language/language";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import HeaderVelgGyldighetsdato from "pages/Kart/Header/HeaderVelgGyldighetsdato";
 
 const Header = () => {
   const { utkast } = useUtkast();
+  const { gyldighetsdato } = useValgtGyldighetsdato();
   const { history } = useHistory();
   const { toggleOverlayModal } = useOverlayPanel();
   const { openAsync } = useConfirmationModal();
 
   const { currentlyEditingInndelinger, selectedFylkeId } = useInndelinger();
 
-  const { fylker } = useFylker(selectedFylkeId !== "");
-  const { kommuner } = useKommuner(selectedFylkeId, selectedFylkeId !== "");
+  const { fylker } = useFylker(gyldighetsdato, selectedFylkeId !== "");
+  const { kommuner } = useKommuner(selectedFylkeId, gyldighetsdato, selectedFylkeId !== "");
 
   const activeFylke = fylker?.find((fylke) => fylke.id.lokalid.value === selectedFylkeId);
   const activeKommuner = kommuner?.filter((kommune) =>
@@ -134,6 +137,7 @@ const Header = () => {
           )}
         </HeaderSection>
         {utkast && <HeaderUtkastOperations utkast={utkast} />}
+        {!utkast && <HeaderVelgGyldighetsdato />}
       </Bar>
     </Container>
   );
