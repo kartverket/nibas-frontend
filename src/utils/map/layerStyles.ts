@@ -10,7 +10,7 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style, { StyleFunction } from "ol/style/Style";
 import Text from "ol/style/Text";
-import { isFeatureEditable, isMatrikkelFeature } from "utils/features";
+import { getFeatureFremtidigEndringDato, isFeatureEditable, isMatrikkelFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
 import { getRepresentasjonspunktId } from "./source";
@@ -169,6 +169,10 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
 
 export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived: boolean): Style[] => {
   const grenseType = feature.get("type");
+
+  if (getFeatureFremtidigEndringDato(feature) != null) {
+    return grenseStyles.fremtidigEndring;
+  }
 
   if (isGrenseType(grenseType)) {
     if (grenseId === "edit" && isFeatureEditable(feature, archived) === true) {
