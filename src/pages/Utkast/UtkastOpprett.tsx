@@ -16,21 +16,24 @@ import {
   Select,
   useToast,
   FormErrorMessage,
+  Datepicker,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { ApiErrorResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { format } from "date-fns";
 
 type UtkastFormData = {
   navn: string;
   endringstype: string;
+  gyldigFra: string;
 };
 
 const UtkastOpprett = () => {
@@ -47,10 +50,11 @@ const UtkastOpprett = () => {
     handleSubmit,
     getValues,
     reset,
+    control,
   } = useForm<UtkastFormData>({
     mode: "onSubmit",
     reValidateMode: "onChange",
-    defaultValues: { navn: "", endringstype: "" },
+    defaultValues: { navn: "", endringstype: "", gyldigFra: "" },
   });
 
   const handleCloseModal = () => {
@@ -64,6 +68,7 @@ const UtkastOpprett = () => {
       {
         navn: getValues("navn"),
         endringstype: getValues("endringstype"),
+        gyldigFra: getValues("gyldigFra"),
       },
       token,
     );
@@ -126,6 +131,24 @@ const UtkastOpprett = () => {
                     ))}
                   </Select>
                   {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype.message} />}
+                </FormSection>
+                <FormSection>
+                  <FormLabel>Gyldig fra-dato</FormLabel>
+                  <FormHelperText>Kun grenser gyldige fra datoen du velger vil være synlige i kartet.</FormHelperText>
+                  <Controller
+                    control={control}
+                    name="gyldigFra"
+                    render={({ field }) => {
+                      return (
+                        <Datepicker
+                          fromDate={new Date()}
+                          onChange={(e): void => {
+                            field.onChange(format(e.target.value, "yyyy-MM-dd"));
+                          }}
+                        />
+                      );
+                    }}
+                  />
                 </FormSection>
               </FormContent>
             </ModalBody>
