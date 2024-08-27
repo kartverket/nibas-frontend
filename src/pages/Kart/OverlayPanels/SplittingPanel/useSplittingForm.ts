@@ -14,6 +14,7 @@ import { useCallback } from "react";
 import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -62,11 +63,12 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
 
   const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoryEntry, getHistoryEntries } = useHistory();
+  const { gyldighetsdato } = useValgtGyldighetsdato();
   const inndelingtype = currentlyEditingInndelinger.length > 0 ? currentlyEditingInndelinger[0].inndelingtype : null;
 
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
-  const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null);
-  const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null);
+  const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null, gyldighetsdato);
+  const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null, gyldighetsdato);
 
   const getFlateOptionsFromInndelingType = () => {
     if (inndelingtype != null) {

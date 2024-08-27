@@ -19,6 +19,7 @@ import { useAuthentication } from "components/Authentication/AuthenticationHook"
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 const Form = styled.form`
   display: flex;
@@ -47,6 +48,7 @@ const MergePanel = () => {
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
   const { currentlyEditingInndelinger } = useInndelinger();
+  const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const currentlyEditingStemmekrets = currentlyEditingInndelinger.find(
     (inndeling) => inndeling.inndelingtype === "stemmekrets",
@@ -54,6 +56,7 @@ const MergePanel = () => {
 
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(
     currentlyEditingStemmekrets != null ? currentlyEditingStemmekrets.id : null,
+    gyldighetsdato,
   );
 
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
@@ -130,7 +133,11 @@ const MergePanel = () => {
       };
       updateUtkast(utkast.id, updateUtkastRequest);
       const sammenslaaingsStemmekretsIds = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
-      const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(sammenslaaingsStemmekretsIds, auth.token);
+      const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(
+        sammenslaaingsStemmekretsIds,
+        gyldighetsdato,
+        auth.token,
+      );
       const overlappingFeatureIds = getDuplicateItems(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
         (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),

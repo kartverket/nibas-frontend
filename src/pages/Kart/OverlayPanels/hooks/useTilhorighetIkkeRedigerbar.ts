@@ -12,19 +12,25 @@ import { useTilhorighetForm } from "./useTilhorighetForm";
 import { FeatureProperties, GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
 import { fetcherWithToken } from "utils/api";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { getUrlWithParameters } from "hooks/useNibasApi";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 const getTilhorigheterForFeatureAvType = (
   feature: Feature,
   kontekstType: KontekstType,
+  gyldighetsdato: string | undefined,
   authToken: string | undefined,
 ): Promise<Krets[]> => {
   const featureProperties = feature.getProperties() as FeatureProperties;
   const tilhorigheterAvRiktigType = featureProperties.kontekstEgenskaper.filter(
     (k) => k.type === kontekstType.valueOf(),
   );
-  const path = kontekstType === KontekstType.GRUNNKRETS ? "/v1/grunnkretser/" : "/v1/stemmekretser/";
+  const path = kontekstType === KontekstType.GRUNNKRETS ? "/v1/grunnkretser/{id}" : "/v1/stemmekretser/{id}";
   const promises = tilhorigheterAvRiktigType.map((tilhorighet) =>
-    fetcherWithToken([path + tilhorighet.id?.lokalid.value, authToken]),
+    fetcherWithToken([
+      getUrlWithParameters(path, { id: tilhorighet.id?.lokalid.value ?? "", gyldighetsdato }),
+      authToken,
+    ]),
   );
 
   return Promise.all(promises).then((result: StemmekretsResponse[] | GrunnkretsResponse[]) => {
@@ -48,19 +54,20 @@ export const useTilhorighetIkkeRedigerbar = (feature: Feature, kontekstType: Kon
     getCurrentOppdaterteKontekstEgenskaper,
   } = useTilhorighetForm(feature, kontekstType);
 
+  const { gyldighetsdato } = useValgtGyldighetsdato();
   const { token } = useAuthentication();
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsLoading(true);
-    getTilhorigheterForFeatureAvType(feature, kontekstType, token).then((kretser) => {
+    getTilhorigheterForFeatureAvType(feature, kontekstType, gyldighetsdato, token).then((kretser) => {
       setTilhorighetOptions({
         [Tilhorighet.A]: kretser,
         [Tilhorighet.B]: kretser,
       });
       setIsLoading(false);
     });
-  }, [feature, kontekstType, setTilhorighetOptions, token]);
+  }, [feature, gyldighetsdato, kontekstType, setTilhorighetOptions, token]);
 
   return {
     kontekstType,

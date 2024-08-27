@@ -5,6 +5,7 @@ import { styled } from "styled-components";
 import { InndelingSearchResponse } from "types/api";
 import { NavigasjonProps } from "./NavigasjonPanel";
 import { useInndelingerSearch } from "./useInndelingerSearch";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 type InndelingOption = InndelingSearchResponse & {
   label: string;
@@ -18,6 +19,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: Inndel
   const searchInndelinger = useInndelingerSearch();
   const [selectedInndeling, setSelectedInndeling] = useState<InndelingOption | null>();
   const searchRef = useRef<SearchAsyncElement<InndelingOption>>(null);
+  const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const mapInndelingResponseToOption = ({
     id,
@@ -47,7 +49,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: Inndel
 
   const loadResults = async (term: string, resultsCallback: (options: InndelingOption[]) => void) => {
     if (term.length > 1) {
-      const inndelinger = await searchInndelinger(term, 15);
+      const inndelinger = await searchInndelinger(term, 15, gyldighetsdato);
       if (inndelinger !== null) {
         resultsCallback(inndelinger.map(mapInndelingResponseToOption));
       }

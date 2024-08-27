@@ -1,25 +1,33 @@
 import { StemmekretsResponse } from "../../types/api";
 import { fetcherWithToken } from "utils/api";
 import useSWRImmutable from "swr/immutable";
-import useNibasApi from "hooks/useNibasApi";
+import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
-const stemmekretserFetcher = async ([stemmekretsIds, token]: [string[], string | undefined]) => {
+const stemmekretserFetcher = async ([stemmekretsIds, gyldighetsdato, token]: [
+  string[],
+  string | undefined,
+  string | undefined,
+]) => {
   const promises: Promise<StemmekretsResponse>[] = stemmekretsIds.map(async (id) =>
-    fetcherWithToken([`/v1/stemmekretser/${id}`, token]),
+    fetcherWithToken([getUrlWithParameters("/v1/stemmekretser/{id}", { id, gyldighetsdato }), token]),
   );
 
   return await Promise.all(promises);
 };
 
-export const useStemmekretser = (stemmekretsIds: string[]) => {
+export const useStemmekretser = (stemmekretsIds: string[], gyldighetsdato: string | undefined) => {
   const { token } = useAuthentication();
 
-  return useSWRImmutable(stemmekretsIds.length > 0 ? [stemmekretsIds, token] : null, stemmekretserFetcher);
+  return useSWRImmutable(
+    stemmekretsIds.length > 0 ? [stemmekretsIds, gyldighetsdato, token] : null,
+    stemmekretserFetcher,
+  );
 };
 
-export const useKommuneStemmekretser = (kommuneId: string | null) => {
+export const useKommuneStemmekretser = (kommuneId: string | null, gyldighetsdato: string | undefined) => {
   return useNibasApi(kommuneId != null ? "/v1/kommuner/{id}/stemmekretser" : null, {
     id: kommuneId!,
+    gyldighetsdato,
   });
 };

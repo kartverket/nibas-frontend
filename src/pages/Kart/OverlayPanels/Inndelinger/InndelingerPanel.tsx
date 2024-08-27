@@ -10,9 +10,11 @@ import { styled } from "styled-components";
 import InndelingOption from "./InndelingOption";
 import { capitalize } from "utils/string-utils";
 import useInndelingerPanel from "./useInndelingerPanel";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 const InndelingerPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
+  const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const {
     activePanelFylkeId,
@@ -28,8 +30,8 @@ const InndelingerPanel = () => {
     resetSelection,
   } = useInndelingerPanel();
 
-  const { fylker } = useFylker();
-  const { kommuner } = useKommuner(activePanelFylkeId);
+  const { fylker } = useFylker(gyldighetsdato);
+  const { kommuner } = useKommuner(activePanelFylkeId, gyldighetsdato);
 
   return (
     <Modal isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">

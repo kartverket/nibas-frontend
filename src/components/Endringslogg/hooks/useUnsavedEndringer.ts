@@ -27,6 +27,7 @@ import {
 } from "contexts/HistoryContext/history-utils";
 import { inndelingResponseNavnToString } from "utils/language/language";
 import useKommuner from "hooks/inndelinger/useKommuner";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 type UseUnsavedEndringerReturnType = {
   harEndringer: boolean;
@@ -38,8 +39,9 @@ type UseUnsavedEndringerReturnType = {
 
 export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
   const { getHistoryEntries } = useHistory();
+  const { gyldighetsdato } = useValgtGyldighetsdato();
   const history = getHistoryEntries();
-  const { isLoading: lasterKommuner, kommuner: alleKommuner } = useKommuner();
+  const { isLoading: lasterKommuner, kommuner: alleKommuner } = useKommuner(null, gyldighetsdato);
 
   const nyeGrenser = getNyeGrenser(history);
   const arkiverteGrenser = getArkiverteGrenser(history);
@@ -166,6 +168,7 @@ type UseKretsdelingChangesReturnType = {
 };
 
 const useKretsdelingChanges = (entries: HistoryEntry[]): UseKretsdelingChangesReturnType => {
+  const { gyldighetsdato } = useValgtGyldighetsdato();
   const kretsdelingentries = getKretsDelingEntries(entries);
   const changes = kretsdelingentries.flatMap((entry) => entry.changes);
   const stemmekretsIds = getUniqueItems(
@@ -175,8 +178,8 @@ const useKretsdelingChanges = (entries: HistoryEntry[]): UseKretsdelingChangesRe
     changes.filter((change) => change.from.flatetype === "GRUNNKRETS").map((change) => change.id),
   );
 
-  const { data: stemmekretser, isLoading: isLoadingStemmekretser } = useStemmekretser(stemmekretsIds);
-  const { data: grunnkretser, isLoading: isLoadingGrunnkretser } = useGrunnkretser(grunnkretsIds);
+  const { data: stemmekretser, isLoading: isLoadingStemmekretser } = useStemmekretser(stemmekretsIds, gyldighetsdato);
+  const { data: grunnkretser, isLoading: isLoadingGrunnkretser } = useGrunnkretser(grunnkretsIds, gyldighetsdato);
 
   const stemmekretsdelinger: KretsSplittingEndring[] =
     stemmekretser?.map((stemmekrets) => getLastKretsdeling(changes, stemmekrets)) ?? [];

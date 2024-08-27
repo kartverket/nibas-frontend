@@ -10,9 +10,14 @@ import Kartinformasjon from "./Kartinformasjon";
 import { zindex } from "utils/constants";
 import { Spinner } from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { format, isPast } from "date-fns";
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const { utkast } = useUtkast();
+  const { setGyldighetsdato } = useValgtGyldighetsdato();
 
   const { isLoadingInndeling } = useInndelinger();
 
@@ -32,6 +37,13 @@ const Kart = () => {
       map.setTarget(undefined);
     };
   }, []);
+
+  // Reset valgt visningsdato når kartet åpnes. Bruk enten gyldig-fra på utkastet (om vi har) eller dagens dato
+  // Om datoen på utkastet sin gyldigFra er i fortiden bruker vi dagens dato.
+  useEffect(() => {
+    const dateToUse = utkast?.gyldigFra != null && !isPast(utkast.gyldigFra) ? new Date(utkast.gyldigFra) : new Date();
+    setGyldighetsdato(format(dateToUse, "yyyy-MM-dd"));
+  }, [setGyldighetsdato, utkast]);
 
   return (
     <KartWrapper>
