@@ -743,6 +743,8 @@ export interface components {
       id: string;
       /** @description Arbeidsnavnet til utkastet. */
       navn: string;
+      /** @description Datoen endringene i vedtaket skal tre i kraft */
+      gyldigFra?: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
       /** @description Status for utkastet. */

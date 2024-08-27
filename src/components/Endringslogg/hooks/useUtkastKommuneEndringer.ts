@@ -17,7 +17,7 @@ type UseUtkastKommuneEndringerReturnType = {
 
 export const useUtkastKommuneEndringer = (utkast: UtkastResponse): UseUtkastKommuneEndringerReturnType => {
   const { data: kommuner, isLoading: lasterKommuner } = useNibasApi("/v1/kommuner");
-  const { isLoading: lasterFylker, fylker } = useFylker();
+  const { isLoading: lasterFylker, fylker } = useFylker(utkast.gyldigFra);
 
   const endringer = getEndringerForKommuner(utkast, kommuner);
   const fylkerMedEndringer = getUniqueItems(endringer.map((endring) => endring.nummer.slice(0, 2)));

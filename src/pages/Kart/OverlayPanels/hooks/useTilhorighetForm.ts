@@ -22,6 +22,7 @@ import {
 } from "./tilhorighet-utils";
 import { getGrenseTilhorighetEntries, getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
 import { usePrevious } from "hooks/usePrevious";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 const getKretserFromKretsDelingEndringer = (
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -99,7 +100,8 @@ const getKretserFromHistory = (
 
 export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: KontekstType) => {
   const { getHistoryEntries } = useHistory();
-  const { data: kommuneResponses } = useNibasApi("/v1/kommuner");
+  const { gyldighetsdato } = useValgtGyldighetsdato();
+  const { data: kommuneResponses } = useNibasApi("/v1/kommuner", { gyldighetsdato });
   const { utkast } = useUtkast();
   const previousFeature = usePrevious(feature);
 

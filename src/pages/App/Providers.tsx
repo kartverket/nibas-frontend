@@ -8,26 +8,29 @@ import { ToolbarProvider } from "contexts/ToolbarContext";
 import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
 import { InndelingerProvider } from "contexts/InndelingerContext/InndelingerContext";
 import { AuthRenewProvider } from "components/Authentication/AuthRenewError";
+import { GyldighetsdatoProvider } from "contexts/GyldighetsdatoContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <ErrorHandlingProvider>
       <ConfirmationModalProvider>
-        <FeatureStyleProvider>
-          <HistoryProvider>
-            <OverlayPanelProvider>
-              <AuthRenewProvider>
-                <ToolbarProvider>
-                  <KartlagProvider>
-                    <UtkastProvider>
-                      <InndelingerProvider>{children}</InndelingerProvider>
-                    </UtkastProvider>
-                  </KartlagProvider>
-                </ToolbarProvider>
-              </AuthRenewProvider>
-            </OverlayPanelProvider>
-          </HistoryProvider>
-        </FeatureStyleProvider>
+        <GyldighetsdatoProvider>
+          <FeatureStyleProvider>
+            <HistoryProvider>
+              <OverlayPanelProvider>
+                <AuthRenewProvider>
+                  <ToolbarProvider>
+                    <KartlagProvider>
+                      <UtkastProvider>
+                        <InndelingerProvider>{children}</InndelingerProvider>
+                      </UtkastProvider>
+                    </KartlagProvider>
+                  </ToolbarProvider>
+                </AuthRenewProvider>
+              </OverlayPanelProvider>
+            </HistoryProvider>
+          </FeatureStyleProvider>
+        </GyldighetsdatoProvider>
       </ConfirmationModalProvider>
     </ErrorHandlingProvider>
   );
