@@ -27,6 +27,7 @@ const utkast: UtkastResponse = {
   opprettetDato: "123",
   status: "123",
   version: 1,
+  gyldigFra: "2022-01-01",
 };
 
 const mockUtkastContextValue = {

@@ -109,7 +109,7 @@ const UtkastOpprett = () => {
                   </FormHelperText>
 
                   <Input
-                    {...register("navn", { required: "Utkastet må ha et navn" })}
+                    {...register("navn", { required: "Du må gi utkastet et navn" })}
                     type="text"
                     placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
                   />
@@ -132,23 +132,25 @@ const UtkastOpprett = () => {
                   </Select>
                   {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype.message} />}
                 </FormSection>
-                <FormSection>
+                <FormSection isInvalid={!!errors.gyldigFra}>
                   <FormLabel>Gyldig fra-dato</FormLabel>
                   <FormHelperText>Kun grenser gyldige fra datoen du velger vil være synlige i kartet.</FormHelperText>
                   <Controller
                     control={control}
+                    rules={{ required: "Du må velge en gyldig fra-dato for utkastet" }}
                     name="gyldigFra"
-                    render={({ field }) => {
+                    render={({ field: { onChange } }) => {
                       return (
                         <Datepicker
                           fromDate={new Date()}
                           onChange={(e): void => {
-                            field.onChange(format(e.target.value, "yyyy-MM-dd"));
+                            onChange(format(e.target.value, "yyyy-MM-dd"));
                           }}
                         />
                       );
                     }}
                   />
+                  {!!errors.gyldigFra && <FormErrorMessage errorMessage={errors.gyldigFra.message} />}
                 </FormSection>
               </FormContent>
             </ModalBody>
