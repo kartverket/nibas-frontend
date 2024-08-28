@@ -13,6 +13,7 @@ import {
   isPointInsideMultiPolygon,
   transformCoordinatesToProjection,
 } from "./koordinater-utils";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 const StyledFormControl = styled(FormControl)`
   display: flex;
@@ -59,7 +60,8 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
     defaultValues: { north: null, east: null, globalErrorDummyField: null },
   });
 
-  const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
+  const { gyldighetsdato } = useValgtGyldighetsdato();
+  const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/", { gyldighetsdato });
 
   const validatePointInsideMultiPolygon = (north: number | null, east: number | null) => {
     if (nasjonFetchError != null || isLoading) {

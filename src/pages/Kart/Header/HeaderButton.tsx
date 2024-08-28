@@ -1,7 +1,7 @@
 import { Button, ButtonProps, IconButton, MaterialSymbol, Tooltip } from "@kvib/react";
 import { CustomTooltipProps, TooltipBody } from "../Toolbar/CustomTooltip";
 import { styled } from "styled-components";
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 
 type HeaderButtonProps = {
   icon: MaterialSymbol;
@@ -13,17 +13,13 @@ type HeaderButtonProps = {
   alert?: ReactNode;
 } & ButtonProps;
 
-const HeaderButtonNoTooltip = ({
-  icon,
-  label,
-  onClick,
-  isDisabled,
-  isLabelHidden = false,
-  alert,
-  ...props
-}: Omit<HeaderButtonProps, "tooltip">) =>
-  isLabelHidden ? (
+const HeaderButtonNoTooltip = forwardRef(function HeaderButtonWithNoTooltip(
+  { icon, label, onClick, isDisabled, isLabelHidden = false, alert, ...props }: Omit<HeaderButtonProps, "tooltip">,
+  ref,
+) {
+  return isLabelHidden ? (
     <IconButton
+      ref={ref}
       size="sm"
       variant="ghost"
       icon={icon}
@@ -33,12 +29,13 @@ const HeaderButtonNoTooltip = ({
       {...props}
     />
   ) : (
-    <Button size="sm" variant="ghost" leftIcon={icon} onClick={onClick} isDisabled={isDisabled} {...props}>
+    <Button ref={ref} size="sm" variant="ghost" leftIcon={icon} onClick={onClick} isDisabled={isDisabled} {...props}>
       <ButtonContent>
         {label} {alert}
       </ButtonContent>
     </Button>
   );
+});
 
 const HeaderButton = ({ tooltip, ...props }: HeaderButtonProps) => {
   if (tooltip != null) {
