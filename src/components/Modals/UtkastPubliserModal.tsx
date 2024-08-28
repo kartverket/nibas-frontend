@@ -75,7 +75,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       toast({
         status: "success",
         title: "Utkast publisert",
-        description: `Endringene trer i kraft ${publishDateText}.`,
+        description: `Endringene trer i kraft ${format(isPast(utkast.gyldigFra) ? new Date() : utkast.gyldigFra, "dd.MM.yyyy")}.`,
       });
       cleanUpUtkast();
       closeUtkast();
