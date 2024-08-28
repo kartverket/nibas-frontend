@@ -783,7 +783,7 @@ export interface components {
        * Format: date
        * @description Datoen utkastet skal publiseres fra. Settes default til dagens dato om ikke satt.
        */
-      publiseringsdato: string;
+      publiseringsdato?: string;
     };
     FrontendLogRequest: {
       /** @enum {string} */

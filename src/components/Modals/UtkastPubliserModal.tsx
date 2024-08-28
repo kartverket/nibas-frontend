@@ -5,8 +5,6 @@ import {
   AlertTitle,
   Button,
   ButtonGroup,
-  Datepicker,
-  FormLabel,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -17,12 +15,14 @@ import {
   useToast,
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
+import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { UnsavedEndringerCollapse } from "components/Endringslogg/UlagredeEndringer/UnsavedEndringerCollapse";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { format, isToday } from "date-fns";
+import { format, isPast, isToday } from "date-fns";
 import { datestringToFormattedDatestring } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
@@ -32,8 +32,6 @@ import { useSWRConfig } from "swr";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { routes } from "utils/routes";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 
 type Props = {
   isOpen: boolean;
@@ -44,7 +42,6 @@ type Props = {
 const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const toast = useToast();
   const { closeUtkast } = useUtkast();
-  const [publiseringsdato, setPubliseringsdato] = useState(new Date());
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuthentication();
   const { setError } = useErrorHandling();
@@ -66,14 +63,13 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const publiserUtkast = async () => {
     setIsLoading(true);
-    const publiseringDateString = format(publiseringsdato, "yyyy-MM-dd");
 
-    const response = await publishUtkast(utkast.id, publiseringDateString, token);
+    const response = await publishUtkast(utkast.id, token);
     setIsLoading(false);
 
-    const publishDateText = isToday(publiseringsdato)
+    const publishDateText = isToday(utkast.gyldigFra)
       ? "umiddelbart"
-      : datestringToFormattedDatestring(publiseringDateString);
+      : datestringToFormattedDatestring(utkast.gyldigFra);
 
     if (statusCode.isSuccessful(response.status)) {
       toast({
@@ -120,26 +116,23 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalHeader>Publiser utkast</ModalHeader>
         <ModalCloseButton />
         <Body>
-          <Alert status="info">
+          <Alert status={isPast(utkast.gyldigFra) ? "warning" : "info"}>
             <AlertIcon />
             <div>
-              <AlertTitle>Du er i ferd med å publisere et utkast</AlertTitle>
+              <AlertTitle>
+                {`Endringene vil gjelde fra ${format(isPast(utkast.gyldigFra) ? new Date() : utkast.gyldigFra, "dd.MM.yyyy")}`}
+              </AlertTitle>
               <AlertDescription>
-                Endringene i utkastet vil bli tilgjengelig for alle etter den valgte publiseringsdatoen.
+                {isPast(utkast.gyldigFra)
+                  ? `Du satte ${format(utkast.gyldigFra, "dd.MM.yyyy")} som gyldig fra-dato da du opprettet utkastet. Denne
+                  datoen har passert, og datoen vil dermed endres til dagens dato.`
+                  : `Ønsker du å endre denne datoen må du opprette et nytt utkast og gjennomføre endringene på nytt.`}
               </AlertDescription>
             </div>
           </Alert>
 
           {antallEndringer > 0 && <UnsavedEndringerCollapse />}
           <EndringsloggAccordion utkast={utkast} />
-          <Datepickerlabel>
-            Fra hvilken dato skal endringene utkastet tre i kraft?
-            <Datepicker
-              fromDate={new Date()}
-              defaultSelected={new Date()}
-              onChange={(event) => setPubliseringsdato(new Date(event.target.value))}
-            />
-          </Datepickerlabel>
         </Body>
         <ModalFooter>
           <ButtonGroup>
@@ -160,10 +153,6 @@ const Body = styled(ModalBody)`
   display: flex;
   flex-direction: column;
   gap: 24px;
-`;
-
-const Datepickerlabel = styled(FormLabel)`
-  margin-bottom: 16px;
 `;
 
 export default UtkastPubliserModal;
