@@ -19,12 +19,13 @@ jobs:
     secrets: inherit
 
   deploy-argo:
+    permissions:
+      id-token: write
     needs: build
-    uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
+    uses: kartverket/smia-apps/.github/workflows/release-app-octo-sts.yml@main
     with:
       application: nibas-frontend
       version: ${{ needs.build.outputs.version }}
       digest: ${{ needs.build.outputs.digest }}
       deploy_dev: true
-    secrets:
-      PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}
+      identify: nibas
