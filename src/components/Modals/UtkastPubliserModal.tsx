@@ -22,8 +22,7 @@ import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEnd
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { format, isPast, isToday } from "date-fns";
-import { datestringToFormattedDatestring } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { format, isPast } from "date-fns";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
@@ -67,15 +66,12 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     const response = await publishUtkast(utkast.id, token);
     setIsLoading(false);
 
-    const publishDateText = isToday(utkast.gyldigFra)
-      ? "umiddelbart"
-      : datestringToFormattedDatestring(utkast.gyldigFra);
-
     if (statusCode.isSuccessful(response.status)) {
       toast({
         status: "success",
         title: "Utkast publisert",
-        description: `Endringene trer i kraft ${format(isPast(utkast.gyldigFra) ? new Date() : utkast.gyldigFra, "dd.MM.yyyy")}.`,
+        //Backend publiserer med dagens dato hvis utkastet sin gyldigFra-dato har passert.
+        description: `Endringene trer i kraft ${format(isPast(utkast.gyldigFra) ? "umiddelbart" : utkast.gyldigFra, "dd.MM.yyyy")}.`,
       });
       cleanUpUtkast();
       closeUtkast();
