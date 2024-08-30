@@ -60,7 +60,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     mutate(() => true, undefined, { revalidate: false });
   };
 
-  const utkastGyldigFraIsPast = isBefore(utkast.gyldigFra, format(new Date(), "dd-MM-yyyy"));
+  const isUtkastGyldigFraPast = isBefore(utkast.gyldigFra, format(new Date(), "yyyy-MM-dd"));
+
   const publiserUtkast = async () => {
     setIsLoading(true);
 
@@ -72,7 +73,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         status: "success",
         title: "Utkast publisert",
         //Backend publiserer med dagens dato hvis utkastet sin gyldigFra-dato har passert.
-        description: `Endringene trer i kraft ${utkastGyldigFraIsPast || isSameDay(utkast.gyldigFra, new Date()) ? "umiddelbart" : format(utkast.gyldigFra, "dd.MM.yyyy")}.`,
+        description: `Endringene trer i kraft ${isUtkastGyldigFraPast || isSameDay(utkast.gyldigFra, new Date()) ? "umiddelbart" : format(utkast.gyldigFra, "dd.MM.yyyy")}.`,
       });
       cleanUpUtkast();
       closeUtkast();
@@ -113,14 +114,14 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalHeader>Publiser utkast</ModalHeader>
         <ModalCloseButton />
         <Body>
-          <Alert status={utkastGyldigFraIsPast ? "warning" : "info"}>
+          <Alert status={isUtkastGyldigFraPast ? "warning" : "info"}>
             <AlertIcon />
             <div>
               <AlertTitle>
-                {`Endringene vil gjelde fra ${format(utkastGyldigFraIsPast ? new Date() : utkast.gyldigFra, "dd.MM.yyyy")}`}
+                {`Endringene vil gjelde fra ${format(isUtkastGyldigFraPast ? new Date() : utkast.gyldigFra, "dd.MM.yyyy")}`}
               </AlertTitle>
               <AlertDescription>
-                {utkastGyldigFraIsPast
+                {isUtkastGyldigFraPast
                   ? `Du satte ${format(utkast.gyldigFra, "dd.MM.yyyy")} som gyldig fra-dato da du opprettet utkastet. Denne
                   datoen har passert, og datoen vil dermed endres til dagens dato.`
                   : `Ønsker du å endre denne datoen må du opprette et nytt utkast og gjennomføre endringene på nytt.`}
