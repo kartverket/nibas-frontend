@@ -41,7 +41,7 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
 
   return (
     <Accordion allowToggle defaultIndex={[0]}>
-      <EndringsloggAccordionItem>
+      <AccordionItem>
         <EndringsloggAccordionButton>
           Endringer i dette utkastet
           <AccordionIcon />
@@ -70,16 +70,10 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
             {endringerutentilhorighet && <EndringerUtenTilhorighet endringer={endringerutentilhorighet} />}
           </ListWithNoDot>
         </AccordionPanel>
-      </EndringsloggAccordionItem>
+      </AccordionItem>
     </Accordion>
   );
 };
-
-const EndringsloggAccordionItem = styled(AccordionItem)`
-  border: none;
-  box-shadow: var(--kvib-shadows-base);
-  border-radius: 8px;
-`;
 
 const EndringsloggAccordionButton = styled(AccordionButton)`
   display: flex;

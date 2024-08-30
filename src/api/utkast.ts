@@ -23,10 +23,9 @@ export const updateUtkastApi = (id: string, utkast: OppdaterUtkastRequest, token
   });
 };
 
-export const publishUtkast = (id: string, publiseringsdato: string, token: string | undefined) => {
+export const publishUtkast = (id: string, token: string | undefined) => {
   return fetch(getUrlForPath(`v1/utkast/${id}/publiser`), {
     method: "POST",
-    body: JSON.stringify({ publiseringsdato }),
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,

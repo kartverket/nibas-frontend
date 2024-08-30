@@ -394,6 +394,7 @@ export const mockUtkast: UtkastResponse = {
     },
     endredeFeatures: [mockGeoJsonFeatureResponse.features[0]],
   }),
+  gyldigFra: "2022-01-01",
 };
 
 export const mockUtkastIngenEndringer: UtkastResponse = {
@@ -411,6 +412,7 @@ export const mockUtkastIngenEndringer: UtkastResponse = {
     stemmekretsendringer: {},
     endredeFeatures: [],
   }),
+  gyldigFra: "2022-01-01",
 };
 
 export const mockUtkastRef1: UtkastRef = {

@@ -743,8 +743,6 @@ export interface components {
       id: string;
       /** @description Arbeidsnavnet til utkastet. */
       navn: string;
-      /** @description Datoen endringene i vedtaket skal tre i kraft */
-      gyldigFra?: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
       /** @description Status for utkastet. */
@@ -761,6 +759,11 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+      /**
+       * Format: date
+       * @description Gyldig fra-datoen til utkastet
+       */
+      gyldigFra: string;
     };
     /** @description Utkastet som ønskes opprettet */
     OpprettUtkastRequest: {
@@ -768,6 +771,11 @@ export interface components {
       navn: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
+      /**
+       * Format: date
+       * @description Gyldig fra-datoen til utkastet. Settes default til dagens dato om ikke satt
+       */
+      gyldigFra?: string | null;
     };
     /** @description Requestbody for publisering av utkast. */
     PubliserUtkastRequest: {
@@ -775,7 +783,7 @@ export interface components {
        * Format: date
        * @description Datoen utkastet skal publiseres fra. Settes default til dagens dato om ikke satt.
        */
-      publiseringsdato: string;
+      publiseringsdato?: string;
     };
     FrontendLogRequest: {
       /** @enum {string} */
