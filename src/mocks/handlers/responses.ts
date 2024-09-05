@@ -7,7 +7,6 @@ import {
   KodelisteRespons,
   KommuneResponse,
   StemmekretsResponse,
-  UtkastRef,
   UtkastResponse,
 } from "types/api";
 
@@ -42,6 +41,7 @@ export const mockFylker: FylkeResponse[] = [
       },
       geometry: {
         type: "",
+        coordinates: [],
       },
     },
     version: 0,
@@ -79,6 +79,7 @@ export const mockFylker: FylkeResponse[] = [
       },
       geometry: {
         type: "",
+        coordinates: [],
       },
     },
     version: 0,
@@ -415,20 +416,6 @@ export const mockUtkastIngenEndringer: UtkastResponse = {
   gyldigFra: "2022-01-01",
 };
 
-export const mockUtkastRef1: UtkastRef = {
-  href: "",
-  id: "1",
-  navn: "Mock utkast",
-  opprettetDato: "2022-06-01",
-};
-
-export const mockUtkastRef2: UtkastRef = {
-  href: "",
-  id: "2",
-  navn: "Et nytt utkast",
-  opprettetDato: "2022-06-01",
-};
-
 const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
   ...mockDetailedGrunnkrets1,
   id: {
@@ -475,3 +462,59 @@ export const mockStemmekretserFramtidigeEndringer: StemmekretsResponse[] = [
     ...mockStemmekrets1,
   },
 ];
+
+export const mockUtkast1: UtkastResponse = {
+  id: "1",
+  navn: "Mock utkast",
+  opprettetDato: "2022-06-01",
+  endringstype: "",
+  status: "",
+  auditInfoResponse: {
+    oppdateringsdato: "",
+  },
+  operasjoner: {
+    metadataendringer: {
+      nasjonsendringer: {},
+      fylkesendringer: {},
+      kommuneendringer: {},
+      grunnkretsendringer: {},
+      stemmekretsendringer: {},
+    },
+    grenseendringer: {
+      endredeFeatures: [],
+    },
+    stemmekretsSammenslaaingsendring: undefined,
+    grunnkretsSammenslaaingsendring: undefined,
+    kretsDelingEndringer: [],
+  },
+  version: 0,
+  gyldigFra: "",
+};
+
+export const mockUtkast2: UtkastResponse = {
+  id: "2",
+  navn: "Et nytt utkast",
+  opprettetDato: "2022-06-01",
+  endringstype: "",
+  status: "",
+  auditInfoResponse: {
+    oppdateringsdato: "",
+  },
+  operasjoner: {
+    metadataendringer: {
+      nasjonsendringer: {},
+      fylkesendringer: {},
+      kommuneendringer: {},
+      grunnkretsendringer: {},
+      stemmekretsendringer: {},
+    },
+    grenseendringer: {
+      endredeFeatures: [],
+    },
+    stemmekretsSammenslaaingsendring: undefined,
+    grunnkretsSammenslaaingsendring: undefined,
+    kretsDelingEndringer: [],
+  },
+  version: 0,
+  gyldigFra: "",
+};

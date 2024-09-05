@@ -33,6 +33,12 @@ const Landing = () => {
           icon="travel_explore"
           onClick={() => navigate(routes.kart)}
         />
+        <ActionCard
+          title="Fremtidige endringer"
+          description="Se hvilke endringer som er publisert, men som ikke har intruffet enda."
+          icon="event"
+          onClick={() => navigate(routes.endringer)}
+        />
       </Page>
       <PrivacyFooter />
     </PageContainer>
