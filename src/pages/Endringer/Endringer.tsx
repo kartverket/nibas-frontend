@@ -1,14 +1,14 @@
-import { Text, Heading, Icon, Link, Stack, Table, Thead, Tr, Th, Tbody, Card, Td } from "@kvib/react";
+import { Card, Heading, Icon, Link, Stack, Table, Tbody, Td, Text, Th, Thead, Tr } from "@kvib/react";
 import { Page, PageContainer } from "components/Page";
-import LandingHeader from "pages/Landing/LandingHeader";
-import { styled } from "styled-components";
-import { routes } from "utils/routes";
-import { Link as RouterLink } from "react-router-dom";
-import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { format } from "date-fns";
-import { UtkastResponse } from "types/api";
-import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import { useUtkasts } from "hooks/inndelinger/useUtkasts";
+import LandingHeader from "pages/Landing/LandingHeader";
+import { Link as RouterLink } from "react-router-dom";
+import { styled } from "styled-components";
+import { GrunnkretsResponse, StemmekretsResponse, UtkastResponse } from "types/api";
+import { routes } from "utils/routes";
 
 const utkastColumns = {
   Beskrivelse: "navn",
@@ -76,11 +76,19 @@ interface UtkastRowProps {
 
 const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const { data: endredeStemmekretser } = useStemmekretser(utkast.endredeInndelinger, utkast.gyldigFra);
-  const foundStemmekretserIds = endredeStemmekretser?.map((sk) => sk.id.lokalid.value);
-  const { data: endredeGrunnkretser } = useGrunnkretser(
-    utkast.endredeInndelinger.filter((id) => foundStemmekretserIds?.includes(id) === false),
-    utkast.gyldigFra,
-  );
+  const { data: endredeGrunnkretser } = useGrunnkretser(utkast.endredeInndelinger, utkast.gyldigFra);
+
+  const berørteInndelinger =
+    endredeGrunnkretser != null && endredeStemmekretser != null
+      ? [
+          ...[...endredeStemmekretser, ...endredeGrunnkretser]
+            .reduce((acc, current) => {
+              acc.set(current.id, current);
+              return acc;
+            }, new Map())
+            .values(),
+        ]
+      : [];
 
   return (
     <Tr>
@@ -88,11 +96,10 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
       <StyledCell>{utkast.endringstype}</StyledCell>
       <StyledCell>{format(utkast.gyldigFra, "dd.MM.yyyy")}</StyledCell>
       <StyledCell>
-        {endredeGrunnkretser?.map((gk) => (
-          <Text key={gk.id.lokalid.value}>{`${gk.kommunenummer.kodeverdi}${gk.nummer} ${gk.navn}`}</Text>
-        ))}
-        {endredeStemmekretser?.map((sk) => (
-          <Text key={sk.id.lokalid.value}>{`${sk.kommunenummer.kodeverdi}${sk.nummer} ${sk.navn}`}</Text>
+        {berørteInndelinger?.map((inndeling: StemmekretsResponse | GrunnkretsResponse) => (
+          <Text
+            key={inndeling.id.lokalid.value}
+          >{`${inndeling.kommunenummer.kodeverdi}${inndeling.nummer} ${inndeling.navn}`}</Text>
         ))}
       </StyledCell>
     </Tr>
