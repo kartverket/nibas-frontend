@@ -42,7 +42,7 @@ export const Endringer = () => {
             {format(new Date(), "dd.MM.yyyy")}
           </Text>
         </SubTitleContainer>
-        {utkasts != null ? (
+        {utkasts != null && utkasts.length > 0 ? (
           <TableContainer>
             <Table colorScheme="gray">
               <Thead>
