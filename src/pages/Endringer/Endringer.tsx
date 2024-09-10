@@ -1,11 +1,25 @@
-import { Text, Heading, Icon, Link, Stack, Table, Thead, Tr, Th, Tbody, Card } from "@kvib/react";
+import { Text, Heading, Icon, Link, Stack, Table, Thead, Tr, Th, Tbody, Card, Td } from "@kvib/react";
 import { Page, PageContainer } from "components/Page";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { styled } from "styled-components";
 import { routes } from "utils/routes";
 import { Link as RouterLink } from "react-router-dom";
+import { useUtkasts } from "hooks/inndelinger/useUtkasts";
+import { format } from "date-fns";
+import { UtkastResponse } from "types/api";
+import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+
+const utkastColumns = {
+  Beskrivelse: "navn",
+  "Type endring": "endringstype",
+  "Gyldig fra": "gyldigFra",
+  "Berørte inndelinger": "endredeInndelinger",
+};
 
 export const Endringer = () => {
+  const { data: utkasts } = useUtkasts(["PUBLISERT"], format(new Date(), "yyyy-MM-dd"));
+
   return (
     <PageContainer>
       <LandingHeader />
@@ -24,23 +38,55 @@ export const Endringer = () => {
         </TitleContainer>
         <SubTitleContainer>
           <Text>Se endringer som inntreffer etter:</Text>
-          <Text as="b">{new Date().toDateString()}</Text>
+          <Text as="b" fontSize={"large"}>
+            {format(new Date(), "dd.MM.yyyy")}
+          </Text>
         </SubTitleContainer>
         <TableContainer>
           <Table colorScheme="gray">
             <Thead>
               <Tr>
-                <StyledCell>Beskrivelse</StyledCell>
-                <StyledCell>Type endring</StyledCell>
-                <StyledCell>Gyldig fra</StyledCell>
-                <StyledCell>Berørte inndelinger</StyledCell>
+                {Object.keys(utkastColumns).map((column) => (
+                  <TitleCell key={column}>{column}</TitleCell>
+                ))}
               </Tr>
             </Thead>
-            <Tbody></Tbody>
+            {utkasts != null && (
+              <Tbody>
+                {utkasts.map((utkast) => (
+                  <UtkastRow key={utkast.id} utkast={utkast} />
+                ))}
+              </Tbody>
+            )}
           </Table>
         </TableContainer>
       </EndringerPage>
     </PageContainer>
+  );
+};
+
+interface UtkastRowProps {
+  utkast: UtkastResponse;
+}
+
+const UtkastRow = ({ utkast }: UtkastRowProps) => {
+  const { data: endredeStemmekretser } = useStemmekretser(utkast.endredeInndelinger, utkast.gyldigFra);
+  const { data: endredeGrunnkretser } = useGrunnkretser(utkast.endredeInndelinger, utkast.gyldigFra);
+
+  return (
+    <Tr>
+      <StyledCell>{utkast.navn}</StyledCell>
+      <StyledCell>{utkast.endringstype}</StyledCell>
+      <StyledCell>{format(utkast.gyldigFra, "dd.MM.yyyy")}</StyledCell>
+      <StyledCell>
+        {endredeGrunnkretser?.map((gk) => (
+          <Text key={gk.id.lokalid.value}>{`${gk.kommunenummer.kodeverdi}${gk.nummer} ${gk.navn}`}</Text>
+        ))}
+        {endredeStemmekretser?.map((sk) => (
+          <Text key={sk.id.lokalid.value}>{`${sk.kommunenummer.kodeverdi}${sk.nummer} ${sk.navn}`}</Text>
+        ))}
+      </StyledCell>
+    </Tr>
   );
 };
 
@@ -101,7 +147,11 @@ const TableContainer = styled(Card)`
   box-shadow: none;
 `;
 
-const StyledCell = styled(Th)`
+const StyledCell = styled(Td)`
+  padding: 16px 28px;
+`;
+
+const TitleCell = styled(Th)`
   padding: 16px 28px;
   text-transform: capitalize;
   color: unset;

@@ -4,7 +4,9 @@ import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
-const stemmekretserFetcher = async ([stemmekretsIds, gyldighetsdato, token]: [
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const stemmekretserFetcher = async ([keydiff, stemmekretsIds, gyldighetsdato, token]: [
+  string,
   string[],
   string | undefined,
   string | undefined,
@@ -20,7 +22,7 @@ export const useStemmekretser = (stemmekretsIds: string[], gyldighetsdato: strin
   const { token } = useAuthentication();
 
   return useSWRImmutable(
-    stemmekretsIds.length > 0 ? [stemmekretsIds, gyldighetsdato, token] : null,
+    stemmekretsIds.length > 0 ? ["stemmekretser", stemmekretsIds, gyldighetsdato, token] : null,
     stemmekretserFetcher,
   );
 };

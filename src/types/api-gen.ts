@@ -783,6 +783,8 @@ export interface components {
        * @description Gyldig fra-datoen til utkastet
        */
       gyldigFra: string;
+      /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
+      endredeInndelinger: string[];
     };
     /** @description Utkastet som ønskes opprettet */
     OpprettUtkastRequest: {
@@ -984,9 +986,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
+      valid?: boolean;
       /** Format: double */
       m?: number;
-      valid?: boolean;
       coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {

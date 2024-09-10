@@ -28,6 +28,7 @@ const utkast: UtkastResponse = {
   status: "123",
   version: 1,
   gyldigFra: "2022-01-01",
+  endredeInndelinger: [],
 };
 
 const mockUtkastContextValue = {
