@@ -42,24 +42,29 @@ export const Endringer = () => {
             {format(new Date(), "dd.MM.yyyy")}
           </Text>
         </SubTitleContainer>
-        <TableContainer>
-          <Table colorScheme="gray">
-            <Thead>
-              <Tr>
-                {Object.keys(utkastColumns).map((column) => (
-                  <TitleCell key={column}>{column}</TitleCell>
-                ))}
-              </Tr>
-            </Thead>
-            {utkasts != null && (
+        {utkasts != null ? (
+          <TableContainer>
+            <Table colorScheme="gray">
+              <Thead>
+                <Tr>
+                  {Object.keys(utkastColumns).map((column) => (
+                    <TitleCell key={column}>{column}</TitleCell>
+                  ))}
+                </Tr>
+              </Thead>
+
               <Tbody>
                 {utkasts.map((utkast) => (
                   <UtkastRow key={utkast.id} utkast={utkast} />
                 ))}
               </Tbody>
-            )}
-          </Table>
-        </TableContainer>
+            </Table>
+          </TableContainer>
+        ) : (
+          <NoUtkastsMessageContainer>
+            <Text>{`Det er ingen publiserte utkast med endringer gyldig fra ${format(new Date(), "dd.MM.yyyy")}`}</Text>
+          </NoUtkastsMessageContainer>
+        )}
       </EndringerPage>
     </PageContainer>
   );
@@ -93,6 +98,12 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     </Tr>
   );
 };
+
+const NoUtkastsMessageContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const EndringerPage = styled(Page)`
   display: grid;
