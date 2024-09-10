@@ -4,9 +4,7 @@ import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const grunnkretsFetcher = async ([keydiff, grunnkretsIds, gyldighetsdato, token]: [
-  string,
+const grunnkretsFetcher = async ([grunnkretsIds, gyldighetsdato, token]: [
   string[],
   string | undefined,
   string | undefined,
@@ -21,7 +19,7 @@ const grunnkretsFetcher = async ([keydiff, grunnkretsIds, gyldighetsdato, token]
 export const useGrunnkretser = (grunnkretsId: string[], gyldighetsdato: string | undefined) => {
   const auth = useAuthentication();
   return useSWRImmutable(
-    grunnkretsId.length > 0 ? ["grunnkretser", grunnkretsId, gyldighetsdato, auth.token] : null,
+    grunnkretsId.length > 0 ? [grunnkretsId, gyldighetsdato, auth.token] : null,
     grunnkretsFetcher,
   );
 };

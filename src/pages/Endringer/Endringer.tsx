@@ -71,7 +71,11 @@ interface UtkastRowProps {
 
 const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const { data: endredeStemmekretser } = useStemmekretser(utkast.endredeInndelinger, utkast.gyldigFra);
-  const { data: endredeGrunnkretser } = useGrunnkretser(utkast.endredeInndelinger, utkast.gyldigFra);
+  const foundStemmekretserIds = endredeStemmekretser?.map((sk) => sk.id.lokalid.value);
+  const { data: endredeGrunnkretser } = useGrunnkretser(
+    utkast.endredeInndelinger.filter((id) => foundStemmekretserIds?.includes(id) === false),
+    utkast.gyldigFra,
+  );
 
   return (
     <Tr>
