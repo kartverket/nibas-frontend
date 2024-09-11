@@ -1,14 +1,40 @@
-import { Card, Heading, Icon, Link, Stack, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@kvib/react";
+import {
+  Card,
+  Heading,
+  Icon,
+  IconButton,
+  Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Stack,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tooltip,
+  Tr,
+  useToast,
+} from "@kvib/react";
+import { createUtkast } from "api/utkast";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { Page, PageContainer } from "components/Page";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { format } from "date-fns";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
+import { endringstyper } from "pages/Kart/constants";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { useState } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { GrunnkretsResponse, StemmekretsResponse, UtkastResponse } from "types/api";
+import { ApiErrorResponse, GrunnkretsResponse, StemmekretsResponse, UtkastResponse } from "types/api";
+import { statusCode } from "utils/api";
 import { routes } from "utils/routes";
 
 const utkastColumns = {
@@ -54,6 +80,7 @@ export const Endringer = () => {
                   {Object.keys(utkastColumns).map((column) => (
                     <TitleCell key={column}>{column}</TitleCell>
                   ))}
+                  <TitleCell />
                 </Tr>
               </Thead>
 
@@ -79,8 +106,42 @@ interface UtkastRowProps {
 }
 
 const UtkastRow = ({ utkast }: UtkastRowProps) => {
+  const { token } = useAuthentication();
+  const toast = useToast();
+  const navigate = useNavigate();
+  const { setError } = useErrorHandling();
   const { data: endredeStemmekretser } = useStemmekretser(utkast.endredeInndelinger, utkast.gyldigFra);
   const { data: endredeGrunnkretser } = useGrunnkretser(utkast.endredeInndelinger, utkast.gyldigFra);
+  const { setGyldighetsdato } = useValgtGyldighetsdato();
+
+  const opprettFeilrettingUtkast = async () => {
+    const response = await createUtkast(
+      {
+        navn: "Feilretting: ".concat(utkast.navn),
+        endringstype: endringstyper[7],
+        gyldigFra: utkast.gyldigFra,
+      },
+      token,
+    );
+
+    if (statusCode.isSuccessful(response.status)) {
+      const json = await response.json();
+      const utkastId = json.id;
+      toast({ title: "Utkast opprettet", status: "success" });
+      navigate(`../utkast/${utkastId}`);
+    } else if (statusCode.isError(response.status)) {
+      const wrapper = (await response.json()) as ApiErrorResponse;
+      setError({
+        ...wrapper.errorDescription,
+        errorCode: wrapper.errorCode,
+      });
+    }
+  };
+
+  const openVisningsmodusPaaUtkastGyldigFra = () => {
+    setGyldighetsdato(utkast.gyldigFra);
+    navigate(`../kart`);
+  };
 
   const berørteInndelinger =
     endredeGrunnkretser != null && endredeStemmekretser != null
@@ -105,6 +166,25 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
             key={inndeling.id.lokalid.value}
           >{`${inndeling.kommunenummer.kodeverdi}${inndeling.nummer} ${inndeling.navn}`}</Text>
         ))}
+      </StyledCell>
+      <StyledCell>
+        <Menu>
+          <MenuButton
+            onClick={(e) => e.stopPropagation()}
+            as={IconButton}
+            aria-label="Utkast alternativer"
+            icon="more_horiz"
+            variant="ghost"
+          />
+          <MenuList onClick={(e) => e.stopPropagation()}>
+            <MenuItem icon={<Icon icon={"draw"} />} onClick={opprettFeilrettingUtkast}>
+              Gjør en feilretting i et nytt utkast
+            </MenuItem>
+            <MenuItem icon={<Icon icon={"travel_explore"} />} onClick={openVisningsmodusPaaUtkastGyldigFra}>
+              Åpne visningsmodus på gjeldene dato
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </StyledCell>
     </Tr>
   );
