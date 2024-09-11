@@ -1,10 +1,11 @@
-import { Card, Heading, Icon, Link, Stack, Table, Tbody, Td, Text, Th, Thead, Tr } from "@kvib/react";
+import { Card, Heading, Icon, Link, Stack, Table, Tbody, Td, Text, Th, Thead, Tooltip, Tr } from "@kvib/react";
 import { Page, PageContainer } from "components/Page";
 import { format } from "date-fns";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import LandingHeader from "pages/Landing/LandingHeader";
+import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { styled } from "styled-components";
 import { GrunnkretsResponse, StemmekretsResponse, UtkastResponse } from "types/api";
@@ -33,7 +34,10 @@ export const Endringer = () => {
             <Heading as="h1" size="lg">
               Fremtidige endringer
             </Heading>
-            <Text>Merk at du ikke kan gjøre endringer på allerede publiserte endringer.</Text>
+            <Stack direction={"row"}>
+              <Text>Merk at du ikke kan gjøre endringer på allerede publiserte endringer.</Text>
+              <FremtidigeUtkastTooltip />
+            </Stack>
           </Stack>
         </TitleContainer>
         <SubTitleContainer>
@@ -105,6 +109,40 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     </Tr>
   );
 };
+
+const FremtidigeUtkastTooltip = () => {
+  const [iconHovered, setIconHovered] = useState(false);
+
+  return (
+    <Tooltip
+      label={
+        <>
+          Når er utkast er publisert kan det ikke trekkes tilbake. For å rette det må du lage et <b>nytt utkast</b> med{" "}
+          <b>samme gyldig fra-dato som den fremtidige feilen oppstår</b>
+        </>
+      }
+      hasArrow
+      placement="bottom"
+    >
+      <InfoIcon>
+        <Icon
+          onMouseOver={() => setIconHovered(true)}
+          onMouseOut={() => setIconHovered(false)}
+          size={24}
+          color="var(--kvib-colors-blue-500)"
+          isFilled={iconHovered}
+          icon="info"
+        ></Icon>
+      </InfoIcon>
+    </Tooltip>
+  );
+};
+
+const InfoIcon = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: help;
+`;
 
 const NoUtkastsMessageContainer = styled.div`
   display: flex;
