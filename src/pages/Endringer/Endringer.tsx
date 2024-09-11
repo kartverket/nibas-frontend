@@ -1,4 +1,4 @@
-import { Card, Heading, Icon, Link, Stack, Table, Tbody, Td, Text, Th, Thead, Tr } from "@kvib/react";
+import { Button, Card, Heading, Icon, Link, Stack, Table, Tbody, Td, Text, Th, Thead, Tr } from "@kvib/react";
 import { Page, PageContainer } from "components/Page";
 import { format } from "date-fns";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
@@ -33,11 +33,11 @@ export const Endringer = () => {
             <Heading as="h1" size="lg">
               Fremtidige endringer
             </Heading>
-            <Text>Merk at du ikke kan gjøre endringer på allerede publiserte endringer.</Text>{" "}
+            <Text>Merk at du ikke kan gjøre endringer på allerede publiserte endringer.</Text>
           </Stack>
         </TitleContainer>
         <SubTitleContainer>
-          <Text>Se endringer som inntreffer etter:</Text>
+          <Text>Se endringer som inntreffer etter</Text>
           <Text as="b" fontSize={"large"}>
             {format(new Date(), "dd.MM.yyyy")}
           </Text>
@@ -175,6 +175,7 @@ const StyledCell = styled(Td)`
 
 const TitleCell = styled(Th)`
   padding: 16px 28px;
-  text-transform: capitalize;
+  text-transform: unset;
   color: unset;
+  font-size: small;
 `;
