@@ -1,4 +1,4 @@
-import { Button, Card, Heading, Icon, Link, Stack, Table, Tbody, Td, Text, Th, Thead, Tr } from "@kvib/react";
+import { Card, Heading, Icon, Link, Stack, Table, Tbody, Td, Text, Th, Thead, Tr } from "@kvib/react";
 import { Page, PageContainer } from "components/Page";
 import { format } from "date-fns";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
