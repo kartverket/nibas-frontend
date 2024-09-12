@@ -7,14 +7,17 @@ import LandingHeader from "./LandingHeader";
 import PrivacyFooter from "./PrivacyFooter";
 import useMapReset from "hooks/useMapReset";
 import { useEffect } from "react";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 const Landing = () => {
   const navigate = useNavigate();
   const resetMap = useMapReset();
+  const { resetGyldighetsdato } = useValgtGyldighetsdato();
 
   useEffect(() => {
+    resetGyldighetsdato();
     resetMap();
-  }, [resetMap]);
+  }, [resetGyldighetsdato, resetMap]);
 
   return (
     <PageContainer>
