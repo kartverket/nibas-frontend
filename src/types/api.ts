@@ -41,7 +41,6 @@ export type InndelingSearchResponse = components["schemas"]["InndelingSearchResp
  */
 export type UtkastOperasjoner = UtkastResponse["operasjoner"];
 export type UtkastResponse = components["schemas"]["UtkastResponse"];
-export type UtkastRef = components["schemas"]["UtkastRef"];
 export type UtkastMetadataendringer = components["schemas"]["Metadataendringer"];
 export type OpprettUtkastRequest = components["schemas"]["OpprettUtkastRequest"];
 export type OppdaterUtkastRequest = components["schemas"]["OppdaterUtkastRequest"];

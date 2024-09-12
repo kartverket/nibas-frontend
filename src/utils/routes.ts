@@ -8,4 +8,5 @@ export const routes = {
   utkast: "/utkast",
   utkastId: ":utkastId",
   kart: "kart",
+  endringer: "/endringer",
 };
