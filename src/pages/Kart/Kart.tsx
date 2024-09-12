@@ -41,13 +41,13 @@ const Kart = () => {
   // Reset valgt visningsdato når kartet åpnes. Bruk enten gyldig-fra på utkastet (om vi har) eller dagens dato
   // Om datoen på utkastet sin gyldigFra er i fortiden bruker vi dagens dato.
   useEffect(() => {
-    const dateToUse =
-      gyldighetsdato != null
-        ? gyldighetsdato
-        : utkast?.gyldigFra != null && !isPast(utkast.gyldigFra)
-          ? new Date(utkast.gyldigFra)
-          : new Date();
-    setGyldighetsdato(format(dateToUse, "yyyy-MM-dd"));
+    if (gyldighetsdato != null) {
+      setGyldighetsdato(gyldighetsdato);
+    } else {
+      const dateToUse =
+        utkast?.gyldigFra != null && !isPast(utkast.gyldigFra) ? new Date(utkast.gyldigFra) : new Date();
+      setGyldighetsdato(format(dateToUse, "yyyy-MM-dd"));
+    }
   }, [gyldighetsdato, setGyldighetsdato, utkast]);
 
   return (
