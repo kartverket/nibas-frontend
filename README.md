@@ -1,6 +1,6 @@
 # NIBAS klient (Nasjonal Inndelingsbase)
 
-En klient skrevet i React og Typescript, og som bruker Vite som utviklingsverktøy og bundler.
+En klient som er bygget med React og TypeScript, og som bruker Vite som utviklingsverktøy og bundler.
 
 ## Lokal utvikling
 
