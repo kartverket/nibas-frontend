@@ -19,7 +19,6 @@ import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { deleteUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useState } from "react";
-import { mutate } from "swr";
 import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
@@ -27,6 +26,7 @@ import { routes } from "utils/routes";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useAuthRenewError } from "components/Authentication/AuthRenewError";
+import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 
 type Props = {
   isOpen: boolean;
@@ -36,6 +36,7 @@ type Props = {
 
 const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
   const { closeUtkast } = useUtkast();
+  const { mutate } = useUtkasts();
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuthentication();
   const { setError } = useErrorHandling();
@@ -51,7 +52,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
     setIsLoading(false);
 
     if (statusCode.isSuccessful(response.status)) {
-      await mutate(["/v1/utkast", token]);
+      await mutate();
       closeUtkast();
       clearInndelingerAndSources();
 
