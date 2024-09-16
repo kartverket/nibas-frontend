@@ -23,7 +23,6 @@ import { createUtkast } from "api/utkast";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { format } from "date-fns";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
@@ -112,7 +111,6 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const { setError } = useErrorHandling();
   const { data: endredeStemmekretser } = useStemmekretser(utkast.endredeInndelinger, utkast.gyldigFra);
   const { data: endredeGrunnkretser } = useGrunnkretser(utkast.endredeInndelinger, utkast.gyldigFra);
-  const { setGyldighetsdato } = useValgtGyldighetsdato();
 
   const opprettFeilrettingUtkast = async () => {
     const response = await createUtkast(
@@ -137,12 +135,14 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
       });
     }
   };
+  /*
 
   const openVisningsmodusPaaUtkastGyldigFra = () => {
     setGyldighetsdato(utkast.gyldigFra);
     navigate(`../kart`);
   };
 
+*/
   const berørteInndelinger =
     endredeGrunnkretser != null && endredeStemmekretser != null
       ? [
@@ -180,9 +180,11 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
             <MenuItem icon={<Icon icon={"draw"} />} onClick={opprettFeilrettingUtkast}>
               Gjør en feilretting i et nytt utkast
             </MenuItem>
+            {/**
             <MenuItem icon={<Icon icon={"travel_explore"} />} onClick={openVisningsmodusPaaUtkastGyldigFra}>
               Åpne visningsmodus på gjeldene dato
             </MenuItem>
+             */}
           </MenuList>
         </Menu>
       </StyledCell>

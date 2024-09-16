@@ -1,6 +1,23 @@
+import { useToast } from "@kvib/react";
+import { updateUtkastApi } from "api/utkast";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { HistoryChange } from "contexts/HistoryContext/types";
+import { fetchUtkastFromSessionStorage, sessionStorageKeys } from "contexts/application-state-utils";
+import useNibasApi from "hooks/useNibasApi";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
+import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
+import { statusCode } from "utils/api";
+import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
+import { removeNil } from "utils/list-utils";
+import { getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
+import { routes } from "utils/routes";
 import { EntityUtkastType, UtkastContextValue, UtkastEntity, UtkastRequestWithoutOperations } from "./types";
 import {
   addTempFeatureIdToNewFeaturesInUtkast,
@@ -8,23 +25,6 @@ import {
   historyToUtkastOperations,
   toCleanUtkast,
 } from "./utkast-utils";
-import { updateUtkastApi } from "api/utkast";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { HistoryChange } from "contexts/HistoryContext/types";
-import useNibasApi from "hooks/useNibasApi";
-import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
-import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { statusCode } from "utils/api";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { useToast } from "@kvib/react";
-import { routes } from "utils/routes";
-import { addEditedFeaturesToSource, removeEditedFeaturesFromSourceByIds } from "utils/map/source";
-import { getFeaturesFromGeoJson } from "utils/map/geoJson";
-import { FeatureIdWithEndpoints, getAllFeatureEndPointCoordinates, isFeatureDeadEnd } from "utils/features";
-import { removeNil } from "utils/list-utils";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
-import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { fetchUtkastFromSessionStorage, sessionStorageKeys } from "contexts/application-state-utils";
 
 export const UtkastContext = createContext<UtkastContextValue | undefined>(undefined);
 
