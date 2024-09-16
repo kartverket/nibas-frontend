@@ -135,14 +135,11 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
       });
     }
   };
-  /*
 
-  const openVisningsmodusPaaUtkastGyldigFra = () => {
-    setGyldighetsdato(utkast.gyldigFra);
-    navigate(`../kart`);
+  const openVisningsmodusPaaUtkastGyldigFra = (gyldigFra: string) => {
+    navigate(`../kart/${format(new Date(gyldigFra), "yyyy-MM-dd")}`);
   };
 
-*/
   const berørteInndelinger =
     endredeGrunnkretser != null && endredeStemmekretser != null
       ? [
@@ -180,11 +177,12 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
             <MenuItem icon={<Icon icon={"draw"} />} onClick={opprettFeilrettingUtkast}>
               Gjør en feilretting i et nytt utkast
             </MenuItem>
-            {/**
-            <MenuItem icon={<Icon icon={"travel_explore"} />} onClick={openVisningsmodusPaaUtkastGyldigFra}>
+            <MenuItem
+              icon={<Icon icon={"travel_explore"} />}
+              onClick={() => openVisningsmodusPaaUtkastGyldigFra(utkast.gyldigFra)}
+            >
               Åpne visningsmodus på gjeldene dato
             </MenuItem>
-             */}
           </MenuList>
         </Menu>
       </StyledCell>
