@@ -4,8 +4,11 @@ import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
-const grunnkretsFetcher = async (params: [string, string[], string | undefined, string | undefined]) => {
-  const [, grunnkretsIds, gyldighetsdato, token] = params;
+const grunnkretsFetcher = async ([grunnkretsIds, gyldighetsdato, token]: [
+  string[],
+  string | undefined,
+  string | undefined,
+]) => {
   const promises: Promise<GrunnkretsResponse>[] = grunnkretsIds.map(async (id) =>
     fetcherWithToken([getUrlWithParameters("/v1/grunnkretser/{id}", { id, gyldighetsdato }), token]),
   );
@@ -17,7 +20,7 @@ export const useGrunnkretser = (grunnkretsId: string[], gyldighetsdato: string |
   const auth = useAuthentication();
   return useSWRImmutable(
     // Vi legger på en string i key for å forhindre at swr bruker cache hvis man spør om samme IDer på tvers av hooks
-    grunnkretsId.length > 0 ? ["grunnkretser", grunnkretsId, gyldighetsdato, auth.token] : null,
+    grunnkretsId.length > 0 ? [grunnkretsId, gyldighetsdato, auth.token] : null,
     grunnkretsFetcher,
   );
 };
