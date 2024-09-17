@@ -19,7 +19,6 @@ const grunnkretsFetcher = async ([grunnkretsIds, gyldighetsdato, token]: [
 export const useGrunnkretser = (grunnkretsId: string[], gyldighetsdato: string | undefined) => {
   const auth = useAuthentication();
   return useSWRImmutable(
-    // Vi legger på en string i key for å forhindre at swr bruker cache hvis man spør om samme IDer på tvers av hooks
     grunnkretsId.length > 0 ? [grunnkretsId, gyldighetsdato, auth.token] : null,
     grunnkretsFetcher,
   );
