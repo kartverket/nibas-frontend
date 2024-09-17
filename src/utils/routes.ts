@@ -7,6 +7,6 @@ export const routes = {
   logout: "/logout",
   utkast: "/utkast",
   utkastId: ":utkastId",
-  kart: "kart",
+  kart: "kart/:gyldigFra?",
   endringer: "/endringer",
 };
