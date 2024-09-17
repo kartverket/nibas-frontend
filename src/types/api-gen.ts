@@ -443,7 +443,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -756,6 +762,11 @@ export interface components {
        */
       oppdateringsdato: string;
     };
+    /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
+    EndredeInndelinger: {
+      endredeStemmekretser: string[];
+      endredeGrunnkretser: string[];
+    };
     /** @description Representasjon av utkast */
     UtkastResponse: {
       /** @description Unik uuid for utkastet */
@@ -783,8 +794,7 @@ export interface components {
        * @description Gyldig fra-datoen til utkastet
        */
       gyldigFra: string;
-      /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
-      endredeInndelinger: string[];
+      endredeInndelinger: components["schemas"]["EndredeInndelinger"];
     };
     /** @description Utkastet som ønskes opprettet */
     OpprettUtkastRequest: {
@@ -794,17 +804,9 @@ export interface components {
       endringstype: string;
       /**
        * Format: date
-       * @description Gyldig fra-datoen til utkastet. Settes default til dagens dato om ikke satt
+       * @description Gyldig fra-datoen til utkastet.
        */
-      gyldigFra?: string | null;
-    };
-    /** @description Requestbody for publisering av utkast. */
-    PubliserUtkastRequest: {
-      /**
-       * Format: date
-       * @description Datoen utkastet skal publiseres fra. Settes default til dagens dato om ikke satt.
-       */
-      publiseringsdato?: string;
+      gyldigFra: string;
     };
     FrontendLogRequest: {
       /** @enum {string} */
@@ -923,7 +925,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -998,7 +1006,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1350,11 +1364,6 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["OptimistiskLaasWrapper"];
         };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PubliserUtkastRequest"];
       };
     };
   };

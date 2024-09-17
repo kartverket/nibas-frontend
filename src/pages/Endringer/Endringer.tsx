@@ -110,8 +110,14 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
-  const { data: endredeStemmekretser } = useStemmekretser(utkast.endredeInndelinger, utkast.gyldigFra);
-  const { data: endredeGrunnkretser } = useGrunnkretser(utkast.endredeInndelinger, utkast.gyldigFra);
+  const { data: endredeStemmekretser } = useStemmekretser(
+    utkast.endredeInndelinger.endredeStemmekretser,
+    utkast.gyldigFra,
+  );
+  const { data: endredeGrunnkretser } = useGrunnkretser(
+    utkast.endredeInndelinger.endredeGrunnkretser,
+    utkast.gyldigFra,
+  );
 
   const opprettFeilrettingUtkast = async () => {
     const response = await createUtkast(
