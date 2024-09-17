@@ -4,11 +4,8 @@ import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
-const stemmekretserFetcher = async ([stemmekretsIds, gyldighetsdato, token]: [
-  string[],
-  string | undefined,
-  string | undefined,
-]) => {
+const stemmekretserFetcher = async (params: [string, string[], string | undefined, string | undefined]) => {
+  const [, stemmekretsIds, gyldighetsdato, token] = params;
   const promises: Promise<StemmekretsResponse>[] = stemmekretsIds.map(async (id) =>
     fetcherWithToken([getUrlWithParameters("/v1/stemmekretser/{id}", { id, gyldighetsdato }), token]),
   );
@@ -20,7 +17,8 @@ export const useStemmekretser = (stemmekretsIds: string[], gyldighetsdato: strin
   const { token } = useAuthentication();
 
   return useSWRImmutable(
-    stemmekretsIds.length > 0 ? [stemmekretsIds, gyldighetsdato, token] : null,
+    // Vi legger på en string i key for å forhindre at swr bruker cache hvis man spør om samme IDer på tvers av hooks
+    stemmekretsIds.length > 0 ? ["stemmekretser", stemmekretsIds, gyldighetsdato, token] : null,
     stemmekretserFetcher,
   );
 };

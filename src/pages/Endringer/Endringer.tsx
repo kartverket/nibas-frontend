@@ -32,8 +32,9 @@ import LandingHeader from "pages/Landing/LandingHeader";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { ApiErrorResponse, GrunnkretsResponse, StemmekretsResponse, UtkastResponse } from "types/api";
+import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
+import { inndelingColors } from "utils/map/layerStyles";
 import { routes } from "utils/routes";
 
 const utkastColumns = {
@@ -141,33 +142,27 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     setGyldighetsdato(utkast.gyldigFra);
     navigate(`../kart`);
   };
-
 */
-  const berørteInndelinger =
-    endredeGrunnkretser != null && endredeStemmekretser != null
-      ? [
-          ...[...endredeStemmekretser, ...endredeGrunnkretser]
-            .reduce((acc, current) => {
-              acc.set(current.id, current);
-              return acc;
-            }, new Map())
-            .values(),
-        ]
-      : [];
-
   return (
     <Tr>
       <StyledCell>{utkast.navn}</StyledCell>
       <StyledCell>{utkast.endringstype}</StyledCell>
       <StyledCell>{format(utkast.gyldigFra, "dd.MM.yyyy")}</StyledCell>
       <StyledCell>
-        {berørteInndelinger?.map((inndeling: StemmekretsResponse | GrunnkretsResponse) => (
-          <Text
-            key={inndeling.id.lokalid.value}
-          >{`${inndeling.kommunenummer.kodeverdi}${inndeling.nummer} ${inndeling.navn}`}</Text>
-        ))}
+        <InndelingerList bulletcolor={inndelingColors.grunnkrets}>
+          {endredeGrunnkretser?.map((inndeling) => (
+            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${inndeling.navn}`}</li>
+          ))}
+        </InndelingerList>
+        <InndelingerList bulletcolor={inndelingColors.stemmekrets}>
+          {endredeStemmekretser?.map((inndeling) => (
+            <li
+              key={inndeling.id.lokalid.value}
+            >{`(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer} ${inndeling.navn}`}</li>
+          ))}
+        </InndelingerList>
       </StyledCell>
-      <StyledCell>
+      <OptionsCell>
         <Menu>
           <MenuButton
             onClick={(e) => e.stopPropagation()}
@@ -187,7 +182,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
              */}
           </MenuList>
         </Menu>
-      </StyledCell>
+      </OptionsCell>
     </Tr>
   );
 };
@@ -293,9 +288,23 @@ const StyledCell = styled(Td)`
   padding: 16px 28px;
 `;
 
+const OptionsCell = styled(StyledCell)`
+  text-align: right;
+`;
+
 const TitleCell = styled(Th)`
   padding: 16px 28px;
   text-transform: unset;
   color: unset;
   font-size: small;
+`;
+
+const InndelingerList = styled.ul<{ bulletcolor: string }>`
+  list-style-type: disc;
+  margin-left: 20px;
+
+  li::marker {
+    color: ${(props) => props.bulletcolor};
+    font-size: 20px;
+  }
 `;
