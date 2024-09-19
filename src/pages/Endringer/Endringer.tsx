@@ -27,6 +27,7 @@ import { format, subDays } from "date-fns";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
+import Loading from "pages/App/Loading";
 import { endringstyper } from "pages/Kart/constants";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { useState } from "react";
@@ -45,7 +46,7 @@ const utkastColumns = {
 };
 
 export const Endringer = () => {
-  const { data: utkasts } = useUtkasts(["PUBLISERT"], format(new Date(), "yyyy-MM-dd"));
+  const { data: utkasts, isLoading } = useUtkasts(["PUBLISERT"], format(new Date(), "yyyy-MM-dd"));
 
   return (
     <PageContainer>
@@ -72,7 +73,9 @@ export const Endringer = () => {
             {format(new Date(), "dd.MM.yyyy")}
           </Text>
         </SubTitleContainer>
-        {utkasts != null && utkasts.length > 0 ? (
+        {isLoading ? (
+          <Loading />
+        ) : utkasts != null && utkasts.length > 0 ? (
           <TableContainer>
             <Table colorScheme="gray">
               <Thead>
