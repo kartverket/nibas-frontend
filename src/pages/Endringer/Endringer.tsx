@@ -23,7 +23,7 @@ import { createUtkast } from "api/utkast";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { format } from "date-fns";
+import { format, subDays } from "date-fns";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
@@ -110,13 +110,17 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
+
+  // Vi ønsker å vise opprinnelige navn og nummere for inndelingene, og må derfor bruke dagen før utkastet sine endringer trer i kraft.
+  const beforePublisering = format(subDays(new Date(utkast.gyldigFra), 1), "yyyy-MM-dd");
+
   const { data: endredeStemmekretser } = useStemmekretser(
     utkast.endredeInndelinger.endredeStemmekretser,
-    utkast.gyldigFra,
+    beforePublisering,
   );
   const { data: endredeGrunnkretser } = useGrunnkretser(
     utkast.endredeInndelinger.endredeGrunnkretser,
-    utkast.gyldigFra,
+    beforePublisering,
   );
 
   const opprettFeilrettingUtkast = async () => {
