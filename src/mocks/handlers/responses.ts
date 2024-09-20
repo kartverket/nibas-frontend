@@ -396,7 +396,10 @@ export const mockUtkast: UtkastResponse = {
     endredeFeatures: [mockGeoJsonFeatureResponse.features[0]],
   }),
   gyldigFra: "2022-01-01",
-  endredeInndelinger: [],
+  endredeInndelinger: {
+    endredeStemmekretser: [],
+    endredeGrunnkretser: [],
+  },
 };
 
 export const mockUtkastIngenEndringer: UtkastResponse = {
@@ -415,7 +418,10 @@ export const mockUtkastIngenEndringer: UtkastResponse = {
     endredeFeatures: [],
   }),
   gyldigFra: "2022-01-01",
-  endredeInndelinger: [],
+  endredeInndelinger: {
+    endredeStemmekretser: [],
+    endredeGrunnkretser: [],
+  },
 };
 
 const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
@@ -491,7 +497,10 @@ export const mockUtkast1: UtkastResponse = {
   },
   version: 0,
   gyldigFra: "",
-  endredeInndelinger: [],
+  endredeInndelinger: {
+    endredeStemmekretser: [],
+    endredeGrunnkretser: [],
+  },
 };
 
 export const mockUtkast2: UtkastResponse = {
@@ -520,5 +529,8 @@ export const mockUtkast2: UtkastResponse = {
   },
   version: 0,
   gyldigFra: "",
-  endredeInndelinger: [],
+  endredeInndelinger: {
+    endredeStemmekretser: [],
+    endredeGrunnkretser: [],
+  },
 };

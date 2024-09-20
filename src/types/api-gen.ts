@@ -756,6 +756,11 @@ export interface components {
        */
       oppdateringsdato: string;
     };
+    /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
+    EndredeInndelinger: {
+      endredeStemmekretser: string[];
+      endredeGrunnkretser: string[];
+    };
     /** @description Representasjon av utkast */
     UtkastResponse: {
       /** @description Unik uuid for utkastet */
@@ -783,8 +788,7 @@ export interface components {
        * @description Gyldig fra-datoen til utkastet
        */
       gyldigFra: string;
-      /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
-      endredeInndelinger: string[];
+      endredeInndelinger: components["schemas"]["EndredeInndelinger"];
     };
     /** @description Utkastet som ønskes opprettet */
     OpprettUtkastRequest: {
@@ -794,17 +798,9 @@ export interface components {
       endringstype: string;
       /**
        * Format: date
-       * @description Gyldig fra-datoen til utkastet. Settes default til dagens dato om ikke satt
+       * @description Gyldig fra-datoen til utkastet.
        */
-      gyldigFra?: string | null;
-    };
-    /** @description Requestbody for publisering av utkast. */
-    PubliserUtkastRequest: {
-      /**
-       * Format: date
-       * @description Datoen utkastet skal publiseres fra. Settes default til dagens dato om ikke satt.
-       */
-      publiseringsdato?: string;
+      gyldigFra: string;
     };
     FrontendLogRequest: {
       /** @enum {string} */
@@ -1350,11 +1346,6 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["OptimistiskLaasWrapper"];
         };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PubliserUtkastRequest"];
       };
     };
   };

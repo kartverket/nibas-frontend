@@ -98,7 +98,7 @@ const flateStyles = [
   }),
 ];
 
-const inndelingColors = {
+export const inndelingColors = {
   fylke: "#170CEB",
   kommune: "#637DF3",
   nasjon: "#61538B",
