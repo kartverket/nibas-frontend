@@ -20,7 +20,7 @@ spec:
   type: "security_champion"
   parent: "eiendom_security_champions"
   members:
-  - "etse"
+  - "AleksanderWK"
   children:
   - "resource:nibas-frontend"
 ---
@@ -34,7 +34,5 @@ metadata:
 spec:
   type: "repo"
   owner: "security_champion_nibas-frontend"
-  system: "nibas"
   dependencyOf:
   - "component:nibas-frontend"
-
