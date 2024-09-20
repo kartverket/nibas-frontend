@@ -39,6 +39,7 @@ const lineAndPointStyles = ({
   pointRadius = 2.5,
   endpointStrokeWidth = 2,
   endpointRadius = 3.5,
+  zIndex,
 }: {
   color: string;
   dashed?: boolean;
@@ -47,37 +48,36 @@ const lineAndPointStyles = ({
   pointRadius?: number;
   endpointStrokeWidth?: number;
   endpointRadius?: number;
-}) => [
-  new Style({
-    stroke: new Stroke({
-      color,
-      lineDash: dashed ? [6, 8] : [],
-      width: lineStrokeWidth,
-    }),
-  }),
-  new Style({
-    image: new Circle({
-      radius: points ? pointRadius : 0,
-      fill: new Fill({
-        color,
-      }),
-    }),
-    geometry: getNonEndpointsOnFeature,
-  }),
-  new Style({
-    image: new Circle({
-      radius: points ? endpointRadius : 0,
-      fill: new Fill({
-        color: "#FFFFFF",
-      }),
+  zIndex?: number;
+}) => {
+  return [
+    new Style({
       stroke: new Stroke({
-        color: color,
-        width: endpointStrokeWidth,
+        color,
+        lineDash: dashed ? [6, 8] : [],
+        width: lineStrokeWidth,
       }),
+      zIndex,
     }),
-    geometry: getEndPointsOnFeature,
-  }),
-];
+    new Style({
+      image: new Circle({
+        radius: points ? pointRadius : 0,
+        fill: new Fill({ color }),
+      }),
+      geometry: getNonEndpointsOnFeature,
+      zIndex,
+    }),
+    new Style({
+      image: new Circle({
+        radius: points ? endpointRadius : 0,
+        fill: new Fill({ color: "#FFFFFF" }),
+        stroke: new Stroke({ color, width: endpointStrokeWidth }),
+      }),
+      geometry: getEndPointsOnFeature,
+      zIndex,
+    }),
+  ];
+};
 
 export const selectedPointStyle = new Style({
   image: new Circle({
@@ -85,8 +85,6 @@ export const selectedPointStyle = new Style({
     stroke: new Stroke({ color: "#D163E6FF", width: 3 }),
     fill: new Fill({ color: "#ffffff" }),
   }),
-  fill: new Fill({ color: "#ffffff" }),
-  stroke: new Stroke({ color: "#D163E6FF" }),
   zIndex: 10,
 });
 
@@ -109,61 +107,86 @@ export const inndelingColors = {
   edit: "#000000",
 };
 
+export const editableGrenseColors = {
+  fylke: "#170CEB",
+  kommune: "#637DF3",
+  nasjon: "#61538B",
+  grunnkrets: "#4D94AF",
+  stemmekrets: "#FFAE49FF",
+  delomraade: "#5DB9DC",
+};
+
 export const grenseStyles = {
-  fylke: lineAndPointStyles({ color: inndelingColors["fylke"] }),
-  kommune: lineAndPointStyles({ color: inndelingColors["kommune"] }),
-  nasjon: lineAndPointStyles({ color: inndelingColors["nasjon"] }),
-  grunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"] }),
-  stemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"] }),
-  delomraade: lineAndPointStyles({ color: inndelingColors["delomraade"] }),
-  edit: lineAndPointStyles({ color: inndelingColors["edit"] }),
-  select: lineAndPointStyles({ color: "#D163E6FF" }),
-  dirty: lineAndPointStyles({ color: "#00CB85FF" }),
-  error: lineAndPointStyles({ color: "#FF0000FF" }),
-  fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"] }),
-  matrikkel: lineAndPointStyles({ color: "#C0AFFBFF", pointRadius: 1.5, endpointRadius: 2 }),
-  sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
+  fylke: lineAndPointStyles({ color: inndelingColors["fylke"], zIndex: 100 }),
+  kommune: lineAndPointStyles({ color: inndelingColors["kommune"], zIndex: 99 }),
+  nasjon: lineAndPointStyles({ color: inndelingColors["nasjon"], zIndex: 98 }),
+  grunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"], zIndex: 97 }),
+  stemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"], zIndex: 96 }),
+  delomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], zIndex: 95 }),
+  editFylke: lineAndPointStyles({ color: editableGrenseColors["fylke"], zIndex: 100 }),
+  editKommune: lineAndPointStyles({ color: editableGrenseColors["kommune"], zIndex: 99 }),
+  editNasjon: lineAndPointStyles({ color: editableGrenseColors["nasjon"], zIndex: 98 }),
+  editGrunnkrets: lineAndPointStyles({ color: editableGrenseColors["grunnkrets"], zIndex: 97 }),
+  editStemmekrets: lineAndPointStyles({ color: editableGrenseColors["stemmekrets"], zIndex: 96 }),
+  editDelomraade: lineAndPointStyles({ color: editableGrenseColors["delomraade"], zIndex: 95 }),
+  select: lineAndPointStyles({ color: "#D163E6FF", zIndex: 101 }),
+  dirty: lineAndPointStyles({ color: "#00CB85FF", zIndex: 102 }),
+  error: lineAndPointStyles({ color: "#FF0000FF", zIndex: 103 }),
+  fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"], zIndex: 104 }),
+  matrikkel: lineAndPointStyles({ color: "#C0AFFBFF", pointRadius: 1.5, endpointRadius: 2, zIndex: 90 }),
+  sammenslaaing: lineAndPointStyles({ color: "#D3C439B3", zIndex: 94 }),
   flate: flateStyles,
   sammenslaaingOverlapping: lineAndPointStyles({
     color: "#D3C439B3",
     dashed: true,
     points: false,
+    zIndex: 99,
   }),
-  archivedFylke: lineAndPointStyles({ color: inndelingColors["fylke"], dashed: true }),
-  archivedKommune: lineAndPointStyles({ color: inndelingColors["kommune"], dashed: true }),
-  archivedNasjon: lineAndPointStyles({ color: inndelingColors["nasjon"], dashed: true }),
-  archivedGrunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"], dashed: true }),
-  archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"], dashed: true }),
-  archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true }),
+  archivedFylke: lineAndPointStyles({ color: inndelingColors["fylke"], dashed: true, zIndex: 89 }),
+  archivedKommune: lineAndPointStyles({ color: inndelingColors["kommune"], dashed: true, zIndex: 88 }),
+  archivedNasjon: lineAndPointStyles({ color: inndelingColors["nasjon"], dashed: true, zIndex: 87 }),
+  archivedGrunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"], dashed: true, zIndex: 86 }),
+  archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"], dashed: true, zIndex: 85 }),
+  archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true, zIndex: 84 }),
 };
 
-const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
+const grenseStyleFromType = (grenseType: GrenseType, archived: boolean, editable: boolean): Style[] => {
+  if (editable) {
+    switch (grenseType) {
+      case "Fylkesgrense":
+        return grenseStyles.editFylke;
+      case "Kommunegrense":
+        return grenseStyles.editKommune;
+      case "Territorialgrense":
+      case "Riksgrense":
+        return grenseStyles.editNasjon;
+      case "Delområdegrense":
+        return grenseStyles.editDelomraade;
+      case "Grunnkretsgrense":
+        return grenseStyles.editGrunnkrets;
+      case "Stemmekretsgrense":
+        return grenseStyles.editStemmekrets;
+      default:
+        return [];
+    }
+  }
+
   switch (grenseType) {
-    case "Fylkesgrense": {
+    case "Fylkesgrense":
       return archived ? grenseStyles.archivedFylke : grenseStyles.fylke;
-    }
-    case "Kommunegrense": {
+    case "Kommunegrense":
       return archived ? grenseStyles.archivedKommune : grenseStyles.kommune;
-    }
-    case "Posisjon":
     case "Territorialgrense":
-    case "AvtaltAvgrensningslinje":
-    case "Riksgrense": {
+    case "Riksgrense":
       return archived ? grenseStyles.archivedNasjon : grenseStyles.nasjon;
-    }
-    case "Delområdegrense": {
+    case "Delområdegrense":
       return archived ? grenseStyles.archivedDelomraade : grenseStyles.delomraade;
-    }
-    case "Grunnkretsgrense": {
+    case "Grunnkretsgrense":
       return archived ? grenseStyles.archivedGrunnkrets : grenseStyles.grunnkrets;
-    }
-    case "Stemmekretsgrense": {
+    case "Stemmekretsgrense":
       return archived ? grenseStyles.archivedStemmekrets : grenseStyles.stemmekrets;
-    }
-    case "GRUNNKRETS":
-    case "STEMMEKRETS": {
-      return grenseStyles.flate;
-    }
+    default:
+      return [];
   }
 };
 
@@ -175,11 +198,8 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
   }
 
   if (isGrenseType(grenseType)) {
-    if (grenseId === "edit" && isFeatureEditable(feature, archived) === true) {
-      return grenseStyles.edit;
-    }
-
-    return grenseStyleFromType(grenseType, archived || grenseId === "archived");
+    const editable = grenseId === "edit" && isFeatureEditable(feature, archived);
+    return grenseStyleFromType(grenseType, archived || grenseId === "archived", editable);
   }
 
   if (isMatrikkelFeature(feature)) {
@@ -192,7 +212,7 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
 export const getArchiveLayerStyle = (feature: FeatureLike): Style[] => {
   const grenseType = feature.get("type");
   if (isGrenseType(grenseType)) {
-    return grenseStyleFromType(grenseType, true);
+    return grenseStyleFromType(grenseType, true, false);
   }
   return [];
 };
@@ -213,11 +233,7 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) =
   }
 
   const getColor = () => {
-    if (gyldigTil != null) {
-      return inndelingColors["fremtidigEndring"];
-    }
-
-    return inndelingColors[grenseId];
+    return gyldigTil != null ? inndelingColors["fremtidigEndring"] : inndelingColors[grenseId];
   };
 
   return new Style({

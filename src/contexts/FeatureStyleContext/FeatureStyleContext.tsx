@@ -18,6 +18,8 @@ import { getChangeIds } from "contexts/HistoryContext/history-utils";
 import { Geometry, LineString } from "ol/geom";
 import { FeatureProperties } from "types/api";
 import { getDuplicateItems, getUniqueItems, removeNil } from "utils/list-utils";
+import { getLayerStyle } from "utils/map/layerStyles";
+import { editSource } from "hooks/layers/constants";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -119,19 +121,27 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
   const resetFeatureStyles = (featureIdsToReset: string[]) => {
     for (const featureId of featureIdsToReset) {
-      setFeatureStyle(featureId, grenseStyles.edit);
-      const savedCustomStyleForFeature = customStyles.find((cs) => cs.savedCustomFeatureIds.includes(featureId));
-      if (savedCustomStyleForFeature != null) {
-        setFeatureStyle(featureId, savedCustomStyleForFeature.customStyle);
-      } else {
-        setFeatureStyle(featureId, grenseStyles.edit);
-      }
-    }
+      const feature = editSource.getFeatureById(featureId); // Make sure you have a way to get the feature
+      if (feature) {
+        const grenseId = "edit"; // or however you determine this
+        const archived = false; // or however you determine this
 
-    if (featureIdsToReset.length > 0) {
-      for (const customStyle of customStyles) {
-        customStyle.renderSavedCustomStyles();
-        customStyle.removeCustomStyles(featureIdsToReset);
+        // Get the style using the helper function
+        const styleToUse = getLayerStyle(feature, grenseId, archived);
+
+        setFeatureStyle(featureId, styleToUse);
+
+        const savedCustomStyleForFeature = customStyles.find((cs) => cs.savedCustomFeatureIds.includes(featureId));
+        if (savedCustomStyleForFeature != null) {
+          setFeatureStyle(featureId, savedCustomStyleForFeature.customStyle);
+        }
+      }
+
+      if (featureIdsToReset.length > 0) {
+        for (const customStyle of customStyles) {
+          customStyle.renderSavedCustomStyles();
+          customStyle.removeCustomStyles(featureIdsToReset);
+        }
       }
     }
   };
@@ -206,8 +216,8 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
         const properties = endretFeature.getProperties() as FeatureProperties | undefined;
         const shouldArchive = properties?.shouldArchive;
 
-        // Avgjør hvilken type endringsfarge featuren skal ha
-        if (shouldArchive !== undefined && shouldArchive) {
+        // Check that shouldArchive is a boolean before proceeding
+        if (shouldArchive === true) {
           archivedFeatureIds.push(featureId);
 
           const connectedFeatures = getFeaturesConnectedToFeatureAtEndpoints(endretFeature);

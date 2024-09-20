@@ -23,12 +23,12 @@ const isDottedStyle = (styles: Style[]): boolean => {
 export const tegnforklaringer: TegnforklaringProps[][] = [
   [
     {
-      text: "Riksgrense",
+      text: "Riks- eller maritim grense",
       dotted: isDottedStyle(grenseStyles.nasjon),
       color: getColorFromStyle(grenseStyles.nasjon),
     },
     {
-      text: "Arkivert riksgrense",
+      text: "Arkivert riks- eller maritim grense",
       dotted: isDottedStyle(grenseStyles.archivedNasjon),
       color: getColorFromStyle(grenseStyles.archivedNasjon),
     },
@@ -105,11 +105,6 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
     },
   ],
   [
-    {
-      text: "Mulig å redigere",
-      dotted: isDottedStyle(grenseStyles.edit),
-      color: getColorFromStyle(grenseStyles.edit),
-    },
     {
       text: "Valgt grense",
       dotted: isDottedStyle(grenseStyles.select),
