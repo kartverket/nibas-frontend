@@ -110,13 +110,13 @@ export const SplittingPanel = () => {
 
     return true;
   };
-  const kommunenummer = opprinneligFlateOptions[0].kommunenummer;
-  const existingInndelingNummere = opprinneligFlateOptions.map((inndeling) => inndeling.nummer);
+  const kommunenummer = opprinneligFlateOptions?.[0].kommunenummer;
+  const existingInndelingNummere = opprinneligFlateOptions?.map((inndeling) => inndeling.nummer);
   const getInndelingNummerRegisterOptions = inndelingtype && getNumberValidatorFunctionForInndelingType(inndelingtype);
   const nummerRegisterOptions =
     getInndelingNummerRegisterOptions &&
     getInndelingNummerRegisterOptions({
-      shouldNotBeEqualWith: existingInndelingNummere,
+      shouldNotBeEqualWith: existingInndelingNummere ?? [],
       prefixNumber: kommunenummer,
       additionalValidation: validateNotDuplicateNewKretsnummere,
     });

@@ -72,15 +72,15 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
 
   const getFlateOptionsFromInndelingType = () => {
     if (inndelingtype != null) {
-      if (inndelingtype === "grunnkrets") {
-        return mapGrunnkretsResponseToKrets(grunnkretser ?? []);
+      if (inndelingtype === "grunnkrets" && grunnkretser) {
+        return mapGrunnkretsResponseToKrets(grunnkretser);
       }
-      if (inndelingtype === "stemmekrets") {
-        return mapStemmekretResponseToKrets(stemmekretser ?? []);
+      if (inndelingtype === "stemmekrets" && stemmekretser) {
+        return mapStemmekretResponseToKrets(stemmekretser);
       }
     }
 
-    return [];
+    return undefined;
   };
 
   const opprinneligFlateOptions = getFlateOptionsFromInndelingType();
@@ -90,7 +90,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     const lokalid = e.target.value;
     replace(getDefaultSplittingValue().nyeKretser); // vi ønsker å resette til en tom liste ved bytte av opprinnelig krets
     setValue("opprinneligKrets.lokalId", lokalid, { shouldDirty: true });
-    const kretsForNewOpprinneligKrets = opprinneligFlateOptions.find((krets) => krets.id.lokalid.value === lokalid);
+    const kretsForNewOpprinneligKrets = opprinneligFlateOptions?.find((krets) => krets.id.lokalid.value === lokalid);
     if (
       kretsForNewOpprinneligKrets &&
       !fields.find((field) => field.kretsNummer === kretsForNewOpprinneligKrets?.id.lokalid.value)
@@ -135,7 +135,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
   const addSplittingRequestToHistory = async () => {
     if (inndelingtype != null && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
-      const opprinneligKretsInfo = opprinneligFlateOptions.find(
+      const opprinneligKretsInfo = opprinneligFlateOptions?.find(
         (krets) => krets.id.lokalid.value === opprinneligKrets.lokalId,
       );
       const kommuneIdentifikator = getKommuneIdentifikatorFromOptions(
