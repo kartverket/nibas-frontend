@@ -2,6 +2,8 @@ import React, { createContext, useContext, useMemo } from "react";
 import { FeatureStyleContextValue } from "./types";
 import { useSelectStyles } from "./useSelectStyles";
 import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
+import { isGrenseType } from "utils/type-utils";
+import { grenseStyleFromType } from "utils/map/layerStyles";
 import Feature from "ol/Feature";
 import useCustomStyles from "./useCustomStyles";
 import { Coordinate } from "ol/coordinate";
@@ -121,20 +123,21 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
   const resetFeatureStyles = (featureIdsToReset: string[]) => {
     for (const featureId of featureIdsToReset) {
-      const feature = editSource.getFeatureById(featureId); // Make sure you have a way to get the feature
-      if (feature) {
-        const grenseId = "edit"; // or however you determine this
-        const archived = false; // or however you determine this
+      const feature = editSource.getFeatureById(featureId);
+      const grenseType = feature?.get("type");
 
-        // Get the style using the helper function
-        const styleToUse = getLayerStyle(feature, grenseId, archived);
+      if (feature && isGrenseType(grenseType)) {
+        // Get the correct edit style based on the grenseType
+        const editStyle = grenseStyleFromType(grenseType, false, true);
+        setFeatureStyle(featureId, editStyle);
+      }
 
-        setFeatureStyle(featureId, styleToUse);
-
-        const savedCustomStyleForFeature = customStyles.find((cs) => cs.savedCustomFeatureIds.includes(featureId));
-        if (savedCustomStyleForFeature != null) {
-          setFeatureStyle(featureId, savedCustomStyleForFeature.customStyle);
-        }
+      const savedCustomStyleForFeature = customStyles.find((cs) => cs.savedCustomFeatureIds.includes(featureId));
+      if (savedCustomStyleForFeature != null) {
+        setFeatureStyle(featureId, savedCustomStyleForFeature.customStyle);
+      } else if (feature && isGrenseType(grenseType)) {
+        const editStyle = grenseStyleFromType(grenseType, false, true);
+        setFeatureStyle(featureId, editStyle);
       }
 
       if (featureIdsToReset.length > 0) {

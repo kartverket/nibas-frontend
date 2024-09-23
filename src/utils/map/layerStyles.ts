@@ -150,7 +150,7 @@ export const grenseStyles = {
   archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true, zIndex: 84 }),
 };
 
-const grenseStyleFromType = (grenseType: GrenseType, archived: boolean, editable: boolean): Style[] => {
+export const grenseStyleFromType = (grenseType: GrenseType, archived: boolean, editable: boolean): Style[] => {
   if (editable) {
     switch (grenseType) {
       case "Fylkesgrense":
