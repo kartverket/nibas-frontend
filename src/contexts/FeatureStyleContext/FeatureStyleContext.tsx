@@ -127,7 +127,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       const grenseType = feature?.get("type");
 
       if (feature && isGrenseType(grenseType)) {
-        // Get the correct edit style based on the grenseType
         const editStyle = grenseStyleFromType(grenseType, false, true);
         setFeatureStyle(featureId, editStyle);
       }
