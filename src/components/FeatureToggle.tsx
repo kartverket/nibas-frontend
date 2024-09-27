@@ -10,6 +10,7 @@ export type Environment = "prod" | "dev";
 
 const environmentByUrl: Record<string, Environment> = {
   localhost: "dev",
+  "nibas-e2e.atkv3-dev.kartverket-intern.cloud": "dev",
   "nibas.atkv3-dev.kartverket-intern.cloud": "dev",
   "nibas.kartverket-intern.cloud": "prod",
 };
