@@ -39,10 +39,7 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
 
 export const getCurrentEnvironment = (): Environment => {
   const { hostname } = window.location;
-  if (Object.keys(environmentByUrl).includes(hostname)) {
-    return environmentByUrl[hostname];
-  }
-  return "prod";
+  return environmentByUrl[hostname] ?? "prod";
 };
 
 export const featureEnabled = (key: Keys): boolean => {
