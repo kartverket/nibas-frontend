@@ -55,5 +55,5 @@ jobs:
       digest: ${{ needs.build.outputs.digest }}
       deploy_dev: true
       deploy_prod: false
-      extra-namespace: nibas-e2e
+      extra_namespace: nibas-e2e
       identity: nibas
