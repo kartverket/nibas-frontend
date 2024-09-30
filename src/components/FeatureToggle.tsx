@@ -8,18 +8,18 @@ const getLocalEnvironmentOverride = (envKey: string) => {
 
 export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e";
 
-export enum NibasHostname {
-  LOCALHOST = "localhost",
-  DEV_E2E = "nibas-e2e.atkv3-dev.kartverket-intern.cloud",
-  DEV_MAIN = "nibas.atkv3-dev.kartverket-intern.cloud",
-  PROD = "nibas.kartverket-intern.cloud",
+export enum NibasOrigin {
+  LOCALHOST = "http://localhost:3000",
+  DEV_E2E = "https://nibas-e2e.atkv3-dev.kartverket-intern.cloud",
+  DEV_MAIN = "https://nibas.atkv3-dev.kartverket-intern.cloud",
+  PROD = "https://nibas.kartverket-intern.cloud",
 }
 
 const environmentByUrl: Record<string, Environment> = {
-  [NibasHostname.LOCALHOST]: "localhost",
-  [NibasHostname.DEV_E2E]: "dev-e2e",
-  [NibasHostname.DEV_MAIN]: "dev-main",
-  [NibasHostname.PROD]: "prod",
+  [NibasOrigin.LOCALHOST]: "localhost",
+  [NibasOrigin.DEV_E2E]: "dev-e2e",
+  [NibasOrigin.DEV_MAIN]: "dev-main",
+  [NibasOrigin.PROD]: "prod",
 };
 
 // denne utvides etterhvert som vi får flere flagg
@@ -38,8 +38,8 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
 };
 
 export const getCurrentEnvironment = (): Environment => {
-  const { hostname } = window.location;
-  return environmentByUrl[hostname] ?? "prod";
+  const { origin } = window.location;
+  return environmentByUrl[origin] ?? "prod";
 };
 
 export const featureEnabled = (key: Keys): boolean => {
