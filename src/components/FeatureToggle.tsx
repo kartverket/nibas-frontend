@@ -6,13 +6,20 @@ const getLocalEnvironmentOverride = (envKey: string) => {
   return import.meta.env[envKey] === "true";
 };
 
-export type Environment = "prod" | "dev";
+export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e";
+
+export enum NibasOrigin {
+  LOCALHOST = "http://localhost:3000",
+  DEV_E2E = "nibas-e2e.atkv3-dev.kartverket-intern.cloud",
+  DEV_MAIN = "nibas.atkv3-dev.kartverket-intern.cloud",
+  PROD = "nibas.kartverket-intern.cloud",
+}
 
 const environmentByUrl: Record<string, Environment> = {
-  localhost: "dev",
-  "nibas-e2e.atkv3-dev.kartverket-intern.cloud": "dev",
-  "nibas.atkv3-dev.kartverket-intern.cloud": "dev",
-  "nibas.kartverket-intern.cloud": "prod",
+  [NibasOrigin.LOCALHOST]: "localhost",
+  [NibasOrigin.DEV_E2E]: "dev-e2e",
+  [NibasOrigin.DEV_MAIN]: "dev-main",
+  [NibasOrigin.PROD]: "prod",
 };
 
 // denne utvides etterhvert som vi får flere flagg
@@ -24,13 +31,18 @@ type Keys = "EKSEMPEL_TOGGLE";
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   EKSEMPEL_TOGGLE: {
     prod: false,
-    dev: getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
+    "dev-main": getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
+    "dev-e2e": getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
+    localhost: getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
   },
 };
 
 export const getCurrentEnvironment = (): Environment => {
-  const { hostname } = window.location;
-  return environmentByUrl[hostname] ?? "prod";
+  const { origin: url } = window.location;
+  if (Object.keys(environmentByUrl).includes(url)) {
+    return environmentByUrl[url];
+  }
+  return "prod";
 };
 
 export const featureEnabled = (key: Keys): boolean => {

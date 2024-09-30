@@ -4,13 +4,21 @@ import { zindex } from "utils/constants";
 
 type EnvironmentStyle = { label: string; color: string };
 const styles: Record<Environment, EnvironmentStyle> = {
-  dev: {
+  "dev-main": {
     label: "Utviklingsmiljø",
     color: "var(--kvib-colors-purple-200)",
   },
   prod: {
     label: "",
     color: "transparent",
+  },
+  "dev-e2e": {
+    label: "E2E-testmiljø",
+    color: "var(--kvib-colors-blue-200)",
+  },
+  localhost: {
+    label: "Lokalt Utviklingsmiljø",
+    color: "var(--kvib-colors-red-200)",
   },
 };
 
