@@ -8,18 +8,18 @@ const getLocalEnvironmentOverride = (envKey: string) => {
 
 export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e";
 
-export enum NibasOrigin {
-  LOCALHOST = "http://localhost:3000",
+export enum NibasHostname {
+  LOCALHOST = "localhost",
   DEV_E2E = "nibas-e2e.atkv3-dev.kartverket-intern.cloud",
   DEV_MAIN = "nibas.atkv3-dev.kartverket-intern.cloud",
   PROD = "nibas.kartverket-intern.cloud",
 }
 
 const environmentByUrl: Record<string, Environment> = {
-  [NibasOrigin.LOCALHOST]: "localhost",
-  [NibasOrigin.DEV_E2E]: "dev-e2e",
-  [NibasOrigin.DEV_MAIN]: "dev-main",
-  [NibasOrigin.PROD]: "prod",
+  [NibasHostname.LOCALHOST]: "localhost",
+  [NibasHostname.DEV_E2E]: "dev-e2e",
+  [NibasHostname.DEV_MAIN]: "dev-main",
+  [NibasHostname.PROD]: "prod",
 };
 
 // denne utvides etterhvert som vi får flere flagg
@@ -38,9 +38,9 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
 };
 
 export const getCurrentEnvironment = (): Environment => {
-  const { origin: url } = window.location;
-  if (Object.keys(environmentByUrl).includes(url)) {
-    return environmentByUrl[url];
+  const { hostname } = window.location;
+  if (Object.keys(environmentByUrl).includes(hostname)) {
+    return environmentByUrl[hostname];
   }
   return "prod";
 };
