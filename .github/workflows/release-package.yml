@@ -29,7 +29,7 @@ jobs:
     secrets: inherit
 
   pharos:
-    name: Run Pharos security scan
+    name: Run Pharos Security Scan
     needs: build
     permissions:
       actions: read
