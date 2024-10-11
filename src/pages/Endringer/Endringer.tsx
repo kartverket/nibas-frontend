@@ -190,7 +190,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
               icon={<Icon icon={"travel_explore"} />}
               onClick={() => openVisningsmodusPaaUtkastGyldigFra(utkast.gyldigFra)}
             >
-              Åpne visningsmodus på gjeldene dato
+              Åpne visningsmodus på gjeldende dato
             </MenuItem>
           </MenuList>
         </Menu>
