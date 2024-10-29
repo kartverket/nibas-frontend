@@ -1,4 +1,3 @@
-version: 3.0
 organization: Eiendom
 product: Nasjonal inndelingsbase
 repo_types: [InternalClient]
