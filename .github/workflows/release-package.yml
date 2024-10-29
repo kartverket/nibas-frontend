@@ -59,5 +59,7 @@ jobs:
       identity: nibas
 
   run-cypress:
+    permissions:
+      id-token: write
     needs: [deploy-argo]
     uses: kartverket/smia-apps/.github/workflows/run-nibas-cypress-job.yml@main
