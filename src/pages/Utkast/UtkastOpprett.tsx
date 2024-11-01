@@ -16,21 +16,24 @@ import {
   Select,
   useToast,
   FormErrorMessage,
+  Datepicker,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { ApiErrorResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { format } from "date-fns";
 
 type UtkastFormData = {
   navn: string;
   endringstype: string;
+  gyldigFra: string;
 };
 
 const UtkastOpprett = () => {
@@ -47,10 +50,11 @@ const UtkastOpprett = () => {
     handleSubmit,
     getValues,
     reset,
+    control,
   } = useForm<UtkastFormData>({
     mode: "onSubmit",
     reValidateMode: "onChange",
-    defaultValues: { navn: "", endringstype: "" },
+    defaultValues: { navn: "", endringstype: "", gyldigFra: "" },
   });
 
   const handleCloseModal = () => {
@@ -64,6 +68,7 @@ const UtkastOpprett = () => {
       {
         navn: getValues("navn"),
         endringstype: getValues("endringstype"),
+        gyldigFra: getValues("gyldigFra"),
       },
       token,
     );
@@ -104,7 +109,7 @@ const UtkastOpprett = () => {
                   </FormHelperText>
 
                   <Input
-                    {...register("navn", { required: "Utkastet må ha et navn" })}
+                    {...register("navn", { required: "Du må gi utkastet et navn" })}
                     type="text"
                     placeholder="f.eks. Sammenslåing av Rosenborg og Sentrum i Trondheim"
                   />
@@ -126,6 +131,26 @@ const UtkastOpprett = () => {
                     ))}
                   </Select>
                   {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype.message} />}
+                </FormSection>
+                <FormSection isInvalid={!!errors.gyldigFra}>
+                  <FormLabel>Gyldig fra-dato</FormLabel>
+                  <FormHelperText>Kun grenser gyldige fra datoen du velger vil være synlige i kartet.</FormHelperText>
+                  <Controller
+                    control={control}
+                    rules={{ required: "Du må velge en gyldig fra-dato for utkastet" }}
+                    name="gyldigFra"
+                    render={({ field: { onChange } }) => {
+                      return (
+                        <Datepicker
+                          fromDate={new Date()}
+                          onChange={(e): void => {
+                            onChange(format(e.target.value, "yyyy-MM-dd"));
+                          }}
+                        />
+                      );
+                    }}
+                  />
+                  {!!errors.gyldigFra && <FormErrorMessage errorMessage={errors.gyldigFra.message} />}
                 </FormSection>
               </FormContent>
             </ModalBody>

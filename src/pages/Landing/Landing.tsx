@@ -7,6 +7,7 @@ import LandingHeader from "./LandingHeader";
 import PrivacyFooter from "./PrivacyFooter";
 import useMapReset from "hooks/useMapReset";
 import { useEffect } from "react";
+import { format } from "date-fns";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -31,7 +32,13 @@ const Landing = () => {
           title="Finn og utforsk"
           description="Se oppdaterte data uten å foreta deg noen endringer."
           icon="travel_explore"
-          onClick={() => navigate(routes.kart)}
+          onClick={() => navigate(`kart/${format(new Date(), "yyyy-MM-dd")}`)}
+        />
+        <ActionCard
+          title="Se fremtidige endringer"
+          description="Se hvilke endringer som er publisert, men som ikke har intruffet enda."
+          icon="event"
+          onClick={() => navigate(routes.endringer)}
         />
       </Page>
       <PrivacyFooter />

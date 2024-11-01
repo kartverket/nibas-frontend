@@ -28,6 +28,7 @@ import { AuthRenewError } from "components/Authentication/AuthRenewError";
 import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
 import "cypress-globals";
 import { FullPageErrorWithFaroErrorBoundry } from "components/FullPageError";
+import { Endringer } from "pages/Endringer/Endringer";
 
 const App = () => {
   const router = withFaroRouterInstrumentation(
@@ -48,6 +49,7 @@ const App = () => {
               <Route path={routes.utkastId} element={<PageLayout />} />
             </Route>
             <Route path={routes.kart} element={<PageLayout />} />
+            <Route path={routes.endringer} element={<Endringer />} />
           </Route>
         </Route>,
       ),

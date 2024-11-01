@@ -6,15 +6,15 @@
 export interface paths {
   "/v1/utkast/{id}": {
     /** Henter utkast med gitt id */
-    get: operations["hentUtkast"];
+    get: operations["hentUtkast_1"];
     /** Oppdaterer angitt utkast. Returnerer oppdatert utkast. */
     put: operations["oppdaterUtkast"];
     /** Forkast angitt utkast. */
     delete: operations["forkastUtkast"];
   };
   "/v1/utkast": {
-    /** Henter alle utkast i status Opprettet sortert på navn. */
-    get: operations["hentUtkastIStatusOpprettet"];
+    /** Henter alle utkast med gitt status og som er gyldige fra og med gitt dato. */
+    get: operations["hentUtkast"];
     /** Oppretter et utkast og returnerer id. */
     post: operations["opprettUtkast"];
   };
@@ -278,7 +278,10 @@ export interface components {
       /** @description Id til feature */
       id?: string;
       properties: components["schemas"]["FeatureProperties"];
-      geometry: components["schemas"]["Geometry"];
+      geometry:
+        | components["schemas"]["LineString"]
+        | components["schemas"]["MultiPolygon"]
+        | components["schemas"]["Point"];
     };
     /** @description Egenskaper som beskriver en gitt feature (properties-objektet i geojson-strukturen) */
     FeatureProperties: {
@@ -289,7 +292,15 @@ export interface components {
        * @description Koordinatsystemet. Defaulter til 25833.
        */
       srid: number;
-      metadata?: components["schemas"]["Metadata"];
+      metadata?:
+        | components["schemas"]["AdministrativGrenseMetadata"]
+        | components["schemas"]["AvtaltAvgrensningslinjeMetadata"]
+        | components["schemas"]["FlateMetadata"]
+        | components["schemas"]["GrunnlinjeMetadata"]
+        | components["schemas"]["KommunalKretsgrenseMetadata"]
+        | components["schemas"]["RiksgrenseMetadata"]
+        | components["schemas"]["StatistiskgrenseMetadata"]
+        | components["schemas"]["TerritorialgrenseMetadata"];
       /** @description Egenskaper til konteksten til grensen. */
       kontekstEgenskaper: components["schemas"]["KontekstEgenskaper"][];
       /**
@@ -384,6 +395,14 @@ export interface components {
       id?: string;
       /** @description Lenke til kodelista. */
       href: string;
+    };
+    /** @description Spesifikk metadata for en kommunal kretsgrense (stemmekretsgrense/valgdistriktgrense/skolekretsgrense) */
+    KommunalKretsgrenseMetadata: components["schemas"]["Metadata"] & {
+      common?: components["schemas"]["CommonMetadata"];
+      commonGrense?: components["schemas"]["CommonGrenseMetadata"];
+    } & {
+      common: unknown;
+      commonGrense: unknown;
     };
     /** @description Representasjon av en kommune */
     KommuneRequest: {
@@ -737,6 +756,11 @@ export interface components {
        */
       oppdateringsdato: string;
     };
+    /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
+    EndredeInndelinger: {
+      endredeStemmekretser: string[];
+      endredeGrunnkretser: string[];
+    };
     /** @description Representasjon av utkast */
     UtkastResponse: {
       /** @description Unik uuid for utkastet */
@@ -759,6 +783,12 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+      /**
+       * Format: date
+       * @description Gyldig fra-datoen til utkastet
+       */
+      gyldigFra: string;
+      endredeInndelinger: components["schemas"]["EndredeInndelinger"];
     };
     /** @description Utkastet som ønskes opprettet */
     OpprettUtkastRequest: {
@@ -766,34 +796,17 @@ export interface components {
       navn: string;
       /** @description Typen endring utkastet representerer. */
       endringstype: string;
-    };
-    /** @description Requestbody for publisering av utkast. */
-    PubliserUtkastRequest: {
       /**
        * Format: date
-       * @description Datoen utkastet skal publiseres fra. Settes default til dagens dato om ikke satt.
+       * @description Gyldig fra-datoen til utkastet.
        */
-      publiseringsdato: string;
+      gyldigFra: string;
     };
     FrontendLogRequest: {
       /** @enum {string} */
       logLevel: "INFO" | "WARN" | "ERROR";
       message: string;
       stacktrace?: string;
-    };
-    /** @description En referanse til et utkast */
-    UtkastRef: {
-      /** @description ID-en til utkastet */
-      id: string;
-      /** @description Navnet på utkastet */
-      navn: string;
-      /** @description URL til full representasjon av utkastet. */
-      href: string;
-      /**
-       * Format: date-time
-       * @description Tidspunktet utkastet ble opprettet.
-       */
-      opprettetDato: string;
     };
     /** @description Gyldighetsintervall for objektet */
     GyldighetResponse: {
@@ -1167,7 +1180,7 @@ export interface components {
 
 export interface operations {
   /** Henter utkast med gitt id */
-  hentUtkast: {
+  hentUtkast_1: {
     parameters: {
       path: {
         /** ID-en til utkastet man vil hente */
@@ -1260,13 +1273,19 @@ export interface operations {
       };
     };
   };
-  /** Henter alle utkast i status Opprettet sortert på navn. */
-  hentUtkastIStatusOpprettet: {
+  /** Henter alle utkast med gitt status og som er gyldige fra og med gitt dato. */
+  hentUtkast: {
+    parameters: {
+      query: {
+        utkastStatus?: ("OPPRETTET" | "PUBLISERT" | "FORKASTET")[];
+        gyldigFra?: string;
+      };
+    };
     responses: {
       /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["UtkastRef"][];
+          "application/json": components["schemas"]["UtkastResponse"][];
         };
       };
       /** Bad Request */
@@ -1327,11 +1346,6 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["OptimistiskLaasWrapper"];
         };
-      };
-    };
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["PubliserUtkastRequest"];
       };
     };
   };

@@ -14,6 +14,7 @@ import { useCallback } from "react";
 import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -62,23 +63,24 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
 
   const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoryEntry, getHistoryEntries } = useHistory();
+  const { gyldighetsdato } = useValgtGyldighetsdato();
   const inndelingtype = currentlyEditingInndelinger.length > 0 ? currentlyEditingInndelinger[0].inndelingtype : null;
 
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
-  const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null);
-  const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null);
+  const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null, gyldighetsdato);
+  const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null, gyldighetsdato);
 
   const getFlateOptionsFromInndelingType = () => {
     if (inndelingtype != null) {
-      if (inndelingtype === "grunnkrets") {
-        return mapGrunnkretsResponseToKrets(grunnkretser ?? []);
+      if (inndelingtype === "grunnkrets" && grunnkretser) {
+        return mapGrunnkretsResponseToKrets(grunnkretser);
       }
-      if (inndelingtype === "stemmekrets") {
-        return mapStemmekretResponseToKrets(stemmekretser ?? []);
+      if (inndelingtype === "stemmekrets" && stemmekretser) {
+        return mapStemmekretResponseToKrets(stemmekretser);
       }
     }
 
-    return [];
+    return undefined;
   };
 
   const opprinneligFlateOptions = getFlateOptionsFromInndelingType();
@@ -88,7 +90,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     const lokalid = e.target.value;
     replace(getDefaultSplittingValue().nyeKretser); // vi ønsker å resette til en tom liste ved bytte av opprinnelig krets
     setValue("opprinneligKrets.lokalId", lokalid, { shouldDirty: true });
-    const kretsForNewOpprinneligKrets = opprinneligFlateOptions.find((krets) => krets.id.lokalid.value === lokalid);
+    const kretsForNewOpprinneligKrets = opprinneligFlateOptions?.find((krets) => krets.id.lokalid.value === lokalid);
     if (
       kretsForNewOpprinneligKrets &&
       !fields.find((field) => field.kretsNummer === kretsForNewOpprinneligKrets?.id.lokalid.value)
@@ -133,7 +135,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
   const addSplittingRequestToHistory = async () => {
     if (inndelingtype != null && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
-      const opprinneligKretsInfo = opprinneligFlateOptions.find(
+      const opprinneligKretsInfo = opprinneligFlateOptions?.find(
         (krets) => krets.id.lokalid.value === opprinneligKrets.lokalId,
       );
       const kommuneIdentifikator = getKommuneIdentifikatorFromOptions(

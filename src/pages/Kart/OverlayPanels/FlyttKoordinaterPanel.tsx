@@ -23,6 +23,7 @@ import {
   transformCoordinatesToProjection,
 } from "./NavigasjonPanel/koordinater-utils";
 import { AbsolutePanel, PanelHeader } from "./Panel";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 type KoordinaterFormData = {
   north: number;
@@ -220,7 +221,8 @@ const FlyttKoordinaterPanel = () => {
     resetTool();
   };
 
-  const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/");
+  const { gyldighetsdato } = useValgtGyldighetsdato();
+  const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/", { gyldighetsdato });
   const [globalFormError, setGlobalFormError] = useState<string | null>();
 
   const movePointToCoordinates = () => {

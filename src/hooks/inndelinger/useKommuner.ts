@@ -1,11 +1,12 @@
 import useNibasApi from "../useNibasApi";
 
-const useKommuner = (fylkeId: string | null = null, shouldFetch = true) => {
+const useKommuner = (fylkeId: string | null = null, gyldighetsdato: string | undefined, shouldFetch = true) => {
   const { data: kommuner, ...rest } = useNibasApi(
     shouldFetch ? "/v1/kommuner" : null,
     fylkeId != null
       ? {
           fylkeid: fylkeId,
+          gyldighetsdato,
         }
       : undefined,
   );
@@ -20,9 +21,10 @@ const useKommuner = (fylkeId: string | null = null, shouldFetch = true) => {
   };
 };
 
-export const useKommune = (kommuneId: string, shouldFetch = true) => {
+export const useKommune = (kommuneId: string, gyldighetsdato: string | undefined, shouldFetch = true) => {
   const { data: kommune, ...rest } = useNibasApi(shouldFetch ? "/v1/kommuner/{id}" : null, {
     id: kommuneId,
+    gyldighetsdato,
   });
 
   return {

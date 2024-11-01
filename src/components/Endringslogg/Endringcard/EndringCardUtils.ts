@@ -23,16 +23,14 @@ export const getTitleForEndringstype = (endringstype: AllEndringTypes): string =
 export const getBodyTextForNumericChange = (value: number, endringstype: NumericEndringType): string => {
   switch (endringstype) {
     case "grenseendring": {
-      const grenseendring = value > 1 ? "grenseendringer" : "grenseendring";
-      const metadataendring = value > 1 ? "metadataendringer" : "metadataendring";
-      return `${value} ${grenseendring} eller ${metadataendring} har blitt gjennomført `;
+      return `${value} ${value > 1 ? "grenser" : "grense"} har fått endret metadata eller geometri`;
     }
     case "arkiveringer":
       return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} har blitt arkivert`;
     case "grenseinformasjon":
       return `${value} eksisterende ${value > 1 ? "grenser" : "grense"} har fått endret informasjon`;
     case "nyegrenser":
-      return `${value} ${value > 1 ? "nye grenser" : "ny grense"} er tegnet`;
+      return `${value} ${value > 1 ? "nye grenser" : "ny grense"} har blitt opprettet`;
   }
 };
 

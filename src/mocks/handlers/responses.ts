@@ -7,7 +7,6 @@ import {
   KodelisteRespons,
   KommuneResponse,
   StemmekretsResponse,
-  UtkastRef,
   UtkastResponse,
 } from "types/api";
 
@@ -42,6 +41,7 @@ export const mockFylker: FylkeResponse[] = [
       },
       geometry: {
         type: "",
+        coordinates: [],
       },
     },
     version: 0,
@@ -79,6 +79,7 @@ export const mockFylker: FylkeResponse[] = [
       },
       geometry: {
         type: "",
+        coordinates: [],
       },
     },
     version: 0,
@@ -394,6 +395,11 @@ export const mockUtkast: UtkastResponse = {
     },
     endredeFeatures: [mockGeoJsonFeatureResponse.features[0]],
   }),
+  gyldigFra: "2022-01-01",
+  endredeInndelinger: {
+    endredeStemmekretser: [],
+    endredeGrunnkretser: [],
+  },
 };
 
 export const mockUtkastIngenEndringer: UtkastResponse = {
@@ -411,20 +417,11 @@ export const mockUtkastIngenEndringer: UtkastResponse = {
     stemmekretsendringer: {},
     endredeFeatures: [],
   }),
-};
-
-export const mockUtkastRef1: UtkastRef = {
-  href: "",
-  id: "1",
-  navn: "Mock utkast",
-  opprettetDato: "2022-06-01",
-};
-
-export const mockUtkastRef2: UtkastRef = {
-  href: "",
-  id: "2",
-  navn: "Et nytt utkast",
-  opprettetDato: "2022-06-01",
+  gyldigFra: "2022-01-01",
+  endredeInndelinger: {
+    endredeStemmekretser: [],
+    endredeGrunnkretser: [],
+  },
 };
 
 const mockFutureGrunnkrets1_1: GrunnkretsResponse = {
@@ -473,3 +470,67 @@ export const mockStemmekretserFramtidigeEndringer: StemmekretsResponse[] = [
     ...mockStemmekrets1,
   },
 ];
+
+export const mockUtkast1: UtkastResponse = {
+  id: "1",
+  navn: "Mock utkast",
+  opprettetDato: "2022-06-01",
+  endringstype: "",
+  status: "",
+  auditInfoResponse: {
+    oppdateringsdato: "",
+  },
+  operasjoner: {
+    metadataendringer: {
+      nasjonsendringer: {},
+      fylkesendringer: {},
+      kommuneendringer: {},
+      grunnkretsendringer: {},
+      stemmekretsendringer: {},
+    },
+    grenseendringer: {
+      endredeFeatures: [],
+    },
+    stemmekretsSammenslaaingsendring: undefined,
+    grunnkretsSammenslaaingsendring: undefined,
+    kretsDelingEndringer: [],
+  },
+  version: 0,
+  gyldigFra: "",
+  endredeInndelinger: {
+    endredeStemmekretser: [],
+    endredeGrunnkretser: [],
+  },
+};
+
+export const mockUtkast2: UtkastResponse = {
+  id: "2",
+  navn: "Et nytt utkast",
+  opprettetDato: "2022-06-01",
+  endringstype: "",
+  status: "",
+  auditInfoResponse: {
+    oppdateringsdato: "",
+  },
+  operasjoner: {
+    metadataendringer: {
+      nasjonsendringer: {},
+      fylkesendringer: {},
+      kommuneendringer: {},
+      grunnkretsendringer: {},
+      stemmekretsendringer: {},
+    },
+    grenseendringer: {
+      endredeFeatures: [],
+    },
+    stemmekretsSammenslaaingsendring: undefined,
+    grunnkretsSammenslaaingsendring: undefined,
+    kretsDelingEndringer: [],
+  },
+  version: 0,
+  gyldigFra: "",
+  endredeInndelinger: {
+    endredeStemmekretser: [],
+    endredeGrunnkretser: [],
+  },
+};

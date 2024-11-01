@@ -10,31 +10,3 @@ spec:
   lifecycle: "production"
   owner: "smia"
   system: "nibas"
----
-apiVersion: "backstage.io/v1alpha1"
-kind: "Group"
-metadata:
-  name: "security_champion_nibas-frontend"
-  title: "Security Champion nibas-frontend"
-spec:
-  type: "security_champion"
-  parent: "eiendom_security_champions"
-  members:
-  - "etse"
-  children:
-  - "resource:nibas-frontend"
----
-apiVersion: "backstage.io/v1alpha1"
-kind: "Resource"
-metadata:
-  name: "nibas-frontend"
-  links:
-  - url: "https://github.com/kartverket/nibas-frontend"
-    title: "nibas-frontend på GitHub"
-spec:
-  type: "repo"
-  owner: "security_champion_nibas-frontend"
-  system: "nibas"
-  dependencyOf:
-  - "component:nibas-frontend"
-

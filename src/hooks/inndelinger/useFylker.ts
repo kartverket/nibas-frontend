@@ -1,7 +1,7 @@
 import useNibasApi from "../useNibasApi";
 
-const useFylker = (shouldFetch = true) => {
-  const { data: fylker, ...rest } = useNibasApi(shouldFetch ? "/v1/fylker" : null);
+const useFylker = (gyldighetsdato: string | undefined, shouldFetch = true) => {
+  const { data: fylker, ...rest } = useNibasApi(shouldFetch ? "/v1/fylker" : null, { gyldighetsdato });
 
   const sortedFylker = fylker?.sort((a, b) => {
     return Number(a.nummer) - Number(b.nummer);

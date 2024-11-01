@@ -11,13 +11,21 @@ import {
   getKommuneMetadataEntries,
   getStemmekretsMetadataEntries,
 } from "contexts/HistoryContext/history-utils";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
-const useFlatedataFromBackend = (inndeling: Inndeling): MetadataResponse[] | undefined => {
-  const { kommuner } = useKommuner(inndeling.id, inndeling.inndelingtype === "fylke");
-  const { kommune } = useKommune(inndeling.id, inndeling.inndelingtype === "kommune");
-  const { data: grunnkretser } = useKommuneGrunnkretser(inndeling.inndelingtype === "grunnkrets" ? inndeling.id : null);
+const useFlatedataFromBackend = (
+  inndeling: Inndeling,
+  gyldighetsdato: string | undefined,
+): MetadataResponse[] | undefined => {
+  const { kommuner } = useKommuner(inndeling.id, gyldighetsdato, inndeling.inndelingtype === "fylke");
+  const { kommune } = useKommune(inndeling.id, gyldighetsdato, inndeling.inndelingtype === "kommune");
+  const { data: grunnkretser } = useKommuneGrunnkretser(
+    inndeling.inndelingtype === "grunnkrets" ? inndeling.id : null,
+    gyldighetsdato,
+  );
   const { data: stemmekretser } = useKommuneStemmekretser(
     inndeling.inndelingtype === "stemmekrets" ? inndeling.id : null,
+    gyldighetsdato,
   );
 
   switch (inndeling.inndelingtype) {
@@ -79,7 +87,8 @@ const addHistoryChangesToMetadata = (
 };
 
 export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefined => {
-  const flatedataFromBackend = useFlatedataFromBackend(inndeling);
+  const { gyldighetsdato } = useValgtGyldighetsdato();
+  const flatedataFromBackend = useFlatedataFromBackend(inndeling, gyldighetsdato);
   const { getHistoryEntries } = useHistory();
 
   const utkastFlatedata = (useUtkastEntity(

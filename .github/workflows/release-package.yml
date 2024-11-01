@@ -45,14 +45,22 @@ jobs:
           image_url: ${{ needs.build.outputs.image_url }}
 
   deploy-argo:
+    permissions:
+      id-token: write
     needs: [build, test]
-    uses: kartverket/smia-apps/.github/workflows/release-app.yml@main
+    uses: kartverket/smia-apps/.github/workflows/release-app-octo-sts.yml@main
     with:
       application: nibas-frontend
       version: ${{ needs.build.outputs.version }}
       digest: ${{ needs.build.outputs.digest }}
       deploy_dev: true
-      deploy_test: true
       deploy_prod: false
-    secrets:
-      PAT_TOKEN: ${{ secrets.PAT_ARGOCD }}
+      extra_namespace: nibas-e2e
+      identity: nibas
+
+  run-cypress:
+    permissions:
+      id-token: write
+      contents: read
+    needs: [deploy-argo]
+    uses: kartverket/smia-apps/.github/workflows/run-nibas-cypress-job.yml@main
