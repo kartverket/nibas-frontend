@@ -114,7 +114,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         updatedUtkast.navn = change.to.navn;
       }
     }
-
     return updatedUtkast;
   };
 

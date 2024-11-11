@@ -69,7 +69,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
     const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
-
     if (changes.length > 0) {
       // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
       if (mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune") {
@@ -104,12 +103,25 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             <FlatedataTableHeader text={`${inndelingPrefix}nummer`} {...sortHeaderProps("nummer")} />
             <FlatedataTableHeader text={`${inndelingPrefix}navn`} {...sortHeaderProps("navn")} />
             {isAdministrativEnhet ? (
-              <FlatedataTableHeader text="Merknad" {...sortHeaderProps("samiskforvaltningsomraade")} />
+              <>
+                <FlatedataTableHeader text="Merknad" {...sortHeaderProps("samiskforvaltningsomraade")} />
+                <th></th>
+                <th></th>
+              </>
             ) : mainInndeling.inndelingtype === "stemmekrets" ? (
-              <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
+              <>
+                <FlatedataTableHeader text="Tellekretsnummer" {...sortHeaderProps("tellekretsnummer")} />
+                <FlatedataTableHeader text="Tellekretsnavn" {...sortHeaderProps("tellekretsnavn")} />
+                <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
+              </>
             ) : (
-              <th></th>
+              <>
+                <th></th>
+                <th></th>
+                <th></th>
+              </>
             )}
+            <th></th>
             <th></th>
           </tr>
         </thead>
@@ -174,7 +186,7 @@ const Container = styled(TabPanel)`
 
 const Table = styled.table`
   display: grid;
-  grid-template-columns: auto auto 1fr auto;
+  grid-template-columns: auto auto auto auto auto 1fr auto;
   grid-auto-rows: max-content;
   width: 100%;
   overflow: auto;

@@ -15,7 +15,7 @@ interface PropertiesByInndelingtype extends Record<Inndelingtype, ResponseProper
 const propertiesByInndelingtype: PropertiesByInndelingtype = {
   fylke: ["nummer", "navn", "samiskforvaltningsomraade"],
   kommune: ["nummer", "navn", "samiskforvaltningsomraade"],
-  stemmekrets: ["nummer", "navn", "valgdistriktsnummer"],
+  stemmekrets: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"],
   grunnkrets: ["nummer", "navn"],
 };
 
