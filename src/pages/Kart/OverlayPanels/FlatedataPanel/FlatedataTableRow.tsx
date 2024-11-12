@@ -109,10 +109,24 @@ export const FlatedataTableRow = ({
       required: undefined,
     },
     navn: {
-      validate: (navn: string) =>
-        navn === "" && getValues(`${inndelingId}.tellekretsnummer`) !== ""
-          ? "Tellekretsnavn må også oppgis"
-          : undefined,
+      validate: (navn: string) => {
+        if (navn === "" && getValues(`${inndelingId}.tellekretsnummer`) !== "") {
+          return "Tellekretsnavn må også oppgis";
+        }
+
+        const allNavnForNummer = new Set(
+          Object.values(getValues())
+            .filter(
+              (i) => i.tellekretsnummer !== "" && i.tellekretsnummer === getValues(`${inndelingId}.tellekretsnummer`),
+            )
+            .map((i) => i.tellekretsnavn),
+        );
+
+        if (allNavnForNummer.size > 1) {
+          return `Tellekretsnavn må være likt for alle med tellekretsnummer ${getValues(`${inndelingId}.tellekretsnummer`)}`;
+        }
+      },
+
       required: undefined,
     },
   };
