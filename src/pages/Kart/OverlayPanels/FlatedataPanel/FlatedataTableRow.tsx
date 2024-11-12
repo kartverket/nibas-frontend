@@ -15,6 +15,7 @@ import { getInndelingFremtidigEndringDato } from "utils/features";
 import { Icon, Tooltip } from "@kvib/react";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
+import { isIntegerString } from "utils/type-utils";
 
 type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
@@ -84,6 +85,35 @@ export const FlatedataTableRow = ({
     nummer: validateInndelingNumber({ shouldNotBeEqualWith: existingInndelingtypeNumbers, prefixNumber: prefixNumber }),
     navn: {
       required: `${capitalize(inndelingtype)}navn kan ikke være tomt`,
+    },
+  };
+
+  const tellekretsRegisterOptions = {
+    nummer: {
+      validate: (nummer: string) => {
+        if (nummer.length > 0) {
+          if (!isIntegerString(nummer)) {
+            return `tellekretsnummer kan kun inneholde siffer`;
+          }
+          if (parseInt(nummer) <= 0) {
+            return `tellekretsnummer kan ikke være 0 eller et negativt tall`;
+          }
+          if (!(nummer.length >= 1 && nummer.length <= 4)) {
+            return `tellekretsnummer må ha minst 1 siffer og maks 4 siffer`;
+          }
+        }
+        if (nummer === "" && getValues(`${inndelingId}.tellekretsnavn`) !== "") {
+          return "Tellekretsnummer må også oppgis";
+        }
+      },
+      required: undefined,
+    },
+    navn: {
+      validate: (navn: string) =>
+        navn === "" && getValues(`${inndelingId}.tellekretsnummer`) !== ""
+          ? "Tellekretsnavn må også oppgis"
+          : undefined,
+      required: undefined,
     },
   };
 
@@ -168,7 +198,10 @@ export const FlatedataTableRow = ({
                   ? validationError(inndelingErrors.tellekretsnummer)
                   : undefined
               }
-              {...register(`${inndelingId}.tellekretsnummer`)}
+              {...register(
+                `${inndelingId}.tellekretsnummer`,
+                disabledDate == null ? tellekretsRegisterOptions.nummer : undefined,
+              )}
             />
           ) : (
             <td></td>
@@ -183,7 +216,10 @@ export const FlatedataTableRow = ({
                   ? validationError(inndelingErrors.tellekretsnavn)
                   : undefined
               }
-              {...register(`${inndelingId}.tellekretsnavn`)}
+              {...register(
+                `${inndelingId}.tellekretsnavn`,
+                disabledDate == null ? tellekretsRegisterOptions.navn : undefined,
+              )}
             />
           ) : (
             <td></td>
