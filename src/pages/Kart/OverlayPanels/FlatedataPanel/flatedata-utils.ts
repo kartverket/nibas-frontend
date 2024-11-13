@@ -89,8 +89,8 @@ export const reduceFlatedataChanges = (
         if (
           newValues.nummer === oldValues.nummer &&
           newValues.navn === oldValues.navn &&
-          oldValues.tellekretsnummer === newValues.tellekretsnummer &&
-          oldValues.tellekretsnavn === newValues.tellekretsnavn
+          newValues.tellekretsnummer === oldValues.tellekretsnummer &&
+          newValues.tellekretsnavn === oldValues.tellekretsnavn
         ) {
           return accumulator;
         }

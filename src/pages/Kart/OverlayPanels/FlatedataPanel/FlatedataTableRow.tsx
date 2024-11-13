@@ -94,13 +94,13 @@ export const FlatedataTableRow = ({
       validate: (nummer: string) => {
         if (nummer.length > 0) {
           if (!isIntegerString(nummer)) {
-            return `tellekretsnummer kan kun inneholde siffer`;
+            return `Tellekretsnummer kan kun inneholde siffer`;
           }
           if (parseInt(nummer) <= 0) {
-            return `tellekretsnummer kan ikke være 0 eller et negativt tall`;
+            return `Tellekretsnummer kan ikke være 0 eller et negativt tall`;
           }
           if (!(nummer.length >= 1 && nummer.length <= 4)) {
-            return `tellekretsnummer må ha minst 1 siffer og maks 4 siffer`;
+            return `Tellekretsnummer må ha minst 1 siffer og maks 4 siffer`;
           }
         }
         if (nummer === "" && getValues(`${inndelingId}.tellekretsnavn`) !== "") {

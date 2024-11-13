@@ -64,7 +64,13 @@ const addHistoryChangesToMetadata = (
       return metadataresponses.map((metadatareponse) => {
         const change = changes.findLast((c) => c.id === metadatareponse.id.lokalid.value);
         if (change) {
-          return { ...metadatareponse, navn: change.to.navn, nummer: change.to.nummer } as MetadataResponse;
+          return {
+            ...metadatareponse,
+            navn: change.to.navn,
+            nummer: change.to.nummer,
+            tellekretsnummer: change.to.tellekretsnummer,
+            tellekretsnavn: change.to.tellekretsnavn,
+          } as MetadataResponse;
         }
         return metadatareponse;
       });
