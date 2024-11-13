@@ -70,7 +70,8 @@ export const FlatedataTableRow = ({
     setValue,
     getValues,
     register,
-    formState: { errors },
+    trigger,
+    formState: { errors, isSubmitted },
   } = formMethods;
 
   const inndelingId = getIdFromEntity(inndeling);
@@ -119,7 +120,8 @@ export const FlatedataTableRow = ({
             .filter(
               (i) => i.tellekretsnummer !== "" && i.tellekretsnummer === getValues(`${inndelingId}.tellekretsnummer`),
             )
-            .map((i) => i.tellekretsnavn),
+            .map((i) => i.tellekretsnavn)
+            .concat(navn),
         );
 
         if (allNavnForNummer.size > 1) {
@@ -153,6 +155,10 @@ export const FlatedataTableRow = ({
     undoEventKey: `${inndelingtype}Undo`,
     setFormValues,
   });
+
+  const tellekretsnavnRegister = {
+    ...register(`${inndelingId}.tellekretsnavn`, disabledDate == null ? tellekretsRegisterOptions.navn : undefined),
+  };
 
   return (
     <Row key={inndelingId} $isSearchMatch={isSearchMatch}>
@@ -230,10 +236,13 @@ export const FlatedataTableRow = ({
                   ? validationError(inndelingErrors.tellekretsnavn)
                   : undefined
               }
-              {...register(
-                `${inndelingId}.tellekretsnavn`,
-                disabledDate == null ? tellekretsRegisterOptions.navn : undefined,
-              )}
+              {...tellekretsnavnRegister}
+              onChange={(e) => {
+                tellekretsnavnRegister.onChange(e);
+                if (isSubmitted) {
+                  trigger(allInndelinger.map((i) => getIdFromEntity(i).concat(".tellekretsnavn")));
+                }
+              }}
             />
           ) : (
             <td></td>
