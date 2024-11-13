@@ -46,6 +46,7 @@ const getRequestFromInputs = (
           version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
+          kommunenummer: isStemmekretsInndeling(inndeling) ? inndeling.kommunenummer.kodeverdi : undefined,
         };
         return stemmekretsRequest;
       }
