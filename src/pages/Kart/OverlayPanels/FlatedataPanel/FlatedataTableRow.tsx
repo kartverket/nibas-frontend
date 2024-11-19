@@ -15,6 +15,7 @@ import { getInndelingFremtidigEndringDato } from "utils/features";
 import { Icon, Tooltip } from "@kvib/react";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
+import { isIntegerString } from "utils/type-utils";
 
 type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
@@ -69,7 +70,8 @@ export const FlatedataTableRow = ({
     setValue,
     getValues,
     register,
-    formState: { errors },
+    trigger,
+    formState: { errors, isSubmitted },
   } = formMethods;
 
   const inndelingId = getIdFromEntity(inndeling);
@@ -84,6 +86,50 @@ export const FlatedataTableRow = ({
     nummer: validateInndelingNumber({ shouldNotBeEqualWith: existingInndelingtypeNumbers, prefixNumber: prefixNumber }),
     navn: {
       required: `${capitalize(inndelingtype)}navn kan ikke være tomt`,
+    },
+  };
+
+  const tellekretsRegisterOptions = {
+    nummer: {
+      validate: (nummer: string) => {
+        if (nummer.length > 0) {
+          if (!isIntegerString(nummer)) {
+            return `Tellekretsnummer kan kun inneholde siffer`;
+          }
+          if (parseInt(nummer) <= 0) {
+            return `Tellekretsnummer kan ikke være 0 eller et negativt tall`;
+          }
+          if (!(nummer.length >= 1 && nummer.length <= 4)) {
+            return `Tellekretsnummer må ha minst 1 siffer og maks 4 siffer`;
+          }
+        }
+        if (nummer === "" && getValues(`${inndelingId}.tellekretsnavn`) !== "") {
+          return "Tellekretsnummer må også oppgis";
+        }
+      },
+      required: undefined,
+    },
+    navn: {
+      validate: (navn: string) => {
+        if (navn === "" && getValues(`${inndelingId}.tellekretsnummer`) !== "") {
+          return "Tellekretsnavn må også oppgis";
+        }
+
+        const allNavnForNummer = new Set(
+          Object.values(getValues())
+            .filter(
+              (i) => i.tellekretsnummer !== "" && i.tellekretsnummer === getValues(`${inndelingId}.tellekretsnummer`),
+            )
+            .map((i) => i.tellekretsnavn)
+            .concat(navn),
+        );
+
+        if (allNavnForNummer.size > 1) {
+          return `Tellekretsnavn må være likt for alle med tellekretsnummer ${getValues(`${inndelingId}.tellekretsnummer`)}`;
+        }
+      },
+
+      required: undefined,
     },
   };
 
@@ -110,6 +156,10 @@ export const FlatedataTableRow = ({
     setFormValues,
   });
 
+  const tellekretsnavnRegister = {
+    ...register(`${inndelingId}.tellekretsnavn`, disabledDate == null ? tellekretsRegisterOptions.navn : undefined),
+  };
+
   return (
     <Row key={inndelingId} $isSearchMatch={isSearchMatch}>
       {isKommuneInndeling(inndeling) ? (
@@ -132,6 +182,9 @@ export const FlatedataTableRow = ({
               formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}
             />
           </TableCell>
+          <td></td>
+          <td></td>
+          <td></td>
         </>
       ) : (
         <>
@@ -155,7 +208,47 @@ export const FlatedataTableRow = ({
             }
             {...register(`${inndelingId}.navn`, disabledDate == null ? registerOptions.navn : undefined)}
           />
+          {isStemmekretsInndeling(inndeling) ? (
+            <InputCell
+              isEditing={isEditing}
+              isDisabled={disabledDate != null}
+              data={getValues(`${inndelingId}.tellekretsnummer`) ?? inndeling.tellekretsnummer}
+              validationError={
+                inndelingErrors != null && "tellekretsnummer" in inndelingErrors
+                  ? validationError(inndelingErrors.tellekretsnummer)
+                  : undefined
+              }
+              {...register(
+                `${inndelingId}.tellekretsnummer`,
+                disabledDate == null ? tellekretsRegisterOptions.nummer : undefined,
+              )}
+            />
+          ) : (
+            <td></td>
+          )}
+          {isStemmekretsInndeling(inndeling) ? (
+            <InputCell
+              isEditing={isEditing}
+              isDisabled={disabledDate != null}
+              data={getValues(`${inndelingId}.tellekretsnavn`) ?? inndeling.tellekretsnavn}
+              validationError={
+                inndelingErrors != null && "tellekretsnavn" in inndelingErrors
+                  ? validationError(inndelingErrors.tellekretsnavn)
+                  : undefined
+              }
+              {...tellekretsnavnRegister}
+              onChange={(e) => {
+                tellekretsnavnRegister.onChange(e);
+                if (isSubmitted) {
+                  trigger(allInndelinger.map((i) => getIdFromEntity(i).concat(".tellekretsnavn")));
+                }
+              }}
+            />
+          ) : (
+            <td></td>
+          )}
           <TableCell>{isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer ?? "" : ""}</TableCell>
+          <td></td>
           <TableCell>
             <FremtidigEndringIcon
               formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}

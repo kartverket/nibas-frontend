@@ -6,7 +6,7 @@ import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
-type StemmekretsInput = { navn: string; nummer: string };
+type StemmekretsInput = { navn: string; nummer: string; tellekretsnavn: string; tellekretsnummer: string };
 type StemmekretsInputs = { [inndelingId: string]: StemmekretsInput };
 type GrunnkretsInput = StemmekretsInput;
 type GrunnkretsInputs = { [inndelingId: string]: GrunnkretsInput };
@@ -40,6 +40,8 @@ const getRequestFromInputs = (
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
           },
+          tellekretsnummer: isStemmekretsInndeling(inndeling) ? data.tellekretsnummer : undefined,
+          tellekretsnavn: isStemmekretsInndeling(inndeling) ? data.tellekretsnavn : undefined,
           valgdistriktsnummer: isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer : undefined,
           version: inndeling.version,
           navn: data.navn,
@@ -84,7 +86,12 @@ export const reduceFlatedataChanges = (
           return accumulator;
         }
       } else {
-        if (newValues.nummer === oldValues.nummer && newValues.navn === oldValues.navn) {
+        if (
+          newValues.nummer === oldValues.nummer &&
+          newValues.navn === oldValues.navn &&
+          newValues.tellekretsnummer === oldValues.tellekretsnummer &&
+          newValues.tellekretsnavn === oldValues.tellekretsnavn
+        ) {
           return accumulator;
         }
       }
