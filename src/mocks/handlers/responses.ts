@@ -387,7 +387,7 @@ export const mockUtkast: UtkastResponse = {
         navn: "Utkast stemmekrets",
         nummer: "123",
         version: 2,
-        kommunenummer: mockStemmekrets1.kommunenummer.kodeverdi,
+        kommunenummer: mockStemmekrets1.kommunenummer,
         identifikasjon: {
           lokalid: mockStemmekrets1.id.lokalid.value,
         },
