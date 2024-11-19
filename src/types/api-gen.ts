@@ -418,6 +418,13 @@ export interface components {
        */
       version: number;
     };
+    /** @description Representasjon av et kommunenummer */
+    Kommunenummer: {
+      /** @description Unik UUID for kommunenummeret */
+      id: string;
+      /** @description Det faktiske kommunenummeret */
+      kodeverdi: string;
+    };
     /** @description Egenskaper som beskriver konteksten som grensen sees i. */
     KontekstEgenskaper: {
       id?: components["schemas"]["ObjektIdentifikator"];
@@ -601,8 +608,7 @@ export interface components {
       tellekretsnavn?: string;
       /** @description Valgdistriktsnummeret til stemmekretsen */
       valgdistriktsnummer?: string;
-      /** @description Kommunenummeret stemmekretsen tilhører til */
-      kommunenummer?: string;
+      kommunenummer?: components["schemas"]["Kommunenummer"];
       /**
        * Format: int32
        * @description Teknisk versjon for å støtte samhandling og redigering
@@ -636,20 +642,6 @@ export interface components {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
-    };
-    ApiErrorResponse: {
-      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-      errorCode: string;
-      errorDescription: components["schemas"]["ErrorDescription"];
-    };
-    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-    ErrorDescription: {
-      /** @description Tittelen på feilmeldingen som skal vises. */
-      title: string;
-      /** @description En beskrivende forklaring av feilen som oppstod. */
-      description: string;
-      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-      additionalInfo?: string;
     };
     /** @description Feil som har oppstått pga optimistisk lås. */
     OptimistiskLaasResponse: {
@@ -748,6 +740,20 @@ export interface components {
       /** @description Feil som har oppstått pga optimistisk lås. */
       optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
     };
+    ApiErrorResponse: {
+      /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+      errorCode: string;
+      errorDescription: components["schemas"]["ErrorDescription"];
+    };
+    /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+    ErrorDescription: {
+      /** @description Tittelen på feilmeldingen som skal vises. */
+      title: string;
+      /** @description En beskrivende forklaring av feilen som oppstod. */
+      description: string;
+      /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+      additionalInfo?: string;
+    };
     /** @description Representasjon av audit info for et objekt. */
     AuditInfoResponse: {
       /**
@@ -820,13 +826,6 @@ export interface components {
        * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
        */
       gyldigTil?: string | null;
-    };
-    /** @description Representasjon av et kommunenummer */
-    Kommunenummer: {
-      /** @description Unik UUID for kommunenummeret */
-      id: string;
-      /** @description Det faktiske kommunenummeret */
-      kodeverdi: string;
     };
     /** @description Representasjon av en stemmekrets */
     StemmekretsResponse: {
@@ -982,9 +981,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
+      valid?: boolean;
       coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {
