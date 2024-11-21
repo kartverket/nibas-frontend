@@ -1,8 +1,6 @@
 import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 
 export type KartlagId =
-  | "topo"
-  | "toporaster"
   | "topograatone"
   | "matrikkelenWMS"
   | "administrativeGrenser"

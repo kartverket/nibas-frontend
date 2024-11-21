@@ -25,8 +25,6 @@ type WMTSResponseLayer = {
 // Funksjon som gir vårt egendefinerte navn på et kartlag hvis vi har definert det
 export const getKartlagCustomTitle = (layerId: KartlagId) => {
   const kartlagTitles: Record<KartlagId, string | null> = {
-    topo: null,
-    toporaster: null,
     topograatone: null,
     matrikkelenWMS: null,
     administrativeGrenser: "Administrative enheter WMS",
