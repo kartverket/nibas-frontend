@@ -352,6 +352,8 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+      /** @description informasjon om grunnkretsen */
+      informasjon?: string;
     };
     /** @description Representasjon av sammenslåing av en grunnkrets med 1 eller flere andre grunnkretser i samme kommune */
     GrunnkretsSammenslaaingsendringRequest: {
@@ -614,6 +616,8 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+      /** @description informasjon om stemmekretsen */
+      informasjon?: string;
     };
     /** @description Representasjon av sammenslåing av en stemmekrets med 1 eller flere andre stemmekretser i samme kommune */
     StemmekretsSammenslaaingsendringRequest: {
@@ -861,6 +865,8 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+      /** @description Informasjon om stemmekretsen */
+      informasjon?: string;
     };
     /** @description Geometrien til fylket. Ikke grenser */
     FeatureCollection: {
@@ -954,6 +960,8 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+      /** @description Informasjon om grunnkretsen */
+      informasjon?: string;
     };
     /** @description Liste av kodeliste-elementer. */
     KodelisteItem: {
@@ -981,9 +989,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
+      valid?: boolean;
       /** Format: double */
       m?: number;
-      valid?: boolean;
       coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {
