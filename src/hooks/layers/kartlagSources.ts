@@ -58,7 +58,7 @@ const toporasterWMTSConfig: WMTSConfig = {
 };
 
 const topograatoneWMTSConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/topograatone/v1/wmts/1.0.0/",
+  url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/",
   layer: "topograatone",
   matrixSet: "utm33n",
   tileGrid: getBaseGrid(),
