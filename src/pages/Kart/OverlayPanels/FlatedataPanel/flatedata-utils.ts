@@ -6,14 +6,23 @@ import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
-type StemmekretsInput = { navn: string; nummer: string; tellekretsnavn: string; tellekretsnummer: string };
+type StemmekretsInput = {
+  navn: string;
+  nummer: string;
+  tellekretsnavn: string;
+  tellekretsnummer: string;
+  informasjon: string;
+};
 type StemmekretsInputs = { [inndelingId: string]: StemmekretsInput };
-type GrunnkretsInput = StemmekretsInput;
+type GrunnkretsInput = { navn: string; nummer: string; informasjon: string };
 type GrunnkretsInputs = { [inndelingId: string]: GrunnkretsInput };
 export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs;
 
-const isKommuneInput = (value: KommuneInput | StemmekretsInput): value is KommuneInput =>
+const isKommuneInput = (value: KommuneInput | StemmekretsInput | GrunnkretsInput): value is KommuneInput =>
   "samiskforvaltningsomraade" in value;
+
+const isStemmekretsInput = (value: KommuneInput | StemmekretsInput | GrunnkretsInput): value is StemmekretsInput =>
+  "tellekretsnummer" in value && "tellekretsnavn" in value;
 
 const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
@@ -35,7 +44,7 @@ const getRequestFromInputs = (
       return null;
     }
     case "stemmekrets": {
-      if (!isKommuneInput(data)) {
+      if (isStemmekretsInput(data)) {
         const stemmekretsRequest: StemmekretsRequest = {
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
@@ -47,6 +56,7 @@ const getRequestFromInputs = (
           navn: data.navn,
           nummer: data.nummer,
           kommunenummer: isStemmekretsInndeling(inndeling) ? inndeling.kommunenummer : undefined,
+          informasjon: data.informasjon,
         };
         return stemmekretsRequest;
       }
@@ -61,6 +71,7 @@ const getRequestFromInputs = (
           version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
+          informasjon: data.informasjon,
         };
         return grunnkretsRequest;
       }
@@ -85,15 +96,22 @@ export const reduceFlatedataChanges = (
         if (newValues.samiskforvaltningsomraade === oldValues.samiskforvaltningsomraade) {
           return accumulator;
         }
-      } else {
+      } else if (isStemmekretsInput(oldValues)) {
         if (
           newValues.nummer === oldValues.nummer &&
           newValues.navn === oldValues.navn &&
           newValues.tellekretsnummer === oldValues.tellekretsnummer &&
-          newValues.tellekretsnavn === oldValues.tellekretsnavn
+          newValues.tellekretsnavn === oldValues.tellekretsnavn &&
+          newValues.informasjon === oldValues.informasjon
         ) {
           return accumulator;
         }
+      } else if (
+        newValues.nummer === oldValues.nummer &&
+        newValues.navn === oldValues.navn &&
+        newValues.informasjon === oldValues.informasjon
+      ) {
+        return accumulator;
       }
 
       const changedInndeling = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);

@@ -185,6 +185,7 @@ export const FlatedataTableRow = ({
           <td></td>
           <td></td>
           <td></td>
+          <td></td>
         </>
       ) : (
         <>
@@ -208,7 +209,7 @@ export const FlatedataTableRow = ({
             }
             {...register(`${inndelingId}.navn`, disabledDate == null ? registerOptions.navn : undefined)}
           />
-          {isStemmekretsInndeling(inndeling) ? (
+          {isStemmekretsInndeling(inndeling) && (
             <InputCell
               isEditing={isEditing}
               isDisabled={disabledDate != null}
@@ -223,10 +224,8 @@ export const FlatedataTableRow = ({
                 disabledDate == null ? tellekretsRegisterOptions.nummer : undefined,
               )}
             />
-          ) : (
-            <td></td>
           )}
-          {isStemmekretsInndeling(inndeling) ? (
+          {isStemmekretsInndeling(inndeling) && (
             <InputCell
               isEditing={isEditing}
               isDisabled={disabledDate != null}
@@ -244,10 +243,21 @@ export const FlatedataTableRow = ({
                 }
               }}
             />
-          ) : (
-            <td></td>
           )}
-          <TableCell>{isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer ?? "" : ""}</TableCell>
+          {isStemmekretsInndeling(inndeling) && <TableCell>{inndeling.valgdistriktsnummer}</TableCell>}
+          <InputCell
+            isEditing={isEditing}
+            isDisabled={disabledDate != null}
+            data={getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
+            {...register(`${inndelingId}.informasjon`)}
+          />
+          {!isKommuneInndeling(inndeling) && !isStemmekretsInndeling(inndeling) && (
+            <>
+              <td></td>
+              <td></td>
+              <td></td>
+            </>
+          )}
           <td></td>
           <TableCell>
             <FremtidigEndringIcon

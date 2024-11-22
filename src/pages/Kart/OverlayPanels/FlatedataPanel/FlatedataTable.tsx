@@ -107,19 +107,24 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <FlatedataTableHeader text="Merknad" {...sortHeaderProps("samiskforvaltningsomraade")} />
                 <th></th>
                 <th></th>
+                <th></th>
               </>
             ) : mainInndeling.inndelingtype === "stemmekrets" ? (
               <>
                 <FlatedataTableHeader text="Tellekretsnummer" {...sortHeaderProps("tellekretsnummer")} />
                 <FlatedataTableHeader text="Tellekretsnavn" {...sortHeaderProps("tellekretsnavn")} />
                 <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
+                <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
+              </>
+            ) : mainInndeling.inndelingtype === "grunnkrets" ? (
+              <>
+                <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
+                <th></th>
+                <th></th>
+                <th></th>
               </>
             ) : (
-              <>
-                <th></th>
-                <th></th>
-                <th></th>
-              </>
+              <></>
             )}
             <th></th>
             <th></th>
@@ -186,7 +191,7 @@ const Container = styled(TabPanel)`
 
 const Table = styled.table`
   display: grid;
-  grid-template-columns: auto auto auto auto auto 1fr auto;
+  grid-template-columns: auto auto auto auto auto auto 1fr auto;
   grid-auto-rows: max-content;
   width: 100%;
   overflow: auto;
