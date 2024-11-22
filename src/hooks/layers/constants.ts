@@ -25,8 +25,6 @@ export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
   grunnkretserWMS: createTileLayerFromKartlagSource("grunnkretserWMS"),
   stedsnavn: createTileLayerFromKartlagSource("stedsnavn"),
   stedsnavnSSR: createTileLayerFromKartlagSource("stedsnavnSSR"),
-  topo: createTileLayerFromKartlagSource("topo"),
-  toporaster: createTileLayerFromKartlagSource("toporaster"),
   topograatone: createTileLayerFromKartlagSource("topograatone", { opacity: 0.75 }),
   kartbladinndelinger: createTileLayerFromKartlagSource("kartbladinndelinger"),
   sjokartDybdedata: createTileLayerFromKartlagSource("sjokartDybdedata"),

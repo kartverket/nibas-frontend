@@ -38,9 +38,9 @@ type WMTSConfig = {
   style: string;
   format: string;
 };
-
+/*
 const topoWMTSConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/topo/v1/wmts/1.0.0/",
+  url: "https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/",
   layer: "topo",
   matrixSet: "utm33n",
   tileGrid: getBaseGrid(),
@@ -49,14 +49,14 @@ const topoWMTSConfig: WMTSConfig = {
 };
 
 const toporasterWMTSConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/toporaster/v1/wmts/1.0.0/",
+  url: "https://cache.kartverket.no/v1/wmts/1.0.0/toporaster/default/",
   layer: "toporaster",
   matrixSet: "utm33n",
   tileGrid: getBaseGrid(),
   style: "default",
   format: "image/png",
 };
-
+*/
 const topograatoneWMTSConfig: WMTSConfig = {
   url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/",
   layer: "topograatone",
@@ -122,8 +122,6 @@ const createAuthedTileWMS = (id: KartlagId, url: string, tjenesteId: string) => 
 };
 
 export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
-  topo: createWMTS("topo", topoWMTSConfig),
-  toporaster: createWMTS("toporaster", toporasterWMTSConfig),
   topograatone: createWMTS("topograatone", topograatoneWMTSConfig),
   norgeIBilder: createWMTS("norgeIBilder", norgeIBilderConfig),
   administrativeGrenser: createTileWMS("administrativeGrenser", "https://wms.geonorge.no/skwms1/wms.adm_enheter2"),
