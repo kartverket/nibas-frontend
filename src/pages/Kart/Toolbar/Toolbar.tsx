@@ -1,4 +1,14 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, useDisclosure } from "@kvib/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Icon,
+  MenuItem,
+  MenuItemProps,
+  MenuList,
+  useDisclosure,
+} from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -17,6 +27,14 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { anyFeatureIsEditable } from "utils/features";
 import SnapMenu from "./SnapMenu";
 import ZoomButtons from "./ZoomButtons";
+import { ToolbarMenu } from "./ToolbarMenu";
+import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+
+export type MenuItems = (MenuItemProps & {
+  $isActive: boolean;
+  isDisabled: boolean;
+  label: string;
+})[];
 
 const Toolbar = () => {
   const { utkast } = useUtkast();
@@ -101,6 +119,7 @@ const Toolbar = () => {
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
+  useKeyboardShortcut("grensecoordinates", () => toggleTool("grensecoordinates"));
   useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useHoldButtonToggle(
@@ -161,6 +180,27 @@ const Toolbar = () => {
 
     resetTool();
   });
+
+  const informasjonMenuItems: MenuItems = [
+    {
+      label: "Informasjon om grense",
+      icon: <Icon icon="info" />,
+      command: KeyboardShortcuts["grenseinfo"].displayString,
+      $isActive: activeTool === "grenseinfo",
+      isDisabled: false,
+      onClick: toggleGrenseinfo,
+      "aria-label": "Informasjon om grense",
+    },
+    {
+      label: "Vis koordinater på punkt",
+      icon: <Icon icon="fmd_bad" />,
+      command: KeyboardShortcuts["grensecoordinates"].displayString,
+      $isActive: activeTool === "grensecoordinates",
+      isDisabled: false,
+      onClick: () => toggleTool("grensecoordinates"),
+      "aria-label": "Vis koordinater på punkt",
+    },
+  ];
 
   return (
     <OuterContainer>
@@ -240,15 +280,23 @@ const Toolbar = () => {
             Flatedetaljer
           </ToolbarButton>
 
-          <ToolbarButton
+          <ToolbarMenu
             icon="query_stats"
-            isActive={activeTool === "grenseinfo"}
-            onClick={toggleGrenseinfo}
+            isActive={informasjonMenuItems.some((imi) => imi.$isActive)}
             aria-label="Se informasjon om grensen"
-            tooltip={{ text: "Se informasjon om grensen", shortcut: "grenseinfo" }}
+            tooltip="Vis informasjonsverktøy"
+            isDisabled={false}
+            label={"Informasjon"}
+            additionalTooltip={"Se verktøy for å få informasjon om en grense"}
           >
-            Informasjon
-          </ToolbarButton>
+            <MenuList>
+              {informasjonMenuItems.map((imi) => (
+                <ToolbarMenuItem key={imi.label} {...imi}>
+                  {imi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuList>
+          </ToolbarMenu>
           <ToolbarButton
             icon="map"
             aria-label="Åpne kartlagsmenyen"
@@ -322,6 +370,10 @@ const ToolbarButtons = styled.div`
   background: white;
   border-radius: 10px;
   box-shadow: var(--kvib-shadows-sm);
+`;
+
+export const ToolbarMenuItem = styled(MenuItem)<{ $isActive: boolean }>`
+  background: ${(props) => props.$isActive && "var(--kvib-colors-blue-50)"};
 `;
 
 export default Toolbar;

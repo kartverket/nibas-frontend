@@ -19,6 +19,7 @@ export const toolValues = [
   "draw",
   "split",
   "grenseinfo",
+  "grensecoordinates",
   "koordinater",
   "archive",
   "delete",
