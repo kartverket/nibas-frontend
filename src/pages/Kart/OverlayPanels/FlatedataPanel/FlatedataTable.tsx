@@ -30,8 +30,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const { utkast } = useUtkast();
   const isAdministrativEnhet = mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune";
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
-  const { addHistoryEntry, history } = useHistory();
-  console.log(history);
+  const { addHistoryEntry } = useHistory();
 
   const flatedata = useFlatedata(mainInndeling) ?? [];
 
@@ -68,7 +67,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const inndelingPrefix = isAdministrativEnhet ? "Kommune" : capitalize(mainInndeling.inndelingtype);
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
-    console.log(data);
     clearSearch();
     const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
     if (changes.length > 0) {
