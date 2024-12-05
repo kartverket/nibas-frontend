@@ -49,14 +49,16 @@ const getRequestFromInputs = (
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
           },
-          tellekretsnummer: isStemmekretsInndeling(inndeling) ? data.tellekretsnummer : undefined,
-          tellekretsnavn: isStemmekretsInndeling(inndeling) ? data.tellekretsnavn : undefined,
+          tellekretsnummer:
+            isStemmekretsInndeling(inndeling) && data.tellekretsnummer !== "" ? data.tellekretsnummer : undefined,
+          tellekretsnavn:
+            isStemmekretsInndeling(inndeling) && data.tellekretsnavn !== "" ? data.tellekretsnavn : undefined,
           valgdistriktsnummer: isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer : undefined,
           version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
           kommunenummer: isStemmekretsInndeling(inndeling) ? inndeling.kommunenummer : undefined,
-          informasjon: data.informasjon,
+          informasjon: data.informasjon !== "" ? data.informasjon : undefined,
         };
         return stemmekretsRequest;
       }
@@ -71,7 +73,7 @@ const getRequestFromInputs = (
           version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
-          informasjon: data.informasjon,
+          informasjon: data.informasjon !== "" ? data.informasjon : undefined,
         };
         return grunnkretsRequest;
       }
