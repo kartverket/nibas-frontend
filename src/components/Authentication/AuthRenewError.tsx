@@ -73,10 +73,10 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
       };
 
       saveApplicationStateToSessionStorage(appState);
-      clear();
-      setAuthRenewError(false);
-      signIn({ state: { utkastId: utkast.id } });
     }
+    clear();
+    setAuthRenewError(false);
+    signIn(utkast?.id != null && utkast?.id !== '' ? { state: { utkastId: utkast.id } } : undefined);
   };
 
   return (
