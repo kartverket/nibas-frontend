@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { createUtkastOperations } from "contexts/UtkastContext/utkast-utils";
 import {

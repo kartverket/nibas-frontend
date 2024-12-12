@@ -770,6 +770,7 @@ export interface components {
     EndredeInndelinger: {
       endredeStemmekretser: string[];
       endredeGrunnkretser: string[];
+      endredeKommuner: string[];
     };
     /** @description Representasjon av utkast */
     UtkastResponse: {

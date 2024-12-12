@@ -25,6 +25,7 @@ import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { format, subDays } from "date-fns";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import Loading from "pages/App/Loading";
@@ -35,6 +36,7 @@ import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
 import { inndelingColors } from "utils/map/layerStyles";
 import { routes } from "utils/routes";
 
@@ -125,6 +127,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     utkast.endredeInndelinger.endredeGrunnkretser,
     beforePublisering,
   );
+  const { data: endredeKommuner } = useKommunerByIds(utkast.endredeInndelinger.endredeKommuner, beforePublisering);
 
   const opprettFeilrettingUtkast = async () => {
     const response = await createUtkast(
@@ -170,6 +173,11 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
             <li
               key={inndeling.id.lokalid.value}
             >{`(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer} ${inndeling.navn}`}</li>
+          ))}
+        </InndelingerList>
+        <InndelingerList bulletcolor={inndelingColors.kommune}>
+          {endredeKommuner?.map((inndeling) => (
+            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
           ))}
         </InndelingerList>
       </StyledCell>
