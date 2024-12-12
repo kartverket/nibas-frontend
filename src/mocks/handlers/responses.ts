@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { GeoJSONFeatureCollection } from "ol/format/GeoJSON";
 import { createUtkastOperations } from "contexts/UtkastContext/utkast-utils";
 import {
@@ -400,6 +399,8 @@ export const mockUtkast: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };
 
@@ -422,6 +423,8 @@ export const mockUtkastIngenEndringer: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };
 
@@ -501,6 +504,8 @@ export const mockUtkast1: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };
 
@@ -533,5 +538,7 @@ export const mockUtkast2: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };
