@@ -771,6 +771,7 @@ export interface components {
       endredeStemmekretser: string[];
       endredeGrunnkretser: string[];
       endredeKommuner: string[];
+      endredeFylker: string[];
     };
     /** @description Representasjon av utkast */
     UtkastResponse: {
