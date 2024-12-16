@@ -185,7 +185,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
         </InndelingerList>
         <InndelingerList bulletcolor={inndelingColors.fylke}>
           {endredeFylker?.map((inndeling) => (
-            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${inndeling.navn}`}</li>
+            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
           ))}
         </InndelingerList>
       </StyledCell>
