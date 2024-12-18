@@ -31,6 +31,8 @@ const utkast: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };
 
