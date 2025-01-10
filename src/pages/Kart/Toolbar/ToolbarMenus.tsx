@@ -151,24 +151,6 @@ const ToolbarMenus = () => {
       command: KeyboardShortcuts["flatesplit"].displayString,
     },
   ];
-
-  /*
-          <ToolbarButton
-            icon="window"
-            onClick={() => toggleOverlayModal("flatedata")}
-            isActive={activeOverlayModal === "flatedata"}
-            isDisabled={!flatedataIsAvailable}
-            aria-label="Se eller endre flatedetaljer"
-            tooltip={{
-              text: "Se eller endre flatedetaljer",
-              additionalInfo: !flatedataIsAvailable ? "Velg en inndeling for å aktivere verktøyet" : undefined,
-              shortcut: "flatedata",
-            }}
-          >
-            Flatedetaljer
-          </ToolbarButton>
-*/
-
   return (
     <>
       <Divider orientation="vertical" />
