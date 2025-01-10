@@ -80,7 +80,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
             <div>
               <AlertTitle>Er du sikker på at du vil slette utkastet?</AlertTitle>
               <AlertDescription>
-                lle endringene som er gjort i utkastet vil forsvinne. Denne handlingen kan ikke angres.
+                Alle endringene som er gjort i utkastet vil forsvinne. Denne handlingen kan ikke angres.
               </AlertDescription>
             </div>
           </Alert>
