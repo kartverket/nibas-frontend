@@ -7,6 +7,9 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
+  Text,
+  Flex,
+  Center,
   Stack,
 } from "@kvib/react";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
@@ -40,7 +43,14 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
           {!harEndringer && !harUlagredeEndringer && !laster && <Empty>Det er ingen endringer i dette utkastet</Empty>}
           <Stack spacing={6}>
             <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
-            {laster && <Spinner size="xl" />}
+            <Center>
+              {laster && (
+                <Flex alignItems="center" gap="var(--kvib-space-4)">
+                  <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="lg" />
+                  <Text>Laster inn endringslogg ...</Text>
+                </Flex>
+              )}
+            </Center>
             <EndringUnstyledList>
               {stemmekretsendringer?.map((endringer) => (
                 <EndringerForKommune

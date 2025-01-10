@@ -94,7 +94,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
         return false;
       } else {
         setError("globalErrorDummyField", {
-          message: "Koordinatene er ikke på samme fornat. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+          message: "Koordinatene er ikke på samme format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
         });
         return false;
       }

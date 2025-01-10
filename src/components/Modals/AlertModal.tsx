@@ -95,7 +95,7 @@ const AlertModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
       <ModalOverlay />
       <ModalContent>
         <AlertHeader status={status}>
@@ -106,7 +106,9 @@ const AlertModal = ({
         <Body>
           <BodyText>{description}</BodyText>
           {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
-          {errorCode && <BodyTextExtra>{`Feilkode ${errorCode}`}</BodyTextExtra>}
+          {errorCode && (
+            <BodyTextExtra>Kontakt Kartverket og oppgi feilkoden {errorCode} dersom feilen vedvarer.</BodyTextExtra>
+          )}
         </Body>
         {(primaryAction || secondaryAction) && (
           <ModalFooter>

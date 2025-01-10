@@ -35,15 +35,15 @@ export const AuthLogIn = () => {
 
 export const AuthNotAuthorized = () => (
   <ErrorBox
-    title="Du har ikke tilgang til å se inndelingsbasen."
-    text="Vennlist kontakt Kartverket hvis du mener dette er en feil."
+    title="Du har ikke tilgang til inndelingsbasen. "
+    text="Vennligst kontakt Kartverket dersom du mener dette er en feil."
   />
 );
 
 export const AuthError = () => (
   <ErrorBox
-    title="En feil skjedde ved pålogging."
-    text="Det skjedde en uventet feil under påloggingen. Du kan forsøke å laste siden på nytt, eller logge ut og forsøke å logge inn på nytt. Hvis feilen vedvarer, vennligst kontakt Kartverket."
+    title="Påloggingen feilet"
+    text="En uventet feil skjedde under påloggingen. Oppdater siden og prøv å logge inn på nytt. Dersom feilen vedvarer, ta kontakt med Kartverket."
   />
 );
 

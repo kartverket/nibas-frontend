@@ -16,9 +16,10 @@ type MenuItems = (MenuItemProps & {
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool } = useToolbar();
-  const { activeOverlayPanel, closeOverlayPanel, toggleOverlayPanel } = useOverlayPanel();
+  const { activeOverlayPanel, closeOverlayPanel, toggleOverlayPanel, toggleOverlayModal, activeOverlayModal } =
+    useOverlayPanel();
 
-  const { currentlyEditingInndelinger } = useInndelinger();
+  const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
 
   const isEditing = currentlyEditingInndelinger.length > 0;
 
@@ -29,6 +30,10 @@ const ToolbarMenus = () => {
   const mergeIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
     return inndeling.inndelingtype === "stemmekrets";
   });
+
+  // TODO Sjekk om vi kan fjerne ubrukte inndelinger
+  const flatedataIsAvailable =
+    getAllInndelinger().filter((inndeling) => inndeling.isViewing || inndeling.isEditing).length > 0;
 
   const toggleMovePoint = () => {
     toggleTool("koordinater");
@@ -46,6 +51,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
   useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditing);
+  useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
@@ -117,6 +123,15 @@ const ToolbarMenus = () => {
     },
   ];
   const flateMenuItems: MenuItems = [
+    {
+      label: "Flatedetaljer",
+      icon: <Icon icon="window" />,
+      command: KeyboardShortcuts["flatedata"].displayString,
+      $isActive: activeOverlayModal === "flatedata",
+      isDisabled: !flatedataIsAvailable,
+      onClick: () => toggleOverlayModal("flatedata"),
+      "aria-label": "Se eller endre flatedetaljer",
+    },
     {
       label: "Slå sammen flater",
       icon: <Icon icon="cell_merge" />,

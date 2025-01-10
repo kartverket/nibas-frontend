@@ -78,8 +78,10 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
           <Alert status="warning">
             <AlertIcon />
             <div>
-              <AlertTitle>Ved å slette utkastet mister du alle endringene som er gjort i utkastet.</AlertTitle>
-              <AlertDescription>Denne handlingen kan ikke angres.</AlertDescription>
+              <AlertTitle>Er du sikker på at du vil slette utkastet?</AlertTitle>
+              <AlertDescription>
+                Alle endringene som er gjort i utkastet vil forsvinne. Denne handlingen kan ikke angres.
+              </AlertDescription>
             </div>
           </Alert>
           <EndringsloggAccordion utkast={utkast} />

@@ -8,10 +8,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Accordion,
-  AccordionButton,
-  AccordionPanel,
-  AccordionItem,
 } from "@kvib/react";
 import { useAuthentication } from "./AuthenticationHook";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -81,40 +77,34 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)}>
+      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Du har automatisk blitt logget ut</ModalHeader>
+          <ModalHeader>Du har blitt logget ut automatisk</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text fontWeight="bold" mb="1rem">
-              Du har automatisk blitt logget ut, og må logge inn på nytt hos IDPorten for å fortsette endringene Dersom
-              du bytter nettleser i mellomtiden risikerer du å miste eventuelle ulagrede endringer
+            <Text mb="1rem">
+              På grunn av en begrensning hos IDporten vil man måtte logge inn på nytt hver 2. time. Sørg derfor for at
+              du lagrer utkastet ditt så ofte som mulig.
             </Text>
-
-            <Accordion>
-              <AccordionItem>
-                <AccordionButton>Hvorfor ble jeg logget ut?</AccordionButton>
-                <AccordionPanel>
-                  På grunn av en begrensning hos IDporten vil man kun være logget inn i to timer om gangen. Om du ikke
-                  hadde lagret de siste endringene dine idet du ble logget ut kan vi gjenopprette det etter du har
-                  logget inn på nytt, så fremt du ikke bytter nettleser i mellomtiden.
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
+            <Text fontWeight="bold" mb="1rem">
+              Dersom du hadde ulagrede endringer kan vi forsøke å gjenopprette dem. Ønsker du å logge inn på nytt og
+              gjenopprette endringene?
+            </Text>
           </ModalBody>
           <ModalFooter>
             <Button
               colorScheme="blue"
+              variant="secondary"
               mr={3}
               onClick={() => {
                 setAuthRenewError(false);
               }}
             >
-              Lukk
+              Forbli logget ut
             </Button>
-            <Button variant="ghost" onClick={onRelog}>
-              Logg inn på nytt
+            <Button variant="primary" onClick={onRelog}>
+              Logg inn og gjenopprett
             </Button>
           </ModalFooter>
         </ModalContent>

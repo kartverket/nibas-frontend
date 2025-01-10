@@ -122,9 +122,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
               </AlertTitle>
               <AlertDescription>
                 {isUtkastGyldigFraPast
-                  ? `Du satte ${format(utkast.gyldigFra, "dd.MM.yyyy")} som gyldig fra-dato da du opprettet utkastet. Denne
-                  datoen har passert, og datoen vil dermed endres til dagens dato.`
-                  : `Ønsker du å endre denne datoen må du opprette et nytt utkast og gjennomføre endringene på nytt.`}
+                  ? `Datoen du satte på utkastet da du opprettet det har nå passert. Opprinnelig dato var satt som ${format(utkast.gyldigFra, "dd.MM.yyyy")}. Datoen er derfor blitt endret til dagens dato.`
+                  : `Dersom du ikke ønsker at endringene skal tre i kraft på denne datoen, må du slette utkastet og opprette et nytt et med riktig dato. Endringene du har gjort i utkastet må dermed gjøres på nytt.`}
               </AlertDescription>
             </div>
           </Alert>

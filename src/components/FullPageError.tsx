@@ -24,21 +24,14 @@ export const FullPageError = () => (
         <Box>
           <AlertTitle>En ukjent feil har oppstått</AlertTitle>
           <AlertDescription>
-            Noe gikk galt med siden, men vi vet ikke hvorfor. Hvis feilen vedvarer, vennligst kontakt Kartverket.
-            Kontaktinformasjon finnes i{" "}
-            <UnderlinedLink href="https://kartverket.atlassian.net/wiki/spaces/NIBAS/pages/685342721/Brukerveiledning">
-              brukerveiledningen.
-            </UnderlinedLink>
+            Oppdater siden og prøv igjen. Dersom feilen vedvarer, kan du ta kontakt med Kartverket. Oppgi gjerne hva du
+            gjorde før feilen oppsto.
           </AlertDescription>
         </Box>
       </AlertWithMaxSize>
     </ErrorContainer>
   </ThirdPartyProviders>
 );
-
-const UnderlinedLink = styled.a`
-  border-bottom: 1px solid;
-`;
 
 const AlertWithMaxSize = styled(Alert)`
   max-width: 800px;

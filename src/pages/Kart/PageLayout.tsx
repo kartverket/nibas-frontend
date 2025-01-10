@@ -29,14 +29,14 @@ const PageLayout = () => {
               });
             } else {
               setError({
-                title: `Ukjent feil`,
-                description: `En ukjent feil oppstod med. Kall mot backtjenesten feilet med responskode ${err.response?.status}.`,
+                title: `En ukjent feil har oppstått`,
+                description: `Oppdater siden og prøv igjen. Dersom feilen vedvarer, kan du ta kontakt med Kartverket. Oppgi feilkoden ${err.response?.status} og en beskrivelse på hva du gjorde idet feilen oppsto.`,
               });
             }
           },
         }}
       >
-        <Suspense fallback="Loading...">
+        <Suspense fallback="Laster inn...">
           <Header />
         </Suspense>
         <Kart />
