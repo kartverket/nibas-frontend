@@ -23,7 +23,7 @@ import { createUtkast } from "api/utkast";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { format, subDays } from "date-fns";
+import { format, subDays, addDays } from "date-fns";
 import { useFylkerByIds } from "hooks/inndelinger/useFylker";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
@@ -49,7 +49,7 @@ const utkastColumns = {
 };
 
 export const Endringer = () => {
-  const { data: utkasts, isLoading } = useUtkasts(["PUBLISERT"], format(new Date(), "yyyy-MM-dd"));
+  const { data: utkasts, isLoading } = useUtkasts(["PUBLISERT"], format(addDays(new Date(), 1), "yyyy-MM-dd"));
 
   return (
     <PageContainer>
