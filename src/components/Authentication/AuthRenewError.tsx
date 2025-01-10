@@ -88,7 +88,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
               du lagrer utkastet ditt så ofte som mulig.
             </Text>
             <Text fontWeight="bold" mb="1rem">
-              Dersom du hadde ulagrede endringer kan vi forsøke å gjenopprette de. Ønsker du å logge inn på nytt og
+              Dersom du hadde ulagrede endringer kan vi forsøke å gjenopprette dem. Ønsker du å logge inn på nytt og
               gjenopprette endringene?
             </Text>
           </ModalBody>
