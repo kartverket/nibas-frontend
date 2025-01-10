@@ -36,7 +36,7 @@ export const AuthLogIn = () => {
 export const AuthNotAuthorized = () => (
   <ErrorBox
     title="Du har ikke tilgang til inndelingsbasen. "
-    text="Vennlist kontakt Kartverket dersom du mener dette er en feil."
+    text="Vennligst kontakt Kartverket dersom du mener dette er en feil."
   />
 );
 
