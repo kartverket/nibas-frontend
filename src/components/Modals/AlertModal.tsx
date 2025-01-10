@@ -12,7 +12,6 @@ import {
   ModalOverlay,
   AlertProps,
   ModalHeader,
-  Link,
 } from "@kvib/react";
 import { useState } from "react";
 

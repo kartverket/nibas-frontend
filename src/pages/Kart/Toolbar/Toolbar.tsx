@@ -32,7 +32,7 @@ const Toolbar = () => {
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
 
-  const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
   const isEditing = currentlyEditingInndelinger.length > 0;
 
   const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
