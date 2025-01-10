@@ -49,7 +49,7 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
         <AccordionPanel>
           {!harEndringer && harLastetData && <div>Det er ingen endringer i dette utkastet</div>}
 
-          {!harLastetData && <Spinner size="xl" />}
+          {!harLastetData && <Spinner size="xl" color="blue.500" thickness="2px" emptyColor="gray.200" />}
           <ListWithNoDot>
             {stemmekretsendringer?.map((endringer) => (
               <EndringerForKommune

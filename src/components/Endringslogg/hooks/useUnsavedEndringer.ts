@@ -246,7 +246,7 @@ const combineMetadataChangesForSameId = (metadataendringer: MetadataendringerWit
       // Dette skal egentlig aldri kunne skje - så dette er egentlig mest for å gjøre typescript glad. Oppstår
       // denne situsjonen har det blir gjort en kodeendring som innførte en feil.
       throw new Error(
-        "Noe gikk galt ved oppbygning av endringsloggen. Klarte ikke finne igjen endringen for kretsen. Dette burde ikke kunne skje.",
+        "Noe gikk galt ved oppbygning av endringsloggen. Klarte ikke finne igjen endringen for kretsen. Dette burde ikke kunne skje. Kontakt derfor Kartverket og oppgi at du har mottatt denne feilmeldingen.",
       );
     }
 

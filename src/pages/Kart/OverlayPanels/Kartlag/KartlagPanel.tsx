@@ -3,7 +3,7 @@ import { PanelHeader, SidePanel } from "../Panel";
 import { styled } from "styled-components";
 import Kartlag from "./Kartlag";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
-import { Spinner } from "@kvib/react";
+import { Spinner, Center } from "@kvib/react";
 
 const KartlagPanel = () => {
   const { mappedLayers } = useKartlag();
@@ -23,7 +23,9 @@ const KartlagPanel = () => {
             />
           ))
         ) : (
-          <Spinner />
+          <Center>
+            <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+          </Center>
         )}
       </KartlagList>
     </SidePanel>
