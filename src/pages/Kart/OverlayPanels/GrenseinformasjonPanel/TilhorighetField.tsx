@@ -244,13 +244,14 @@ const KommunegrenseTilhorighetField = ({ feature, isDisabled }: TilhorighetProps
   );
 };
 
-const IkkeRedigerbarAdministrativGrense = ({ feature }: TilhorighetProps) => {
+const IkkeRedigerbarAdministrativGrense = ({ feature, isDisabled }: TilhorighetProps) => {
   const useTilhorighetGrunnkrets = useTilhorighetIkkeRedigerbar(feature, KontekstType.GRUNNKRETS);
   const useTilhorighetStemmekrets = useTilhorighetIkkeRedigerbar(feature, KontekstType.STEMMEKRETS);
 
   return (
     <TilhorighetFieldController
       feature={feature}
+      isDisabled={isDisabled}
       grunnkretsTilhorighetForm={useTilhorighetGrunnkrets}
       stemmekretsTilhorighetForm={useTilhorighetStemmekrets}
       renderChildren={({ isEditing, isSubmitted, isGrunnkretserValid, isStemmekretserValid }) => (
@@ -289,7 +290,7 @@ export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetPro
 
     return <KommunegrenseTilhorighetField feature={feature} isDisabled={shouldBeDisabled || !isEditable} />;
   } else if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
-    return <IkkeRedigerbarAdministrativGrense feature={feature} />;
+    return <IkkeRedigerbarAdministrativGrense feature={feature} isDisabled={shouldBeDisabled} />;
   }
 
   return <CommonTilhorighetField feature={feature} isDisabled={shouldBeDisabled} />;
