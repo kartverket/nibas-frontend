@@ -212,13 +212,14 @@ const CommonTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   );
 };
 
-const KommunegrenseTilhorighetField = ({ feature }: TilhorighetProps) => {
+const KommunegrenseTilhorighetField = ({ feature, isDisabled }: TilhorighetProps) => {
   const useTilhorighetGrunnkrets = useTilhorighetKommune(feature, KontekstType.GRUNNKRETS);
   const useTilhorighetStemmekrets = useTilhorighetKommune(feature, KontekstType.STEMMEKRETS);
 
   return (
     <TilhorighetFieldController
       feature={feature}
+      isDisabled={isDisabled}
       grunnkretsTilhorighetForm={useTilhorighetGrunnkrets}
       stemmekretsTilhorighetForm={useTilhorighetStemmekrets}
       renderChildren={({ isEditing, isSubmitted, isGrunnkretserValid, isStemmekretserValid }) => (
