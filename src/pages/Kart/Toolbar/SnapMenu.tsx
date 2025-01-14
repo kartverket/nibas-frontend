@@ -3,6 +3,7 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
+import { useToast } from "@kvib/react";
 
 type Props = {
   isOpen: boolean;
@@ -12,6 +13,7 @@ type Props = {
 
 const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
   const { activeModeTools, toggleModeTool } = useToolbar();
+  const toast = useToast();
 
   const toggleSnapping = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
@@ -27,8 +29,37 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
     }
   };
 
-  useKeyboardShortcut("snap", onToggle);
-
+  // useKeyboardShortcut("snap", toggleSnapping);
+  useKeyboardShortcut("snap", () => {
+    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
+    const isNibasToggled = activeModeTools.includes("snap_nibas");
+    toggleSnapping();
+    if (!isMatrikkelToggled && !isNibasToggled) {
+      toast({ status: "info", title: "Snapping er slått på." });
+    } else {
+      toast({ status: "warning", title: "Snapping er slått av." });
+    }
+  });
+  // useKeyboardShortcut("snap_matrikkel", () => toggleModeTool("snap_matrikkel"));
+  useKeyboardShortcut("snap_matrikkel", () => {
+    toggleModeTool("snap_matrikkel");
+    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
+    if (isMatrikkelToggled) {
+      toast({ status: "warning", title: "Snapping mot teiggrenser er slått av." });
+    } else {
+      toast({ status: "info", title: "Snapping mot teiggrenser er slått på." });
+    }
+  });
+  useKeyboardShortcut("snap_nibas", () => {
+    toggleModeTool("snap_nibas");
+    const isMatrikkelToggled = activeModeTools.includes("snap_nibas");
+    if (isMatrikkelToggled) {
+      toast({ status: "warning", title: "Snapping mot egne grenser er slått av." });
+    } else {
+      toast({ status: "info", title: "Snapping mot egne grenser er slått på." });
+    }
+  });
+  // useKeyboardShortcut("snap_nibas", () => toggleModeTool("snap_nibas"));
   return (
     <Menu closeOnSelect={false} closeOnBlur={false} onClose={onClose} isOpen={isOpen}>
       <MenuButtonWithChevron
