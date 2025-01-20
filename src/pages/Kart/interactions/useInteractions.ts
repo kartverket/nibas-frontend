@@ -11,7 +11,6 @@ import { useCursorStyles } from "./useCursorStyles";
 import { SnapData, createKartlagSnapsData } from "./snapping-utils";
 import { MapBrowserEvent } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
-
 const useInteractions = () => {
   const { modify } = useModify();
   const { dragPan, dragZoom } = useDragInteractions();
@@ -49,13 +48,21 @@ const useInteractions = () => {
     ],
   });
 
+  // Legger til/fjerner `draw`-interaksjonen **bare** når `activeTool === "draw"`. På den måten unngår vi at `draw` nullstilles hver gang vi for eksempel
+  // toggler snap. `draw` blir kun  fjernet hvis brukeren faktisk bytter verktøy bort fra "draw".
+  useEffect(() => {
+    if (activeTool === "draw") {
+      map.addInteraction(draw);
+    } else {
+      map.removeInteraction(draw);
+    }
+  }, [activeTool, draw]);
   useEffect(() => {
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
     map.on("click", select);
     map.on("click", selectPoint);
     map.addInteraction(dragPan);
     map.addInteraction(modify);
-    map.addInteraction(draw);
     map.addInteraction(dragZoom);
 
     // snaps må legges til etter modify og draw interactions
@@ -74,8 +81,8 @@ const useInteractions = () => {
       map.un("click", selectPoint);
       map.removeInteraction(dragPan);
       map.removeInteraction(modify);
-      map.removeInteraction(draw);
       map.removeInteraction(dragZoom);
+
       if (kartlagSnapData.current) {
         Object.values(kartlagSnapData.current).forEach((snapData) => {
           if (snapData?.hover) {
@@ -87,7 +94,7 @@ const useInteractions = () => {
         });
       }
     };
-  }, [activeModeTools, activeTool, dragPan, dragZoom, draw, modify, select, selectPoint]);
+  }, [dragPan, dragZoom, modify, select, selectPoint, activeModeTools, activeTool]);
 };
 
 export default useInteractions;

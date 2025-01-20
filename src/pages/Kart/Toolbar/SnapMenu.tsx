@@ -1,10 +1,8 @@
-import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Checkbox, Spacer } from "@kvib/react";
+import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Checkbox, Spacer, useToast } from "@kvib/react";
 import { useToolbar } from "contexts/ToolbarContext";
 import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
-import { useToast } from "@kvib/react";
-
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -31,14 +29,14 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
 
   // useKeyboardShortcut("snap", toggleSnapping);
   useKeyboardShortcut("snap", () => {
-    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
-    const isNibasToggled = activeModeTools.includes("snap_nibas");
+    // const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
+    // const isNibasToggled = activeModeTools.includes("snap_nibas");
     toggleSnapping();
-    if (!isMatrikkelToggled && !isNibasToggled) {
-      toast({ status: "info", title: "Snapping er slått på." });
-    } else {
-      toast({ status: "warning", title: "Snapping er slått av." });
-    }
+    // if (!isMatrikkelToggled && !isNibasToggled) {
+    //   toast({ status: "info", title: "Snapping er slått på." });
+    // } else {
+    //   toast({ status: "warning", title: "Snapping er slått av." });
+    // }
   });
   // useKeyboardShortcut("snap_matrikkel", () => toggleModeTool("snap_matrikkel"));
   useKeyboardShortcut("snap_matrikkel", () => {

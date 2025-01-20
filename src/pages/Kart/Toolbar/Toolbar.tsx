@@ -114,9 +114,11 @@ const Toolbar = () => {
         .getInteractions()
         .getArray()
         .find((interaction) => interaction instanceof Draw);
+
       if (drawInteraction) {
         const revision = drawInteraction.getRevision();
-        if (revision && revision > 0) {
+        // Fortsette her: Teste med 0 istedenfor -1 ??
+        if (revision && revision > -1) {
           const test = drawInteraction as Draw;
           test.abortDrawing();
 
