@@ -50,7 +50,7 @@ export const AfterAuthentication = () => {
   return (
     <AuthenticationPage>
       <Logo />
-      <Spinner size="xl" color="var(--kvib-colors-blue-500)" />
+      <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="lg" />
       <Text>Vennligst vent, du blir logget inn...</Text>
       <PrivacyFooter />
     </AuthenticationPage>

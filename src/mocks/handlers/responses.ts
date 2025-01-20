@@ -399,6 +399,8 @@ export const mockUtkast: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };
 
@@ -421,6 +423,8 @@ export const mockUtkastIngenEndringer: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };
 
@@ -500,6 +504,8 @@ export const mockUtkast1: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };
 
@@ -532,5 +538,7 @@ export const mockUtkast2: UtkastResponse = {
   endredeInndelinger: {
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
+    endredeKommuner: [],
+    endredeFylker: [],
   },
 };

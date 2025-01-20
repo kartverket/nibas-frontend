@@ -18,8 +18,8 @@ const HeaderBreadcrumb = () => {
   const navigate = useNavigate();
 
   const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } = useAlertModal(
-    "Du har endringer i utkastet som ikke er lagret",
-    "Er du sikker på at du vil gå ut av utkastet? Dersom du lukker utkastet nå mister du alle ulagrede endringer.",
+    "Du har ulagrede endringer",
+    "Dersom du går ut av utkastet uten å lagre først vil du miste alle de ulagrede endringene dine. Er du sikker på at du vil gå ut av utkastet?",
   );
 
   const handleHome = () => {

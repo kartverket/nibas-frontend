@@ -1,4 +1,8 @@
-import useNibasApi from "../useNibasApi";
+import useNibasApi, { getUrlWithParameters } from "../useNibasApi";
+import { KommuneResponse } from "../../types/api";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import useSWRImmutable from "swr/immutable";
+import { fetcherWithToken } from "utils/api";
 
 const useKommuner = (fylkeId: string | null = null, gyldighetsdato: string | undefined, shouldFetch = true) => {
   const { data: kommuner, ...rest } = useNibasApi(
@@ -19,6 +23,24 @@ const useKommuner = (fylkeId: string | null = null, gyldighetsdato: string | und
     kommuner: sortedKommuner,
     ...rest,
   };
+};
+
+const kommunerFetcher = async ([kommuneIds, gyldighetsdato, token]: [
+  string[],
+  string | undefined,
+  string | undefined,
+]) => {
+  const promises: Promise<KommuneResponse>[] = kommuneIds.map(async (id) =>
+    fetcherWithToken([getUrlWithParameters("/v1/kommuner/{id}", { id, gyldighetsdato }), token]),
+  );
+
+  return await Promise.all(promises);
+};
+
+export const useKommunerByIds = (kommuneIds: string[], gyldighetsdato: string | undefined) => {
+  const { token } = useAuthentication();
+
+  return useSWRImmutable(kommuneIds.length > 0 ? [kommuneIds, gyldighetsdato, token] : null, kommunerFetcher);
 };
 
 export const useKommune = (kommuneId: string, gyldighetsdato: string | undefined, shouldFetch = true) => {

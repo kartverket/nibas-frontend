@@ -18,7 +18,7 @@ export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
         <AlertTitle>{title}</AlertTitle>
         <AlertDescription>{text}</AlertDescription>
       </TextContainer>
-      <LogoutButton variant="ghost" onClick={() => auth.signOut()}>
+      <LogoutButton variant="primary" onClick={() => auth.signOut()}>
         Logg ut
       </LogoutButton>
     </AlertWithButton>
