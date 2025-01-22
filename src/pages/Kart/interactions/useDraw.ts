@@ -26,6 +26,8 @@ import { editSource } from "hooks/layers/constants";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { map } from "../constants";
+import { CollectionEvent } from "ol/Collection";
+import { Interaction } from "ol/interaction";
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
   const { currentlyEditingInndelinger } = useInndelinger();
@@ -49,24 +51,16 @@ const useDraw = () => {
   const getLineStringFeaturesAtPixelRef = useRef(getLineStringFeaturesAtPixel);
   const endpointToastRef = useRef(endpointToast);
   const toastRef = useRef(toast);
-  const counter = useRef(0);
+  // Når vi ikke avslutter/instansierer ny draw ved snap-toggling så blir det flere draw-instanser, fjerner derfor den/de som ikke er nyest.
   useEffect(() => {
     // Lytt på `map.getInteractions()` sin "add" event, for å oppdage når en ny Draw dukker opp
     const interactions = map.getInteractions();
-    function handleAdd(evt: { element: unknown }) {
+    function handleAdd(evt: CollectionEvent<Interaction>) {
       if (evt.element instanceof Draw) {
-        console.log("Ny Draw ble lagt til i kartet", evt.element);
-        const isSnapOn =
-          activeModeToolsRef.current.includes("snap_matrikkel") || activeModeToolsRef.current.includes("snap_nibas");
-        console.log("snap er på? " + isSnapOn);
-        // Fjern evt. gamle draw (behold bare den nyeste)
         const draws = interactions.getArray().filter((i) => i instanceof Draw);
-        console.log(draws);
         if (draws.length > 1) {
-          // Fjern alle unntatt den siste
           draws.slice(0, -1).forEach((d) => {
             map.removeInteraction(d);
-            console.log("Fjernet gammel Draw:", d);
           });
         }
       }
@@ -112,7 +106,6 @@ const useDraw = () => {
         // Legg til feature hvis vi ikke treffer noen andre features
         if (featuresAtPixel.length === 0) {
           draw.changed();
-          counter.current++;
           return true;
         }
 
@@ -156,18 +149,14 @@ const useDraw = () => {
         // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et punkt, så vi unngår rar geometri
         // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
         // enn null (som den blir av første endring), vil vi avslutte tegningen
-        console.log(draw.getRevision());
-        if (counter.current > 0) {
-          console.log("innom her?");
+        if (draw.getRevision() > 0) {
           draw.appendCoordinates([event.coordinate]);
           draw.finishDrawing();
-          console.log(draw.getRevision());
-          counter.current = 0;
+          setAbortDrawMemoHelper((a) => a + 1);
           return false;
         }
 
         draw.changed();
-        counter.current++;
         return true;
       },
     });
