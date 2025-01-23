@@ -11,7 +11,6 @@ import { useCursorStyles } from "./useCursorStyles";
 import { SnapData, createKartlagSnapsData } from "./snapping-utils";
 import { MapBrowserEvent } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
-import useHoverLineString from "./useHoverLineString";
 
 const useInteractions = () => {
   const { modify } = useModify();
@@ -22,12 +21,8 @@ const useInteractions = () => {
   const { activeModeTools, activeTool } = useToolbar();
   const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
 
-  useHoverLineString(activeTool === "grensecoordinates", (feature, vertex, event) => {
-    console.log(vertex);
-  });
-
   const crosshairCursorTools: Tool[] = ["draw", "add", "remove", null];
-  const pointerCursorTools: Tool[] = ["archive", "grenseinfo", "koordinater", "split", "delete"];
+  const pointerCursorTools: Tool[] = ["archive", "grenseinfo", "grensecoordinates", "koordinater", "split", "delete"];
 
   useCursorStyles({
     isEnabled: !activeModeTools.includes("move") && crosshairCursorTools.includes(activeTool),

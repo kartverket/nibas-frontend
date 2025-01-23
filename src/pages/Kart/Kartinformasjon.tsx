@@ -20,12 +20,7 @@ const Kartinformasjon = () => {
   useEffect(() => {
     if (map.getControls().getLength() === 0) {
       const mousePosition = new MousePosition({
-        coordinateFormat: (coordinates) => {
-          if (!coordinates) {
-            return "";
-          }
-          return `${coordinates[0].toFixed(2)}Ø  ${coordinates[1].toFixed(2)}N`;
-        },
+        coordinateFormat: formatCoordinatesNor,
         target: document.getElementById("mouse-position") ?? "",
       });
 
@@ -118,3 +113,10 @@ const ProjectionSpan = styled.span`
 `;
 
 export default Kartinformasjon;
+
+export const formatCoordinatesNor = (coordinates: number[] | undefined) => {
+  if (!coordinates) {
+    return "";
+  }
+  return `${coordinates[0].toFixed(2)}Ø  ${coordinates[1].toFixed(2)}N`;
+};
