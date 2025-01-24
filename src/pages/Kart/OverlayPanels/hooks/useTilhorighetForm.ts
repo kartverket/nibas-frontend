@@ -84,6 +84,42 @@ const getIdForKontekstEgenskaper = (
   }
 };
 
+const getUpdatedGrunnkretsNames = (kretser: Krets[], historyEntries: HistoryEntry[]): Krets[] => {
+  //list of all names in kretser
+  const kretserNames = kretser.map((krets) => krets.navn);
+  console.log("kretserfør" + kretserNames);
+  const filteredHistoryEntries = historyEntries.filter((historyEntry) => {
+    historyEntry.type === "grunnkrets";
+  });
+  const idAndToNames = filteredHistoryEntries.flatMap((historyEntry) =>
+    historyEntry.changes.map((change) => ({
+      id: change.id,
+      to: change.to,
+    })),
+  );
+
+  //newKretser should be a copy of kretser exept in the cases where there is an entry in idAndToNames with the same id as the krets in kretser.
+  //In those cases the name of the krets in newKretser should be updated to the name in idAndToNames.
+  const newKretser = kretser.map((krets) => {
+    const nameChange = idAndToNames.find((idAndToName) => idAndToName.id === krets.id.lokalid.value);
+    if (nameChange) {
+      return {
+        ...krets,
+        //set navn equal to the name in idAndToNames
+        navn: (nameChange.to as { navn: string })?.navn ?? krets.navn,
+      };
+    } else {
+      return krets;
+    }
+  });
+
+  const newKretserNames = newKretser.map((krets) => krets.navn);
+
+  console.log("kretseretter" + newKretserNames);
+
+  return newKretser;
+};
+
 const getKretserFromHistory = (
   entries: HistoryEntry[],
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -148,12 +184,13 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
           kommunerIdOgNummer,
           kontekstType,
         );
+        const ListeA: Krets[] = [
+          ...commonOptions[Tilhorighet.A],
+          ...tilhorighetOptionsFromUtkast,
+          ...tihorighetOptionsFromHistory,
+        ];
         setTilhorighetValg({
-          [Tilhorighet.A]: [
-            ...commonOptions[Tilhorighet.A],
-            ...tilhorighetOptionsFromUtkast,
-            ...tihorighetOptionsFromHistory,
-          ],
+          [Tilhorighet.A]: getUpdatedGrunnkretsNames(ListeA, getHistoryEntries()),
           [Tilhorighet.B]: [
             ...commonOptions[Tilhorighet.B],
             ...tilhorighetOptionsFromUtkast,
