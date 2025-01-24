@@ -36,7 +36,6 @@ const PointOverlayPopup = () => {
 const Popup = styled.div<{
   visible: boolean;
 }>`
-  position: absolute;
   color: white;
   background-color: var(--kvib-colors-gray-700);
   padding: 8px;

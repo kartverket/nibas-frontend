@@ -39,7 +39,8 @@ export const overlayPopup = new Overlay({
       duration: 250,
     },
   },
-  offset: [0, 0],
+  positioning: "center-center",
+  offset: [0, -35],
 });
 
 export const endringstyper = [
