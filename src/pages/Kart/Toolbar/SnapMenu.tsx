@@ -1,9 +1,8 @@
-import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Checkbox, Spacer } from "@kvib/react";
+import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Checkbox, Spacer, useToast } from "@kvib/react";
 import { useToolbar } from "contexts/ToolbarContext";
 import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
-
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -12,6 +11,7 @@ type Props = {
 
 const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
   const { activeModeTools, toggleModeTool } = useToolbar();
+  const toast = useToast();
 
   const toggleSnapping = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
@@ -27,8 +27,27 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
     }
   };
 
-  useKeyboardShortcut("snap", onToggle);
-
+  useKeyboardShortcut("snap", () => {
+    toggleSnapping();
+  });
+  useKeyboardShortcut("snap_matrikkel", () => {
+    toggleModeTool("snap_matrikkel");
+    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
+    if (isMatrikkelToggled) {
+      toast({ status: "warning", title: "Snapping mot teiggrenser er slått av." });
+    } else {
+      toast({ status: "info", title: "Snapping mot teiggrenser er slått på." });
+    }
+  });
+  useKeyboardShortcut("snap_nibas", () => {
+    toggleModeTool("snap_nibas");
+    const isMatrikkelToggled = activeModeTools.includes("snap_nibas");
+    if (isMatrikkelToggled) {
+      toast({ status: "warning", title: "Snapping mot egne grenser er slått av." });
+    } else {
+      toast({ status: "info", title: "Snapping mot egne grenser er slått på." });
+    }
+  });
   return (
     <Menu closeOnSelect={false} closeOnBlur={false} onClose={onClose} isOpen={isOpen}>
       <MenuButtonWithChevron

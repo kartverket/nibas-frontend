@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Draw, { DrawEvent } from "ol/interaction/Draw";
 import { pixelTolerance } from "./constants";
-import { useToolbar } from "contexts/ToolbarContext";
+import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
 import { noModifierKeys } from "ol/events/condition";
 import { grenseStyles } from "utils/map/layerStyles";
 import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
@@ -25,7 +25,9 @@ import { addFeaturesToSource } from "utils/map/source";
 import { editSource } from "hooks/layers/constants";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
-
+import { map } from "../constants";
+import { CollectionEvent } from "ol/Collection";
+import { Interaction } from "ol/interaction";
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
   const { currentlyEditingInndelinger } = useInndelinger();
@@ -44,25 +46,63 @@ const useDraw = () => {
     description: "Valgt punkt er ikke et endepunkt og vil resultere i en grensedeling ved avsluttet tegning",
   });
 
+  const activeToolRef = useRef<Tool | null>(null);
+  const activeModeToolsRef = useRef<ModeTool[]>([]);
+  const getLineStringFeaturesAtPixelRef = useRef(getLineStringFeaturesAtPixel);
+  const endpointToastRef = useRef(endpointToast);
+  const toastRef = useRef(toast);
+  // Når vi ikke avslutter/instansierer ny draw ved snap-toggling så blir det flere draw-instanser, fjerner derfor den/de som ikke er nyest.
+  useEffect(() => {
+    // Lytt på `map.getInteractions()` sin "add" event, for å oppdage når en ny Draw dukker opp
+    const interactions = map.getInteractions();
+    function handleAdd(evt: CollectionEvent<Interaction>) {
+      if (evt.element instanceof Draw) {
+        const draws = interactions.getArray().filter((i) => i instanceof Draw);
+        if (draws.length > 1) {
+          draws.slice(0, -1).forEach((d) => {
+            map.removeInteraction(d);
+          });
+        }
+      }
+    }
+    interactions.on("add", handleAdd);
+    return () => {
+      interactions.un("add", handleAdd);
+    };
+  }, []);
+  // Før lå disse i dependency-arrayet til `draw`-instansieringen (f.eks. `activeTool`, `toast` osv.),
+  // noe som gjorde at `draw` ble re-instansiert hver gang en av disse endret seg.
+  // Det førte til at pågående tegninger ble avbrutt unødvendig (f.eks. ved hver toast).
+  // Ved å bruke refs unngår vi å ha dem i dependency-lista for `draw`, og dermed beholdes den samme
+  // `draw`-instansen gjennom hele tegningen.
+  useEffect(() => {
+    // Oppdatér alle refs i én smell
+    activeToolRef.current = activeTool;
+    activeModeToolsRef.current = activeModeTools;
+    getLineStringFeaturesAtPixelRef.current = getLineStringFeaturesAtPixel;
+    endpointToastRef.current = endpointToast;
+    toastRef.current = toast;
+  }, [activeTool, activeModeTools, getLineStringFeaturesAtPixel, endpointToast, toast]);
+
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {
     // Denne er kun her for å få ESLint til å ikke ønske å legge til en regel-ignorering, da det ikke går an å legge til
     // ignoreringer for spesifikke dependencies i dependency arrayet.
     // It ain't clean, but it works.
     abortDrawMemoHelper;
-
     return new Draw({
       type: "LineString",
       snapTolerance: pixelTolerance,
       style: grenseStyles.select,
       freehandCondition: () => false,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
-        if (!noModifierKeys(event) || activeTool !== "draw" || activeModeTools.includes("move")) {
+        // Hent nåværende verdi fra ref
+        const currentTool = activeToolRef.current;
+        const currentModeTools = activeModeToolsRef.current;
+        if (!noModifierKeys(event) || currentTool !== "draw" || currentModeTools.includes("move")) {
           return false;
         }
-
-        const featuresAtPixel = getLineStringFeaturesAtPixel(event, "edit");
-
+        const featuresAtPixel = getLineStringFeaturesAtPixelRef.current(event, "edit");
         // Legg til feature hvis vi ikke treffer noen andre features
         if (featuresAtPixel.length === 0) {
           draw.changed();
@@ -78,7 +118,7 @@ const useDraw = () => {
             const nearbyVertex = findNearbyVertexOnFeature(geometry, event.coordinate);
 
             if (nearbyVertex == null) {
-              toast({
+              toastRef.current({
                 status: "warning",
                 title: "Punkter kan kun plasseres fritt eller på andre punkter",
               });
@@ -96,23 +136,23 @@ const useDraw = () => {
               const gyldigTilDato = getFeatureFremtidigEndringDato(feature);
 
               if (gyldigTilDato != null) {
-                toast({
+                toastRef.current({
                   status: "error",
                   title: `Grensen har en fremtidig endring og kan ikke endres før den nye endringen har inntruffet. Endringen skal inntreffe ${datestringToFormattedDatestring(gyldigTilDato)}`,
                 });
                 return false;
               }
-              endpointToast();
+              endpointToastRef.current();
             }
           }
         }
-
         // Vi ønsker å avslutte tegningen hvis man har startet en tegning, og så treffer et punkt, så vi unngår rar geometri
         // Dette gjøres ved å bumpe et versjonstall med draw.changed() hvis denne conditionen returnerer true. Hvis versjonen da er høyere
         // enn null (som den blir av første endring), vil vi avslutte tegningen
         if (draw.getRevision() > 0) {
           draw.appendCoordinates([event.coordinate]);
           draw.finishDrawing();
+          setAbortDrawMemoHelper((a) => a + 1);
           return false;
         }
 
@@ -120,7 +160,7 @@ const useDraw = () => {
         return true;
       },
     });
-  }, [abortDrawMemoHelper, activeTool, activeModeTools, getLineStringFeaturesAtPixel, toast, endpointToast]);
+  }, [abortDrawMemoHelper]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>, splittedFeatures: SplittedFeature[]) => {
@@ -204,7 +244,6 @@ const useDraw = () => {
       }
       return null;
     };
-
     const onDrawEnd = async (e: DrawEvent) => {
       const drawnFeature = e.feature as Feature<LineString>;
       const drawnFeatureGeometry = drawnFeature.getGeometry();
@@ -253,7 +292,6 @@ const useDraw = () => {
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
       // i så fall må vi holde styr på hvilken grense som skal utvides, og fra hvilket punkt. selectPoint kan være nyttig her
     };
-
     draw.on("drawend", onDrawEnd);
     draw.on("drawabort", onDrawAbort);
     return () => {

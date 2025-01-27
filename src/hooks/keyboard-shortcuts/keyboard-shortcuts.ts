@@ -10,6 +10,8 @@ export type Shortcut =
   | "merge"
   | "layers"
   | "snap"
+  | "snap_nibas"
+  | "snap_matrikkel"
   | "open"
   | "grenseinfo"
   | "grensecoordinates"
@@ -98,6 +100,8 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
 
   // Misc Toolbar
   snap: createShortcut("g", { control: true }),
+  snap_nibas: createShortcut("f", { control: true, shift: true }),
+  snap_matrikkel: createShortcut("g", { control: true, shift: true }),
   layers: createShortcut("k", { control: true }),
   goto: createShortcut("Enter", { control: true }),
 
