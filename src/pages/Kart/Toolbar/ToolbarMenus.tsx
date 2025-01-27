@@ -1,18 +1,12 @@
-import { Divider, Hide, Icon, MenuDivider, MenuItem, MenuItemProps, MenuList, MenuOptionGroup } from "@kvib/react";
+import { Divider, Hide, Icon, MenuDivider, MenuList, MenuOptionGroup } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { styled } from "styled-components";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 import { ConditionalHide, ConditionalShow } from "components/ConditionalShowHide";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
-
-type MenuItems = (MenuItemProps & {
-  $isActive: boolean;
-  isDisabled: boolean;
-  label: string;
-})[];
+import { MenuItems, ToolbarMenuItem } from "./Toolbar";
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool } = useToolbar();
@@ -257,9 +251,5 @@ const ToolbarMenus = () => {
     </>
   );
 };
-
-const ToolbarMenuItem = styled(MenuItem)<{ $isActive: boolean }>`
-  background: ${(props) => props.$isActive && "var(--kvib-colors-blue-50)"};
-`;
 
 export default ToolbarMenus;

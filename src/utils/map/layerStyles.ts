@@ -90,6 +90,16 @@ export const selectedPointStyle = new Style({
   zIndex: 10,
 });
 
+export const hoveredPointStyle = new Style({
+  image: new Circle({
+    radius: 6,
+    stroke: new Stroke({ color: "#D163E6FF", width: 6 }),
+  }),
+  fill: new Fill({ color: "#ffffff" }),
+  stroke: new Stroke({ color: "#D163E6FF" }),
+  zIndex: 10,
+});
+
 const flateStyles = [
   new Style({
     fill: new Fill({

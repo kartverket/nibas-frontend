@@ -6,18 +6,19 @@ import Point from "ol/geom/Point";
 import { editSource } from "hooks/layers/constants";
 import { removeFeaturesFromSourceByIds } from "utils/map/source";
 import { LineString } from "ol/geom";
+import Style from "ol/style/Style";
 
 export const useSelectStyles = () => {
   const [selectedPoint, setSelectedPoint] = useState<Feature<Point> | null>(null);
   const [selectedFeatures, setSelectedFeatures] = useState<Feature<LineString>[]>([]);
 
-  const selectPointOnFeature = (coordinate: Coordinate) => {
+  const selectPointOnFeature = (coordinate: Coordinate, style?: Style) => {
     if (selectedPoint) {
       selectedPoint.getGeometry()?.setCoordinates(coordinate);
     } else {
       const highlightPoint = new Feature(new Point(coordinate));
       highlightPoint.setId("temp-point-highlight");
-      highlightPoint.setStyle(selectedPointStyle);
+      highlightPoint.setStyle(style ?? selectedPointStyle);
       editSource.addFeatures([highlightPoint]);
       setSelectedPoint(highlightPoint);
     }

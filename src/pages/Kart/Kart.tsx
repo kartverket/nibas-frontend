@@ -14,6 +14,7 @@ import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { format, isPast } from "date-fns";
 import { useParams } from "react-router-dom";
+import PointOverlayPopup from "./PointOverlayPopup";
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -68,6 +69,7 @@ const Kart = () => {
             <Toolbar />
           </KartOverlay>
           <OverlayPopup />
+          <PointOverlayPopup />
         </Suspense>
       </KartTarget>
     </KartWrapper>
