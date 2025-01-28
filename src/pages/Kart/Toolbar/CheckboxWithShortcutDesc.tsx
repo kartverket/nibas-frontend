@@ -1,6 +1,6 @@
 import { Checkbox, Flex, Text } from "@kvib/react";
 
-type CustomCheckboxProps = {
+type CheckboxWithShortcutDescProps = {
   value: string;
   onChange: () => void;
   isChecked: boolean;
@@ -8,7 +8,13 @@ type CustomCheckboxProps = {
   children: React.ReactNode;
 };
 
-const CustomCheckbox = ({ value, onChange, isChecked, shortcut, children }: CustomCheckboxProps) => {
+const CheckboxWithShortcutDesc = ({
+  value,
+  onChange,
+  isChecked,
+  shortcut,
+  children,
+}: CheckboxWithShortcutDescProps) => {
   return (
     <Flex align="center" justifyContent={"space-between"}>
       <Checkbox value={value} onChange={onChange} isChecked={isChecked}>
@@ -21,4 +27,4 @@ const CustomCheckbox = ({ value, onChange, isChecked, shortcut, children }: Cust
   );
 };
 
-export default CustomCheckbox;
+export default CheckboxWithShortcutDesc;

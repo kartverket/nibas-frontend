@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
-import CustomCheckbox from "./CustomCheckbox";
+import CheckboxWithShortcutDesc from "./CheckboxWithShortcutDesc";
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -76,26 +76,26 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         <MenuDivider />
         <MenuItem>
           <Box w={"100%"}>
-            <CustomCheckbox
+            <CheckboxWithShortcutDesc
               value="egne"
               onChange={() => toggleModeTool("snap_nibas")}
               isChecked={activeModeTools.includes("snap_nibas")}
               shortcut={KeyboardShortcuts["snap_nibas"].displayString}
             >
               Snap til egne grenser
-            </CustomCheckbox>
+            </CheckboxWithShortcutDesc>
           </Box>
         </MenuItem>
         <MenuItem>
           <Box w={"100%"}>
-            <CustomCheckbox
+            <CheckboxWithShortcutDesc
               value="matrikkel"
               onChange={() => toggleModeTool("snap_matrikkel")}
               isChecked={activeModeTools.includes("snap_matrikkel")}
               shortcut={KeyboardShortcuts["snap_matrikkel"].displayString}
             >
               Snap til teiggrenser
-            </CustomCheckbox>
+            </CheckboxWithShortcutDesc>
           </Box>
         </MenuItem>
       </MenuList>
