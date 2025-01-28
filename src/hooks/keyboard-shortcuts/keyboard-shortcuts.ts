@@ -85,7 +85,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   delete: createShortcut("a", { control: true, shift: true }),
   draw: createShortcut("t", { control: true }),
   grenseinfo: createShortcut("i", { control: true }),
-  grensecoordinates: createShortcut("a", { control: true }),
+  grensecoordinates: createShortcut("k", { control: true, shift: true }),
   grensesplit: createShortcut("p", { control: true, shift: true }),
 
   // Point Tools
