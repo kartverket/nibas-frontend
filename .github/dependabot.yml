@@ -19,7 +19,4 @@ updates:
     directory: "/"
     schedule:
       interval: daily
-    groups:
-      dependencies:
-        patterns:
-          - "*"
+    open-pull-requests-limit: 10
