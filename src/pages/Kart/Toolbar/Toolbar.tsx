@@ -18,7 +18,7 @@ import { map } from "../constants";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
-import { ConditionalHide } from "components/ConditionalShowHide";
+import { ConditionalHide, ConditionalShow } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
 import { useState } from "react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
@@ -50,8 +50,12 @@ const Toolbar = () => {
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
 
-  const { currentlyEditingInndelinger } = useInndelinger();
+  const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
   const isEditing = currentlyEditingInndelinger.length > 0;
+
+  // TODO Sjekk om vi kan fjerne ubrukte inndelinger
+  const flatedataIsAvailable =
+    getAllInndelinger().filter((inndeling) => inndeling.isViewing || inndeling.isEditing).length > 0;
 
   const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 
@@ -261,7 +265,22 @@ const Toolbar = () => {
           >
             Gå til ...
           </ToolbarButton>
-
+          {!utkast && (
+            <ToolbarButton
+              icon="window"
+              onClick={() => toggleOverlayModal("flatedata")}
+              isActive={activeOverlayModal === "flatedata"}
+              isDisabled={!flatedataIsAvailable}
+              aria-label="Se eller endre flatedetaljer"
+              tooltip={{
+                text: "Se eller endre flatedetaljer",
+                additionalInfo: !flatedataIsAvailable ? "Velg en inndeling for å aktivere verktøyet" : undefined,
+                shortcut: "flatedata",
+              }}
+            >
+              Flatedetaljer
+            </ToolbarButton>
+          )}
           <ToolbarMenu
             icon="query_stats"
             isActive={informasjonMenuItems.some((imi) => imi.$isActive)}
