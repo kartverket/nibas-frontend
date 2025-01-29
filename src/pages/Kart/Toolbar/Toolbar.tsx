@@ -18,7 +18,7 @@ import { map } from "../constants";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
-import { ConditionalHide, ConditionalShow } from "components/ConditionalShowHide";
+import { ConditionalHide } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
 import { useState } from "react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
