@@ -92,11 +92,10 @@ export const selectedPointStyle = new Style({
 
 export const hoveredPointStyle = new Style({
   image: new Circle({
-    radius: 6,
-    stroke: new Stroke({ color: "#D163E6FF", width: 6 }),
+    radius: 2.5,
+    fill: new Fill({ color: "#000000" }),
+    stroke: new Stroke({ color: "#D163E680", width: 10 }),
   }),
-  fill: new Fill({ color: "#ffffff" }),
-  stroke: new Stroke({ color: "#D163E6FF" }),
   zIndex: 10,
 });
 
