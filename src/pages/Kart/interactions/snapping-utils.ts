@@ -73,7 +73,16 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
     hoverEnabled: false,
   };
 
-  const enableHoverPointForTools: Tool[] = ["split", "archive", "add", "grenseinfo", "koordinater", "remove", "draw"];
+  const enableHoverPointForTools: Tool[] = [
+    "split",
+    "archive",
+    "add",
+    "grenseinfo",
+    "koordinater",
+    "remove",
+    "draw",
+    "measure",
+  ];
 
   // Redigering og ingen verktøy eller snapping er valgt
   if (

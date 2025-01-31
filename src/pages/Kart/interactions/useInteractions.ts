@@ -11,16 +11,18 @@ import { useCursorStyles } from "./useCursorStyles";
 import { SnapData, createKartlagSnapsData } from "./snapping-utils";
 import { MapBrowserEvent } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
+import useMeasure from "./useMeasure";
 const useInteractions = () => {
   const { modify } = useModify();
   const { dragPan, dragZoom } = useDragInteractions();
   const { select } = useSelect();
   const { draw } = useDraw();
+  useMeasure();
   const { selectPoint } = useSelectPoint();
   const { activeModeTools, activeTool } = useToolbar();
   const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
 
-  const crosshairCursorTools: Tool[] = ["draw", "add", "remove", null];
+  const crosshairCursorTools: Tool[] = ["draw", "add", "remove", "measure", null];
   const pointerCursorTools: Tool[] = ["archive", "grenseinfo", "grensecoordinates", "koordinater", "split", "delete"];
 
   useCursorStyles({
@@ -47,7 +49,6 @@ const useInteractions = () => {
       },
     ],
   });
-
   // Legger til/fjerner `draw`-interaksjonen **bare** når `activeTool === "draw"`. På den måten unngår vi at `draw` nullstilles hver gang vi for eksempel
   // toggler snap. `draw` blir kun  fjernet hvis brukeren faktisk bytter verktøy bort fra "draw".
   useEffect(() => {
