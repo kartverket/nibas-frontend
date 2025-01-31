@@ -199,7 +199,7 @@ const Toolbar = () => {
     },
     {
       label: "Mål avstand",
-      icon: <Icon icon="distance" />,
+      icon: <Icon icon="straighten" />,
       command: KeyboardShortcuts["measure"].displayString,
       $isActive: activeTool === "measure",
       isDisabled: false,

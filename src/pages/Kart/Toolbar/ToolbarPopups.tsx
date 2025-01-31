@@ -170,7 +170,8 @@ const ToolbarPopups = () => {
       case "measure":
         return (
           <ToolbarPopup
-            text="Klikk på kartet for å starte oppmåling - dobbeltklikk for å avslutte"
+            text="Velg i kartet der du ønsker å starte målingen. Avslutt med dobbeltklikk."
+            subtext="Målingen kan snappes til punkter eller startes fritt utenfor andre grenser. Ønsker du å panorere underveis, bruk piltastene."
             onClose={resetTool}
           />
         );
