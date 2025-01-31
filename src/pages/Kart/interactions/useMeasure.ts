@@ -1,10 +1,9 @@
 import { useEffect, useRef, useMemo } from "react";
 import Draw, { DrawEvent } from "ol/interaction/Draw";
-import { Overlay } from "ol";
+import { Overlay, MapBrowserEvent } from "ol";
 import { unByKey } from "ol/Observable";
 import { getLength } from "ol/sphere";
 import { LineString } from "ol/geom";
-import { MapBrowserEvent } from "ol";
 import { Style, Stroke } from "ol/style";
 import { map } from "../constants";
 import { EventsKey } from "ol/events";
