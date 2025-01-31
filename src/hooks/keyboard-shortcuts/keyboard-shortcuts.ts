@@ -2,7 +2,6 @@ export type Shortcut =
   | "save"
   | "redo"
   | "undo"
-  | "edit"
   | "movepoint"
   | "move"
   | "add"
@@ -76,8 +75,7 @@ const createShortcut = (key: string, modifierKeys: ModifierKeysOption): Keyboard
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   // Mode Tools
-  move: createShortcut("v", {}),
-  edit: createShortcut("r", {}),
+  move: createShortcut("p", {}),
   matrikkel: createShortcut("e", { control: true }),
 
   // Grense Tools

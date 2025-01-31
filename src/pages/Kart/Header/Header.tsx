@@ -13,7 +13,7 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { Breadcrumb, BreadcrumbItem, Hide, Text, Tooltip } from "@kvib/react";
+import { Breadcrumb, BreadcrumbItem, Flex, Hide, Text, Tooltip } from "@kvib/react";
 import { capitalize } from "utils/string-utils";
 import { KommuneResponse } from "types/api";
 import { inndelingResponseNavnToString } from "utils/language/language";
@@ -69,14 +69,18 @@ const Header = () => {
     <Container>
       <UtkastBar>
         <HeaderBreadcrumb />
-        <HeaderHistoryOperations />
+        <Flex>
+          <HeaderHistoryOperations />
+          {utkast && <HeaderUtkastOperations utkast={utkast} />}
+          {!utkast && <HeaderVelgGyldighetsdato />}
+        </Flex>
       </UtkastBar>
-      <Bar>
+      <OpenInndelingerBar>
         <HeaderSection>
           {!utkast && <HeaderHome />}
           {utkast && (
             <HeaderButton
-              label="Rediger en inndeling"
+              label="Rediger inndeling"
               icon="travel_explore"
               onClick={async () => {
                 if (hasUnsavedChangesInHistory) {
@@ -136,9 +140,7 @@ const Header = () => {
             </Hide>
           )}
         </HeaderSection>
-        {utkast && <HeaderUtkastOperations utkast={utkast} />}
-        {!utkast && <HeaderVelgGyldighetsdato />}
-      </Bar>
+      </OpenInndelingerBar>
     </Container>
   );
 };
@@ -147,25 +149,26 @@ const InndelingText = styled(Text)<{ $isBold?: boolean }>`
   ${(props) => props.$isBold === true && "font-weight: var(--kvib-fontWeights-bold)"};
 `;
 
-const Container = styled.header`
-  box-shadow: var(--kvib-shadows-sm);
+const Container = styled.div`
   z-index: ${zindex.mapHeader};
   font-size: var(--kvib-fontSizes-sm);
-  background: white;
 `;
 
-const Bar = styled.article`
-  display: flex;
+const OpenInndelingerBar = styled(Flex)`
   justify-content: space-between;
-  padding: 10px 18px;
-  gap: 64px;
+  position: absolute;
+  background: var(--kvib-colors-chakra-body-bg);
+  margin-top: 18px;
+  margin-left: 18px;
 
   &:empty {
     display: none;
   }
 `;
 
-const UtkastBar = styled(Bar)`
+const UtkastBar = styled(Flex)`
+  justify-content: space-between;
+  padding: 10px 18px;
   background: var(--kvib-colors-chakra-body-bg);
   border-bottom: 1px solid var(--kvib-colors-chakra-border-color);
 `;

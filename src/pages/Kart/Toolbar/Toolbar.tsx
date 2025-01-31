@@ -3,6 +3,7 @@ import {
   AlertDescription,
   AlertIcon,
   AlertTitle,
+  Divider,
   Icon,
   MenuItem,
   MenuItemProps,
@@ -26,7 +27,6 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { anyFeatureIsEditable } from "utils/features";
 import SnapMenu from "./SnapMenu";
-import ZoomButtons from "./ZoomButtons";
 import { ToolbarMenu } from "./ToolbarMenu";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
@@ -65,6 +65,14 @@ const Toolbar = () => {
     if (activeOverlayPanel === "grenseinfo") {
       closeOverlayPanel();
     }
+  };
+
+  const zoom = (difference: number) => {
+    const view = map.getView();
+    view.animate({
+      zoom: (view.getZoom() ?? 0) + difference,
+      duration: 250,
+    });
   };
 
   const toggleMatrikkel = () => {
@@ -115,8 +123,16 @@ const Toolbar = () => {
   });
 
   useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
-  useKeyboardShortcut("move", () => enableModeTool("move"), panningEnabled);
-  useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
+  useKeyboardShortcut("move", () => {
+    if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
+      if (!utkast) return;
+      disableModeTool("move");
+      isEditing;
+    } else {
+      enableModeTool("move");
+      panningEnabled;
+    }
+  });
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useKeyboardShortcut("grensecoordinates", () => toggleTool("grensecoordinates"));
@@ -207,12 +223,9 @@ const Toolbar = () => {
       <ToolInfoAlert $isOpen={activeTool === "delete"}>
         <AlertIcon />
         <div>
-          <AlertTitle>Sletting og arkivering</AlertTitle>
           <AlertDescription>
             {`
-          Merk at sletteverktøyet kun er ment for grenser som er opprettet i utkatset ved en feiltagelse, og ikke
-          eksisterende (dvs. allerede publiserte) grenser. Ønsker du å fjerne disse, bruk heller "Arkiver
-          grenser"-verktøyet.
+          Sletteverktøyet er kun tiltenkt grenser som er opprettet i utkastet.
           `}
           </AlertDescription>
         </div>
@@ -220,51 +233,52 @@ const Toolbar = () => {
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          {utkast && (
-            <>
-              <ToolbarButton
-                icon="back_hand"
-                onClick={() => enableModeTool("move")}
-                isActive={activeModeTools.includes("move")}
-                isDisabled={!panningEnabled}
-                aria-label="Panorer i kartet"
-                tooltip={{
-                  text: "Panorer i kartet",
-                  shortcut: "move",
-                  holdButton: "ALT-tasten",
-                  additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
-                }}
-              >
-                Panorer
-              </ToolbarButton>
-              <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-                <ToolbarButton
-                  icon="highlight_mouse_cursor"
-                  onClick={() => disableModeTool("move")}
-                  isActive={!activeModeTools.includes("move")}
-                  aria-label="Flytt eller rediger grenser i kartet"
-                  isDisabled={!isEditing || !anyFeatureIsEditable()}
-                  tooltip={{
-                    text: "Flytt eller rediger grenser i kartet",
-                    shortcut: "edit",
-                    additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
-                  }}
-                >
-                  Flytt/Rediger
-                </ToolbarButton>
-                <ToolbarMenus />
-              </ConditionalHide>
-            </>
-          )}
+          <ToolbarButton
+            icon={"back_hand"}
+            onClick={() => {
+              if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
+                if (!utkast) return;
+                disableModeTool("move");
+                isEditing;
+              } else {
+                enableModeTool("move");
+                panningEnabled;
+              }
+            }}
+            isActive={activeModeTools.includes("move")}
+            aria-label={"Panorer i kartet"}
+            tooltip={{
+              text: "Panorer i kartet",
+              shortcut: "move",
+              holdButton: "ALT-tasten",
+              additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
+            }}
+          />
+          <Divider orientation="vertical" />
+          <ToolbarButton
+            icon="remove"
+            onClick={() => zoom(-1)}
+            variant="ghost"
+            aria-label="Zoom ut fra kartet"
+            tooltip={{ text: "Zoom ut" }}
+          />
+          <ToolbarButton
+            icon="add"
+            onClick={() => zoom(1)}
+            variant="ghost"
+            aria-label="Zoom inn på kartet"
+            tooltip={{ text: "Zoom inn" }}
+          />
+          <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
+            <ToolbarMenus />
+          </ConditionalHide>
           <ToolbarButton
             icon="search"
             isActive={activeOverlayModal === "navigasjon"}
             onClick={() => toggleOverlayModal("navigasjon")}
             aria-label="Gå til inndeling eller punkt i kartet"
-            tooltip={{ text: "Gå til inndeling eller punkt i kartet", shortcut: "goto" }}
-          >
-            Gå til ...
-          </ToolbarButton>
+            tooltip={{ text: "Finn i kartet", shortcut: "goto" }}
+          ></ToolbarButton>
           {!utkast && (
             <ToolbarButton
               icon="window"
@@ -277,18 +291,15 @@ const Toolbar = () => {
                 additionalInfo: !flatedataIsAvailable ? "Velg en inndeling for å aktivere verktøyet" : undefined,
                 shortcut: "flatedata",
               }}
-            >
-              Flatedetaljer
-            </ToolbarButton>
+            ></ToolbarButton>
           )}
           <ToolbarMenu
-            icon="query_stats"
+            icon="info"
             isActive={informasjonMenuItems.some((imi) => imi.$isActive)}
-            aria-label="Se informasjon om grensen"
-            tooltip="Vis informasjonsverktøy"
+            aria-label="Vis informasjonsverktøy"
+            tooltip="Informasjon"
             isDisabled={false}
             label={"Informasjon"}
-            additionalTooltip={"Se verktøy for å få informasjon om en grense"}
           >
             <MenuList>
               {informasjonMenuItems.map((imi) => (
@@ -299,30 +310,25 @@ const Toolbar = () => {
             </MenuList>
           </ToolbarMenu>
           <ToolbarButton
-            icon="map"
+            icon="stacks"
             aria-label="Åpne kartlagsmenyen"
             isActive={activeOverlayPanel === "kartlag"}
             onClick={() => toggleOverlayPanel("kartlag")}
-            tooltip={{ text: "Legg til, endre rekkefølge og fjern kartlag fra kartet.", shortcut: "layers" }}
-          >
-            Kartlag
-          </ToolbarButton>
+            tooltip={{ text: "Kartlag", shortcut: "layers" }}
+          ></ToolbarButton>
           <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
             <>
               <ToolbarButton
                 icon="holiday_village"
-                aria-label="Vis grenser fra matrikkelen"
+                aria-label="Teiggrenser"
                 isActive={activeModeTools.includes("matrikkel")}
                 onClick={toggleMatrikkel}
-                tooltip={{ text: "Vis grenser fra matrikkelen", shortcut: "matrikkel" }}
-              >
-                Matrikkel
-              </ToolbarButton>
+                tooltip={{ text: "Teiggrenser", shortcut: "matrikkel" }}
+              ></ToolbarButton>
               {utkast && <SnapMenu isOpen={isSnapMenuOpen} onClose={closeSnapMenu} onToggle={toggleSnapMenu} />}
             </>
           </ConditionalHide>
         </ToolbarButtons>
-        <ZoomButtons />
       </Container>
     </OuterContainer>
   );
@@ -332,7 +338,7 @@ const ToolInfoAlert = styled(Alert)<{ $isOpen?: boolean }>`
   ${(props) => props.$isOpen === false && "display: none"};
   position: absolute;
   top: 10px;
-  width: 800px;
+  width: var(--kvib-breakpoints-md);
   border-radius: var(--kvib-space-2);
   box-shadow: var(--kvib-shadows-lg);
 `;
@@ -364,12 +370,12 @@ const Container = styled.div`
 const ToolbarButtons = styled.div`
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 18px;
 
   width: fit-content;
-  padding: 16px 20px;
+  padding: 12px;
   background: white;
-  border-radius: 10px;
+  border-radius: var(--kvib-radii-lg);
   box-shadow: var(--kvib-shadows-sm);
 `;
 

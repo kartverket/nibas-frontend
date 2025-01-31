@@ -151,27 +151,11 @@ const ToolbarMenus = () => {
       <Hide below="xl">
         <ConditionalHide above="xl" condition={!!activeOverlayPanel}>
           <ToolbarMenu
-            label="Grense"
-            icon="timeline"
-            isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
-            isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
-            tooltip="Vis grenseverktøy"
-            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
-          >
-            <MenuList>
-              {grenseMenuItems.map((gmi) => (
-                <ToolbarMenuItem key={gmi.label} {...gmi}>
-                  {gmi.label}
-                </ToolbarMenuItem>
-              ))}
-            </MenuList>
-          </ToolbarMenu>
-          <ToolbarMenu
             label="Punkt"
-            icon="radio_button_checked"
+            icon="adjust"
             isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
             isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
-            tooltip="Vis punktverktøy"
+            tooltip="Punkt"
             additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
@@ -183,16 +167,28 @@ const ToolbarMenus = () => {
             </MenuList>
           </ToolbarMenu>
           <ToolbarMenu
+            label="Grense"
+            icon="timeline"
+            isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
+            isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
+            tooltip="Grense"
+            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
+          >
+            <MenuList>
+              {grenseMenuItems.map((gmi) => (
+                <ToolbarMenuItem key={gmi.label} {...gmi}>
+                  {gmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuList>
+          </ToolbarMenu>
+          <ToolbarMenu
             label="Flate"
-            icon="crop_landscape"
+            icon="border_all"
             isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
             isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
-            tooltip="Vis flateverktøy"
-            additionalTooltip={
-              mergeIsAvailable || flatedetaljerIsAvailable
-                ? undefined
-                : "Rediger en stemme- eller grunnkrets for å aktivere verktøyet"
-            }
+            tooltip="Flate"
+            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
               {flateMenuItems.map((fmi) => (
@@ -207,7 +203,7 @@ const ToolbarMenus = () => {
       <ConditionalShow below="xl" condition={!activeOverlayPanel}>
         <ToolbarMenu
           label="Verktøy"
-          icon="timeline"
+          icon="handyman"
           isDisabled={
             grenseMenuItems.every((gmi) => gmi.isDisabled) &&
             punktMenuItems.every((pmi) => pmi.isDisabled) &&
@@ -218,7 +214,7 @@ const ToolbarMenus = () => {
             punktMenuItems.some((pmi) => pmi.$isActive) ||
             flateMenuItems.some((fmi) => fmi.$isActive)
           }
-          tooltip={"Vis verktøy"}
+          tooltip={"Verktøy"}
         >
           <MenuList>
             <MenuOptionGroup title="Grense">

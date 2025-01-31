@@ -21,13 +21,13 @@ const ShortcutText = ({ shortcut, holdButton }: ShortcutTextProps) => {
   if (shortcutString != null && holdButton != null) {
     return (
       <ShortcutTextStyle>
-        Trykk {shortcutString} eller hold inne {holdButton}
+        {shortcutString} eller hold inne {holdButton}
       </ShortcutTextStyle>
     );
   } else if (holdButton != null) {
     return <ShortcutTextStyle>Hold inne {holdButton}</ShortcutTextStyle>;
   } else if (shortcutString != null) {
-    return <ShortcutTextStyle>Trykk {shortcutString}</ShortcutTextStyle>;
+    return <ShortcutTextStyle>{shortcutString}</ShortcutTextStyle>;
   }
   return null;
 };

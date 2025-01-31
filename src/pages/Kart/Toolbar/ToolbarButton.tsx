@@ -15,7 +15,6 @@ const ToolbarButton = (
   <CustomTooltip {...tooltip}>
     <ButtonContainer>
       <IconButton icon={icon} variant="ghost" ref={ref} {...props} />
-      <Label>{children}</Label>
     </ButtonContainer>
   </CustomTooltip>
 );
