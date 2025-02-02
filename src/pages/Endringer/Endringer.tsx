@@ -58,7 +58,7 @@ export const Endringer = () => {
         <TitleContainer>
           <ReturnButton to={routes.index}>
             <Icon icon="arrow_back" />
-            <span>Gå tilbake</span>
+            <span>Tilbake til forsiden</span>
           </ReturnButton>
           <Stack>
             <Heading as="h1" size="lg">
@@ -99,7 +99,7 @@ export const Endringer = () => {
           </TableContainer>
         ) : (
           <NoUtkastsMessageContainer>
-            <Text>{`Det er ingen publiserte utkast med endringer gyldig fra ${format(new Date(), "dd.MM.yyyy")}`}</Text>
+            <Text>{`Det er ingen publiserte utkast med endringer gyldig fra-dato satt til etter ${format(new Date(), "dd.MM.yyyy")}`}</Text>
           </NoUtkastsMessageContainer>
         )}
       </EndringerPage>

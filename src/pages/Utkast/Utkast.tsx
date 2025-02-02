@@ -59,7 +59,7 @@ const Utkast = () => {
         <TitleContainer>
           <ReturnButton to={routes.index}>
             <Icon icon="arrow_back" />
-            <span>Gå tilbake</span>
+            <span>Tilbake til forsiden</span>
           </ReturnButton>
           <Heading as="h1" size="lg">
             Upubliserte utkast
