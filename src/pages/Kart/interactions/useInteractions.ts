@@ -32,14 +32,14 @@ const useInteractions = () => {
     isEnabled: pointerCursorTools.includes(activeTool),
     defaultCursor: () => "pointer",
   });
-
   useCursorStyles({
     isEnabled: !pointerCursorTools.includes(activeTool) && activeModeTools.includes("move"),
     defaultCursor: () => "grab",
     eventsAndCursor: [
       {
         name: "pointerdrag",
-        cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "grabbing"),
+        cursor: (e) =>
+          shiftKeyOnly(e as MapBrowserEvent<UIEvent>) || activeModeTools.includes("dragzoom") ? "zoom-in" : "grabbing",
       },
       {
         name: "mouseup",
@@ -47,7 +47,6 @@ const useInteractions = () => {
       },
     ],
   });
-
   // Legger til/fjerner `draw`-interaksjonen **bare** når `activeTool === "draw"`. På den måten unngår vi at `draw` nullstilles hver gang vi for eksempel
   // toggler snap. `draw` blir kun  fjernet hvis brukeren faktisk bytter verktøy bort fra "draw".
   useEffect(() => {

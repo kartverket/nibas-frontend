@@ -45,41 +45,49 @@ const Kartinformasjon = () => {
 
   return (
     <>
-      <Container>
-        <ProjectionSpan>{getProjectionName(true)}</ProjectionSpan>
-        <Position id="mouse-position" />
+      <ScaleContainer>
+        <ScaleIndicator id="scale-line" />
         <Scale id="scale-bar" />
+      </ScaleContainer>
+      <Container>
+        <Position id="mouse-position" />
+        {getProjectionName(true)}
       </Container>
-
-      <ScaleIndicator id="scale-line" />
     </>
   );
 };
 
 const Container = styled.div`
+  font-family: monospace;
   position: absolute;
-  top: 6px;
-  left: 8px;
+  grid-area: mapinfo;
+  right: 10px;
+  bottom: 8px;
   align-items: center;
   display: flex;
-  justify-content: space-between;
-  padding: 2px 8px;
-  width: fit-content;
   gap: 12px;
-  background: white;
-  box-shadow: var(--kvib-shadows-sm);
   font-size: var(--kvib-fontSizes-xs);
-  border-radius: 4px;
   z-index: ${zindex.farBack};
+  color: var(--kvib-colors-gray-600);
+`;
+
+const ScaleContainer = styled.div`
+  font-family: monospace;
+  position: absolute;
+  grid-area: mapinfo;
+  left: 10px;
+  bottom: 8px;
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  font-size: var(--kvib-fontSizes-xs);
+  z-index: ${zindex.farBack};
+  color: var(--kvib-colors-gray-600);
 `;
 
 const ScaleIndicator = styled.span`
-  position: absolute;
-  bottom: 8px;
-  left: 8px;
   z-index: ${zindex.farBack};
-
-  border: 2px solid var(--kvib-colors-gray-700);
+  border: 2px solid var(--kvib-colors-gray-600);
   font-size: var(--kvib-fontSizes-xs);
   border-top: none;
   text-align: center;
@@ -101,15 +109,9 @@ const Scale = styled.div`
 `;
 
 const Position = styled.span`
-  color: var(--kvib-colors-black);
-
   div {
     white-space: pre;
   }
-`;
-
-const ProjectionSpan = styled.span`
-  color: var(--kvib-colors-gray-700);
 `;
 
 export default Kartinformasjon;

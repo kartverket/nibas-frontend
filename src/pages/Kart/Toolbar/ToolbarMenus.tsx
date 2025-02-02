@@ -1,4 +1,4 @@
-import { Divider, Hide, Icon, MenuDivider, MenuList, MenuOptionGroup } from "@kvib/react";
+import { Divider, Hide, Icon, MenuDivider, MenuList, MenuOptionGroup, Tooltip } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -7,9 +7,11 @@ import { ConditionalHide, ConditionalShow } from "components/ConditionalShowHide
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
+import { anyFeatureIsEditable } from "utils/features";
+import CustomTooltip from "./CustomTooltip";
 
 const ToolbarMenus = () => {
-  const { activeTool, toggleTool } = useToolbar();
+  const { activeTool, toggleTool, disableModeTool, activeModeTools } = useToolbar();
   const { activeOverlayPanel, closeOverlayPanel, toggleOverlayPanel, toggleOverlayModal, activeOverlayModal } =
     useOverlayPanel();
 
@@ -61,7 +63,7 @@ const ToolbarMenus = () => {
     },
     {
       label: "Del grense",
-      icon: <Icon icon="alt_route" />,
+      icon: <Icon icon="cut" />,
       $isActive: activeTool === "split",
       isDisabled: !isEditing,
       onClick: () => toggleTool("split"),
@@ -79,7 +81,7 @@ const ToolbarMenus = () => {
     },
     {
       label: "Slett grense",
-      icon: <Icon icon="delete" />,
+      icon: <Icon icon="delete_forever" />,
       command: KeyboardShortcuts["delete"].displayString,
       $isActive: activeTool === "delete",
       isDisabled: !isEditing,
@@ -89,8 +91,17 @@ const ToolbarMenus = () => {
   ];
   const punktMenuItems: MenuItems = [
     {
-      label: "Flytt punkt med koordinater",
-      icon: <Icon icon="location_on" />,
+      label: "Flytt punkt (frihånd)",
+      icon: <Icon icon="control_camera" />,
+      command: KeyboardShortcuts["edit"].displayString,
+      isDisabled: !isEditing || !anyFeatureIsEditable(),
+      onClick: () => disableModeTool("move"),
+      $isActive: !activeModeTools.includes("move"),
+      "aria-label": "Flytt punkt med frihånd",
+    },
+    {
+      label: "Flytt punkt (koordinater)",
+      icon: <Icon icon="my_location" />,
       command: KeyboardShortcuts["movepoint"].displayString,
       $isActive: activeTool === "koordinater",
       isDisabled: !isEditing,
@@ -99,7 +110,7 @@ const ToolbarMenus = () => {
     },
     {
       label: "Legg til punkt",
-      icon: <Icon icon="add_location_alt" />,
+      icon: <Icon icon="add_circle" />,
       command: KeyboardShortcuts["add"].displayString,
       $isActive: activeTool === "add",
       isDisabled: !isEditing,
@@ -108,7 +119,7 @@ const ToolbarMenus = () => {
     },
     {
       label: "Fjern punkt",
-      icon: <Icon icon="wrong_location" />,
+      icon: <Icon icon="do_not_disturb_on" />,
       command: KeyboardShortcuts["remove"].displayString,
       $isActive: activeTool === "remove",
       isDisabled: !isEditing,
@@ -119,7 +130,7 @@ const ToolbarMenus = () => {
   const flateMenuItems: MenuItems = [
     {
       label: "Flatedetaljer",
-      icon: <Icon icon="window" />,
+      icon: <Icon icon="menu_book" />,
       command: KeyboardShortcuts["flatedata"].displayString,
       $isActive: activeOverlayModal === "flatedata",
       isDisabled: !flatedataIsAvailable,
@@ -148,67 +159,90 @@ const ToolbarMenus = () => {
   return (
     <>
       <Divider orientation="vertical" />
-      <Hide below="xl">
-        <ConditionalHide above="xl" condition={!!activeOverlayPanel}>
+      <Hide below="lg">
+        <ConditionalHide above="lg" condition={!!activeOverlayPanel}>
           <ToolbarMenu
             label="Punkt"
             icon="adjust"
-            isDisabled={punktMenuItems.every((pmi) => pmi.isDisabled)}
+            isDisabled={false}
             isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
             tooltip="Punkt"
-            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
-              {punktMenuItems.map((pmi) => (
-                <ToolbarMenuItem key={pmi.label} {...pmi}>
-                  {pmi.label}
-                </ToolbarMenuItem>
-              ))}
+              {punktMenuItems.map((pmi) =>
+                pmi.isDisabled ? (
+                  <CustomTooltip
+                    text="Åpne en inndeling for å aktivere"
+                    aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
+                    key={pmi.label}
+                  >
+                    <ToolbarMenuItem {...pmi}>{pmi.label}</ToolbarMenuItem>
+                  </CustomTooltip>
+                ) : (
+                  <ToolbarMenuItem {...pmi} key={pmi.label}>
+                    {pmi.label}
+                  </ToolbarMenuItem>
+                ),
+              )}
             </MenuList>
           </ToolbarMenu>
           <ToolbarMenu
             label="Grense"
             icon="timeline"
-            isDisabled={grenseMenuItems.every((gmi) => gmi.isDisabled)}
+            isDisabled={false}
             isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
             tooltip="Grense"
-            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
-              {grenseMenuItems.map((gmi) => (
-                <ToolbarMenuItem key={gmi.label} {...gmi}>
-                  {gmi.label}
-                </ToolbarMenuItem>
-              ))}
+              {grenseMenuItems.map((gmi) =>
+                gmi.isDisabled ? (
+                  <CustomTooltip
+                    text="Åpne en inndeling for å aktivere"
+                    aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
+                    key={gmi.label}
+                  >
+                    <ToolbarMenuItem {...gmi}>{gmi.label}</ToolbarMenuItem>
+                  </CustomTooltip>
+                ) : (
+                  <ToolbarMenuItem {...gmi} key={gmi.label}>
+                    {gmi.label}
+                  </ToolbarMenuItem>
+                ),
+              )}
             </MenuList>
           </ToolbarMenu>
           <ToolbarMenu
             label="Flate"
             icon="border_all"
-            isDisabled={flateMenuItems.every((fmi) => fmi.isDisabled)}
+            isDisabled={false}
             isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
             tooltip="Flate"
-            additionalTooltip={isEditing ? undefined : "Rediger en inndeling for å aktivere verktøyet"}
           >
             <MenuList>
-              {flateMenuItems.map((fmi) => (
-                <ToolbarMenuItem key={fmi.label} {...fmi}>
-                  {fmi.label}
-                </ToolbarMenuItem>
-              ))}
+              {flateMenuItems.map((fmi) =>
+                fmi.isDisabled ? (
+                  <CustomTooltip
+                    text="Åpne en inndeling for å aktivere"
+                    aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
+                    key={fmi.label}
+                  >
+                    <ToolbarMenuItem {...fmi}>{fmi.label}</ToolbarMenuItem>
+                  </CustomTooltip>
+                ) : (
+                  <ToolbarMenuItem {...fmi} key={fmi.label}>
+                    {fmi.label}
+                  </ToolbarMenuItem>
+                ),
+              )}
             </MenuList>
           </ToolbarMenu>
         </ConditionalHide>
       </Hide>
-      <ConditionalShow below="xl" condition={!activeOverlayPanel}>
+      <ConditionalShow below="lg" condition={!activeOverlayPanel}>
         <ToolbarMenu
           label="Verktøy"
           icon="handyman"
-          isDisabled={
-            grenseMenuItems.every((gmi) => gmi.isDisabled) &&
-            punktMenuItems.every((pmi) => pmi.isDisabled) &&
-            flateMenuItems.every((fmi) => fmi.isDisabled)
-          }
+          isDisabled={false}
           isActive={
             grenseMenuItems.some((gmi) => gmi.$isActive) ||
             punktMenuItems.some((pmi) => pmi.$isActive) ||
@@ -217,28 +251,58 @@ const ToolbarMenus = () => {
           tooltip={"Verktøy"}
         >
           <MenuList>
-            <MenuOptionGroup title="Grense">
-              {grenseMenuItems.map((gmi) => (
-                <ToolbarMenuItem key={gmi.label} {...gmi}>
-                  {gmi.label}
-                </ToolbarMenuItem>
-              ))}
+            <MenuOptionGroup title="Punkt">
+              {punktMenuItems.map((pmi) =>
+                pmi.isDisabled ? (
+                  <CustomTooltip
+                    text="Åpne en inndeling for å aktivere"
+                    aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
+                    key={pmi.label}
+                  >
+                    <ToolbarMenuItem {...pmi}>{pmi.label}</ToolbarMenuItem>
+                  </CustomTooltip>
+                ) : (
+                  <ToolbarMenuItem {...pmi} key={pmi.label}>
+                    {pmi.label}
+                  </ToolbarMenuItem>
+                ),
+              )}
             </MenuOptionGroup>
             <MenuDivider />
-            <MenuOptionGroup title="Punkt">
-              {punktMenuItems.map((pmi) => (
-                <ToolbarMenuItem key={pmi.label} {...pmi}>
-                  {pmi.label}
-                </ToolbarMenuItem>
-              ))}
+            <MenuOptionGroup title="Grense">
+              {grenseMenuItems.map((gmi) =>
+                gmi.isDisabled ? (
+                  <CustomTooltip
+                    text="Åpne en inndeling for å aktivere"
+                    aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
+                    key={gmi.label}
+                  >
+                    <ToolbarMenuItem {...gmi}>{gmi.label}</ToolbarMenuItem>
+                  </CustomTooltip>
+                ) : (
+                  <ToolbarMenuItem {...gmi} key={gmi.label}>
+                    {gmi.label}
+                  </ToolbarMenuItem>
+                ),
+              )}
             </MenuOptionGroup>
             <MenuDivider />
             <MenuOptionGroup title="Flate">
-              {flateMenuItems.map((fmi) => (
-                <ToolbarMenuItem key={fmi.label} {...fmi}>
-                  {fmi.label}
-                </ToolbarMenuItem>
-              ))}
+              {flateMenuItems.map((fmi) =>
+                fmi.isDisabled ? (
+                  <CustomTooltip
+                    text="Åpne en inndeling for å aktivere"
+                    aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
+                    key={fmi.label}
+                  >
+                    <ToolbarMenuItem {...fmi}>{fmi.label}</ToolbarMenuItem>
+                  </CustomTooltip>
+                ) : (
+                  <ToolbarMenuItem {...fmi} key={fmi.label}>
+                    {fmi.label}
+                  </ToolbarMenuItem>
+                ),
+              )}
             </MenuOptionGroup>
           </MenuList>
         </ToolbarMenu>

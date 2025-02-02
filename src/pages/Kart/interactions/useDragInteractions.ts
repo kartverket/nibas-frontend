@@ -14,9 +14,13 @@ const useDragInteractions = () => {
     [activeModeTools],
   );
 
-  const dragZoom = new DragZoom({
-    condition: (e) => shiftKeyOnly(e),
-  });
+  const dragZoom = useMemo(
+    () =>
+      new DragZoom({
+        condition: (e) => activeModeTools.includes("dragzoom") || shiftKeyOnly(e),
+      }),
+    [activeModeTools],
+  );
 
   return { dragPan, dragZoom };
 };

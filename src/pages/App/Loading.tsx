@@ -3,20 +3,28 @@ import { Spinner } from "@kvib/react";
 
 const Loading = () => {
   return (
-    <Container>
-      <Spinner thickness="4px" emptyColor="gray.200" color="blue.500" size="2xl" />
-    </Container>
+    <SpinnerBackground>
+      <KartLoadingSpinner size="lg" />
+    </SpinnerBackground>
   );
 };
 
-const Container = styled.div`
-  margin: 0 auto;
-  text-align: center;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+const SpinnerBackground = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: var(--kvib-shadows-base);
+  margin: auto;
 `;
 
+const KartLoadingSpinner = styled(Spinner)`
+  color: var(--kvib-colors-blue-500);
+  border-width: 3px;
+  margin: auto;
+`;
 export default Loading;

@@ -17,6 +17,7 @@ import { styled } from "styled-components";
 import { getLayerById } from "utils/map/layers";
 import { map } from "../constants";
 import ToolbarButton from "./ToolbarButton";
+import useDragInteractions from "../interactions/useDragInteractions";
 import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
@@ -49,7 +50,6 @@ const Toolbar = () => {
     toggleOverlayModal,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
-
   const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
   const isEditing = currentlyEditingInndelinger.length > 0;
 
@@ -123,16 +123,16 @@ const Toolbar = () => {
   });
 
   useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
+  useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("move", () => {
     if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
       if (!utkast) return;
-      disableModeTool("move");
-      isEditing;
     } else {
       enableModeTool("move");
       panningEnabled;
     }
   });
+  useKeyboardShortcut("preview", () => toggleOverlayModal("inndelinger-view"));
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useKeyboardShortcut("grensecoordinates", () => toggleTool("grensecoordinates"));
@@ -144,6 +144,12 @@ const Toolbar = () => {
     () => enableModeTool("move"),
     () => disableModeTool("move"),
     isPanningAllowed,
+  );
+  useHoldButtonToggle(
+    "shift",
+    activeModeTools.includes("dragzoom"),
+    () => enableModeTool("dragzoom"),
+    () => disableModeTool("dragzoom"),
   );
 
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
@@ -199,7 +205,7 @@ const Toolbar = () => {
 
   const informasjonMenuItems: MenuItems = [
     {
-      label: "Informasjon om grense",
+      label: "Grenseinformasjon",
       icon: <Icon icon="info" />,
       command: KeyboardShortcuts["grenseinfo"].displayString,
       $isActive: activeTool === "grenseinfo",
@@ -208,13 +214,50 @@ const Toolbar = () => {
       "aria-label": "Informasjon om grense",
     },
     {
-      label: "Vis koordinater på punkt",
+      label: "Punktkoordinater",
       icon: <Icon icon="fmd_bad" />,
       command: KeyboardShortcuts["grensecoordinates"].displayString,
       $isActive: activeTool === "grensecoordinates",
       isDisabled: false,
       onClick: () => toggleTool("grensecoordinates"),
       "aria-label": "Vis koordinater på punkt",
+    },
+    {
+      label: "Tegnforklaring",
+      icon: <Icon icon="palette" />,
+      $isActive: activeOverlayPanel === "tegnforklaring",
+      isDisabled: false,
+      onClick: () => toggleOverlayPanel("tegnforklaring"),
+      "aria-label": "Åpne tegnforklaring",
+    },
+  ];
+  const kartlagMenuItems: MenuItems = [
+    {
+      label: "Bakgrunnskart",
+      icon: <Icon icon="map" />,
+      command: KeyboardShortcuts["layers"].displayString,
+      $isActive: activeOverlayPanel === "kartlag",
+      isDisabled: false,
+      onClick: () => toggleOverlayPanel("kartlag"),
+      "aria-label": "Åpne bakgrunnskartpanelet",
+    },
+    {
+      label: "Eiendomsgrenser",
+      icon: <Icon icon="holiday_village" />,
+      command: KeyboardShortcuts["matrikkel"].displayString,
+      $isActive: activeModeTools.includes("matrikkel"),
+      isDisabled: false,
+      onClick: toggleMatrikkel,
+      "aria-label": "Vis eiendomsgrenser",
+    },
+    {
+      label: "Egne grenser",
+      icon: <Icon icon="holiday_village" />,
+      command: KeyboardShortcuts["preview"].displayString,
+      $isActive: activeOverlayModal === "inndelinger-view",
+      isDisabled: false,
+      onClick: () => toggleOverlayModal("inndelinger-view"),
+      "aria-label": "Vis eiendomsgrenser",
     },
   ];
 
@@ -238,23 +281,38 @@ const Toolbar = () => {
             onClick={() => {
               if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
                 if (!utkast) return;
-                disableModeTool("move");
-                isEditing;
               } else {
-                enableModeTool("move");
-                panningEnabled;
+                if (activeModeTools.includes("dragzoom")) {
+                  enableModeTool("move");
+                  disableModeTool("dragzoom");
+                }
               }
             }}
-            isActive={activeModeTools.includes("move")}
+            isActive={activeModeTools.includes("move") && !activeModeTools.includes("dragzoom")}
             aria-label={"Panorer i kartet"}
             tooltip={{
               text: "Panorer i kartet",
               shortcut: "move",
-              holdButton: "ALT-tasten",
-              additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
             }}
           />
           <Divider orientation="vertical" />
+          <ToolbarButton
+            icon="select"
+            onClick={() => {
+              if (activeModeTools.includes("dragzoom")) {
+                disableModeTool("dragzoom");
+              } else {
+                enableModeTool("dragzoom");
+              }
+            }}
+            isActive={activeModeTools.includes("dragzoom")}
+            variant="ghost"
+            aria-label="Zoom til område ved å markere i kartet"
+            tooltip={{
+              text: "Zoom til område",
+              additionalInfo: "Shift + marker i kartet",
+            }}
+          />
           <ToolbarButton
             icon="remove"
             onClick={() => zoom(-1)}
@@ -269,7 +327,7 @@ const Toolbar = () => {
             aria-label="Zoom inn på kartet"
             tooltip={{ text: "Zoom inn" }}
           />
-          <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
+          <ConditionalHide below="lg" condition={!!activeOverlayPanel}>
             <ToolbarMenus />
           </ConditionalHide>
           <ToolbarButton
@@ -281,7 +339,7 @@ const Toolbar = () => {
           ></ToolbarButton>
           {!utkast && (
             <ToolbarButton
-              icon="window"
+              icon="menu_book"
               onClick={() => toggleOverlayModal("flatedata")}
               isActive={activeOverlayModal === "flatedata"}
               isDisabled={!flatedataIsAvailable}
@@ -309,25 +367,23 @@ const Toolbar = () => {
               ))}
             </MenuList>
           </ToolbarMenu>
-          <ToolbarButton
+          <ToolbarMenu
             icon="stacks"
-            aria-label="Åpne kartlagsmenyen"
-            isActive={activeOverlayPanel === "kartlag"}
-            onClick={() => toggleOverlayPanel("kartlag")}
-            tooltip={{ text: "Kartlag", shortcut: "layers" }}
-          ></ToolbarButton>
-          <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-            <>
-              <ToolbarButton
-                icon="holiday_village"
-                aria-label="Teiggrenser"
-                isActive={activeModeTools.includes("matrikkel")}
-                onClick={toggleMatrikkel}
-                tooltip={{ text: "Teiggrenser", shortcut: "matrikkel" }}
-              ></ToolbarButton>
-              {utkast && <SnapMenu isOpen={isSnapMenuOpen} onClose={closeSnapMenu} onToggle={toggleSnapMenu} />}
-            </>
-          </ConditionalHide>
+            isActive={kartlagMenuItems.some((kmi) => kmi.$isActive)}
+            aria-label="Kartlag"
+            tooltip="Kartlag"
+            isDisabled={false}
+            label={"Kartlag"}
+          >
+            <MenuList>
+              {kartlagMenuItems.map((kmi) => (
+                <ToolbarMenuItem key={kmi.label} {...kmi}>
+                  {kmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuList>
+          </ToolbarMenu>
+          <>{utkast && <SnapMenu isOpen={isSnapMenuOpen} onClose={closeSnapMenu} onToggle={toggleSnapMenu} />}</>
         </ToolbarButtons>
       </Container>
     </OuterContainer>

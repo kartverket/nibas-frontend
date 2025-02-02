@@ -54,13 +54,7 @@ const EditAndSaveButton = ({
 
   return (
     <Container className={className}>
-      {tooltip != null ? (
-        <Tooltip hasArrow label={<TooltipBody text={tooltip} />}>
-          {renderButton()}
-        </Tooltip>
-      ) : (
-        renderButton()
-      )}
+      {tooltip != null ? <Tooltip label={<TooltipBody text={tooltip} />}>{renderButton()}</Tooltip> : renderButton()}
     </Container>
   );
 };

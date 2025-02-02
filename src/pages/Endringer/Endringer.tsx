@@ -226,7 +226,6 @@ const FremtidigeUtkastTooltip = () => {
           <b>samme gyldig fra-dato som den fremtidige feilen oppstår</b>
         </>
       }
-      hasArrow
       placement="bottom"
     >
       <InfoIcon>

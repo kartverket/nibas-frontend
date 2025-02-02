@@ -15,6 +15,7 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { format, isPast } from "date-fns";
 import { useParams } from "react-router-dom";
 import PointOverlayPopup from "./PointOverlayPopup";
+import Loading from "pages/App/Loading";
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -56,17 +57,12 @@ const Kart = () => {
   return (
     <KartWrapper>
       <KartTarget ref={mapRef}>
-        <Suspense fallback="More loading...">
+        <Suspense fallback="Laster inn...">
           <KartOverlay>
-            {isLoadingInndeling && (
-              <SpinnerBackground>
-                <KartLoadingSpinner size="lg" />
-              </SpinnerBackground>
-            )}
-            <Kartinformasjon />
-            <TegnforklaringButton />
+            {isLoadingInndeling && <Loading />}
             <OverlayPanels />
             <Toolbar />
+            <Kartinformasjon />
           </KartOverlay>
           <OverlayPopup />
           <PointOverlayPopup />
@@ -94,27 +90,11 @@ const KartTarget = styled.div`
 
   /* dragzoom kan kun få style via vanlig css tydeligvis */
   .ol-dragzoom {
-    background: var(--kvib-colors-blue-200);
-    opacity: 0.3;
-    border-radius: 6px;
-    border: solid 2px var(--kvib-colors-blue-500);
+    background: var(--kvib-colors-whiteAlpha-500);
+    border-radius: var(--kvib-radii-lg);
+    border: solid 2px var(--kvib-colors-black);
+    box-shadow: var(--kvib-shadows-md);
   }
-`;
-
-const SpinnerBackground = styled.div`
-  display: grid;
-  place-items: center;
-  background: white;
-  padding: 12px;
-  border-radius: 50%;
-  box-shadow: var(--kvib-shadows-base);
-  margin: auto;
-`;
-
-const KartLoadingSpinner = styled(Spinner)`
-  color: var(--kvib-colors-blue-500);
-  border-width: 3px;
-  margin: auto;
 `;
 
 const KartOverlay = styled.div`
@@ -124,8 +104,8 @@ const KartOverlay = styled.div`
   justify-items: center;
   grid-template-areas:
     "overlay sidepanel"
-    "toolbar sidepanel";
-  gap: 16px;
+    "toolbar sidepanel"
+    "mapinfo sidepanel";
   width: 100%;
   height: 100%;
   position: absolute;

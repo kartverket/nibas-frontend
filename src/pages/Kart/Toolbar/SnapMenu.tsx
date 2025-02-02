@@ -5,6 +5,7 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 import CheckboxWithShortcutDesc from "./CheckboxWithShortcutDesc";
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -56,16 +57,16 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         aria-label="Snap til andre grenser i kartet"
         isOpen={isOpen}
         onClick={onToggle}
-        icon="align_justify_space_between"
+        icon="stack"
         isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
-        tooltip={{ text: "Skru av/på snapping mot andre grenser.", shortcut: "snap" }}
+        tooltip={{ text: "Snapping", shortcut: "snap" }}
       >
         Snap
       </MenuButtonWithChevron>
       <MenuList minWidth="240px" marginBottom="10px">
         <SnapMenuHeader>
           <Switch
-            aria-label="Switch medium"
+            aria-label="Slå av/på snapping"
             isChecked={activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")}
             onChange={() => toggleSnapping()}
           />

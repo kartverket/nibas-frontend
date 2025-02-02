@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import { forwardRef, ReactNode } from "react";
 
 type HeaderButtonProps = {
-  icon: MaterialSymbol;
+  icon?: MaterialSymbol; // Made optional
   onClick?: () => void;
   isDisabled?: boolean;
   tooltip?: CustomTooltipProps;
@@ -22,14 +22,22 @@ const HeaderButtonNoTooltip = forwardRef(function HeaderButtonWithNoTooltip(
       ref={ref}
       size="sm"
       variant="ghost"
-      icon={icon}
+      icon={icon ?? "home"} // Ensure IconButton always has an icon
       aria-label={label}
       onClick={onClick}
       isDisabled={isDisabled}
       {...props}
     />
   ) : (
-    <Button ref={ref} size="sm" variant="ghost" leftIcon={icon} onClick={onClick} isDisabled={isDisabled} {...props}>
+    <Button
+      ref={ref}
+      size="sm"
+      variant="ghost"
+      leftIcon={icon} // Use leftIcon only if icon is provided
+      onClick={onClick}
+      isDisabled={isDisabled}
+      {...props}
+    >
       <ButtonContent>
         {label} {alert}
       </ButtonContent>
@@ -40,7 +48,7 @@ const HeaderButtonNoTooltip = forwardRef(function HeaderButtonWithNoTooltip(
 const HeaderButton = ({ tooltip, ...props }: HeaderButtonProps) => {
   if (tooltip != null) {
     return (
-      <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}>
+      <Tooltip label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}>
         <HeaderButtonNoTooltip {...props} />
       </Tooltip>
     );
@@ -57,7 +65,7 @@ const ButtonContent = styled.div`
 export const HeaderSection = styled.section`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
 `;
 
 export default HeaderButton;

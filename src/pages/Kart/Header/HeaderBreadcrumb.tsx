@@ -1,9 +1,8 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Hide, Icon, Text, useDisclosure } from "@kvib/react";
+import { Button, Divider, Hide, Icon, Link, Text, useDisclosure } from "@kvib/react";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { styled } from "styled-components";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 import UtkastEndreModal from "components/Modals/UtkastEndreModal";
-import HeaderHome from "./HeaderHome";
 import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import useAlertModal from "hooks/useAlertModal";
@@ -36,24 +35,14 @@ const HeaderBreadcrumb = () => {
 
   return (
     <HeaderSection>
-      <HeaderHome />
-      <Breadcrumb separator="">
-        <CustomTooltip text="Gå tilbake til utkastoversikten" hasArrow>
-          <BreadcrumbItem>
-            <BreadcrumbLink onClick={handleHome}>Utkast</BreadcrumbLink>
-            <Separator icon="chevron_right" />
-          </BreadcrumbItem>
-        </CustomTooltip>
-        <Hide below="xl">
-          <BreadcrumbItem>
-            <Crumb>{utkast.endringstype}</Crumb>
-            <Separator icon="chevron_right" />
-          </BreadcrumbItem>
-        </Hide>
-        <BreadcrumbItem>
-          <Text noOfLines={1}>{utkast.navn}</Text>
-        </BreadcrumbItem>
-      </Breadcrumb>
+      <CustomTooltip text="Gå tilbake til utkastoversikten">
+        <Button leftIcon="arrow_back" variant="tertiary" size="sm" onClick={handleHome}>
+          Alle utkast
+        </Button>
+      </CustomTooltip>
+      <Divider orientation="vertical" />
+      <Hide below="lg">{utkast.endringstype}</Hide>
+      <Text noOfLines={1}>{utkast.navn}</Text>
       <HeaderButton
         label="Rediger utkast"
         icon="edit_note"

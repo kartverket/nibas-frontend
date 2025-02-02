@@ -5,7 +5,8 @@ import HeaderUtkastOperations from "./HeaderUtkastOperations";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import HeaderHome from "./HeaderHome";
+import { useNavigate } from "react-router-dom";
+import { routes } from "utils/routes";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { zindex } from "utils/constants";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
@@ -13,12 +14,12 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { Breadcrumb, BreadcrumbItem, Flex, Hide, Text, Tooltip } from "@kvib/react";
-import { capitalize } from "utils/string-utils";
+import { Breadcrumb, BreadcrumbItem, Button, Flex, Hide, Text, Tooltip } from "@kvib/react";
 import { KommuneResponse } from "types/api";
 import { inndelingResponseNavnToString } from "utils/language/language";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import HeaderVelgGyldighetsdato from "pages/Kart/Header/HeaderVelgGyldighetsdato";
+import CustomTooltip from "../Toolbar/CustomTooltip";
 
 const Header = () => {
   const { utkast } = useUtkast();
@@ -26,6 +27,7 @@ const Header = () => {
   const { history } = useHistory();
   const { toggleOverlayModal } = useOverlayPanel();
   const { openAsync } = useConfirmationModal();
+  const navigate = useNavigate();
 
   const { currentlyEditingInndelinger, selectedFylkeId } = useInndelinger();
 
@@ -68,6 +70,13 @@ const Header = () => {
   return (
     <Container>
       <UtkastBar>
+        {!utkast && (
+          <CustomTooltip text="Tilbake til forsiden">
+            <Button leftIcon="arrow_back" variant="tertiary" size="sm" onClick={() => navigate(routes.index)}>
+              Tilbake til forsiden
+            </Button>
+          </CustomTooltip>
+        )}
         <HeaderBreadcrumb />
         <Flex>
           <HeaderHistoryOperations />
@@ -76,12 +85,10 @@ const Header = () => {
         </Flex>
       </UtkastBar>
       <OpenInndelingerBar>
-        <HeaderSection>
-          {!utkast && <HeaderHome />}
-          {utkast && (
+        {utkast && (
+          <HeaderSection>
             <HeaderButton
               label="Rediger inndeling"
-              icon="travel_explore"
               onClick={async () => {
                 if (hasUnsavedChangesInHistory) {
                   const shouldToggle = await confirmSelectIfDirtyModal();
@@ -97,49 +104,37 @@ const Header = () => {
               }}
               variant="primary"
             />
-          )}
-          <HeaderButton
-            label="Forhåndsvis en inndeling"
-            icon="preview"
-            onClick={() => toggleOverlayModal("inndelinger-view")}
-            tooltip={{
-              text: "Åpne og se en inndeling i kartet",
-            }}
-            variant={utkast == null ? "primary" : "ghost"}
-          />
-          {activeFylke && currentlyEditingInndelinger.length > 0 && (
-            <Hide below="xl">
-              <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={0}>
-                <BreadcrumbItem>
-                  <InndelingText>{capitalize(currentlyEditingInndelinger[0].inndelingtype)}</InndelingText>
-                </BreadcrumbItem>
-                <BreadcrumbItem>
-                  <InndelingText $isBold={activeKommuner == null}>
-                    {activeFylke.nummer} {inndelingResponseNavnToString(activeFylke.navn)}
-                  </InndelingText>
-                </BreadcrumbItem>
+            {activeFylke && currentlyEditingInndelinger.length > 0 ? (
+              <Flex alignItems="center" gap={1}>
+                Redigerer{" "}
+                <InndelingText>
+                  {currentlyEditingInndelinger[0].inndelingtype}
+                  {(currentlyEditingInndelinger[0].inndelingtype === "stemmekrets" ||
+                    currentlyEditingInndelinger[0].inndelingtype === "grunnkrets") && <span>er i</span>}
+                </InndelingText>
                 {activeKommuner && activeKommuner.length > 0 && (
-                  <BreadcrumbItem>
-                    {activeKommuner.length > 3 ? (
+                  <span>
+                    {activeKommuner.length > 4 ? (
                       <Tooltip
-                        hasArrow
                         label={activeKommuner.map((kommune) => (
                           <p key={kommune.nummer}>
                             {kommune.nummer} {inndelingResponseNavnToString(kommune.navn)}
                           </p>
                         ))}
                       >
-                        <InndelingText $isBold>{activeKommuner.length} inndelinger redigeres</InndelingText>
+                        <InndelingText>{activeKommuner.length} inndelinger redigeres</InndelingText>
                       </Tooltip>
                     ) : (
-                      <InndelingText $isBold>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
+                      <InndelingText>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
                     )}
-                  </BreadcrumbItem>
+                  </span>
                 )}
-              </Breadcrumb>
-            </Hide>
-          )}
-        </HeaderSection>
+              </Flex>
+            ) : (
+              <p>Ingen inndelinger redigeres for øyeblikket.</p>
+            )}
+          </HeaderSection>
+        )}
       </OpenInndelingerBar>
     </Container>
   );
@@ -158,8 +153,11 @@ const OpenInndelingerBar = styled(Flex)`
   justify-content: space-between;
   position: absolute;
   background: var(--kvib-colors-chakra-body-bg);
+  border-radius: var(--kvib-radii-md);
   margin-top: 18px;
   margin-left: 18px;
+  padding-right: 16px;
+  box-shadow: var(--kvib-shadows-sm);
 
   &:empty {
     display: none;

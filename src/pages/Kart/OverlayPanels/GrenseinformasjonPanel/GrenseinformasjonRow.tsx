@@ -27,7 +27,7 @@ const GrenseinformasjonRow = ({
     <Container>
       <EditContent>
         <Row>
-          <Tooltip label={tooltipLabel} hasArrow placement="bottom">
+          <Tooltip label={tooltipLabel} placement="bottom">
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
               <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
               <InfoIcon>

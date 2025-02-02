@@ -2,6 +2,7 @@ export type Shortcut =
   | "save"
   | "redo"
   | "undo"
+  | "edit"
   | "movepoint"
   | "move"
   | "add"
@@ -22,6 +23,7 @@ export type Shortcut =
   | "flatesplit"
   | "draw"
   | "escape"
+  | "preview"
   | "goto";
 
 type KeyboardShortcut = {
@@ -75,8 +77,10 @@ const createShortcut = (key: string, modifierKeys: ModifierKeysOption): Keyboard
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   // Mode Tools
+  edit: createShortcut("r", {}),
   move: createShortcut("p", {}),
   matrikkel: createShortcut("e", { control: true }),
+  preview: createShortcut("p", { control: true, shift: true }),
 
   // Grense Tools
   archive: createShortcut("a", { control: true }),

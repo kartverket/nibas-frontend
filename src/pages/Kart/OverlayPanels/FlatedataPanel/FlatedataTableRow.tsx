@@ -27,7 +27,6 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
       <Tooltip
         label={`Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`}
         placement="left"
-        hasArrow
       >
         <IconContainer>
           <Icon
