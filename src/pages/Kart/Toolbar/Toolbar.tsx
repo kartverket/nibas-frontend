@@ -251,13 +251,13 @@ const Toolbar = () => {
       "aria-label": "Vis eiendomsgrenser",
     },
     {
-      label: "Egne grenser",
-      icon: <Icon icon="holiday_village" />,
+      label: "Legg til grenser i bakgrunnen",
+      icon: <Icon icon="preview" />,
       command: KeyboardShortcuts["preview"].displayString,
       $isActive: activeOverlayModal === "inndelinger-view",
       isDisabled: false,
       onClick: () => toggleOverlayModal("inndelinger-view"),
-      "aria-label": "Vis eiendomsgrenser",
+      "aria-label": "Legg til egne grenser som bakgrunn",
     },
   ];
 

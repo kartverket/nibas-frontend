@@ -1,4 +1,4 @@
-import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Spacer, useToast, Box } from "@kvib/react";
+import { Menu, MenuList, Switch, Text, CloseButton, MenuDivider, MenuItem, Spacer, useToast, Box } from "@kvib/react";
 import { useToolbar } from "contexts/ToolbarContext";
 import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -57,9 +57,9 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         aria-label="Snap til andre grenser i kartet"
         isOpen={isOpen}
         onClick={onToggle}
-        icon="stack"
+        icon="stacked_line_chart"
         isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
-        tooltip={{ text: "Snapping", shortcut: "snap" }}
+        tooltip={{ text: "Snapping" }}
       >
         Snap
       </MenuButtonWithChevron>
@@ -71,6 +71,9 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
             onChange={() => toggleSnapping()}
           />
           <span>Snapping</span>
+          <Text fontSize="sm" sx={{ color: "gray.600" }}>
+            {KeyboardShortcuts["snap"].displayString}
+          </Text>
           <Spacer />
           <CloseButton onClick={onClose} />
         </SnapMenuHeader>

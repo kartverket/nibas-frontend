@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import { forwardRef, ReactNode } from "react";
 
 type HeaderButtonProps = {
-  icon?: MaterialSymbol; // Made optional
+  icon?: MaterialSymbol;
   onClick?: () => void;
   isDisabled?: boolean;
   tooltip?: CustomTooltipProps;
@@ -22,7 +22,7 @@ const HeaderButtonNoTooltip = forwardRef(function HeaderButtonWithNoTooltip(
       ref={ref}
       size="sm"
       variant="ghost"
-      icon={icon ?? "home"} // Ensure IconButton always has an icon
+      icon={icon ?? "home"}
       aria-label={label}
       onClick={onClick}
       isDisabled={isDisabled}
@@ -65,7 +65,7 @@ const ButtonContent = styled.div`
 export const HeaderSection = styled.section`
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 4px;
 `;
 
 export default HeaderButton;

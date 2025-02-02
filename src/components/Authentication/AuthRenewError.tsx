@@ -77,7 +77,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)} size="xl">
+      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)} size="2xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Du har blitt logget ut automatisk</ModalHeader>
@@ -88,8 +88,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
               du lagrer utkastet ditt så ofte som mulig.
             </Text>
             <Text fontWeight="bold" mb="1rem">
-              Dersom du hadde ulagrede endringer kan vi forsøke å gjenopprette dem. Ønsker du å logge inn på nytt og
-              gjenopprette endringene?
+              Dersom du hadde ulagrede endringer kan vi dem. Ønsker du å logge inn på nytt og gjenopprette endringene?
             </Text>
           </ModalBody>
           <ModalFooter>

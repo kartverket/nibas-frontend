@@ -8,25 +8,17 @@ import { UtkastResponse } from "types/api";
 const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
   const { harEndringer } = useUtkastEndringer(utkast);
   const { isOpen: isPubliserOpen, onClose: onPubliserClose, onOpen: onPubliserOpen } = useDisclosure();
-  const { isOpen: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
 
   return (
     <HeaderSection>
       <HeaderButton
-        label="Publiser utkast"
-        icon="upload"
+        label="Publiser endringer"
         onClick={onPubliserOpen}
         isDisabled={!harEndringer}
+        variant="primary"
         tooltip={{ text: "Publiser alle endringene i dette utkastet" }}
       />
-      <HeaderButton
-        label="Slett utkast"
-        icon="delete"
-        onClick={onSlettOpen}
-        tooltip={{ text: "Slett utkastet og alle endringene i dette utkastet" }}
-      />
       <UtkastPubliserModal isOpen={isPubliserOpen} onClose={onPubliserClose} utkast={utkast} />
-      <UtkastSlettModal isOpen={isSlettOpen} onClose={onSlettClose} utkast={utkast} />
     </HeaderSection>
   );
 };

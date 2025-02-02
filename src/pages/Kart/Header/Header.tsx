@@ -78,7 +78,7 @@ const Header = () => {
           </CustomTooltip>
         )}
         <HeaderBreadcrumb />
-        <Flex>
+        <Flex gap={1}>
           <HeaderHistoryOperations />
           {utkast && <HeaderUtkastOperations utkast={utkast} />}
           {!utkast && <HeaderVelgGyldighetsdato />}
@@ -105,15 +105,17 @@ const Header = () => {
               variant="primary"
             />
             {activeFylke && currentlyEditingInndelinger.length > 0 ? (
-              <Flex alignItems="center" gap={1}>
-                Redigerer{" "}
-                <InndelingText>
+              <Flex alignItems="center" gap={1} paddingLeft="12px">
+                <Text sx={{ color: "gray.600" }}>Redigerer</Text>
+                <InndelingText sx={{ color: "gray.600" }}>
                   {currentlyEditingInndelinger[0].inndelingtype}
                   {(currentlyEditingInndelinger[0].inndelingtype === "stemmekrets" ||
-                    currentlyEditingInndelinger[0].inndelingtype === "grunnkrets") && <span>er i</span>}
+                    currentlyEditingInndelinger[0].inndelingtype === "grunnkrets") && (
+                    <Text sx={{ color: "gray.600" }}>er i</Text>
+                  )}
                 </InndelingText>
                 {activeKommuner && activeKommuner.length > 0 && (
-                  <span>
+                  <Text fontWeight="600">
                     {activeKommuner.length > 4 ? (
                       <Tooltip
                         label={activeKommuner.map((kommune) => (
@@ -127,11 +129,11 @@ const Header = () => {
                     ) : (
                       <InndelingText>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
                     )}
-                  </span>
+                  </Text>
                 )}
               </Flex>
             ) : (
-              <p>Ingen inndelinger redigeres for øyeblikket.</p>
+              <Text sx={{ color: "gray.700", paddingLeft: "12px" }}>Ingen inndelinger redigeres for øyeblikket</Text>
             )}
           </HeaderSection>
         )}
@@ -142,6 +144,7 @@ const Header = () => {
 
 const InndelingText = styled(Text)<{ $isBold?: boolean }>`
   ${(props) => props.$isBold === true && "font-weight: var(--kvib-fontWeights-bold)"};
+  display: flex;
 `;
 
 const Container = styled.div`

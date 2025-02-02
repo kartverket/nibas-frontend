@@ -80,7 +80,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   edit: createShortcut("r", {}),
   move: createShortcut("p", {}),
   matrikkel: createShortcut("e", { control: true }),
-  preview: createShortcut("p", { control: true, shift: true }),
+  preview: createShortcut("p", { control: true }),
 
   // Grense Tools
   archive: createShortcut("a", { control: true }),

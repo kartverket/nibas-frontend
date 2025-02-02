@@ -1,8 +1,7 @@
 import { Button, Divider, Hide, Icon, Link, Text, useDisclosure } from "@kvib/react";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { styled } from "styled-components";
-import HeaderButton, { HeaderSection } from "./HeaderButton";
-import UtkastEndreModal from "components/Modals/UtkastEndreModal";
+import { HeaderSection } from "./HeaderButton";
 import { useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import useAlertModal from "hooks/useAlertModal";
@@ -11,7 +10,6 @@ import AlertModal from "components/Modals/AlertModal";
 import CustomTooltip from "../Toolbar/CustomTooltip";
 
 const HeaderBreadcrumb = () => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
   const { utkast } = useUtkast();
   const { canSave } = useHistory();
   const navigate = useNavigate();
@@ -41,16 +39,8 @@ const HeaderBreadcrumb = () => {
         </Button>
       </CustomTooltip>
       <Divider orientation="vertical" />
-      <Hide below="lg">{utkast.endringstype}</Hide>
+      <Hide below="md">{utkast.endringstype}</Hide>
       <Text noOfLines={1}>{utkast.navn}</Text>
-      <HeaderButton
-        label="Rediger utkast"
-        icon="edit_note"
-        onClick={onOpen}
-        isLabelHidden={true}
-        tooltip={{ text: "Rediger detaljene til dette utkastet" }}
-      />
-      <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
       <AlertModal
         status="warning"
         title={modalTitle}

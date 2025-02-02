@@ -47,7 +47,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
               {laster && (
                 <Flex alignItems="center" gap="var(--kvib-space-4)">
                   <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="lg" />
-                  <Text>Laster inn endringslogg ...</Text>
+                  <Text>Laster inn endringer</Text>
                 </Flex>
               )}
             </Center>
