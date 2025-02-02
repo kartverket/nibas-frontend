@@ -68,8 +68,8 @@ export const MergeMultiselect = ({ alleStemmekretser }: MergeMultiselectProps) =
           }}
         />
       ))}
-      <LeggTilFlerButton variant="secondary" rightIcon="add" onClick={() => append({ value: "default" })}>
-        Legg til flere sammenslåinger
+      <LeggTilFlerButton variant="tertiary" leftIcon="add" onClick={() => append({ value: "default" })}>
+        Legg til flere stemmekretser
       </LeggTilFlerButton>
     </MultiSelectWrapper>
   );

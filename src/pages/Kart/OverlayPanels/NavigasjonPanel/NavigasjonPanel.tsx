@@ -62,11 +62,11 @@ const fadeIn = keyframes`
 `;
 
 const Container = styled(AbsolutePanel)`
-  top: 32px;
+  top: 48px;
   left: 50%;
   transform: translateX(-50%);
   max-width: unset;
-  width: 800px;
+  width: var(--kvib-sizes-3xl);
   padding: 24px 24px 8px;
   border-radius: 8px;
   box-shadow: var(--kvib-shadows-lg);

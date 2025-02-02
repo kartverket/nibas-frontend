@@ -17,7 +17,7 @@ const Greeting = () => {
 
   return (
     <Container>
-      <Text as="b">God {contextualGreeting}!</Text> Hva har du lyst til å gjøre nå?
+      <Text as="b">God {contextualGreeting}!</Text> Hva har du lyst til å gjøre?
     </Container>
   );
 };

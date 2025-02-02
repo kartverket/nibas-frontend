@@ -29,7 +29,7 @@ const Form = styled.form`
 
 const InputsWrapper = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 2fr;
   gap: 16px;
 `;
 
@@ -204,11 +204,8 @@ const MergePanel = () => {
         utkastStemmekretser && (
           <FormProvider {...formMethods}>
             <Form onSubmit={handleSubmit(handleMerge)}>
-              <Heading as="h3" size="sm">
-                Hvilken stemmekrets skal brukes som utgangspunkt?
-              </Heading>
               <FormControl>
-                <FormLabel>Stemmekrets</FormLabel>
+                <FormLabel>Stemmekrets (utgangspunkt)</FormLabel>
                 <Select
                   {...selectStemmekretsRegister}
                   onChange={(e) => {
@@ -237,25 +234,14 @@ const MergePanel = () => {
                     })}
                 </Select>
               </FormControl>
-              <Alert>
-                <AlertIcon />
-                <AlertTitle>
-                  Legg merke til at det er informasjonen fra denne stemmekretsen som vil beholdes, mens all informasjon
-                  om de resterende stemmekretsene vil bli fjernet i sin helhet fra inndelingsbasen.
-                </AlertTitle>
-              </Alert>
-              <Divider />
-              <Heading as="h3" size="sm">
-                Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?
-              </Heading>
               <MergeMultiselect alleStemmekretser={utkastStemmekretser} />
               <Divider />
               <Heading as="h3" size="sm">
-                Hva skal den sammenslåtte stemmekretsen hete?
+                Informasjon om den nye flaten
               </Heading>
               <InputsWrapper>
                 <Input
-                  label="Stemmekretsnummer"
+                  label="Stemmekretsnr."
                   {...register(
                     "nummer",
                     getNumberValidatorFunctionForInndelingType("stemmekrets")({

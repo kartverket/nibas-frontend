@@ -1,11 +1,10 @@
 import { Button, Text, Icon, MaterialSymbol } from "@kvib/react";
-import {} from "material-symbols";
 import { styled } from "styled-components";
 
 type Props = {
   text: string;
   subtext?: string;
-  icon?: string;
+  icon: MaterialSymbol;
   onClick?: () => void;
   secondaryOnClick?: () => void;
   secondaryButtonText?: string;
@@ -21,6 +20,7 @@ const ToolbarPopup = ({
   buttonText = "",
   onClick,
   onClose,
+  icon,
   secondaryButtonText = "",
   secondaryOnClick,
   isDisabled = false,
@@ -28,7 +28,8 @@ const ToolbarPopup = ({
 }: Props) => {
   return (
     <ToolbarPopupBody>
-      <TextRows style={{ marginRight: onClose != null ? "28px" : "0" }}>
+      <Icon icon={icon} color="var(--kvib-colors-blue-500" />
+      <TextRows style={{ marginLeft: "8px", marginRight: onClose != null ? "28px" : "0" }}>
         <Text as="b" fontSize="sm">
           {text}
         </Text>
@@ -60,7 +61,7 @@ const ToolbarPopupBody = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 2px;
-  padding: 8px 18px;
+  padding: 8px 12px;
   border-radius: 8px;
   background: var(--kvib-colors-blue-50);
   border: 2px solid var(--kvib-colors-blue-500);

@@ -251,13 +251,13 @@ const Toolbar = () => {
       "aria-label": "Vis eiendomsgrenser",
     },
     {
-      label: "Legg til grenser i bakgrunnen",
+      label: "Forhåndsvis inndelinger",
       icon: <Icon icon="preview" />,
       command: KeyboardShortcuts["preview"].displayString,
       $isActive: activeOverlayModal === "inndelinger-view",
       isDisabled: false,
       onClick: () => toggleOverlayModal("inndelinger-view"),
-      "aria-label": "Legg til egne grenser som bakgrunn",
+      "aria-label": "Legg til egne grenser som forhåndsvisning i bakgrunnen av kartet",
     },
   ];
 
@@ -327,9 +327,12 @@ const Toolbar = () => {
             aria-label="Zoom inn på kartet"
             tooltip={{ text: "Zoom inn" }}
           />
-          <ConditionalHide below="lg" condition={!!activeOverlayPanel}>
-            <ToolbarMenus />
-          </ConditionalHide>
+          {utkast && (
+            <ConditionalHide below="lg" condition={!!activeOverlayPanel}>
+              <ToolbarMenus />
+            </ConditionalHide>
+          )}
+
           <ToolbarButton
             icon="search"
             isActive={activeOverlayModal === "navigasjon"}
@@ -346,7 +349,7 @@ const Toolbar = () => {
               aria-label="Se eller endre flatedetaljer"
               tooltip={{
                 text: "Se eller endre flatedetaljer",
-                additionalInfo: !flatedataIsAvailable ? "Velg en inndeling for å aktivere verktøyet" : undefined,
+                additionalInfo: !flatedataIsAvailable ? "Forhåndsvis en inndeling for å aktivere verktøyet" : undefined,
                 shortcut: "flatedata",
               }}
             ></ToolbarButton>

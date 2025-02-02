@@ -35,12 +35,13 @@ const HeaderBreadcrumb = () => {
     <HeaderSection>
       <CustomTooltip text="Gå tilbake til utkastoversikten">
         <Button leftIcon="arrow_back" variant="tertiary" size="sm" onClick={handleHome}>
-          Alle utkast
+          Se alle utkast
         </Button>
       </CustomTooltip>
-      <Divider orientation="vertical" />
-      <Hide below="md">{utkast.endringstype}</Hide>
-      <Text noOfLines={1}>{utkast.navn}</Text>
+      <Divider marginLeft="8px" orientation="vertical" />
+      <Text paddingLeft="14px" noOfLines={1}>
+        {utkast.navn}
+      </Text>
       <AlertModal
         status="warning"
         title={modalTitle}

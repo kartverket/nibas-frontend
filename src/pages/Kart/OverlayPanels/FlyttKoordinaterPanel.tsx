@@ -22,7 +22,7 @@ import {
   isPointInsideMultiPolygon,
   transformCoordinatesToProjection,
 } from "./NavigasjonPanel/koordinater-utils";
-import { AbsolutePanel, PanelHeader } from "./Panel";
+import { AbsolutePanel, PanelHeader, SidePanel } from "./Panel";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 type KoordinaterFormData = {
@@ -277,7 +277,7 @@ const FlyttKoordinaterPanel = () => {
   };
 
   return (
-    <AbsolutePanel>
+    <SidePanel>
       <PanelHeader onClose={onKoordinaterPanelClose} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>
@@ -335,7 +335,7 @@ const FlyttKoordinaterPanel = () => {
           </Button>
         </ButtonRow>
       </Form>
-    </AbsolutePanel>
+    </SidePanel>
   );
 };
 

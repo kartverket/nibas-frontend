@@ -129,6 +129,8 @@ const PanelHeadingContainer = styled.div`
 
 const PanelHeadingText = styled.h3`
   display: flex;
+  font-size: var(--kvib-fontSizes-lg);
+  font-weight: 600;
   align-items: center;
   justify-content: space-between;
   width: 100%;

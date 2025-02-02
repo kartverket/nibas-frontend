@@ -14,12 +14,13 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { Breadcrumb, BreadcrumbItem, Button, Flex, Hide, Text, Tooltip } from "@kvib/react";
+import { Breadcrumb, BreadcrumbItem, Button, Divider, Flex, Hide, Icon, Text, Tooltip } from "@kvib/react";
 import { KommuneResponse } from "types/api";
 import { inndelingResponseNavnToString } from "utils/language/language";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import HeaderVelgGyldighetsdato from "pages/Kart/Header/HeaderVelgGyldighetsdato";
 import CustomTooltip from "../Toolbar/CustomTooltip";
+import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 
 const Header = () => {
   const { utkast } = useUtkast();
@@ -71,11 +72,20 @@ const Header = () => {
     <Container>
       <UtkastBar>
         {!utkast && (
-          <CustomTooltip text="Tilbake til forsiden">
-            <Button leftIcon="arrow_back" variant="tertiary" size="sm" onClick={() => navigate(routes.index)}>
-              Tilbake til forsiden
-            </Button>
-          </CustomTooltip>
+          <Flex alignItems="center">
+            <CustomTooltip text="Tilbake til forsiden">
+              <Button leftIcon="arrow_back" variant="tertiary" size="sm" onClick={() => navigate(routes.index)}>
+                Tilbake til forsiden
+              </Button>
+            </CustomTooltip>
+            <Divider marginLeft="8px" orientation="vertical" />
+            <Flex paddingLeft="14px" gap={1} alignItems="center">
+              <Text sx={{ color: "gray.700" }}>
+                Forhåndsvis en inndeling ved å bruke {KeyboardShortcuts["preview"].displayString} eller ved å benytte
+                kartlagsmenyen
+              </Text>
+            </Flex>
+          </Flex>
         )}
         <HeaderBreadcrumb />
         <Flex gap={1}>
@@ -85,8 +95,8 @@ const Header = () => {
         </Flex>
       </UtkastBar>
       <OpenInndelingerBar>
-        {utkast && (
-          <HeaderSection>
+        <HeaderSection>
+          {utkast && (
             <HeaderButton
               label="Rediger inndeling"
               onClick={async () => {
@@ -104,8 +114,10 @@ const Header = () => {
               }}
               variant="primary"
             />
-            {activeFylke && currentlyEditingInndelinger.length > 0 ? (
-              <Flex alignItems="center" gap={1} paddingLeft="12px">
+          )}
+          {utkast &&
+            (activeFylke && currentlyEditingInndelinger.length > 0 ? (
+              <Flex alignItems="center" gap={1} padding="0 12px">
                 <Text sx={{ color: "gray.600" }}>Redigerer</Text>
                 <InndelingText sx={{ color: "gray.600" }}>
                   {currentlyEditingInndelinger[0].inndelingtype}
@@ -133,10 +145,9 @@ const Header = () => {
                 )}
               </Flex>
             ) : (
-              <Text sx={{ color: "gray.700", paddingLeft: "12px" }}>Ingen inndelinger redigeres for øyeblikket</Text>
-            )}
-          </HeaderSection>
-        )}
+              <Text sx={{ color: "gray.700", padding: "0 12px" }}>Ingen inndelinger redigeres for øyeblikket</Text>
+            ))}
+        </HeaderSection>
       </OpenInndelingerBar>
     </Container>
   );
@@ -159,7 +170,6 @@ const OpenInndelingerBar = styled(Flex)`
   border-radius: var(--kvib-radii-md);
   margin-top: 18px;
   margin-left: 18px;
-  padding-right: 16px;
   box-shadow: var(--kvib-shadows-sm);
 
   &:empty {
