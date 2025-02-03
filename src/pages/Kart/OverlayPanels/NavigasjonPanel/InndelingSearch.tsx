@@ -1,23 +1,23 @@
 import { Badge, SearchAsync, SearchAsyncElement, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 import { styled } from "styled-components";
-import { InndelingSearchResponse } from "types/api";
-import { NavigasjonProps } from "./NavigasjonPanel";
+import { InndelingSearchResponse, InndelingSearchType } from "types/api";
 import { useInndelingerSearch } from "./useInndelingerSearch";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
-type InndelingOption = InndelingSearchResponse & {
+export type InndelingOption = InndelingSearchResponse & {
   label: string;
 };
 
-type InndelingSearchProps = NavigasjonProps & {
+type InndelingSearchProps = {
+  onSelect: (selectedSearchResult: InndelingOption | null) => void;
   isOpen: boolean;
+  inndelingstypeFilter: InndelingSearchType[];
 };
 
-export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: InndelingSearchProps) => {
+export const InndelingSearch = ({ onSelect, isOpen, inndelingstypeFilter }: InndelingSearchProps) => {
   const searchInndelinger = useInndelingerSearch();
-  const [selectedInndeling, setSelectedInndeling] = useState<InndelingOption | null>();
   const searchRef = useRef<SearchAsyncElement<InndelingOption>>(null);
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
@@ -39,19 +39,18 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: Inndel
   };
 
   const handleOnChange = (inndeling: InndelingOption | null) => {
-    const north = inndeling?.representasjonspunkt.y;
-    const east = inndeling?.representasjonspunkt.x;
-    if (north != null && east != null) {
-      centerOnCoordinate(north, east);
-      setSelectedInndeling(null);
-    }
+    onSelect(inndeling);
   };
 
   const loadResults = async (term: string, resultsCallback: (options: InndelingOption[]) => void) => {
     if (term.length > 1) {
       const inndelinger = await searchInndelinger(term, 15, gyldighetsdato);
       if (inndelinger !== null) {
-        resultsCallback(inndelinger.map(mapInndelingResponseToOption));
+        resultsCallback(
+          // TODO filter her gjør at resultater potensielt dukker opp senere enn nødvendig fordi de er statisk sortert.
+          // Hvis vi endrer endepunkt til å ha filter kan vi få det korrekt
+          inndelinger.map(mapInndelingResponseToOption).filter((option) => inndelingstypeFilter.includes(option.type)),
+        );
       }
     }
   };
@@ -66,7 +65,7 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: Inndel
     return (
       <OptionContainer>
         <Text>{label}</Text>
-        <Badge colorScheme="gray">{type}</Badge>
+        {inndelingstypeFilter.length > 1 && <Badge colorScheme="gray">{type}</Badge>}
       </OptionContainer>
     );
   };
@@ -124,7 +123,6 @@ export const InndelingSearch = ({ onSelect: centerOnCoordinate, isOpen }: Inndel
 
   return (
     <SearchAsync
-      value={selectedInndeling}
       optionLabelFormatter={highlightAndBadgeLabelFormatter}
       placeholder="Skriv inn navnet eller nummeret til inndelingen"
       noOptionsMessage={noOptionMessage}

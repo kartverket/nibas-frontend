@@ -3,9 +3,10 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { keyframes, styled } from "styled-components";
 import { map } from "../../constants";
 import { AbsolutePanel } from "../Panel";
-import { InndelingSearch } from "./InndelingSearch";
+import { InndelingOption, InndelingSearch } from "./InndelingSearch";
 import { KoordinaterSearch } from "./KoordinaterSearch";
 import { useState } from "react";
+import { EiendomSearch } from "./EiendomSearch";
 
 export type NavigasjonProps = {
   onSelect: (north: number | null, east: number | null) => void;
@@ -24,21 +25,38 @@ const NavigasjonPanel = () => {
     }
   };
 
+  const handleOnChange = (inndeling: InndelingOption | null) => {
+    const north = inndeling?.representasjonspunkt.y;
+    const east = inndeling?.representasjonspunkt.x;
+    if (north != null && east != null) {
+      centerOnCoordinate(north, east);
+      //setSelectedInndeling(null);
+    }
+  };
+
   return (
     <Container>
       <CustomTabs size="md">
         <TabList>
           <Tab onClick={() => setCurrentTabIndex(0)}>Gå til inndeling</Tab>
           <Tab onClick={() => setCurrentTabIndex(1)}>Gå til koordinater</Tab>
+          <Tab onClick={() => setCurrentTabIndex(2)}>Gå til eiendom</Tab>
           <Spacer />
           <CloseButton onClick={() => closeOverlayModal()} aria-label="Lukk" />
         </TabList>
         <TabPanels>
           <StyledTabPanel>
-            <InndelingSearch onSelect={centerOnCoordinate} isOpen={currentTabIndex === 0} />
+            <InndelingSearch
+              onSelect={handleOnChange}
+              isOpen={currentTabIndex === 0}
+              inndelingstypeFilter={["GRUNNKRETS", "STEMMEKRETS", "KOMMUNE", "FYLKE"]}
+            />
           </StyledTabPanel>
           <StyledTabPanel>
             <KoordinaterSearch onSelect={centerOnCoordinate} />
+          </StyledTabPanel>
+          <StyledTabPanel>
+            <EiendomSearch onSelect={centerOnCoordinate} />
           </StyledTabPanel>
         </TabPanels>
       </CustomTabs>
