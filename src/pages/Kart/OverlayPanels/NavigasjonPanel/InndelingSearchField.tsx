@@ -1,24 +1,39 @@
-import { Badge, SearchAsync, SearchAsyncElement, Text } from "@kvib/react";
+import { Badge, FormControl, FormErrorMessage, FormLabel, SearchAsync, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
-import { ReactNode, useEffect, useRef } from "react";
+import { ValidationError } from "components/Input";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { ReactNode } from "react";
+import { Control, Controller, FieldValues, Path, RegisterOptions } from "react-hook-form";
 import { styled } from "styled-components";
 import { InndelingSearchResponse, InndelingSearchType } from "types/api";
 import { useInndelingerSearch } from "./useInndelingerSearch";
-import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 export type InndelingOption = InndelingSearchResponse & {
   label: string;
 };
 
-type InndelingSearchProps = {
-  onSelect: (selectedSearchResult: InndelingOption | null) => void;
-  isOpen: boolean;
+type InndelingSearchFieldProps<T extends FieldValues> = {
+  label?: string;
+  fieldName: Path<T>;
+  control?: Control<T>;
+  rules?: RegisterOptions;
   inndelingstypeFilter: InndelingSearchType[];
+  validationError?: ValidationError;
+  clearErrorsOnChange?: () => void;
+  onSelectInndeling?: (inndeling: InndelingOption | null) => void;
 };
 
-export const InndelingSearch = ({ onSelect, isOpen, inndelingstypeFilter }: InndelingSearchProps) => {
+export const InndelingSearchField = <T extends FieldValues>({
+  label: fieldLabel,
+  fieldName,
+  control,
+  rules,
+  inndelingstypeFilter,
+  clearErrorsOnChange: clearErrors,
+  validationError,
+  onSelectInndeling,
+}: InndelingSearchFieldProps<T>) => {
   const searchInndelinger = useInndelingerSearch();
-  const searchRef = useRef<SearchAsyncElement<InndelingOption>>(null);
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const mapInndelingResponseToOption = ({
@@ -36,10 +51,6 @@ export const InndelingSearch = ({ onSelect, isOpen, inndelingstypeFilter }: Innd
       representasjonspunkt,
       label: `${nummer} ${navn}`,
     };
-  };
-
-  const handleOnChange = (inndeling: InndelingOption | null) => {
-    onSelect(inndeling);
   };
 
   const loadResults = async (term: string, resultsCallback: (options: InndelingOption[]) => void) => {
@@ -100,38 +111,40 @@ export const InndelingSearch = ({ onSelect, isOpen, inndelingstypeFilter }: Innd
     );
   };
 
-  // TODO: Dette burde ikke være en useEffect. Dette burde helles trigges samtidig som `isOpen` settes til true så man slipper ekstra rerender her
-  useEffect(() => {
-    const searchElement = searchRef.current;
-    if (isOpen && searchElement != null) {
-      searchElement.focus();
-
-      searchElement.onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-        const inputRef = searchElement.inputRef;
-        if (inputRef != null && event.code === "Escape") {
-          if (inputRef.value.length === 0) {
-            searchElement.blur();
-          } else {
-            inputRef.value = "";
-            searchElement.onMenuClose();
-            searchElement.clearValue();
-          }
-        }
-      };
-    }
-  }, [isOpen]);
-
   return (
-    <SearchAsync
-      optionLabelFormatter={highlightAndBadgeLabelFormatter}
-      placeholder="Skriv inn navnet eller nummeret til inndelingen"
-      noOptionsMessage={noOptionMessage}
-      onChange={handleOnChange}
-      loadOptions={loadResults}
-      debounceTime={150}
-      autoFocus
-      ref={searchRef}
-    />
+    <FormControl isInvalid={validationError?.showError}>
+      {fieldLabel != null && <FormLabel>{fieldLabel}</FormLabel>}
+      <Controller
+        name={fieldName}
+        control={control}
+        rules={rules}
+        render={({ field: { onChange, value, ref } }) => {
+          const onChangeWithClearErrors = (newValue: InndelingOption | null) => {
+            onChange(newValue);
+            if (clearErrors != null) {
+              clearErrors();
+            }
+            if (onSelectInndeling != null) {
+              onSelectInndeling(newValue);
+            }
+          };
+          return (
+            <SearchAsync
+              value={value}
+              optionLabelFormatter={highlightAndBadgeLabelFormatter}
+              placeholder="Skriv inn navnet eller nummeret til inndelingen"
+              noOptionsMessage={noOptionMessage}
+              onChange={onChangeWithClearErrors}
+              loadOptions={loadResults}
+              debounceTime={150}
+              autoFocus
+              ref={ref}
+            />
+          );
+        }}
+      />
+      <FormErrorMessage>{validationError?.message}</FormErrorMessage>
+    </FormControl>
   );
 };
 

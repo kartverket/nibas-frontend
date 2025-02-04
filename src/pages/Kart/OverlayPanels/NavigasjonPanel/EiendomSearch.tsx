@@ -1,14 +1,19 @@
-import { Button, FormControl, FormErrorMessage, FormLabel, InputGroup } from "@kvib/react";
+import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button } from "@kvib/react";
 import Input from "components/Input";
-import { ChangeHandler, useForm } from "react-hook-form";
+import { BaseSyntheticEvent, useState } from "react";
+import { RegisterOptions, useForm } from "react-hook-form";
 import { styled } from "styled-components";
-import { InndelingOption, InndelingSearch } from "./InndelingSearch";
-import { NavigasjonProps } from "./NavigasjonPanel";
+import { InndelingOption, InndelingSearchField } from "./InndelingSearchField";
+import { centerOnCoordinate, SearchProps } from "./NavigasjonPanel";
 import { useEiendom } from "./useEiendom";
 
-const StyledFormControl = styled(FormControl)`
+const StyledForm = styled.form`
   display: flex;
   flex-direction: column;
+`;
+
+const StyledAlert = styled(Alert)`
+  margin-bottom: 28px;
 `;
 
 const InputContainer = styled.div`
@@ -17,34 +22,25 @@ const InputContainer = styled.div`
   margin: 22px 0 28px;
 `;
 
-const StyledFormErrorMessage = styled(FormErrorMessage)`
-  grid-column: 1 / -2;
-`;
-
 const StyledButton = styled(Button)`
   align-self: flex-end;
 `;
 
-type EiendomForm = {
+export type Eiendom = {
   kommune: InndelingOption | null;
   gaardsnummer: number | null;
   bruksnummer: number | null;
   festenummer: number | null;
-  globalErrorDummyField: null;
 };
 
-export type Eiendom = Omit<EiendomForm, "globalErrorDummyField">;
-
-export const EiendomSearch = ({ onSelect }: NavigasjonProps) => {
+export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
   const {
     register,
     handleSubmit,
-    reset,
-    setError,
     clearErrors,
-    setValue,
-    formState: { isDirty, errors: formErrors },
-  } = useForm<EiendomForm>({
+    control,
+    formState: { errors: formErrors, isDirty },
+  } = useForm<Eiendom>({
     mode: "onSubmit",
     reValidateMode: "onSubmit",
     defaultValues: {
@@ -54,14 +50,21 @@ export const EiendomSearch = ({ onSelect }: NavigasjonProps) => {
       festenummer: null,
     },
   });
-  const searchForEiendom = useEiendom();
+  const { searchForEiendom, isLoading } = useEiendom();
+  const [notFound, setNotFound] = useState<boolean>(false);
 
-  const registerWithClearErrorsOnChange = (field: keyof EiendomForm) => {
-    const { onChange, ...rest } = register(field);
-    const handleOnChange: ChangeHandler = (value) => {
+  const eiendomFieldValidator: Partial<Record<keyof Eiendom, RegisterOptions>> = {
+    kommune: { required: "Du må oppgi en kommune for eiendommen" },
+    gaardsnummer: { required: "Du må oppgi et gårdsnummer for eiendommen" },
+    bruksnummer: { required: "Du må oppgi et bruksnummer for eiendommen" },
+  };
+
+  const registerWithClearErrorsOnChange = (field: keyof Eiendom) => {
+    const { onChange, ...rest } = register(field, eiendomFieldValidator[field]);
+    const handleOnChange = (event: BaseSyntheticEvent<InputEvent>) => {
       clearErrors(field);
-      clearErrors("globalErrorDummyField");
-      return onChange(value);
+      setNotFound(false);
+      return onChange(event);
     };
 
     return {
@@ -70,85 +73,91 @@ export const EiendomSearch = ({ onSelect }: NavigasjonProps) => {
     };
   };
 
-  const handleSearch = async (eiendom: EiendomForm) => {
+  const handleSearch = async (eiendom: Eiendom) => {
     console.log(eiendom);
     const result = await searchForEiendom(eiendom);
     if (result != null) {
+      setNotFound(false);
       const eiendomRepresentasjonspunkt = result.features.find((feature) => feature.geometry.type === "Point");
       if (eiendomRepresentasjonspunkt != null) {
         const coords = eiendomRepresentasjonspunkt.geometry.coordinates;
         if (coords.length === 2) {
-          onSelect(Number(coords[0]), Number(coords[1]));
+          centerOnCoordinate(Number(coords[0]), Number(coords[1]));
+          onSearchSuccess();
         }
+      } else {
+        setNotFound(true);
       }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(handleSearch)}>
-      <StyledFormControl isInvalid={formErrors.globalErrorDummyField != null}>
-        <FormLabel htmlFor="input">Kommune</FormLabel>
-        <InndelingSearch
-          onSelect={(kommune) => setValue("kommune", kommune)}
-          isOpen={true}
-          inndelingstypeFilter={["KOMMUNE"]}
+    <StyledForm onSubmit={handleSubmit(handleSearch)}>
+      <InndelingSearchField
+        label="Kommune"
+        fieldName="kommune"
+        control={control}
+        rules={eiendomFieldValidator["kommune"]}
+        inndelingstypeFilter={["KOMMUNE"]}
+        clearErrorsOnChange={() => {
+          clearErrors("kommune");
+          setNotFound(false);
+        }}
+        validationError={{
+          showError: !!formErrors.kommune,
+          message: formErrors.kommune?.message ?? "",
+        }}
+      />
+      <InputContainer>
+        <Input
+          type="number"
+          placeholder="Fyll inn gårdsnummer ..."
+          label={"Gårdsnummer"}
+          {...registerWithClearErrorsOnChange("gaardsnummer")}
+          validationError={{
+            showError: !!formErrors.gaardsnummer,
+            message: formErrors.gaardsnummer?.message ?? "",
+          }}
         />
-        <InputContainer>
-          <InputGroup>
-            <Input
-              type="number"
-              placeholder="Fyll inn gårdsnummer ..."
-              label={"Gårdsnummer"}
-              {...registerWithClearErrorsOnChange("gaardsnummer")}
-              validationError={{
-                showError: !!formErrors.gaardsnummer,
-                message: formErrors.gaardsnummer?.message ?? "",
-              }}
-            />
-          </InputGroup>
-          {formErrors.gaardsnummer != null && (
-            <StyledFormErrorMessage>{formErrors.gaardsnummer.message}</StyledFormErrorMessage>
-          )}
 
-          <InputGroup>
-            <Input
-              type="number"
-              placeholder="Fyll inn bruksnummer ..."
-              label={"Bruksnummer"}
-              {...registerWithClearErrorsOnChange("bruksnummer")}
-              validationError={{
-                showError: !!formErrors.bruksnummer,
-                message: formErrors.bruksnummer?.message ?? "",
-              }}
-            />
-          </InputGroup>
-          {formErrors.bruksnummer != null && (
-            <StyledFormErrorMessage>{formErrors.bruksnummer.message}</StyledFormErrorMessage>
-          )}
+        <Input
+          type="number"
+          placeholder="Fyll inn bruksnummer ..."
+          label={"Bruksnummer"}
+          {...registerWithClearErrorsOnChange("bruksnummer")}
+          validationError={{
+            showError: !!formErrors.bruksnummer,
+            message: formErrors.bruksnummer?.message ?? "",
+          }}
+        />
 
-          <InputGroup>
-            <Input
-              type="number"
-              placeholder="Fyll inn festenummer ..."
-              label={"Festenummer (valgfritt)"}
-              {...registerWithClearErrorsOnChange("festenummer")}
-              validationError={{
-                showError: !!formErrors.festenummer,
-                message: formErrors.festenummer?.message ?? "",
-              }}
-            />
-          </InputGroup>
-          {formErrors.festenummer != null && (
-            <StyledFormErrorMessage>{formErrors.festenummer.message}</StyledFormErrorMessage>
-          )}
-        </InputContainer>
-        {formErrors.globalErrorDummyField != null && (
-          <StyledFormErrorMessage>{formErrors.globalErrorDummyField.message}</StyledFormErrorMessage>
-        )}
-        <StyledButton type="submit" isDisabled={!isDirty}>
-          Gå til eiendom
-        </StyledButton>
-      </StyledFormControl>
-    </form>
+        <Input
+          type="number"
+          placeholder="Fyll inn festenummer ..."
+          label={"Festenummer (valgfritt)"}
+          {...registerWithClearErrorsOnChange("festenummer")}
+          validationError={{
+            showError: !!formErrors.festenummer,
+            message: formErrors.festenummer?.message ?? "",
+          }}
+        />
+      </InputContainer>
+
+      {notFound === true && (
+        <StyledAlert status="error">
+          <AlertIcon />
+          <Box>
+            <AlertTitle>Fant ingen eiendommer med oppgitt matrikkelnummer</AlertTitle>
+            <AlertDescription>
+              Dobbeltsjekk at du har skrevet inn korrekt matrikkelnummer eller har valgt riktig kommune.
+            </AlertDescription>
+          </Box>
+        </StyledAlert>
+      )}
+
+      <StyledButton type="submit" isDisabled={!isDirty} isLoading={isLoading}>
+        Gå til eiendom
+      </StyledButton>
+    </StyledForm>
   );
 };

@@ -1,6 +1,7 @@
 import { statusCode } from "utils/api";
-import { Eiendom } from "./EiendomSearch";
 import useToastUnique from "hooks/toast/useToastUnique";
+import { Eiendom } from "./EiendomSearch";
+import { useState } from "react";
 
 // Hjelpefunksjon for å få en url med parametere. Bruk getUrlWithParameters hvis du skal fetche fra nibas-backend for mer typesikkerhet.
 const getExternalUrlWithParameters = (url: string, params: Record<string, string>): string => {
@@ -22,6 +23,7 @@ type EiendomRequestParameter = {
 };
 
 export const useEiendom = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toastUnique: searchErrorToast } = useToastUnique({
     status: "error",
     title: "Søket feilet",
@@ -34,9 +36,10 @@ export const useEiendom = () => {
         gardsnummer: eiendom.gaardsnummer.toString(),
         bruksnummer: eiendom.bruksnummer.toString(),
         ...(eiendom.festenummer != null && { festenummer: eiendom.festenummer.toString() }),
-        kommunenummer: eiendom.kommune?.nummer,
+        kommunenummer: eiendom.kommune.nummer,
         utkoordsys: "25833", // I Nibas bruker vi EPSG:25833
       };
+      setIsLoading(true);
       const response = await fetch(
         getExternalUrlWithParameters("https://api.kartverket.no/eiendom/v1/geokoding", params),
         {
@@ -46,6 +49,7 @@ export const useEiendom = () => {
           },
         },
       );
+      setIsLoading(false);
 
       if (statusCode.isSuccessful(response.status)) {
         return response.json();
@@ -56,7 +60,7 @@ export const useEiendom = () => {
     return null;
   };
 
-  return searchForEiendom;
+  return { searchForEiendom, isLoading };
 };
 
 type EiendomResult = {

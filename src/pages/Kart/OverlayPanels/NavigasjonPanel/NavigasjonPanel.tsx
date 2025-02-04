@@ -3,60 +3,43 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { keyframes, styled } from "styled-components";
 import { map } from "../../constants";
 import { AbsolutePanel } from "../Panel";
-import { InndelingOption, InndelingSearch } from "./InndelingSearch";
-import { KoordinaterSearch } from "./KoordinaterSearch";
-import { useState } from "react";
 import { EiendomSearch } from "./EiendomSearch";
+import { InndelingerSearch } from "./InndelingerSearch";
+import { KoordinaterSearch } from "./KoordinaterSearch";
 
-export type NavigasjonProps = {
-  onSelect: (north: number | null, east: number | null) => void;
+export type SearchProps = {
+  onSearchSuccess: () => void;
+};
+
+export const centerOnCoordinate = (north: number | null, east: number | null) => {
+  if (north !== null && east !== null) {
+    const view = map.getView();
+    view.animate({ duration: 0, center: [east, north], zoom: 18 });
+  }
 };
 
 const NavigasjonPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
 
-  const [currentTabIndex, setCurrentTabIndex] = useState(0);
-
-  const centerOnCoordinate = (north: number | null, east: number | null) => {
-    if (north !== null && east !== null) {
-      const view = map.getView();
-      view.animate({ duration: 0, center: [east, north], zoom: 18 });
-      closeOverlayModal();
-    }
-  };
-
-  const handleOnChange = (inndeling: InndelingOption | null) => {
-    const north = inndeling?.representasjonspunkt.y;
-    const east = inndeling?.representasjonspunkt.x;
-    if (north != null && east != null) {
-      centerOnCoordinate(north, east);
-      //setSelectedInndeling(null);
-    }
-  };
-
   return (
     <Container>
       <CustomTabs size="md">
         <TabList>
-          <Tab onClick={() => setCurrentTabIndex(0)}>Gå til inndeling</Tab>
-          <Tab onClick={() => setCurrentTabIndex(1)}>Gå til koordinater</Tab>
-          <Tab onClick={() => setCurrentTabIndex(2)}>Gå til eiendom</Tab>
+          <Tab>Gå til inndeling</Tab>
+          <Tab>Gå til koordinater</Tab>
+          <Tab>Gå til eiendom</Tab>
           <Spacer />
           <CloseButton onClick={() => closeOverlayModal()} aria-label="Lukk" />
         </TabList>
         <TabPanels>
           <StyledTabPanel>
-            <InndelingSearch
-              onSelect={handleOnChange}
-              isOpen={currentTabIndex === 0}
-              inndelingstypeFilter={["GRUNNKRETS", "STEMMEKRETS", "KOMMUNE", "FYLKE"]}
-            />
+            <InndelingerSearch onSearchSuccess={closeOverlayModal} />
           </StyledTabPanel>
           <StyledTabPanel>
-            <KoordinaterSearch onSelect={centerOnCoordinate} />
+            <KoordinaterSearch onSearchSuccess={closeOverlayModal} />
           </StyledTabPanel>
           <StyledTabPanel>
-            <EiendomSearch onSelect={centerOnCoordinate} />
+            <EiendomSearch onSearchSuccess={closeOverlayModal} />
           </StyledTabPanel>
         </TabPanels>
       </CustomTabs>
