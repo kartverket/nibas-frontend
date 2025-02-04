@@ -84,39 +84,39 @@ const getIdForKontekstEgenskaper = (
   }
 };
 
-const getUpdatedGrunnkretsNames = (kretser: Krets[], historyEntries: HistoryEntry[]): Krets[] => {
-  //list of all names in kretser
-  const kretserNames = kretser.map((krets) => krets.navn);
-  console.log("kretserfør" + kretserNames);
-  const filteredHistoryEntries = historyEntries.filter((historyEntry) => {
-    historyEntry.type === "grunnkrets";
-  });
-  const idAndToNames = filteredHistoryEntries.flatMap((historyEntry) =>
-    historyEntry.changes.map((change) => ({
-      id: change.id,
-      to: change.to,
-    })),
-  );
+const getUpdatedNames = (
+  kretser: Krets[],
+  historyEntries: HistoryEntry[],
+  utkastEntries: UtkastOperasjoner,
+  kontekstType: KontekstType,
+): Krets[] => {
+  const idAndNamesHistory = historyEntries
+    .flatMap((historyEntry) =>
+      historyEntry.changes.map((change) => {
+        if (change.to != null && "navn" in change.to) {
+          return {
+            id: change.id,
+            name: change.to.navn,
+          };
+        }
+      }),
+    )
+    .filter((entry) => entry !== undefined);
 
-  //newKretser should be a copy of kretser exept in the cases where there is an entry in idAndToNames with the same id as the krets in kretser.
-  //In those cases the name of the krets in newKretser should be updated to the name in idAndToNames.
+  const idAndNamesUtkast = Object.values(
+    utkastEntries.metadataendringer[kontekstType === "GRUNNKRETS" ? "grunnkretsendringer" : "stemmekretsendringer"],
+  ).map((grunnkretsEndring) => ({ id: grunnkretsEndring.identifikasjon.lokalid, name: grunnkretsEndring.navn }));
+
+  const idAndNames = idAndNamesHistory.concat(idAndNamesUtkast);
+
   const newKretser = kretser.map((krets) => {
-    const nameChange = idAndToNames.find((idAndToName) => idAndToName.id === krets.id.lokalid.value);
-    if (nameChange) {
-      return {
-        ...krets,
-        //set navn equal to the name in idAndToNames
-        navn: (nameChange.to as { navn: string })?.navn ?? krets.navn,
-      };
+    const newName = idAndNames.find((idAndNameEntry) => idAndNameEntry.id === krets.id.lokalid.value)?.name;
+    if (newName != null) {
+      return { ...krets, navn: newName };
     } else {
       return krets;
     }
   });
-
-  const newKretserNames = newKretser.map((krets) => krets.navn);
-
-  console.log("kretseretter" + newKretserNames);
-
   return newKretser;
 };
 
@@ -189,13 +189,14 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
           ...tilhorighetOptionsFromUtkast,
           ...tihorighetOptionsFromHistory,
         ];
+        const ListeB: Krets[] = [
+          ...commonOptions[Tilhorighet.A],
+          ...tilhorighetOptionsFromUtkast,
+          ...tihorighetOptionsFromHistory,
+        ];
         setTilhorighetValg({
-          [Tilhorighet.A]: getUpdatedGrunnkretsNames(ListeA, getHistoryEntries()),
-          [Tilhorighet.B]: [
-            ...commonOptions[Tilhorighet.B],
-            ...tilhorighetOptionsFromUtkast,
-            ...tihorighetOptionsFromHistory,
-          ],
+          [Tilhorighet.A]: getUpdatedNames(ListeA, getHistoryEntries(), utkast.operasjoner, kontekstType),
+          [Tilhorighet.B]: getUpdatedNames(ListeB, getHistoryEntries(), utkast.operasjoner, kontekstType),
         });
       } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);
