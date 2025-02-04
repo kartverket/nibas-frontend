@@ -19,7 +19,6 @@ type InndelingSearchFieldProps<T extends FieldValues> = {
   rules?: RegisterOptions;
   inndelingstypeFilter: InndelingSearchType[];
   validationError?: ValidationError;
-  clearErrorsOnChange?: () => void;
   onSelectInndeling?: (inndeling: InndelingOption | null) => void;
 };
 
@@ -29,7 +28,6 @@ export const InndelingSearchField = <T extends FieldValues>({
   control,
   rules,
   inndelingstypeFilter,
-  clearErrorsOnChange: clearErrors,
   validationError,
   onSelectInndeling,
 }: InndelingSearchFieldProps<T>) => {
@@ -121,9 +119,6 @@ export const InndelingSearchField = <T extends FieldValues>({
         render={({ field: { onChange, value, ref } }) => {
           const onChangeWithClearErrors = (newValue: InndelingOption | null) => {
             onChange(newValue);
-            if (clearErrors != null) {
-              clearErrors();
-            }
             if (onSelectInndeling != null) {
               onSelectInndeling(newValue);
             }

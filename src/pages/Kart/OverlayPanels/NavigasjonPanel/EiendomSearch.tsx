@@ -99,7 +99,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
         control={control}
         rules={eiendomFieldValidator["kommune"]}
         inndelingstypeFilter={["KOMMUNE"]}
-        clearErrorsOnChange={() => {
+        onSelectInndeling={() => {
           clearErrors("kommune");
           setNotFound(false);
         }}
