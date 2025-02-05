@@ -57,7 +57,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         aria-label="Snap til andre grenser i kartet"
         isOpen={isOpen}
         onClick={onToggle}
-        icon="stacked_line_chart"
+        icon="close_fullscreen"
         isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
         tooltip={{ text: "Snapping" }}
       >
