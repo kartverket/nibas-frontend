@@ -15,6 +15,7 @@ export type InndelingOption = InndelingSearchResponse & {
 
 type InndelingSearchFieldProps<T extends FieldValues> = {
   label?: string;
+  placeholder?: string;
   fieldName: Path<T>;
   control?: Control<T>;
   rules?: RegisterOptions;
@@ -25,6 +26,7 @@ type InndelingSearchFieldProps<T extends FieldValues> = {
 
 export const InndelingSearchField = <T extends FieldValues>({
   label: fieldLabel,
+  placeholder,
   fieldName,
   control,
   rules,
@@ -67,7 +69,7 @@ export const InndelingSearchField = <T extends FieldValues>({
 
   const noOptionMessage = (obj: { inputValue: string }): ReactNode => {
     return obj.inputValue !== "" ? (
-      <ErrorMessage>{`Fant ingen inndeling som matchet "${obj.inputValue}"`}</ErrorMessage>
+      <ErrorMessage>{`Fant ingen ${inndelingstypeFilter.toString().replaceAll(",", ", ").toLowerCase()} som matchet "${obj.inputValue}"`}</ErrorMessage>
     ) : null;
   };
 
@@ -128,7 +130,7 @@ export const InndelingSearchField = <T extends FieldValues>({
             <SearchAsync
               value={value}
               optionLabelFormatter={highlightAndBadgeLabelFormatter}
-              placeholder="Skriv inn navnet eller nummeret til inndelingen"
+              placeholder={placeholder}
               noOptionsMessage={noOptionMessage}
               onChange={onChangeWithClearErrors}
               loadOptions={loadResults}

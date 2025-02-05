@@ -16,6 +16,7 @@ export const InndelingerSearch = ({ onSearchSuccess }: SearchProps) => {
 
   return (
     <InndelingSearchField
+      placeholder="Skriv inn navnet eller nummeret til inndelingen"
       control={control}
       fieldName={"inndeling"}
       inndelingstypeFilter={["FYLKE", "KOMMUNE", "GRUNNKRETS", "STEMMEKRETS"]}

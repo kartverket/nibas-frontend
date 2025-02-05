@@ -153,6 +153,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
     <StyledForm onSubmit={handleSubmit(handleSearch)}>
       <InndelingSearchField
         label="Kommune"
+        placeholder="Skriv inn navnet eller nummeret til kommunen"
         fieldName="kommune"
         control={control}
         rules={eiendomFieldValidator["kommune"]}
