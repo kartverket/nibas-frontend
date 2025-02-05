@@ -56,13 +56,9 @@ export const InndelingSearchField = <T extends FieldValues>({
 
   const loadResults = async (term: string, resultsCallback: (options: InndelingOption[]) => void) => {
     if (term.length > 1) {
-      const inndelinger = await searchInndelinger(term, 15, gyldighetsdato);
+      const inndelinger = await searchInndelinger(term, 15, gyldighetsdato, inndelingstypeFilter);
       if (inndelinger !== null) {
-        resultsCallback(
-          // TODO filter her gjør at resultater potensielt dukker opp senere enn nødvendig fordi de er statisk sortert.
-          // Hvis vi endrer endepunkt til å ha filter kan vi få det korrekt
-          inndelinger.map(mapInndelingResponseToOption).filter((option) => inndelingstypeFilter.includes(option.type)),
-        );
+        resultsCallback(inndelinger.map(mapInndelingResponseToOption));
       }
     }
   };

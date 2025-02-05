@@ -1,6 +1,6 @@
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import useToastUnique from "hooks/toast/useToastUnique";
-import { InndelingSearchResponse } from "types/api";
+import { InndelingSearchResponse, InndelingSearchType } from "types/api";
 import { getUrlForPath, statusCode } from "utils/api";
 import { getUrlWithParameters } from "hooks/useNibasApi";
 
@@ -16,13 +16,15 @@ export const useInndelingerSearch = () => {
     searchString: string,
     limit: number,
     gyldighetsdato: string | undefined,
+    filter: InndelingSearchType[],
   ): Promise<InndelingSearchResponse[] | null> => {
     const response = await fetch(
       getUrlForPath(
         getUrlWithParameters("/v1/inndelinger/", {
           gyldighetsdato,
           searchString: encodeURIComponent(searchString),
-          limit: limit,
+          limit,
+          filter,
         }) as string,
       ),
       {
