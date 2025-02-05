@@ -10,6 +10,7 @@ import { KommuneResponse } from "types/api";
 import { InndelingOption, InndelingSearchField } from "./InndelingSearchField";
 import { centerOnCoordinate, SearchProps } from "./NavigasjonPanel";
 import { useEiendom } from "./useEiendom";
+import { processFormValuesToCommonNull } from "utils/form-utils";
 
 const StyledForm = styled.form`
   display: flex;
@@ -132,7 +133,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
   };
 
   const handleSearch = async (eiendom: Eiendom) => {
-    const result = await searchForEiendom(eiendom);
+    const result = await searchForEiendom(processFormValuesToCommonNull(eiendom));
     if (result != null) {
       setNotFound(false);
       const eiendomRepresentasjonspunkt = result.features.find((feature) => feature.geometry.type === "Point");
