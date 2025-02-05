@@ -9,6 +9,7 @@ import { InndelingSearchResponse, InndelingSearchType } from "types/api";
 import { useInndelingerSearch } from "./useInndelingerSearch";
 
 export type InndelingOption = InndelingSearchResponse & {
+  representasjonspunkt: { x: number | undefined; y: number | undefined };
   label: string;
 };
 
@@ -46,7 +47,7 @@ export const InndelingSearchField = <T extends FieldValues>({
       navn,
       nummer,
       type,
-      representasjonspunkt,
+      representasjonspunkt: { x: representasjonspunkt.x, y: representasjonspunkt.y },
       label: `${nummer} ${navn}`,
     };
   };
