@@ -139,7 +139,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
       if (eiendomRepresentasjonspunkt != null) {
         const coords = eiendomRepresentasjonspunkt.geometry.coordinates;
         if (coords.length === 2) {
-          centerOnCoordinate(Number(coords[0]), Number(coords[1]));
+          centerOnCoordinate(Number(coords[1]), Number(coords[0]));
           onSearchSuccess();
         }
       } else {
