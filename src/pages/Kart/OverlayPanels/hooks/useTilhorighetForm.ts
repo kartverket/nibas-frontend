@@ -99,9 +99,10 @@ const getUpdatedNames = (
             name: change.to.navn,
           };
         }
+        return null;
       }),
     )
-    .filter((entry) => entry !== undefined);
+    .filter((entry): entry is { id: string; name: string } => entry !== null);
 
   const idAndNamesUtkast = Object.values(
     utkastEntries.metadataendringer[kontekstType === "GRUNNKRETS" ? "grunnkretsendringer" : "stemmekretsendringer"],
@@ -109,15 +110,15 @@ const getUpdatedNames = (
 
   const idAndNames = idAndNamesHistory.concat(idAndNamesUtkast);
 
-  const newKretser = kretser.map((krets) => {
-    const newName = idAndNames.find((idAndNameEntry) => idAndNameEntry.id === krets.id.lokalid.value)?.name;
-    if (newName != null) {
-      return { ...krets, navn: newName };
-    } else {
-      return krets;
+  return kretser.map((krets) => {
+    const foundEntry = idAndNames.find((entry) => entry.id === krets.id.lokalid.value);
+
+    if (foundEntry !== undefined) {
+      return { ...krets, navn: foundEntry.name };
     }
+
+    return krets;
   });
-  return newKretser;
 };
 
 const getKretserFromHistory = (
