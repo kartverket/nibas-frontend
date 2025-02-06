@@ -17,7 +17,7 @@ const useInteractions = () => {
   const { dragPan, dragZoom } = useDragInteractions();
   const { select } = useSelect();
   const { draw } = useDraw();
-  useMeasure();
+  const { measureInteraction } = useMeasure();
   const { selectPoint } = useSelectPoint();
   const { activeModeTools, activeTool } = useToolbar();
   const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
@@ -49,6 +49,13 @@ const useInteractions = () => {
       },
     ],
   });
+  useEffect(() => {
+    if (activeTool === "measure") {
+      map.addInteraction(measureInteraction);
+    } else {
+      map.removeInteraction(measureInteraction);
+    }
+  }, [activeTool, measureInteraction]);
   // Legger til/fjerner `draw`-interaksjonen **bare** når `activeTool === "draw"`. På den måten unngår vi at `draw` nullstilles hver gang vi for eksempel
   // toggler snap. `draw` blir kun  fjernet hvis brukeren faktisk bytter verktøy bort fra "draw".
   useEffect(() => {

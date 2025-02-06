@@ -81,10 +81,8 @@ const tooltipStyle = {
   boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
 };
 
-// ------- useMeasure hooken -------- //
 const useMeasure = () => {
   const { activeTool, activeModeTools } = useToolbar();
-
   // refs for å unngå re-render loops:
   const activeToolRef = useRef<Tool | null>(null);
   const activeModeToolsRef = useRef<ModeTool[]>([]);
@@ -143,12 +141,8 @@ const useMeasure = () => {
 
   useEffect(() => {
     if (activeTool === "measure") {
-      // Legg til layer + interaction
       if (!map.getLayers().getArray().includes(measureLayer)) {
         map.addLayer(measureLayer);
-      }
-      if (!map.getInteractions().getArray().includes(measureInteraction)) {
-        map.addInteraction(measureInteraction);
       }
 
       // 1) Oppretter helpTooltip-element og overlay om det ikke finnes
