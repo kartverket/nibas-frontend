@@ -73,7 +73,16 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
     hoverEnabled: false,
   };
 
-  const enableHoverPointForTools: Tool[] = ["split", "archive", "add", "grenseinfo", "koordinater", "remove", "draw"];
+  const enableHoverPointForTools: Tool[] = [
+    "split",
+    "archive",
+    "add",
+    "grenseinfo",
+    "koordinater",
+    "remove",
+    "draw",
+    "measure",
+  ];
 
   // Redigering og ingen verktøy eller snapping er valgt
   if (
@@ -149,4 +158,5 @@ export const createKartlagSnapsData = (
   stemmekrets: createSnapDataForSource("stemmekrets", activeModeTools, activeTool),
   archived: createSnapDataForSource("archived", activeModeTools, activeTool),
   edit: createSnapDataForSource("edit", activeModeTools, activeTool),
+  measure: createSnapDataForSource("measure", activeModeTools, activeTool),
 });

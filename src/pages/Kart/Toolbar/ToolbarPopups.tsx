@@ -178,6 +178,15 @@ const ToolbarPopups = () => {
             onClose={resetTool}
           />
         );
+      case "measure":
+        return (
+          <ToolbarPopup
+            icon={"measuring_tape"}
+            text="Velg i kartet der du ønsker å starte målingen. Avslutt med dobbeltklikk."
+            subtext="Målingen kan snappes til punkter eller startes fritt utenfor andre grenser. Ønsker du å panorere underveis, bruk piltastene."
+            onClose={resetTool}
+          />
+        );
       case "archive":
         return (
           <ToolbarPopup

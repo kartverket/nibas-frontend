@@ -1,9 +1,8 @@
-import HeaderButton, { HeaderSection } from "./HeaderButton";
 import { useDisclosure } from "@kvib/react";
-import UtkastSlettModal from "components/Modals/UtkastSlettModal";
-import UtkastPubliserModal from "components/Modals/UtkastPubliserModal";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
+import UtkastPubliserModal from "components/Modals/UtkastPubliserModal";
 import { UtkastResponse } from "types/api";
+import HeaderButton, { HeaderSection } from "./HeaderButton";
 
 const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
   const { harEndringer } = useUtkastEndringer(utkast);

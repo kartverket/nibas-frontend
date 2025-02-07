@@ -2,7 +2,6 @@ import {
   Alert,
   AlertDescription,
   AlertIcon,
-  AlertTitle,
   Divider,
   Icon,
   MenuItem,
@@ -10,26 +9,25 @@ import {
   MenuList,
   useDisclosure,
 } from "@kvib/react";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useToolbar } from "contexts/ToolbarContext";
-import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { styled } from "styled-components";
-import { getLayerById } from "utils/map/layers";
-import { map } from "../constants";
-import ToolbarButton from "./ToolbarButton";
-import useDragInteractions from "../interactions/useDragInteractions";
-import ToolbarMenus from "./ToolbarMenus";
-import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
-import { Draw } from "ol/interaction";
-import { useState } from "react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { anyFeatureIsEditable } from "utils/features";
-import SnapMenu from "./SnapMenu";
-import { ToolbarMenu } from "./ToolbarMenu";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { Draw } from "ol/interaction";
+import { useState } from "react";
+import { styled } from "styled-components";
+import { anyFeatureIsEditable } from "utils/features";
+import { getLayerById } from "utils/map/layers";
+import { map } from "../constants";
+import SnapMenu from "./SnapMenu";
+import ToolbarButton from "./ToolbarButton";
+import { ToolbarMenu } from "./ToolbarMenu";
+import ToolbarMenus from "./ToolbarMenus";
+import ToolbarPopups from "./ToolbarPopups";
 
 export type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -126,7 +124,9 @@ const Toolbar = () => {
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("move", () => {
     if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
-      if (!utkast) return;
+      if (!utkast) {
+        return;
+      }
     } else {
       enableModeTool("move");
       panningEnabled;
@@ -136,6 +136,7 @@ const Toolbar = () => {
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useKeyboardShortcut("grensecoordinates", () => toggleTool("grensecoordinates"));
+  useKeyboardShortcut("measure", () => toggleTool("measure"));
   useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useHoldButtonToggle(
@@ -223,6 +224,15 @@ const Toolbar = () => {
       "aria-label": "Vis koordinater på punkt",
     },
     {
+      label: "Mål avstand",
+      icon: <Icon icon="straighten" />,
+      command: KeyboardShortcuts["measure"].displayString,
+      $isActive: activeTool === "measure",
+      isDisabled: false,
+      onClick: () => toggleTool("measure"),
+      "aria-label": "Mål avstand",
+    },
+    {
       label: "Tegnforklaring",
       icon: <Icon icon="palette" />,
       $isActive: activeOverlayPanel === "tegnforklaring",
@@ -280,7 +290,9 @@ const Toolbar = () => {
             icon={"back_hand"}
             onClick={() => {
               if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
-                if (!utkast) return;
+                if (!utkast) {
+                  return;
+                }
               } else {
                 if (activeModeTools.includes("dragzoom")) {
                   enableModeTool("move");
