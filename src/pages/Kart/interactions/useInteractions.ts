@@ -35,7 +35,14 @@ const useInteractions = () => {
     defaultCursor: () => "pointer",
   });
   useCursorStyles({
-    isEnabled: !pointerCursorTools.includes(activeTool) && activeModeTools.includes("move"),
+    isEnabled: activeModeTools.includes("dragzoom"),
+    defaultCursor: () => "zoom-in",
+  });
+  useCursorStyles({
+    isEnabled:
+      !pointerCursorTools.includes(activeTool) &&
+      activeModeTools.includes("move") &&
+      !activeModeTools.includes("dragzoom"),
     defaultCursor: () => "grab",
     eventsAndCursor: [
       {
