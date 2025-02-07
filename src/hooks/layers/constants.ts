@@ -37,6 +37,7 @@ export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
 
 export const editSource = new VectorSource();
 export const archivedSource = new VectorSource();
+export const measureSource = new VectorSource();
 
 const grenseStyle =
   (grenseId: GrenseId): StyleFunction =>
@@ -62,4 +63,5 @@ export const grenserLayers: Record<GrenseId, VectorLayer<Feature>> = {
   stemmekrets: createVectorLayer("stemmekrets"),
   archived: createVectorLayer("archived", archivedSource),
   edit: createVectorLayer("edit", editSource),
+  measure: createVectorLayer("measure", measureSource),
 };

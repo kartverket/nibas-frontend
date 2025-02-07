@@ -167,6 +167,14 @@ const ToolbarPopups = () => {
         return <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />;
       case "grensecoordinates":
         return <ToolbarPopup text="Hold over punktet du ønsker å se koordinatet til" onClose={resetTool} />;
+      case "measure":
+        return (
+          <ToolbarPopup
+            text="Velg i kartet der du ønsker å starte målingen. Avslutt med dobbeltklikk."
+            subtext="Målingen kan snappes til punkter eller startes fritt utenfor andre grenser. Ønsker du å panorere underveis, bruk piltastene."
+            onClose={resetTool}
+          />
+        );
       case "archive":
         return (
           <ToolbarPopup

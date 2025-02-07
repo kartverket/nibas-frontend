@@ -120,6 +120,7 @@ const Toolbar = () => {
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useKeyboardShortcut("grensecoordinates", () => toggleTool("grensecoordinates"));
+  useKeyboardShortcut("measure", () => toggleTool("measure"));
   useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useHoldButtonToggle(
@@ -199,6 +200,15 @@ const Toolbar = () => {
       isDisabled: false,
       onClick: () => toggleTool("grensecoordinates"),
       "aria-label": "Vis koordinater på punkt",
+    },
+    {
+      label: "Mål avstand",
+      icon: <Icon icon="straighten" />,
+      command: KeyboardShortcuts["measure"].displayString,
+      $isActive: activeTool === "measure",
+      isDisabled: false,
+      onClick: () => toggleTool("measure"),
+      "aria-label": "Mål avstand",
     },
   ];
 
