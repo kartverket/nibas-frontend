@@ -158,4 +158,5 @@ export const createKartlagSnapsData = (
   stemmekrets: createSnapDataForSource("stemmekrets", activeModeTools, activeTool),
   archived: createSnapDataForSource("archived", activeModeTools, activeTool),
   edit: createSnapDataForSource("edit", activeModeTools, activeTool),
+  measure: createSnapDataForSource("measure", activeModeTools, activeTool),
 });

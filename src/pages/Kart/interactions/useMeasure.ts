@@ -4,24 +4,14 @@ import { Overlay, MapBrowserEvent } from "ol";
 import { unByKey } from "ol/Observable";
 import { getLength } from "ol/sphere";
 import { LineString } from "ol/geom";
-import { Style, Stroke } from "ol/style";
 import { map } from "../constants";
 import { EventsKey } from "ol/events";
-import VectorSource from "ol/source/Vector";
-import VectorLayer from "ol/layer/Vector";
 import { noModifierKeys } from "ol/events/condition";
 import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
+import { grenserLayers } from "hooks/layers/constants";
+import { grenseStyles } from "utils/map/layerStyles";
 
-let measureIdCounter = 0;
-function generateMeasureFeatureId() {
-  measureIdCounter++;
-  return `measure-feature-${measureIdCounter}`;
-}
-
-// ------- Hjelpefunksjoner -------- //
-
-// Opprett tooltip-element (<div>) med ønsket tekst/stil
 function createTooltipElement(text: string, style: React.CSSProperties) {
   const el = document.createElement("div");
   el.innerHTML = text;
@@ -29,7 +19,6 @@ function createTooltipElement(text: string, style: React.CSSProperties) {
   return el;
 }
 
-// Opprett et Overlay gitt et element + konfigurasjon
 function createOverlay(
   element: HTMLElement,
   offset: [number, number],
@@ -44,7 +33,6 @@ function createOverlay(
   });
 }
 
-// Oppdaterer tooltip-element og overlay-posisjon
 function updateTooltip(
   tooltipElement: HTMLDivElement | null,
   tooltipOverlay: Overlay | null,
@@ -92,32 +80,19 @@ const useMeasure = () => {
     activeModeToolsRef.current = activeModeTools;
   }, [activeTool, activeModeTools]);
 
-  const measureSource = useMemo(() => new VectorSource(), []);
   // measureLayer (den oppmålte linjen etter drawend)
   const measureLayer = useMemo(() => {
-    return new VectorLayer({
-      source: measureSource,
-      style: new Style({
-        stroke: new Stroke({
-          lineDash: [10, 10],
-          color: "#000000",
-          width: 2,
-        }),
-      }),
-    });
-  }, [measureSource]);
+    const layer = grenserLayers.measure;
+    layer.setStyle(grenseStyles.measure);
+    return layer;
+  }, []);
+
   const measureInteraction = useMemo(() => {
     return new Draw({
-      source: measureSource,
+      source: measureLayer.getSource()!,
       type: "LineString",
       snapTolerance: pixelTolerance,
-      style: new Style({
-        stroke: new Stroke({
-          lineDash: [10, 10],
-          color: "#000000",
-          width: 2,
-        }),
-      }),
+      style: grenseStyles.measure,
       stopClick: true,
       condition: (event: MapBrowserEvent<MouseEvent>) => {
         const currentTool = activeToolRef.current;
@@ -128,7 +103,7 @@ const useMeasure = () => {
         return true;
       },
     });
-  }, [measureSource]);
+  }, [measureLayer]);
 
   // Overlays for tooltips (refs for å unngå re-renders)
   const helpTooltipElement = useRef<HTMLDivElement | null>(null);
@@ -141,10 +116,6 @@ const useMeasure = () => {
 
   useEffect(() => {
     if (activeTool === "measure") {
-      if (!map.getLayers().getArray().includes(measureLayer)) {
-        map.addLayer(measureLayer);
-      }
-
       // 1) Oppretter helpTooltip-element og overlay om det ikke finnes
       if (!helpTooltipElement.current && !helpTooltipRef.current) {
         helpTooltipElement.current = createTooltipElement(helpMsg, tooltipStyle);
@@ -181,7 +152,7 @@ const useMeasure = () => {
 
       // 4) drawstart
       const onDrawStart = (evt: DrawEvent) => {
-        measureSource.clear(); // Nullstill forrige måling
+        measureLayer.getSource()?.clear(); // Nullstill forrige måling/opptegning
         const geom = evt.feature.getGeometry() as LineString;
 
         geom.on("change", () => {
@@ -193,10 +164,8 @@ const useMeasure = () => {
       };
 
       // 5) drawend
-      const onDrawEnd = (evt: DrawEvent) => {
+      const onDrawEnd = () => {
         isDrawing.current = false;
-        const measureId = generateMeasureFeatureId();
-        evt.feature.setId(measureId);
       };
 
       measureInteraction.on("drawstart", onDrawStart);
@@ -207,14 +176,8 @@ const useMeasure = () => {
         isDrawing.current = false;
         measureInteraction.un("drawstart", onDrawStart);
         measureInteraction.un("drawend", onDrawEnd);
-
-        if (map.getInteractions().getArray().includes(measureInteraction)) {
-          map.removeInteraction(measureInteraction);
-        }
-        if (map.getLayers().getArray().includes(measureLayer)) {
-          map.removeLayer(measureLayer);
-        }
-        measureSource.clear();
+        // Fjerner eventuell oppmåling/tegning
+        measureLayer.getSource()?.clear();
 
         // Fjern overlays
         if (helpTooltipRef.current) {
@@ -236,7 +199,7 @@ const useMeasure = () => {
         measureTooltipElement.current = null;
       };
     }
-  }, [activeTool, measureInteraction, measureLayer, measureSource]);
+  }, [activeTool, measureInteraction, measureLayer]);
 
   return { measureInteraction };
 };
