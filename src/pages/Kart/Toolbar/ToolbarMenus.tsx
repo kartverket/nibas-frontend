@@ -1,14 +1,14 @@
-import { Divider, Hide, Icon, MenuDivider, MenuList, MenuOptionGroup, Tooltip } from "@kvib/react";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useToolbar } from "contexts/ToolbarContext";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { Divider, Hide, Icon, MenuDivider, MenuList, MenuOptionGroup } from "@kvib/react";
 import { ConditionalHide, ConditionalShow } from "components/ConditionalShowHide";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
+import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
-import { MenuItems, ToolbarMenuItem } from "./Toolbar";
 import { anyFeatureIsEditable } from "utils/features";
 import CustomTooltip from "./CustomTooltip";
+import { MenuItems, ToolbarMenuItem } from "./Toolbar";
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool, disableModeTool, activeModeTools } = useToolbar();

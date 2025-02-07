@@ -1,21 +1,19 @@
-import { Suspense, useEffect, useRef } from "react";
-import { styled } from "styled-components";
-import { map } from "./constants";
-import OverlayPopup from "./OverlayPopup";
-import useInteractions from "./interactions/useInteractions";
-import Toolbar from "./Toolbar/Toolbar";
-import OverlayPanels from "./OverlayPanels/OverlayPanels";
-import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/TegnforklaringButton";
-import Kartinformasjon from "./Kartinformasjon";
-import { zindex } from "utils/constants";
-import { Spinner } from "@kvib/react";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { format, isPast } from "date-fns";
-import { useParams } from "react-router-dom";
-import PointOverlayPopup from "./PointOverlayPopup";
 import Loading from "pages/App/Loading";
+import { Suspense, useEffect, useRef } from "react";
+import { useParams } from "react-router-dom";
+import { styled } from "styled-components";
+import { zindex } from "utils/constants";
+import { map } from "./constants";
+import useInteractions from "./interactions/useInteractions";
+import Kartinformasjon from "./Kartinformasjon";
+import OverlayPanels from "./OverlayPanels/OverlayPanels";
+import OverlayPopup from "./OverlayPopup";
+import PointOverlayPopup from "./PointOverlayPopup";
+import Toolbar from "./Toolbar/Toolbar";
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);

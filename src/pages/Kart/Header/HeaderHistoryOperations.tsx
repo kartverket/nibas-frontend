@@ -1,17 +1,17 @@
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import HeaderButton, { HeaderSection } from "./HeaderButton";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { Badge, Button, Icon, Menu, MenuButton, MenuList, Tooltip, useDisclosure } from "@kvib/react";
+import { Badge, Button, Icon, Menu, MenuButton, MenuList, useDisclosure } from "@kvib/react";
+import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
+import UtkastEndreModal from "components/Modals/UtkastEndreModal";
+import UtkastSlettModal from "components/Modals/UtkastSlettModal";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { styled } from "styled-components";
 import { statusCode } from "utils/api";
-import { useAuthRenewError } from "components/Authentication/AuthRenewError";
-import { MenuItems, ToolbarMenuItem } from "../Toolbar/Toolbar";
-import UtkastSlettModal from "components/Modals/UtkastSlettModal";
-import UtkastEndreModal from "components/Modals/UtkastEndreModal";
 import CustomTooltip from "../Toolbar/CustomTooltip";
+import { MenuItems, ToolbarMenuItem } from "../Toolbar/Toolbar";
+import HeaderButton, { HeaderSection } from "./HeaderButton";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();

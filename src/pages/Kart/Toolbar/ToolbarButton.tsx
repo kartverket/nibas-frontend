@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, IconButton, IconButtonProps } from "@kvib/react";
+import { FormControl, IconButton, IconButtonProps } from "@kvib/react";
 import { forwardRef } from "react";
 import { styled } from "styled-components";
 import CustomTooltip, { CustomTooltipProps } from "./CustomTooltip";
@@ -8,10 +8,7 @@ export type ToolbarButtonProps = {
   tooltip: CustomTooltipProps;
 } & IconButtonProps;
 
-const ToolbarButton = (
-  { icon, children, tooltip, ...props }: ToolbarButtonProps,
-  ref: React.ForwardedRef<HTMLButtonElement>,
-) => (
+const ToolbarButton = ({ icon, tooltip, ...props }: ToolbarButtonProps, ref: React.ForwardedRef<HTMLButtonElement>) => (
   <CustomTooltip {...tooltip}>
     <ButtonContainer>
       <IconButton icon={icon} variant="ghost" ref={ref} {...props} />
@@ -23,13 +20,6 @@ const ButtonContainer = styled(FormControl)`
   display: flex;
   flex-direction: column;
   align-items: center;
-`;
-
-const Label = styled(FormLabel)`
-  font-weight: normal;
-  color: var(--kvib-colors-gray-800);
-  margin: 0;
-  font-size: var(--kvib-fontSizes-sm);
 `;
 
 export default forwardRef(ToolbarButton);

@@ -1,13 +1,13 @@
-import { Button, Divider, Hide, Icon, Link, Text, useDisclosure } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { styled } from "styled-components";
-import { HeaderSection } from "./HeaderButton";
-import { useNavigate } from "react-router-dom";
-import { routes } from "utils/routes";
-import useAlertModal from "hooks/useAlertModal";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { Button, Divider, Icon, Text } from "@kvib/react";
 import AlertModal from "components/Modals/AlertModal";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import useAlertModal from "hooks/useAlertModal";
+import { useNavigate } from "react-router-dom";
+import { styled } from "styled-components";
+import { routes } from "utils/routes";
 import CustomTooltip from "../Toolbar/CustomTooltip";
+import { HeaderSection } from "./HeaderButton";
 
 const HeaderBreadcrumb = () => {
   const { utkast } = useUtkast();
@@ -64,10 +64,6 @@ const HeaderBreadcrumb = () => {
 export const Separator = styled(Icon)`
   line-height: 30px;
   font-size: 20px;
-`;
-
-const Crumb = styled.span`
-  white-space: nowrap;
 `;
 
 export default HeaderBreadcrumb;
