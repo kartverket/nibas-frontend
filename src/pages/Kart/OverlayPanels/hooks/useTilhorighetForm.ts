@@ -84,6 +84,69 @@ const getIdForKontekstEgenskaper = (
   }
 };
 
+const getUpdatedMetadata = (
+  kretser: Krets[],
+  historyEntries: HistoryEntry[],
+  utkastEntries: UtkastOperasjoner,
+  kontekstType: KontekstType,
+): Krets[] => {
+  const idAndNamesHistory = historyEntries
+    .flatMap((historyEntry) =>
+      historyEntry.changes.map((change) => {
+        if (change.to != null && "navn" in change.to) {
+          return {
+            id: change.id,
+            name: change.to.navn,
+          };
+        }
+        return null;
+      }),
+    )
+    .filter((entry): entry is { id: string; name: string } => entry !== null);
+
+  const idAndNumbersHistory = historyEntries
+    .flatMap((historyEntry) =>
+      historyEntry.changes.map((change) => {
+        if (change.to != null && "nummer" in change.to) {
+          return {
+            id: change.id,
+            number: change.to.nummer,
+          };
+        }
+        return null;
+      }),
+    )
+    .filter((entry): entry is { id: string; number: string } => entry !== null);
+
+  const idAndNamesUtkast = Object.values(
+    utkastEntries.metadataendringer[kontekstType === "GRUNNKRETS" ? "grunnkretsendringer" : "stemmekretsendringer"],
+  ).map((grunnkretsEndring) => ({ id: grunnkretsEndring.identifikasjon.lokalid, name: grunnkretsEndring.navn }));
+
+  const idAndNumbersUtkast = Object.values(
+    utkastEntries.metadataendringer[kontekstType === "GRUNNKRETS" ? "grunnkretsendringer" : "stemmekretsendringer"],
+  ).map((grunnkretsEndring) => ({ id: grunnkretsEndring.identifikasjon.lokalid, number: grunnkretsEndring.nummer }));
+
+  const idAndNames = idAndNamesHistory.concat(idAndNamesUtkast);
+
+  const idAndNumbers = idAndNumbersHistory.concat(idAndNumbersUtkast);
+
+  return kretser.map((krets) => {
+    const foundNameEntry = idAndNames.find((entry) => entry.id === krets.id.lokalid.value);
+
+    if (foundNameEntry !== undefined && foundNameEntry.name !== krets.navn) {
+      return { ...krets, navn: foundNameEntry.name };
+    }
+
+    const foundNumberEntry = idAndNumbers.find((entry) => entry.id === krets.id.lokalid.value);
+
+    if (foundNumberEntry !== undefined) {
+      return { ...krets, nummer: foundNumberEntry.number };
+    }
+
+    return krets;
+  });
+};
+
 const getKretserFromHistory = (
   entries: HistoryEntry[],
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -148,17 +211,19 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
           kommunerIdOgNummer,
           kontekstType,
         );
+        const ListeA: Krets[] = [
+          ...commonOptions[Tilhorighet.A],
+          ...tilhorighetOptionsFromUtkast,
+          ...tihorighetOptionsFromHistory,
+        ];
+        const ListeB: Krets[] = [
+          ...commonOptions[Tilhorighet.A],
+          ...tilhorighetOptionsFromUtkast,
+          ...tihorighetOptionsFromHistory,
+        ];
         setTilhorighetValg({
-          [Tilhorighet.A]: [
-            ...commonOptions[Tilhorighet.A],
-            ...tilhorighetOptionsFromUtkast,
-            ...tihorighetOptionsFromHistory,
-          ],
-          [Tilhorighet.B]: [
-            ...commonOptions[Tilhorighet.B],
-            ...tilhorighetOptionsFromUtkast,
-            ...tihorighetOptionsFromHistory,
-          ],
+          [Tilhorighet.A]: getUpdatedMetadata(ListeA, getHistoryEntries(), utkast.operasjoner, kontekstType),
+          [Tilhorighet.B]: getUpdatedMetadata(ListeB, getHistoryEntries(), utkast.operasjoner, kontekstType),
         });
       } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);
