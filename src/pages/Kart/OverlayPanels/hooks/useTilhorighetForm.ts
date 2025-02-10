@@ -90,57 +90,36 @@ const getUpdatedMetadata = (
   utkastEntries: UtkastOperasjoner,
   kontekstType: KontekstType,
 ): Krets[] => {
-  const idAndNamesHistory = historyEntries
+  const metadataFromHistory = historyEntries
     .flatMap((historyEntry) =>
       historyEntry.changes.map((change) => {
-        if (change.to != null && "navn" in change.to) {
+        if (change.to != null && "navn" in change.to && "nummer" in change.to) {
           return {
             id: change.id,
             name: change.to.navn,
-          };
-        }
-        return null;
-      }),
-    )
-    .filter((entry): entry is { id: string; name: string } => entry !== null);
-
-  const idAndNumbersHistory = historyEntries
-    .flatMap((historyEntry) =>
-      historyEntry.changes.map((change) => {
-        if (change.to != null && "nummer" in change.to) {
-          return {
-            id: change.id,
             number: change.to.nummer,
           };
         }
         return null;
       }),
     )
-    .filter((entry): entry is { id: string; number: string } => entry !== null);
+    .filter((entry): entry is { id: string; name: string; number: string } => entry !== null);
 
-  const idAndNamesUtkast = Object.values(
+  const metadataFromUtkast = Object.values(
     utkastEntries.metadataendringer[kontekstType === "GRUNNKRETS" ? "grunnkretsendringer" : "stemmekretsendringer"],
-  ).map((grunnkretsEndring) => ({ id: grunnkretsEndring.identifikasjon.lokalid, name: grunnkretsEndring.navn }));
+  ).map((endring) => ({
+    id: endring.identifikasjon.lokalid,
+    name: endring.navn,
+    number: endring.nummer,
+  }));
 
-  const idAndNumbersUtkast = Object.values(
-    utkastEntries.metadataendringer[kontekstType === "GRUNNKRETS" ? "grunnkretsendringer" : "stemmekretsendringer"],
-  ).map((grunnkretsEndring) => ({ id: grunnkretsEndring.identifikasjon.lokalid, number: grunnkretsEndring.nummer }));
-
-  const idAndNames = idAndNamesHistory.concat(idAndNamesUtkast);
-
-  const idAndNumbers = idAndNumbersHistory.concat(idAndNumbersUtkast);
+  const metadataChanges = metadataFromHistory.concat(metadataFromUtkast);
 
   return kretser.map((krets) => {
-    const foundNameEntry = idAndNames.find((entry) => entry.id === krets.id.lokalid.value);
+    const matchingChange = metadataChanges.find((entry) => entry.id === krets.id.lokalid.value);
 
-    if (foundNameEntry !== undefined && foundNameEntry.name !== krets.navn) {
-      return { ...krets, navn: foundNameEntry.name };
-    }
-
-    const foundNumberEntry = idAndNumbers.find((entry) => entry.id === krets.id.lokalid.value);
-
-    if (foundNumberEntry !== undefined) {
-      return { ...krets, nummer: foundNumberEntry.number };
+    if (matchingChange !== undefined) {
+      return { ...krets, navn: matchingChange.name, nummer: matchingChange.number };
     }
 
     return krets;
