@@ -116,10 +116,10 @@ const getUpdatedMetadata = (
   const metadataChanges = metadataFromHistory.concat(metadataFromUtkast);
 
   return kretser.map((krets) => {
-    const foundChange = metadataChanges.find((entry) => entry.id === krets.id.lokalid.value);
+    const matchingChange = metadataChanges.find((entry) => entry.id === krets.id.lokalid.value);
 
-    if (foundChange !== undefined) {
-      return { ...krets, navn: foundChange.name, nummer: foundChange.number };
+    if (matchingChange !== undefined) {
+      return { ...krets, navn: matchingChange.name, nummer: matchingChange.number };
     }
 
     return krets;
