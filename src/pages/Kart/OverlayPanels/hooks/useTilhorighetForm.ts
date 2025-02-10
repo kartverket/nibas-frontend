@@ -107,10 +107,10 @@ const getUpdatedMetadata = (
 
   const metadataFromUtkast = Object.values(
     utkastEntries.metadataendringer[kontekstType === "GRUNNKRETS" ? "grunnkretsendringer" : "stemmekretsendringer"],
-  ).map((grunnkretsEndring) => ({
-    id: grunnkretsEndring.identifikasjon.lokalid,
-    name: grunnkretsEndring.navn,
-    number: grunnkretsEndring.nummer,
+  ).map((endring) => ({
+    id: endring.identifikasjon.lokalid,
+    name: endring.navn,
+    number: endring.nummer,
   }));
 
   const metadataChanges = metadataFromHistory.concat(metadataFromUtkast);
