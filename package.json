@@ -76,7 +76,7 @@
     "eslint-plugin-react-hooks": "~4.6.2",
     "jsdom": "^24.1.0",
     "msw": "~2.3.1",
-    "postcss-styled-syntax": "^0.6.4",
+    "postcss-styled-syntax": "^0.7.1",
     "prettier": "^3.3.0",
     "stylelint": "^16.6.1",
     "stylelint-config-standard": "^37.0.0",
