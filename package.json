@@ -79,7 +79,7 @@
     "postcss-styled-syntax": "^0.6.4",
     "prettier": "^3.3.0",
     "stylelint": "^16.6.1",
-    "stylelint-config-standard": "^36.0.0",
+    "stylelint-config-standard": "^37.0.0",
     "typescript": "~5.4.5",
     "vite": "^5.4.14",
     "vite-plugin-checker": "^0.6.4",
