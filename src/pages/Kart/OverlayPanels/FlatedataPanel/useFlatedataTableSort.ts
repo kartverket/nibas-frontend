@@ -57,6 +57,14 @@ export function orderInndelingerBy(
     const itemAValue = get(itemA, sortField, "");
     const itemBValue = get(itemB, sortField, "");
 
+    // Hvis begge verdiene er strenger, men kun inneholder siffer, behandle de som siffer
+    const isNumericA = typeof itemAValue === "string" && /^\d+$/.test(itemAValue);
+    const isNumericB = typeof itemBValue === "string" && /^\d+$/.test(itemBValue);
+
+    if (isNumericA && isNumericB) {
+      return Number(itemAValue) - Number(itemBValue);
+    }
+
     if (typeof itemAValue === "string" && typeof itemBValue === "string") {
       return itemAValue.toLowerCase().localeCompare(itemBValue.toLowerCase(), "no");
     }
