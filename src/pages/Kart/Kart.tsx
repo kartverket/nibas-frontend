@@ -1,7 +1,6 @@
 import { Suspense, useEffect, useRef } from "react";
 import { styled } from "styled-components";
 import { map } from "./constants";
-import OverlayPopup from "./OverlayPopup";
 import useInteractions from "./interactions/useInteractions";
 import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
@@ -68,7 +67,6 @@ const Kart = () => {
             <OverlayPanels />
             <Toolbar />
           </KartOverlay>
-          <OverlayPopup />
           <PointOverlayPopup />
         </Suspense>
       </KartTarget>
