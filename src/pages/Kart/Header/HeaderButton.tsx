@@ -29,15 +29,7 @@ const HeaderButtonNoTooltip = forwardRef(function HeaderButtonWithNoTooltip(
       {...props}
     />
   ) : (
-    <Button
-      ref={ref}
-      size="sm"
-      variant="ghost"
-      leftIcon={icon} // Use leftIcon only if icon is provided
-      onClick={onClick}
-      isDisabled={isDisabled}
-      {...props}
-    >
+    <Button ref={ref} size="sm" variant="ghost" leftIcon={icon} onClick={onClick} isDisabled={isDisabled} {...props}>
       <ButtonContent>
         {label} {alert}
       </ButtonContent>
