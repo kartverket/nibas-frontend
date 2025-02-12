@@ -62,7 +62,9 @@ const Toolbar = () => {
   const toggleGrenseinfo = () => {
     toggleTool("grenseinfo");
 
-    if (activeOverlayPanel === "grenseinfo") {
+    if (selectedFeatures.length > 0) {
+      toggleOverlayPanel("grenseinfo");
+    } else if (activeOverlayPanel === "grenseinfo") {
       closeOverlayPanel();
     }
   };
