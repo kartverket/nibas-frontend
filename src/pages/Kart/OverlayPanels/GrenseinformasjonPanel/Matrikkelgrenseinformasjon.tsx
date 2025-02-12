@@ -1,4 +1,4 @@
-import { Text } from "@kvib/react";
+import { Alert, AlertIcon, Text } from "@kvib/react";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { PropsWithChildren } from "react";
@@ -90,7 +90,7 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
       <PanelHeader noMargin onClose={onClose}>
         Informasjon
       </PanelHeader>
-      {teiggrenseProperties && (
+      {teiggrenseProperties ? (
         <>
           <TeiggrensePropertyRow label={"Målemetode"}>
             {maalemetode != null ? (
@@ -117,6 +117,11 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
             {teiggrenseProperties.OMTVISTET === 1 ? "Ja" : "Nei"}
           </TeiggrensePropertyRow>
         </>
+      ) : (
+        <Alert status="error">
+          <AlertIcon />
+          Finner ikke informasjon om valgt teiggrense. Kontakt Kartverket dersom du mener dette er feil.
+        </Alert>
       )}
     </GrensePanelContent>
   );

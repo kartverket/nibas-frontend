@@ -1,5 +1,5 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { SidePanel } from "../Panel";
+import { PanelHeader, SidePanel } from "../Panel";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 import GrenseinformasjonForm from "./GrenseinformasjonForm";
@@ -7,7 +7,7 @@ import { useCallback, useEffect } from "react";
 import { isTeigFeature } from "utils/features";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
-import { Card, CardBody, CardHeader, Divider, Heading } from "@kvib/react";
+import { Alert, AlertIcon, Card, CardBody, CardHeader, Divider, Heading } from "@kvib/react";
 import { styled } from "styled-components";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
@@ -48,9 +48,9 @@ const GrenseinformasjonPanel = () => {
     selectedFeature && (
       <SidePanel>
         {!isTeigFeature(selectedFeature) ? (
-          <>
+          <GrensePanelContent>
             {selectedProperties ? (
-              <GrensePanelContent>
+              <>
                 <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />
                 <Divider />
                 <Card variant="filled">
@@ -64,11 +64,19 @@ const GrenseinformasjonPanel = () => {
                     <Vedtaksinformasjon feature={selectedFeature} />
                   </GrenseInfoExtraCardBody>
                 </Card>
-              </GrensePanelContent>
+              </>
             ) : (
-              <p>Valgt grense har ikke metadata</p>
+              <>
+                <PanelHeader noMargin onClose={closeOverlayPanel}>
+                  Informasjon
+                </PanelHeader>
+                <Alert status="error">
+                  <AlertIcon />
+                  Finner ikke informasjon om valgt grense. Kontakt Kartverket dersom du mener dette er feil.
+                </Alert>
+              </>
             )}
-          </>
+          </GrensePanelContent>
         ) : (
           <TeiggrenseInformasjon onClose={closeOverlayPanel} feature={selectedFeature} />
         )}
