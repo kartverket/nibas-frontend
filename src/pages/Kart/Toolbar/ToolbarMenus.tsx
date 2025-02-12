@@ -69,6 +69,15 @@ const ToolbarMenus = () => {
       command: KeyboardShortcuts["grensesplit"].displayString,
     },
     {
+      label: "Forleng grense",
+      icon: <Icon icon="expand" />,
+      $isActive: activeTool === "extend",
+      isDisabled: !isEditing,
+      onClick: () => toggleTool("extend"),
+      "aria-label": "Forleng en grense til neste kollisjon",
+      command: KeyboardShortcuts["grenseforlenging"].displayString,
+    },
+    {
       label: "Arkiver grense",
       icon: <Icon icon="archive" />,
       command: KeyboardShortcuts["archive"].displayString,
