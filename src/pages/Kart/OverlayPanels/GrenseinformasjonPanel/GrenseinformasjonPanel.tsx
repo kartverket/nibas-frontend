@@ -19,6 +19,7 @@ const GrenseinformasjonPanel = () => {
   const { history } = useHistory();
   const { toggleTool } = useToolbar();
   const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
+  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
 
   const handleClose = () => {
     closeOverlayPanel(false);
@@ -26,11 +27,11 @@ const GrenseinformasjonPanel = () => {
   };
 
   const closeGrenseinfoIfFeatureRemoved = useCallback(() => {
-    if (selectedFeature?.getId() === undefined || selectedFeature?.getId() === null) {
+    if (selectedFeature?.getId() === undefined || selectedFeature.getId() === null) {
       return;
     }
 
-    const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature!.getId()!.toString(), history);
+    const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature.getId()!.toString(), history);
     if (isFeatureGone) {
       closeOverlayPanel(false);
       toggleTool("grenseinfo");
@@ -43,25 +44,32 @@ const GrenseinformasjonPanel = () => {
     }
   }, [closeGrenseinfoIfFeatureRemoved, history.entries.length, history.index]);
 
-  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
-
   return (
     <SidePanel>
-      {!selectedFeature ? (
+      {selectedFeatures.length === 0 ? (
         <GrensePanelContent>
           <PanelHeader onClose={handleClose} noMargin>
             Informasjon
           </PanelHeader>
-          <Text>Velg en grense for å se informasjon om den.</Text>
+          <Text>Velg en grense i kartet for å se grenseinformasjon</Text>
         </GrensePanelContent>
-      ) : isMatrikkelFeature(selectedFeature) ? (
+      ) : selectedFeatures.length > 1 ? (
+        <GrensePanelContent>
+          <PanelHeader onClose={handleClose} noMargin>
+            Informasjon
+          </PanelHeader>
+          <Text>
+            Du kan kun se informasjon om én grense om gangen. Velg grensen på nytt som du ønsker å se informasjon til.
+          </Text>
+        </GrensePanelContent>
+      ) : selectedFeature && isMatrikkelFeature(selectedFeature) ? (
         <GrensePanelContent>
           <PanelHeader onClose={handleClose} noMargin>
             Informasjon
           </PanelHeader>
           <Text>Kan ikke vise informasjon om matrikkelgrenser.</Text>
         </GrensePanelContent>
-      ) : selectedProperties ? (
+      ) : selectedFeature && selectedProperties ? (
         <GrensePanelContent>
           <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
           <Divider />
