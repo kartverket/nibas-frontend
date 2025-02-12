@@ -1,5 +1,5 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { SidePanel } from "../Panel";
+import { SidePanel, PanelHeader } from "../Panel";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 import GrenseinformasjonForm from "./GrenseinformasjonForm";
@@ -7,7 +7,7 @@ import { useCallback, useEffect } from "react";
 import { isMatrikkelFeature } from "utils/features";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
-import { Card, CardBody, CardHeader, Divider, Heading } from "@kvib/react";
+import { Card, CardBody, Divider, Heading, Text, CardHeader } from "@kvib/react";
 import { styled } from "styled-components";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
@@ -21,14 +21,6 @@ const GrenseinformasjonPanel = () => {
   const handleClose = () => {
     closeOverlayPanel(false);
   };
-
-  useEffect(() => {
-    if (selectedFeatures.length === 0) {
-      closeOverlayPanel(false);
-    }
-  }, [closeOverlayPanel, selectedFeatures.length]);
-
-  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
 
   const closeGrenseinfoIfFeatureRemoved = useCallback(() => {
     if (selectedFeature?.getId() === undefined || selectedFeature?.getId() === null) {
@@ -47,31 +39,49 @@ const GrenseinformasjonPanel = () => {
     }
   }, [closeGrenseinfoIfFeatureRemoved, history.entries.length, history.index]);
 
+  const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
+
   return (
-    selectedFeature &&
-    !isMatrikkelFeature(selectedFeature) && (
-      <SidePanel>
-        {selectedProperties ? (
-          <GrensePanelContent>
-            <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
-            <Divider />
-            <Card variant="filled">
-              <GrenseInfoExtraCardHeader>
-                <Heading size="md">Ytterligere informasjon</Heading>
-              </GrenseInfoExtraCardHeader>
-              <GrenseInfoExtraCardBody>
-                <Divider />
-                <TilhorighetField feature={selectedFeature} />
-                <Divider />
-                <Vedtaksinformasjon feature={selectedFeature} />
-              </GrenseInfoExtraCardBody>
-            </Card>
-          </GrensePanelContent>
-        ) : (
-          <p>Valgt grense har ikke metadata</p>
-        )}
-      </SidePanel>
-    )
+    <SidePanel>
+      {!selectedFeature ? (
+        <GrensePanelContent>
+          <PanelHeader onClose={handleClose} noMargin>
+            Informasjon
+          </PanelHeader>
+          <Text>Velg en grense for å se informasjon om den.</Text>
+        </GrensePanelContent>
+      ) : isMatrikkelFeature(selectedFeature) ? (
+        <GrensePanelContent>
+          <PanelHeader onClose={handleClose} noMargin>
+            Informasjon
+          </PanelHeader>
+          <Text>Kan ikke vise informasjon om matrikkelgrenser.</Text>
+        </GrensePanelContent>
+      ) : selectedProperties ? (
+        <GrensePanelContent>
+          <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
+          <Divider />
+          <Card variant="filled">
+            <GrenseInfoExtraCardHeader>
+              <Heading size="md">Ytterligere informasjon</Heading>
+            </GrenseInfoExtraCardHeader>
+            <GrenseInfoExtraCardBody>
+              <Divider />
+              <TilhorighetField feature={selectedFeature} />
+              <Divider />
+              <Vedtaksinformasjon feature={selectedFeature} />
+            </GrenseInfoExtraCardBody>
+          </Card>
+        </GrensePanelContent>
+      ) : (
+        <GrensePanelContent>
+          <PanelHeader onClose={handleClose} noMargin>
+            Informasjon
+          </PanelHeader>
+          <Text>Valgt grense har ikke metadata</Text>
+        </GrensePanelContent>
+      )}
+    </SidePanel>
   );
 };
 
