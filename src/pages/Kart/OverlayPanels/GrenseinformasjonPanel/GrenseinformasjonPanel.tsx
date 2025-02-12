@@ -18,9 +18,13 @@ const GrenseinformasjonPanel = () => {
   const { history } = useHistory();
   const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
 
+  const handleClose = () => {
+    closeOverlayPanel(false);
+  };
+
   useEffect(() => {
     if (selectedFeatures.length === 0) {
-      closeOverlayPanel();
+      closeOverlayPanel(false);
     }
   }, [closeOverlayPanel, selectedFeatures.length]);
 
@@ -33,7 +37,7 @@ const GrenseinformasjonPanel = () => {
 
     const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature!.getId()!.toString(), history);
     if (isFeatureGone) {
-      closeOverlayPanel();
+      closeOverlayPanel(false);
     }
   }, [closeOverlayPanel, history, selectedFeature]);
 
@@ -49,7 +53,7 @@ const GrenseinformasjonPanel = () => {
       <SidePanel>
         {selectedProperties ? (
           <GrensePanelContent>
-            <GrenseinformasjonForm onClose={closeOverlayPanel} feature={selectedFeature} />
+            <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
             <Divider />
             <Card variant="filled">
               <GrenseInfoExtraCardHeader>
