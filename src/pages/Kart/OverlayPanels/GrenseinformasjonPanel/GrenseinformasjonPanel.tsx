@@ -11,15 +11,18 @@ import { Card, CardBody, Divider, Heading, Text, CardHeader } from "@kvib/react"
 import { styled } from "styled-components";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
+import { useToolbar } from "contexts/ToolbarContext";
 
 const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
   const { closeOverlayPanel } = useOverlayPanel();
   const { history } = useHistory();
+  const { toggleTool } = useToolbar();
   const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
 
   const handleClose = () => {
     closeOverlayPanel(false);
+    toggleTool("grenseinfo");
   };
 
   const closeGrenseinfoIfFeatureRemoved = useCallback(() => {
@@ -30,8 +33,9 @@ const GrenseinformasjonPanel = () => {
     const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature!.getId()!.toString(), history);
     if (isFeatureGone) {
       closeOverlayPanel(false);
+      toggleTool("grenseinfo");
     }
-  }, [closeOverlayPanel, history, selectedFeature]);
+  }, [closeOverlayPanel, history, selectedFeature, toggleTool]);
 
   useEffect(() => {
     if (history.index < history.entries.length) {

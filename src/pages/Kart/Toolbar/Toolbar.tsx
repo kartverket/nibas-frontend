@@ -47,7 +47,6 @@ const Toolbar = () => {
     closeOverlayModal,
     toggleOverlayPanel,
     toggleOverlayModal,
-    openOverlayPanel,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
 
@@ -61,14 +60,8 @@ const Toolbar = () => {
   const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 
   const toggleGrenseinfo = () => {
-    const wasActive = activeTool === "grenseinfo";
     toggleTool("grenseinfo");
-
-    if (!wasActive) {
-      openOverlayPanel("grenseinfo");
-    } else {
-      closeOverlayPanel(false);
-    }
+    toggleOverlayPanel("grenseinfo", false);
   };
 
   const toggleMatrikkel = () => {
