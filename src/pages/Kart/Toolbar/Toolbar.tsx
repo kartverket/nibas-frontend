@@ -148,9 +148,10 @@ const Toolbar = () => {
   );
   useHoldButtonToggle(
     "shift",
-    activeModeTools.includes("dragzoom"),
-    () => enableModeTool("dragzoom"),
-    () => disableModeTool("dragzoom"),
+    activeModeTools.includes("move"),
+    () => enableModeTool("move"),
+    () => disableModeTool("move"),
+    isPanningAllowed,
   );
 
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
@@ -294,13 +295,10 @@ const Toolbar = () => {
                   return;
                 }
               } else {
-                if (activeModeTools.includes("dragzoom")) {
-                  enableModeTool("move");
-                  disableModeTool("dragzoom");
-                }
+                enableModeTool("move");
               }
             }}
-            isActive={activeModeTools.includes("move") && !activeModeTools.includes("dragzoom")}
+            isActive={activeModeTools.includes("move")}
             aria-label={"Panorer i kartet"}
             tooltip={{
               text: "Panorer i kartet",
@@ -308,23 +306,6 @@ const Toolbar = () => {
             }}
           />
           <Divider orientation="vertical" />
-          <ToolbarButton
-            icon="select"
-            onClick={() => {
-              if (activeModeTools.includes("dragzoom")) {
-                disableModeTool("dragzoom");
-              } else {
-                enableModeTool("dragzoom");
-              }
-            }}
-            isActive={activeModeTools.includes("dragzoom")}
-            variant="ghost"
-            aria-label="Zoom til område ved å markere i kartet"
-            tooltip={{
-              text: "Zoom til område",
-              additionalInfo: "Shift + marker i kartet",
-            }}
-          />
           <ToolbarButton
             icon="remove"
             onClick={() => zoom(-1)}

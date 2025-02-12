@@ -35,20 +35,12 @@ const useInteractions = () => {
     defaultCursor: () => "pointer",
   });
   useCursorStyles({
-    isEnabled: activeModeTools.includes("dragzoom"),
-    defaultCursor: () => "zoom-in",
-  });
-  useCursorStyles({
-    isEnabled:
-      !pointerCursorTools.includes(activeTool) &&
-      activeModeTools.includes("move") &&
-      !activeModeTools.includes("dragzoom"),
+    isEnabled: !pointerCursorTools.includes(activeTool) && activeModeTools.includes("move"),
     defaultCursor: () => "grab",
     eventsAndCursor: [
       {
         name: "pointerdrag",
-        cursor: (e) =>
-          shiftKeyOnly(e as MapBrowserEvent<UIEvent>) || activeModeTools.includes("dragzoom") ? "zoom-in" : "grabbing",
+        cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "grabbing"),
       },
       {
         name: "mouseup",
