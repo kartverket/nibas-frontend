@@ -216,7 +216,7 @@ const Toolbar = () => {
       "aria-label": "Informasjon om grense",
     },
     {
-      label: "Punktkoordinater",
+      label: "Koordinater på punkter",
       icon: <Icon icon="fmd_bad" />,
       command: KeyboardShortcuts["grensecoordinates"].displayString,
       $isActive: activeTool === "grensecoordinates",
