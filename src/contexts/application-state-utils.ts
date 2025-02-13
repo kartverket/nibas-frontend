@@ -182,13 +182,11 @@ const serializeHistory = (history: HistoryState) => {
         type: "serializablegrensedelete",
         changes: [],
       };
-      entry.changes.forEach((change: HistoryChange<Feature<Geometry> | null>) => {
-        if (change.from == null) {
-          return;
-        }
+      entry.changes.forEach((change) => {
+        const features = geoJson.readFeatures(change.from);
         const serializableChange: SerializableHistoryChange<string | null> = {
           id: change.id,
-          from: geoJson.writeFeature(change.from),
+          from: features.length > 0 ? geoJson.writeFeature(features[0]) : null,
           to: null,
         };
         tmpEntry.changes.push(serializableChange);
@@ -259,9 +257,10 @@ const deserializeHistory = (serializedHistoryEntry: string): HistoryState | null
           changes: [],
         };
         entry.changes.forEach((change) => {
+          const features = geoJson.readFeatures(change.from);
           const serializableChange: HistoryChange<Feature<Geometry> | null> = {
             id: change.id,
-            from: geoJson.readFeature(change.from),
+            from: features.length > 0 ? features[0] : null,
             to: null,
           };
           tmpEntry.changes.push(serializableChange);
