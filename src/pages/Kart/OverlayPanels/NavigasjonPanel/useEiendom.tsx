@@ -39,21 +39,24 @@ export const useEiendom = () => {
         kommunenummer: eiendom.kommune.nummer,
         utkoordsys: "25833", // I Nibas bruker vi EPSG:25833
       };
-      setIsLoading(true);
-      const response = await fetch(
-        getExternalUrlWithParameters("https://api.kartverket.no/eiendom/v1/geokoding", params),
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
+      try {
+        setIsLoading(true);
+        const response = await fetch(
+          getExternalUrlWithParameters("https://api.kartverket.no/eiendom/v1/geokoding", params),
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           },
-        },
-      );
-      setIsLoading(false);
-
-      if (statusCode.isSuccessful(response.status)) {
-        return response.json();
-      } else if (statusCode.isError(response.status)) {
+        );
+        setIsLoading(false);
+        if (statusCode.isSuccessful(response.status)) {
+          return response.json();
+        } else if (statusCode.isError(response.status)) {
+          searchErrorToast();
+        }
+      } catch (error) {
         searchErrorToast();
       }
     }
