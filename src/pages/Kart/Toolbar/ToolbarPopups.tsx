@@ -29,12 +29,13 @@ const ToolbarPopups = () => {
   const archiveFeatures = () => {
     const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
 
-    clearSelection();
     addArchivedStyles(selectedFeatureIds);
     removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
     addFeaturesToSource("archived", selectedFeatures);
 
     addArchivingEntryFromFeatureList(selectedFeatures, addHistoryEntry);
+
+    clearSelection();
 
     toast({
       status: "success",
