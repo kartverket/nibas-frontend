@@ -175,6 +175,10 @@ const ToolbarPopups = () => {
             onClose={resetTool}
           />
         );
+      case "extend":
+        return (
+          <ToolbarPopup text="Velg grensen du vil forlenge til neste kollisjon" subtext="TODO" onClose={resetTool} />
+        );
       case "archive":
         return (
           <ToolbarPopup

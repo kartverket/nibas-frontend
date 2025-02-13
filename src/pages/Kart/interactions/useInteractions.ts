@@ -12,17 +12,19 @@ import { SnapData, createKartlagSnapsData } from "./snapping-utils";
 import { MapBrowserEvent } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
 import useMeasure from "./useMeasure";
+import useExtend from "./useExtend";
 const useInteractions = () => {
   const { modify } = useModify();
   const { dragPan, dragZoom } = useDragInteractions();
   const { select } = useSelect();
   const { draw } = useDraw();
   const { measureInteraction } = useMeasure();
+  const { extendInteraction } = useExtend();
   const { selectPoint } = useSelectPoint();
   const { activeModeTools, activeTool } = useToolbar();
   const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
 
-  const crosshairCursorTools: Tool[] = ["draw", "add", "remove", "measure", null];
+  const crosshairCursorTools: Tool[] = ["draw", "add", "remove", "measure", "extend", null];
   const pointerCursorTools: Tool[] = ["archive", "grenseinfo", "grensecoordinates", "koordinater", "split", "delete"];
 
   useCursorStyles({
@@ -56,6 +58,13 @@ const useInteractions = () => {
       map.removeInteraction(measureInteraction);
     }
   }, [activeTool, measureInteraction]);
+  useEffect(() => {
+    if (activeTool === "extend") {
+      map.addInteraction(extendInteraction);
+    } else {
+      map.removeInteraction(extendInteraction);
+    }
+  }, [activeTool, extendInteraction]);
   // Legger til/fjerner `draw`-interaksjonen **bare** når `activeTool === "draw"`. På den måten unngår vi at `draw` nullstilles hver gang vi for eksempel
   // toggler snap. `draw` blir kun  fjernet hvis brukeren faktisk bytter verktøy bort fra "draw".
   useEffect(() => {

@@ -16,8 +16,8 @@ export type Shortcut =
   | "grenseinfo"
   | "grensecoordinates"
   | "measure"
+  | "extend"
   | "grensesplit"
-  | "grenseforlenging"
   | "archive"
   | "delete"
   | "matrikkel"
@@ -89,8 +89,8 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   grenseinfo: createShortcut("i", { control: true }),
   grensecoordinates: createShortcut("k", { control: true, shift: true }),
   grensesplit: createShortcut("p", { control: true, shift: true }),
-  grenseforlenging: createShortcut("e", {control: true, shift: true}),
   measure: createShortcut("d", { control: true }),
+  extend: createShortcut("e", { control: true, shift: true }),
 
   // Point Tools
   add: createShortcut("l", { control: true }),

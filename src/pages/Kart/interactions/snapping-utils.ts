@@ -82,6 +82,7 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
     "remove",
     "draw",
     "measure",
+    "extend",
   ];
 
   // Redigering og ingen verktøy eller snapping er valgt
@@ -159,4 +160,5 @@ export const createKartlagSnapsData = (
   archived: createSnapDataForSource("archived", activeModeTools, activeTool),
   edit: createSnapDataForSource("edit", activeModeTools, activeTool),
   measure: createSnapDataForSource("measure", activeModeTools, activeTool),
+  extend: createSnapDataForSource("extend", activeModeTools, activeTool),
 });

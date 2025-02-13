@@ -46,6 +46,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
   useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditing);
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
+  useKeyboardShortcut("extend", () => toggleOverlayModal("extend"));
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
@@ -75,7 +76,7 @@ const ToolbarMenus = () => {
       isDisabled: !isEditing,
       onClick: () => toggleTool("extend"),
       "aria-label": "Forleng en grense til neste kollisjon",
-      command: KeyboardShortcuts["grenseforlenging"].displayString,
+      command: KeyboardShortcuts["extend"].displayString,
     },
     {
       label: "Arkiver grense",

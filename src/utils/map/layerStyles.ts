@@ -117,6 +117,7 @@ export const inndelingColors = {
   fremtidigEndring: "#B92659",
   edit: "#000000",
   measure: "#000000",
+  extend: "#000000",
 };
 
 export const grenseStyles = {
@@ -128,6 +129,7 @@ export const grenseStyles = {
   delomraade: lineAndPointStyles({ color: inndelingColors["delomraade"] }),
   edit: lineAndPointStyles({ color: inndelingColors["edit"] }),
   measure: lineAndPointStyles({ color: inndelingColors["measure"], dashed: true }),
+  extend: lineAndPointStyles({ color: inndelingColors["extend"], dashed: true }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
   error: lineAndPointStyles({ color: "#FF0000FF" }),

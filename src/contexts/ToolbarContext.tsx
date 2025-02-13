@@ -18,18 +18,18 @@ export const toolValues = [
   "remove",
   "draw",
   "split",
-  "extend",
   "grenseinfo",
   "grensecoordinates",
   "koordinater",
   "archive",
   "delete",
   "measure",
+  "extend",
   null,
 ] as const;
 export type Tool = (typeof toolValues)[number];
 
-const editTools: Tool[] = ["add", "remove", "draw", "split", "extend", "koordinater", "archive", "measure"];
+const editTools: Tool[] = ["add", "remove", "draw", "split", "koordinater", "archive", "measure", "extend"];
 
 export const modeToolValues = ["move", "matrikkel", "snap_nibas", "snap_matrikkel"] as const;
 export type ModeTool = (typeof modeToolValues)[number];
