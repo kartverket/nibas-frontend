@@ -25,7 +25,7 @@ const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
   return coordinates[middle];
 };
 
-export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split", "archive"];
+export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 
 const useSelect = () => {
   const toast = useToast();
