@@ -9,7 +9,7 @@ const overlayPanelValues = [
   "kartlag",
 ] as const;
 export type OverlayPanel = (typeof overlayPanelValues)[number];
-const overlayModalValues = ["inndelinger", "inndelinger-view", "flatedata", "navigasjon", "extend"] as const;
+const overlayModalValues = ["inndelinger", "inndelinger-view", "flatedata", "navigasjon"] as const;
 export type OverlayModal = (typeof overlayModalValues)[number];
 
 export type OverlayPanelContextValue = {

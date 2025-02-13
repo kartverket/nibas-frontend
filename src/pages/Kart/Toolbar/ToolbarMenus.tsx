@@ -44,9 +44,9 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
+  useKeyboardShortcut("extend", () => toggleTool("extend"));
   useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditing);
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
-  useKeyboardShortcut("extend", () => toggleOverlayModal("extend"));
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
