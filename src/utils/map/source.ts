@@ -37,7 +37,7 @@ const setSharedIndexIfFeatureInSource = (source: VectorSource, featureId: string
 };
 
 export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometry>[], callback?: () => void) => {
-  const layer = getLayerById(sourceId) as VectorLayer<Feature>;
+  const layer = getLayerById(sourceId) as VectorLayer<VectorSource<Feature<Geometry>>>;
   const source = layer.getSource();
   if (!source) {
     return;
@@ -70,7 +70,7 @@ export const addFeaturesToSource = (sourceId: LayerId, features: Feature<Geometr
 };
 
 export const removeFeaturesFromSourceByIds = (sourceId: LayerId, featureIds: string[]) => {
-  const layer = getLayerById(sourceId) as VectorLayer<Feature>;
+  const layer = getLayerById(sourceId) as VectorLayer<VectorSource<Feature<Geometry>>>;
   const source = layer.getSource();
   if (!source) {
     return;
