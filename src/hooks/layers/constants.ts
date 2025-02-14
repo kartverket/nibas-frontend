@@ -54,7 +54,7 @@ const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
   return newLayer;
 };
 
-export const grenserLayers: Record<GrenseId, VectorLayer<Feature>> = {
+export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource<Feature>>> = {
   matrikkel: createVectorLayer("matrikkel"),
   fylke: createVectorLayer("fylke"),
   kommune: createVectorLayer("kommune"),

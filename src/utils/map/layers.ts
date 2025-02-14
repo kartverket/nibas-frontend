@@ -35,7 +35,7 @@ export const isWMSLayer = (layer: BaseLayer): layer is TileLayer<TileWMS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof TileWMS;
 };
 
-export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<Feature> => {
+export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<VectorSource<Feature>> => {
   return layer instanceof VectorLayer && layer.getSource() instanceof VectorSource;
 };
 
