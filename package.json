@@ -16,7 +16,7 @@
     "react-oidc-context": "^3.1.0",
     "react-router-dom": "~6.23.1",
     "styled-components": "^6.1.11",
-    "swr": "~2.2.5"
+    "swr": "~2.3.2"
   },
   "scripts": {
     "start": "vite",
