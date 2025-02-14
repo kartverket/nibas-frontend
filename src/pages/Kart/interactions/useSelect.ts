@@ -2,9 +2,7 @@ import { useToast } from "@kvib/react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { usePrevious } from "hooks/usePrevious";
 import { MapBrowserEvent } from "ol";
-import { useEffect } from "react";
 import {
   getFeatureFremtidigEndringDato,
   getFlateRepresentasjonpunkterWithFremtidigEndring,
@@ -23,23 +21,12 @@ const useSelect = () => {
   const { activeTool, activeModeTools } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection, addToSelection, removeFromSelection, isSelectedFeature } =
     useFeatureStyle();
-  const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
-  const previousPointMode = usePrevious(activeTool);
+  const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
   const safeTools: Tool[] = ["grenseinfo"];
   const pointTools: Tool[] = ["add", "remove", "split"];
-
-  // Dersom man bytter verktøy ønsker vi å cleare selection
-  useEffect(() => {
-    if (activeTool !== previousPointMode && selectedFeatures.length > 0) {
-      clearSelection();
-      if (activeOverlayPanel === "grenseinfo") {
-        closeOverlayPanel();
-      }
-    }
-  }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, previousPointMode, selectedFeatures.length]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (
@@ -61,8 +48,13 @@ const useSelect = () => {
       // Vi velger kun én feature om gangen
       const clickedFeature = activeFeatures[0];
 
-      // Hvis feature allerede er valgt skal den de-selectes
-      if (!pointTools.includes(activeTool) && isSelectedFeature(clickedFeature)) {
+      // Hvis feature allerede er valgt skal den de-selectes, men bare hvis vi ikke er i et verktøy
+      // som trenger selection (split, archive)
+      if (
+        !pointTools.includes(activeTool) &&
+        !exclusiveSelectTools.includes(activeTool) &&
+        isSelectedFeature(clickedFeature)
+      ) {
         removeFromSelection(clickedFeature);
         event.stopPropagation();
         return;

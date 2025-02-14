@@ -15,8 +15,8 @@ export type OverlayModal = (typeof overlayModalValues)[number];
 export type OverlayPanelContextValue = {
   activeOverlayPanel: OverlayPanel | null;
   openOverlayPanel: (overlayPanel: OverlayPanel) => void;
-  closeOverlayPanel: () => void;
-  toggleOverlayPanel: (overlayPanel: OverlayPanel) => void;
+  closeOverlayPanel: (clearSelectionOnClose?: boolean) => void;
+  toggleOverlayPanel: (overlayPanel: OverlayPanel, clearSelectionOnClose?: boolean) => void;
 
   activeOverlayModal: OverlayModal | null;
   openOverlayModal: (overlayModal: OverlayModal) => void;
@@ -48,16 +48,18 @@ export const OverlayPanelProvider = ({ children }: { children: React.ReactNode }
   const openOverlayModal = (modalType: OverlayModal) => setActiveOverlayModal(modalType);
   const openOverlayPanel = (panelType: OverlayPanel) => setActiveOverlayPanel(panelType);
   const closeOverlayModal = () => setActiveOverlayModal(null);
-  const closeOverlayPanel = () => {
+  const closeOverlayPanel = (clearSelectionOnClose = true) => {
     setActiveOverlayPanel(null);
-    clearSelection();
+    if (clearSelectionOnClose) {
+      clearSelection();
+    }
   };
 
   const toggleOverlayModal = (modalType: OverlayModal) =>
     modalType === activeOverlayModal ? closeOverlayModal() : openOverlayModal(modalType);
 
-  const toggleOverlayPanel = (panelType: OverlayPanel) =>
-    panelType === activeOverlayPanel ? closeOverlayPanel() : openOverlayPanel(panelType);
+  const toggleOverlayPanel = (panelType: OverlayPanel, clearSelectionOnClose = true) =>
+    panelType === activeOverlayPanel ? closeOverlayPanel(clearSelectionOnClose) : openOverlayPanel(panelType);
 
   const value = {
     activeOverlayModal,

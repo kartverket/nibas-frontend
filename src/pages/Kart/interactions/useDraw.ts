@@ -10,7 +10,6 @@ import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getTempFeatureId } from "./feature-id-utils";
 import { createNyGrenseHistoryChange } from "./grense-history-utils";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import LineString from "ol/geom/LineString";
 import { useGetFeatures } from "./interaction-utils";
@@ -32,7 +31,6 @@ const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
   const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoryEntry } = useHistory();
-  const { openOverlayPanel } = useOverlayPanel();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const toast = useToast();
@@ -286,7 +284,6 @@ const useDraw = () => {
         description: "Grense lagt til med standardmetadata. Husk at du må sette tilhørighet på nye grenser.",
       });
 
-      openOverlayPanel("grenseinfo");
       selectFeatures([drawnFeature]);
 
       // TODO: dersom man ønsker å utvide en grense ønsker vi nok å slå sammen den nye grensen med den gamle her
@@ -305,7 +302,6 @@ const useDraw = () => {
     currentlyEditingInndelinger,
     draw,
     openAsync,
-    openOverlayPanel,
     selectFeatures,
     selectedFeatures,
     toast,

@@ -20,7 +20,7 @@ import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
 import { Draw } from "ol/interaction";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
@@ -61,10 +61,7 @@ const Toolbar = () => {
 
   const toggleGrenseinfo = () => {
     toggleTool("grenseinfo");
-
-    if (activeOverlayPanel === "grenseinfo") {
-      closeOverlayPanel();
-    }
+    toggleOverlayPanel("grenseinfo", false);
   };
 
   const toggleMatrikkel = () => {
@@ -76,6 +73,12 @@ const Toolbar = () => {
     }
     toggleModeTool("matrikkel");
   };
+
+  useEffect(() => {
+    if (activeTool !== "grenseinfo" && activeOverlayPanel === "grenseinfo") {
+      closeOverlayPanel(false);
+    }
+  }, [activeTool, activeOverlayPanel, closeOverlayPanel]);
 
   const isPanningAllowed = (): boolean => {
     if (!isEditing) {
