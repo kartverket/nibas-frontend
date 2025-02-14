@@ -41,16 +41,29 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
   }, [history]);
 
   const addHistoryEntry = useCallback(
-    (entry: HistoryEntry) => {
+    async (entry: HistoryEntry) => {
       clearFeaturesAfterIndex();
-      const entries = [...history.entries.slice(0, history.index), entry];
-      updateFeatureStyles(entries);
-      setHistory({
-        index: history.index + 1,
-        entries,
+      // Bruker funksjonell oppdatering, der vi mottar `prevHistory` i en callback, i stedet for å bruke `history` direkte.
+      // For å unngå concurrency-feil hvis man kaller addHistoryEntry flere ganger etter hverandre. (f.eks når man tegner ny grense og splitter automatisk)
+      const entries = await new Promise<HistoryEntry[]>((resolve) => {
+        setHistory((prevHistory) => {
+          const newEntries = [...prevHistory.entries.slice(0, prevHistory.index), entry];
+
+          // Bruk en microtask for å "resolve" etter at vi har returnert fra callbacken,
+          // for å forhindre at React får en "Cannot update a component while rendering..." når vi kalle updateFeatureStyles
+          queueMicrotask(() => {
+            resolve(newEntries);
+          });
+
+          return {
+            index: prevHistory.index + 1,
+            entries: newEntries,
+          };
+        });
       });
+      updateFeatureStyles(entries);
     },
-    [clearFeaturesAfterIndex, history.entries, history.index, updateFeatureStyles],
+    [clearFeaturesAfterIndex, updateFeatureStyles],
   );
 
   const clearHistory = (historySaved: boolean = false) => {
