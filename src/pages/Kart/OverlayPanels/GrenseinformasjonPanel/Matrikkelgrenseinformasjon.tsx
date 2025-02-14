@@ -4,7 +4,7 @@ import { LineString } from "ol/geom";
 import { PropsWithChildren } from "react";
 import { styled } from "styled-components";
 import { PanelHeader } from "../Panel";
-import useNibasApi from "hooks/useNibasApi";
+//import useNibasApi from "hooks/useNibasApi";
 
 type TeiggrenseInformasjonProps = {
   feature: Feature<LineString>;
@@ -82,8 +82,8 @@ const getNoyaktighetsklasseDescriptionFromKode = (kode: number) => {
 export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjonProps) => {
   const featureProperties = feature.getProperties();
   const teiggrenseProperties = isTeiggrenseMetadata(featureProperties) ? featureProperties : null;
-  const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
-  const maalemetode = kodeliste?.items.find((item) => item.kode === teiggrenseProperties?.MALEMETODE?.toString());
+  //const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+  //const maalemetode = kodeliste?.items.find((item) => item.kode === teiggrenseProperties?.MALEMETODE?.toString());
 
   return (
     <GrensePanelContent>
@@ -92,13 +92,13 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
       </PanelHeader>
       {teiggrenseProperties ? (
         <>
-          <TeiggrensePropertyRow label={"Målemetode"}>
+          {/* <TeiggrensePropertyRow label={"Målemetode"}>
             {maalemetode != null ? (
               `${maalemetode.kode} ${maalemetode.label}`
             ) : (
               <ItalicText>Ikke oppgitt. Se nøyaktighetsklasse</ItalicText>
             )}
-          </TeiggrensePropertyRow>
+          </TeiggrensePropertyRow> */}
           <TeiggrensePropertyRow label={"Nøyaktighet (cm)"}>
             {teiggrenseProperties.NOYAKTIGHET != null ? (
               teiggrenseProperties.NOYAKTIGHET
