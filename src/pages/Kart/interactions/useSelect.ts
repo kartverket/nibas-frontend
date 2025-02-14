@@ -1,29 +1,18 @@
-import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { Feature, MapBrowserEvent } from "ol";
-import { overlayPopup } from "../constants";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import LineString from "ol/geom/LineString";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToast } from "@kvib/react";
-import { useGetFeatures } from "./interaction-utils";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { MapBrowserEvent } from "ol";
 import {
-  isFeatureToBeArchived,
-  isFeatureEditable,
-  isMatrikkelFeature,
   getFeatureFremtidigEndringDato,
   getFlateRepresentasjonpunkterWithFremtidigEndring,
+  isFeatureEditable,
+  isFeatureToBeArchived,
 } from "utils/features";
-import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { removeNil } from "utils/list-utils";
-
-const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
-  const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
-  if (coordinates.length < 2) {
-    return;
-  }
-  const middle = Math.floor((coordinates.length - 1) / 2);
-  return coordinates[middle];
-};
+import { overlayPopup } from "../constants";
+import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { useGetFeatures } from "./interaction-utils";
 
 export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 
@@ -148,13 +137,7 @@ const useSelect = () => {
       }
 
       if (activeTool === "grenseinfo") {
-        // Dersom den valgte grensen er en WFS-grense skal vi vise et eget panel for det
-        if (isMatrikkelFeature(clickedFeature)) {
-          overlayPopup.setPosition(getOverlayPosition(clickedFeature));
-        } else {
-          overlayPopup.setPosition(undefined);
-          openOverlayPanel("grenseinfo");
-        }
+        openOverlayPanel("grenseinfo");
       }
 
       if (activeTool === "archive" && isFeatureToBeArchived(clickedFeature) === true) {

@@ -1,17 +1,18 @@
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { SidePanel, PanelHeader } from "../Panel";
+import { PanelHeader, SidePanel } from "../Panel";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { FeatureProperties } from "types/api";
 import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { useCallback, useEffect } from "react";
-import { isMatrikkelFeature } from "utils/features";
+import { isTeigFeature } from "utils/features";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
-import { Card, CardBody, Divider, Heading, Text, CardHeader } from "@kvib/react";
+import { Alert, AlertIcon, Card, CardBody, CardHeader, Divider, Heading, Text } from "@kvib/react";
 import { styled } from "styled-components";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
 import { useToolbar } from "contexts/ToolbarContext";
+import { TeiggrenseInformasjon } from "./Matrikkelgrenseinformasjon";
 
 const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
@@ -62,13 +63,8 @@ const GrenseinformasjonPanel = () => {
             Du kan kun se informasjon om én grense om gangen. Velg grensen på nytt som du ønsker å se informasjon til.
           </Text>
         </GrensePanelContent>
-      ) : selectedFeature && isMatrikkelFeature(selectedFeature) ? (
-        <GrensePanelContent>
-          <PanelHeader onClose={handleClose} noMargin>
-            Informasjon
-          </PanelHeader>
-          <Text>Kan ikke vise informasjon om matrikkelgrenser.</Text>
-        </GrensePanelContent>
+      ) : selectedFeature && isTeigFeature(selectedFeature) === true ? (
+        <TeiggrenseInformasjon onClose={handleClose} feature={selectedFeature} />
       ) : selectedFeature && selectedProperties ? (
         <GrensePanelContent>
           <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
@@ -90,7 +86,10 @@ const GrenseinformasjonPanel = () => {
           <PanelHeader onClose={handleClose} noMargin>
             Informasjon
           </PanelHeader>
-          <Text>Valgt grense har ikke metadata</Text>
+          <Alert status="error">
+            <AlertIcon />
+            Finner ikke informasjon om valgt grense. Kontakt Kartverket dersom du mener dette er feil.
+          </Alert>
         </GrensePanelContent>
       )}
     </SidePanel>
