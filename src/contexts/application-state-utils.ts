@@ -186,7 +186,7 @@ const serializeHistory = (history: HistoryState) => {
         const features = geoJson.readFeatures(change.from);
         const serializableChange: SerializableHistoryChange<string | null> = {
           id: change.id,
-          from: features.length > 0 ? geoJson.writeFeature(features[0]) : null,
+          from: features.length === 1 ? geoJson.writeFeature(features[0]) : null,
           to: null,
         };
         tmpEntry.changes.push(serializableChange);
