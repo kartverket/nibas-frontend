@@ -222,13 +222,16 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
                 .map((change) => change.id);
               addDirtyStyles(idsOfFeaturesInHistory);
             }
-            const fremtidigEndringFeatureIds = removeNil(
-              features
-                .filter((feature) => getFeatureFremtidigEndringDato(feature) != null)
-                .map((feature) => feature.getId()?.toString()),
-            );
 
-            setAndSaveFremtidigEndringStyles(fremtidigEndringFeatureIds);
+            const featuresMedFremtidigEndringDato = features.filter((feature) =>
+              getFeatureFremtidigEndringDato(feature),
+            );
+            const fremtidigEndringFeatureIds = removeNil(
+              featuresMedFremtidigEndringDato.map((feature) => feature.getId()?.toString()),
+            );
+            if (fremtidigEndringFeatureIds.length > 0) {
+              setAndSaveFremtidigEndringStyles(fremtidigEndringFeatureIds);
+            }
           });
         }
       }
