@@ -1,27 +1,26 @@
-import { useEffect, useMemo } from "react";
+import { useToast } from "@kvib/react";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
+import useToastCounter from "hooks/toast/useToastCounter";
+import { Collection, MapBrowserEvent } from "ol";
+import { Coordinate, equals } from "ol/coordinate";
+import { click, primaryAction } from "ol/events/condition";
+import BaseEvent from "ol/events/Event";
 import Feature from "ol/Feature";
+import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { click, primaryAction } from "ol/events/condition";
-import { Collection, MapBrowserEvent } from "ol";
-import { pixelTolerance, previousCoordinateKey } from "./constants";
-import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { useToast } from "@kvib/react";
 import { Style } from "ol/style";
+import { useEffect, useMemo } from "react";
+import { isFeatureEditable, isFeatureToBeArchived, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
+import { isAdministrativGrense } from "utils/grenser";
+import { findNearbyVertexOnFeature } from "utils/map/map-utils";
+import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
-import { isAdministrativGrense } from "utils/grenser";
-import { isFeatureToBeArchived, isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
-import { findNearbyVertexOnFeature } from "utils/map/map-utils";
-import useToastCounter from "hooks/toast/useToastCounter";
-import { Geometry } from "ol/geom";
-import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
-import { Coordinate, equals } from "ol/coordinate";
-import BaseEvent from "ol/events/Event";
-import { useSnappedLineString } from "./useSnappedLineString";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -144,8 +143,6 @@ const useModify = () => {
     addToast,
     removeToast,
   ]);
-
-  useSnappedLineString(modify);
 
   useEffect(() => {
     const createAddPointGrenseEntry = (ev: BaseEvent) => {
