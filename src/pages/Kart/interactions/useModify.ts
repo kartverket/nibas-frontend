@@ -21,7 +21,7 @@ import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSplit from "./useSplit";
 import { Coordinate, equals } from "ol/coordinate";
 import BaseEvent from "ol/events/Event";
-import { map } from "../constants";
+import { useSnappedLineString } from "./useSnappedLineString";
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -145,6 +145,8 @@ const useModify = () => {
     removeToast,
   ]);
 
+  useSnappedLineString(modify);
+
   useEffect(() => {
     const createAddPointGrenseEntry = (ev: BaseEvent) => {
       const changedFeature = ev.target as Feature<Geometry>;
@@ -176,18 +178,11 @@ const useModify = () => {
         }
       });
     };
-    const savePotentiallySnappedFeatureData = (e: ModifyEvent) => {
-      const featuresAtEndPixel = map.getFeaturesAtPixel(e.mapBrowserEvent.pixel);
-      console.log(featuresAtEndPixel);
-      //filtrer ut alt som ikke er linestrenger og selve featuren som ble modifisert.
-      // finn linestring med høyeste (dårligste nøyaktighet), og putt dette på et egetdefinert attributt på featuren.
-    };
+
     modify.on("modifystart", saveCoordinatesBeforeModification);
-    modify.on("modifyend", savePotentiallySnappedFeatureData);
 
     return () => {
       modify.un("modifystart", saveCoordinatesBeforeModification);
-      modify.un("modifyend", savePotentiallySnappedFeatureData);
     };
   }, [activeTool, addHistoryEntry, modify]);
 
