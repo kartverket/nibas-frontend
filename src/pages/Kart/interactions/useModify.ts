@@ -79,9 +79,8 @@ const useModify = () => {
         return primaryAction(event);
       },
       style: new Style(),
-      insertVertexCondition: () => {
-        if (activeTool === "add") {
-          addToast();
+      insertVertexCondition: (event) => {
+        if (activeTool === "add" && primaryAction(event)) {
           return true;
         }
         return false;
@@ -140,7 +139,6 @@ const useModify = () => {
     disallowedPointModes,
     getLineStringFeaturesAtPixel,
     toast,
-    addToast,
     removeToast,
   ]);
 
@@ -148,6 +146,7 @@ const useModify = () => {
     const createAddPointGrenseEntry = (ev: BaseEvent) => {
       const changedFeature = ev.target as Feature<Geometry>;
       if (changedFeature.getGeometry() instanceof LineString) {
+        addToast();
         addHistoryEntry({
           type: "grense",
           changes: createGrenseHistoryChange([changedFeature]),
@@ -180,7 +179,7 @@ const useModify = () => {
     return () => {
       modify.un("modifystart", saveCoordinatesBeforeModification);
     };
-  }, [activeTool, addHistoryEntry, modify]);
+  }, [activeTool, addHistoryEntry, addToast, modify]);
 
   useEffect(() => {
     const addModificationToHistory = (features: Feature<Geometry>[]) => {
