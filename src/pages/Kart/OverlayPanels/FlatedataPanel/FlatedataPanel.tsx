@@ -80,7 +80,7 @@ const FlatedataPanel = () => {
   };
 
   return (
-    <Dialog isOpen={true} onClose={handleCloseModal} scrollBehavior="inside">
+    <Dialog open={true} onOpenChange={handleCloseModal} scrollBehavior="inside">
       <DialogBackdrop onClick={handleCloseModal} />
       <DialogContent as={FlatedataPanelContent}>
         <FlatedataPanelHeader onClose={handleCloseModal}>

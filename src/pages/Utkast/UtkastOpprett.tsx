@@ -94,7 +94,7 @@ const UtkastOpprett = () => {
         Opprett et nytt utkast
       </Button>
 
-      <Dialog isOpen={isOpen} onClose={handleCloseModal} size="xl" isCentered>
+      <Dialog open={isOpen} onOpenChange={handleCloseModal} size="xl">
         <DialogBackdrop />
         <DialogContent>
           <form onSubmit={handleSubmit(opprettUtkast)}>

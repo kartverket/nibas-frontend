@@ -75,7 +75,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={handleCloseModal} isCentered>
+    <Dialog open={isOpen} onOpenChange={handleCloseModal}>
       <DialogBackdrop />
       <DialogContent>
         <form onSubmit={handleSubmit(editUtkast)}>

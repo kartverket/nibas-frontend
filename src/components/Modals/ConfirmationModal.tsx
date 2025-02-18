@@ -20,7 +20,7 @@ const ConfirmationModal = ({
   onDecline,
 }: ConfirmationModalProps) => {
   return (
-    <Dialog isOpen onClose={onDecline}>
+    <Dialog open={true} onOpenChange={onDecline}>
       <DialogBackdrop />
       <DialogContent>
         <DialogHeader>{title}</DialogHeader>

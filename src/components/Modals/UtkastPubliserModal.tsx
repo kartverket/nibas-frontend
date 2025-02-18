@@ -107,7 +107,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} isCentered size="4xl">
+    <Dialog open={isOpen} onOpenChange={onClose} size="xl">
       <DialogBackdrop />
       <DialogContent>
         <DialogHeader>Publiser utkast</DialogHeader>

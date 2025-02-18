@@ -68,7 +68,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} isCentered size="2xl">
+    <Dialog open={isOpen} onOpenChange={onClose} size="xl">
       <DialogBackdrop />
       <DialogContent>
         <DialogHeader>Slett utkast</DialogHeader>

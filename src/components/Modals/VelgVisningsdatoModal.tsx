@@ -53,7 +53,7 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} isCentered size="2xl">
+    <Dialog open={isOpen} onOpenChange={onClose} size="xl">
       <DialogBackdrop />
       <DialogContent>
         <form onSubmit={handleSubmit(onBekreft)}>

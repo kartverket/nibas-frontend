@@ -136,7 +136,7 @@ export const VedtaksinfoDetaljer = ({
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={closeModal} isCentered size="6xl">
+    <Dialog open={isOpen} onOpenChange={closeModal} size="xl">
       <DialogBackdrop />
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>

@@ -44,7 +44,7 @@ const InndelingerPanel = () => {
   const { kommuner } = useKommuner(activePanelFylkeId, gyldighetsdato);
 
   return (
-    <Dialog isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">
+    <Dialog open={true} onOpenChange={resetInndelingerPanel} scrollBehavior="inside">
       <DialogBackdrop />
       <DialogContent as={ModalPanel}>
         <PanelHeader

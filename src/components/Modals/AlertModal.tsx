@@ -95,7 +95,7 @@ const AlertModal = ({
   };
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} isCentered size="2xl">
+    <Dialog open={isOpen} onOpenChange={onClose} size="xl">
       <DialogBackdrop />
       <DialogContent>
         <AlertHeader status={status}>

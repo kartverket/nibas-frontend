@@ -34,7 +34,8 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   const harUlagredeEndringer = history.index > 0;
 
   return (
-    <Dialog isOpen={isOpen} onClose={onClose} size="4xl" isCentered scrollBehavior="inside">
+    // TODO: Center dialog?
+    <Dialog open={isOpen} onOpenChange={onClose} size="lg" scrollBehavior="inside">
       <DialogBackdrop />
       <DialogContent>
         <DialogHeader>Endringslogg</DialogHeader>
