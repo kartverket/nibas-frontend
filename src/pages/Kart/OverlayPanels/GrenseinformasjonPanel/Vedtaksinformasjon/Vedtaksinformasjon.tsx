@@ -71,7 +71,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
           size="sm"
           variant="secondary"
           rightIcon="add"
-          isDisabled={isGrenseinfoPanelDisabled}
+          disabled={isGrenseinfoPanelDisabled}
           aria-label="Legg til dokumentreferanse"
           onClick={() => {
             setFormViewState("creating");

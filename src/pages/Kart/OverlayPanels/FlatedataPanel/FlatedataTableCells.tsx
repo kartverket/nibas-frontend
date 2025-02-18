@@ -42,7 +42,7 @@ export const MerknadCell = forwardRef<HTMLInputElement, MerknadCellProps>(functi
     <TableCell>
       {isEditing ? (
         <FormControl isInvalid={validationError?.showError}>
-          <Checkbox isDisabled={isDisabled} ref={ref} {...inputProps} defaultChecked={data}>
+          <Checkbox disabled={isDisabled} ref={ref} {...inputProps} defaultChecked={data}>
             Samisk forvaltningsområde
           </Checkbox>
           <FormErrorMessage>{validationError?.message}</FormErrorMessage>

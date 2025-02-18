@@ -330,7 +330,7 @@ const FlyttKoordinaterPanel = () => {
           <Button variant="tertiary" onClick={onKoordinaterPanelClose}>
             Avbryt
           </Button>
-          <Button type="submit" isDisabled={!isDirty}>
+          <Button type="submit" disabled={!isDirty}>
             Flytt punkt til koordinater
           </Button>
         </ButtonRow>

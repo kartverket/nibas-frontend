@@ -143,7 +143,7 @@ const InndelingerPanel = () => {
               <Button variant="tertiary" size={"md"} onClick={closeOverlayModal}>
                 Avbryt
               </Button>
-              <Button size={"md"} isDisabled={!isSelectionAvailable} onClick={selectNewInndelinger}>
+              <Button size={"md"} disabled={!isSelectionAvailable} onClick={selectNewInndelinger}>
                 {isEditingPanel ? "Rediger" : "Se"} valgte inndelinger
               </Button>
             </ButtonGroup>

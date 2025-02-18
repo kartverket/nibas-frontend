@@ -232,7 +232,7 @@ export const SplittingPanel = () => {
               </Button>
               <Button
                 onClick={handleSubmit(addSplittingRequestToHistory)}
-                isDisabled={getValues("nyeKretser").slice(1).length < 1}
+                disabled={getValues("nyeKretser").slice(1).length < 1}
               >
                 Splitt
               </Button>

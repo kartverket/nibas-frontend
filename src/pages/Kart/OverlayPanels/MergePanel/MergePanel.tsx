@@ -286,7 +286,7 @@ const MergePanel = () => {
                 >
                   Avbryt
                 </Button>
-                <Button type="submit" isDisabled={!isDirty}>
+                <Button type="submit" disabled={!isDirty}>
                   Slå sammen
                 </Button>
               </Buttons>

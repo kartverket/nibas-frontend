@@ -83,7 +83,7 @@ export const ReferanseInput = ({
                   }}
                 />
                 <LeggTilKnapp
-                  isDisabled={appendButtonDisabled}
+                  disabled={appendButtonDisabled}
                   onClick={() => {
                     const element = document.getElementById(registerName) as HTMLInputElement;
                     appendReferanse(element);

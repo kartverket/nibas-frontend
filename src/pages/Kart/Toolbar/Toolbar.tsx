@@ -239,7 +239,7 @@ const Toolbar = () => {
                 icon="back_hand"
                 onClick={() => enableModeTool("move")}
                 isActive={activeModeTools.includes("move")}
-                isDisabled={!panningEnabled}
+                disabled={!panningEnabled}
                 aria-label="Panorer i kartet"
                 tooltip={{
                   text: "Panorer i kartet",
@@ -256,7 +256,7 @@ const Toolbar = () => {
                   onClick={() => disableModeTool("move")}
                   isActive={!activeModeTools.includes("move")}
                   aria-label="Flytt eller rediger grenser i kartet"
-                  isDisabled={!isEditing || !anyFeatureIsEditable()}
+                  disabled={!isEditing || !anyFeatureIsEditable()}
                   tooltip={{
                     text: "Flytt eller rediger grenser i kartet",
                     shortcut: "edit",
@@ -283,7 +283,7 @@ const Toolbar = () => {
               icon="window"
               onClick={() => toggleOverlayModal("flatedata")}
               isActive={activeOverlayModal === "flatedata"}
-              isDisabled={!flatedataIsAvailable}
+              disabled={!flatedataIsAvailable}
               aria-label="Se eller endre flatedetaljer"
               tooltip={{
                 text: "Se eller endre flatedetaljer",

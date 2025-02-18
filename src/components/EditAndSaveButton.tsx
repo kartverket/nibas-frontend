@@ -35,7 +35,7 @@ const EditAndSaveButton = ({
         <Button variant="tertiary" aria-label="Forkast endringer" onClick={toggleEditing} size={size}>
           Avbryt
         </Button>
-        <Button aria-label="Lagre endringer" onClick={onSubmit} isDisabled={!canSave} size={size}>
+        <Button aria-label="Lagre endringer" onClick={onSubmit} disabled={!canSave} size={size}>
           Bekreft
         </Button>
       </CombinedButton>
@@ -46,7 +46,7 @@ const EditAndSaveButton = ({
         size={size}
         rightIcon={hasIcon ? "edit_note" : undefined}
         variant={variant}
-        isDisabled={isDisabled}
+        disabled={isDisabled}
       >
         {children}
       </EditButton>

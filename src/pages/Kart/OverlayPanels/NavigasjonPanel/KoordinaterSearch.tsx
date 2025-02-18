@@ -180,7 +180,7 @@ export const KoordinaterSearch = ({ onSearchSuccess }: SearchProps) => {
           <StyledFormErrorMessage>{formErrors.globalErrorDummyField.message}</StyledFormErrorMessage>
         )}
 
-        <StyledButton type="submit" isDisabled={!isDirty}>
+        <StyledButton type="submit" disabled={!isDirty}>
           Gå til koordinater
         </StyledButton>
       </StyledFormControl>
