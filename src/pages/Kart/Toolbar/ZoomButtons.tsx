@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import ToolbarButton from "./ToolbarButton";
-import { Divider } from "@kvib/react";
+import { Separator } from "@kvib/react";
 import { map } from "../constants";
 
 const zoom = (difference: number) => {
@@ -21,7 +21,7 @@ const ZoomButtons = () => {
         aria-label="Zoom inn på kartet"
         tooltip={{ text: "Zoom inn på kartet" }}
       />
-      <Divider />
+      <Separator />
       <ToolbarButton
         icon="remove"
         onClick={() => zoom(-1)}

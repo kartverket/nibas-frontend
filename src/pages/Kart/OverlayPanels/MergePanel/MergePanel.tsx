@@ -13,7 +13,7 @@ import { getDuplicateItems, getUniqueItemsBy, removeNil } from "utils/list-utils
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, Heading, Select } from "@kvib/react";
+import { Alert, AlertIcon, AlertTitle, Button, Separator, FormControl, FormLabel, Heading, Select } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -244,12 +244,12 @@ const MergePanel = () => {
                   om de resterende stemmekretsene vil bli fjernet i sin helhet fra inndelingsbasen.
                 </AlertTitle>
               </Alert>
-              <Divider />
+              <Separator />
               <Heading as="h3" size="sm">
                 Hvilke stemmekretser ønsker du å slå sammen med denne kretsen?
               </Heading>
               <MergeMultiselect alleStemmekretser={utkastStemmekretser} />
-              <Divider />
+              <Separator />
               <Heading as="h3" size="sm">
                 Hva skal den sammenslåtte stemmekretsen hete?
               </Heading>

@@ -1,4 +1,4 @@
-import { Button, Divider, FormControl, Input } from "@kvib/react";
+import { Button, Separator, FormControl, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
 import { InputName, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
 import { styled } from "styled-components";
@@ -54,7 +54,7 @@ export const ReferanseInput = ({
    **/
   return (
     <InputContainer>
-      <Divider />
+      <Separator />
       <Controller
         control={control}
         name={registerName}

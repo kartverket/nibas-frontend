@@ -1,4 +1,4 @@
-import { Divider, Hide, Icon, MenuDivider, MenuList, MenuOptionGroup } from "@kvib/react";
+import { Separator, Hide, Icon, MenuDivider, MenuList, MenuOptionGroup } from "@kvib/react";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -147,7 +147,7 @@ const ToolbarMenus = () => {
   ];
   return (
     <>
-      <Divider orientation="vertical" />
+      <Separator orientation="vertical" />
       <Hide below="xl">
         <ConditionalHide above="xl" condition={!!activeOverlayPanel}>
           <ToolbarMenu
@@ -247,7 +247,7 @@ const ToolbarMenus = () => {
           </MenuList>
         </ToolbarMenu>
       </ConditionalShow>
-      <Divider orientation="vertical" />
+      <Separator orientation="vertical" />
     </>
   );
 };

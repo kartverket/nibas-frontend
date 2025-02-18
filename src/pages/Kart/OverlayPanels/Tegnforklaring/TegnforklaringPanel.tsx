@@ -3,7 +3,7 @@ import { PanelHeader, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tegnforklaring } from "./Tegnforklaring";
 import { tegnforklaringer } from "./tegnforklaring-styles";
-import { Divider } from "@kvib/react";
+import { Separator } from "@kvib/react";
 
 export const TegnforklaringPanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
@@ -15,7 +15,7 @@ export const TegnforklaringPanel = () => {
           {group.map((props) => (
             <Tegnforklaring key={props.text} {...props} />
           ))}
-          {index < tegnforklaringer.length - 1 && <Divider mb="10px" />}
+          {index < tegnforklaringer.length - 1 && <Separator mb="10px" />}
         </React.Fragment>
       ))}
     </SidePanel>

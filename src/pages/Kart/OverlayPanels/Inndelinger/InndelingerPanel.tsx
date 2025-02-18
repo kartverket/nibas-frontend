@@ -2,7 +2,7 @@ import {
   Button,
   Link,
   ButtonGroup,
-  Divider,
+  Separator,
   Modal,
   ModalBody,
   DialogContent,
@@ -72,7 +72,7 @@ const InndelingerPanel = () => {
                 </InndelingOption>
               ))}
             </InndelingerList>
-            <Divider orientation="vertical" />
+            <Separator orientation="vertical" />
             <InndelingerList>
               {selectedInndelingtype &&
                 fylker?.map((fylke) => {
@@ -102,7 +102,7 @@ const InndelingerPanel = () => {
                   );
                 })}
             </InndelingerList>
-            <Divider orientation="vertical" />
+            <Separator orientation="vertical" />
             <InndelingerList>
               {kommuner ? (
                 activePanelFylkeId &&
@@ -134,7 +134,7 @@ const InndelingerPanel = () => {
               )}
             </InndelingerList>
           </InndelingerLayout>
-          <Divider></Divider>
+          <Separator></Separator>
           <ButtonContainer>
             <Link size={"md"} onClick={resetSelection}>
               Nullstill markering

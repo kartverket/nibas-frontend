@@ -7,7 +7,7 @@ import { useCallback, useEffect } from "react";
 import { isTeigFeature } from "utils/features";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
-import { Alert, AlertIcon, Card, CardBody, CardHeader, Divider, Heading, Text } from "@kvib/react";
+import { Alert, AlertIcon, Card, CardBody, CardHeader, Separator, Heading, Text } from "@kvib/react";
 import { styled } from "styled-components";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
@@ -68,15 +68,15 @@ const GrenseinformasjonPanel = () => {
       ) : selectedFeature && selectedProperties ? (
         <GrensePanelContent>
           <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
-          <Divider />
+          <Separator />
           <Card variant="filled">
             <GrenseInfoExtraCardHeader>
               <Heading size="md">Ytterligere informasjon</Heading>
             </GrenseInfoExtraCardHeader>
             <GrenseInfoExtraCardBody>
-              <Divider />
+              <Separator />
               <TilhorighetField feature={selectedFeature} />
-              <Divider />
+              <Separator />
               <Vedtaksinformasjon feature={selectedFeature} />
             </GrenseInfoExtraCardBody>
           </Card>
