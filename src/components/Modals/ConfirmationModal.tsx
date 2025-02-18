@@ -2,11 +2,11 @@ import {
   Button,
   Modal,
   ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogBackdrop,
 } from "@kvib/react";
 import { ConfirmationModalProps } from "contexts/ConfirmationModalContext";
 import { styled } from "styled-components";
@@ -21,10 +21,10 @@ const ConfirmationModal = ({
 }: ConfirmationModalProps) => {
   return (
     <Modal isOpen onClose={onDecline}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>{title}</ModalHeader>
-        <ModalCloseButton />
+      <DialogBackdrop />
+      <DialogContent>
+        <DialogHeader>{title}</DialogHeader>
+        <DialogCloseTrigger />
         <ModalBody>{description}</ModalBody>
         <ModalFooterWithSpacing>
           <Button variant="ghost" onClick={onDecline}>
@@ -32,12 +32,12 @@ const ConfirmationModal = ({
           </Button>
           <Button onClick={onAccept}>{acceptText ?? "Ja"}</Button>
         </ModalFooterWithSpacing>
-      </ModalContent>
+      </DialogContent>
     </Modal>
   );
 };
 
-const ModalFooterWithSpacing = styled(ModalFooter)`
+const ModalFooterWithSpacing = styled(DialogFooter)`
   gap: 8px;
 `;
 

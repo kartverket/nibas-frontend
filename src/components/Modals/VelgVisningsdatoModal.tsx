@@ -6,11 +6,11 @@ import {
   FormLabel,
   Modal,
   ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogBackdrop,
 } from "@kvib/react";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useForm } from "react-hook-form";
@@ -54,11 +54,11 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
-      <ModalOverlay />
-      <ModalContent>
+      <DialogBackdrop />
+      <DialogContent>
         <form onSubmit={handleSubmit(onBekreft)}>
-          <ModalHeader>Velg visningsdato</ModalHeader>
-          <ModalCloseButton />
+          <DialogHeader>Velg visningsdato</DialogHeader>
+          <DialogCloseTrigger />
           <Body>
             <div>
               <DatepickerHeading>Gyldig fra-dato</DatepickerHeading>
@@ -73,7 +73,7 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
               />
             </div>
           </Body>
-          <ModalFooter>
+          <DialogFooter>
             <ButtonGroup>
               <Button variant="tertiary" onClick={onClose}>
                 Avbryt
@@ -82,9 +82,9 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
                 Bekreft dato
               </Button>
             </ButtonGroup>
-          </ModalFooter>
+          </DialogFooter>
         </form>
-      </ModalContent>
+      </DialogContent>
     </Modal>
   );
 };

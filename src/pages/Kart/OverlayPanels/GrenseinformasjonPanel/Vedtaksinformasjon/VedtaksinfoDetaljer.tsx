@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, ModalContent, Text, ModalOverlay, useToast } from "@kvib/react";
+import { Button, Modal, ModalBody, DialogContent, Text, DialogBackdrop, useToast } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
@@ -137,8 +137,8 @@ export const VedtaksinfoDetaljer = ({
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal} isCentered size="6xl">
-      <ModalOverlay />
-      <ModalContent>
+      <DialogBackdrop />
+      <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
           <VedtakHeaderContainer>
             <PanelHeader onClose={closeModal}>
@@ -181,7 +181,7 @@ export const VedtaksinfoDetaljer = ({
             </VedtakFooterContainer>
           )}
         </form>
-      </ModalContent>
+      </DialogContent>
     </Modal>
   );
 };

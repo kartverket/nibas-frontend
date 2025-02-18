@@ -3,11 +3,11 @@ import {
   Modal,
   ModalBody,
   Text,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogBackdrop,
 } from "@kvib/react";
 import { useAuthentication } from "./AuthenticationHook";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -78,10 +78,10 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Du har blitt logget ut automatisk</ModalHeader>
-          <ModalCloseButton />
+        <DialogBackdrop />
+        <DialogContent>
+          <DialogHeader>Du har blitt logget ut automatisk</DialogHeader>
+          <DialogCloseTrigger />
           <ModalBody>
             <Text mb="1rem">
               På grunn av en begrensning hos IDporten vil man måtte logge inn på nytt hver 2. time. Sørg derfor for at
@@ -92,7 +92,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
               gjenopprette endringene?
             </Text>
           </ModalBody>
-          <ModalFooter>
+          <DialogFooter>
             <Button
               colorScheme="blue"
               variant="secondary"
@@ -106,8 +106,8 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
             <Button variant="primary" onClick={onRelog}>
               Logg inn og gjenopprett
             </Button>
-          </ModalFooter>
-        </ModalContent>
+          </DialogFooter>
+        </DialogContent>
       </Modal>
       {children}
     </>

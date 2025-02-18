@@ -1,12 +1,12 @@
 import {
   Button,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
+  DialogBackdrop,
+  DialogContent,
+  DialogHeader,
+  DialogCloseTrigger,
   ModalBody,
-  ModalFooter,
+  DialogFooter,
   ButtonGroup,
   useDisclosure,
   Input,
@@ -95,11 +95,11 @@ const UtkastOpprett = () => {
       </Button>
 
       <Modal isOpen={isOpen} onClose={handleCloseModal} size="xl" isCentered>
-        <ModalOverlay />
-        <ModalContent>
+        <DialogBackdrop />
+        <DialogContent>
           <form onSubmit={handleSubmit(opprettUtkast)}>
-            <ModalHeader>Opprett et nytt utkast</ModalHeader>
-            <ModalCloseButton />
+            <DialogHeader>Opprett et nytt utkast</DialogHeader>
+            <DialogCloseTrigger />
             <ModalBody>
               <FormContent>
                 <FormSection isInvalid={!!errors.navn}>
@@ -154,7 +154,7 @@ const UtkastOpprett = () => {
                 </FormSection>
               </FormContent>
             </ModalBody>
-            <ModalFooter>
+            <DialogFooter>
               <ButtonGroup>
                 <Button variant="tertiary" onClick={handleCloseModal}>
                   Avbryt
@@ -163,9 +163,9 @@ const UtkastOpprett = () => {
                   Opprett utkast
                 </Button>
               </ButtonGroup>
-            </ModalFooter>
+            </DialogFooter>
           </form>
-        </ModalContent>
+        </DialogContent>
       </Modal>
     </>
   );

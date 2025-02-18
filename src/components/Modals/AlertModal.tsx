@@ -6,12 +6,12 @@ import {
   ButtonGroup,
   Modal,
   ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalOverlay,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogBackdrop,
   AlertProps,
-  ModalHeader,
+  DialogHeader,
 } from "@kvib/react";
 import { useState } from "react";
 
@@ -25,7 +25,7 @@ const AlertHeader = styled(Alert)`
   font-size: 20px;
 `;
 
-const Title = styled(ModalHeader)`
+const Title = styled(DialogHeader)`
   padding: 0;
   flex: unset;
 `;
@@ -96,13 +96,13 @@ const AlertModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
-      <ModalOverlay />
-      <ModalContent>
+      <DialogBackdrop />
+      <DialogContent>
         <AlertHeader status={status}>
           <AlertIcon />
           <Title>{title}</Title>
         </AlertHeader>
-        <ModalCloseButton aria-label="Lukk" />
+        <DialogCloseTrigger aria-label="Lukk" />
         <Body>
           <BodyText>{description}</BodyText>
           {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
@@ -111,7 +111,7 @@ const AlertModal = ({
           )}
         </Body>
         {(primaryAction || secondaryAction) && (
-          <ModalFooter>
+          <DialogFooter>
             <ButtonGroup>
               {secondaryAction && (
                 <Button
@@ -133,9 +133,9 @@ const AlertModal = ({
                 </Button>
               )}
             </ButtonGroup>
-          </ModalFooter>
+          </DialogFooter>
         )}
-      </ModalContent>
+      </DialogContent>
     </Modal>
   );
 };

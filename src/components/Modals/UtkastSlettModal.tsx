@@ -8,11 +8,11 @@ import {
   ButtonGroup,
   Modal,
   ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogBackdrop,
 } from "@kvib/react";
 import { ApiErrorResponse, UtkastResponse } from "types/api";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
@@ -70,10 +70,10 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Slett utkast</ModalHeader>
-        <ModalCloseButton />
+      <DialogBackdrop />
+      <DialogContent>
+        <DialogHeader>Slett utkast</DialogHeader>
+        <DialogCloseTrigger />
         <Body>
           <Alert status="warning">
             <AlertIcon />
@@ -86,7 +86,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
           </Alert>
           <EndringsloggAccordion utkast={utkast} />
         </Body>
-        <ModalFooter>
+        <DialogFooter>
           <ButtonGroup>
             <Button variant="tertiary" onClick={onClose}>
               Avbryt
@@ -95,8 +95,8 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
               Slett utkast
             </Button>
           </ButtonGroup>
-        </ModalFooter>
-      </ModalContent>
+        </DialogFooter>
+      </DialogContent>
     </Modal>
   );
 };

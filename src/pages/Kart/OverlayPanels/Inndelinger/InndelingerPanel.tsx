@@ -1,4 +1,14 @@
-import { Button, Link, ButtonGroup, Divider, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
+import {
+  Button,
+  Link,
+  ButtonGroup,
+  Divider,
+  Modal,
+  ModalBody,
+  DialogContent,
+  DialogBackdrop,
+  Spinner,
+} from "@kvib/react";
 import { PanelHeader, ModalPanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { INNDELINGTYPER, BaseInndeling } from "contexts/InndelingerContext/InndelingerContext";
@@ -35,8 +45,8 @@ const InndelingerPanel = () => {
 
   return (
     <Modal isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">
-      <ModalOverlay />
-      <ModalContent as={ModalPanel}>
+      <DialogBackdrop />
+      <DialogContent as={ModalPanel}>
         <PanelHeader
           onClose={resetInndelingerPanel}
           subHeading={
@@ -139,7 +149,7 @@ const InndelingerPanel = () => {
             </ButtonGroup>
           </ButtonContainer>
         </Content>
-      </ModalContent>
+      </DialogContent>
     </Modal>
   );
 };

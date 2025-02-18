@@ -7,11 +7,11 @@ import {
   ButtonGroup,
   Modal,
   ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogBackdrop,
   useToast,
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
@@ -109,10 +109,10 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Publiser utkast</ModalHeader>
-        <ModalCloseButton />
+      <DialogBackdrop />
+      <DialogContent>
+        <DialogHeader>Publiser utkast</DialogHeader>
+        <DialogCloseTrigger />
         <Body>
           <Alert status={isUtkastGyldigFraPast ? "warning" : "info"}>
             <AlertIcon />
@@ -131,7 +131,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
           {antallEndringer > 0 && <UnsavedEndringerCollapse />}
           <EndringsloggAccordion utkast={utkast} />
         </Body>
-        <ModalFooter>
+        <DialogFooter>
           <ButtonGroup>
             <Button variant="tertiary" onClick={onClose}>
               Avbryt
@@ -140,8 +140,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
               Publiser utkast
             </Button>
           </ButtonGroup>
-        </ModalFooter>
-      </ModalContent>
+        </DialogFooter>
+      </DialogContent>
     </Modal>
   );
 };

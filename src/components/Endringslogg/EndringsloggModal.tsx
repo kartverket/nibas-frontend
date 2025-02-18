@@ -2,10 +2,10 @@ import { styled } from "styled-components";
 import {
   Modal,
   ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogBackdrop,
   Spinner,
   Text,
   Flex,
@@ -35,10 +35,10 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered scrollBehavior="inside">
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Endringslogg</ModalHeader>
-        <ModalCloseButton aria-label="Lukk" />
+      <DialogBackdrop />
+      <DialogContent>
+        <DialogHeader>Endringslogg</DialogHeader>
+        <DialogCloseTrigger aria-label="Lukk" />
         <ModalBody>
           {!harEndringer && !harUlagredeEndringer && !laster && <Empty>Det er ingen endringer i dette utkastet</Empty>}
           <Stack spacing={6}>
@@ -71,7 +71,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
             </EndringUnstyledList>
           </Stack>
         </ModalBody>
-      </ModalContent>
+      </DialogContent>
     </Modal>
   );
 };

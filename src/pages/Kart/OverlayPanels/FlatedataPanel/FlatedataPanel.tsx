@@ -5,8 +5,8 @@ import {
   InputGroup,
   InputLeftElement,
   Modal,
-  ModalContent,
-  ModalOverlay,
+  DialogContent,
+  DialogBackdrop,
   Tab,
   TabList,
   TabPanels,
@@ -81,8 +81,8 @@ const FlatedataPanel = () => {
 
   return (
     <Modal isOpen={true} onClose={handleCloseModal} scrollBehavior="inside">
-      <ModalOverlay onClick={handleCloseModal} />
-      <ModalContent as={FlatedataPanelContent}>
+      <DialogBackdrop onClick={handleCloseModal} />
+      <DialogContent as={FlatedataPanelContent}>
         <FlatedataPanelHeader onClose={handleCloseModal}>
           <span>Flateinformasjon</span>
           <SearchInput>
@@ -117,7 +117,7 @@ const FlatedataPanel = () => {
             ))}
           </FlatedataTabPanels>
         </FlatedataTabs>
-      </ModalContent>
+      </DialogContent>
     </Modal>
   );
 };

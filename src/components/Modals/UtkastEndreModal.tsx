@@ -8,11 +8,11 @@ import {
   Input,
   Modal,
   ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
+  DialogCloseTrigger,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogBackdrop,
   Select,
 } from "@kvib/react";
 import { endringstyper } from "pages/Kart/constants";
@@ -76,11 +76,11 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
 
   return (
     <Modal isOpen={isOpen} onClose={handleCloseModal} isCentered>
-      <ModalOverlay />
-      <ModalContent>
+      <DialogBackdrop />
+      <DialogContent>
         <form onSubmit={handleSubmit(editUtkast)}>
-          <ModalHeader>Endre detaljer</ModalHeader>
-          <ModalCloseButton aria-label="Lukk" />
+          <DialogHeader>Endre detaljer</DialogHeader>
+          <DialogCloseTrigger aria-label="Lukk" />
           <ModalBody>
             <FormContent>
               <FormSection isInvalid={!!errors.navn}>
@@ -114,7 +114,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
               </FormSection>
             </FormContent>
           </ModalBody>
-          <ModalFooter>
+          <DialogFooter>
             <ButtonGroup>
               <Button variant="tertiary" onClick={handleCloseModal}>
                 Avbryt
@@ -123,9 +123,9 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
                 Endre detaljer
               </Button>
             </ButtonGroup>
-          </ModalFooter>
+          </DialogFooter>
         </form>
-      </ModalContent>
+      </DialogContent>
     </Modal>
   );
 };
