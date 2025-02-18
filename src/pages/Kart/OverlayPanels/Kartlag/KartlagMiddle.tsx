@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Accordion, AccordionPanel, Checkbox, Spacer } from "@kvib/react";
+import { Accordion, AccordionItemContent, Checkbox, Spacer } from "@kvib/react";
 import KartlagInner from "./KartlagInner";
 import { KartlagAccordionItem, KartlagAccordionIcon, KartlagControls, KartlagAccordionButton } from "./components";
 import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
@@ -48,7 +48,7 @@ const KartlagMiddle = ({ mappedLayer, indexPath, isNested = false }: Props) => {
   );
 };
 
-const KartlagAccordionPanel = styled(AccordionPanel)`
+const KartlagAccordionPanel = styled(AccordionItemContent)`
   position: relative;
   padding: 0;
 

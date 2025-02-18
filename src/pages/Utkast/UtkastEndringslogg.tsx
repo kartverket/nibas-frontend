@@ -1,9 +1,9 @@
 import {
   Accordion,
-  AccordionButton,
-  AccordionIcon,
+  AccordionItemTrigger,
+  AccordionItemIndicator,
   AccordionItem,
-  AccordionPanel,
+  AccordionItemContent,
   Icon,
   MenuItem,
   Spinner,
@@ -44,9 +44,9 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
       <AccordionItem>
         <EndringsloggAccordionButton>
           Endringer i dette utkastet
-          <AccordionIcon />
+          <AccordionItemIndicator />
         </EndringsloggAccordionButton>
-        <AccordionPanel>
+        <AccordionItemContent>
           {!harEndringer && harLastetData && <div>Det er ingen endringer i dette utkastet</div>}
 
           {!harLastetData && <Spinner size="xl" color="blue.500" thickness="2px" emptyColor="gray.200" />}
@@ -69,13 +69,13 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
             {kommunendringer?.map((endringer) => <EndringerForFylke key={endringer.nummer} endringer={endringer} />)}
             {endringerutentilhorighet && <EndringerUtenTilhorighet endringer={endringerutentilhorighet} />}
           </ListWithNoDot>
-        </AccordionPanel>
+        </AccordionItemContent>
       </AccordionItem>
     </Accordion>
   );
 };
 
-const EndringsloggAccordionButton = styled(AccordionButton)`
+const EndringsloggAccordionButton = styled(AccordionItemTrigger)`
   display: flex;
   justify-content: space-between;
   font-weight: var(--kvib-fontWeights-bold);

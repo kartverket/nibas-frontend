@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Accordion, AccordionPanel, Checkbox, Spacer } from "@kvib/react";
+import { Accordion, AccordionItemContent, Checkbox, Spacer } from "@kvib/react";
 import KartlagMiddle from "./KartlagMiddle";
 import KartlagInner from "./KartlagInner";
 import { KartlagAccordionItem, KartlagAccordionIcon, KartlagControls, KartlagAccordionButton } from "./components";
@@ -59,7 +59,7 @@ const KartlagOuterControls = styled(KartlagControls)<{ $isVisible: boolean }>`
   background: ${(props) => (props.$isVisible ? "var(--kvib-colors-blue-50)" : "var(--kvib-colors-gray-50)")};
 `;
 
-const KartlagAccordionPanel = styled(AccordionPanel)<{ $isVisible: boolean }>`
+const KartlagAccordionPanel = styled(AccordionItemContent)<{ $isVisible: boolean }>`
   display: flex;
   flex-direction: column;
   gap: 12px;

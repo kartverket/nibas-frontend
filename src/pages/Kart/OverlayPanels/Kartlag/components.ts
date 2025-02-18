@@ -1,5 +1,5 @@
 import { css, styled } from "styled-components";
-import { AccordionItem, AccordionIcon, AccordionButton } from "@kvib/react";
+import { AccordionItem, AccordionItemIndicator, AccordionItemTrigger } from "@kvib/react";
 
 export const KartlagAccordionItem = styled(AccordionItem)`
   width: 100%;
@@ -22,13 +22,13 @@ export const KartlagControls = styled.div<{ $isExpanded: boolean }>`
     `};
 `;
 
-export const KartlagAccordionIcon = styled(AccordionIcon)`
+export const KartlagAccordionIcon = styled(AccordionItemIndicator)`
   width: 40px;
   height: 40px;
   padding: 8px;
 `;
 
-export const KartlagAccordionButton = styled(AccordionButton)<{ $isVisible: boolean }>`
+export const KartlagAccordionButton = styled(AccordionItemTrigger)<{ $isVisible: boolean }>`
   width: fit-content;
   padding: 0;
   border-radius: 6px;
