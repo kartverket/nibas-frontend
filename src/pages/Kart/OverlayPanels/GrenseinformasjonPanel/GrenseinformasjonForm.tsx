@@ -1,6 +1,6 @@
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { Alert, AlertIcon, Button, Datepicker, Input, Select, Textarea } from "@kvib/react";
+import { Alert, Button, Datepicker, Input, Select, Textarea } from "@kvib/react";
 import { GrenseType } from "hooks/layers/types";
 import { styled } from "styled-components";
 import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
@@ -197,8 +197,8 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             tooltipLabel="Dato når grensen skal være gyldig til."
             valueLabel={datestringToFormattedDatestring(gyldigTil)}
           />
-          <Alert status="warning" variant="top-accent">
-            <AlertIcon />
+          {/* TODO: Style */}
+          <Alert status="warning" variant="subtle">
             Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor ikke kunne gjøre noen endringer på denne
             grensen.
           </Alert>

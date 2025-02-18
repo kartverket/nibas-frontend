@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Text } from "@kvib/react";
+import { Alert, Text } from "@kvib/react";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { PropsWithChildren } from "react";
@@ -119,7 +119,6 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
         </>
       ) : (
         <Alert status="error">
-          <AlertIcon />
           Finner ikke informasjon om valgt teiggrense. Kontakt Kartverket dersom du mener dette er feil.
         </Alert>
       )}

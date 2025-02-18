@@ -1,7 +1,6 @@
 import {
   Alert,
   AlertDescription,
-  AlertIcon,
   AlertTitle,
   Button,
   ButtonGroup,
@@ -115,7 +114,6 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         <DialogCloseTrigger />
         <Body>
           <Alert status={isUtkastGyldigFraPast ? "warning" : "info"}>
-            <AlertIcon />
             <div>
               <AlertTitle>
                 {`Endringene vil gjelde fra ${format(isUtkastGyldigFraPast ? new Date() : utkast.gyldigFra, "dd.MM.yyyy")}`}

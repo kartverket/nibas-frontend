@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, AlertTitle, Box, Button, Collapse } from "@kvib/react";
+import { Alert, AlertTitle, Box, Button, Collapse } from "@kvib/react";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { UnsavedEndringer } from "components/Endringslogg/UlagredeEndringer/UnsavedEndringer";
@@ -17,7 +17,6 @@ export const UnsavedEndringerCollapse = ({ expandedByDefault = false }: Props) =
       <CustomCollapse animateOpacity={false} in={isExpanded} startingHeight={64}>
         <AlertWithButton status="warning">
           <Wrapper>
-            <AlertIcon />
             <AlertTitle>
               Du har {antallEndringer} {antallEndringer > 1 ? "ulagrede endringer" : "ulagret endring"} i utkastet
             </AlertTitle>

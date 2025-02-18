@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { ReactElement, ReactNode } from "react";
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button } from "@kvib/react";
+import { Alert, AlertDescription, AlertTitle, Box, Button } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 
 type ErrorBoxProps = {
@@ -13,7 +13,6 @@ export const ErrorBox = ({ title, text }: ErrorBoxProps) => {
 
   return (
     <AlertWithButton status="error">
-      <AlertIcon />
       <TextContainer>
         <AlertTitle>{title}</AlertTitle>
         <AlertDescription>{text}</AlertDescription>

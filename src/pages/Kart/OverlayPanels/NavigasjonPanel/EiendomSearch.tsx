@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Button, Link, Text } from "@kvib/react";
+import { Alert, AlertDescription, AlertTitle, Box, Button, Link, Text } from "@kvib/react";
 import Input from "components/Input";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -219,7 +219,6 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
 
       {notFound === true && (
         <StyledAlert status="error">
-          <AlertIcon />
           <Box>
             <AlertTitle>Fant ingen eiendommer med oppgitt matrikkelnummer</AlertTitle>
             <AlertDescription>

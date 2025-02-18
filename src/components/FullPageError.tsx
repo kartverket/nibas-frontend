@@ -1,5 +1,5 @@
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
-import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Logo } from "@kvib/react";
+import { Alert, AlertDescription, AlertTitle, Box, Logo } from "@kvib/react";
 import { styled } from "styled-components";
 import { FaroErrorBoundary } from "@grafana/faro-react";
 import { Outlet } from "react-router-dom";
@@ -20,7 +20,6 @@ export const FullPageError = () => (
       </LogoContainer>
 
       <AlertWithMaxSize status="error">
-        <AlertIcon />
         <Box>
           <AlertTitle>En ukjent feil har oppstått</AlertTitle>
           <AlertDescription>

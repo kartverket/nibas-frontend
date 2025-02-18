@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 import {
   Alert,
   AlertDescription,
-  AlertIcon,
   AlertTitle,
   Button,
   ButtonGroup,
@@ -76,7 +75,6 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
         <DialogCloseTrigger />
         <Body>
           <Alert status="warning">
-            <AlertIcon />
             <div>
               <AlertTitle>Er du sikker på at du vil slette utkastet?</AlertTitle>
               <AlertDescription>
