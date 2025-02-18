@@ -117,7 +117,7 @@ const AlertModal = ({
                 <Button
                   variant="tertiary"
                   onClick={handleSecondaryAction}
-                  isLoading={secondaryLoading}
+                  loading={secondaryLoading}
                   isDisabled={primaryAction && primaryLoading}
                 >
                   {secondaryAction.text}
@@ -126,7 +126,7 @@ const AlertModal = ({
               {primaryAction && (
                 <Button
                   onClick={handlePrimaryAction}
-                  isLoading={primaryLoading}
+                  loading={primaryLoading}
                   isDisabled={secondaryAction && secondaryLoading}
                 >
                   {primaryAction.text}

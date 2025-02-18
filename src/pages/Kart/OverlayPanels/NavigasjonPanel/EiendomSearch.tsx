@@ -228,7 +228,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
         </StyledAlert>
       )}
 
-      <StyledButton type="submit" isDisabled={!isDirty} isLoading={isLoading}>
+      <StyledButton type="submit" isDisabled={!isDirty} loading={isLoading}>
         Gå til eiendom
       </StyledButton>
     </StyledForm>

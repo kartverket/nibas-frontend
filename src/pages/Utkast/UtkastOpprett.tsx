@@ -159,7 +159,7 @@ const UtkastOpprett = () => {
                 <Button variant="tertiary" onClick={handleCloseModal}>
                   Avbryt
                 </Button>
-                <Button type="submit" isLoading={isLoading}>
+                <Button type="submit" loading={isLoading}>
                   Opprett utkast
                 </Button>
               </ButtonGroup>

@@ -119,7 +119,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
               <Button variant="tertiary" onClick={handleCloseModal}>
                 Avbryt
               </Button>
-              <Button type="submit" isDisabled={!isDirty} isLoading={isLoading}>
+              <Button type="submit" isDisabled={!isDirty} loading={isLoading}>
                 Endre detaljer
               </Button>
             </ButtonGroup>

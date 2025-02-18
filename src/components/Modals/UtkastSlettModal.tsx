@@ -89,7 +89,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
             <Button variant="tertiary" onClick={onClose}>
               Avbryt
             </Button>
-            <Button colorScheme="red" isLoading={isLoading} onClick={slettUtkast}>
+            <Button colorScheme="red" loading={isLoading} onClick={slettUtkast}>
               Slett utkast
             </Button>
           </ButtonGroup>

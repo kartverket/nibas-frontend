@@ -33,7 +33,7 @@ const ToolbarPopup = ({
         {subtext && <Text fontSize="sm">{subtext}</Text>}
       </TextRows>
       {buttonText && (
-        <Button size="sm" isDisabled={isDisabled} onClick={onClick} isLoading={isLoading}>
+        <Button size="sm" isDisabled={isDisabled} onClick={onClick} loading={isLoading}>
           {buttonText}
         </Button>
       )}

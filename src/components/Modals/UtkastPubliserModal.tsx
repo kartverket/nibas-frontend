@@ -134,7 +134,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
             <Button variant="tertiary" onClick={onClose}>
               Avbryt
             </Button>
-            <Button isLoading={isLoading} onClick={publiserUtkast}>
+            <Button loading={isLoading} onClick={publiserUtkast}>
               Publiser utkast
             </Button>
           </ButtonGroup>
