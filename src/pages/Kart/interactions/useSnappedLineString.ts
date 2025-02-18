@@ -13,7 +13,7 @@ export const useSnappedLineString = (
     e: ModifyEvent,
     actingLineString: Feature<Geometry>,
     targetLineString: FeatureLike,
-    point: FeatureLike,
+    targetPoint: FeatureLike,
   ) => void,
 ) => {
   const [currentlyModifyingLineString, setCurrentlyModifyingLineString] = useState<Feature<Geometry> | null>(null);

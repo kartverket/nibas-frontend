@@ -25,13 +25,13 @@ const useInteractions = () => {
   const { activeModeTools, activeTool } = useToolbar();
   const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
 
-  useSnappedLineString(modify, (e, actingLineString, targetLineString, snappedPoint) => {
+  useSnappedLineString(modify, (e, actingLineString, targetLineString, targetPoint) => {
     const targetLineStringPosisjonskvalitet = (
       (targetLineString.getProperties() as FeatureProperties).metadata as Metadata
     ).commonGrense?.posisjonskvalitet;
 
-    if (targetLineStringPosisjonskvalitet != null && isPointFeature(snappedPoint)) {
-      const pointCoords = snappedPoint.getGeometry()?.getCoordinates();
+    if (targetLineStringPosisjonskvalitet != null && isPointFeature(targetPoint)) {
+      const pointCoords = targetPoint.getGeometry()?.getCoordinates();
       if (pointCoords != null) {
         const snappedPosisjonskvaliteter: Map<string, Posisjonskvalitet> =
           actingLineString.get("snapData") ?? new Map();
@@ -39,7 +39,6 @@ const useInteractions = () => {
           "snapData",
           snappedPosisjonskvaliteter.set(pointCoords.toString(), targetLineStringPosisjonskvalitet),
         );
-        console.log(actingLineString);
       }
     }
   });
