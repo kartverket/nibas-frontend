@@ -30,9 +30,9 @@ const GrenseinformasjonRow = ({
     <Container>
       <EditContent>
         <Row>
-          <Tooltip label={tooltipLabel} hasArrow placement="bottom">
+          <Tooltip aria-label={tooltipLabel} hasArrow placement="bottom">
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-              <Text as="b">{name}</Text>
+              <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
               <InfoIcon>
                 <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
               </InfoIcon>
