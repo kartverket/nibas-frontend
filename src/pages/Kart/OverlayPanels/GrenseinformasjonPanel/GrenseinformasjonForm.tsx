@@ -24,7 +24,7 @@ import {
   isNonEditableFeatureId,
   isTempFeatureId,
 } from "pages/Kart/interactions/feature-id-utils";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import { styled } from "styled-components";
 import { FeatureProperties, KodelisteRespons, Metadata, Posisjonskvalitet } from "types/api";
@@ -76,7 +76,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
   const { openAsync } = useConfirmationModal();
-  const [autofillOpen, setAutofillOpen] = useState(feature.get("snapData") != null);
   const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
   const toast = useToast();
@@ -122,19 +121,28 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     reset(getDefaultValues(feature));
   }, [feature, getDefaultValues, reset, history]);
 
-  const autoFillFormValues = () => {
-    const posisjonskvaliteter: Map<string, Posisjonskvalitet> = feature.get("snapData");
-    const featureCoordinatesAsString = isLineStringFeature(feature)
-      ? feature
-          .getGeometry()
-          ?.getCoordinates()
-          .map((coord) => coord.toString())
-      : undefined;
+  const relevantPosisjonskvaliteter = useMemo(() => {
+    const posisjonskvaliteter: Map<string, Posisjonskvalitet> | undefined = feature.get("snapData");
     if (posisjonskvaliteter != null) {
+      const featureCoordinatesAsString = isLineStringFeature(feature)
+        ? feature
+            .getGeometry()
+            ?.getCoordinates()
+            .map((coord) => coord.toString())
+        : undefined;
       // Hvis man har snappet bort fra en grense man tidligere snappet til i utkastet ønsker vi ikke å bruke denne posisjonskvaliteten
-      const relevantPosisjonskvaliteter: Posisjonskvalitet[] = Array.from(posisjonskvaliteter.entries())
+      const relevant: Posisjonskvalitet[] = Array.from(posisjonskvaliteter.entries())
         .filter((entry) => featureCoordinatesAsString?.includes(entry[0]))
         .map((entry) => entry[1]);
+      return relevant;
+    }
+    return [];
+  }, [feature]);
+
+  const [autofillOpen, setAutofillOpen] = useState(relevantPosisjonskvaliteter.length > 0);
+
+  const autoFillFormValues = () => {
+    if (relevantPosisjonskvaliteter != null) {
       // Finner den dårligste posisjonskvaliteten basert på nøyaktighet
       const worstPosisjonskvalitet = relevantPosisjonskvaliteter.toSorted((a, b) => {
         if (a != null && b != null && a.noeyaktighet != null && b.noeyaktighet != null) {
@@ -145,7 +153,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       if (worstPosisjonskvalitet != null && kodeliste != null) {
         setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
         setValue("maalemetode", worstPosisjonskvalitet.maalemetode.id, { shouldDirty: true, shouldValidate: true });
-        feature.set("snapData", null);
         handleSubmit(onSubmit)();
         return;
       }
@@ -154,7 +161,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       status: "error",
       title: "Feil ved oppdatering av grense",
       description:
-        "Feilet ved automatisk utfylling av egenskaper. Prøv å fyll ut manuelt, og kontakt Kartverkert hvis feilen vedvarer",
+        "Feilet ved automatisk utfylling av egenskaper. Prøv å fylle ut manuelt, og kontakt Kartverket hvis feilen vedvarer",
     });
   };
 
