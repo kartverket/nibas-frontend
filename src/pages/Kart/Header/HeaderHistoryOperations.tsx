@@ -12,7 +12,7 @@ import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { canSave, undo, redo } = useHistory();
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
 
@@ -74,7 +74,7 @@ const HeaderHistoryOperations = () => {
         }}
         alert={antallEndringer > 0 && <AlertIcon count={antallEndringer} />}
       />
-      <EndringsloggModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
+      <EndringsloggModal isOpen={open} onClose={onClose} utkast={utkast} />
     </HeaderSection>
   );
 };

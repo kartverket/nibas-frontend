@@ -7,14 +7,14 @@ type Props = {
 };
 
 const UtkastSlett = ({ utkast }: Props) => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
 
   return (
     <>
       <MenuItem icon={<Icon icon="delete" />} onClick={onOpen}>
         Slett
       </MenuItem>
-      <UtkastSlettModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
+      <UtkastSlettModal isOpen={open} onClose={onClose} utkast={utkast} />
     </>
   );
 };

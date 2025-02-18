@@ -12,7 +12,7 @@ import AlertModal from "components/Modals/AlertModal";
 import CustomTooltip from "../Toolbar/CustomTooltip";
 
 const HeaderBreadcrumb = () => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const { utkast } = useUtkast();
   const { canSave } = useHistory();
   const navigate = useNavigate();
@@ -61,7 +61,7 @@ const HeaderBreadcrumb = () => {
         isLabelHidden={true}
         tooltip={{ text: "Rediger detaljene til dette utkastet" }}
       />
-      <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
+      <UtkastEndreModal isOpen={open} onClose={onClose} utkast={utkast} />
       <AlertModal
         status="warning"
         title={modalTitle}

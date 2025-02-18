@@ -6,7 +6,7 @@ import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { format, isToday } from "date-fns";
 
 const HeaderVelgGyldighetsdato = () => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const getDatoText = (dato: string | null | undefined): string => {
@@ -25,7 +25,7 @@ const HeaderVelgGyldighetsdato = () => {
       <Button size="sm" variant="ghost" leftIcon="calendar_today" onClick={onOpen}>
         Velg dato
       </Button>
-      <VelgVisningsdatoModal isOpen={isOpen} onClose={onClose} />
+      <VelgVisningsdatoModal isOpen={open} onClose={onClose} />
     </HeaderSection>
   );
 };

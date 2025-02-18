@@ -36,7 +36,7 @@ export type InputName = {
 export type FormViewState = "editing" | "viewing" | "creating";
 
 export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const [formViewState, setFormViewState] = useState<FormViewState>("creating");
   const [iconHovered, setIconHovered] = useState(false);
   const [selectedVedtak, setSelectedVedtak] = useState<DokumentasjonsreferanseDTO | undefined>(undefined);
@@ -99,7 +99,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
         setFormViewState={setFormViewState}
         formViewState={formViewState}
         vedtak={selectedVedtak}
-        isOpen={isOpen}
+        isOpen={open}
         onClose={closeModal}
         feature={feature}
         isDisabled={isGrenseinfoPanelDisabled}

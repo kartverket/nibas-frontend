@@ -37,7 +37,7 @@ type UtkastFormData = {
 };
 
 const UtkastOpprett = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuthentication();
   const toast = useToast();
@@ -94,7 +94,7 @@ const UtkastOpprett = () => {
         Opprett et nytt utkast
       </Button>
 
-      <Dialog open={isOpen} onOpenChange={handleCloseModal} size="xl">
+      <Dialog open={open} onOpenChange={handleCloseModal} size="xl">
         <DialogBackdrop />
         <DialogContent>
           <form onSubmit={handleSubmit(opprettUtkast)}>

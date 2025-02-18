@@ -9,14 +9,14 @@ type Props = {
 
 const UtkastPubliser = ({ utkast }: Props) => {
   const { harEndringer } = useUtkastEndringer(utkast);
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
 
   return (
     <>
       <MenuItem icon={<Icon icon="publish" />} onClick={onOpen} isDisabled={!harEndringer}>
         Publiser
       </MenuItem>
-      <UtkastPubliserModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
+      <UtkastPubliserModal isOpen={open} onClose={onClose} utkast={utkast} />
     </>
   );
 };

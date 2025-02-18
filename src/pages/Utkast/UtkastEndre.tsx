@@ -7,14 +7,14 @@ type Props = {
 };
 
 const UtkastEndre = ({ utkast }: Props) => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
+  const { open, onClose, onOpen } = useDisclosure();
 
   return (
     <>
       <MenuItem icon={<Icon icon="edit" />} onClick={onOpen}>
         Endre detaljer
       </MenuItem>
-      <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
+      <UtkastEndreModal isOpen={open} onClose={onClose} utkast={utkast} />
     </>
   );
 };
