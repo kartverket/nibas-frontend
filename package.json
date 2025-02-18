@@ -72,7 +72,7 @@
     "eslint-import-resolver-typescript": "~3.8.0",
     "eslint-plugin-import": "~2.29.1",
     "eslint-plugin-prettier": "^5.2.3",
-    "eslint-plugin-react": "~7.34.2",
+    "eslint-plugin-react": "~7.37.4",
     "eslint-plugin-react-hooks": "~5.1.0",
     "jsdom": "^26.0.0",
     "msw": "~2.3.1",
