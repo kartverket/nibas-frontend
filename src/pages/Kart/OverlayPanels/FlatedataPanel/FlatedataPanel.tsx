@@ -28,8 +28,7 @@ const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
     (i) => i.id === inndeling.id && i.inndelingtype !== inndeling.inndelingtype,
   );
   const inndelingType = !inndelingIsUnique ? ` (${capitalize(pluralizeInndelingtype(inndeling.inndelingtype))})` : "";
-  const isEditable = inndeling.isEditing ? " (Kan redigeres)" : "";
-  return nameAndNumber + inndelingType + isEditable;
+  return nameAndNumber + inndelingType;
 };
 
 const FlatedataPanel = () => {
@@ -101,6 +100,7 @@ const FlatedataPanel = () => {
             {allInndelinger.map((inndeling) => (
               <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>
                 {getTabText(inndeling, allInndelinger)}
+                {inndeling.isEditing ? <Icon icon="edit" aria-hidden /> : <Icon icon="visibility" aria-hidden />}
               </FlatedataTab>
             ))}
           </FlatedataTabList>
@@ -171,6 +171,9 @@ const FlatedataTabPanels = styled(TabPanels)`
 const FlatedataTab = styled(Tab)`
   white-space: nowrap;
   margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 `;
 
 export default FlatedataPanel;
