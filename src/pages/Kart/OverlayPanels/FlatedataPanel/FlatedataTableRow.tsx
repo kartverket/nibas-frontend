@@ -182,10 +182,10 @@ export const FlatedataTableRow = ({
               formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}
             />
           </TableCell>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <TableCell></TableCell>
+          <TableCell></TableCell>
+          <TableCell></TableCell>
+          <TableCell></TableCell>
         </>
       ) : (
         <>
@@ -253,12 +253,12 @@ export const FlatedataTableRow = ({
           />
           {!isKommuneInndeling(inndeling) && !isStemmekretsInndeling(inndeling) && (
             <>
-              <td></td>
-              <td></td>
-              <td></td>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
+              <TableCell></TableCell>
             </>
           )}
-          <td></td>
+          <TableCell></TableCell>
           <TableCell>
             <FremtidigEndringIcon
               formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}
@@ -279,7 +279,7 @@ const validationError = (error: FieldError | undefined | null) => {
   }
 };
 
-const Row = styled.tr<{ $isSearchMatch: boolean }>`
+const Row = styled.TableRow<{ $isSearchMatch: boolean }>`
   ${(props) =>
     !props.$isSearchMatch &&
     css`

@@ -18,9 +18,9 @@ const InputCell = forwardRef<HTMLInputElement, InputCellProps>(function InputCel
 });
 
 export const TableCell = ({ children }: { children: React.ReactNode }) => (
-  <td>
+  <TableCell>
     <CenteredText>{children}</CenteredText>
-  </td>
+  </TableCell>
 );
 
 const CenteredText = styled.span`

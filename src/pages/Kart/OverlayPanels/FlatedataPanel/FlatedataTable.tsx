@@ -98,16 +98,16 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   return (
     <Container>
       <Table>
-        <thead>
-          <tr>
+        <TableHeader>
+          <TableRow>
             <FlatedataTableHeader text={`${inndelingPrefix}nummer`} {...sortHeaderProps("nummer")} />
             <FlatedataTableHeader text={`${inndelingPrefix}navn`} {...sortHeaderProps("navn")} />
             {isAdministrativEnhet ? (
               <>
                 <FlatedataTableHeader text="Merknad" {...sortHeaderProps("samiskforvaltningsomraade")} />
-                <th></th>
-                <th></th>
-                <th></th>
+                <TableColumnHeader></TableColumnHeader>
+                <TableColumnHeader></TableColumnHeader>
+                <TableColumnHeader></TableColumnHeader>
               </>
             ) : mainInndeling.inndelingtype === "stemmekrets" ? (
               <>
@@ -119,18 +119,18 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             ) : mainInndeling.inndelingtype === "grunnkrets" ? (
               <>
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
-                <th></th>
-                <th></th>
-                <th></th>
+                <TableColumnHeader></TableColumnHeader>
+                <TableColumnHeader></TableColumnHeader>
+                <TableColumnHeader></TableColumnHeader>
               </>
             ) : (
               <></>
             )}
-            <th></th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
+            <TableColumnHeader></TableColumnHeader>
+            <TableColumnHeader></TableColumnHeader>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((inndeling) => {
             const inndelingId = getIdFromEntity(inndeling);
 
@@ -151,7 +151,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
               />
             );
           })}
-        </tbody>
+        </TableBody>
       </Table>
       {utkast && mainInndeling.isEditing && (
         <FlatedataFooter
@@ -196,19 +196,19 @@ const Table = styled.table`
   width: 100%;
   overflow: auto;
 
-  thead,
-  tbody,
-  tr {
+  tableheader,
+  tablebody,
+  tablerow {
     display: contents;
   }
 
-  th {
+  tablecolumnheader {
     font-weight: normal;
     text-align: left;
   }
 
-  th,
-  td {
+  tablecolumnheader,
+  tablecell {
     padding: 12px 18px;
     border-bottom: 1px solid var(--kvib-colors-chakra-border-color);
 

@@ -10,13 +10,13 @@ import {
   MenuList,
   Stack,
   Table,
-  Tbody,
-  Td,
+  TableBody,
+  TableCell,
   Text,
-  Th,
-  Thead,
+  TableColumnHeader,
+  TableHeader,
   Tooltip,
-  Tr,
+  TableRow,
   useToast,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
@@ -81,20 +81,20 @@ export const Endringer = () => {
         ) : utkasts != null && utkasts.length > 0 ? (
           <TableContainer>
             <Table colorScheme="gray">
-              <Thead>
-                <Tr>
+              <TableHeader>
+                <TableRow>
                   {Object.keys(utkastColumns).map((column) => (
                     <TitleCell key={column}>{column}</TitleCell>
                   ))}
                   <TitleCell />
-                </Tr>
-              </Thead>
+                </TableRow>
+              </TableHeader>
 
-              <Tbody>
+              <TableBody>
                 {utkasts.map((utkast) => (
                   <UtkastRow key={utkast.id} utkast={utkast} />
                 ))}
-              </Tbody>
+              </TableBody>
             </Table>
           </TableContainer>
         ) : (
@@ -161,7 +161,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
   };
 
   return (
-    <Tr>
+    <TableRow>
       <StyledCell>{utkast.navn}</StyledCell>
       <StyledCell>{utkast.endringstype}</StyledCell>
       <StyledCell>{format(utkast.gyldigFra, "dd.MM.yyyy")}</StyledCell>
@@ -211,7 +211,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
           </MenuList>
         </Menu>
       </OptionsCell>
-    </Tr>
+    </TableRow>
   );
 };
 
@@ -312,7 +312,7 @@ const TableContainer = styled(Card)`
   box-shadow: none;
 `;
 
-const StyledCell = styled(Td)`
+const StyledCell = styled(TableCell)`
   padding: 16px 28px;
 `;
 
@@ -320,7 +320,7 @@ const OptionsCell = styled(StyledCell)`
   text-align: right;
 `;
 
-const TitleCell = styled(Th)`
+const TitleCell = styled(TableColumnHeader)`
   padding: 16px 28px;
   text-transform: unset;
   color: unset;

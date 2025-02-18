@@ -12,7 +12,7 @@ const FlatedataTableHeader = ({ text, onClick, isActivated, isReversed }: Props)
   const rightIcon = !isActivated ? undefined : isReversed ? "arrow_upward" : "arrow_downward";
 
   return (
-    <th>
+    <TableColumnHeader>
       <ClickableHeader
         variant="ghost"
         colorScheme="gray"
@@ -25,7 +25,7 @@ const FlatedataTableHeader = ({ text, onClick, isActivated, isReversed }: Props)
       >
         {text}
       </ClickableHeader>
-    </th>
+    </TableColumnHeader>
   );
 };
 
