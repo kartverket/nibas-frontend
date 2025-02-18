@@ -7,6 +7,7 @@ import {
   MenuItem,
   MenuItemProps,
   MenuList,
+  Show,
   useDisclosure,
 } from "@kvib/react";
 import { ConditionalHide } from "components/ConditionalShowHide";
@@ -208,7 +209,7 @@ const Toolbar = () => {
   const informasjonMenuItems: MenuItems = [
     {
       label: "Grenseinformasjon",
-      icon: <Icon icon="info" />,
+      icon: <Icon icon="query_stats" />,
       command: KeyboardShortcuts["grenseinfo"].displayString,
       $isActive: activeTool === "grenseinfo",
       isDisabled: false,
@@ -225,7 +226,7 @@ const Toolbar = () => {
       "aria-label": "Vis koordinater på punkt",
     },
     {
-      label: "Mål avstand",
+      label: "Måleverktøy",
       icon: <Icon icon="straighten" />,
       command: KeyboardShortcuts["measure"].displayString,
       $isActive: activeTool === "measure",
@@ -303,6 +304,7 @@ const Toolbar = () => {
             tooltip={{
               text: "Panorer i kartet",
               shortcut: "move",
+              additionalInfo: "Shift + marker i kartet for å zoome",
             }}
           />
           <Divider orientation="vertical" />
@@ -320,11 +322,7 @@ const Toolbar = () => {
             aria-label="Zoom inn på kartet"
             tooltip={{ text: "Zoom inn" }}
           />
-          {utkast && (
-            <ConditionalHide below="lg" condition={!!activeOverlayPanel}>
-              <ToolbarMenus />
-            </ConditionalHide>
-          )}
+          {utkast && <ToolbarMenus />}
 
           <ToolbarButton
             icon="search"

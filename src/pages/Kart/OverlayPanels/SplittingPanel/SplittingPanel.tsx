@@ -127,7 +127,7 @@ export const SplittingPanel = () => {
         onClose={closeAndResetForm}
         subHeading="Ved å splitte en flate kan du opprette en eller flere nye flater"
       >
-        Splitt en flate
+        Splitt flate
       </PanelHeader>
 
       <Stack spacing={8}>

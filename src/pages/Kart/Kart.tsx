@@ -88,8 +88,8 @@ const KartTarget = styled.div`
 
   /* dragzoom kan kun få style via vanlig css tydeligvis */
   .ol-dragzoom {
-    background: var(--kvib-colors-whiteAlpha-500);
-    border-radius: var(--kvib-radii-lg);
+    background: var(--kvib-colors-whiteAlpha-400);
+    border-radius: var(--kvib-radii-md);
     border: solid 2px var(--kvib-colors-black);
     box-shadow: var(--kvib-shadows-md);
   }

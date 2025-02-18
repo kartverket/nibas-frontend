@@ -84,11 +84,11 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
           <ModalCloseButton />
           <ModalBody>
             <Text mb="1rem">
-              På grunn av en begrensning hos IDporten vil man måtte logge inn på nytt hver 2. time. Sørg derfor for at
-              du lagrer utkastet ditt så ofte som mulig.
+              På grunn av en begrensning hos ID-porten vil man måtte logge inn på nytt hver andre time.
             </Text>
             <Text fontWeight="bold" mb="1rem">
-              Dersom du hadde ulagrede endringer kan vi dem. Ønsker du å logge inn på nytt og gjenopprette endringene?
+              Dersom du hadde ulagrede endringene kan de gjenopprettes så fremt du ikke bytter nettleser underveis.
+              Ønsker du å logge inn på nytt?
             </Text>
           </ModalBody>
           <ModalFooter>
@@ -100,10 +100,10 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
                 setAuthRenewError(false);
               }}
             >
-              Forbli logget ut
+              Forbli utlogget
             </Button>
             <Button variant="primary" onClick={onRelog}>
-              Logg inn og gjenopprett
+              Logg inn og gjenopprett endringer
             </Button>
           </ModalFooter>
         </ModalContent>

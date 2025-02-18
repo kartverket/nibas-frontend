@@ -109,7 +109,7 @@ const HeaderHistoryOperations = () => {
                 variant="ghost"
                 size="sm"
               >
-                Innstillinger
+                Flere valg
               </MenuButton>
             </CustomTooltip>
             <MenuList>
