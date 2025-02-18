@@ -123,7 +123,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 
   const relevantPosisjonskvaliteter = useMemo(() => {
     const posisjonskvaliteter: Map<string, Posisjonskvalitet> | undefined = feature.get("snapData");
-    if (posisjonskvaliteter != null) {
+    if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0) {
       const featureCoordinatesAsString = isLineStringFeature(feature)
         ? feature
             .getGeometry()
@@ -131,7 +131,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             .map((coord) => coord.toString())
         : undefined;
       // Hvis man har snappet bort fra en grense man tidligere snappet til i utkastet ønsker vi ikke å bruke denne posisjonskvaliteten
-      const relevant: Posisjonskvalitet[] = Array.from(posisjonskvaliteter.entries())
+      const relevant: Posisjonskvalitet[] = [...posisjonskvaliteter.entries()]
         .filter((entry) => featureCoordinatesAsString?.includes(entry[0]))
         .map((entry) => entry[1]);
       return relevant;
