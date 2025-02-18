@@ -1,7 +1,7 @@
 import {
   Button,
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   Text,
   DialogCloseTrigger,
   DialogContent,
@@ -77,12 +77,13 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)} size="xl">
+      {/* TODO: check onOpenChange*/}
+      <Dialog preventScroll={false} open={authRenewError} onOpenChange={() => setAuthRenewError(false)} size="xl">
         <DialogBackdrop />
         <DialogContent>
           <DialogHeader>Du har blitt logget ut automatisk</DialogHeader>
           <DialogCloseTrigger />
-          <ModalBody>
+          <DialogBody>
             <Text mb="1rem">
               På grunn av en begrensning hos IDporten vil man måtte logge inn på nytt hver 2. time. Sørg derfor for at
               du lagrer utkastet ditt så ofte som mulig.
@@ -91,7 +92,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
               Dersom du hadde ulagrede endringer kan vi forsøke å gjenopprette dem. Ønsker du å logge inn på nytt og
               gjenopprette endringene?
             </Text>
-          </ModalBody>
+          </DialogBody>
           <DialogFooter>
             <Button
               colorScheme="blue"
@@ -108,7 +109,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Modal>
+      </Dialog>
       {children}
     </>
   );

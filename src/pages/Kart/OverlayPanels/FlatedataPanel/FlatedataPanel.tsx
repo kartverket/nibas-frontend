@@ -4,7 +4,7 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Modal,
+  Dialog,
   DialogContent,
   DialogBackdrop,
   Tab,
@@ -80,7 +80,7 @@ const FlatedataPanel = () => {
   };
 
   return (
-    <Modal isOpen={true} onClose={handleCloseModal} scrollBehavior="inside">
+    <Dialog isOpen={true} onClose={handleCloseModal} scrollBehavior="inside">
       <DialogBackdrop onClick={handleCloseModal} />
       <DialogContent as={FlatedataPanelContent}>
         <FlatedataPanelHeader onClose={handleCloseModal}>
@@ -118,7 +118,7 @@ const FlatedataPanel = () => {
           </FlatedataTabPanels>
         </FlatedataTabs>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 

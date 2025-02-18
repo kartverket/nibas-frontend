@@ -5,8 +5,8 @@ import {
   AlertTitle,
   Button,
   ButtonGroup,
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   DialogCloseTrigger,
   DialogContent,
   DialogFooter,
@@ -68,7 +68,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
+    <Dialog isOpen={isOpen} onClose={onClose} isCentered size="2xl">
       <DialogBackdrop />
       <DialogContent>
         <DialogHeader>Slett utkast</DialogHeader>
@@ -95,11 +95,11 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
           </ButtonGroup>
         </DialogFooter>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 
-const Body = styled(ModalBody)`
+const Body = styled(DialogBody)`
   display: flex;
   flex-direction: column;
   gap: 16px;

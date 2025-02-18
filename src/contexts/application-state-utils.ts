@@ -27,7 +27,7 @@ export const sessionStorageKeys = {
   selectedFeatures: "selected-features",
   selectedPoint: "selected-point",
   overlayPanel: "overlay-panel",
-  overlayModal: "overlay-modal",
+  overlayModal: "overlay-Dialog",
   mapPosition: "map-position",
 } as const;
 

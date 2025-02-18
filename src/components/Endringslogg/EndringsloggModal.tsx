@@ -1,7 +1,7 @@
 import { styled } from "styled-components";
 import {
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   DialogCloseTrigger,
   DialogContent,
   DialogHeader,
@@ -34,12 +34,12 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   const harUlagredeEndringer = history.index > 0;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered scrollBehavior="inside">
+    <Dialog isOpen={isOpen} onClose={onClose} size="4xl" isCentered scrollBehavior="inside">
       <DialogBackdrop />
       <DialogContent>
         <DialogHeader>Endringslogg</DialogHeader>
         <DialogCloseTrigger aria-label="Lukk" />
-        <ModalBody>
+        <DialogBody>
           {!harEndringer && !harUlagredeEndringer && !laster && <Empty>Det er ingen endringer i dette utkastet</Empty>}
           <Stack spacing={6}>
             <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
@@ -70,9 +70,9 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
               {endringerutentilhorighet && <EndringerUtenTilhorighet endringer={endringerutentilhorighet} />}
             </EndringUnstyledList>
           </Stack>
-        </ModalBody>
+        </DialogBody>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 

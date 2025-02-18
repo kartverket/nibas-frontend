@@ -6,8 +6,8 @@ import {
   FormHelperText,
   FormLabel,
   Input,
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   DialogCloseTrigger,
   DialogContent,
   DialogFooter,
@@ -75,13 +75,13 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal} isCentered>
+    <Dialog isOpen={isOpen} onClose={handleCloseModal} isCentered>
       <DialogBackdrop />
       <DialogContent>
         <form onSubmit={handleSubmit(editUtkast)}>
           <DialogHeader>Endre detaljer</DialogHeader>
           <DialogCloseTrigger aria-label="Lukk" />
-          <ModalBody>
+          <DialogBody>
             <FormContent>
               <FormSection isInvalid={!!errors.navn}>
                 <FormLabel>Navn på utkastet</FormLabel>
@@ -113,7 +113,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
                 {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype.message} />}
               </FormSection>
             </FormContent>
-          </ModalBody>
+          </DialogBody>
           <DialogFooter>
             <ButtonGroup>
               <Button variant="tertiary" onClick={handleCloseModal}>
@@ -126,7 +126,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
           </DialogFooter>
         </form>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 

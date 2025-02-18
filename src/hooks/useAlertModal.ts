@@ -9,7 +9,7 @@ const useAlertModal = (title: string, body: string) => {
     openModal,
     closeModal,
     modalTitle: title,
-    modalBody: body,
+    DialogBody: body,
   };
 };
 

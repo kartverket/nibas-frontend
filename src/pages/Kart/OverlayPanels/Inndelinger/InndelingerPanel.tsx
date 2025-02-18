@@ -3,8 +3,8 @@ import {
   Link,
   ButtonGroup,
   Separator,
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   DialogContent,
   DialogBackdrop,
   Spinner,
@@ -44,7 +44,7 @@ const InndelingerPanel = () => {
   const { kommuner } = useKommuner(activePanelFylkeId, gyldighetsdato);
 
   return (
-    <Modal isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">
+    <Dialog isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">
       <DialogBackdrop />
       <DialogContent as={ModalPanel}>
         <PanelHeader
@@ -150,7 +150,7 @@ const InndelingerPanel = () => {
           </ButtonContainer>
         </Content>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 
@@ -161,7 +161,7 @@ const InndelingSpinnerContainer = styled.div`
   height: 100%;
 `;
 
-const Content = styled(ModalBody)`
+const Content = styled(DialogBody)`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: 1fr auto auto;

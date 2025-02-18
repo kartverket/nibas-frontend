@@ -27,7 +27,7 @@ export type ConfirmationModalContextValue = {
 export const ConfirmationModalContext = createContext<ConfirmationModalContextValue | undefined>(undefined);
 
 export const ConfirmationModalProvider = ({ children }: { children: React.ReactNode }) => {
-  const [modal, setModal] = useState<ConfirmationModalProps | null>(null);
+  const [Dialog, setModal] = useState<ConfirmationModalProps | null>(null);
 
   const getModalPropsFromOptions = (modalOptions: ConfirmationModalOptions): ConfirmationModalProps => {
     return {
@@ -89,7 +89,7 @@ export const ConfirmationModalProvider = ({ children }: { children: React.ReactN
   return (
     <ConfirmationModalContext.Provider value={value}>
       {children}
-      {modal && <ConfirmationModal {...modal}></ConfirmationModal>}
+      {Dialog && <ConfirmationModal {...Dialog}></ConfirmationModal>}
     </ConfirmationModalContext.Provider>
   );
 };

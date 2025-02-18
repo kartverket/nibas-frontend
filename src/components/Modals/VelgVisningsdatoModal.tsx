@@ -4,8 +4,8 @@ import {
   ButtonGroup,
   Datepicker,
   FormLabel,
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   DialogCloseTrigger,
   DialogContent,
   DialogFooter,
@@ -53,7 +53,7 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
+    <Dialog isOpen={isOpen} onClose={onClose} isCentered size="2xl">
       <DialogBackdrop />
       <DialogContent>
         <form onSubmit={handleSubmit(onBekreft)}>
@@ -85,11 +85,11 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
           </DialogFooter>
         </form>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 
-const Body = styled(ModalBody)`
+const Body = styled(DialogBody)`
   display: flex;
   flex-direction: column;
   gap: 16px;

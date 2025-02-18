@@ -4,8 +4,8 @@ import {
   AlertTitle,
   Button,
   ButtonGroup,
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   DialogCloseTrigger,
   DialogContent,
   DialogFooter,
@@ -107,7 +107,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="4xl">
+    <Dialog isOpen={isOpen} onClose={onClose} isCentered size="4xl">
       <DialogBackdrop />
       <DialogContent>
         <DialogHeader>Publiser utkast</DialogHeader>
@@ -140,11 +140,11 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
           </ButtonGroup>
         </DialogFooter>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 
-const Body = styled(ModalBody)`
+const Body = styled(DialogBody)`
   display: flex;
   flex-direction: column;
   gap: 24px;

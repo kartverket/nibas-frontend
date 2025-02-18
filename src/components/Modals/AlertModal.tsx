@@ -4,8 +4,8 @@ import {
   AlertIcon,
   Button,
   ButtonGroup,
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   DialogCloseTrigger,
   DialogContent,
   DialogFooter,
@@ -30,7 +30,7 @@ const Title = styled(DialogHeader)`
   flex: unset;
 `;
 
-const Body = styled(ModalBody)`
+const Body = styled(DialogBody)`
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -95,7 +95,7 @@ const AlertModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
+    <Dialog isOpen={isOpen} onClose={onClose} isCentered size="2xl">
       <DialogBackdrop />
       <DialogContent>
         <AlertHeader status={status}>
@@ -136,7 +136,7 @@ const AlertModal = ({
           </DialogFooter>
         )}
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 

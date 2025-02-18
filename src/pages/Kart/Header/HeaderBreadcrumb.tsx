@@ -17,7 +17,7 @@ const HeaderBreadcrumb = () => {
   const { canSave } = useHistory();
   const navigate = useNavigate();
 
-  const { modalIsOpen, openModal, closeModal, modalTitle, modalBody } = useAlertModal(
+  const { modalIsOpen, openModal, closeModal, modalTitle, DialogBody } = useAlertModal(
     "Du har ulagrede endringer",
     "Dersom du går ut av utkastet uten å lagre først vil du miste alle de ulagrede endringene dine. Er du sikker på at du vil gå ut av utkastet?",
   );
@@ -65,7 +65,7 @@ const HeaderBreadcrumb = () => {
       <AlertModal
         status="warning"
         title={modalTitle}
-        description={modalBody}
+        description={DialogBody}
         isOpen={modalIsOpen}
         onClose={closeModal}
         secondaryAction={{

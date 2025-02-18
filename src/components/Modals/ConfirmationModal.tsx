@@ -1,7 +1,7 @@
 import {
   Button,
-  Modal,
-  ModalBody,
+  Dialog,
+  DialogBody,
   DialogCloseTrigger,
   DialogContent,
   DialogFooter,
@@ -20,12 +20,12 @@ const ConfirmationModal = ({
   onDecline,
 }: ConfirmationModalProps) => {
   return (
-    <Modal isOpen onClose={onDecline}>
+    <Dialog isOpen onClose={onDecline}>
       <DialogBackdrop />
       <DialogContent>
         <DialogHeader>{title}</DialogHeader>
         <DialogCloseTrigger />
-        <ModalBody>{description}</ModalBody>
+        <DialogBody>{description}</DialogBody>
         <ModalFooterWithSpacing>
           <Button variant="ghost" onClick={onDecline}>
             {declineText ?? "Nei"}
@@ -33,7 +33,7 @@ const ConfirmationModal = ({
           <Button onClick={onAccept}>{acceptText ?? "Ja"}</Button>
         </ModalFooterWithSpacing>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 

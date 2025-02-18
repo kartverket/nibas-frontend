@@ -1,4 +1,4 @@
-import { Button, Modal, ModalBody, DialogContent, Text, DialogBackdrop, useToast } from "@kvib/react";
+import { Button, Dialog, DialogBody, DialogContent, Text, DialogBackdrop, useToast } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
@@ -136,7 +136,7 @@ export const VedtaksinfoDetaljer = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={closeModal} isCentered size="6xl">
+    <Dialog isOpen={isOpen} onClose={closeModal} isCentered size="6xl">
       <DialogBackdrop />
       <DialogContent>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -145,7 +145,7 @@ export const VedtaksinfoDetaljer = ({
               <Text>{`Se ${!isDisabled ? "eller endre på" : ""} vedtaksinformasjon`}</Text>
             </PanelHeader>
           </VedtakHeaderContainer>
-          <ModalBody>
+          <DialogBody>
             <VedtaksinfoBody
               formViewState={formViewState}
               clearErrors={clearErrors}
@@ -161,7 +161,7 @@ export const VedtaksinfoDetaljer = ({
               deleteDokref={deleteDokref}
               values={getValues}
             />
-          </ModalBody>
+          </DialogBody>
 
           {!isDisabled && (
             <VedtakFooterContainer>
@@ -182,7 +182,7 @@ export const VedtaksinfoDetaljer = ({
           )}
         </form>
       </DialogContent>
-    </Modal>
+    </Dialog>
   );
 };
 
