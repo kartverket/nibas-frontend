@@ -19,7 +19,7 @@ const KartlagMiddle = ({ mappedLayer, indexPath, isNested = false }: Props) => {
     toggleKartlag(mappedLayer, indexPath);
   };
   return (
-    <Accordion allowToggle>
+    <Accordion collapsible>
       <KartlagAccordionItem>
         {({ isExpanded }) => (
           <>

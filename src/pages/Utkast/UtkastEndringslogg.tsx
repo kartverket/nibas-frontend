@@ -40,7 +40,7 @@ export const EndringsloggAccordion = ({ utkast }: Props) => {
   const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
-    <Accordion allowToggle defaultIndex={[0]}>
+    <Accordion collapsible defaultIndex={[0]}>
       <AccordionItem>
         <EndringsloggAccordionButton>
           Endringer i dette utkastet

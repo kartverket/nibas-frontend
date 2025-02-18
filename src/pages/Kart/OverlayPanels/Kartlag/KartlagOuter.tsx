@@ -20,7 +20,7 @@ const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
   };
 
   return (
-    <KartlagAccordion allowToggle>
+    <KartlagAccordion collapsible>
       <KartlagAccordionItem>
         {({ isExpanded }) => (
           <>
