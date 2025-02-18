@@ -17,7 +17,7 @@ export const EndringerUtenTilhorighet = ({ endringer }: EndringerUtenTilhorighet
   return (
     <EndringListItem>
       <ListHeading as="h3">
-        Endringer uten tilhørighet <StyledIcon icon="warning" size={24} isFilled={true} color="orange" />
+        Endringer uten tilhørighet <StyledIcon icon="warning" size={24} filled={true} color="orange" />
       </ListHeading>
       <EndringerKommuneCardList endringer={endringer} />
     </EndringListItem>

@@ -14,7 +14,7 @@ const LandingHeader = () => {
       </Section>
       {isAuthenticated && (
         <Section>
-          <LoginIcon icon="person" isFilled />
+          <LoginIcon icon="person" filled />
           <Text as="b">{maskedUserId}</Text>
           <Button variant="tertiary" aria-label="Logg ut" leftIcon="logout" onClick={signOut}>
             Logg ut

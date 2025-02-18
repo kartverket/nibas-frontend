@@ -235,7 +235,7 @@ const FremtidigeUtkastTooltip = () => {
           onMouseOut={() => setIconHovered(false)}
           size={24}
           color="var(--kvib-colors-blue-500)"
-          isFilled={iconHovered}
+          filled={iconHovered}
           icon="info"
         ></Icon>
       </InfoIcon>

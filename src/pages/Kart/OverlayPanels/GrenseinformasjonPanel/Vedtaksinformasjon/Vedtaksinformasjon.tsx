@@ -68,7 +68,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
             <Text as="b" paddingRight="8px" fontSize={"lg"}>
               Vedtaksinformasjon
             </Text>
-            <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
+            <Icon size={24} color="var(--kvib-colors-blue-500)" filled={iconHovered} icon="info"></Icon>
           </InfoIcon>
         </Tooltip>
         <Button
