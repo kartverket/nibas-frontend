@@ -7,8 +7,8 @@ import { UtkastResponse } from "types/api";
 
 const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
   const { harEndringer } = useUtkastEndringer(utkast);
-  const { isOpen: isPubliserOpen, onClose: onPubliserClose, onOpen: onPubliserOpen } = useDisclosure();
-  const { isOpen: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
+  const { open: isPubliserOpen, onClose: onPubliserClose, onOpen: onPubliserOpen } = useDisclosure();
+  const { open: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
 
   return (
     <HeaderSection>

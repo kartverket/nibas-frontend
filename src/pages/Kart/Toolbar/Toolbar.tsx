@@ -57,7 +57,7 @@ const Toolbar = () => {
   const flatedataIsAvailable =
     getAllInndelinger().filter((inndeling) => inndeling.isViewing || inndeling.isEditing).length > 0;
 
-  const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
+  const { open: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 
   const toggleGrenseinfo = () => {
     toggleTool("grenseinfo");
