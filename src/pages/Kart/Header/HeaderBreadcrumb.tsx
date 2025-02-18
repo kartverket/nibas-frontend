@@ -51,7 +51,7 @@ const HeaderBreadcrumb = () => {
           </BreadcrumbItem>
         </Hide>
         <BreadcrumbItem>
-          <Text noOfLines={1}>{utkast.navn}</Text>
+          <Text lineClamp={1}>{utkast.navn}</Text>
         </BreadcrumbItem>
       </Breadcrumb>
       <HeaderButton

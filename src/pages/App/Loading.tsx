@@ -4,7 +4,7 @@ import { Spinner } from "@kvib/react";
 const Loading = () => {
   return (
     <Container>
-      <Spinner thickness="4px" emptyColor="gray.200" color="blue.500" size="2xl" />
+      <Spinner colorPalette="blue" color="blue.500" size="lg" />
     </Container>
   );
 };

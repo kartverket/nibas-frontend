@@ -130,7 +130,7 @@ export const SplittingPanel = () => {
         Splitt en flate
       </PanelHeader>
 
-      <Stack spacing={8}>
+      <Stack gap={8}>
         <FormControl>
           <FormLabel>{`Hvilken ${inndelingtype} skal splittes?`}</FormLabel>
           <Select
@@ -164,7 +164,7 @@ export const SplittingPanel = () => {
 
         {getValues("opprinneligKrets.lokalId") !== CustomOption.NOT_CHOSEN && (
           <>
-            <Stack spacing={4}>
+            <Stack gap={4}>
               <Heading as="h3" size="sm">{`Hva skal ${fields[0].kretsNavn} splittes til?`}</Heading>
               {fields.map((field, index) => (
                 <div key={field.id}>

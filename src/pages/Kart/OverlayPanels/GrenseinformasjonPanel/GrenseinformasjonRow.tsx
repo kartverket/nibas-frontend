@@ -39,7 +39,7 @@ const GrenseinformasjonRow = ({
         {isEditing ? (
           <Field>{children}</Field>
         ) : isLoading ? (
-          <SkeletonText noOfLines={1} skeletonHeight={5} marginTop="8px" />
+          <SkeletonText lineClamp={1} skeletonHeight={5} marginTop="8px" />
         ) : (
           <Field>{valueLabel != null && valueLabel.length > 0 ? valueLabel : "Ikke spesifisert"}</Field>
         )}

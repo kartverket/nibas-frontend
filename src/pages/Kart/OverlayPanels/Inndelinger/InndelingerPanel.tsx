@@ -129,7 +129,7 @@ const InndelingerPanel = () => {
                 })
               ) : (
                 <InndelingSpinnerContainer>
-                  <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+                  <Spinner colorPalette="blue" color="blue.500" size="xl" />
                 </InndelingSpinnerContainer>
               )}
             </InndelingerList>

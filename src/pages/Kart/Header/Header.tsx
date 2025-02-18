@@ -105,7 +105,7 @@ const Header = () => {
           />
           {activeFylke && currentlyEditingInndelinger.length > 0 && (
             <Hide below="xl">
-              <Breadcrumb separator={<Separator icon="chevron_right" />} spacing={0}>
+              <Breadcrumb separator={<Separator icon="chevron_right" />} gap={0}>
                 <BreadcrumbItem>
                   <InndelingText>{capitalize(currentlyEditingInndelinger[0].inndelingtype)}</InndelingText>
                 </BreadcrumbItem>

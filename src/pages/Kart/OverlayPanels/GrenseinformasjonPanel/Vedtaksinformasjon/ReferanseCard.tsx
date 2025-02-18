@@ -13,7 +13,7 @@ export const ReferanseCard = ({ referanse, urlMode, deleteRef, formViewState }: 
   return (
     <StyledCard>
       <Row>
-        <Text colorScheme="gray" noOfLines={2} maxWidth="320px">
+        <Text colorScheme="gray" lineClamp={2} maxWidth="320px">
           {referanse?.beskrivelse}
         </Text>
         {urlMode && formViewState === "viewing" && (

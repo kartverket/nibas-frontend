@@ -45,7 +45,7 @@ const GrenseinformasjonRow = ({
             {!isValid && isSubmitted && <FormErrorMessage>Du må velge 2 tilhørigheter for grensen</FormErrorMessage>}
           </FormControl>
         ) : isLoading ? (
-          <SkeletonText noOfLines={1} skeletonHeight={5} marginTop="8px" />
+          <SkeletonText lineClamp={1} skeletonHeight={5} marginTop="8px" />
         ) : (
           <Field>{valueLabel ?? "Ikke spesifisert"}</Field>
         )}
