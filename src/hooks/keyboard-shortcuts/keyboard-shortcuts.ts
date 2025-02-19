@@ -14,6 +14,7 @@ export type Shortcut =
   | "snap_matrikkel"
   | "open"
   | "grenseinfo"
+  | "tegnforklaring"
   | "grensecoordinates"
   | "measure"
   | "grensesplit"
@@ -108,6 +109,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   snap_matrikkel: createShortcut("g", { control: true, shift: true }),
   layers: createShortcut("k", { control: true }),
   goto: createShortcut("Enter", { control: true }),
+  tegnforklaring: createShortcut("q", { control: true, shift: true }),
 
   // Utkast / History Tools
   redo: createShortcut("z", { control: true, shift: true }),

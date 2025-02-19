@@ -7,10 +7,8 @@ import {
   MenuItem,
   MenuItemProps,
   MenuList,
-  Show,
   useDisclosure,
 } from "@kvib/react";
-import { ConditionalHide } from "components/ConditionalShowHide";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -139,6 +137,7 @@ const Toolbar = () => {
   useKeyboardShortcut("grensecoordinates", () => toggleTool("grensecoordinates"));
   useKeyboardShortcut("measure", () => toggleTool("measure"));
   useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
+  useKeyboardShortcut("tegnforklaring", () => toggleOverlayPanel("tegnforklaring"));
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useHoldButtonToggle(
     "alt",
@@ -237,6 +236,7 @@ const Toolbar = () => {
     {
       label: "Tegnforklaring",
       icon: <Icon icon="palette" />,
+      command: KeyboardShortcuts["tegnforklaring"].displayString,
       $isActive: activeOverlayPanel === "tegnforklaring",
       isDisabled: false,
       onClick: () => toggleOverlayPanel("tegnforklaring"),

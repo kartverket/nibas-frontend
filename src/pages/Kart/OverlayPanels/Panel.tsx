@@ -113,7 +113,6 @@ const PanelHeaderContainer = styled.div<{ $isSmall: boolean; $noMargin: boolean 
   gap: 8px;
   padding: ${({ $isSmall }) => ($isSmall ? "12px 0 8px" : "16px 0 12px")};
   margin-bottom: ${({ $isSmall, $noMargin }) => ($noMargin ? "" : $isSmall ? "16px" : "20px")};
-  border-bottom: 2px solid var(--kvib-colors-gray-50);
   background: var(--kvib-colors-chakra-body-bg);
 `;
 
