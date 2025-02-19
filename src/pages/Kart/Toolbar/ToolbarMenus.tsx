@@ -26,8 +26,12 @@ const ToolbarMenus = () => {
     return inndeling.inndelingtype === "stemmekrets";
   });
 
-  const [isWide] = useMediaQuery("(min-width: 1350px)"); //Kan potensielt byttes ut med kvib sine breakpoints
-  const [isSmall] = useMediaQuery("(min-width: 900px)");
+  const [isWide] = useMediaQuery(
+    "(min-width: " + getComputedStyle(document.documentElement).getPropertyValue("--kvib-breakpoints-2xl") + ")",
+  );
+  const [isSmall] = useMediaQuery(
+    "(min-width: " + getComputedStyle(document.documentElement).getPropertyValue("--kvib-breakpoints-lg") + ")",
+  );
 
   // TODO Sjekk om vi kan fjerne ubrukte inndelinger
   const flatedataIsAvailable =
