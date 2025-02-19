@@ -1,4 +1,14 @@
-import { Divider, Flex, Icon, MenuDivider, MenuList, MenuOptionGroup, Show, useMediaQuery } from "@kvib/react";
+import {
+  extendTheme,
+  Divider,
+  Flex,
+  Icon,
+  MenuDivider,
+  MenuList,
+  MenuOptionGroup,
+  useMediaQuery,
+  useTheme,
+} from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -14,6 +24,7 @@ const ToolbarMenus = () => {
   const { activeOverlayPanel, closeOverlayPanel, toggleOverlayPanel, toggleOverlayModal, activeOverlayModal } =
     useOverlayPanel();
 
+  const theme = useTheme();
   const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
 
   const isEditing = currentlyEditingInndelinger.length > 0;
@@ -26,12 +37,8 @@ const ToolbarMenus = () => {
     return inndeling.inndelingtype === "stemmekrets";
   });
 
-  const [isWide] = useMediaQuery(
-    "(min-width: " + getComputedStyle(document.documentElement).getPropertyValue("--kvib-breakpoints-2xl") + ")",
-  );
-  const [isSmall] = useMediaQuery(
-    "(min-width: " + getComputedStyle(document.documentElement).getPropertyValue("--kvib-breakpoints-lg") + ")",
-  );
+  const [isWide] = useMediaQuery("(min-width: " + theme.breakpoints["2xl"] + ")");
+  const [isSmall] = useMediaQuery("(min-width: " + theme.breakpoints["lg"] + ")");
 
   // TODO Sjekk om vi kan fjerne ubrukte inndelinger
   const flatedataIsAvailable =
