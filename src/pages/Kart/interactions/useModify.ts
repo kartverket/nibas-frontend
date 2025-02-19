@@ -3,25 +3,33 @@ import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { GrenseId } from "hooks/layers/types";
 import useToastCounter from "hooks/toast/useToastCounter";
 import { Collection, MapBrowserEvent } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
 import { click, primaryAction } from "ol/events/condition";
 import BaseEvent from "ol/events/Event";
-import Feature, { FeatureLike } from "ol/Feature";
+import Feature from "ol/Feature";
 import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { Style } from "ol/style";
 import { useEffect, useMemo } from "react";
-import { FeatureProperties, Metadata, Posisjonskvalitet } from "types/api";
+import { FeatureProperties, Metadata } from "types/api";
 import { isFeatureEditable, isFeatureToBeArchived, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { isAdministrativGrense } from "utils/grenser";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
+import { isTeiggrenseMetadata } from "../OverlayPanels/GrenseinformasjonPanel/Matrikkelgrenseinformasjon";
 import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
+
+export type ContextualPosisjonskvalitet = {
+  grensetype: "teig" | "nibas";
+  maalemetode: string | undefined;
+  noeyaktighet: number | undefined;
+};
 
 const useModify = () => {
   const { addHistoryEntry } = useHistory();
@@ -57,7 +65,7 @@ const useModify = () => {
           return false;
         }
 
-        const activeFeatures = getLineStringFeaturesAtPixel(event, "edit");
+        const activeFeatures = getLineStringFeaturesAtPixel(event, ["edit"]);
 
         // Unngå interaksjon med inaktive features (representasjonspunkter f.eks.)
         if (activeFeatures.length === 0) {
@@ -92,7 +100,7 @@ const useModify = () => {
         }
 
         if (activeTool === "remove" && click(event)) {
-          const activeFeatures = getLineStringFeaturesAtPixel(event, "edit");
+          const activeFeatures = getLineStringFeaturesAtPixel(event, ["edit"]);
 
           if (!activeFeatures.every((feature) => isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
             return false;
@@ -202,14 +210,48 @@ const useModify = () => {
       }
     };
 
-    const onSnap = (actingLineString: Feature<Geometry>, targetLineString: FeatureLike, pointCoords: Coordinate) => {
-      const targetLineStringPosisjonskvalitet = (
-        (targetLineString.getProperties() as FeatureProperties).metadata as Metadata
-      ).commonGrense?.posisjonskvalitet;
+    const onSnap = (event: ModifyEvent, actingLineString: Feature<Geometry>, pointCoords: Coordinate) => {
+      // Vi ønsker ikke å arve posisjonskvalitet fra grenser i redigeringsmodus
+      const shouldSnapLayers: GrenseId[] = [
+        "matrikkel",
+        "fylke",
+        "kommune",
+        "nasjon",
+        "grunnkrets",
+        "stemmekrets",
+        "archived",
+        "measure",
+      ];
+      const targetFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, shouldSnapLayers).filter(
+        (f) => f.getId() !== actingLineString.getId(),
+      );
+      // hvis det er et knutepunkt ønsker ikke å sette egenskaper man kan arve da vi ikke vet hvilken grense man prøver å kopiere fra.
+      if (targetFeatures.length === 1) {
+        const targetFeature = targetFeatures[0];
+        const featureProperties = targetFeature.getProperties();
+        let targetLineStringPosisjonskvalitet: ContextualPosisjonskvalitet | undefined;
 
-      if (targetLineStringPosisjonskvalitet != null) {
-        if (pointCoords != null) {
-          const snappedPosisjonskvaliteter: Map<string, Posisjonskvalitet> =
+        if (!isTeiggrenseMetadata(featureProperties)) {
+          const posisjonskvalitet = ((featureProperties as FeatureProperties).metadata as Metadata).commonGrense
+            ?.posisjonskvalitet;
+
+          targetLineStringPosisjonskvalitet = {
+            grensetype: "nibas",
+            maalemetode: posisjonskvalitet?.maalemetode.id,
+            noeyaktighet: posisjonskvalitet?.noeyaktighet,
+          };
+        } else {
+          if (typeof featureProperties.MALEMETODE === "number" && typeof featureProperties.NOYAKTIGHET === "number") {
+            targetLineStringPosisjonskvalitet = {
+              grensetype: "teig",
+              maalemetode: featureProperties.MALEMETODE.toString(),
+              noeyaktighet: featureProperties.NOYAKTIGHET,
+            };
+          }
+        }
+
+        if (targetLineStringPosisjonskvalitet) {
+          const snappedPosisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> =
             actingLineString.get("snapData") ?? new Map();
           actingLineString.set(
             "snapData",
@@ -227,7 +269,7 @@ const useModify = () => {
           return;
         }
 
-        const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, "edit");
+        const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, ["edit"]);
 
         const nonSelectedActiveFeatures = activeFeatures.filter(
           (feature) => selectedFeature.getId() !== feature.getId(),
@@ -288,13 +330,11 @@ const useModify = () => {
 
               if (isAccepted) {
                 performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
-                onSnap(selectedFeature, nonSelectedActiveFeature, nearbyVertex);
               } else {
                 setPreviousCoordinatesForFeature(selectedFeature);
                 return;
               }
             }
-
             // Vi trenger ikke gjøre noe hvis man ender opp på samme punkt som man løsrev fra
           } else {
             setPreviousCoordinatesForFeature(selectedFeature);
@@ -302,6 +342,7 @@ const useModify = () => {
             return;
           }
         }
+        onSnap(event, selectedFeature, event.mapBrowserEvent.coordinate);
       }
 
       addModificationToHistory(event.features.getArray());

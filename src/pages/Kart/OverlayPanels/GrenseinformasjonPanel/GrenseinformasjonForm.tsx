@@ -24,17 +24,18 @@ import {
   isNonEditableFeatureId,
   isTempFeatureId,
 } from "pages/Kart/interactions/feature-id-utils";
+import { ContextualPosisjonskvalitet } from "pages/Kart/interactions/useModify";
 import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import { styled } from "styled-components";
-import { FeatureProperties, KodelisteRespons, Metadata, Posisjonskvalitet } from "types/api";
+import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
+import { isLineStringFeature } from "utils/type-utils";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
 import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { PanelHeader } from "../Panel";
 import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
-import { isLineStringFeature } from "utils/type-utils";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -122,7 +123,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   }, [feature, getDefaultValues, reset, history]);
 
   const relevantPosisjonskvaliteter = useMemo(() => {
-    const posisjonskvaliteter: Map<string, Posisjonskvalitet> | undefined = feature.get("snapData");
+    const posisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> | undefined = feature.get("snapData");
     if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0) {
       const featureCoordinatesAsString = isLineStringFeature(feature)
         ? feature
@@ -131,9 +132,11 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             .map((coord) => coord.toString())
         : undefined;
       // Hvis man har snappet bort fra en grense man tidligere snappet til i utkastet ønsker vi ikke å bruke denne posisjonskvaliteten
-      const relevant: Posisjonskvalitet[] = [...posisjonskvaliteter.entries()]
+      const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
         .filter((entry) => featureCoordinatesAsString?.includes(entry[0]))
-        .map((entry) => entry[1]);
+        .map((entry) => entry[1])
+        // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
+        .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
       return relevant;
     }
     return [];
@@ -152,8 +155,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       })[relevantPosisjonskvaliteter.length - 1];
       if (worstPosisjonskvalitet != null && kodeliste != null) {
         setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
-        setValue("maalemetode", worstPosisjonskvalitet.maalemetode.id, { shouldDirty: true, shouldValidate: true });
+        setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
         handleSubmit(onSubmit)();
+        setAutofillOpen(false);
         return;
       }
     }
@@ -230,10 +234,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
               size={"sm"}
               /* @ts-expect-error auto_fix_high er ikke i versjonen av kvib (material-symbols) vi bruker*/
               leftIcon="auto_fix_high"
-              onClick={() => {
-                autoFillFormValues();
-                setAutofillOpen(false);
-              }}
+              onClick={() => autoFillFormValues()}
             >
               Fyll inn automatisk
             </Button>

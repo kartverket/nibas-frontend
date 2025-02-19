@@ -100,7 +100,7 @@ const useDraw = () => {
         if (!noModifierKeys(event) || currentTool !== "draw" || currentModeTools.includes("move")) {
           return false;
         }
-        const featuresAtPixel = getLineStringFeaturesAtPixelRef.current(event, "edit");
+        const featuresAtPixel = getLineStringFeaturesAtPixelRef.current(event, ["edit"]);
         // Legg til feature hvis vi ikke treffer noen andre features
         if (featuresAtPixel.length === 0) {
           draw.changed();

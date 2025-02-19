@@ -33,8 +33,8 @@ const useSelectPoint = () => {
     if (!activeModeTools.includes("move") && allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
-      const archivedFeatures = getFeaturesAtPixel(event, "archived");
-      const nonArchivedFeatures = getFeaturesAtPixel(event, "edit");
+      const archivedFeatures = getFeaturesAtPixel(event, ["archived"]);
+      const nonArchivedFeatures = getFeaturesAtPixel(event, ["edit"]);
 
       if (archivedFeatures.length === 0 && nonArchivedFeatures.length === 0) {
         clearSelection();

@@ -34,7 +34,7 @@ const useSelect = () => {
       !disallowedTools.includes(activeTool) &&
       !(activeModeTools.includes("move") && !safeTools.includes(activeTool))
     ) {
-      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
+      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : ["edit"]);
 
       // Dersom man har klikket på kartet skal vi kvitte oss med selection
       if (activeFeatures.length === 0) {
