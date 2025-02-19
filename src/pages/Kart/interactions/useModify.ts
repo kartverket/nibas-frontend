@@ -3,7 +3,6 @@ import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { GrenseId } from "hooks/layers/types";
 import useToastCounter from "hooks/toast/useToastCounter";
 import { Collection, MapBrowserEvent } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
@@ -212,7 +211,7 @@ const useModify = () => {
 
     const onSnap = (event: ModifyEvent, actingLineString: Feature<Geometry>, pointCoords: Coordinate) => {
       // Vi ønsker ikke å arve posisjonskvalitet fra grenser i redigeringsmodus
-      const shouldSnapLayers: GrenseId[] = [
+      const targetFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, [
         "matrikkel",
         "fylke",
         "kommune",
@@ -221,14 +220,10 @@ const useModify = () => {
         "stemmekrets",
         "archived",
         "measure",
-      ];
-      const targetFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, shouldSnapLayers).filter(
-        (f) => f.getId() !== actingLineString.getId(),
-      );
+      ]).filter((f) => f.getId() !== actingLineString.getId());
       // hvis det er et knutepunkt ønsker ikke å sette egenskaper man kan arve da vi ikke vet hvilken grense man prøver å kopiere fra.
       if (targetFeatures.length === 1) {
-        const targetFeature = targetFeatures[0];
-        const featureProperties = targetFeature.getProperties();
+        const featureProperties = targetFeatures[0].getProperties();
         let targetLineStringPosisjonskvalitet: ContextualPosisjonskvalitet | undefined;
 
         if (!isTeiggrenseMetadata(featureProperties)) {
