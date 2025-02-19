@@ -50,7 +50,10 @@ export const InndelingSearchField = <T extends FieldValues>({
       nummer,
       type,
       representasjonspunkt: { x: representasjonspunkt.x, y: representasjonspunkt.y },
-      label: `${nummer} ${navn}`,
+      label:
+        type === "STEMMEKRETS" && nummer.length >= 4
+          ? `(${nummer.slice(0, 4)}) ${nummer.slice(4)} ${navn}`
+          : `${nummer} ${navn}`,
     };
   };
 
