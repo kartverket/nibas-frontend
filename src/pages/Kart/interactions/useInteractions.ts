@@ -4,7 +4,6 @@ import { MapBrowserEvent } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
 import { map } from "pages/Kart/constants";
 import { useEffect, useRef } from "react";
-import { FeatureProperties, Metadata, Posisjonskvalitet } from "types/api";
 import { SnapData, createKartlagSnapsData } from "./snapping-utils";
 import { useCursorStyles } from "./useCursorStyles";
 import useDragInteractions from "./useDragInteractions";
@@ -13,8 +12,6 @@ import useMeasure from "./useMeasure";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useSelectPoint from "./useSelectPoint";
-import { useSnappedLineString } from "./useSnappedLineString";
-import { isPointFeature } from "utils/type-utils";
 const useInteractions = () => {
   const { modify } = useModify();
   const { dragPan, dragZoom } = useDragInteractions();
@@ -24,24 +21,6 @@ const useInteractions = () => {
   const { selectPoint } = useSelectPoint();
   const { activeModeTools, activeTool } = useToolbar();
   const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
-
-  useSnappedLineString(modify, (e, actingLineString, targetLineString, targetPoint) => {
-    const targetLineStringPosisjonskvalitet = (
-      (targetLineString.getProperties() as FeatureProperties).metadata as Metadata
-    ).commonGrense?.posisjonskvalitet;
-
-    if (targetLineStringPosisjonskvalitet != null && isPointFeature(targetPoint)) {
-      const pointCoords = targetPoint.getGeometry()?.getCoordinates();
-      if (pointCoords != null) {
-        const snappedPosisjonskvaliteter: Map<string, Posisjonskvalitet> =
-          actingLineString.get("snapData") ?? new Map();
-        actingLineString.set(
-          "snapData",
-          snappedPosisjonskvaliteter.set(pointCoords.toString(), targetLineStringPosisjonskvalitet),
-        );
-      }
-    }
-  });
 
   const crosshairCursorTools: Tool[] = ["draw", "add", "remove", "measure", null];
   const pointerCursorTools: Tool[] = ["archive", "grenseinfo", "grensecoordinates", "koordinater", "split", "delete"];

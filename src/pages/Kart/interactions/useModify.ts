@@ -8,12 +8,13 @@ import { Collection, MapBrowserEvent } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
 import { click, primaryAction } from "ol/events/condition";
 import BaseEvent from "ol/events/Event";
-import Feature from "ol/Feature";
+import Feature, { FeatureLike } from "ol/Feature";
 import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { Style } from "ol/style";
 import { useEffect, useMemo } from "react";
+import { FeatureProperties, Metadata, Posisjonskvalitet } from "types/api";
 import { isFeatureEditable, isFeatureToBeArchived, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { isAdministrativGrense } from "utils/grenser";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
@@ -202,6 +203,23 @@ const useModify = () => {
       }
     };
 
+    const onSnap = (actingLineString: Feature<Geometry>, targetLineString: FeatureLike, pointCoords: Coordinate) => {
+      const targetLineStringPosisjonskvalitet = (
+        (targetLineString.getProperties() as FeatureProperties).metadata as Metadata
+      ).commonGrense?.posisjonskvalitet;
+
+      if (targetLineStringPosisjonskvalitet != null) {
+        if (pointCoords != null) {
+          const snappedPosisjonskvaliteter: Map<string, Posisjonskvalitet> =
+            actingLineString.get("snapData") ?? new Map();
+          actingLineString.set(
+            "snapData",
+            snappedPosisjonskvaliteter.set(pointCoords.toString(), targetLineStringPosisjonskvalitet),
+          );
+        }
+      }
+    };
+
     const updateFeatureOnModification = async (event: ModifyEvent) => {
       // Hvis man har valgt én feature kan det føre til løsriving
       if (selectedFeatures.length === 1) {
@@ -271,6 +289,7 @@ const useModify = () => {
 
               if (isAccepted) {
                 performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
+                onSnap(selectedFeature, nonSelectedActiveFeature, nearbyVertex);
               } else {
                 setPreviousCoordinatesForFeature(selectedFeature);
                 return;
