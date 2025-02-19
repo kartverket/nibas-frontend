@@ -124,17 +124,14 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 
   const relevantPosisjonskvaliteter = useMemo(() => {
     const posisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> | undefined = feature.get("snapData");
-    if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0) {
-      const featureCoordinatesAsString = isLineStringFeature(feature)
-        ? feature
-            .getGeometry()
-            ?.getCoordinates()
-            .map((coord) => coord.toString())
-        : undefined;
+    if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0 && isLineStringFeature(feature)) {
+      const featureCoordinates = feature.getGeometry()?.getCoordinates();
+      const featureCoordinatesAsString =
+        featureCoordinates != null ? featureCoordinates.map((coord) => coord.toString()) : [];
       // Hvis man har snappet bort fra en grense man tidligere snappet til i utkastet ønsker vi ikke å bruke denne posisjonskvaliteten
       const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
-        .filter((entry) => featureCoordinatesAsString?.includes(entry[0]))
-        .map((entry) => entry[1])
+        .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
+        .map(([, posisjonskvalitet]) => posisjonskvalitet)
         // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
         .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
       return relevant;
