@@ -14,7 +14,6 @@ import {
 } from "@kvib/react";
 import { KartlagId } from "hooks/layers/types";
 import { useEffect, useState } from "react";
-import { styled } from "styled-components";
 import { getLayerById } from "utils/map/layers";
 
 type Props = {
@@ -30,11 +29,11 @@ const KartlagOpacity = ({ layerId }: Props) => {
   }, [layer, opacity]);
 
   return (
-    <Popover>
+    <Popover placement="left">
       <PopoverTrigger>
-        <OpacityButton
+        <IconButton
           aria-label="Juster gjennomsiktighet"
-          variant="ghost"
+          variant="tertiary"
           icon="tonality"
           onClick={(e) => e.stopPropagation()}
         />
@@ -44,22 +43,16 @@ const KartlagOpacity = ({ layerId }: Props) => {
         <PopoverCloseButton />
         <PopoverHeader>Juster gjennomsiktighet</PopoverHeader>
         <PopoverBody>
-          <Slider min={0} max={100} value={opacity} onChange={setOpacity}>
+          <Slider min={0} max={100} value={opacity} step={5} onChange={setOpacity}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
-            <SliderThumb />
+            <SliderThumb boxSize={5} />
           </Slider>
         </PopoverBody>
       </PopoverContent>
     </Popover>
   );
 };
-
-const OpacityButton = styled(IconButton)`
-  &:hover {
-    background: var(--kvib-colors-blue-100);
-  }
-`;
 
 export default KartlagOpacity;

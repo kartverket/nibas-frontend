@@ -17,15 +17,17 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
     <Container>
       <ArrowButtons>
         <IconButton
-          variant="secondary"
+          variant="primary"
           size="sm"
+          colorScheme="gray"
           icon="arrow_upward"
           aria-label="Flytt kartlag opp"
           onClick={() => moveLayer("up", mappedLayer.sourceId)}
           isDisabled={index === 0}
         />
         <IconButton
-          variant="secondary"
+          variant="primary"
+          colorScheme="gray"
           size="sm"
           icon="arrow_downward"
           aria-label="Flytt kartlag ned"

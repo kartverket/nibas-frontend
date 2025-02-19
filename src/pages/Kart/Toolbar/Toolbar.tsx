@@ -3,6 +3,7 @@ import {
   AlertDescription,
   AlertIcon,
   Divider,
+  Flex,
   Icon,
   MenuItem,
   MenuItemProps,
@@ -322,15 +323,6 @@ const Toolbar = () => {
             aria-label="Zoom inn på kartet"
             tooltip={{ text: "Zoom inn" }}
           />
-          {utkast && <ToolbarMenus />}
-
-          <ToolbarButton
-            icon="search"
-            isActive={activeOverlayModal === "navigasjon"}
-            onClick={() => toggleOverlayModal("navigasjon")}
-            aria-label="Gå til inndeling eller punkt i kartet"
-            tooltip={{ text: "Finn i kartet", shortcut: "goto" }}
-          ></ToolbarButton>
           {!utkast && (
             <ToolbarButton
               icon="menu_book"
@@ -345,6 +337,15 @@ const Toolbar = () => {
               }}
             ></ToolbarButton>
           )}
+          {utkast && <ToolbarMenus />}
+
+          <ToolbarButton
+            icon="search"
+            isActive={activeOverlayModal === "navigasjon"}
+            onClick={() => toggleOverlayModal("navigasjon")}
+            aria-label="Gå til inndeling eller punkt i kartet"
+            tooltip={{ text: "Finn i kartet", shortcut: "goto" }}
+          ></ToolbarButton>
           <ToolbarMenu
             icon="info"
             isActive={informasjonMenuItems.some((imi) => imi.$isActive)}
