@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, FormLabel, Select, useToast } from "@kvib/react";
+import { Alert, AlertIcon, Button, Field, FormErrorMessage, FormLabel, Select, useToast } from "@kvib/react";
 import Input from "components/Input";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
@@ -37,7 +37,7 @@ const Form = styled.form`
   padding-bottom: 16px;
 `;
 
-const SpacedFormControl = styled(FormControl)`
+const SpacedFormControl = styled(Field)`
   display: flex;
   flex-direction: column;
 `;
@@ -282,7 +282,7 @@ const FlyttKoordinaterPanel = () => {
         Flytt punkt med koordinater
       </PanelHeader>
       <Form onSubmit={handleSubmit(movePointToCoordinates)}>
-        <SpacedFormControl isInvalid={globalFormError != null && formErrors != null}>
+        <SpacedFormControl invalid={globalFormError != null && formErrors != null}>
           <FormLabel>Koordinatsystem</FormLabel>
           <Select
             isInvalid={false}

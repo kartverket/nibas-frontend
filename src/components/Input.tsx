@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { FormControl, FormLabel, InputProps, Input, FormErrorMessage } from "@kvib/react";
+import { Field, FormLabel, InputProps, Input, FormErrorMessage } from "@kvib/react";
 
 export type ValidationError = {
   message: string;
@@ -15,11 +15,11 @@ const InnerInput = (
   { className, label = "", validationError, ...props }: Props,
   ref: React.ForwardedRef<HTMLInputElement>,
 ) => (
-  <FormControl isInvalid={validationError?.showError}>
+  <Field invalid={validationError?.showError}>
     {label && <FormLabel>{label}</FormLabel>}
     <Input className={className} ref={ref} {...props} />
     <FormErrorMessage>{validationError?.message}</FormErrorMessage>
-  </FormControl>
+  </Field>
 );
 
 const InputWithLabel = forwardRef(InnerInput);

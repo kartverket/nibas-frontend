@@ -1,4 +1,4 @@
-import { Button, Separator, FormControl, Input } from "@kvib/react";
+import { Button, Separator, Field, Input } from "@kvib/react";
 import { VedtakinfoRow } from "./VedtakinfoRow";
 import { InputName, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
 import { styled } from "styled-components";
@@ -60,7 +60,7 @@ export const ReferanseInput = ({
         name={registerName}
         render={({ field }) => {
           return (
-            <FormControl isInvalid={!!errors}>
+            <Field invalid={!!errors}>
               <VedtakinfoRow tooltipLabel={tooltipLabel} name={title} error={errors}>
                 <Input
                   id={registerName}
@@ -92,7 +92,7 @@ export const ReferanseInput = ({
                   Legg til
                 </LeggTilKnapp>
               </VedtakinfoRow>
-            </FormControl>
+            </Field>
           );
         }}
       />

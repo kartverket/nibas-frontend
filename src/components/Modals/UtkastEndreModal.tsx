@@ -1,7 +1,7 @@
 import {
   Button,
   ButtonGroup,
-  FormControl,
+  Field,
   FormErrorMessage,
   FormHelperText,
   FormLabel,
@@ -83,7 +83,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
           <DialogCloseTrigger aria-label="Lukk" />
           <DialogBody>
             <FormContent>
-              <FormSection isInvalid={!!errors.navn}>
+              <FormSection invalid={!!errors.navn}>
                 <FormLabel>Navn på utkastet</FormLabel>
                 <FormHelperText>
                   Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
@@ -95,7 +95,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
                 />
                 {!!errors.navn && <FormErrorMessage errorMessage={errors.navn.message} />}
               </FormSection>
-              <FormSection isInvalid={!!errors.endringstype}>
+              <FormSection invalid={!!errors.endringstype}>
                 <FormLabel>Endringstype</FormLabel>
                 <FormHelperText>
                   Velg en passende endringstype. Prøv å begrense endringene i hvert utkast til den valgte typen.
@@ -137,7 +137,7 @@ const FormContent = styled.div`
 `;
 
 // TODO: kvib har ikke 500-variant av mulish, bruker bold i mellomtiden
-const FormSection = styled(FormControl)`
+const FormSection = styled(Field)`
   display: flex;
   flex-direction: column;
   gap: 8px;

@@ -1,6 +1,6 @@
 import { FieldError } from "react-hook-form";
 import { VedtakinfoRow } from "./VedtakinfoRow";
-import { FormControl, Text } from "@kvib/react";
+import { Field, Text } from "@kvib/react";
 import { FormViewState } from "./Vedtaksinformasjon";
 
 type FieldProps = {
@@ -25,7 +25,7 @@ export const VedtakinfoField = ({
   maxWidth = "290px",
 }: FieldProps) => {
   return (
-    <FormControl isRequired={formViewState !== "viewing" ? isRequired : false} isInvalid={!!error}>
+    <Field required={formViewState !== "viewing" ? isRequired : false} invalid={!!error}>
       <VedtakinfoRow isRequired={isRequired} tooltipLabel={tooltipLabel} name={title} error={error}>
         {formViewState === "viewing" ? (
           <Text paddingTop="8px" paddingBottom="8px" maxWidth={maxWidth}>
@@ -35,6 +35,6 @@ export const VedtakinfoField = ({
           children
         )}
       </VedtakinfoRow>
-    </FormControl>
+    </Field>
   );
 };

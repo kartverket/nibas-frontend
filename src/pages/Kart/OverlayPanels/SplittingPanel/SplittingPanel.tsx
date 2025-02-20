@@ -1,7 +1,7 @@
 import {
   Button,
   ButtonGroup,
-  FormControl,
+  Field,
   FormLabel,
   Heading,
   Icon,
@@ -131,7 +131,7 @@ export const SplittingPanel = () => {
       </PanelHeader>
 
       <Stack gap={8}>
-        <FormControl>
+        <Field>
           <FormLabel>{`Hvilken ${inndelingtype} skal splittes?`}</FormLabel>
           <Select
             {...opprinneligKretsRegister}
@@ -160,7 +160,7 @@ export const SplittingPanel = () => {
                 );
               })}
           </Select>
-        </FormControl>
+        </Field>
 
         {getValues("opprinneligKrets.lokalId") !== CustomOption.NOT_CHOSEN && (
           <>
@@ -169,7 +169,7 @@ export const SplittingPanel = () => {
               {fields.map((field, index) => (
                 <div key={field.id}>
                   <NyKretsField>
-                    <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNummer}>
+                    <Field invalid={!!errors.nyeKretser?.[index]?.kretsNummer}>
                       {index !== 0 && <FormLabel>Nytt nummer</FormLabel>}
                       <Input
                         disabled={index === 0}
@@ -181,8 +181,8 @@ export const SplittingPanel = () => {
                           ),
                         )}
                       />
-                    </FormControl>
-                    <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
+                    </Field>
+                    <Field invalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
                       {index !== 0 && <FormLabel>Nytt navn</FormLabel>}
                       <Input
                         disabled={index === 0}
@@ -190,7 +190,7 @@ export const SplittingPanel = () => {
                           required: `Ny ${inndelingtype} må ha et navn`,
                         })}
                       />
-                    </FormControl>
+                    </Field>
                     {index !== 0 ? (
                       <IconButton
                         onClick={() => {

@@ -1,4 +1,4 @@
-import { Badge, FormControl, FormErrorMessage, FormLabel, SearchAsync, Text } from "@kvib/react";
+import { Badge, Field, FormErrorMessage, FormLabel, SearchAsync, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
 import { ValidationError } from "components/Input";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
@@ -112,7 +112,7 @@ export const InndelingSearchField = <T extends FieldValues>({
   };
 
   return (
-    <FormControl isInvalid={validationError?.showError}>
+    <Field invalid={validationError?.showError}>
       {fieldLabel != null && <FormLabel>{fieldLabel}</FormLabel>}
       <Controller
         name={fieldName}
@@ -141,7 +141,7 @@ export const InndelingSearchField = <T extends FieldValues>({
         }}
       />
       <FormErrorMessage>{validationError?.message}</FormErrorMessage>
-    </FormControl>
+    </Field>
   );
 };
 

@@ -13,7 +13,7 @@ import { getDuplicateItems, getUniqueItemsBy, removeNil } from "utils/list-utils
 import { MergeMultiselect } from "./MergeMultiselect";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { Alert, AlertIcon, AlertTitle, Button, Separator, FormControl, FormLabel, Heading, Select } from "@kvib/react";
+import { Alert, AlertIcon, AlertTitle, Button, Separator, Field, FormLabel, Heading, Select } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -207,7 +207,7 @@ const MergePanel = () => {
               <Heading as="h3" size="sm">
                 Hvilken stemmekrets skal brukes som utgangspunkt?
               </Heading>
-              <FormControl>
+              <Field>
                 <FormLabel>Stemmekrets</FormLabel>
                 <Select
                   {...selectStemmekretsRegister}
@@ -236,7 +236,7 @@ const MergePanel = () => {
                       );
                     })}
                 </Select>
-              </FormControl>
+              </Field>
               <Alert>
                 <AlertIcon />
                 <AlertTitle>

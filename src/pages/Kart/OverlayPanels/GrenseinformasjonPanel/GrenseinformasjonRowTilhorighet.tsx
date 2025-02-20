@@ -33,7 +33,7 @@ const GrenseinformasjonRow = ({
           {/* TODO: missing hasArrow prop, placement=bottom */}
           <Tooltip content={tooltipLabel}>
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-              <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
+              <Text as="b">{name}</Text>
               <InfoIcon>
                 <Icon size={24} color="var(--kvib-colors-blue-500)" filled={iconHovered} icon="info"></Icon>
               </InfoIcon>
@@ -41,14 +41,14 @@ const GrenseinformasjonRow = ({
           </Tooltip>
         </Row>
         {isEditing ? (
-          <FormControl isInvalid={!isValid && isSubmitted}>
+          <FormControl invalid={!isValid && isSubmitted}>
             <Field>{children}</Field>
             {!isValid && isSubmitted && <FormErrorMessage>Du må velge 2 tilhørigheter for grensen</FormErrorMessage>}
           </FormControl>
         ) : isLoading ? (
           <SkeletonText lineClamp={1} skeletonHeight={5} marginTop="8px" />
         ) : (
-          <Field>{valueLabel ?? "Ikke spesifisert"}</Field>
+          <FormControl>{valueLabel ?? "Ikke spesifisert"}</FormControl>
         )}
       </EditContent>
     </Container>

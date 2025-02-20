@@ -2,9 +2,9 @@ import { forwardRef } from "react";
 import { styled } from "styled-components";
 import { StemmekretsResponse } from "types/api";
 import { ValidationError } from "components/Input";
-import { CloseButton, FormControl, FormErrorMessage, FormLabel, Select, SelectProps } from "@kvib/react";
+import { CloseButton, Field, FormErrorMessage, FormLabel, Select, SelectProps } from "@kvib/react";
 
-const MergeSelectWrapper = styled(FormControl)`
+const MergeSelectWrapper = styled(Field)`
   display: grid;
   align-items: center;
   grid-template-columns: 1fr auto;

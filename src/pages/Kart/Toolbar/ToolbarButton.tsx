@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, IconButton, IconButtonProps } from "@kvib/react";
+import { Field, FormLabel, IconButton, IconButtonProps } from "@kvib/react";
 import { forwardRef } from "react";
 import { styled } from "styled-components";
 import CustomTooltip, { CustomTooltipProps } from "./CustomTooltip";
@@ -20,7 +20,7 @@ const ToolbarButton = (
   </CustomTooltip>
 );
 
-const ButtonContainer = styled(FormControl)`
+const ButtonContainer = styled(Field)`
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -1,4 +1,4 @@
-import { Tag, Checkbox, FormControl, FormErrorMessage } from "@kvib/react";
+import { Tag, Checkbox, Field, FormErrorMessage } from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
 import { styled } from "styled-components";
@@ -41,12 +41,12 @@ export const MerknadCell = forwardRef<HTMLInputElement, MerknadCellProps>(functi
   return (
     <TableCell>
       {isEditing ? (
-        <FormControl isInvalid={validationError?.showError}>
+        <Field invalid={validationError?.showError}>
           <Checkbox disabled={isDisabled} ref={ref} {...inputProps} defaultChecked={data}>
             Samisk forvaltningsområde
           </Checkbox>
           <FormErrorMessage>{validationError?.message}</FormErrorMessage>
-        </FormControl>
+        </Field>
       ) : (
         data && (
           <Tag colorScheme="gray" size="md">

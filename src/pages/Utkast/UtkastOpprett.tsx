@@ -10,7 +10,7 @@ import {
   ButtonGroup,
   useDisclosure,
   Input,
-  FormControl,
+  Field,
   FormLabel,
   FormHelperText,
   Select,
@@ -177,7 +177,7 @@ const FormContent = styled.div`
   gap: 32px;
 `;
 
-const FormSection = styled(FormControl)`
+const FormSection = styled(Field)`
   display: flex;
   flex-direction: column;
   gap: 8px;

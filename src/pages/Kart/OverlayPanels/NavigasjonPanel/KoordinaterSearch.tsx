@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, FormLabel, InputGroup, Select } from "@kvib/react";
+import { Alert, AlertIcon, Button, Field, FormErrorMessage, FormLabel, InputGroup, Select } from "@kvib/react";
 import Input from "components/Input";
 import useNibasApi from "hooks/useNibasApi";
 import { getLabelsFromProjection } from "pages/Kart/Kartinformasjon";
@@ -15,7 +15,7 @@ import {
 } from "./koordinater-utils";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
-const StyledFormControl = styled(FormControl)`
+const StyledFormControl = styled(Field)`
   display: flex;
   flex-direction: column;
 `;
