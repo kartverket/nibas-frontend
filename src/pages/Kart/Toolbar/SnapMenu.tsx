@@ -98,7 +98,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
               isChecked={activeModeTools.includes("snap_matrikkel")}
               shortcut={KeyboardShortcuts["snap_matrikkel"].displayString}
             >
-              Snap til teiggrenser
+              Snap til eiendomsgrenser
             </CheckboxWithShortcutDesc>
           </Box>
         </MenuItem>

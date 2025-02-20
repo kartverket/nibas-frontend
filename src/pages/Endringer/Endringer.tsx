@@ -263,7 +263,7 @@ const EndringerPage = styled(Page)`
     "subtitle"
     "table";
   justify-items: unset;
-  padding: 64px;
+  padding: 64px 120px;
 `;
 
 const TitleContainer = styled.div`

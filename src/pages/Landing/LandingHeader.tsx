@@ -10,20 +10,18 @@ const LandingHeader = () => {
   return (
     <Container>
       <Section>
-        <Logo variant="horizontal" size={118} />
+        <Logo variant="horizontal" size={148} />
       </Section>
       {isAuthenticated && (
-        <Section>
-          <LoginIcon icon="person" isFilled />
-          <Flex direction="column">
-            <Text>Logget inn som </Text>
-            <Text as="b">{maskedUserId}</Text>
+        <Flex gap={4} alignItems="center">
+          <Flex gap="6px" alignItems="center">
+            <LoginIcon icon="person" isFilled />
+            <Text fontSize={16}>{maskedUserId}</Text>
           </Flex>
-
-          <Button variant="tertiary" size="sm" aria-label="Logg ut" leftIcon="logout" onClick={signOut}>
+          <Button variant="tertiary" aria-label="Logg ut" leftIcon="logout" onClick={signOut}>
             Logg ut
           </Button>
-        </Section>
+        </Flex>
       )}
     </Container>
   );
@@ -31,7 +29,7 @@ const LandingHeader = () => {
 
 const Container = styled.div`
   display: flex;
-  padding: 18px 64px;
+  padding: 24px 120px;
   justify-content: space-between;
   background: var(--kvib-colors-white);
   box-shadow: var(--kvib-shadows-sm);

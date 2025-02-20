@@ -60,13 +60,12 @@ function formatLength(line: LineString): string {
 const helpMsg = "Klikk for å starte en ny måling";
 
 const tooltipStyle = {
-  background: "rgba(0, 0, 0, 0.7)",
-  color: "#fff",
+  background: "var(--kvib-colors-blackAlpha-700)",
+  color: "var(--kvib-colors-white)",
   padding: "5px 10px",
   borderRadius: "4px",
   fontSize: "14px",
   whiteSpace: "nowrap",
-  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
 };
 
 const useMeasure = () => {

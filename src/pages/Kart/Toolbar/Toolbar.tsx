@@ -305,6 +305,7 @@ const Toolbar = () => {
             tooltip={{
               text: "Panorer i kartet",
               shortcut: "move",
+              holdButton: "Alt",
               additionalInfo: "Shift + marker i kartet for å zoome",
             }}
           />
@@ -324,18 +325,24 @@ const Toolbar = () => {
             tooltip={{ text: "Zoom inn" }}
           />
           {!utkast && (
-            <ToolbarButton
-              icon="menu_book"
-              onClick={() => toggleOverlayModal("flatedata")}
-              isActive={activeOverlayModal === "flatedata"}
-              isDisabled={!flatedataIsAvailable}
-              aria-label="Se eller endre flatedetaljer"
-              tooltip={{
-                text: "Se eller endre flatedetaljer",
-                additionalInfo: !flatedataIsAvailable ? "Forhåndsvis en inndeling for å aktivere verktøyet" : undefined,
-                shortcut: "flatedata",
-              }}
-            ></ToolbarButton>
+            <Flex height="100%" gap="18px">
+              <Divider orientation="vertical" />
+              <ToolbarButton
+                icon="menu_book"
+                onClick={() => toggleOverlayModal("flatedata")}
+                isActive={activeOverlayModal === "flatedata"}
+                isDisabled={!flatedataIsAvailable}
+                aria-label="Se flatedetaljer"
+                tooltip={{
+                  text: "Se flatedetaljer",
+                  additionalInfo: !flatedataIsAvailable
+                    ? "Forhåndsvis en inndeling for å aktivere verktøyet"
+                    : undefined,
+                  shortcut: "flatedata",
+                }}
+              ></ToolbarButton>
+              <Divider orientation="vertical" />
+            </Flex>
           )}
           {utkast && <ToolbarMenus />}
 

@@ -42,12 +42,12 @@ const KartlagOpacity = ({ layerId }: Props) => {
         <PopoverArrow />
         <PopoverCloseButton />
         <PopoverHeader>Juster gjennomsiktighet</PopoverHeader>
-        <PopoverBody>
+        <PopoverBody padding="12px 16px">
           <Slider min={0} max={100} value={opacity} step={5} onChange={setOpacity}>
             <SliderTrack>
               <SliderFilledTrack />
             </SliderTrack>
-            <SliderThumb boxSize={5} />
+            <SliderThumb boxSize={4} />
           </Slider>
         </PopoverBody>
       </PopoverContent>

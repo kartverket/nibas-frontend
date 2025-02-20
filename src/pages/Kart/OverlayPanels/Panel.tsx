@@ -60,7 +60,7 @@ const slideIn = keyframes`
 `;
 
 const Panel = styled.div`
-  --panel-padding: 16px;
+  --panel-padding: 22px;
   width: 100%;
   padding: 0 var(--panel-padding);
   background: white;
@@ -106,14 +106,14 @@ const PanelHeaderContainer = styled.div<{ $isSmall: boolean; $noMargin: boolean 
   position: sticky;
   top: 0;
   z-index: ${zindex.panel};
-
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
   padding: ${({ $isSmall }) => ($isSmall ? "12px 0 8px" : "16px 0 12px")};
-  margin-bottom: ${({ $isSmall, $noMargin }) => ($noMargin ? "" : $isSmall ? "16px" : "20px")};
+  margin-bottom: ${({ $isSmall, $noMargin }) => ($noMargin ? "" : $isSmall ? "10px" : "14px")};
   background: var(--kvib-colors-chakra-body-bg);
+  border-bottom: 1px solid var(--kvib-colors-gray-100);
 `;
 
 const PanelHeadingContainer = styled.div`

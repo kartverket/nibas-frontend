@@ -36,7 +36,7 @@ export const getKartlagCustomTitle = (layerId: KartlagId) => {
     sjokartDybdedata: "Dybdedata",
     n5Raster2: "N5 Raster WMS",
     historiskeKart: null,
-    norgeIBilder: "Norge i bilder (EUR89 UTM33)",
+    norgeIBilder: "Norge i bilder (EU89 UTM33)",
     norgesMaritimeGrenser: null,
     sjokartElektroniske: null,
   };
