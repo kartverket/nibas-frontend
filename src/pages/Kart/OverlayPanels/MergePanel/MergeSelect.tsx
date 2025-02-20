@@ -34,9 +34,9 @@ type MergeSelectProps = {
   validationError?: ValidationError;
 } & SelectProps;
 
-export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
+export const MergeSelect = forwardRef<HTMLDivElement, MergeSelectProps>(
   ({ onRemove, stemmekretser, showRemoveButton, validationError, ...inputProps }, ref) => (
-    <MergeSelectWrapper isInvalid={validationError?.showError}>
+    <MergeSelectWrapper invalid={validationError?.showError}>
       <SelectLabel>Navn eller nummer på stemmekrets</SelectLabel>
       <div>
         <Select {...inputProps} ref={ref} placeholder="Velg en stemmekrets fra listen">

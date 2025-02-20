@@ -1,7 +1,7 @@
 import { Button, ButtonProps, IconButton, MaterialSymbol, Tooltip } from "@kvib/react";
 import { CustomTooltipProps, TooltipBody } from "../Toolbar/CustomTooltip";
 import { styled } from "styled-components";
-import { forwardRef, ReactNode } from "react";
+import { ReactNode, ForwardRefRenderFunction } from "react";
 
 type HeaderButtonProps = {
   icon: MaterialSymbol;
@@ -13,10 +13,10 @@ type HeaderButtonProps = {
   alert?: ReactNode;
 } & ButtonProps;
 
-const HeaderButtonNoTooltip = forwardRef(function HeaderButtonWithNoTooltip(
-  { icon, label, onClick, isDisabled, isLabelHidden = false, alert, ...props }: Omit<HeaderButtonProps, "tooltip">,
+const HeaderButtonNoTooltip: ForwardRefRenderFunction<HTMLButtonElement, Omit<HeaderButtonProps, "tooltip">> = (
+  { icon, label, onClick, isDisabled, isLabelHidden = false, alert, ...props },
   ref,
-) {
+) => {
   return isLabelHidden ? (
     <IconButton
       ref={ref}
@@ -25,21 +25,22 @@ const HeaderButtonNoTooltip = forwardRef(function HeaderButtonWithNoTooltip(
       icon={icon}
       aria-label={label}
       onClick={onClick}
-      isDisabled={isDisabled}
+      disabled={isDisabled}
       {...props}
     />
   ) : (
-    <Button ref={ref} size="sm" variant="ghost" leftIcon={icon} onClick={onClick} isDisabled={isDisabled} {...props}>
+    <Button ref={ref} size="sm" variant="ghost" leftIcon={icon} onClick={onClick} disabled={isDisabled} {...props}>
       <ButtonContent>
         {label} {alert}
       </ButtonContent>
     </Button>
   );
-});
+};
 
 const HeaderButton = ({ tooltip, ...props }: HeaderButtonProps) => {
   if (tooltip != null) {
     return (
+      //{/* TODO: missing hasArrow prop */}
       <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}>
         <HeaderButtonNoTooltip {...props} />
       </Tooltip>
