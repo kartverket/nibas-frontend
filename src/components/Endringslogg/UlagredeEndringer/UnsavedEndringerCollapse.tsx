@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, Button, Collapse } from "@kvib/react";
+import { Alert, AlertTitle, Box, Button, Collapsible } from "@kvib/react";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { UnsavedEndringer } from "components/Endringslogg/UlagredeEndringer/UnsavedEndringer";
@@ -14,7 +14,7 @@ export const UnsavedEndringerCollapse = ({ expandedByDefault = false }: Props) =
 
   return (
     antallEndringer > 0 && (
-      <CustomCollapse animateOpacity={false} in={isExpanded} startingHeight={64}>
+      <CustomCollapse open={isExpanded}>
         <AlertWithButton status="warning">
           <Wrapper>
             <AlertTitle>
@@ -41,9 +41,19 @@ export const UnsavedEndringerCollapse = ({ expandedByDefault = false }: Props) =
   );
 };
 
-const CustomCollapse = styled(Collapse)`
+// TODO: check that this works..
+const CustomCollapse = styled(Collapsible)`
   background-color: var(--kvib-colors-orange-100);
   border-radius: 8px;
+
+  [data-state="closed"] {
+    height: 64px;
+    overflow: hidden;
+  }
+
+  [data-state="open"] {
+    animation: expand-height 200ms ease-out;
+  }
 `;
 
 const AlertWithButton = styled(Alert)`
