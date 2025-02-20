@@ -22,7 +22,7 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
           icon="arrow_upward"
           aria-label="Flytt kartlag opp"
           onClick={() => moveLayer("up", mappedLayer.sourceId)}
-          isDisabled={index === 0}
+          disabled={index === 0}
         />
         <IconButton
           variant="secondary"
@@ -30,7 +30,7 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
           icon="arrow_downward"
           aria-label="Flytt kartlag ned"
           onClick={() => moveLayer("down", mappedLayer.sourceId)}
-          isDisabled={index === maxIndex}
+          disabled={index === maxIndex}
         />
       </ArrowButtons>
       {mappedLayer.sublayers.length > 0 ? (

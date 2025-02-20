@@ -86,7 +86,7 @@ export const VedtaksinfoBody = ({
                   message: "Feltet kan ikke inneholde mer enn 250 tegn.",
                 },
               })}
-              isRequired={false}
+              required={false}
               backgroundColor="white"
               placeholder="Skriv inn tittelen på vedtaket"
             />
