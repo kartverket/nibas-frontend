@@ -24,10 +24,9 @@ type FremtidigEndringIconProps = {
 const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
   return (
     formattedDate != null && (
+      // TODO: missing hasArrow placement=left
       <Tooltip
-        label={`Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`}
-        placement="left"
-        hasArrow
+        content={`Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`}
       >
         <IconContainer>
           <Icon
@@ -191,7 +190,7 @@ export const FlatedataTableRow = ({
         <>
           <InputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            disabled={disabledDate != null}
             data={getValues(`${inndelingId}.nummer`) ?? inndeling.nummer}
             validationError={
               inndelingErrors != null && "nummer" in inndelingErrors
@@ -202,7 +201,7 @@ export const FlatedataTableRow = ({
           />
           <InputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            disabled={disabledDate != null}
             data={getValues(`${inndelingId}.navn`) ?? inndeling.navn}
             validationError={
               inndelingErrors != null && "navn" in inndelingErrors ? validationError(inndelingErrors.navn) : undefined
@@ -212,7 +211,7 @@ export const FlatedataTableRow = ({
           {isStemmekretsInndeling(inndeling) && (
             <InputCell
               isEditing={isEditing}
-              isDisabled={disabledDate != null}
+              disabled={disabledDate != null}
               data={getValues(`${inndelingId}.tellekretsnummer`) ?? inndeling.tellekretsnummer}
               validationError={
                 inndelingErrors != null && "tellekretsnummer" in inndelingErrors
@@ -228,7 +227,7 @@ export const FlatedataTableRow = ({
           {isStemmekretsInndeling(inndeling) && (
             <InputCell
               isEditing={isEditing}
-              isDisabled={disabledDate != null}
+              disabled={disabledDate != null}
               data={getValues(`${inndelingId}.tellekretsnavn`) ?? inndeling.tellekretsnavn}
               validationError={
                 inndelingErrors != null && "tellekretsnavn" in inndelingErrors
@@ -247,7 +246,7 @@ export const FlatedataTableRow = ({
           {isStemmekretsInndeling(inndeling) && <TableCell>{inndeling.valgdistriktsnummer}</TableCell>}
           <InputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            disabled={disabledDate != null}
             data={getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />

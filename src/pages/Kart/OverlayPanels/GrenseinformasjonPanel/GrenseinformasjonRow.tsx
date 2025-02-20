@@ -27,7 +27,8 @@ const GrenseinformasjonRow = ({
     <Container>
       <EditContent>
         <Row>
-          <Tooltip aria-label={tooltipLabel} hasArrow placement="bottom">
+          {/* TODO: missing hasArrow prop, placement=bottom */}
+          <Tooltip content={tooltipLabel}>
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
               <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
               <InfoIcon>

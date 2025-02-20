@@ -59,11 +59,8 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   return (
     <>
       <OversiktHeader>
-        <Tooltip
-          aria-label="Henvisning til dokumenter som er med å fastlegge aktuell grense."
-          hasArrow
-          placement="bottom"
-        >
+        {/* TODO: missing hasArrow prop, placement=bottom */}
+        <Tooltip content="Henvisning til dokumenter som er med å fastlegge aktuell grense.">
           <InfoIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
             <Text as="b" paddingRight="8px" fontSize={"lg"}>
               Vedtaksinformasjon

@@ -118,8 +118,8 @@ const Header = () => {
                   <BreadcrumbItem>
                     {activeKommuner.length > 3 ? (
                       <Tooltip
-                        hasArrow
-                        label={activeKommuner.map((kommune) => (
+                        // TODO: missing hasArrow prop
+                        content={activeKommuner.map((kommune) => (
                           <p key={kommune.nummer}>
                             {kommune.nummer} {inndelingResponseNavnToString(kommune.navn)}
                           </p>

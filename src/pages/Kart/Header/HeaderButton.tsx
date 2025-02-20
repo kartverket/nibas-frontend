@@ -41,7 +41,7 @@ const HeaderButton = ({ tooltip, ...props }: HeaderButtonProps) => {
   if (tooltip != null) {
     return (
       //{/* TODO: missing hasArrow prop */}
-      <Tooltip hasArrow label={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}>
+      <Tooltip content={<TooltipBody text={tooltip.text} shortcut={tooltip.shortcut} />}>
         <HeaderButtonNoTooltip {...props} />
       </Tooltip>
     );

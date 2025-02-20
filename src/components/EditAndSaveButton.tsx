@@ -55,9 +55,8 @@ const EditAndSaveButton = ({
   return (
     <Container className={className}>
       {tooltip != null ? (
-        <Tooltip hasArrow label={<TooltipBody text={tooltip} />}>
-          {renderButton()}
-        </Tooltip>
+        // TODO: missing hasArrow prop
+        <Tooltip content={<TooltipBody text={tooltip} />}>{renderButton()}</Tooltip>
       ) : (
         renderButton()
       )}

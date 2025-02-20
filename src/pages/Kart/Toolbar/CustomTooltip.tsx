@@ -46,11 +46,10 @@ export const TooltipBody = ({ text, icon, shortcut, holdButton, additionalInfo }
 
 const CustomTooltip = ({ text, icon, shortcut, children, holdButton, additionalInfo, ...restProps }: Props) => {
   return (
+    // TODO: missing hasArrow prop, placement=top
     <Tooltip
-      hasArrow
-      placement="top"
       {...restProps}
-      label={
+      content={
         <TooltipBody
           text={text}
           shortcut={shortcut}

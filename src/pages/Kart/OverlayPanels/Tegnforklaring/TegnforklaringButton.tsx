@@ -6,7 +6,8 @@ export const TegnforklaringButton = () => {
   const { toggleOverlayPanel } = useOverlayPanel();
 
   return (
-    <Tooltip aria-label="Vis tegnforklaring for grensetypene i kartet" hasArrow placement="left">
+    // TODO: missing hasArrow prop, placement=left
+    <Tooltip content="Vis tegnforklaring for grensetypene i kartet">
       <RoundButton
         onClick={() => toggleOverlayPanel("tegnforklaring")}
         aria-label="Åpne og lukke tegnforklaring"
