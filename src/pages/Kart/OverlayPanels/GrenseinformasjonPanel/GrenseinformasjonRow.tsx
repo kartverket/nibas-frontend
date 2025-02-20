@@ -1,6 +1,6 @@
-import { Icon, SkeletonText, Text, Tooltip } from "@kvib/react";
+import { SkeletonText, Text } from "@kvib/react";
 import { styled } from "styled-components";
-import { useState } from "react";
+import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
 
 interface Props {
   name: string;
@@ -21,20 +21,13 @@ const GrenseinformasjonRow = ({
   isLoading = false,
   isRequired = false,
 }: Props) => {
-  const [iconHovered, setIconHovered] = useState(false);
-
   return (
     <Container>
       <EditContent>
         <Row>
-          <Tooltip label={tooltipLabel} hasArrow placement="bottom">
-            <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
-              <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
-              <InfoIcon>
-                <Icon size={24} color="var(--kvib-colors-blue-500)" isFilled={iconHovered} icon="info"></Icon>
-              </InfoIcon>
-            </TextWithIcon>
-          </Tooltip>
+          <TitleWithIconTooltip tooltipLabel={tooltipLabel}>
+            <Text as="b">{`${name}${isRequired ? "" : " (valgfri)"}`}</Text>
+          </TitleWithIconTooltip>
         </Row>
         {isEditing ? (
           <Field>{children}</Field>
@@ -48,13 +41,6 @@ const GrenseinformasjonRow = ({
   );
 };
 
-const InfoIcon = styled.div`
-  margin-left: 8px;
-  display: flex;
-  align-items: center;
-  cursor: help;
-`;
-
 const EditContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -63,11 +49,6 @@ const EditContent = styled.div`
 const Row = styled.div`
   display: flex;
   justify-content: space-between;
-`;
-
-const TextWithIcon = styled.div`
-  display: flex;
-  align-items: center;
 `;
 
 const Field = styled.div`

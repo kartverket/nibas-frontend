@@ -1,17 +1,17 @@
+import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { GrenseId } from "hooks/layers/types";
+import { MapBrowserEvent } from "ol";
+import { shiftKeyOnly } from "ol/events/condition";
 import { map } from "pages/Kart/constants";
+import { useEffect, useRef } from "react";
+import { SnapData, createKartlagSnapsData } from "./snapping-utils";
+import { useCursorStyles } from "./useCursorStyles";
 import useDragInteractions from "./useDragInteractions";
 import useDraw from "./useDraw";
-import { useEffect, useRef } from "react";
+import useMeasure from "./useMeasure";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useSelectPoint from "./useSelectPoint";
-import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { GrenseId } from "hooks/layers/types";
-import { useCursorStyles } from "./useCursorStyles";
-import { SnapData, createKartlagSnapsData } from "./snapping-utils";
-import { MapBrowserEvent } from "ol";
-import { shiftKeyOnly } from "ol/events/condition";
-import useMeasure from "./useMeasure";
 const useInteractions = () => {
   const { modify } = useModify();
   const { dragPan, dragZoom } = useDragInteractions();

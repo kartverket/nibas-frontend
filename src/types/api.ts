@@ -68,6 +68,7 @@ type TerritorialgrenseMetadata = components["schemas"]["TerritorialgrenseMetadat
 type StatistiskGrenseMetadata = components["schemas"]["StatistiskgrenseMetadata"] & {
   dokumentasjonsreferanser: undefined;
 };
+export type Posisjonskvalitet = components["schemas"]["CommonGrenseMetadata"]["posisjonskvalitet"];
 
 export type Metadata =
   | AvtaltAvgrensningslinjeMetadata

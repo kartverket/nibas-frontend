@@ -44,7 +44,7 @@ type TeiggrenseMetadata = {
   [K in (typeof teiggrenseMetadataValues)[number]]: number | string | null;
 };
 
-const isTeiggrenseMetadata = (value: object): value is TeiggrenseMetadata => {
+export const isTeiggrenseMetadata = (value: object): value is TeiggrenseMetadata => {
   return teiggrenseMetadataValues.every((key) => key in value);
 };
 
