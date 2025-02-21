@@ -61,25 +61,27 @@ const Container = styled.div`
   font-family: monospace;
   position: absolute;
   grid-area: mapinfo;
-  right: 10px;
-  bottom: 8px;
+  right: 6px;
+  bottom: 6px;
   align-items: center;
   display: flex;
   gap: 12px;
   font-size: var(--kvib-fontSizes-xs);
   z-index: ${zindex.farBack};
   color: var(--kvib-colors-gray-600);
+  background: var(--kvib-colors-whiteAlpha-700);
+  padding: 2px 4px;
 `;
 
 const ScaleContainer = styled.div`
   font-family: monospace;
   position: absolute;
   grid-area: mapinfo;
-  left: 10px;
-  bottom: 8px;
+  left: 6px;
+  bottom: 6px;
   align-items: center;
   display: flex;
-  gap: 12px;
+  gap: 6px;
   font-size: var(--kvib-fontSizes-xs);
   z-index: ${zindex.farBack};
   color: var(--kvib-colors-gray-600);
@@ -91,12 +93,15 @@ const ScaleIndicator = styled.span`
   font-size: var(--kvib-fontSizes-xs);
   border-top: none;
   text-align: center;
+  background: var(--kvib-colors-whiteAlpha-700);
 `;
 
 const Scale = styled.div`
   /* Vi hindrer OpenLayers sin innebygde styling fra å sette bredde ved å bare ha inline-elementer */
   .ol-scale-bar-inner {
     display: inline;
+    background: var(--kvib-colors-whiteAlpha-700);
+    padding: 2px 4px;
 
     * {
       display: none;
