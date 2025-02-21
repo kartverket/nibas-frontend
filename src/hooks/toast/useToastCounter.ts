@@ -1,13 +1,13 @@
 import { UseToastOptions, useToast } from "@kvib/react";
 import { useRef, useState } from "react";
 
+// TODO: hmm
 const useToastCounter = (options: UseToastOptions, singularDescription: string, pluralDescription: string) => {
   const toast = useToast();
   const [count, setCount] = useState(0);
   const toastIdRef = useRef<string | number>("");
 
   const toastCounter = (): void => {
-    // TODO: hmm
     if (count > 0 && toast.isActive(toastIdRef.current)) {
       toast.close(toastIdRef.current);
       toastIdRef.current = toast({ ...options, description: `${count + 1} ${pluralDescription}` });

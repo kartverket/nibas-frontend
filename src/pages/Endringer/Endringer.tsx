@@ -5,9 +5,9 @@ import {
   IconButton,
   Link,
   Menu,
-  MenuButton,
+  Button,
   MenuItem,
-  MenuList,
+  List,
   Stack,
   Table,
   TableBody,
@@ -40,6 +40,7 @@ import { statusCode } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { inndelingColors } from "utils/map/layerStyles";
 import { routes } from "utils/routes";
+import { MdDraw, MdTravelExplore } from "react-icons/md";
 
 const utkastColumns = {
   Beskrivelse: "navn",
@@ -190,24 +191,24 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
       </StyledCell>
       <OptionsCell>
         <Menu>
-          <MenuButton
+          <Button
             onClick={(e) => e.stopPropagation()}
             as={IconButton}
             aria-label="Utkast alternativer"
-            icon="more_horiz"
+            leftIcon="more_horiz"
             variant="ghost"
           />
-          <MenuList onClick={(e) => e.stopPropagation()}>
-            <MenuItem icon={<Icon icon={"draw"} />} onClick={opprettFeilrettingUtkast}>
+          {/* TODO: check style and function*/}
+          <List onClick={(e) => e.stopPropagation()}>
+            <MenuItem value="feilretting" onSelect={opprettFeilrettingUtkast}>
+              <MdDraw />
               Gjør en feilretting i et nytt utkast
             </MenuItem>
-            <MenuItem
-              icon={<Icon icon={"travel_explore"} />}
-              onClick={() => openVisningsmodusPaaUtkastGyldigFra(utkast.gyldigFra)}
-            >
+            <MenuItem value="visningsmodus" onSelect={() => openVisningsmodusPaaUtkastGyldigFra(utkast.gyldigFra)}>
+              <MdTravelExplore />
               Åpne visningsmodus på gjeldende dato
             </MenuItem>
-          </MenuList>
+          </List>
         </Menu>
       </OptionsCell>
     </TableRow>
@@ -218,15 +219,14 @@ const FremtidigeUtkastTooltip = () => {
   const [iconHovered, setIconHovered] = useState(false);
 
   return (
+    // TODO: hasArrow prop missing, placement=bottom
     <Tooltip
-      label={
+      content={
         <>
           Når er utkast er publisert kan det ikke trekkes tilbake. For å rette det må du lage et <b>nytt utkast</b> med{" "}
           <b>samme gyldig fra-dato som den fremtidige feilen oppstår</b>
         </>
       }
-      hasArrow
-      placement="bottom"
     >
       <InfoIcon>
         <Icon
