@@ -123,6 +123,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   }, [feature, getDefaultValues, reset, history]);
 
   const relevantPosisjonskvaliteter = useMemo(() => {
+    const eksisterendePosisjonskvalitet = metadata.commonGrense?.posisjonskvalitet;
     const posisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> | undefined = feature.get("snapData");
     if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0 && isLineStringFeature(feature)) {
       const featureCoordinates = feature.getGeometry()?.getCoordinates();
@@ -132,12 +133,17 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
         .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
         .map(([, posisjonskvalitet]) => posisjonskvalitet)
+        .filter(
+          (posisjonskvalitet) =>
+            posisjonskvalitet.noeyaktighet !== eksisterendePosisjonskvalitet?.noeyaktighet ||
+            posisjonskvalitet.maalemetode !== eksisterendePosisjonskvalitet?.maalemetode.id,
+        )
         // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
         .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
       return relevant;
     }
     return [];
-  }, [feature]);
+  }, [feature, metadata.commonGrense?.posisjonskvalitet]);
 
   const [autofillOpen, setAutofillOpen] = useState(relevantPosisjonskvaliteter.length > 0);
 
