@@ -10,6 +10,7 @@ import {
   Input,
   Select,
   Textarea,
+  useDisclosure,
   useToast,
 } from "@kvib/react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
@@ -139,8 +140,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     return [];
   }, [feature]);
 
-  const [autofillOpen, setAutofillOpen] = useState(relevantPosisjonskvaliteter.length > 0);
-
   const autoFillFormValues = () => {
     if (relevantPosisjonskvaliteter != null) {
       // Finner den dårligste posisjonskvaliteten basert på nøyaktighet
@@ -154,7 +153,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
         setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
         handleSubmit(onSubmit)();
-        setAutofillOpen(false);
+        onCloseAutofill();
         return;
       }
     }
@@ -165,6 +164,13 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         "Feilet ved automatisk utfylling av egenskaper. Prøv å fylle ut manuelt, og kontakt Kartverket hvis feilen vedvarer",
     });
   };
+
+  const { isOpen: isAutofillOpen, onOpen: onOpenAutofill, onClose: onCloseAutofill } = useDisclosure();
+  useEffect(() => {
+    if (relevantPosisjonskvaliteter.length > 0) {
+      onOpenAutofill();
+    }
+  }, [relevantPosisjonskvaliteter, onOpenAutofill]);
 
   return (
     <FormContainer>
@@ -205,7 +211,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       >
         Informasjon
       </PanelHeader>
-      {autofillOpen && (
+      {relevantPosisjonskvaliteter.length > 0 && isAutofillOpen && (
         <AutofillAlert status={"info"}>
           <AutofillAlertHeader>
             <TitleWithIconTooltip
@@ -219,7 +225,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
               icon={"close"}
               aria-label={"Lukk autofyll dialog"}
               variant="ghost"
-              onClick={() => setAutofillOpen(false)}
+              onClick={() => onCloseAutofill()}
             />
           </AutofillAlertHeader>
           <AlertDescription>
@@ -235,7 +241,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             >
               Fyll inn automatisk
             </Button>
-            <Button size={"sm"} variant="secondary" onClick={() => setAutofillOpen(false)}>
+            <Button size={"sm"} variant="secondary" onClick={() => onCloseAutofill()}>
               Nei, jeg vil fylle inn selv
             </Button>
           </ButtonGroup>
