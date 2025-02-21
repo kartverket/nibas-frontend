@@ -8,26 +8,28 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
   const [customFeatureIds, setCustomFeatureIds] = useState<string[]>([]);
   const [savedCustomFeatureIds, setSavedCustomFeatureIds] = useState<string[]>([]);
   const [pendingUpdates, setPendingUpdates] = useState<Set<string>>(new Set());
+  const [batchTimeout, setBatchTimeout] = useState<number | null>(null);
 
   const renderCustomStyles = (featureIds: string[]) => {
     const uniqueIds = getUniqueItems(featureIds);
-    const newPendingUpdates = new Set(pendingUpdates);
-
-    uniqueIds.forEach((id) => {
-      if (!newPendingUpdates.has(id)) {
-        newPendingUpdates.add(id);
-        requestAnimationFrame(() => {
-          setFeatureStyle(id, customStyle);
-          setPendingUpdates((prev) => {
-            const next = new Set(prev);
-            next.delete(id);
-            return next;
-          });
-        });
-      }
-    });
-
+    const newPendingUpdates = new Set([...pendingUpdates, ...uniqueIds]);
     setPendingUpdates(newPendingUpdates);
+
+    if (batchTimeout !== null) {
+      window.clearTimeout(batchTimeout);
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      requestAnimationFrame(() => {
+        newPendingUpdates.forEach((id) => {
+          setFeatureStyle(id, customStyle);
+        });
+        setPendingUpdates(new Set());
+      });
+      setBatchTimeout(null);
+    }, 16);
+
+    setBatchTimeout(timeoutId);
   };
 
   const renderSavedCustomStyles = () => renderCustomStyles(savedCustomFeatureIds);
