@@ -5,7 +5,7 @@ import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
 import { noModifierKeys } from "ol/events/condition";
 import { grenseStyles } from "utils/map/layerStyles";
 import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
-import { useToast } from "@kvib/react";
+import { toaster } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getTempFeatureId } from "./feature-id-utils";
@@ -33,7 +33,6 @@ const useDraw = () => {
   const { addHistoryEntry } = useHistory();
   const { selectFeatures, selectedFeatures } = useFeatureStyle();
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
-  const toast = useToast();
   const { createNewFeatures, archiveOldFeature } = useSplit();
   const { openAsync } = useConfirmationModal();
 
@@ -48,7 +47,7 @@ const useDraw = () => {
   const activeModeToolsRef = useRef<ModeTool[]>([]);
   const getLineStringFeaturesAtPixelRef = useRef(getLineStringFeaturesAtPixel);
   const endpointToastRef = useRef(endpointToast);
-  const toastRef = useRef(toast);
+  const toastRef = useRef(toaster);
   // Når vi ikke avslutter/instansierer ny draw ved snap-toggling så blir det flere draw-instanser, fjerner derfor den/de som ikke er nyest.
   useEffect(() => {
     // Lytt på `map.getInteractions()` sin "add" event, for å oppdage når en ny Draw dukker opp
@@ -79,8 +78,8 @@ const useDraw = () => {
     activeModeToolsRef.current = activeModeTools;
     getLineStringFeaturesAtPixelRef.current = getLineStringFeaturesAtPixel;
     endpointToastRef.current = endpointToast;
-    toastRef.current = toast;
-  }, [activeTool, activeModeTools, getLineStringFeaturesAtPixel, endpointToast, toast]);
+    toastRef.current = toaster;
+  }, [activeTool, activeModeTools, getLineStringFeaturesAtPixel, endpointToast, toaster]);
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {

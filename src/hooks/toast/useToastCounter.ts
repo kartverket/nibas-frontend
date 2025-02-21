@@ -7,6 +7,7 @@ const useToastCounter = (options: UseToastOptions, singularDescription: string, 
   const toastIdRef = useRef<string | number>("");
 
   const toastCounter = (): void => {
+    // TODO: hmm
     if (count > 0 && toast.isActive(toastIdRef.current)) {
       toast.close(toastIdRef.current);
       toastIdRef.current = toast({ ...options, description: `${count + 1} ${pluralDescription}` });

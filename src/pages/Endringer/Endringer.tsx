@@ -17,7 +17,7 @@ import {
   TableHeader,
   Tooltip,
   TableRow,
-  useToast,
+  toaster,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
@@ -113,7 +113,6 @@ interface UtkastRowProps {
 
 const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const { token } = useAuthentication();
-  const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
 
@@ -145,7 +144,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     if (statusCode.isSuccessful(response.status)) {
       const json = await response.json();
       const utkastId = json.id;
-      toast({ title: "Utkast opprettet", status: "success" });
+      toaster.success({ title: "Utkast opprettet" });
       navigate(`../utkast/${utkastId}`);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;

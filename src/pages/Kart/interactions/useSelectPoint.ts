@@ -5,12 +5,11 @@ import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useEffect, useMemo } from "react";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
-import { useToast } from "@kvib/react";
+import { toaster } from "@kvib/react";
 import { useGetFeatures } from "./interaction-utils";
 import { isFeatureEditable } from "utils/features";
 
 const useSelectPoint = () => {
-  const toast = useToast();
   const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { selectPointOnFeature, selectedFeatures, selectedPoint, clearSelection } = useFeatureStyle();
@@ -44,8 +43,8 @@ const useSelectPoint = () => {
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
       if (!nonArchivedFeatures.every((feature) => isFeatureEditable(feature))) {
-        toast({
-          status: "error",
+        toaster.create({
+          type: "error",
           title: "Denne grensen er ikke redigerbar.",
         });
         return;
@@ -60,8 +59,8 @@ const useSelectPoint = () => {
       if (nearbyVertexCoordinate) {
         // Om punktet har mer enn 1 ikke-arkivert feature betyr det at det er et endepunkt.
         if (activeTool === "split" && nonArchivedFeatures.length > 1) {
-          toast({
-            status: "error",
+          toaster.create({
+            type: "error",
             title: "Man kan ikke dele grensen på et endepunkt",
           });
           return;
@@ -74,8 +73,8 @@ const useSelectPoint = () => {
         }
       } else {
         if (activeTool === "split" && selectedFeatures.length > 0) {
-          toast({
-            status: "error",
+          toaster.create({
+            type: "error",
             title: "Du kan kun dele grensen i et eksisterende grensepunkt ",
           });
           return;

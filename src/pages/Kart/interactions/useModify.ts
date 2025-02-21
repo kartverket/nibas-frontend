@@ -8,7 +8,7 @@ import { Collection, MapBrowserEvent } from "ol";
 import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { useToast } from "@kvib/react";
+import { toaster } from "@kvib/react";
 import { Style } from "ol/style";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
@@ -26,7 +26,6 @@ const useModify = () => {
   const { addHistoryEntry } = useHistory();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectedFeatures } = useFeatureStyle();
-  const toast = useToast();
   const { toastCounter: removeToast } = useToastCounter(
     { status: "success" },
     "Punktet ble fjernet",
@@ -65,8 +64,7 @@ const useModify = () => {
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
         if (selectedFeatures.some((feature) => !isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
-          toast({
-            status: "error",
+          toaster.error({
             title: "Denne grensen er ikke redigerbar",
             description: selectedFeatures.some((feature) => isAdministrativGrense(feature.get("type")))
               ? "Ved endring av administrative grenser må du skru på visning for alle kretser som er knyttet til grensen"
@@ -107,9 +105,8 @@ const useModify = () => {
 
           // Vi ønsker ikke å slette punkter i knutepunkter
           if (activeFeatures.length > 1) {
-            toast({
+            toaster.error({
               description: "Kan ikke slette punkter i knutepunkter, løsriv grensen først",
-              status: "error",
             });
             return false;
           }
@@ -132,15 +129,7 @@ const useModify = () => {
         return false;
       },
     });
-  }, [
-    activeModeTools,
-    activeTool,
-    selectedFeatures,
-    disallowedPointModes,
-    getLineStringFeaturesAtPixel,
-    toast,
-    removeToast,
-  ]);
+  }, [activeModeTools, activeTool, selectedFeatures, disallowedPointModes, getLineStringFeaturesAtPixel, removeToast]);
 
   useEffect(() => {
     const createAddPointGrenseEntry = (ev: BaseEvent) => {
@@ -215,8 +204,7 @@ const useModify = () => {
         );
 
         if (nonSelectedActiveFeatures.some((feature) => !isFeatureEditable(feature))) {
-          toast({
-            status: "error",
+          toaster.error({
             title: "Grensen er ikke redigerbar",
             description: "Du kan ikke sette en løsrevet grense på en ikke-redigerbar grense",
           });
@@ -278,7 +266,7 @@ const useModify = () => {
             // Vi trenger ikke gjøre noe hvis man ender opp på samme punkt som man løsrev fra
           } else {
             setPreviousCoordinatesForFeature(selectedFeature);
-            toast({ title: "Løsrevede punkter kan kun plasseres på andre punkter", status: "warning" });
+            toaster.create({ title: "Løsrevede punkter kan kun plasseres på andre punkter", type: "warning" });
             return;
           }
         }
@@ -300,7 +288,6 @@ const useModify = () => {
     modify,
     performFeatureSplit,
     selectedFeatures,
-    toast,
   ]);
 
   return { modify };

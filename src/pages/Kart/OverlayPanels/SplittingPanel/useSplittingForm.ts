@@ -9,7 +9,7 @@ import {
 } from "../hooks/tilhorighet-utils";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
-import { useToast } from "@kvib/react";
+import { toaster } from "@kvib/react";
 import { useCallback } from "react";
 import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -40,8 +40,6 @@ const getKommuneIdentifikatorFromOptions = (
 };
 
 export const useSplittingForm = (inndeling: Inndeling | null) => {
-  const toast = useToast();
-
   const {
     register,
     getValues,
@@ -121,8 +119,8 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
         ` ${allButLastKretserFormatted.length > 0 ? "og" : ""} ${nyeKretserFormatted[nyeKretserFormatted.length - 1]}`,
       );
 
-    toast({
-      status: "success",
+    toaster.create({
+      type: "success",
       title: "Splitting utført",
       description: hasAlreadySplittedKrets(opprinneligKretsInfo)
         ? `Oppdaterte splittingen av "${opprinneligKretsInfo.nummer} ${opprinneligKretsInfo.navn}" til å inneholde ${nyeKretserString}. Husk å sjekke at tilhørigheten til nærliggende grenser er korrekt.`

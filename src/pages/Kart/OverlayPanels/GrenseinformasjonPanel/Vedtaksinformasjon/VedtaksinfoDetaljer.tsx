@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogBody, DialogContent, Text, DialogBackdrop, useToast } from "@kvib/react";
+import { Button, Dialog, DialogBody, DialogContent, Text, DialogBackdrop, toaster } from "@kvib/react";
 import { Feature } from "ol";
 import { VedtaksinfoBody } from "./VedtaksinfoBody";
 import { FormViewState, Referanse, VedtakinfoForm } from "./Vedtaksinformasjon";
@@ -31,7 +31,6 @@ export const VedtaksinfoDetaljer = ({
   const [dokref, setDokref] = useState<Referanse[] | undefined>(undefined);
   const [internref, setInternref] = useState<Referanse[] | undefined>(undefined);
   const metadata = feature.getProperties()?.metadata as Metadata | undefined;
-  const toast = useToast();
   const {
     isDirty,
     register,
@@ -67,8 +66,8 @@ export const VedtaksinfoDetaljer = ({
   const updateFeature = (data: VedtakinfoForm) => {
     if (isDirty) {
       const postValues = mapFromFormToApi(data, dokref, internref);
-      toast({
-        status: "success",
+      toaster.create({
+        type: "success",
         title: `Vedtaksinformasjonen er ${postValues.id != null ? "oppdatert" : "lagt til"}`,
       });
       updateDraftFromFeature(postValues);

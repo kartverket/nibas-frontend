@@ -11,7 +11,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogBackdrop,
-  useToast,
+  toaster,
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
 import { useAuthRenewError } from "components/Authentication/AuthRenewError";
@@ -38,7 +38,6 @@ type Props = {
 };
 
 const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
-  const toast = useToast();
   const { closeUtkast } = useUtkast();
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuthentication();
@@ -68,8 +67,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
     setIsLoading(false);
 
     if (statusCode.isSuccessful(response.status)) {
-      toast({
-        status: "success",
+      toaster.success({
         title: "Utkast publisert",
         //Backend publiserer med dagens dato hvis utkastet sin gyldigFra-dato har passert.
         description: `Endringene trer i kraft ${isUtkastGyldigFraPast || isSameDay(utkast.gyldigFra, new Date()) ? "umiddelbart" : format(utkast.gyldigFra, "dd.MM.yyyy")}.`,

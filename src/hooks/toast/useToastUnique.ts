@@ -9,6 +9,7 @@ const useToastUnique = (options: UseToastOptions) => {
     if (toastIdRef.current == null) {
       toastIdRef.current = toast(options);
     } else {
+      // TODO: hmm
       if (!toast.isActive(toastIdRef.current)) {
         toastIdRef.current = toast(options);
       }

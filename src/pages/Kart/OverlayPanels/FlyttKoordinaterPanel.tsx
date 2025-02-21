@@ -1,4 +1,4 @@
-import { Alert, AlertIcon, Button, Field, FormErrorMessage, FormLabel, Select, useToast } from "@kvib/react";
+import { Alert, AlertIcon, Button, Field, FormErrorMessage, FormLabel, Select, toaster } from "@kvib/react";
 import Input from "components/Input";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
@@ -65,7 +65,6 @@ const FlyttKoordinaterPanel = () => {
   const { selectedPoint, selectedFeatures, selectPointOnFeature } = useFeatureStyle();
   const { resetTool } = useToolbar();
   const { addHistoryEntry } = useHistory();
-  const toast = useToast();
   const [projectionOfCoordinates, setProjectionOfCoordinates] = useState<EPSGCode>(mapProjectionEPSGCode);
 
   const defaultValues = (punkt: SelectedPoint) => {
@@ -210,7 +209,7 @@ const FlyttKoordinaterPanel = () => {
       const highlightGeometry = selectedPoint.getGeometry() as Point;
       highlightGeometry.setCoordinates(newCoordinates);
       reset(undefined, { keepValues: true });
-      toast({ status: "success", title: "Punktet ble flyttet" });
+      toaster.create({ type: "success", title: "Punktet ble flyttet" });
     }
   };
 

@@ -1,4 +1,4 @@
-import { useToast } from "@kvib/react";
+import { toaster } from "@kvib/react";
 import { updateUtkastApi } from "api/utkast";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -35,7 +35,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { setError } = useErrorHandling();
-  const toast = useToast();
 
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const utkastIdMatches = utkastPathMatch?.params["utkastId"]?.match(
@@ -209,7 +208,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
 
     const updateUtkastStatus = await updateUtkast(utkast.id, updatedUtkast);
     if (statusCode.isSuccessful(updateUtkastStatus)) {
-      toast({ status: "success", title: "Utkastet er lagret" });
+      toaster.success({ title: "Utkastet er lagret" });
     }
     return updateUtkastStatus;
   };

@@ -1,5 +1,5 @@
 import { SWRConfig } from "swr";
-import { KvibProvider } from "@kvib/react";
+import { KvibProvider, Toaster } from "@kvib/react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import { AuthProvider } from "react-oidc-context";
@@ -19,6 +19,7 @@ const ThirdPartyProviders = ({ children }: { children: React.ReactNode }) => {
     <AuthProvider {...getAuthConfigForCurrentEnvironment()}>
       <CacheProvider value={emotionCache}>
         <KvibProvider>
+          <Toaster />
           <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
         </KvibProvider>
       </CacheProvider>

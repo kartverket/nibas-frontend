@@ -1,4 +1,4 @@
-import { useToast } from "@kvib/react";
+import { toaster } from "@kvib/react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
@@ -17,7 +17,6 @@ import { useGetFeatures } from "./interaction-utils";
 export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 
 const useSelect = () => {
-  const toast = useToast();
   const { activeTool, activeModeTools } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection, addToSelection, removeFromSelection, isSelectedFeature } =
     useFeatureStyle();
@@ -67,12 +66,12 @@ const useSelect = () => {
           getFlateRepresentasjonpunkterWithFremtidigEndring(clickedFeature);
 
         if (!isFeatureEditable(clickedFeature, isFeatureToBeArchived(clickedFeature))) {
-          toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
+          toaster.create({ type: "error", title: "Denne grensen er ikke redigerbar" });
           event.stopPropagation();
           return;
         } else if (fremtidigEndringDato != null) {
-          toast({
-            status: "error",
+          toaster.create({
+            type: "error",
             title: "Grensen du har valgt er ikke redigerbar",
             description: `Grensen har en fremtidig endring og kan ikke endres før den nye endringen har inntruffet. Endringen skal inntreffe ${datestringToFormattedDatestring(fremtidigEndringDato)}`,
           });
@@ -106,8 +105,8 @@ const useSelect = () => {
 
           const sisteEndring = punkterByDate[punkterByDate.length - 1];
 
-          toast({
-            status: "error",
+          toaster.create({
+            type: "error",
             title: "Grensen du har valgt er ikke redigerbar",
             description: `En eller flere av flatene grensen er tilknyttet har en fremtidig endring og grensen kan dermed ikke endres før alle endringer har inntruffet. Siste endring gjelder ${sisteEndring.name} og skal inntreffe ${datestringToFormattedDatestring(sisteEndring.gyldigTil)}`,
           });
@@ -121,8 +120,8 @@ const useSelect = () => {
         const geometry = clickedFeature.getGeometry();
         const coordinates = geometry?.getCoordinates() ?? [];
         if (coordinates.length <= 2) {
-          toast({
-            status: "error",
+          toaster.create({
+            type: "error",
             title: "Grensen har for få punkter til å deles",
           });
           event.stopPropagation();
@@ -141,8 +140,8 @@ const useSelect = () => {
       }
 
       if (activeTool === "archive" && isFeatureToBeArchived(clickedFeature) === true) {
-        toast({
-          status: "error",
+        toaster.create({
+          type: "error",
           title: "Kan ikke arkivere grenser som allerede er arkivert",
         });
         event.stopPropagation();

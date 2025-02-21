@@ -14,7 +14,7 @@ import {
   FormLabel,
   FormHelperText,
   Select,
-  useToast,
+  toaster,
   FormErrorMessage,
   Datepicker,
 } from "@kvib/react";
@@ -40,7 +40,6 @@ const UtkastOpprett = () => {
   const { open, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const { token } = useAuthentication();
-  const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
 
@@ -77,8 +76,8 @@ const UtkastOpprett = () => {
     if (statusCode.isSuccessful(response.status)) {
       const json = await response.json();
       const utkastId = json.id;
-      toast({ title: "Utkast opprettet", status: "success" });
-      navigate(utkastId);
+      toaster.success({ title: "Utkast opprettet" });
+      navigate(`../utkast/${utkastId}`);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({
@@ -102,7 +101,7 @@ const UtkastOpprett = () => {
             <DialogCloseTrigger />
             <DialogBody>
               <FormContent>
-                <FormSection isInvalid={!!errors.navn}>
+                <FormSection invalid={!!errors.navn}>
                   <FormLabel>Navn på utkastet</FormLabel>
                   <FormHelperText>
                     Velg et beskrivende navn som gjør at andre kan forstå hva utkastet inneholder.
@@ -121,7 +120,7 @@ const UtkastOpprett = () => {
                     Velg en passende endringstype. Prøv å begrense endringene i hvert utkast til den valgte typen.
                   </FormHelperText>
                   <Select
-                    placeholder="Velg en endringstype fra listen"
+                    content="Velg en endringstype fra listen"
                     {...register("endringstype", { required: "Du må velge en endringstype for utkastet" })}
                   >
                     {endringstyper.map((type) => (
@@ -132,7 +131,7 @@ const UtkastOpprett = () => {
                   </Select>
                   {!!errors.endringstype && <FormErrorMessage errorMessage={errors.endringstype.message} />}
                 </FormSection>
-                <FormSection isInvalid={!!errors.gyldigFra}>
+                <FormSection invalid={!!errors.gyldigFra}>
                   <FormLabel>Gyldig fra-dato</FormLabel>
                   <FormHelperText>Kun grenser gyldige fra datoen du velger vil være synlige i kartet.</FormHelperText>
                   <Controller

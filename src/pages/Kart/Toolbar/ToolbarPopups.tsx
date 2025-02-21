@@ -3,7 +3,7 @@ import ToolbarPopup from "./ToolbarPopup";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import useSplit from "../interactions/useSplit";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { useToast } from "@kvib/react";
+import { toaster } from "@kvib/react";
 import {
   addArchivingEntryFromFeatureList,
   addGrenseDeleteEntryFromFeatureList,
@@ -20,7 +20,6 @@ import { isTempFeatureId } from "../interactions/feature-id-utils";
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
-  const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
@@ -37,8 +36,7 @@ const ToolbarPopups = () => {
 
     clearSelection();
 
-    toast({
-      status: "success",
+    toaster.success({
       title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble arkivert`,
       description: "Husk å eventuelt sette tilhørighet på berørte grenser",
     });
@@ -50,8 +48,7 @@ const ToolbarPopups = () => {
     const selectedFeaturesContainsExistingGrenser = !selectedFeatureIds.every((id) => isTempFeatureId(id));
 
     if (selectedFeaturesContainsExistingGrenser) {
-      toast({
-        status: "error",
+      toaster.error({
         title: "Kan ikke slette eksisterende grenser",
         description: "Ønsker du å fjerne en eksisterende grense må du bruke arkivering",
       });
@@ -65,8 +62,7 @@ const ToolbarPopups = () => {
     // Denne entrien blir selv slettet (ignorert) ved lagring da den ikke skal med i utkastet.
     addGrenseDeleteEntryFromFeatureList(selectedFeatures, addHistoryEntry);
 
-    toast({
-      status: "success",
+    toaster.success({
       title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble slettet`,
     });
   };
@@ -74,8 +70,7 @@ const ToolbarPopups = () => {
   const handleSplit = () => {
     split();
     clearSelection();
-    toast({
-      status: "success",
+    toaster.success({
       title: "Grensen ble delt",
     });
   };
@@ -83,8 +78,7 @@ const ToolbarPopups = () => {
   const handleMatrikkel = async () => {
     const zoom = map.getView().getZoom();
     if (zoom == null || zoom < 15) {
-      toast({
-        status: "error",
+      toaster.error({
         title: "Kartutsnittet er for stort. Zoom inn nærmere før du henter inn eiendomsgrensene",
       });
     } else {
@@ -92,14 +86,12 @@ const ToolbarPopups = () => {
       const matrikkelFeatures = await getMatrikkelFeatures();
       if (matrikkelFeatures) {
         if (matrikkelFeatures.length === 10000) {
-          toast({
-            status: "warning",
+          toaster.error({
             title: "Utsnittet inneholder for mange grenser. Zoom nærmere, og prøv igjen.",
           });
         } else {
-          toast({
-            status: "success",
-            title: `${matrikkelFeatures.length} grenser ble hentet og vises nå i kartet`,
+          toaster.success({
+            title: `${matrikkelFeatures.length} grenser ble hentet og vises på kartet`,
           });
         }
       } else {
@@ -115,8 +107,7 @@ const ToolbarPopups = () => {
 
   const handleClearMatrikkel = () => {
     if (clearMatrikkelLayer()) {
-      toast({
-        status: "success",
+      toaster.success({
         title: "Teiggrensene ble fjernet fra kartet",
       });
     }

@@ -1,4 +1,4 @@
-import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Spacer, useToast, Box } from "@kvib/react";
+import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Spacer, toaster, Box } from "@kvib/react";
 import { useToolbar } from "contexts/ToolbarContext";
 import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
@@ -13,7 +13,6 @@ type Props = {
 
 const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
   const { activeModeTools, toggleModeTool } = useToolbar();
-  const toast = useToast();
 
   const toggleSnapping = () => {
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
@@ -36,18 +35,18 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
     toggleModeTool("snap_matrikkel");
     const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
     if (isMatrikkelToggled) {
-      toast({ status: "warning", title: "Snapping mot teiggrenser er slått av." });
+      toaster.create({ type: "warning", title: "Snapping mot teiggrenser er slått av." });
     } else {
-      toast({ status: "info", title: "Snapping mot teiggrenser er slått på." });
+      toaster.create({ type: "info", title: "Snapping mot teiggrenser er slått på." });
     }
   });
   useKeyboardShortcut("snap_nibas", () => {
     toggleModeTool("snap_nibas");
     const isMatrikkelToggled = activeModeTools.includes("snap_nibas");
     if (isMatrikkelToggled) {
-      toast({ status: "warning", title: "Snapping mot egne grenser er slått av." });
+      toaster.create({ type: "warning", title: "Snapping mot egne grenser er slått av." });
     } else {
-      toast({ status: "info", title: "Snapping mot egne grenser er slått på." });
+      toaster.create({ type: "info", title: "Snapping mot egne grenser er slått på." });
     }
   });
   return (
