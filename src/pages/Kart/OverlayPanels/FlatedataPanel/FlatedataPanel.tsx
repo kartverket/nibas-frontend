@@ -100,7 +100,11 @@ const FlatedataPanel = () => {
             {allInndelinger.map((inndeling) => (
               <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>
                 {getTabText(inndeling, allInndelinger)}
-                {inndeling.isEditing ? <Icon icon="edit" aria-hidden /> : <Icon icon="visibility" aria-hidden />}
+                {inndeling.isEditing ? (
+                  <Icon icon="edit_document" aria-hidden />
+                ) : (
+                  <Icon icon="visibility" aria-hidden />
+                )}
               </FlatedataTab>
             ))}
           </FlatedataTabList>
