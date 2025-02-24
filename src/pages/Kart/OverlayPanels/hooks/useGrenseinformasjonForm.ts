@@ -33,9 +33,10 @@ const getDefaultValuesFromFeature = (feature: Feature): GrenseinformasjonFormPro
 };
 
 export const useGrenseinformasjonForm = (feature: Feature) => {
-  const { register, handleSubmit, reset, getValues, control, formState } = useForm<GrenseinformasjonFormProps>({
-    defaultValues: getDefaultValuesFromFeature(feature),
-  });
+  const { register, handleSubmit, reset, getValues, setValue, control, formState } =
+    useForm<GrenseinformasjonFormProps>({
+      defaultValues: getDefaultValuesFromFeature(feature),
+    });
 
   const { addHistoryEntry } = useHistory();
 
@@ -46,10 +47,9 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
   const isDirty = Object.values(formState.dirtyFields).length > 0;
 
   const onSubmit: SubmitHandler<GrenseinformasjonFormProps> = (data) => {
-    if (isDirty) {
+    if (Object.values(formState.dirtyFields).length > 0) {
       const metadataDiscriminator = getMetadataDiscriminatorFromType(data.grenseType);
       const commonMetadata = metadata.common;
-
       if (!metadataDiscriminator || !commonMetadata) {
         return;
       } // errorhåndtering på noe vis her
@@ -96,6 +96,7 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
     handleSubmit,
     reset,
     getValues,
+    setValue,
     formState,
     control,
     getDefaultValues: getDefaultValuesFromFeature,

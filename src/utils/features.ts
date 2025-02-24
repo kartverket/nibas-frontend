@@ -284,7 +284,7 @@ export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString
   return true;
 };
 
-export const isMatrikkelFeature = (feature: FeatureLike) => {
+export const isTeigFeature = (feature: FeatureLike) => {
   const featureId = feature.getId()?.toString();
 
   if (featureId != null) {

@@ -6,7 +6,7 @@ import { useState } from "react";
 import { ChangeHandler, useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { EPSGCode, mapProjectionEPSGCode, projectionDefinitions } from "utils/map/projections";
-import { NavigasjonProps } from "./NavigasjonPanel";
+import { centerOnCoordinate, SearchProps } from "./NavigasjonPanel";
 import {
   decimalCoordinatePattern,
   dmsCoordinatePattern,
@@ -44,7 +44,7 @@ type KoordinaterForm = {
   globalErrorDummyField: null;
 };
 
-export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonProps) => {
+export const KoordinaterSearch = ({ onSearchSuccess }: SearchProps) => {
   // dette er projeksjonen brukeren sier at de gir koordinatene på
   const [projectionOfCoordinates, setProjectionOfCoordinates] = useState<EPSGCode>(mapProjectionEPSGCode);
   const {
@@ -87,6 +87,7 @@ export const KoordinaterSearch = ({ onSelect: centerOnCoordinate }: NavigasjonPr
       if (transformedCoordinates != null) {
         if (validatePointInsideMultiPolygon(transformedCoordinates[1], transformedCoordinates[0])) {
           centerOnCoordinate(transformedCoordinates[1], transformedCoordinates[0]);
+          onSearchSuccess();
           reset();
           return true;
         }

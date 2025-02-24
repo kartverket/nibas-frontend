@@ -29,12 +29,13 @@ const ToolbarPopups = () => {
   const archiveFeatures = () => {
     const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
 
-    clearSelection();
     addArchivedStyles(selectedFeatureIds);
     removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
     addFeaturesToSource("archived", selectedFeatures);
 
     addArchivingEntryFromFeatureList(selectedFeatures, addHistoryEntry);
+
+    clearSelection();
 
     toast({
       status: "success",
@@ -167,8 +168,21 @@ const ToolbarPopups = () => {
         break;
 
       case "grenseinfo":
+        if (selectedFeatures.length > 1) {
+          return (
+            <ToolbarPopup
+              text="Du kan kun se informasjon om én grense om gangen. Velg grensen på nytt som du ønsker å se informasjon til."
+              onClose={resetTool}
+              icon={"function"}
+            />
+          );
+        }
         return (
-          <ToolbarPopup icon="info" text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />
+          <ToolbarPopup
+            text="Velg en grense i kartet for å se grenseinformasjon"
+            onClose={resetTool}
+            icon={"function"}
+          />
         );
       case "grensecoordinates":
         return (

@@ -1,25 +1,42 @@
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Button,
+  ButtonGroup,
+  Datepicker,
+  IconButton,
+  Input,
+  Select,
+  Textarea,
+  useDisclosure,
+  useToast,
+} from "@kvib/react";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { GrenseType } from "hooks/layers/types";
+import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
-import { Alert, AlertIcon, Button, Datepicker, Input, Select, Textarea } from "@kvib/react";
-import { GrenseType } from "hooks/layers/types";
-import { styled } from "styled-components";
-import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
-import useNibasApi from "hooks/useNibasApi";
-import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
-import GrenseinformasjonRow from "./GrenseinformasjonRow";
-import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
-import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
-import { PanelHeader } from "../Panel";
-import { useEffect, useState } from "react";
-import { Controller } from "react-hook-form";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useConfirmationModal } from "contexts/ConfirmationModalContext";
-import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import {
-  isTempFeatureId,
-  isNonEditableFeatureId,
   getNonEditableFeatureId,
+  isNonEditableFeatureId,
+  isTempFeatureId,
 } from "pages/Kart/interactions/feature-id-utils";
+import { ContextualPosisjonskvalitet } from "pages/Kart/interactions/useModify";
+import { useEffect, useMemo, useState } from "react";
+import { Controller } from "react-hook-form";
+import { styled } from "styled-components";
+import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
+import { isLineStringFeature } from "utils/type-utils";
+import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
+import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
+import { PanelHeader } from "../Panel";
+import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
+import GrenseinformasjonRow from "./GrenseinformasjonRow";
+import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -61,9 +78,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
   const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
   const { openAsync } = useConfirmationModal();
-
-  const { register, handleSubmit, getValues, control, reset, getDefaultValues, onSubmit, isDirty } =
+  const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
+  const toast = useToast();
 
   const featureId = feature.getId()?.toString();
   const properties = feature.getProperties() as FeatureProperties;
@@ -106,6 +123,55 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     reset(getDefaultValues(feature));
   }, [feature, getDefaultValues, reset, history]);
 
+  const relevantPosisjonskvaliteter = useMemo(() => {
+    const posisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> | undefined = feature.get("snapData");
+    if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0 && isLineStringFeature(feature)) {
+      const featureCoordinates = feature.getGeometry()?.getCoordinates();
+      const featureCoordinatesAsString =
+        featureCoordinates != null ? featureCoordinates.map((coord) => coord.toString()) : [];
+      // Hvis man har snappet bort fra en grense man tidligere snappet til i utkastet ønsker vi ikke å bruke denne posisjonskvaliteten
+      const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
+        .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
+        .map(([, posisjonskvalitet]) => posisjonskvalitet)
+        // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
+        .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
+      return relevant;
+    }
+    return [];
+  }, [feature]);
+
+  const autoFillFormValues = () => {
+    if (relevantPosisjonskvaliteter != null) {
+      // Finner den dårligste posisjonskvaliteten basert på nøyaktighet
+      const worstPosisjonskvalitet = relevantPosisjonskvaliteter.toSorted((a, b) => {
+        if (a != null && b != null && a.noeyaktighet != null && b.noeyaktighet != null) {
+          return a.noeyaktighet - b.noeyaktighet;
+        }
+        return 0;
+      })[relevantPosisjonskvaliteter.length - 1];
+      if (worstPosisjonskvalitet != null && kodeliste != null) {
+        setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
+        setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
+        handleSubmit(onSubmit)();
+        onCloseAutofill();
+        return;
+      }
+    }
+    toast({
+      status: "error",
+      title: "Feil ved oppdatering av grense",
+      description:
+        "Feilet ved automatisk utfylling av egenskaper. Prøv å fylle ut manuelt, og kontakt Kartverket hvis feilen vedvarer",
+    });
+  };
+
+  const { isOpen: isAutofillOpen, onOpen: onOpenAutofill, onClose: onCloseAutofill } = useDisclosure();
+  useEffect(() => {
+    if (relevantPosisjonskvaliteter.length > 0) {
+      onOpenAutofill();
+    }
+  }, [relevantPosisjonskvaliteter, onOpenAutofill]);
+
   return (
     <FormContainer>
       <PanelHeader
@@ -145,7 +211,42 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       >
         Informasjon
       </PanelHeader>
-
+      {relevantPosisjonskvaliteter.length > 0 && isAutofillOpen && (
+        <AutofillAlert status={"info"}>
+          <AutofillAlertHeader>
+            <TitleWithIconTooltip
+              tooltipLabel={
+                "Grensen har blitt snappet til en annnen grense, og vi kan derfor kopiere egenskapene fra den tilsnappede grensen over til denne grensen."
+              }
+            >
+              <AlertTitle>Noen egenskaper kan fylles ut automatisk</AlertTitle>
+            </TitleWithIconTooltip>
+            <IconButton
+              icon={"close"}
+              aria-label={"Lukk autofyll dialog"}
+              variant="ghost"
+              onClick={() => onCloseAutofill()}
+            />
+          </AutofillAlertHeader>
+          <AlertDescription>
+            Målemetoden og nøyaktigheten for denne grensen kan fylles inn automatisk. Vil du at vi skal fylle inn
+            egenskapene for deg?
+          </AlertDescription>
+          <ButtonGroup>
+            <Button
+              size={"sm"}
+              /* @ts-expect-error auto_fix_high er ikke i versjonen av kvib (material-symbols) vi bruker*/
+              leftIcon="auto_fix_high"
+              onClick={() => autoFillFormValues()}
+            >
+              Fyll inn automatisk
+            </Button>
+            <Button size={"sm"} variant="secondary" onClick={() => onCloseAutofill()}>
+              Nei, jeg vil fylle inn selv
+            </Button>
+          </ButtonGroup>
+        </AutofillAlert>
+      )}
       <GrenseinformasjonRow
         name="Identifikator (UUID)"
         tooltipLabel="Grensen sin unike identifikator"
@@ -289,3 +390,16 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 };
 
 export default GrenseinformasjonForm;
+
+const AutofillAlert = styled(Alert)`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  row-gap: 15px;
+`;
+
+const AutofillAlertHeader = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+`;

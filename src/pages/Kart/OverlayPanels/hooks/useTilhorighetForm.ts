@@ -84,6 +84,48 @@ const getIdForKontekstEgenskaper = (
   }
 };
 
+const getUpdatedMetadata = (
+  kretser: Krets[],
+  historyEntries: HistoryEntry[],
+  utkastEntries: UtkastOperasjoner,
+  kontekstType: KontekstType,
+): Krets[] => {
+  const metadataFromHistory = historyEntries
+    .flatMap((historyEntry) =>
+      historyEntry.changes.map((change) => {
+        if (change.to != null && "navn" in change.to && "nummer" in change.to) {
+          return {
+            id: change.id,
+            name: change.to.navn,
+            number: change.to.nummer,
+          };
+        }
+        return null;
+      }),
+    )
+    .filter((entry): entry is { id: string; name: string; number: string } => entry !== null);
+
+  const metadataFromUtkast = Object.values(
+    utkastEntries.metadataendringer[kontekstType === "GRUNNKRETS" ? "grunnkretsendringer" : "stemmekretsendringer"],
+  ).map((endring) => ({
+    id: endring.identifikasjon.lokalid,
+    name: endring.navn,
+    number: endring.nummer,
+  }));
+
+  const metadataChanges = metadataFromHistory.concat(metadataFromUtkast);
+
+  return kretser.map((krets) => {
+    const matchingChange = metadataChanges.find((entry) => entry.id === krets.id.lokalid.value);
+
+    if (matchingChange !== undefined) {
+      return { ...krets, navn: matchingChange.name, nummer: matchingChange.number };
+    }
+
+    return krets;
+  });
+};
+
 const getKretserFromHistory = (
   entries: HistoryEntry[],
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -148,17 +190,19 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
           kommunerIdOgNummer,
           kontekstType,
         );
+        const ListeA: Krets[] = [
+          ...commonOptions[Tilhorighet.A],
+          ...tilhorighetOptionsFromUtkast,
+          ...tihorighetOptionsFromHistory,
+        ];
+        const ListeB: Krets[] = [
+          ...commonOptions[Tilhorighet.A],
+          ...tilhorighetOptionsFromUtkast,
+          ...tihorighetOptionsFromHistory,
+        ];
         setTilhorighetValg({
-          [Tilhorighet.A]: [
-            ...commonOptions[Tilhorighet.A],
-            ...tilhorighetOptionsFromUtkast,
-            ...tihorighetOptionsFromHistory,
-          ],
-          [Tilhorighet.B]: [
-            ...commonOptions[Tilhorighet.B],
-            ...tilhorighetOptionsFromUtkast,
-            ...tihorighetOptionsFromHistory,
-          ],
+          [Tilhorighet.A]: getUpdatedMetadata(ListeA, getHistoryEntries(), utkast.operasjoner, kontekstType),
+          [Tilhorighet.B]: getUpdatedMetadata(ListeB, getHistoryEntries(), utkast.operasjoner, kontekstType),
         });
       } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);

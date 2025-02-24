@@ -1,14 +1,4 @@
-import {
-  extendTheme,
-  Divider,
-  Flex,
-  Icon,
-  MenuDivider,
-  MenuList,
-  MenuOptionGroup,
-  useMediaQuery,
-  useTheme,
-} from "@kvib/react";
+import { Divider, Flex, Icon, MenuDivider, MenuList, MenuOptionGroup, useMediaQuery, useTheme } from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";

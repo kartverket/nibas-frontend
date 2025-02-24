@@ -1,31 +1,18 @@
-import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { Feature, MapBrowserEvent } from "ol";
-import { overlayPopup } from "../constants";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import LineString from "ol/geom/LineString";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToast } from "@kvib/react";
-import { useEffect } from "react";
-import { usePrevious } from "hooks/usePrevious";
-import { useGetFeatures } from "./interaction-utils";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { MapBrowserEvent } from "ol";
 import {
-  isFeatureToBeArchived,
-  isFeatureEditable,
-  isMatrikkelFeature,
   getFeatureFremtidigEndringDato,
   getFlateRepresentasjonpunkterWithFremtidigEndring,
+  isFeatureEditable,
+  isFeatureToBeArchived,
 } from "utils/features";
-import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { removeNil } from "utils/list-utils";
-
-const getOverlayPosition = (selectedFeature: Feature<LineString>) => {
-  const coordinates = selectedFeature.getGeometry()?.getCoordinates() ?? [];
-  if (coordinates.length < 2) {
-    return;
-  }
-  const middle = Math.floor((coordinates.length - 1) / 2);
-  return coordinates[middle];
-};
+import { overlayPopup } from "../constants";
+import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { useGetFeatures } from "./interaction-utils";
 
 export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 
@@ -34,23 +21,12 @@ const useSelect = () => {
   const { activeTool, activeModeTools } = useToolbar();
   const { selectFeatures, selectedFeatures, clearSelection, addToSelection, removeFromSelection, isSelectedFeature } =
     useFeatureStyle();
-  const { activeOverlayPanel, closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
-  const previousPointMode = usePrevious(activeTool);
+  const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
   const safeTools: Tool[] = ["grenseinfo"];
   const pointTools: Tool[] = ["add", "remove", "split"];
-
-  // Dersom man bytter verktøy ønsker vi å cleare selection
-  useEffect(() => {
-    if (activeTool !== previousPointMode && selectedFeatures.length > 0) {
-      clearSelection();
-      if (activeOverlayPanel === "grenseinfo") {
-        closeOverlayPanel();
-      }
-    }
-  }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, previousPointMode, selectedFeatures.length]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (
@@ -58,7 +34,7 @@ const useSelect = () => {
       !disallowedTools.includes(activeTool) &&
       !(activeModeTools.includes("move") && !safeTools.includes(activeTool))
     ) {
-      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : "edit");
+      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : ["edit"]);
 
       // Dersom man har klikket på kartet skal vi kvitte oss med selection
       if (activeFeatures.length === 0) {
@@ -72,8 +48,13 @@ const useSelect = () => {
       // Vi velger kun én feature om gangen
       const clickedFeature = activeFeatures[0];
 
-      // Hvis feature allerede er valgt skal den de-selectes
-      if (!pointTools.includes(activeTool) && isSelectedFeature(clickedFeature)) {
+      // Hvis feature allerede er valgt skal den de-selectes, men bare hvis vi ikke er i et verktøy
+      // som trenger selection (split, archive)
+      if (
+        !pointTools.includes(activeTool) &&
+        !exclusiveSelectTools.includes(activeTool) &&
+        isSelectedFeature(clickedFeature)
+      ) {
         removeFromSelection(clickedFeature);
         event.stopPropagation();
         return;
@@ -156,13 +137,7 @@ const useSelect = () => {
       }
 
       if (activeTool === "grenseinfo") {
-        // Dersom den valgte grensen er en WFS-grense skal vi vise et eget panel for det
-        if (isMatrikkelFeature(clickedFeature)) {
-          overlayPopup.setPosition(getOverlayPosition(clickedFeature));
-        } else {
-          overlayPopup.setPosition(undefined);
-          openOverlayPanel("grenseinfo");
-        }
+        openOverlayPanel("grenseinfo");
       }
 
       if (activeTool === "archive" && isFeatureToBeArchived(clickedFeature) === true) {

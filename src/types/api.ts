@@ -14,6 +14,7 @@ export type FeatureDTO = components["schemas"]["Feature"];
 export type FeatureCollection = components["schemas"]["FeatureCollection"];
 export type KodelisteRespons = components["schemas"]["KodelisteRespons"];
 export type ObjektIdentifikator = components["schemas"]["ObjektIdentifikator"];
+export type InndelingSearchType = components["schemas"]["InndelingSearchResponse"]["type"];
 
 /**
  * Inndelinger
@@ -67,6 +68,7 @@ type TerritorialgrenseMetadata = components["schemas"]["TerritorialgrenseMetadat
 type StatistiskGrenseMetadata = components["schemas"]["StatistiskgrenseMetadata"] & {
   dokumentasjonsreferanser: undefined;
 };
+export type Posisjonskvalitet = components["schemas"]["CommonGrenseMetadata"]["posisjonskvalitet"];
 
 export type Metadata =
   | AvtaltAvgrensningslinjeMetadata

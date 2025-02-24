@@ -1,14 +1,14 @@
 import {
-  Alert,
-  AlertDescription,
+  MenuItemProps,
+  useDisclosure,
   AlertIcon,
+  AlertDescription,
   Divider,
   Flex,
-  Icon,
-  MenuItem,
-  MenuItemProps,
   MenuList,
-  useDisclosure,
+  Alert,
+  MenuItem,
+  Icon,
 } from "@kvib/react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -16,9 +16,9 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
-import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { useKeyboardShortcut, useHoldButtonToggle } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { Draw } from "ol/interaction";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { anyFeatureIsEditable } from "utils/features";
 import { getLayerById } from "utils/map/layers";
@@ -59,10 +59,7 @@ const Toolbar = () => {
 
   const toggleGrenseinfo = () => {
     toggleTool("grenseinfo");
-
-    if (activeOverlayPanel === "grenseinfo") {
-      closeOverlayPanel();
-    }
+    toggleOverlayPanel("grenseinfo", false);
   };
 
   const zoom = (difference: number) => {
@@ -82,6 +79,12 @@ const Toolbar = () => {
     }
     toggleModeTool("matrikkel");
   };
+
+  useEffect(() => {
+    if (activeTool !== "grenseinfo" && activeOverlayPanel === "grenseinfo") {
+      closeOverlayPanel(false);
+    }
+  }, [activeTool, activeOverlayPanel, closeOverlayPanel]);
 
   const isPanningAllowed = (): boolean => {
     if (!isEditing) {

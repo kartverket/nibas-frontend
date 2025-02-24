@@ -11,6 +11,7 @@ import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
 import { grenserLayers } from "hooks/layers/constants";
 import { grenseStyles } from "utils/map/layerStyles";
+import { mapProjectionEPSGCode } from "utils/map/projections";
 
 function createTooltipElement(text: string, style: React.CSSProperties) {
   const el = document.createElement("div");
@@ -47,7 +48,7 @@ function updateTooltip(
 }
 
 function formatLength(line: LineString): string {
-  const length = getLength(line);
+  const length = getLength(line, { projection: mapProjectionEPSGCode });
   let output: string;
   if (length > 1000) {
     output = (length / 1000).toFixed(2) + " km";

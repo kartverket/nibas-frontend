@@ -11,7 +11,6 @@ import { map } from "./constants";
 import useInteractions from "./interactions/useInteractions";
 import Kartinformasjon from "./Kartinformasjon";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
-import OverlayPopup from "./OverlayPopup";
 import PointOverlayPopup from "./PointOverlayPopup";
 import Toolbar from "./Toolbar/Toolbar";
 
@@ -62,7 +61,6 @@ const Kart = () => {
             <Toolbar />
             <Kartinformasjon />
           </KartOverlay>
-          <OverlayPopup />
           <PointOverlayPopup />
         </Suspense>
       </KartTarget>
