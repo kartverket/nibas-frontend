@@ -150,13 +150,6 @@ const Toolbar = () => {
     () => disableModeTool("move"),
     isPanningAllowed,
   );
-  useHoldButtonToggle(
-    "shift",
-    activeModeTools.includes("move"),
-    () => enableModeTool("move"),
-    () => disableModeTool("move"),
-    isPanningAllowed,
-  );
 
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
   useKeyboardShortcut("escape", () => {
