@@ -272,16 +272,6 @@ const Toolbar = () => {
 
   return (
     <OuterContainer>
-      <ToolInfoAlert $isOpen={activeTool === "delete"}>
-        <AlertIcon />
-        <div>
-          <AlertDescription>
-            {`
-          Sletteverktøyet er kun tiltenkt grenser som er opprettet i utkastet.
-          `}
-          </AlertDescription>
-        </div>
-      </ToolInfoAlert>
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
@@ -387,15 +377,6 @@ const Toolbar = () => {
     </OuterContainer>
   );
 };
-
-const ToolInfoAlert = styled(Alert)<{ $isOpen?: boolean }>`
-  ${(props) => props.$isOpen === false && "display: none"};
-  position: absolute;
-  top: 10px;
-  width: var(--kvib-breakpoints-md);
-  border-radius: var(--kvib-space-2);
-  box-shadow: var(--kvib-shadows-lg);
-`;
 
 const OuterContainer = styled.div`
   grid-area: toolbar;

@@ -71,5 +71,5 @@ const ToolbarPopupBody = styled.div`
 const TextRows = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 50ch;
+  max-width: 52ch;
 `;

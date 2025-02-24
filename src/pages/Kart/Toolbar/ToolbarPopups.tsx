@@ -53,7 +53,7 @@ const ToolbarPopups = () => {
       toast({
         status: "error",
         title: "Kan ikke slette eksisterende grenser",
-        description: "Ønsker du å fjerne en eksisterende grense må du bruke arkivering",
+        description: "Ønsker du å fjerne en eksisterende grense må du benytte Arkiver grense-verktøyet.",
       });
       return;
     }
@@ -143,8 +143,8 @@ const ToolbarPopups = () => {
         return (
           <ToolbarPopup
             icon="draw"
-            text="Start tegning ved å klikke på kartet"
-            subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbelklikk for å avslutte tegning. Ønsker du å panorere underveis, bruk piltastene."
+            text="Start tegning ved å klikke på kartet. Avslutt med dobbeltklikk."
+            subtext="Tegninger kan startes i eksisterende punkter eller på et tomt område. Ønsker du å panorere underveis, bruk piltastene."
             onClose={resetTool}
           />
         );
@@ -196,7 +196,7 @@ const ToolbarPopups = () => {
         return (
           <ToolbarPopup
             icon={"straighten"}
-            text="Velg i kartet der du ønsker å starte målingen. Avslutt med dobbeltklikk."
+            text="Start målingen ved å velge startpunkt i kartet. Avslutt med dobbeltklikk."
             subtext="Målingen kan snappes til punkter eller startes fritt utenfor andre grenser. Ønsker du å panorere underveis, bruk piltastene."
             onClose={resetTool}
           />

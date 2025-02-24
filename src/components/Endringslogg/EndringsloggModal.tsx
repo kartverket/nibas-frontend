@@ -41,7 +41,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
           {!harEndringer && !harUlagredeEndringer && !laster && <Empty>Det er ingen endringer i dette utkastet</Empty>}
-          <Stack spacing={6}>
+          <Stack spacing={4}>
             <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
             <Center>
               {laster && (

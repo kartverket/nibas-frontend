@@ -72,7 +72,7 @@ const ShortcutTextStyle = styled(Text)`
 `;
 
 const BodyWrapper = styled(Stack)`
-  padding: 12px;
+  padding: 8px 6px;
 `;
 
 const IconText = styled(Text)`

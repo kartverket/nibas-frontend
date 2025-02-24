@@ -223,7 +223,7 @@ const FremtidigeUtkastTooltip = () => {
       label={
         <>
           Når er utkast er publisert kan det ikke trekkes tilbake. For å rette det må du lage et <b>nytt utkast</b> med{" "}
-          <b>samme gyldig fra-dato som den fremtidige feilen oppstår</b>
+          <b>samme gyldig fra-dato som det fremtidige utkastet oppstår.</b>
         </>
       }
       placement="bottom"
