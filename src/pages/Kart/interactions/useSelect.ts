@@ -45,8 +45,12 @@ const useSelect = () => {
         return;
       }
 
-      // Vi velger kun én feature om gangen
-      const clickedFeature = activeFeatures[0];
+      // Dette gjør at gjentatte klikk itererer gjennom grenser som ligger på samme sted.
+      let clickedFeature = activeFeatures[0];
+      if (activeFeatures.length > 1) {
+        // Finner den første featuren i lista som ikke er valgt
+        clickedFeature = activeFeatures.find((feature) => !isSelectedFeature(feature)) ?? clickedFeature;
+      }
 
       // Hvis feature allerede er valgt skal den de-selectes, men bare hvis vi ikke er i et verktøy
       // som trenger selection (split, archive)
