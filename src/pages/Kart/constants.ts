@@ -1,4 +1,3 @@
-import { Overlay } from "ol";
 import Map from "ol/Map";
 import View from "ol/View";
 import { Extent } from "ol/extent";
@@ -31,16 +30,6 @@ export const map = new Map({
   keyboardEventTarget: window.document,
   interactions: defaults({ altShiftDragRotate: false, dragPan: false, shiftDragZoom: false }),
   maxTilesLoading: Infinity,
-});
-
-export const overlayPopup = new Overlay({
-  autoPan: {
-    animation: {
-      duration: 250,
-    },
-  },
-  positioning: "center-center",
-  offset: [0, -35],
 });
 
 export const endringstyper = [

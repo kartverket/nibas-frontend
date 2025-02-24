@@ -10,7 +10,6 @@ import {
   isFeatureToBeArchived,
 } from "utils/features";
 import { removeNil } from "utils/list-utils";
-import { overlayPopup } from "../constants";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useGetFeatures } from "./interaction-utils";
 
@@ -38,7 +37,6 @@ const useSelect = () => {
 
       // Dersom man har klikket på kartet skal vi kvitte oss med selection
       if (activeFeatures.length === 0) {
-        overlayPopup.setPosition(undefined);
         closeOverlayPanel();
         clearSelection();
         event.stopPropagation();
