@@ -1,20 +1,34 @@
 import { useToast } from "@kvib/react";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { MapBrowserEvent } from "ol";
+import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
+import { useOverlayPanel } from "../../../contexts/OverlayPanelContext";
+import { Tool, useToolbar } from "../../../contexts/ToolbarContext";
+import { Feature, MapBrowserEvent } from "ol";
 import {
   getFeatureFremtidigEndringDato,
   getFlateRepresentasjonpunkterWithFremtidigEndring,
   isFeatureEditable,
   isFeatureToBeArchived,
-} from "utils/features";
-import { removeNil } from "utils/list-utils";
+} from "../../../utils/features";
+import { removeNil } from "../../../utils/list-utils";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { useGetFeatures } from "./interaction-utils";
+import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
+import { SelectedFeatureList } from "../OverlayPopups/SelectedFeatureList";
+import { LineString } from "ol/geom";
+import { useEffect, useState } from "react";
+import { Coordinate } from "ol/coordinate";
+import { areCoordsWithinNibasHitTolerance } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 
 export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
+export type SelectFeature = {
+  feature: Feature<LineString>;
+  clicked: boolean;
+};
 
+export type SelectData = {
+  coordinates: Coordinate;
+  selectFeatures: SelectFeature[];
+};
 const useSelect = () => {
   const toast = useToast();
   const { activeTool, activeModeTools } = useToolbar();
@@ -22,10 +36,16 @@ const useSelect = () => {
     useFeatureStyle();
   const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
+  const { openOverlayPopup, closeOverlayPopup } = useOverlayPopup();
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
   const safeTools: Tool[] = ["grenseinfo"];
   const pointTools: Tool[] = ["add", "remove", "split"];
+
+  const [prevSelectData, setSelectData] = useState<SelectData>();
+  useEffect(() => {
+    console.log(prevSelectData);
+  }, [prevSelectData]);
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (
@@ -35,19 +55,59 @@ const useSelect = () => {
     ) {
       const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : ["edit"]);
 
-      // Dersom man har klikket på kartet skal vi kvitte oss med selection
-      if (activeFeatures.length === 0) {
+      const quitSelection = () => {
+        setSelectData(undefined);
+        closeOverlayPopup();
         closeOverlayPanel();
         clearSelection();
         event.stopPropagation();
+      };
+
+      // Dersom man har klikket på kartet skal vi kvitte oss med selection
+      if (activeFeatures.length === 0) {
+        quitSelection();
         return;
       }
 
       // Dette gjør at gjentatte klikk itererer gjennom grenser som ligger på samme sted.
       let clickedFeature = activeFeatures[0];
       if (activeFeatures.length > 1) {
+        const selectedActiveFeatures = activeFeatures.map((af) => ({
+          feature: af,
+          clicked: af.getId() === clickedFeature.getId(),
+        }));
         // Finner den første featuren i lista som ikke er valgt
-        clickedFeature = activeFeatures.find((feature) => !isSelectedFeature(feature)) ?? clickedFeature;
+        if (prevSelectData != null && areCoordsWithinNibasHitTolerance(prevSelectData.coordinates, event.coordinate)) {
+          const nextClickFeature = prevSelectData.selectFeatures.find(
+            (selectFeature) => !selectFeature.clicked,
+          )?.feature;
+          if (nextClickFeature != null) {
+            clickedFeature = nextClickFeature;
+            setSelectData((prev) => ({
+              coordinates: prev!.coordinates,
+              selectFeatures: prev!.selectFeatures.map((sf) =>
+                sf.feature.getId() === clickedFeature.getId() ? { feature: sf.feature, clicked: true } : sf,
+              ),
+            }));
+          } else {
+            // hvis vi har klikket oss gjennom alle er vi ferdige og kan lukke select
+            quitSelection();
+            return;
+          }
+        } else {
+          setSelectData({
+            coordinates: event.coordinate,
+            selectFeatures: selectedActiveFeatures,
+          });
+        }
+        const clickedFeatureId = clickedFeature.getId()?.toString() ?? "";
+        // skriv om til å sortere stabilt på clicked-status
+        openOverlayPopup(
+          <SelectedFeatureList allFeatures={selectedActiveFeatures} selectedFeatureId={clickedFeatureId} />,
+          event.coordinate,
+        );
+      } else {
+        closeOverlayPopup();
       }
 
       // Hvis feature allerede er valgt skal den de-selectes, men bare hvis vi ikke er i et verktøy
