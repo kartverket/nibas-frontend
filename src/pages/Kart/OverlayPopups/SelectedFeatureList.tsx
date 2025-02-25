@@ -1,7 +1,5 @@
-import { Feature } from "ol";
-import { LineString } from "ol/geom";
-import { styled } from "styled-components";
 import { Text } from "@kvib/react";
+import { styled } from "styled-components";
 import { FeatureProperties } from "../../../types/api";
 import { SelectFeature } from "../interactions/useSelect";
 

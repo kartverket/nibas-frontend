@@ -1,8 +1,12 @@
 import { useToast } from "@kvib/react";
+import { Feature, MapBrowserEvent } from "ol";
+import { Coordinate } from "ol/coordinate";
+import { LineString } from "ol/geom";
+import { useEffect, useState } from "react";
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "../../../contexts/OverlayPanelContext";
+import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
 import { Tool, useToolbar } from "../../../contexts/ToolbarContext";
-import { Feature, MapBrowserEvent } from "ol";
 import {
   getFeatureFremtidigEndringDato,
   getFlateRepresentasjonpunkterWithFremtidigEndring,
@@ -11,13 +15,9 @@ import {
 } from "../../../utils/features";
 import { removeNil } from "../../../utils/list-utils";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
-import { useGetFeatures } from "./interaction-utils";
-import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
-import { SelectedFeatureList } from "../OverlayPopups/SelectedFeatureList";
-import { LineString } from "ol/geom";
-import { useEffect, useState } from "react";
-import { Coordinate } from "ol/coordinate";
 import { areCoordsWithinNibasHitTolerance } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
+import { SelectedFeatureList } from "../OverlayPopups/SelectedFeatureList";
+import { useGetFeatures } from "./interaction-utils";
 
 export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 export type SelectFeature = {
