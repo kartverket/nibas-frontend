@@ -74,6 +74,8 @@ const MergePanel = () => {
     getValues,
     setValue,
     reset,
+    trigger,
+    watch,
     formState: { errors, isDirty },
   } = formMethods;
 
@@ -178,16 +180,18 @@ const MergePanel = () => {
     setValue("nummer", selectedStemmekrets?.nummer ?? "");
   };
 
-  const existingStemmekretsnummere = utkastStemmekretser
-    ? utkastStemmekretser
-        .filter(
-          (stemmekrets) =>
-            ![getValues("stemmekrets"), ...getValues("nummerTilSammenslaaing").map((n) => n.value)].includes(
-              stemmekrets.nummer,
-            ),
-        )
-        .map((inndeling) => inndeling.nummer)
-    : [];
+  const getExistingStemmekretsnummere: () => string[] = () => {
+    return utkastStemmekretser
+      ? utkastStemmekretser
+          .filter(
+            (stemmekrets) =>
+              ![watch("stemmekrets"), ...watch("nummerTilSammenslaaing").map((n) => n.value)].includes(
+                stemmekrets.nummer,
+              ),
+          )
+          .map((inndeling) => inndeling.nummer)
+      : [];
+  };
 
   return (
     <SidePanel>
@@ -259,13 +263,14 @@ const MergePanel = () => {
                   {...register(
                     "nummer",
                     getNumberValidatorFunctionForInndelingType("stemmekrets")({
-                      shouldNotBeEqualWith: existingStemmekretsnummere,
+                      shouldNotBeEqualWith: getExistingStemmekretsnummere(),
                     }),
                   )}
                   validationError={{
                     showError: !!errors?.nummer,
                     message: errors.nummer?.message ?? "",
                   }}
+                  onBlur={() => trigger()}
                 />
                 <Input
                   label="Stemmekretsnavn"

@@ -2,7 +2,6 @@ import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { RegisterOptions, ValidateResult } from "react-hook-form";
 import { capitalize } from "./string-utils";
 import { isIntegerString } from "./type-utils";
-import { FlatedataInputs } from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
 
 const getCommonInndelingNumberValidator = (
   inndelingType: Inndelingtype,
@@ -10,21 +9,11 @@ const getCommonInndelingNumberValidator = (
   maxLength: number,
   shouldNotBeEqualWith: string[],
   additionalValidation?: (number: string) => ValidateResult,
-  getValues?: () => FlatedataInputs,
-  inndelingId?: string,
 ): RegisterOptions => {
   const formattedInndelingType = capitalize(inndelingType);
   return {
     required: `${formattedInndelingType}nummer kan ikke være tomt`,
     validate: (number: string) => {
-      // Hvis vi har 'getValues', henter vi ferske data fra form for kryssvalidering
-      const allValues = getValues ? getValues() : {};
-      if (getValues && inndelingId != null) {
-        // Hent "nummer" fra alle rader unntatt denne
-        shouldNotBeEqualWith = Object.entries(allValues)
-          .filter(([rowId]) => rowId !== inndelingId)
-          .map(([, rowVal]) => rowVal.nummer);
-      }
       if (!isIntegerString(number)) {
         return `${formattedInndelingType}nummer kan kun inneholde siffer`;
       }
@@ -51,22 +40,16 @@ const getCommonInndelingNumberValidator = (
 interface StemmekretsNumberValidatorConfig {
   shouldNotBeEqualWith: string[];
   additionalValidation?: (number: string) => ValidateResult;
-  getValues?: () => FlatedataInputs;
-  inndelingId?: string;
 }
 interface GrunnkretsNumberValidatorConfig {
   shouldNotBeEqualWith: string[];
   additionalValidation?: (number: string) => ValidateResult;
   prefixNumber?: string;
-  getValues?: () => FlatedataInputs;
-  inndelingId?: string;
 }
 interface KommuneNumberValidatorConfig {
   shouldNotBeEqualWith: string[];
   additionalValidation?: (number: string) => ValidateResult;
   prefixNumber?: string;
-  getValues?: () => FlatedataInputs;
-  inndelingId?: string;
 }
 interface FylkeNumberValidatorConfig {
   shouldNotBeEqualWith: string[];
@@ -76,26 +59,14 @@ interface FylkeNumberValidatorConfig {
 export const getStemmekretsNumberValidator = ({
   shouldNotBeEqualWith,
   additionalValidation,
-  getValues,
-  inndelingId,
 }: StemmekretsNumberValidatorConfig): RegisterOptions => {
-  return getCommonInndelingNumberValidator(
-    "stemmekrets",
-    1,
-    4,
-    shouldNotBeEqualWith,
-    additionalValidation,
-    getValues,
-    inndelingId,
-  );
+  return getCommonInndelingNumberValidator("stemmekrets", 1, 4, shouldNotBeEqualWith, additionalValidation);
 };
 
 export const getGrunnkretsNumberValidator = ({
   shouldNotBeEqualWith,
   additionalValidation,
   prefixNumber,
-  getValues,
-  inndelingId,
 }: GrunnkretsNumberValidatorConfig): RegisterOptions => {
   const { validate, ...rest } = getCommonInndelingNumberValidator(
     "grunnkrets",
@@ -103,8 +74,6 @@ export const getGrunnkretsNumberValidator = ({
     8,
     shouldNotBeEqualWith,
     additionalValidation,
-    getValues,
-    inndelingId,
   );
   return {
     ...rest,
