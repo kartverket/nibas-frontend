@@ -1,28 +1,17 @@
-import Overlay from "ol/Overlay";
 import { useEffect, useRef } from "react";
 import { styled } from "styled-components";
 import { map } from "../constants";
 import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
 
-export const overlayPopup = new Overlay({
-  autoPan: {
-    animation: {
-      duration: 250,
-    },
-  },
-  positioning: "center-center",
-  offset: [-150, 0],
-});
-
 export const OverlayPopup = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
-
-  const { overlayPopupContent, overlayPopupPosition } = useOverlayPopup();
+  const { overlayPopup, overlayPopupContent, overlayPopupPosition } = useOverlayPopup();
 
   useEffect(() => {
     if (overlayRef.current) {
       overlayPopup.setElement(overlayRef.current);
       overlayPopup.setPosition(overlayPopupPosition);
+      overlayPopup.setOffset([-150, 0]);
       map.addOverlay(overlayPopup);
     }
 
@@ -30,8 +19,9 @@ export const OverlayPopup = () => {
       map.removeOverlay(overlayPopup);
       overlayPopup.setElement(undefined);
       overlayPopup.setPosition(undefined);
+      overlayPopup.setOffset([0, 0]);
     };
-  }, [overlayPopupPosition]);
+  }, [overlayPopup, overlayPopupPosition]);
 
   return (
     <Popup $visible={true} ref={overlayRef}>

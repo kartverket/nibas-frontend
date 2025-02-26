@@ -1,12 +1,24 @@
+import Overlay from "ol/Overlay";
 import { Coordinate } from "ol/coordinate";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 type OverlayPopupContextValue = {
   openOverlayPopup: (popupContent: ReactNode, position: Coordinate) => void;
   closeOverlayPopup: () => void;
+  overlayPopup: Overlay;
   overlayPopupContent: ReactNode;
   overlayPopupPosition: Coordinate | undefined;
 };
+
+export const overlayPopup = new Overlay({
+  autoPan: {
+    animation: {
+      duration: 250,
+    },
+  },
+  positioning: "center-center",
+  offset: [0, 0],
+});
 
 const OverlayPopupContext = createContext<OverlayPopupContextValue | undefined>(undefined);
 
@@ -29,6 +41,7 @@ export const OverlayPopupProvider = ({ children }: { children: ReactNode }) => {
   const value = {
     openOverlayPopup,
     closeOverlayPopup,
+    overlayPopup,
     overlayPopupContent,
     overlayPopupPosition,
   };
