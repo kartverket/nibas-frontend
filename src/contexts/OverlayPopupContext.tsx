@@ -10,7 +10,7 @@ type OverlayPopupContextValue = {
   overlayPopupPosition: Coordinate | undefined;
 };
 
-export const overlayPopup = new Overlay({
+const overlayPopup = new Overlay({
   autoPan: {
     animation: {
       duration: 250,
