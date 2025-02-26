@@ -4,7 +4,8 @@ import { FeatureProperties } from "../../../types/api";
 import { SelectFeature } from "../interactions/useSelect";
 
 type Props = {
-  allFeatures: SelectFeature[];
+  activeFeaturesAmount: number;
+  selectedFeatures: SelectFeature[];
   selectedFeatureId: string;
 };
 
@@ -27,8 +28,9 @@ const FeatureItem = styled.div<{ $clicked: boolean }>`
   overflow: hidden;
 `;
 
-export const SelectedFeatureList = ({ allFeatures, selectedFeatureId }: Props) => {
-  const activeFeaturesSorted = allFeatures.toSorted((a, b) => Number(b.clicked) - Number(a.clicked));
+export const SelectedFeatureList = ({ activeFeaturesAmount, selectedFeatures, selectedFeatureId }: Props) => {
+  const activeFeaturesSorted = selectedFeatures.toSorted((a, b) => Number(b.clicked) - Number(a.clicked));
+  const activeAndSelectedFeaturesDiff = activeFeaturesAmount - selectedFeatures.length;
   return (
     <Container>
       <PaddedText fontStyle={"italic"} fontSize={"xs"}>
@@ -42,6 +44,9 @@ export const SelectedFeatureList = ({ allFeatures, selectedFeatureId }: Props) =
           </FeatureItem>
         );
       })}
+      {activeAndSelectedFeaturesDiff !== 0 && (
+        <PaddedText fontStyle={"italic"}>+ {activeAndSelectedFeaturesDiff} andre grenser</PaddedText>
+      )}
     </Container>
   );
 };

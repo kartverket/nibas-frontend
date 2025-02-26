@@ -75,10 +75,12 @@ const useSelect = () => {
       // Dette gjør at gjentatte klikk itererer gjennom grenser som ligger på samme sted.
       let clickedFeature = activeFeatures[0];
       if (activeFeatures.length > 1) {
-        const selectedActiveFeatures = activeFeatures.map((af) => ({
-          feature: af,
-          clicked: af.getId() === clickedFeature.getId(),
-        }));
+        const selectedActiveFeatures = activeFeatures
+          .map((af) => ({
+            feature: af,
+            clicked: af.getId() === clickedFeature.getId(),
+          }))
+          .slice(0, 5);
         // Finner den første featuren i lista som ikke er valgt
         if (prevSelectData != null && areCoordsWithinNibasHitTolerance(prevSelectData.coordinates, event.coordinate)) {
           const nextClickFeature = prevSelectData.selectFeatures.find(
@@ -105,7 +107,11 @@ const useSelect = () => {
         }
         const clickedFeatureId = clickedFeature.getId()?.toString() ?? "";
         openOverlayPopup(
-          <SelectedFeatureList allFeatures={selectedActiveFeatures} selectedFeatureId={clickedFeatureId} />,
+          <SelectedFeatureList
+            activeFeaturesAmount={activeFeatures.length}
+            selectedFeatures={selectedActiveFeatures}
+            selectedFeatureId={clickedFeatureId}
+          />,
           event.coordinate,
         );
       } else {
