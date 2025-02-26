@@ -237,9 +237,36 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     return false;
   };
 
+  /**
+   * @returns Hvorvidt utkastet har sammenslåinger eller ikke
+   */
+  const utkastHarSammenslaainger = () => {
+    if (!utkast?.operasjoner) {
+      return false;
+    }
+    const sammenslaaingerStemmekrets = utkast.operasjoner.stemmekretsSammenslaaingsendring || [];
+    const sammenlåingerGrunnkrets = utkast.operasjoner.grunnkretsSammenslaaingsendring || [];
+    for (const sammenslaaing of Array.isArray(sammenslaaingerStemmekrets)
+      ? sammenslaaingerStemmekrets
+      : [sammenslaaingerStemmekrets]) {
+      if (Object.keys(sammenslaaing).length > 0) {
+        return true;
+      }
+    }
+    for (const sammenslaaing of Array.isArray(sammenlåingerGrunnkrets)
+      ? sammenlåingerGrunnkrets
+      : [sammenlåingerGrunnkrets]) {
+      if (Object.keys(sammenslaaing).length > 0) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const value = {
     utkast,
     utkastHarEndringer,
+    utkastHarSammenslaainger,
     getUpdateUtkastRequestFromHistory,
     updateUtkastWithHistory,
     updateUtkast,
