@@ -25,15 +25,12 @@ const OverlayPopupContext = createContext<OverlayPopupContextValue | undefined>(
 export const OverlayPopupProvider = ({ children }: { children: ReactNode }) => {
   const [overlayPopupPosition, setOverlayPopupPosition] = useState<Coordinate>();
   const [overlayPopupContent, setOverlayPopupContent] = useState<ReactNode>();
-  const [, setIsOverlayPopupOpen] = useState(false);
 
   const openOverlayPopup = (popupContent: ReactNode, position: Coordinate) => {
     setOverlayPopupPosition(position);
     setOverlayPopupContent(popupContent);
-    setIsOverlayPopupOpen(true);
   };
   const closeOverlayPopup = () => {
-    setIsOverlayPopupOpen(false);
     setOverlayPopupContent(undefined);
     setOverlayPopupPosition(undefined);
   };
