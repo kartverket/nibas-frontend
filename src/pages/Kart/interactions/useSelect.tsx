@@ -2,11 +2,12 @@ import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { LineString } from "ol/geom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "../../../contexts/OverlayPanelContext";
 import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
 import { Tool, useToolbar } from "../../../contexts/ToolbarContext";
+import { FeatureProperties } from "../../../types/api";
 import {
   getFeatureFremtidigEndringDato,
   getFlateRepresentasjonpunkterWithFremtidigEndring,
@@ -42,10 +43,7 @@ const useSelect = () => {
   const safeTools: Tool[] = ["grenseinfo"];
   const pointTools: Tool[] = ["add", "remove", "split"];
 
-  const [prevSelectData, setSelectData] = useState<SelectData>();
-  useEffect(() => {
-    console.log(prevSelectData);
-  }, [prevSelectData]);
+  const [prevSelectData, setPrevSelectData] = useState<SelectData>();
 
   const select = (event: MapBrowserEvent<MouseEvent>) => {
     if (
@@ -53,10 +51,15 @@ const useSelect = () => {
       !disallowedTools.includes(activeTool) &&
       !(activeModeTools.includes("move") && !safeTools.includes(activeTool))
     ) {
-      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : ["edit"]);
+      const activeFeatures = getLineStringFeaturesAtPixel(
+        event,
+        safeTools.includes(activeTool) ? null : ["edit"],
+      ).toSorted((a, b) =>
+        (a.getProperties() as FeatureProperties).type.localeCompare((b.getProperties() as FeatureProperties).type),
+      );
 
       const quitSelection = () => {
-        setSelectData(undefined);
+        setPrevSelectData(undefined);
         closeOverlayPopup();
         closeOverlayPanel();
         clearSelection();
@@ -83,7 +86,7 @@ const useSelect = () => {
           )?.feature;
           if (nextClickFeature != null) {
             clickedFeature = nextClickFeature;
-            setSelectData((prev) => ({
+            setPrevSelectData((prev) => ({
               coordinates: prev!.coordinates,
               selectFeatures: prev!.selectFeatures.map((sf) =>
                 sf.feature.getId() === clickedFeature.getId() ? { feature: sf.feature, clicked: true } : sf,
@@ -95,13 +98,12 @@ const useSelect = () => {
             return;
           }
         } else {
-          setSelectData({
+          setPrevSelectData({
             coordinates: event.coordinate,
             selectFeatures: selectedActiveFeatures,
           });
         }
         const clickedFeatureId = clickedFeature.getId()?.toString() ?? "";
-        // skriv om til å sortere stabilt på clicked-status
         openOverlayPopup(
           <SelectedFeatureList allFeatures={selectedActiveFeatures} selectedFeatureId={clickedFeatureId} />,
           event.coordinate,

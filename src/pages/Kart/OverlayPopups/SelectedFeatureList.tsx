@@ -28,7 +28,6 @@ const FeatureItem = styled.div<{ $clicked: boolean }>`
 `;
 
 export const SelectedFeatureList = ({ allFeatures, selectedFeatureId }: Props) => {
-  // toSorted er stabil
   const activeFeaturesSorted = allFeatures.toSorted((a, b) => Number(b.clicked) - Number(a.clicked));
   return (
     <Container>
