@@ -28,7 +28,7 @@ export const map = new Map({
   controls: [],
   overlays: [],
   keyboardEventTarget: window.document,
-  interactions: defaults({ altShiftDragRotate: false, dragPan: false, shiftDragZoom: false }),
+  interactions: defaults({ altShiftDragRotate: false, dragPan: false, shiftDragZoom: false, doubleClickZoom: false }),
   maxTilesLoading: Infinity,
 });
 
