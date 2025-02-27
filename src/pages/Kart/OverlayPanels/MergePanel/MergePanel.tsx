@@ -43,7 +43,7 @@ const Buttons = styled.div`
 const MergePanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
-  const { utkast, updateUtkast, utkastHarEndringer } = useUtkast();
+  const { utkast, updateUtkast, utkastHarEndringer, utkastHarSammenslaainger } = useUtkast();
   const auth = useAuthentication();
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
@@ -196,12 +196,13 @@ const MergePanel = () => {
   return (
     <SidePanel>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
-      {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() ? (
+      {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() || utkastHarSammenslaainger() ? (
         <Alert>
           <AlertIcon />
           <AlertTitle>
-            Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre endringer. Avslutt redigeringen av
-            dette utkastet før du gjennomfører sammenslåingen.
+            Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre{" "}
+            {utkastHarSammenslaainger() ? "sammenslåinger" : "endringer"}. Avslutt redigeringen av dette utkastet før du
+            gjennomfører sammenslåingen.
           </AlertTitle>
         </Alert>
       ) : (

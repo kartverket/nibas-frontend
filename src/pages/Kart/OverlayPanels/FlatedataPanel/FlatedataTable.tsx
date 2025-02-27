@@ -27,7 +27,7 @@ type Props = {
 };
 
 const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch }: Props) => {
-  const { utkast } = useUtkast();
+  const { utkast, utkastHarSammenslaainger } = useUtkast();
   const isAdministrativEnhet = mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune";
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
@@ -37,7 +37,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const allInndelingerHasFremtidigEndring = flatedata.every(
     (inndeling) => getInndelingFremtidigEndringDato(inndeling?.id.lokalid.value) != null,
   );
-
   const formMethods = useForm<FlatedataInputs>({ mode: "onSubmit", reValidateMode: "onChange" });
   const {
     reset,
@@ -156,7 +155,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       {utkast && mainInndeling.isEditing && (
         <FlatedataFooter
           isEditing={isEditing}
-          isDisabled={allInndelingerHasFremtidigEndring}
+          isDisabled={allInndelingerHasFremtidigEndring || utkastHarSammenslaainger()}
           toggleEditing={toggleEditing}
           canSave={isDirty}
           onSubmit={(e) => {
@@ -166,7 +165,9 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
           tooltip={
             allInndelingerHasFremtidigEndring
               ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
-              : null
+              : utkastHarSammenslaainger()
+                ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
+                : null
           }
         >
           Rediger flatedetaljer
