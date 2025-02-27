@@ -252,10 +252,10 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
     }
-    const sammenlåingerGrunnkrets = utkast.operasjoner.grunnkretsSammenslaaingsendring || [];
-    for (const sammenslaaing of Array.isArray(sammenlåingerGrunnkrets)
-      ? sammenlåingerGrunnkrets
-      : [sammenlåingerGrunnkrets]) {
+    const sammenslaaingerGrunnkrets = utkast.operasjoner.grunnkretsSammenslaaingsendring || [];
+    for (const sammenslaaing of Array.isArray(sammenslaaingerGrunnkrets)
+      ? sammenslaaingerGrunnkrets
+      : [sammenslaaingerGrunnkrets]) {
       if (Object.keys(sammenslaaing).length > 0) {
         return true;
       }
