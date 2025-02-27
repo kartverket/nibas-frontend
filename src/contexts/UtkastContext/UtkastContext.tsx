@@ -244,23 +244,10 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     if (!utkast?.operasjoner) {
       return false;
     }
-    const sammenslaaingerStemmekrets = utkast.operasjoner.stemmekretsSammenslaaingsendring || [];
-    for (const sammenslaaing of Array.isArray(sammenslaaingerStemmekrets)
-      ? sammenslaaingerStemmekrets
-      : [sammenslaaingerStemmekrets]) {
-      if (Object.keys(sammenslaaing).length > 0) {
-        return true;
-      }
-    }
-    const sammenslaaingerGrunnkrets = utkast.operasjoner.grunnkretsSammenslaaingsendring || [];
-    for (const sammenslaaing of Array.isArray(sammenslaaingerGrunnkrets)
-      ? sammenslaaingerGrunnkrets
-      : [sammenslaaingerGrunnkrets]) {
-      if (Object.keys(sammenslaaing).length > 0) {
-        return true;
-      }
-    }
-    return false;
+    return (
+      utkast.operasjoner.stemmekretsSammenslaaingsendring != null ||
+      utkast.operasjoner.grunnkretsSammenslaaingsendring != null
+    );
   };
 
   const value = {
