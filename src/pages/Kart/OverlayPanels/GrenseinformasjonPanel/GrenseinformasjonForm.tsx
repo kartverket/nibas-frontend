@@ -146,6 +146,14 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     return [];
   }, [feature, metadata.commonGrense?.posisjonskvalitet]);
 
+  const [autofillLoading, setAutofillLoading] = useState(false);
+  const mockAutofillLoading = () => {
+    setAutofillLoading(true);
+    setTimeout(() => {
+      setAutofillLoading(false);
+    }, 1000);
+  };
+
   const autoFillFormValues = () => {
     if (relevantPosisjonskvaliteter != null) {
       // Finner den dårligste posisjonskvaliteten basert på nøyaktighet
@@ -159,6 +167,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
         setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
         handleSubmit(onSubmit)();
+        mockAutofillLoading();
         onCloseAutofill();
         return;
       }
@@ -222,7 +231,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
           <AutofillAlertHeader>
             <TitleWithIconTooltip
               tooltipLabel={
-                "Grensen har blitt snappet til en annnen grense, og vi kan derfor kopiere egenskapene fra den tilsnappede grensen over til denne grensen."
+                "Grensen har blitt snappet til en annen grense, og vi kan derfor kopiere egenskapene fra den tilsnappede grensen over til denne grensen."
               }
             >
               <AlertTitle>Noen egenskaper kan fylles ut automatisk</AlertTitle>
@@ -350,6 +359,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
         valueLabel={kodeliste ? getMaalemetodeText(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
         isEditing={isEditing}
+        isLoading={autofillLoading}
       >
         {kodeliste && (
           <Select {...register("maalemetode")}>
@@ -370,6 +380,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
         valueLabel={getValues("noeyaktighet")?.toString()}
         isEditing={isEditing}
+        isLoading={autofillLoading}
       >
         <Input type="number" {...register("noeyaktighet")} />
       </GrenseinformasjonRow>
