@@ -245,7 +245,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       return false;
     }
     const sammenslaaingerStemmekrets = utkast.operasjoner.stemmekretsSammenslaaingsendring || [];
-    const sammenlåingerGrunnkrets = utkast.operasjoner.grunnkretsSammenslaaingsendring || [];
     for (const sammenslaaing of Array.isArray(sammenslaaingerStemmekrets)
       ? sammenslaaingerStemmekrets
       : [sammenslaaingerStemmekrets]) {
@@ -253,6 +252,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
         return true;
       }
     }
+    const sammenlåingerGrunnkrets = utkast.operasjoner.grunnkretsSammenslaaingsendring || [];
     for (const sammenslaaing of Array.isArray(sammenlåingerGrunnkrets)
       ? sammenlåingerGrunnkrets
       : [sammenlåingerGrunnkrets]) {
