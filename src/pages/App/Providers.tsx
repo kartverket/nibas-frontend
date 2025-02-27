@@ -3,6 +3,7 @@ import { HistoryProvider } from "contexts/HistoryContext/HistoryContext";
 import { UtkastProvider } from "contexts/UtkastContext/UtkastContext";
 import { ErrorHandlingProvider } from "contexts/ErrorHandlingContext";
 import { OverlayPanelProvider } from "contexts/OverlayPanelContext";
+import { OverlayPopupProvider } from "contexts/OverlayPopupContext";
 import { FeatureStyleProvider } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
@@ -17,17 +18,19 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
         <GyldighetsdatoProvider>
           <FeatureStyleProvider>
             <HistoryProvider>
-              <OverlayPanelProvider>
-                <AuthRenewProvider>
-                  <ToolbarProvider>
-                    <KartlagProvider>
-                      <UtkastProvider>
-                        <InndelingerProvider>{children}</InndelingerProvider>
-                      </UtkastProvider>
-                    </KartlagProvider>
-                  </ToolbarProvider>
-                </AuthRenewProvider>
-              </OverlayPanelProvider>
+              <OverlayPopupProvider>
+                <OverlayPanelProvider>
+                  <AuthRenewProvider>
+                    <ToolbarProvider>
+                      <KartlagProvider>
+                        <UtkastProvider>
+                          <InndelingerProvider>{children}</InndelingerProvider>
+                        </UtkastProvider>
+                      </KartlagProvider>
+                    </ToolbarProvider>
+                  </AuthRenewProvider>
+                </OverlayPanelProvider>
+              </OverlayPopupProvider>
             </HistoryProvider>
           </FeatureStyleProvider>
         </GyldighetsdatoProvider>

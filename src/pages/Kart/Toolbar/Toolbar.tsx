@@ -29,6 +29,7 @@ import SnapMenu from "./SnapMenu";
 import ZoomButtons from "./ZoomButtons";
 import { ToolbarMenu } from "./ToolbarMenu";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { useOverlayPopup } from "contexts/OverlayPopupContext";
 
 export type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -134,6 +135,8 @@ const Toolbar = () => {
     isPanningAllowed,
   );
 
+  const { closeOverlayPopup } = useOverlayPopup();
+
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
   useKeyboardShortcut("escape", () => {
     if (activeTool === "draw") {
@@ -163,6 +166,8 @@ const Toolbar = () => {
     }
 
     if (activeOverlayPanel) {
+      // TODO: Når vi får flere overlaypopups må vi ha mulighet for å lukke spesifikke popups, i dette tilfellet "aktivefeatures"
+      closeOverlayPopup();
       closeOverlayPanel();
       return;
     }

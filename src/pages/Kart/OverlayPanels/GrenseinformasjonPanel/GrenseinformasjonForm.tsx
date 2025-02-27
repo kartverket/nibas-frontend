@@ -10,6 +10,7 @@ import {
   Input,
   Select,
   Textarea,
+  useDisclosure,
   useToast,
 } from "@kvib/react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
@@ -123,6 +124,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   }, [feature, getDefaultValues, reset, history]);
 
   const relevantPosisjonskvaliteter = useMemo(() => {
+    const eksisterendePosisjonskvalitet = metadata.commonGrense?.posisjonskvalitet;
     const posisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> | undefined = feature.get("snapData");
     if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0 && isLineStringFeature(feature)) {
       const featureCoordinates = feature.getGeometry()?.getCoordinates();
@@ -132,14 +134,18 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
         .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
         .map(([, posisjonskvalitet]) => posisjonskvalitet)
+        .filter(
+          (posisjonskvalitet) =>
+            posisjonskvalitet.noeyaktighet !== eksisterendePosisjonskvalitet?.noeyaktighet ||
+            posisjonskvalitet.maalemetode !== eksisterendePosisjonskvalitet?.maalemetode.id,
+        )
         // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
         .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
       return relevant;
     }
     return [];
-  }, [feature]);
+  }, [feature, metadata.commonGrense?.posisjonskvalitet]);
 
-  const [autofillOpen, setAutofillOpen] = useState(relevantPosisjonskvaliteter.length > 0);
   const [autofillLoading, setAutofillLoading] = useState(false);
   const mockAutofillLoading = () => {
     setAutofillLoading(true);
@@ -162,7 +168,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
         handleSubmit(onSubmit)();
         mockAutofillLoading();
-        setAutofillOpen(false);
+        onCloseAutofill();
         return;
       }
     }
@@ -173,6 +179,13 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         "Feilet ved automatisk utfylling av egenskaper. Prøv å fylle ut manuelt, og kontakt Kartverket hvis feilen vedvarer",
     });
   };
+
+  const { isOpen: isAutofillOpen, onOpen: onOpenAutofill, onClose: onCloseAutofill } = useDisclosure();
+  useEffect(() => {
+    if (relevantPosisjonskvaliteter.length > 0) {
+      onOpenAutofill();
+    }
+  }, [relevantPosisjonskvaliteter, onOpenAutofill]);
 
   return (
     <FormContainer>
@@ -213,7 +226,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       >
         Informasjon
       </PanelHeader>
-      {autofillOpen && (
+      {relevantPosisjonskvaliteter.length > 0 && isAutofillOpen && (
         <AutofillAlert status={"info"}>
           <AutofillAlertHeader>
             <TitleWithIconTooltip
@@ -227,7 +240,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
               icon={"close"}
               aria-label={"Lukk autofyll dialog"}
               variant="ghost"
-              onClick={() => setAutofillOpen(false)}
+              onClick={() => onCloseAutofill()}
             />
           </AutofillAlertHeader>
           <AlertDescription>
@@ -243,7 +256,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             >
               Fyll inn automatisk
             </Button>
-            <Button size={"sm"} variant="secondary" onClick={() => setAutofillOpen(false)}>
+            <Button size={"sm"} variant="secondary" onClick={() => onCloseAutofill()}>
               Nei, jeg vil fylle inn selv
             </Button>
           </ButtonGroup>
