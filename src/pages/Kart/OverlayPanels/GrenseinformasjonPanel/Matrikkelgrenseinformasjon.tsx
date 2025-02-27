@@ -88,10 +88,24 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
   return (
     <GrensePanelContent>
       <PanelHeader noMargin onClose={onClose}>
-        Informasjon
+        Informasjon om teiggrense
       </PanelHeader>
       {teiggrenseProperties ? (
         <>
+          <TeiggrensePropertyRow label={"Teiggrense ID"}>
+            {teiggrenseProperties.TEIGGRENSEID != null ? (
+              teiggrenseProperties.TEIGGRENSEID
+            ) : (
+              <ItalicText>Ikke oppgitt</ItalicText>
+            )}
+          </TeiggrensePropertyRow>
+          <TeiggrensePropertyRow label={"Kommune"}>
+            {teiggrenseProperties.KOMMUNENR != null ? (
+              teiggrenseProperties.KOMMUNENR
+            ) : (
+              <ItalicText>Ikke oppgitt</ItalicText>
+            )}
+          </TeiggrensePropertyRow>
           {/* <TeiggrensePropertyRow label={"Målemetode"}>
             {maalemetode != null ? (
               `${maalemetode.kode} ${maalemetode.label}`
