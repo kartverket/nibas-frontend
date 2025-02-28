@@ -53,6 +53,7 @@ const useSelect = () => {
       !disallowedTools.includes(activeTool) &&
       !(activeModeTools.includes("move") && !safeTools.includes(activeTool))
     ) {
+      // TODO: Burde kanskje sørge for at det ikke er to av samme administrative grense i noen tilfeller.
       const activeFeatures = getUniqueItemsBy(
         getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : ["edit"]),
         (f) => f.getId(),
@@ -71,7 +72,6 @@ const useSelect = () => {
         quitSelection();
         return;
       }
-      console.log(activeFeatures);
       // Dette gjør at gjentatte klikk itererer gjennom grenser som ligger på samme sted.
       let clickedFeature = activeFeatures[0];
       const currentZoomLevel = map.getView().getZoom() ?? -Infinity;
