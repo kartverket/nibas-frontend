@@ -79,7 +79,7 @@ export const EditGrenseInfoButton = ({
       Fullfør redigering
     </Button>
   ) : tooltip != null && isDisabled ? (
-    <Tooltip hasArrow label={<TooltipBody text={tooltip != null ? tooltip : ""} />}>
+    <Tooltip hasArrow placement="left" label={<TooltipBody text={tooltip != null ? tooltip : ""} />}>
       {<Button isDisabled={true}>Rediger</Button>}
     </Tooltip>
   ) : (
@@ -230,7 +230,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             ? EditGrenseInfoButton({
                 isEditing: isEditing,
                 handleSubmit: handleSubmit(onSubmit),
-                isDisabled: false,
+                isDisabled: utkastHarSammenslaainger(),
                 tooltip: utkastHarSammenslaainger()
                   ? "Utkastet har sammenslåinger og grenseinformasjon kan derfor ikke redigeres"
                   : null,

@@ -14,6 +14,7 @@ type Props = {
   hasIcon?: boolean;
   children: React.ReactNode;
   tooltip?: string | null;
+  tooltipPlacement?: "top" | "right" | "bottom" | "left";
 };
 
 const EditAndSaveButton = ({
@@ -28,6 +29,7 @@ const EditAndSaveButton = ({
   onSubmit,
   size,
   tooltip,
+  tooltipPlacement,
 }: Props) => {
   const renderButton = () =>
     isEditing ? (
@@ -55,7 +57,11 @@ const EditAndSaveButton = ({
   return (
     <Container className={className}>
       {tooltip != null ? (
-        <Tooltip hasArrow label={<TooltipBody text={tooltip} />}>
+        <Tooltip
+          placement={tooltipPlacement ? tooltipPlacement : "bottom"}
+          hasArrow
+          label={<TooltipBody text={tooltip} />}
+        >
           {renderButton()}
         </Tooltip>
       ) : (
