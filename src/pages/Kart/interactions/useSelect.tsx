@@ -20,6 +20,7 @@ import { datestringToFormattedDatestring } from "../OverlayPanels/Grenseinformas
 import { areCoordsWithinNibasHitTolerance } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 import { SelectedFeatureList } from "../OverlayPopups/SelectedFeatureList";
 import { useGetFeatures } from "./interaction-utils";
+import { map } from "../constants";
 
 export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 export type SelectFeature = {
@@ -52,14 +53,7 @@ const useSelect = () => {
       !disallowedTools.includes(activeTool) &&
       !(activeModeTools.includes("move") && !safeTools.includes(activeTool))
     ) {
-      const activeFeatures = getLineStringFeaturesAtPixel(
-        event,
-        safeTools.includes(activeTool) ? null : ["edit"],
-      ).toSorted((a, b) => {
-        const sortStringA = isTeigFeature(a) ? "Teiggrense" : (a.getProperties() as FeatureProperties).type;
-        const sortStringB = isTeigFeature(b) ? "Teiggrense" : (b.getProperties() as FeatureProperties).type;
-        return sortStringA.localeCompare(sortStringB);
-      });
+      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : ["edit"]);
 
       const quitSelection = () => {
         setPrevSelectData(undefined);
@@ -77,8 +71,14 @@ const useSelect = () => {
 
       // Dette gjør at gjentatte klikk itererer gjennom grenser som ligger på samme sted.
       let clickedFeature = activeFeatures[0];
-      if (activeFeatures.length > 1) {
-        const selectedActiveFeatures = activeFeatures
+      const currentZoomLevel = map.getView().getZoom() ?? -Infinity;
+      if (activeFeatures.length > 1 && currentZoomLevel > 10) {
+        const activeFeaturesSorted = activeFeatures.toSorted((a, b) => {
+          const sortStringA = isTeigFeature(a) ? "Teiggrense" : (a.getProperties() as FeatureProperties).type;
+          const sortStringB = isTeigFeature(b) ? "Teiggrense" : (b.getProperties() as FeatureProperties).type;
+          return sortStringA.localeCompare(sortStringB);
+        });
+        const selectedActiveFeatures = activeFeaturesSorted
           .map((af) => ({
             feature: af,
             clicked: af.getId() === clickedFeature.getId(),
@@ -111,7 +111,7 @@ const useSelect = () => {
         const clickedFeatureId = clickedFeature.getId()?.toString() ?? "";
         openOverlayPopup(
           <SelectedFeatureList
-            activeFeaturesAmount={activeFeatures.length}
+            activeFeaturesAmount={activeFeaturesSorted.length}
             selectedFeatures={selectedActiveFeatures}
             selectedFeatureId={clickedFeatureId}
           />,
