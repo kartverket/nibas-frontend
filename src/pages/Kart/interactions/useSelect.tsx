@@ -15,7 +15,7 @@ import {
   isFeatureToBeArchived,
   isTeigFeature,
 } from "../../../utils/features";
-import { removeNil } from "../../../utils/list-utils";
+import { getUniqueItemsBy, removeNil } from "../../../utils/list-utils";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { areCoordsWithinNibasHitTolerance } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 import { SelectedFeatureList } from "../OverlayPopups/SelectedFeatureList";
@@ -53,7 +53,10 @@ const useSelect = () => {
       !disallowedTools.includes(activeTool) &&
       !(activeModeTools.includes("move") && !safeTools.includes(activeTool))
     ) {
-      const activeFeatures = getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : ["edit"]);
+      const activeFeatures = getUniqueItemsBy(
+        getLineStringFeaturesAtPixel(event, safeTools.includes(activeTool) ? null : ["edit"]),
+        (f) => f.getId(),
+      );
 
       const quitSelection = () => {
         setPrevSelectData(undefined);
@@ -68,7 +71,7 @@ const useSelect = () => {
         quitSelection();
         return;
       }
-
+      console.log(activeFeatures);
       // Dette gjør at gjentatte klikk itererer gjennom grenser som ligger på samme sted.
       let clickedFeature = activeFeatures[0];
       const currentZoomLevel = map.getView().getZoom() ?? -Infinity;
