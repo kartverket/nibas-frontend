@@ -2,7 +2,7 @@ import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { LineString } from "ol/geom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "../../../contexts/OverlayPanelContext";
 import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
@@ -13,6 +13,7 @@ import {
   getFlateRepresentasjonpunkterWithFremtidigEndring,
   isFeatureEditable,
   isFeatureToBeArchived,
+  isTeigFeature,
 } from "../../../utils/features";
 import { removeNil } from "../../../utils/list-utils";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
@@ -54,9 +55,11 @@ const useSelect = () => {
       const activeFeatures = getLineStringFeaturesAtPixel(
         event,
         safeTools.includes(activeTool) ? null : ["edit"],
-      ).toSorted((a, b) =>
-        (a.getProperties() as FeatureProperties).type.localeCompare((b.getProperties() as FeatureProperties).type),
-      );
+      ).toSorted((a, b) => {
+        const sortStringA = isTeigFeature(a) ? "Teiggrense" : (a.getProperties() as FeatureProperties).type;
+        const sortStringB = isTeigFeature(b) ? "Teiggrense" : (b.getProperties() as FeatureProperties).type;
+        return sortStringA.localeCompare(sortStringB);
+      });
 
       const quitSelection = () => {
         setPrevSelectData(undefined);
