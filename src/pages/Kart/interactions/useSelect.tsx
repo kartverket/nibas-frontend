@@ -2,7 +2,7 @@ import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { LineString } from "ol/geom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "../../../contexts/OverlayPanelContext";
 import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
