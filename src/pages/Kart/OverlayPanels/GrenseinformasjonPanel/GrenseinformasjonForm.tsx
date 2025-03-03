@@ -10,6 +10,7 @@ import {
   Input,
   Select,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@kvib/react";
@@ -37,6 +38,8 @@ import { PanelHeader } from "../Panel";
 import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -53,19 +56,32 @@ type EditGrenseInfoButtonProps = {
   isEditing: boolean;
   handleSubmit: () => void;
   toggleEdit: () => void;
+  tooltip: string | null;
+  isDisabled: boolean;
 };
 
-export const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrenseInfoButtonProps) => {
+export const EditGrenseInfoButton = ({
+  isEditing,
+  handleSubmit,
+  toggleEdit,
+  tooltip,
+  isDisabled,
+}: EditGrenseInfoButtonProps) => {
   return isEditing ? (
     <Button
       onClick={() => {
         handleSubmit();
         toggleEdit();
       }}
+      isDisabled={isDisabled}
       rightIcon="check_circle"
     >
       Fullfør redigering
     </Button>
+  ) : tooltip != null && isDisabled ? (
+    <Tooltip hasArrow placement="left" label={<TooltipBody text={tooltip != null ? tooltip : ""} />}>
+      {<Button isDisabled={true}>Rediger</Button>}
+    </Tooltip>
   ) : (
     <Button onClick={() => toggleEdit()}>Rediger</Button>
   );
@@ -81,7 +97,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
   const toast = useToast();
-
+  const { utkastHarSammenslaainger } = useUtkast();
   const featureId = feature.getId()?.toString();
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
@@ -214,6 +230,10 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             ? EditGrenseInfoButton({
                 isEditing: isEditing,
                 handleSubmit: handleSubmit(onSubmit),
+                isDisabled: utkastHarSammenslaainger(),
+                tooltip: utkastHarSammenslaainger()
+                  ? "Utkastet har sammenslåinger og grenseinformasjon kan derfor ikke redigeres"
+                  : null,
                 toggleEdit: () => {
                   if (isEditing) {
                     reset(getDefaultValues(feature));
