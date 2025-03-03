@@ -1,18 +1,19 @@
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { PanelHeader, SidePanel } from "../Panel";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { FeatureProperties } from "types/api";
-import GrenseinformasjonForm from "./GrenseinformasjonForm";
-import { useCallback, useEffect } from "react";
-import { isTeigFeature } from "utils/features";
-import { TilhorighetField } from "./TilhorighetField";
-import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
 import { Alert, AlertIcon, Card, CardBody, CardHeader, Divider, Heading, Text } from "@kvib/react";
-import { styled } from "styled-components";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
+import { isNonEditableFeatureId } from "pages/Kart/interactions/feature-id-utils";
+import { useCallback, useEffect } from "react";
+import { styled } from "styled-components";
+import { FeatureProperties } from "types/api";
+import { getFeatureFremtidigEndringDato, isTeigFeature } from "utils/features";
+import { PanelHeader, SidePanel } from "../Panel";
+import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { TeiggrenseInformasjon } from "./Matrikkelgrenseinformasjon";
+import { TilhorighetField } from "./TilhorighetField";
+import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
 
 const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
@@ -45,6 +46,9 @@ const GrenseinformasjonPanel = () => {
     }
   }, [closeGrenseinfoIfFeatureRemoved, history.entries.length, history.index]);
 
+  const gyldigTilDato = getFeatureFremtidigEndringDato(selectedFeature);
+  const isDisabled = isNonEditableFeatureId(selectedFeature?.getId()) || gyldigTilDato != null;
+
   return (
     <SidePanel>
       {selectedFeatures.length === 0 ? (
@@ -75,7 +79,7 @@ const GrenseinformasjonPanel = () => {
             </GrenseInfoExtraCardHeader>
             <GrenseInfoExtraCardBody>
               <Divider />
-              <TilhorighetField feature={selectedFeature} />
+              <TilhorighetField feature={selectedFeature} isDisabled={isDisabled} />
               <Divider />
               <Vedtaksinformasjon feature={selectedFeature} />
             </GrenseInfoExtraCardBody>

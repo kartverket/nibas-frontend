@@ -165,7 +165,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
           tooltip={
             allInndelingerHasFremtidigEndring
               ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
-              : utkastHarSammenslaainger()
+              : utkastHarSammenslaainger() === true
                 ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
                 : null
           }

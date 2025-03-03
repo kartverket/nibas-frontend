@@ -32,9 +32,12 @@ import { styled } from "styled-components";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { isLineStringFeature } from "utils/type-utils";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
-import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { PanelHeader } from "../Panel";
-import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
+import {
+  dateToFormattedDatestring,
+  datestringToFormattedDatestring,
+  isGrenseinformasjonPanelDisabled,
+} from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
 
@@ -76,7 +79,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { currentlyEditingInndelinger } = useInndelinger();
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
-  const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
   const { openAsync } = useConfirmationModal();
   const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
@@ -86,7 +88,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
   const gyldigTil = metadata.common?.gyldigTil;
-  const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled || metadata?.common?.gyldigTil != null;
+  const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled(feature) || metadata?.common?.gyldigTil != null;
 
   const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
     if (id === undefined || id.length === 0) {
