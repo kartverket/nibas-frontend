@@ -16,6 +16,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { removeNil } from "utils/list-utils";
 import { anyFeatureIsEditable } from "utils/features";
 import { isTempFeatureId } from "../interactions/feature-id-utils";
+import { useOverlayPopup } from "contexts/OverlayPopupContext";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
@@ -23,6 +24,7 @@ const ToolbarPopups = () => {
   const toast = useToast();
   const { split } = useSplit();
   const { addHistoryEntry } = useHistory();
+  const { closeOverlayPopup } = useOverlayPopup();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
   const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
 
@@ -172,7 +174,15 @@ const ToolbarPopups = () => {
             />
           );
         }
-        return <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />;
+        return (
+          <ToolbarPopup
+            text="Velg en grense i kartet for å se grenseinformasjon"
+            onClose={() => {
+              resetTool();
+              closeOverlayPopup();
+            }}
+          />
+        );
       case "grensecoordinates":
         return <ToolbarPopup text="Hold over punktet du ønsker å se koordinatet til" onClose={resetTool} />;
       case "measure":
