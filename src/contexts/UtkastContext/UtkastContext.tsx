@@ -237,9 +237,26 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     return false;
   };
 
+  /**
+   * @returns Hvorvidt utkastet har sammenslåinger eller ikke
+   */
+  const utkastHarSammenslaainger = () => {
+    if (!utkast?.operasjoner) {
+      return false;
+    }
+    if (
+      utkast.operasjoner.stemmekretsSammenslaaingsendring != null ||
+      utkast.operasjoner.grunnkretsSammenslaaingsendring != null
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   const value = {
     utkast,
     utkastHarEndringer,
+    utkastHarSammenslaainger,
     getUpdateUtkastRequestFromHistory,
     updateUtkastWithHistory,
     updateUtkast,

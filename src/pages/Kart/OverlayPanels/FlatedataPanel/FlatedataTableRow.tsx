@@ -71,19 +71,26 @@ export const FlatedataTableRow = ({
     getValues,
     register,
     trigger,
+    watch,
     formState: { errors, isSubmitted },
   } = formMethods;
-
   const inndelingId = getIdFromEntity(inndeling);
   const inndelingErrors = errors[inndelingId];
 
-  const existingInndelingtypeNumbers = allInndelinger
-    .filter((item) => item.id !== inndeling.id)
-    .map((item) => item.nummer);
+  const getExistingIndelingtypeNumbers = () => {
+    const watchValues = watch();
+    const watchedValues = Object.entries(watchValues)
+      .filter(([rowId]) => rowId !== inndelingId)
+      .map(([, rowVal]) => rowVal.nummer);
+    return watchedValues;
+  };
   const prefixNumber = "kommunenummer" in inndeling ? inndeling.kommunenummer.kodeverdi : undefined;
   const validateInndelingNumber = getNumberValidatorFunctionForInndelingType(inndelingtype);
   const registerOptions = {
-    nummer: validateInndelingNumber({ shouldNotBeEqualWith: existingInndelingtypeNumbers, prefixNumber: prefixNumber }),
+    nummer: validateInndelingNumber({
+      shouldNotBeEqualWith: getExistingIndelingtypeNumbers(),
+      prefixNumber: prefixNumber,
+    }),
     navn: {
       required: `${capitalize(inndelingtype)}navn kan ikke være tomt`,
     },
@@ -199,6 +206,9 @@ export const FlatedataTableRow = ({
                 : undefined
             }
             {...register(`${inndelingId}.nummer`, disabledDate == null ? registerOptions.nummer : undefined)}
+            onBlur={() => {
+              trigger(); // Ønsker å validere de andre radene etter at vi har skrevet inn et nummer
+            }}
           />
           <InputCell
             isEditing={isEditing}

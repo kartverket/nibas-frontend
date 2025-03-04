@@ -43,7 +43,7 @@ const Buttons = styled.div`
 const MergePanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
-  const { utkast, updateUtkast, utkastHarEndringer } = useUtkast();
+  const { utkast, updateUtkast, utkastHarEndringer, utkastHarSammenslaainger } = useUtkast();
   const auth = useAuthentication();
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
@@ -74,6 +74,8 @@ const MergePanel = () => {
     getValues,
     setValue,
     reset,
+    trigger,
+    watch,
     formState: { errors, isDirty },
   } = formMethods;
 
@@ -178,26 +180,29 @@ const MergePanel = () => {
     setValue("nummer", selectedStemmekrets?.nummer ?? "");
   };
 
-  const existingStemmekretsnummere = utkastStemmekretser
-    ? utkastStemmekretser
-        .filter(
-          (stemmekrets) =>
-            ![getValues("stemmekrets"), ...getValues("nummerTilSammenslaaing").map((n) => n.value)].includes(
-              stemmekrets.nummer,
-            ),
-        )
-        .map((inndeling) => inndeling.nummer)
-    : [];
+  const getExistingStemmekretsnummere: () => string[] = () => {
+    return utkastStemmekretser
+      ? utkastStemmekretser
+          .filter(
+            (stemmekrets) =>
+              ![watch("stemmekrets"), ...watch("nummerTilSammenslaaing").map((n) => n.value)].includes(
+                stemmekrets.nummer,
+              ),
+          )
+          .map((inndeling) => inndeling.nummer)
+      : [];
+  };
 
   return (
     <SidePanel>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
-      {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() ? (
+      {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() || utkastHarSammenslaainger() ? (
         <Alert>
           <AlertIcon />
           <AlertTitle>
-            Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre endringer. Avslutt redigeringen av
-            dette utkastet før du gjennomfører sammenslåingen.
+            Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre{" "}
+            {utkastHarSammenslaainger() ? "sammenslåinger" : "endringer"}. Avslutt redigeringen av dette utkastet før du
+            gjennomfører sammenslåingen.
           </AlertTitle>
         </Alert>
       ) : (
@@ -245,13 +250,14 @@ const MergePanel = () => {
                   {...register(
                     "nummer",
                     getNumberValidatorFunctionForInndelingType("stemmekrets")({
-                      shouldNotBeEqualWith: existingStemmekretsnummere,
+                      shouldNotBeEqualWith: getExistingStemmekretsnummere(),
                     }),
                   )}
                   validationError={{
                     showError: !!errors?.nummer,
                     message: errors.nummer?.message ?? "",
                   }}
+                  onBlur={() => trigger()}
                 />
                 <Input
                   label="Stemmekretsnavn"

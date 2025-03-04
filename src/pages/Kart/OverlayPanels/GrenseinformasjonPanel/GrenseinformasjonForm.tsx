@@ -10,6 +10,7 @@ import {
   Input,
   Select,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@kvib/react";
@@ -37,6 +38,8 @@ import { PanelHeader } from "../Panel";
 import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -53,19 +56,32 @@ type EditGrenseInfoButtonProps = {
   isEditing: boolean;
   handleSubmit: () => void;
   toggleEdit: () => void;
+  tooltip: string | null;
+  isDisabled: boolean;
 };
 
-export const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrenseInfoButtonProps) => {
+export const EditGrenseInfoButton = ({
+  isEditing,
+  handleSubmit,
+  toggleEdit,
+  tooltip,
+  isDisabled,
+}: EditGrenseInfoButtonProps) => {
   return isEditing ? (
     <Button
       onClick={() => {
         handleSubmit();
         toggleEdit();
       }}
+      isDisabled={isDisabled}
       rightIcon="check_circle"
     >
       Fullfør redigering
     </Button>
+  ) : tooltip != null && isDisabled ? (
+    <Tooltip hasArrow placement="left" label={<TooltipBody text={tooltip != null ? tooltip : ""} />}>
+      {<Button isDisabled={true}>Rediger</Button>}
+    </Tooltip>
   ) : (
     <Button onClick={() => toggleEdit()}>Rediger</Button>
   );
@@ -81,7 +97,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
   const toast = useToast();
-
+  const { utkastHarSammenslaainger } = useUtkast();
   const featureId = feature.getId()?.toString();
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
@@ -124,6 +140,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   }, [feature, getDefaultValues, reset, history]);
 
   const relevantPosisjonskvaliteter = useMemo(() => {
+    const eksisterendePosisjonskvalitet = metadata.commonGrense?.posisjonskvalitet;
     const posisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> | undefined = feature.get("snapData");
     if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0 && isLineStringFeature(feature)) {
       const featureCoordinates = feature.getGeometry()?.getCoordinates();
@@ -133,12 +150,25 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
         .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
         .map(([, posisjonskvalitet]) => posisjonskvalitet)
+        .filter(
+          (posisjonskvalitet) =>
+            posisjonskvalitet.noeyaktighet !== eksisterendePosisjonskvalitet?.noeyaktighet ||
+            posisjonskvalitet.maalemetode !== eksisterendePosisjonskvalitet?.maalemetode.id,
+        )
         // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
         .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
       return relevant;
     }
     return [];
-  }, [feature]);
+  }, [feature, metadata.commonGrense?.posisjonskvalitet]);
+
+  const [autofillLoading, setAutofillLoading] = useState(false);
+  const mockAutofillLoading = () => {
+    setAutofillLoading(true);
+    setTimeout(() => {
+      setAutofillLoading(false);
+    }, 1000);
+  };
 
   const autoFillFormValues = () => {
     if (relevantPosisjonskvaliteter != null) {
@@ -153,6 +183,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
         setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
         handleSubmit(onSubmit)();
+        mockAutofillLoading();
         onCloseAutofill();
         return;
       }
@@ -199,6 +230,10 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             ? EditGrenseInfoButton({
                 isEditing: isEditing,
                 handleSubmit: handleSubmit(onSubmit),
+                isDisabled: utkastHarSammenslaainger(),
+                tooltip: utkastHarSammenslaainger()
+                  ? "Utkastet har sammenslåinger og grenseinformasjon kan derfor ikke redigeres"
+                  : null,
                 toggleEdit: () => {
                   if (isEditing) {
                     reset(getDefaultValues(feature));
@@ -216,7 +251,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
           <AutofillAlertHeader>
             <TitleWithIconTooltip
               tooltipLabel={
-                "Grensen har blitt snappet til en annnen grense, og vi kan derfor kopiere egenskapene fra den tilsnappede grensen over til denne grensen."
+                "Grensen har blitt snappet til en annen grense, og vi kan derfor kopiere egenskapene fra den tilsnappede grensen over til denne grensen."
               }
             >
               <AlertTitle>Noen egenskaper kan fylles ut automatisk</AlertTitle>
@@ -344,6 +379,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
         valueLabel={kodeliste ? getMaalemetodeText(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
         isEditing={isEditing}
+        isLoading={autofillLoading}
       >
         {kodeliste && (
           <Select {...register("maalemetode")}>
@@ -364,6 +400,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         tooltipLabel="Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
         valueLabel={getValues("noeyaktighet")?.toString()}
         isEditing={isEditing}
+        isLoading={autofillLoading}
       >
         <Input type="number" {...register("noeyaktighet")} />
       </GrenseinformasjonRow>

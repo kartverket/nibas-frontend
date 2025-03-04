@@ -12,6 +12,7 @@ import useInteractions from "./interactions/useInteractions";
 import Kartinformasjon from "./Kartinformasjon";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
 import PointOverlayPopup from "./PointOverlayPopup";
+import { OverlayPopup } from "./OverlayPopups/OverlayPopup";
 import Toolbar from "./Toolbar/Toolbar";
 
 const Kart = () => {
@@ -62,6 +63,7 @@ const Kart = () => {
             <Kartinformasjon />
           </KartOverlay>
           <PointOverlayPopup />
+          <OverlayPopup />
         </Suspense>
       </KartTarget>
     </KartWrapper>

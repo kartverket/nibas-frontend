@@ -13,6 +13,7 @@ export type ResponseWithId = {
 export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
   utkastHarEndringer: () => boolean;
+  utkastHarSammenslaainger: () => boolean;
   updateUtkastWithHistory: () => Promise<number>;
   updateUtkast: (id: string, newUtkast: OppdaterUtkastRequest, shouldClearHistory?: boolean) => Promise<number | null>;
   getUpdateUtkastRequestFromHistory: () => OppdaterUtkastRequest | null;

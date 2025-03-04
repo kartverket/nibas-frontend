@@ -1,22 +1,12 @@
-import {
-  MenuItemProps,
-  useDisclosure,
-  AlertIcon,
-  AlertDescription,
-  Divider,
-  Flex,
-  MenuList,
-  Alert,
-  MenuItem,
-  Icon,
-} from "@kvib/react";
+import { Divider, Flex, Icon, MenuItem, MenuItemProps, MenuList, useDisclosure } from "@kvib/react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useOverlayPopup } from "contexts/OverlayPopupContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
-import { useKeyboardShortcut, useHoldButtonToggle } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { Draw } from "ol/interaction";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
@@ -151,6 +141,8 @@ const Toolbar = () => {
     isPanningAllowed,
   );
 
+  const { closeOverlayPopup } = useOverlayPopup();
+
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
   useKeyboardShortcut("escape", () => {
     if (activeTool === "draw") {
@@ -180,6 +172,8 @@ const Toolbar = () => {
     }
 
     if (activeOverlayPanel) {
+      // TODO: Når vi får flere overlaypopups må vi ha mulighet for å lukke spesifikke popups, i dette tilfellet "aktivefeatures"
+      closeOverlayPopup();
       closeOverlayPanel();
       return;
     }

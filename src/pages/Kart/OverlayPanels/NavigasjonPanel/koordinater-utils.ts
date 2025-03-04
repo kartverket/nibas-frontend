@@ -1,6 +1,9 @@
+import { Coordinate } from "ol/coordinate";
 import Point from "ol/geom/Point";
 import Polygon from "ol/geom/Polygon";
 import { ProjectionLike, transform } from "ol/proj";
+import { map } from "pages/Kart/constants";
+import { pixelTolerance } from "pages/Kart/interactions/constants";
 
 type MultiPolygon = number[][][][];
 
@@ -66,4 +69,14 @@ export const transformCoordinatesToProjection = (
       destinationProjection,
     );
   }
+};
+
+export const areCoordsWithinNibasHitTolerance = (coord1: Coordinate, coord2: Coordinate): boolean => {
+  const pixel1 = map.getPixelFromCoordinate(coord1);
+  const pixel2 = map.getPixelFromCoordinate(coord2);
+
+  const dx = pixel1[0] - pixel2[0];
+  const dy = pixel1[1] - pixel2[1];
+
+  return Math.sqrt(dx * dx + dy * dy) <= pixelTolerance;
 };
