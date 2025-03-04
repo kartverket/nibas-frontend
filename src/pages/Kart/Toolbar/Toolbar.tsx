@@ -9,27 +9,26 @@ import {
   MenuList,
   useDisclosure,
 } from "@kvib/react";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useToolbar } from "contexts/ToolbarContext";
-import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { styled } from "styled-components";
-import { getLayerById } from "utils/map/layers";
-import { map } from "../constants";
-import ToolbarButton from "./ToolbarButton";
-import ToolbarMenus from "./ToolbarMenus";
-import ToolbarPopups from "./ToolbarPopups";
 import { ConditionalHide } from "components/ConditionalShowHide";
-import { Draw } from "ol/interaction";
-import { useState, useEffect } from "react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { anyFeatureIsEditable } from "utils/features";
-import SnapMenu from "./SnapMenu";
-import ZoomButtons from "./ZoomButtons";
-import { ToolbarMenu } from "./ToolbarMenu";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
-import { useOverlayPopup } from "contexts/OverlayPopupContext";
+import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { Draw } from "ol/interaction";
+import { useEffect, useState } from "react";
+import { styled } from "styled-components";
+import { anyFeatureIsEditable } from "utils/features";
+import { getLayerById } from "utils/map/layers";
+import { map } from "../constants";
+import SnapMenu from "./SnapMenu";
+import ToolbarButton from "./ToolbarButton";
+import { ToolbarMenu } from "./ToolbarMenu";
+import ToolbarMenus from "./ToolbarMenus";
+import ToolbarPopups from "./ToolbarPopups";
+import ZoomButtons from "./ZoomButtons";
 
 export type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -134,9 +133,6 @@ const Toolbar = () => {
     () => disableModeTool("move"),
     isPanningAllowed,
   );
-
-  const { closeOverlayPopup } = useOverlayPopup();
-
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
   useKeyboardShortcut("escape", () => {
     if (activeTool === "draw") {
@@ -166,8 +162,6 @@ const Toolbar = () => {
     }
 
     if (activeOverlayPanel) {
-      // TODO: Når vi får flere overlaypopups må vi ha mulighet for å lukke spesifikke popups, i dette tilfellet "aktivefeatures"
-      closeOverlayPopup();
       closeOverlayPanel();
       return;
     }
