@@ -20,7 +20,7 @@ const ConfirmationModal = ({
   onDecline,
 }: ConfirmationModalProps) => {
   return (
-    <Modal isOpen onClose={onDecline}>
+    <Modal isOpen onClose={onDecline} size="2xl">
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>{title}</ModalHeader>
