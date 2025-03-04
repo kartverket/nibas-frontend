@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
 
 const overlayPanelValues = [
@@ -61,14 +61,6 @@ export const OverlayPanelProvider = ({ children }: { children: React.ReactNode }
 
   const toggleOverlayPanel = (panelType: OverlayPanel, clearSelectionOnClose = true) =>
     panelType === activeOverlayPanel ? closeOverlayPanel(clearSelectionOnClose) : openOverlayPanel(panelType);
-
-  // UseEffect to watch activeOverlayPanel changes
-  useEffect(() => {
-    if (activeOverlayPanel !== null) {
-      // Place any logic here that should happen when activeOverlayPanel changes
-      console.log("Active overlay panel changed to:", activeOverlayPanel);
-    }
-  }, [activeOverlayPanel]); // Dependency array ensures effect runs only when activeOverlayPanel changes
 
   const value = {
     activeOverlayModal,
