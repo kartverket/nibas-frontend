@@ -7,4 +7,5 @@ export type MergeFormData = {
   navn: string;
   nummer: string;
   nummerTilSammenslaaing: MultiselectValue[];
+  informasjon: string | undefined;
 };

@@ -106,6 +106,7 @@ const MergePanel = () => {
     ),
     navn: getValues("navn"),
     nummer: getValues("nummer"),
+    informasjon: getValues("informasjon"),
   });
 
   const mergeStemmekrets = async () => {
@@ -196,13 +197,15 @@ const MergePanel = () => {
   return (
     <SidePanel>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
-      {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() || utkastHarSammenslaainger() ? (
+      {(history.entries.length > 0 && history.index > 0) ||
+      utkastHarEndringer() ||
+      utkastHarSammenslaainger() === true ? (
         <Alert>
           <AlertIcon />
           <AlertTitle>
             Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre{" "}
-            {utkastHarSammenslaainger() ? "sammenslåinger" : "endringer"}. Avslutt redigeringen av dette utkastet før du
-            gjennomfører sammenslåingen.
+            {utkastHarSammenslaainger() === true ? "sammenslåinger" : "endringer"}. Avslutt redigeringen av dette
+            utkastet før du gjennomfører sammenslåingen.
           </AlertTitle>
         </Alert>
       ) : (
@@ -268,6 +271,7 @@ const MergePanel = () => {
                   }}
                 />
               </InputsWrapper>
+              <Input label="Informasjon" {...register("informasjon")} />
               <Buttons>
                 <Button
                   variant="tertiary"

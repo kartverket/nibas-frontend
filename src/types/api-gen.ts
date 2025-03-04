@@ -372,6 +372,8 @@ export interface components {
       navn: string;
       /** @description Grunnkretsnummeret til den sammenslåtte grunnkretsen */
       nummer: string;
+      /** @description Informasjon om sammenslåingen som videreføres til de nye stemmekretsene og den gamle */
+      informasjon?: string;
     };
     /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
     GrunnlinjeMetadata: components["schemas"]["Metadata"] & {
@@ -466,7 +468,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -651,6 +659,8 @@ export interface components {
       navn: string;
       /** @description Stemmekretsnummeret til den sammenslåtte stemmekretsen */
       nummer: string;
+      /** @description Informasjon om sammenslåingen som videreføres til de nye stemmekretsene og den gamle */
+      informasjon?: string;
     };
     TekstHolder: {
       /** @description ID for elementet. */
@@ -962,7 +972,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1044,7 +1060,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1862,7 +1884,14 @@ export interface operations {
         /** Maksgrense for antall treff man ønsker seg */
         limit?: number;
         /** Hvilke typer inndelinger man ønsker å søke etter */
-        filter?: ("FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS")[];
+        filter?: (
+          | "FYLKE"
+          | "KOMMUNE"
+          | "NASJON"
+          | "GRUNNKRETS"
+          | "STEMMEKRETS"
+          | "SKOLEKRETS"
+        )[];
       };
     };
     responses: {
