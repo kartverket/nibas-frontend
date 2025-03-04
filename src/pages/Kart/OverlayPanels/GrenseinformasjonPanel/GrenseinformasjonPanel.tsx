@@ -14,12 +14,14 @@ import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { TeiggrenseInformasjon } from "./Matrikkelgrenseinformasjon";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
 const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
   const { closeOverlayPanel } = useOverlayPanel();
   const { history } = useHistory();
   const { toggleTool } = useToolbar();
+  const { utkastHarSammenslaainger } = useUtkast();
   const selectedFeature = selectedFeatures.length === 1 ? selectedFeatures[0] : undefined;
   const selectedProperties = selectedFeature?.getProperties() as FeatureProperties | undefined;
 
@@ -47,7 +49,8 @@ const GrenseinformasjonPanel = () => {
   }, [closeGrenseinfoIfFeatureRemoved, history.entries.length, history.index]);
 
   const gyldigTilDato = getFeatureFremtidigEndringDato(selectedFeature);
-  const isDisabled = isNonEditableFeatureId(selectedFeature?.getId()) || gyldigTilDato != null;
+  const isDisabled =
+    isNonEditableFeatureId(selectedFeature?.getId()) || gyldigTilDato != null || utkastHarSammenslaainger();
 
   return (
     <SidePanel>
