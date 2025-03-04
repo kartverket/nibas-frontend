@@ -2,7 +2,6 @@ import { useToast } from "@kvib/react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useOverlayPopup } from "contexts/OverlayPopupContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useState } from "react";
 import { anyFeatureIsEditable } from "utils/features";
