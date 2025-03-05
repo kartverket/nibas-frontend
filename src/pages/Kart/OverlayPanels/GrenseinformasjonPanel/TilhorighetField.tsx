@@ -1,15 +1,16 @@
 import { Stack, Text } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { TilhorighetSearch } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/TilhorighetSearch";
 import { useTilhorighetIkkeRedigerbar } from "pages/Kart/OverlayPanels/hooks/useTilhorighetIkkeRedigerbar";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { FeatureProperties } from "types/api";
-import { getFeatureFremtidigEndringDato, isFeatureEditable, isFeatureToBeArchived } from "utils/features";
-import { isAdministrativGrense, isKommuneGrense } from "utils/grenser";
+import { isAdministrativGrense, isFylkesGrense, isKommuneGrense } from "utils/grenser";
 import { capitalize } from "utils/string-utils";
 import { isGrenseType } from "utils/type-utils";
 import {
@@ -21,13 +22,11 @@ import {
   formatKretsNavn,
   getKontekstTypeForFeature,
 } from "../hooks/tilhorighet-utils";
-import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
+import { useAdministrativTilhorighet } from "../hooks/useAdministrativTilhorighet";
 import { useTilhorighet } from "../hooks/useTilhorighet";
-import { useTilhorighetKommune } from "../hooks/useTilhorighetKommune";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 import { addKontekstEntryFromFeature } from "./grenseinformasjon-utils";
-import { isTempFeatureId, isNonEditableFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+
 type TilhorighetRowProps = {
   feature: Feature;
   useTilhorighet: UseTilhorighet;
@@ -217,9 +216,9 @@ const CommonTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetPro
   );
 };
 
-const KommunegrenseTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetProps) => {
-  const useTilhorighetGrunnkrets = useTilhorighetKommune(feature, KontekstType.GRUNNKRETS);
-  const useTilhorighetStemmekrets = useTilhorighetKommune(feature, KontekstType.STEMMEKRETS);
+const AdministrativTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetProps) => {
+  const useTilhorighetGrunnkrets = useAdministrativTilhorighet(feature, KontekstType.GRUNNKRETS);
+  const useTilhorighetStemmekrets = useAdministrativTilhorighet(feature, KontekstType.STEMMEKRETS);
 
   return (
     <TilhorighetFieldController
@@ -284,33 +283,20 @@ const IkkeRedigerbarAdministrativGrense = ({ feature, isDisabled, tooltip }: Til
 };
 
 export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetProps) => {
-  const isGrensePanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
-
   const featureProperties = feature.getProperties() as FeatureProperties;
-  const gyldigTilDato = getFeatureFremtidigEndringDato(feature);
   const featureType = featureProperties.type;
   const utkastHarSammenslaainger = useUtkast().utkastHarSammenslaainger;
-  const tooltip = utkastHarSammenslaainger()
-    ? "Utkastet har sammenslåinger og tilhørighet kan derfor ikke redigeres."
-    : undefined;
-  const shouldBeDisabled =
-    isNonEditableFeatureId(feature.getId()) ||
-    isDisabled ||
-    isGrensePanelDisabled ||
-    gyldigTilDato != null ||
-    utkastHarSammenslaainger();
+  const tooltip =
+    utkastHarSammenslaainger() === true
+      ? "Utkastet har sammenslåinger og tilhørighet kan derfor ikke redigeres."
+      : undefined;
 
-  if (isGrenseType(featureType) && isKommuneGrense(featureType)) {
-    const isEditable = isFeatureEditable(feature, isFeatureToBeArchived(feature), false);
-
-    return (
-      <KommunegrenseTilhorighetField feature={feature} isDisabled={shouldBeDisabled || !isEditable} tooltip={tooltip} />
-    );
+  if (isGrenseType(featureType) && (isKommuneGrense(featureType) || isFylkesGrense(featureType))) {
+    return <AdministrativTilhorighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
   } else if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
-    return <IkkeRedigerbarAdministrativGrense feature={feature} isDisabled={shouldBeDisabled} tooltip={tooltip} />;
+    return <IkkeRedigerbarAdministrativGrense feature={feature} isDisabled={true} tooltip={tooltip} />;
   }
-
-  return <CommonTilhorighetField feature={feature} isDisabled={shouldBeDisabled} tooltip={tooltip} />;
+  return <CommonTilhorighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
 };
 
 const getTilhorighetValuesFormatted = (
