@@ -19,10 +19,10 @@ const HeaderVelgGyldighetsdato = () => {
 
   return (
     <HeaderSection>
-      <Text>
+      <Text paddingRight={3}>
         Viser inndelinger som er gyldig fra <DatoText>{getDatoText(gyldighetsdato)}</DatoText>
       </Text>
-      <Button size="sm" variant="ghost" leftIcon="calendar_today" onClick={onOpen}>
+      <Button size="sm" variant="primary" leftIcon="calendar_today" onClick={onOpen}>
         Velg dato
       </Button>
       <VelgVisningsdatoModal isOpen={isOpen} onClose={onClose} />

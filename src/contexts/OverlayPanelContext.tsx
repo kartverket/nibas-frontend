@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { useFeatureStyle } from "./FeatureStyleContext/FeatureStyleContext";
+
 const overlayPanelValues = [
   "grenseinfo",
   "sammenslåing",

@@ -8,6 +8,7 @@ type ToolbarMenuProps = {
   isDisabled: boolean;
   isActive: boolean;
   tooltip: string;
+  size?: string;
   children: ReactNode;
   additionalTooltip?: string;
 };
@@ -15,6 +16,7 @@ type ToolbarMenuProps = {
 export const ToolbarMenu = ({
   label,
   icon,
+  size,
   isDisabled,
   isActive,
   tooltip,
@@ -28,6 +30,7 @@ export const ToolbarMenu = ({
           aria-label={tooltip}
           isOpen={isOpen}
           icon={icon}
+          size={size}
           isDisabled={isDisabled}
           isActive={isActive}
           tooltip={{ text: tooltip, additionalInfo: additionalTooltip }}
