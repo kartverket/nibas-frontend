@@ -79,7 +79,7 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
                 Avbryt
               </Button>
               <Button type="submit" colorScheme="blue">
-                Velg dato
+                Bekreft dato
               </Button>
             </ButtonGroup>
           </ModalFooter>

@@ -41,7 +41,7 @@ const useDraw = () => {
 
   const { toastUnique: endpointToast } = useToastUnique({
     status: "warning",
-    description: "Merk valgt punkt ikke er et endepunkt. Grensen ble derfor splittet.",
+    description: "Valgt punkt er ikke et endepunkt og vil resultere i en grensedeling ved avsluttet tegning",
   });
 
   const activeToolRef = useRef<Tool | null>(null);
@@ -117,8 +117,8 @@ const useDraw = () => {
 
             if (nearbyVertex == null) {
               toastRef.current({
-                status: "error",
-                title: "Nye grenser kan kun legges på eksisterende punkter eller på et helt tomt område.",
+                status: "warning",
+                title: "Punkter kan kun plasseres fritt eller på andre punkter",
               });
               return false;
             }
@@ -281,6 +281,7 @@ const useDraw = () => {
       toast({
         status: "success",
         title: "Grensen ble lagt til i kartet",
+        description: "Grense lagt til med standardmetadata. Husk at du må sette tilhørighet på nye grenser.",
       });
 
       selectFeatures([drawnFeature]);

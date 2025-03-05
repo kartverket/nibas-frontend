@@ -28,14 +28,12 @@ export const KartlagAccordionIcon = styled(AccordionIcon)`
   padding: 8px;
 `;
 
-export const KartlagAccordionButton = styled(AccordionButton)`
+export const KartlagAccordionButton = styled(AccordionButton)<{ $isVisible: boolean }>`
   width: fit-content;
   padding: 0;
   border-radius: 6px;
-  color: var(--kvib-colors-blue-500);
 
   &:hover {
-    background: transparent;
-    color: var(--kvib-colors-blue-400);
+    background: var(--kvib-colors-blue-100);
   }
 `;

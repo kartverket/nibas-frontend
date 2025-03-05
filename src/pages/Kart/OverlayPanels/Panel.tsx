@@ -41,7 +41,7 @@ export const PanelHeader = ({
 
 const fadeIn = keyframes`
   from {
-    opacity: 1;
+    opacity: 0;
     transform: translateY(-10%);
   }
   to {
@@ -52,19 +52,21 @@ const fadeIn = keyframes`
 
 const slideIn = keyframes`
   from {
-    transform: translateX(10%);
+    opacity: 0;
+    transform: translateX(25%);
   }
   to {
-    transform: none;
+    opacity: 1;
+    transform: translateX(0);
   }
 `;
 
 const Panel = styled.div`
-  --panel-padding: 22px;
+  --panel-padding: 16px;
   width: 100%;
   padding: 0 var(--panel-padding);
   background: white;
-  border-left: 1px solid var(--kvib-colors-chakra-border-color);
+  box-shadow: var(--kvib-shadows-sm);
   overflow: auto;
   z-index: ${zindex.panel};
 `;
@@ -77,7 +79,7 @@ export const ModalPanel = styled(Panel).withConfig({
   max-width: 1250px;
   margin-left: 16px;
   margin-right: 16px;
-  animation: ${fadeIn} 0.2s ease-out;
+  animation: ${fadeIn} 0.25s ease-in-out;
 `;
 
 export const SidePanel = styled(Panel)`
@@ -86,7 +88,7 @@ export const SidePanel = styled(Panel)`
   border-radius: unset;
   border-top: none;
   margin: unset;
-  animation: ${slideIn} 0.2s ease-out;
+  animation: ${slideIn} 0.25s ease-in-out;
 `;
 
 export const AbsolutePanel = styled(Panel)`
@@ -99,21 +101,22 @@ export const AbsolutePanel = styled(Panel)`
   box-shadow: var(--kvib-shadows-sm);
   border-radius: 8px;
   margin: 16px;
-  animation: ${slideIn} 0.2s ease-out;
+  animation: ${slideIn} 0.25s ease-in-out;
 `;
 
 const PanelHeaderContainer = styled.div<{ $isSmall: boolean; $noMargin: boolean }>`
   position: sticky;
   top: 0;
   z-index: ${zindex.panel};
+
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 8px;
   padding: ${({ $isSmall }) => ($isSmall ? "12px 0 8px" : "16px 0 12px")};
-  margin-bottom: ${({ $isSmall, $noMargin }) => ($noMargin ? "" : $isSmall ? "10px" : "14px")};
+  margin-bottom: ${({ $isSmall, $noMargin }) => ($noMargin ? "" : $isSmall ? "16px" : "20px")};
+  border-bottom: 2px solid var(--kvib-colors-gray-50);
   background: var(--kvib-colors-chakra-body-bg);
-  border-bottom: 1px solid var(--kvib-colors-gray-100);
 `;
 
 const PanelHeadingContainer = styled.div`
@@ -126,8 +129,6 @@ const PanelHeadingContainer = styled.div`
 
 const PanelHeadingText = styled.h3`
   display: flex;
-  font-size: var(--kvib-fontSizes-lg);
-  font-weight: 600;
   align-items: center;
   justify-content: space-between;
   width: 100%;

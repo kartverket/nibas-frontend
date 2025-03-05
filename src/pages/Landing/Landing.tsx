@@ -35,8 +35,8 @@ const Landing = () => {
           onClick={() => navigate(`kart/${format(new Date(), "yyyy-MM-dd")}`)}
         />
         <ActionCard
-          title="Fremtidige endringer"
-          description="Se hvilke endringer som er publisert, men som ikke har inntruffet enda."
+          title="Se fremtidige endringer"
+          description="Se hvilke endringer som er publisert, men som ikke har intruffet enda."
           icon="event"
           onClick={() => navigate(routes.endringer)}
         />
