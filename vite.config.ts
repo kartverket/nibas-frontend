@@ -44,7 +44,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
         "/geoservergeo/wfs/matrikkel": {
-          target: "https://nibas.atkv3-dev.kartverket-intern.cloud/",
+          target: "https://prodtest.matrikkel.no",
           changeOrigin: true,
           headers: {
             Authorization: `Basic ${matWfsAuth}`,
