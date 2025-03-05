@@ -29,7 +29,6 @@ import SnapMenu from "./SnapMenu";
 import ZoomButtons from "./ZoomButtons";
 import { ToolbarMenu } from "./ToolbarMenu";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
-import { useOverlayPopup } from "contexts/OverlayPopupContext";
 
 export type MenuItems = (MenuItemProps & {
   $isActive: boolean;
