@@ -296,15 +296,17 @@ export const isTeigFeature = (feature: FeatureLike) => {
 
 export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;
 
-export const getFeatureFremtidigEndringDato = (feature: FeatureLike) => {
-  const properties = feature.getProperties() as FeatureProperties | undefined;
-  if (!properties) {
-    return;
+export const getFeatureFremtidigEndringDato = (feature: FeatureLike | undefined) => {
+  if (feature) {
+    const properties = feature.getProperties() as FeatureProperties | undefined;
+    if (!properties) {
+      return;
+    }
+
+    const metadata = properties.metadata as Metadata | undefined;
+
+    return metadata?.common?.gyldigTil;
   }
-
-  const metadata = properties.metadata as Metadata | undefined;
-
-  return metadata?.common?.gyldigTil;
 };
 
 export const getInndelingFremtidigEndringDato = (inndelingId: string) => {

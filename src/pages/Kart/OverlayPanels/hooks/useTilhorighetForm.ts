@@ -185,24 +185,25 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
           kommunerIdOgNummer,
           utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kontekstType),
         );
-        const tihorighetOptionsFromHistory = getKretserFromHistory(
+        const tilhorighetOptionsFromHistory = getKretserFromHistory(
           getHistoryEntries(),
           kommunerIdOgNummer,
           kontekstType,
         );
-        const ListeA: Krets[] = [
+        const listeA: Krets[] = [
           ...commonOptions[Tilhorighet.A],
           ...tilhorighetOptionsFromUtkast,
-          ...tihorighetOptionsFromHistory,
+          ...tilhorighetOptionsFromHistory,
         ];
-        const ListeB: Krets[] = [
-          ...commonOptions[Tilhorighet.A],
+        const listeB: Krets[] = [
+          ...commonOptions[Tilhorighet.B],
           ...tilhorighetOptionsFromUtkast,
-          ...tihorighetOptionsFromHistory,
+          ...tilhorighetOptionsFromHistory,
         ];
+
         setTilhorighetValg({
-          [Tilhorighet.A]: getUpdatedMetadata(ListeA, getHistoryEntries(), utkast.operasjoner, kontekstType),
-          [Tilhorighet.B]: getUpdatedMetadata(ListeB, getHistoryEntries(), utkast.operasjoner, kontekstType),
+          [Tilhorighet.A]: getUpdatedMetadata(listeA, getHistoryEntries(), utkast.operasjoner, kontekstType),
+          [Tilhorighet.B]: getUpdatedMetadata(listeB, getHistoryEntries(), utkast.operasjoner, kontekstType),
         });
       } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);
