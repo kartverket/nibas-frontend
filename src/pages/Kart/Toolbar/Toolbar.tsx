@@ -1,15 +1,4 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Icon,
-  MenuItem,
-  MenuItemProps,
-  MenuList,
-  useDisclosure,
-} from "@kvib/react";
-import { ConditionalHide } from "components/ConditionalShowHide";
+import { Divider, Flex, Icon, MenuItem, MenuItemProps, MenuList, useDisclosure } from "@kvib/react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -28,7 +17,6 @@ import ToolbarButton from "./ToolbarButton";
 import { ToolbarMenu } from "./ToolbarMenu";
 import ToolbarMenus from "./ToolbarMenus";
 import ToolbarPopups from "./ToolbarPopups";
-import ZoomButtons from "./ZoomButtons";
 
 export type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -49,7 +37,6 @@ const Toolbar = () => {
     toggleOverlayModal,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
-
   const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
   const isEditing = currentlyEditingInndelinger.length > 0;
 
@@ -62,6 +49,14 @@ const Toolbar = () => {
   const toggleGrenseinfo = () => {
     toggleTool("grenseinfo");
     toggleOverlayPanel("grenseinfo", false);
+  };
+
+  const zoom = (difference: number) => {
+    const view = map.getView();
+    view.animate({
+      zoom: (view.getZoom() ?? 0) + difference,
+      duration: 250,
+    });
   };
 
   const toggleMatrikkel = () => {
@@ -118,13 +113,24 @@ const Toolbar = () => {
   });
 
   useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
-  useKeyboardShortcut("move", () => enableModeTool("move"), panningEnabled);
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
+  useKeyboardShortcut("move", () => {
+    if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
+      if (!utkast) {
+        return;
+      }
+    } else {
+      enableModeTool("move");
+      panningEnabled;
+    }
+  });
+  useKeyboardShortcut("preview", () => toggleOverlayModal("inndelinger-view"));
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
   useKeyboardShortcut("grensecoordinates", () => toggleTool("grensecoordinates"));
   useKeyboardShortcut("measure", () => toggleTool("measure"));
   useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
+  useKeyboardShortcut("tegnforklaring", () => toggleOverlayPanel("tegnforklaring"));
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useHoldButtonToggle(
     "alt",
@@ -186,8 +192,8 @@ const Toolbar = () => {
 
   const informasjonMenuItems: MenuItems = [
     {
-      label: "Informasjon om grense",
-      icon: <Icon icon="info" />,
+      label: "Grenseinformasjon",
+      icon: <Icon icon="query_stats" />,
       command: KeyboardShortcuts["grenseinfo"].displayString,
       $isActive: activeTool === "grenseinfo",
       isDisabled: false,
@@ -195,7 +201,7 @@ const Toolbar = () => {
       "aria-label": "Informasjon om grense",
     },
     {
-      label: "Vis koordinater på punkt",
+      label: "Koordinater på punkter",
       icon: <Icon icon="fmd_bad" />,
       command: KeyboardShortcuts["grensecoordinates"].displayString,
       $isActive: activeTool === "grensecoordinates",
@@ -204,7 +210,7 @@ const Toolbar = () => {
       "aria-label": "Vis koordinater på punkt",
     },
     {
-      label: "Mål avstand",
+      label: "Måleverktøy",
       icon: <Icon icon="straighten" />,
       command: KeyboardShortcuts["measure"].displayString,
       $isActive: activeTool === "measure",
@@ -212,95 +218,122 @@ const Toolbar = () => {
       onClick: () => toggleTool("measure"),
       "aria-label": "Mål avstand",
     },
+    {
+      label: "Tegnforklaring",
+      icon: <Icon icon="palette" />,
+      command: KeyboardShortcuts["tegnforklaring"].displayString,
+      $isActive: activeOverlayPanel === "tegnforklaring",
+      isDisabled: false,
+      onClick: () => toggleOverlayPanel("tegnforklaring"),
+      "aria-label": "Åpne tegnforklaring",
+    },
+  ];
+  const kartlagMenuItems: MenuItems = [
+    {
+      label: "Bakgrunnskart",
+      icon: <Icon icon="map" />,
+      command: KeyboardShortcuts["layers"].displayString,
+      $isActive: activeOverlayPanel === "kartlag",
+      isDisabled: false,
+      onClick: () => toggleOverlayPanel("kartlag"),
+      "aria-label": "Åpne bakgrunnskartpanelet",
+    },
+    {
+      label: "Eiendomsgrenser",
+      icon: <Icon icon="holiday_village" />,
+      command: KeyboardShortcuts["matrikkel"].displayString,
+      $isActive: activeModeTools.includes("matrikkel"),
+      isDisabled: false,
+      onClick: toggleMatrikkel,
+      "aria-label": "Vis eiendomsgrenser",
+    },
+    {
+      label: "Forhåndsvis inndelinger",
+      icon: <Icon icon="preview" />,
+      command: KeyboardShortcuts["preview"].displayString,
+      $isActive: activeOverlayModal === "inndelinger-view",
+      isDisabled: false,
+      onClick: () => toggleOverlayModal("inndelinger-view"),
+      "aria-label": "Legg til egne grenser som forhåndsvisning i bakgrunnen av kartet",
+    },
   ];
 
   return (
     <OuterContainer>
-      <ToolInfoAlert $isOpen={activeTool === "delete"}>
-        <AlertIcon />
-        <div>
-          <AlertTitle>Sletting og arkivering</AlertTitle>
-          <AlertDescription>
-            {`
-          Merk at sletteverktøyet kun er ment for grenser som er opprettet i utkatset ved en feiltagelse, og ikke
-          eksisterende (dvs. allerede publiserte) grenser. Ønsker du å fjerne disse, bruk heller "Arkiver
-          grenser"-verktøyet.
-          `}
-          </AlertDescription>
-        </div>
-      </ToolInfoAlert>
       <ToolbarPopups />
       <Container>
         <ToolbarButtons>
-          {utkast && (
-            <>
+          <ToolbarButton
+            icon={"back_hand"}
+            onClick={() => {
+              if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
+                if (!utkast) {
+                  return;
+                }
+              } else {
+                enableModeTool("move");
+              }
+            }}
+            isActive={activeModeTools.includes("move")}
+            aria-label={"Panorer i kartet"}
+            tooltip={{
+              text: "Panorer i kartet",
+              shortcut: "move",
+              holdButton: "Alt",
+              additionalInfo: "Shift + marker i kartet for å zoome",
+            }}
+          />
+          <Divider orientation="vertical" />
+          <ToolbarButton
+            icon="remove"
+            onClick={() => zoom(-1)}
+            variant="ghost"
+            aria-label="Zoom ut fra kartet"
+            tooltip={{ text: "Zoom ut" }}
+          />
+          <ToolbarButton
+            icon="add"
+            onClick={() => zoom(1)}
+            variant="ghost"
+            aria-label="Zoom inn på kartet"
+            tooltip={{ text: "Zoom inn" }}
+          />
+          {!utkast && (
+            <Flex height="100%" gap="18px">
+              <Divider orientation="vertical" />
               <ToolbarButton
-                icon="back_hand"
-                onClick={() => enableModeTool("move")}
-                isActive={activeModeTools.includes("move")}
-                isDisabled={!panningEnabled}
-                aria-label="Panorer i kartet"
+                icon="menu_book"
+                onClick={() => toggleOverlayModal("flatedata")}
+                isActive={activeOverlayModal === "flatedata"}
+                isDisabled={!flatedataIsAvailable}
+                aria-label="Se flatedetaljer"
                 tooltip={{
-                  text: "Panorer i kartet",
-                  shortcut: "move",
-                  holdButton: "ALT-tasten",
-                  additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
+                  text: "Se flatedetaljer",
+                  additionalInfo: !flatedataIsAvailable
+                    ? "Forhåndsvis en inndeling for å aktivere verktøyet"
+                    : undefined,
+                  shortcut: "flatedata",
                 }}
-              >
-                Panorer
-              </ToolbarButton>
-              <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-                <ToolbarButton
-                  icon="highlight_mouse_cursor"
-                  onClick={() => disableModeTool("move")}
-                  isActive={!activeModeTools.includes("move")}
-                  aria-label="Flytt eller rediger grenser i kartet"
-                  isDisabled={!isEditing || !anyFeatureIsEditable()}
-                  tooltip={{
-                    text: "Flytt eller rediger grenser i kartet",
-                    shortcut: "edit",
-                    additionalInfo: "Hold inne Shift + marker i kartet for å zoome",
-                  }}
-                >
-                  Flytt/Rediger
-                </ToolbarButton>
-                <ToolbarMenus />
-              </ConditionalHide>
-            </>
+              ></ToolbarButton>
+              <Divider orientation="vertical" />
+            </Flex>
           )}
+          {utkast && <ToolbarMenus />}
+
           <ToolbarButton
             icon="search"
             isActive={activeOverlayModal === "navigasjon"}
             onClick={() => toggleOverlayModal("navigasjon")}
             aria-label="Gå til inndeling eller punkt i kartet"
-            tooltip={{ text: "Gå til inndeling eller punkt i kartet", shortcut: "goto" }}
-          >
-            Gå til ...
-          </ToolbarButton>
-          {!utkast && (
-            <ToolbarButton
-              icon="window"
-              onClick={() => toggleOverlayModal("flatedata")}
-              isActive={activeOverlayModal === "flatedata"}
-              isDisabled={!flatedataIsAvailable}
-              aria-label="Se eller endre flatedetaljer"
-              tooltip={{
-                text: "Se eller endre flatedetaljer",
-                additionalInfo: !flatedataIsAvailable ? "Velg en inndeling for å aktivere verktøyet" : undefined,
-                shortcut: "flatedata",
-              }}
-            >
-              Flatedetaljer
-            </ToolbarButton>
-          )}
+            tooltip={{ text: "Finn i kartet", shortcut: "goto" }}
+          ></ToolbarButton>
           <ToolbarMenu
-            icon="query_stats"
+            icon="info"
             isActive={informasjonMenuItems.some((imi) => imi.$isActive)}
-            aria-label="Se informasjon om grensen"
-            tooltip="Vis informasjonsverktøy"
+            aria-label="Vis informasjonsverktøy"
+            tooltip="Informasjon"
             isDisabled={false}
             label={"Informasjon"}
-            additionalTooltip={"Se verktøy for å få informasjon om en grense"}
           >
             <MenuList>
               {informasjonMenuItems.map((imi) => (
@@ -310,44 +343,28 @@ const Toolbar = () => {
               ))}
             </MenuList>
           </ToolbarMenu>
-          <ToolbarButton
-            icon="map"
-            aria-label="Åpne kartlagsmenyen"
-            isActive={activeOverlayPanel === "kartlag"}
-            onClick={() => toggleOverlayPanel("kartlag")}
-            tooltip={{ text: "Legg til, endre rekkefølge og fjern kartlag fra kartet.", shortcut: "layers" }}
+          <ToolbarMenu
+            icon="stacks"
+            isActive={kartlagMenuItems.some((kmi) => kmi.$isActive)}
+            aria-label="Kartlag"
+            tooltip="Kartlag"
+            isDisabled={false}
+            label={"Kartlag"}
           >
-            Kartlag
-          </ToolbarButton>
-          <ConditionalHide below="xl" condition={!!activeOverlayPanel}>
-            <>
-              <ToolbarButton
-                icon="holiday_village"
-                aria-label="Vis grenser fra matrikkelen"
-                isActive={activeModeTools.includes("matrikkel")}
-                onClick={toggleMatrikkel}
-                tooltip={{ text: "Vis grenser fra matrikkelen", shortcut: "matrikkel" }}
-              >
-                Matrikkel
-              </ToolbarButton>
-              {utkast && <SnapMenu isOpen={isSnapMenuOpen} onClose={closeSnapMenu} onToggle={toggleSnapMenu} />}
-            </>
-          </ConditionalHide>
+            <MenuList>
+              {kartlagMenuItems.map((kmi) => (
+                <ToolbarMenuItem key={kmi.label} {...kmi}>
+                  {kmi.label}
+                </ToolbarMenuItem>
+              ))}
+            </MenuList>
+          </ToolbarMenu>
+          <>{utkast && <SnapMenu isOpen={isSnapMenuOpen} onClose={closeSnapMenu} onToggle={toggleSnapMenu} />}</>
         </ToolbarButtons>
-        <ZoomButtons />
       </Container>
     </OuterContainer>
   );
 };
-
-const ToolInfoAlert = styled(Alert)<{ $isOpen?: boolean }>`
-  ${(props) => props.$isOpen === false && "display: none"};
-  position: absolute;
-  top: 10px;
-  width: 800px;
-  border-radius: var(--kvib-space-2);
-  box-shadow: var(--kvib-shadows-lg);
-`;
 
 const OuterContainer = styled.div`
   grid-area: toolbar;
@@ -376,12 +393,12 @@ const Container = styled.div`
 const ToolbarButtons = styled.div`
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 18px;
 
   width: fit-content;
-  padding: 16px 20px;
+  padding: 12px;
   background: white;
-  border-radius: 10px;
+  border-radius: var(--kvib-radii-lg);
   box-shadow: var(--kvib-shadows-sm);
 `;
 

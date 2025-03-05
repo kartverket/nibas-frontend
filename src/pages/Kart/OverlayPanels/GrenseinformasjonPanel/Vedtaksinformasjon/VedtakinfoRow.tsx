@@ -21,7 +21,7 @@ export const VedtakinfoRow = ({ children, tooltipLabel, name, error }: Props) =>
   return (
     <>
       <Row>
-        <Tooltip label={tooltipLabel} hasArrow placement="bottom">
+        <Tooltip label={tooltipLabel} placement="bottom">
           <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
             <Label>{name}</Label>
             <InfoIcon>
