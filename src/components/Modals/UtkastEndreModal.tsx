@@ -75,7 +75,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal} isCentered size="2xl">
+    <Modal isOpen={isOpen} onClose={handleCloseModal} isCentered>
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={handleSubmit(editUtkast)}>

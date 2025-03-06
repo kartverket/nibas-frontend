@@ -77,18 +77,19 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <>
-      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)} size="2xl">
+      <Modal blockScrollOnMount={false} isOpen={authRenewError} onClose={() => setAuthRenewError(false)} size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Du har blitt logget ut automatisk</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Text mb="1rem">
-              På grunn av en begrensning hos ID-porten vil man måtte logge inn på nytt hver andre time.
+              På grunn av en begrensning hos IDporten vil man måtte logge inn på nytt hver 2. time. Sørg derfor for at
+              du lagrer utkastet ditt så ofte som mulig.
             </Text>
             <Text fontWeight="bold" mb="1rem">
-              Dersom du hadde ulagrede endringene kan de gjenopprettes så fremt du ikke bytter nettleser underveis.
-              Ønsker du å logge inn på nytt?
+              Dersom du hadde ulagrede endringer kan vi forsøke å gjenopprette dem. Ønsker du å logge inn på nytt og
+              gjenopprette endringene?
             </Text>
           </ModalBody>
           <ModalFooter>
@@ -100,10 +101,10 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
                 setAuthRenewError(false);
               }}
             >
-              Forbli utlogget
+              Forbli logget ut
             </Button>
             <Button variant="primary" onClick={onRelog}>
-              Logg inn og gjenopprett endringer
+              Logg inn og gjenopprett
             </Button>
           </ModalFooter>
         </ModalContent>

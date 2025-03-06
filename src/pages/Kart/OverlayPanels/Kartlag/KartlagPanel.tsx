@@ -11,7 +11,7 @@ const KartlagPanel = () => {
 
   return (
     <SidePanel>
-      <PanelHeader onClose={closeOverlayPanel}>Bakgrunnskart</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>Kartlag</PanelHeader>
       <KartlagList>
         {mappedLayers.length > 0 ? (
           mappedLayers.map((mappedLayer, index) => (

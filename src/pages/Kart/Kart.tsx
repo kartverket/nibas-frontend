@@ -1,19 +1,20 @@
-import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { format, isPast } from "date-fns";
-import Loading from "pages/App/Loading";
 import { Suspense, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { zindex } from "utils/constants";
 import { map } from "./constants";
 import useInteractions from "./interactions/useInteractions";
-import Kartinformasjon from "./Kartinformasjon";
+import Toolbar from "./Toolbar/Toolbar";
 import OverlayPanels from "./OverlayPanels/OverlayPanels";
+import { TegnforklaringButton } from "./OverlayPanels/Tegnforklaring/TegnforklaringButton";
+import Kartinformasjon from "./Kartinformasjon";
+import { zindex } from "utils/constants";
+import { Spinner } from "@kvib/react";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { format, isPast } from "date-fns";
+import { useParams } from "react-router-dom";
 import PointOverlayPopup from "./PointOverlayPopup";
 import { OverlayPopup } from "./OverlayPopups/OverlayPopup";
-import Toolbar from "./Toolbar/Toolbar";
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -55,12 +56,17 @@ const Kart = () => {
   return (
     <KartWrapper>
       <KartTarget ref={mapRef}>
-        <Suspense fallback="Laster inn...">
+        <Suspense fallback="More loading...">
           <KartOverlay>
-            {isLoadingInndeling && <Loading />}
+            {isLoadingInndeling && (
+              <SpinnerBackground>
+                <KartLoadingSpinner size="lg" />
+              </SpinnerBackground>
+            )}
+            <Kartinformasjon />
+            <TegnforklaringButton />
             <OverlayPanels />
             <Toolbar />
-            <Kartinformasjon />
           </KartOverlay>
           <PointOverlayPopup />
           <OverlayPopup />
@@ -88,11 +94,27 @@ const KartTarget = styled.div`
 
   /* dragzoom kan kun få style via vanlig css tydeligvis */
   .ol-dragzoom {
-    background: var(--kvib-colors-whiteAlpha-400);
-    border-radius: var(--kvib-radii-md);
-    border: solid 2px var(--kvib-colors-black);
-    box-shadow: var(--kvib-shadows-md);
+    background: var(--kvib-colors-blue-200);
+    opacity: 0.3;
+    border-radius: 6px;
+    border: solid 2px var(--kvib-colors-blue-500);
   }
+`;
+
+const SpinnerBackground = styled.div`
+  display: grid;
+  place-items: center;
+  background: white;
+  padding: 12px;
+  border-radius: 50%;
+  box-shadow: var(--kvib-shadows-base);
+  margin: auto;
+`;
+
+const KartLoadingSpinner = styled(Spinner)`
+  color: var(--kvib-colors-blue-500);
+  border-width: 3px;
+  margin: auto;
 `;
 
 const KartOverlay = styled.div`
@@ -102,8 +124,8 @@ const KartOverlay = styled.div`
   justify-items: center;
   grid-template-areas:
     "overlay sidepanel"
-    "toolbar sidepanel"
-    "mapinfo sidepanel";
+    "toolbar sidepanel";
+  gap: 16px;
   width: 100%;
   height: 100%;
   position: absolute;

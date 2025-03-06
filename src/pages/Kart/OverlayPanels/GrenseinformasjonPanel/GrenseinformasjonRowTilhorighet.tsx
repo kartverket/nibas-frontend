@@ -30,7 +30,7 @@ const GrenseinformasjonRow = ({
     <Container>
       <EditContent>
         <Row>
-          <Tooltip label={tooltipLabel} placement="bottom">
+          <Tooltip label={tooltipLabel} hasArrow placement="bottom">
             <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
               <Text as="b">{name}</Text>
               <InfoIcon>

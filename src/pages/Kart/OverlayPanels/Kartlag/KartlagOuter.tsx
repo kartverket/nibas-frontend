@@ -55,9 +55,8 @@ const KartlagAccordion = styled(Accordion)`
 `;
 
 const KartlagOuterControls = styled(KartlagControls)<{ $isVisible: boolean }>`
-  padding: 12px 16px;
-  border: 1px solid ${(props) => (props.$isVisible ? "transparent" : "var(--kvib-colors-gray-200)")};
-  background: ${(props) => (props.$isVisible ? "var(--kvib-colors-blue-50)" : "transparent")};
+  padding: 16px;
+  background: ${(props) => (props.$isVisible ? "var(--kvib-colors-blue-50)" : "var(--kvib-colors-gray-50)")};
 `;
 
 const KartlagAccordionPanel = styled(AccordionPanel)<{ $isVisible: boolean }>`

@@ -152,29 +152,27 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
           })}
         </tbody>
       </Table>
-      <FlatedataFooter
-        isEditing={isEditing}
-        isDisabled={
-          allInndelingerHasFremtidigEndring || !utkast || !mainInndeling.isEditing || utkastHarSammenslaainger()
-        }
-        toggleEditing={toggleEditing}
-        canSave={isDirty}
-        onSubmit={(e) => {
-          clearSearch();
-          handleSubmit(submitAndAddHistoryEntry)(e);
-        }}
-        tooltip={
-          allInndelingerHasFremtidigEndring
-            ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
-            : utkastHarSammenslaainger() === true
-              ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
-              : utkast && mainInndeling.isEditing
-                ? null
-                : "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
-        }
-      >
-        Rediger flatedetaljer
-      </FlatedataFooter>
+      {utkast && mainInndeling.isEditing && (
+        <FlatedataFooter
+          isEditing={isEditing}
+          isDisabled={allInndelingerHasFremtidigEndring || utkastHarSammenslaainger()}
+          toggleEditing={toggleEditing}
+          canSave={isDirty}
+          onSubmit={(e) => {
+            clearSearch();
+            handleSubmit(submitAndAddHistoryEntry)(e);
+          }}
+          tooltip={
+            allInndelingerHasFremtidigEndring
+              ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
+              : utkastHarSammenslaainger()
+                ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
+                : null
+          }
+        >
+          Rediger flatedetaljer
+        </FlatedataFooter>
+      )}
     </Container>
   );
 };
