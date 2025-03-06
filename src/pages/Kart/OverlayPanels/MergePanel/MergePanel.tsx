@@ -271,7 +271,7 @@ const MergePanel = () => {
                   }}
                 />
               </InputsWrapper>
-              <Input label="Informasjon" {...register("informasjon")} />
+              <Input label="Informasjon" {...register("informasjon")} placeholder="Informasjon om endringen" />
               <Buttons>
                 <Button
                   variant="tertiary"
