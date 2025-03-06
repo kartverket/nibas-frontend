@@ -197,15 +197,13 @@ const MergePanel = () => {
   return (
     <SidePanel>
       <PanelHeader onClose={closeOverlayPanel}>Slå sammen stemmekretser</PanelHeader>
-      {(history.entries.length > 0 && history.index > 0) ||
-      utkastHarEndringer() ||
-      utkastHarSammenslaainger() === true ? (
+      {(history.entries.length > 0 && history.index > 0) || utkastHarEndringer() || utkastHarSammenslaainger() ? (
         <Alert>
           <AlertIcon />
           <AlertTitle>
             Du kan ikke gjøre en sammenslåing i et eksisterende utkast som har andre{" "}
-            {utkastHarSammenslaainger() === true ? "sammenslåinger" : "endringer"}. Avslutt redigeringen av dette
-            utkastet før du gjennomfører sammenslåingen.
+            {utkastHarSammenslaainger() ? "sammenslåinger" : "endringer"}. Avslutt redigeringen av dette utkastet før du
+            gjennomfører sammenslåingen.
           </AlertTitle>
         </Alert>
       ) : (

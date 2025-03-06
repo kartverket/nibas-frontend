@@ -372,7 +372,7 @@ export interface components {
       navn: string;
       /** @description Grunnkretsnummeret til den sammenslåtte grunnkretsen */
       nummer: string;
-      /** @description Informasjon om sammenslåingen som videreføres til de nye stemmekretsene og den gamle */
+      /** @description Informasjon om sammenslåingen som videreføres til den nye grunnkretsen og de gamle */
       informasjon?: string;
     };
     /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
@@ -653,7 +653,7 @@ export interface components {
       navn: string;
       /** @description Stemmekretsnummeret til den sammenslåtte stemmekretsen */
       nummer: string;
-      /** @description Informasjon om sammenslåingen som videreføres til de nye stemmekretsene og den gamle */
+      /** @description Informasjon om sammenslåingen som videreføres til den nye stemmekretsen og de gamle */
       informasjon?: string;
     };
     TekstHolder: {
