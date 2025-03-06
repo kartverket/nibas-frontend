@@ -17,7 +17,7 @@ const styles: Record<Environment, EnvironmentStyle> = {
     color: "var(--kvib-colors-blue-200)",
   },
   localhost: {
-    label: "Lokalt utviklingsmiljø",
+    label: "Lokalt Utviklingsmiljø",
     color: "var(--kvib-colors-red-200)",
   },
 };

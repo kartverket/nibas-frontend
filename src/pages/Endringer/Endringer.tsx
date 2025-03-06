@@ -58,7 +58,7 @@ export const Endringer = () => {
         <TitleContainer>
           <ReturnButton to={routes.index}>
             <Icon icon="arrow_back" />
-            <span>Tilbake til forsiden</span>
+            <span>Gå tilbake</span>
           </ReturnButton>
           <Stack>
             <Heading as="h1" size="lg">
@@ -99,7 +99,7 @@ export const Endringer = () => {
           </TableContainer>
         ) : (
           <NoUtkastsMessageContainer>
-            <Text>{`Det er ingen publiserte utkast med endringer gyldig fra-dato satt til etter ${format(new Date(), "dd.MM.yyyy")}`}</Text>
+            <Text>{`Det er ingen publiserte utkast med endringer gyldig fra ${format(new Date(), "dd.MM.yyyy")}`}</Text>
           </NoUtkastsMessageContainer>
         )}
       </EndringerPage>
@@ -223,9 +223,10 @@ const FremtidigeUtkastTooltip = () => {
       label={
         <>
           Når er utkast er publisert kan det ikke trekkes tilbake. For å rette det må du lage et <b>nytt utkast</b> med{" "}
-          <b>samme gyldig fra-dato som det fremtidige utkastet oppstår.</b>
+          <b>samme gyldig fra-dato som den fremtidige feilen oppstår</b>
         </>
       }
+      hasArrow
       placement="bottom"
     >
       <InfoIcon>
@@ -263,7 +264,7 @@ const EndringerPage = styled(Page)`
     "subtitle"
     "table";
   justify-items: unset;
-  padding: 64px 120px;
+  padding: 64px;
 `;
 
 const TitleContainer = styled.div`

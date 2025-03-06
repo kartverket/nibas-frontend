@@ -2,20 +2,29 @@ import { forwardRef } from "react";
 import { styled } from "styled-components";
 import { StemmekretsResponse } from "types/api";
 import { ValidationError } from "components/Input";
-import { Button, Flex, FormControl, FormErrorMessage, FormLabel, Select, SelectProps } from "@kvib/react";
+import { CloseButton, FormControl, FormErrorMessage, FormLabel, Select, SelectProps } from "@kvib/react";
 
 const MergeSelectWrapper = styled(FormControl)`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "label label"
+    "select fjern"
+    "error .";
+  gap: 0 8px;
 `;
 
 const MergeSelectErrorMessage = styled(FormErrorMessage)`
-  width: 100%;
+  grid-area: error;
+`;
+
+const RemoveButton = styled(CloseButton)`
+  grid-area: fjern;
 `;
 
 const SelectLabel = styled(FormLabel)`
-  width: 100%;
+  grid-area: label;
 `;
 
 type MergeSelectProps = {
@@ -28,14 +37,7 @@ type MergeSelectProps = {
 export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
   ({ onRemove, stemmekretser, showRemoveButton, validationError, ...inputProps }, ref) => (
     <MergeSelectWrapper isInvalid={validationError?.showError}>
-      <Flex justifyContent="space-between">
-        <SelectLabel>Stemmekrets</SelectLabel>
-        {showRemoveButton && (
-          <Button size="sm" variant="tertiary" onClick={onRemove}>
-            Fjern
-          </Button>
-        )}
-      </Flex>
+      <SelectLabel>Navn eller nummer på stemmekrets</SelectLabel>
       <div>
         <Select {...inputProps} ref={ref} placeholder="Velg en stemmekrets fra listen">
           {stemmekretser.map((s) => (
@@ -45,7 +47,7 @@ export const MergeSelect = forwardRef<HTMLSelectElement, MergeSelectProps>(
           ))}
         </Select>
       </div>
-
+      {showRemoveButton && <RemoveButton variant="ghost" onClick={onRemove} />}
       <MergeSelectErrorMessage>{validationError?.message}</MergeSelectErrorMessage>
     </MergeSelectWrapper>
   ),

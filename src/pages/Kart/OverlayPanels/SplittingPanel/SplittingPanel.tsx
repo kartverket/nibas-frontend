@@ -5,24 +5,30 @@ import {
   FormLabel,
   Heading,
   Icon,
+  IconButton,
   Input,
   InputProps,
   Select,
   Stack,
 } from "@kvib/react";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { ChangeEvent, useEffect } from "react";
 import { styled } from "styled-components";
-import { getInndelingFremtidigEndringDato } from "utils/features";
-import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { PanelHeader, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
+import { ChangeEvent, useEffect } from "react";
 import { useSplittingForm } from "./useSplittingForm";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { getInndelingFremtidigEndringDato } from "utils/features";
+import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 
 const NyKretsField = styled.div`
   display: flex;
   column-gap: 12px;
+`;
+
+const FillerDiv = styled.div`
+  min-width: 40px;
+  min-height: 40px;
 `;
 
 const CustomFormErrorMessage = styled.div`
@@ -117,7 +123,12 @@ export const SplittingPanel = () => {
 
   return (
     <SidePanel>
-      <PanelHeader onClose={closeAndResetForm}>Splitt flate</PanelHeader>
+      <PanelHeader
+        onClose={closeAndResetForm}
+        subHeading="Ved å splitte en flate kan du opprette en eller flere nye flater"
+      >
+        Splitt en flate
+      </PanelHeader>
 
       <Stack spacing={8}>
         <FormControl>
@@ -140,7 +151,7 @@ export const SplittingPanel = () => {
                     disabled
                     value={krets.id.lokalid.value}
                     key={krets.id.lokalid.value}
-                  >{`${krets.nummer} ${krets.navn} (fremtidig endring - kan ikke splittes)`}</option>
+                  >{`${krets.nummer} ${krets.navn} (fremtidig endring, kan ikke splittes)`}</option>
                 ) : (
                   <option
                     value={krets.id.lokalid.value}
@@ -159,7 +170,7 @@ export const SplittingPanel = () => {
                 <div key={field.id}>
                   <NyKretsField>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNummer}>
-                      {index !== 0 ? <FormLabel>Nytt nummer</FormLabel> : <FormLabel>Eksisterende nummer</FormLabel>}
+                      {index !== 0 && <FormLabel>Nytt nummer</FormLabel>}
                       <Input
                         disabled={index === 0}
                         type="number"
@@ -172,7 +183,7 @@ export const SplittingPanel = () => {
                       />
                     </FormControl>
                     <FormControl isInvalid={!!errors.nyeKretser?.[index]?.kretsNavn}>
-                      {index !== 0 ? <FormLabel>Nytt navn</FormLabel> : <FormLabel>Eksisterende navn</FormLabel>}
+                      {index !== 0 && <FormLabel>Nytt navn</FormLabel>}
                       <Input
                         disabled={index === 0}
                         {...register(`nyeKretser.${index}.kretsNavn`, {
@@ -180,19 +191,19 @@ export const SplittingPanel = () => {
                         })}
                       />
                     </FormControl>
-                    <Button
-                      isDisabled={index === 0}
-                      onClick={() => {
-                        remove(index);
-                      }}
-                      aria-label="Fjern splitt"
-                      variant="tertiary"
-                      size="sm"
-                      alignSelf="flex-end"
-                      marginBottom={1}
-                    >
-                      Fjern
-                    </Button>
+                    {index !== 0 ? (
+                      <IconButton
+                        onClick={() => {
+                          remove(index);
+                        }}
+                        aria-label="fjern splitt"
+                        icon="close"
+                        variant="tertiary"
+                        alignSelf="flex-end"
+                      />
+                    ) : (
+                      <FillerDiv />
+                    )}
                   </NyKretsField>
                   {!!errors.nyeKretser?.[index] && (
                     <CustomFormErrorMessage>
@@ -211,7 +222,7 @@ export const SplittingPanel = () => {
                   )}
                 </div>
               ))}
-              <Button onClick={() => append({ kretsNavn: "", kretsNummer: "" })} variant="tertiary" leftIcon="add">
+              <Button onClick={() => append({ kretsNavn: "", kretsNummer: "" })} variant="secondary" leftIcon="add">
                 Legg til ny splitt
               </Button>
             </Stack>
