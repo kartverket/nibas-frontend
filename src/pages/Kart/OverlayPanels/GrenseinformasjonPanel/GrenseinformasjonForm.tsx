@@ -216,7 +216,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       sammenslaaing?.stemmekretserTilSammenslaaing
         .flatMap((sk) => sk.lokalId)
         .concat(sammenslaaing.viderefoertStemmekrets.lokalId) ?? [];
-    // Finner features til de involverte kretsene i inndelingen
     const mergeFeatures = inndelingFeatures
       .flatMap((i) => i.features)
       .filter((f) => {
@@ -225,8 +224,8 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
           (f.getProperties() as FeatureProperties).kontekstEgenskaper.map((ke) => getKretsIdFromKontekstegenskaper(ke)),
         );
         // hvis featuren har to av de involverte kretsene som kontekster så betyr det at det er en feature som deler de to kretsene
-        const commonIds = new Set(involverteKretserLokalids.filter((id) => new Set(kretserIdFromKontekst).has(id)));
-        return commonIds.size >= 2;
+        const overlap = new Set(involverteKretserLokalids.filter((id) => new Set(kretserIdFromKontekst).has(id)));
+        return overlap.size >= 2;
       });
 
     return mergeFeatures.map((mf) => mf.getId()).includes(featureId);
