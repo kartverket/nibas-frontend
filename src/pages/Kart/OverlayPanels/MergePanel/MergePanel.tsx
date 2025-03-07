@@ -106,6 +106,7 @@ const MergePanel = () => {
     ),
     navn: getValues("navn"),
     nummer: getValues("nummer"),
+    informasjon: getValues("informasjon"),
   });
 
   const mergeStemmekrets = async () => {
@@ -284,6 +285,7 @@ const MergePanel = () => {
                   }}
                 />
               </InputsWrapper>
+              <Input label="Informasjon" {...register("informasjon")} placeholder="Informasjon om endringen" />
               <Buttons>
                 <Button
                   variant="tertiary"

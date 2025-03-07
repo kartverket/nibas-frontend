@@ -32,6 +32,18 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
 
+  const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+  const utkastSammenslaaingInformasjon: Record<string, string | undefined> =
+    utkastSammenslaaingEndring?.stemmekretserTilSammenslaaing
+      .concat(utkastSammenslaaingEndring?.viderefoertStemmekrets)
+      .reduce(
+        (acc, sk) => {
+          acc[sk.lokalId] = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.informasjon;
+          return acc;
+        },
+        {} as Record<string, string | undefined>,
+      ) ?? {};
+
   const flatedata = useFlatedata(mainInndeling) ?? [];
 
   const allInndelingerHasFremtidigEndring = flatedata.every(
@@ -147,32 +159,35 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 formMethods={formMethods}
                 previousValues={previousValues}
                 allInndelinger={flatedata}
+                sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
               />
             );
           })}
         </tbody>
       </Table>
-      {utkast && mainInndeling.isEditing && (
-        <FlatedataFooter
-          isEditing={isEditing}
-          isDisabled={allInndelingerHasFremtidigEndring || utkastHarSammenslaainger()}
-          toggleEditing={toggleEditing}
-          canSave={isDirty}
-          onSubmit={(e) => {
-            clearSearch();
-            handleSubmit(submitAndAddHistoryEntry)(e);
-          }}
-          tooltip={
-            allInndelingerHasFremtidigEndring
-              ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
-              : utkastHarSammenslaainger()
-                ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
-                : null
-          }
-        >
-          Rediger flatedetaljer
-        </FlatedataFooter>
-      )}
+      <FlatedataFooter
+        isEditing={isEditing}
+        isDisabled={
+          allInndelingerHasFremtidigEndring || !utkast || !mainInndeling.isEditing || utkastHarSammenslaainger()
+        }
+        toggleEditing={toggleEditing}
+        canSave={isDirty}
+        onSubmit={(e) => {
+          clearSearch();
+          handleSubmit(submitAndAddHistoryEntry)(e);
+        }}
+        tooltip={
+          allInndelingerHasFremtidigEndring
+            ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
+            : utkastHarSammenslaainger()
+              ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
+              : utkast && mainInndeling.isEditing
+                ? null
+                : "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
+        }
+      >
+        Rediger flatedetaljer
+      </FlatedataFooter>
     </Container>
   );
 };
