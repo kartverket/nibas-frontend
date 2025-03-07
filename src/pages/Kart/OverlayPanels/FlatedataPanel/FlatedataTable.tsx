@@ -159,7 +159,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 formMethods={formMethods}
                 previousValues={previousValues}
                 allInndelinger={flatedata}
-                mockSammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
+                sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
               />
             );
           })}

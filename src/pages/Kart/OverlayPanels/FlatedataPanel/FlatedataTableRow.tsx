@@ -55,7 +55,7 @@ type Props = {
   formMethods: UseFormReturn<FlatedataInputs>;
   previousValues: React.MutableRefObject<FlatedataInputs | undefined>;
   allInndelinger: MetadataResponse[];
-  mockSammenslaaingInformasjon: string | undefined;
+  sammenslaaingInformasjon: string | undefined;
 };
 
 export const FlatedataTableRow = ({
@@ -66,7 +66,7 @@ export const FlatedataTableRow = ({
   formMethods,
   previousValues,
   allInndelinger,
-  mockSammenslaaingInformasjon,
+  sammenslaaingInformasjon,
 }: Props) => {
   const {
     setValue,
@@ -260,7 +260,7 @@ export const FlatedataTableRow = ({
           <InputCell
             isEditing={isEditing}
             isDisabled={disabledDate != null}
-            data={mockSammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
+            data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
           {!isKommuneInndeling(inndeling) && !isStemmekretsInndeling(inndeling) && (
