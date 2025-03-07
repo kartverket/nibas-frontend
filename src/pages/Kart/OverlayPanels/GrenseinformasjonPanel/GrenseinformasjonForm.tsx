@@ -17,6 +17,8 @@ import {
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useInndelingFeatures from "contexts/InndelingerContext/useInndelingFeatures";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { GrenseType } from "hooks/layers/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
@@ -27,11 +29,14 @@ import {
   isTempFeatureId,
 } from "pages/Kart/interactions/feature-id-utils";
 import { ContextualPosisjonskvalitet } from "pages/Kart/interactions/useModify";
+import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import { styled } from "styled-components";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
+import { removeNil } from "utils/list-utils";
 import { isLineStringFeature } from "utils/type-utils";
+import { getKretsIdFromKontekstegenskaper } from "../hooks/tilhorighet-utils";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
 import { PanelHeader } from "../Panel";
 import {
@@ -41,8 +46,6 @@ import {
 } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -93,6 +96,8 @@ export const EditGrenseInfoButton = ({
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { currentlyEditingInndelinger } = useInndelinger();
+  const { utkast } = useUtkast();
+  const { inndelingFeatures } = useInndelingFeatures(currentlyEditingInndelinger);
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const { openAsync } = useConfirmationModal();
@@ -204,6 +209,29 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       onOpenAutofill();
     }
   }, [relevantPosisjonskvaliteter, onOpenAutofill]);
+
+  const featureIsMergeFeatureInUtkast = (): boolean => {
+    const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+    const involverteKretserLokalids =
+      sammenslaaing?.stemmekretserTilSammenslaaing
+        .flatMap((sk) => sk.lokalId)
+        .concat(sammenslaaing.viderefoertStemmekrets.lokalId) ?? [];
+    // Finner features til de involverte kretsene i inndelingen
+    const mergeFeatures = inndelingFeatures
+      .flatMap((i) => i.features)
+      .filter((f) => {
+        // Finner kontekstegenskapene til featuren (kretsene featuren er en del av)
+        const kretserIdFromKontekst = removeNil(
+          (f.getProperties() as FeatureProperties).kontekstEgenskaper.map((ke) => getKretsIdFromKontekstegenskaper(ke)),
+        );
+        // hvis featuren har to av de involverte kretsene som kontekster så betyr det at det er en feature som deler de to kretsene
+        const commonIds = new Set(involverteKretserLokalids.filter((id) => new Set(kretserIdFromKontekst).has(id)));
+        return commonIds.size >= 2;
+      });
+
+    return mergeFeatures.map((mf) => mf.getId()).includes(featureId);
+  };
+  const mergeInformasjon = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.informasjon;
 
   return (
     <FormContainer>
@@ -420,7 +448,9 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       <GrenseinformasjonRow
         name="Ekstra informasjon"
         tooltipLabel="Åpent felt med ekstra informasjon om grensen"
-        valueLabel={getValues("informasjon")}
+        valueLabel={
+          featureIsMergeFeatureInUtkast() && mergeInformasjon != null ? mergeInformasjon : getValues("informasjon")
+        }
         isEditing={isEditing}
       >
         <Textarea placeholder="Fyll inn ekstra informasjon" {...register("informasjon")} />
