@@ -1,6 +1,6 @@
 ## Beskrivelse
 
-Beskriv hva som har blitt endret i denne pull requesten. Vennligst inkluder kontekst og motivasjon for endringene.
+_Beskriv hva som har blitt endret i denne pull requesten. Vennligst inkluder kontekst og motivasjon for endringene._
 
 ## Sjekkliste
 
@@ -9,12 +9,12 @@ Beskriv hva som har blitt endret i denne pull requesten. Vennligst inkluder kont
 
 ## Relaterte saker
 
-Link til relaterte saker eller oppgaver (f.eks. PRer eller Jira):
+_Link til relaterte saker eller oppgaver (f.eks. PRer eller Jira):_
 
-## Skjermbilder (hvis relevant)
+## Skjermbilder
 
-Inkluder skjermbilder som viser endringene i brukergrensesnittet.
+_Inkluder skjermbilder som viser endringene i brukergrensesnittet (hvis relevant)._
 
 ## Ytterligere kommentarer
 
-Eventuelle ytterligere kommentarer eller informasjon som kan være nyttig for gjennomgang av pull requesten.
+_Eventuelle ytterligere kommentarer eller informasjon som kan være nyttig for gjennomgang av pull requesten._
