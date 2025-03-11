@@ -136,7 +136,6 @@ const getKretserFromHistory = (
   const kretsdelingOperations = historyToKretsdelingOperations(kretsdelingerEntries).filter(
     (kretsdeling) => kretsdeling.flatetype === kontekstType,
   );
-
   return getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
 };
 
@@ -158,10 +157,9 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
   // Her aner jeg ikke hvordan vi skal håndtere flere potensielle aktivt redigerte inndelinger
   const kommunerId = useMemo(
     () =>
-      getKommunerIdFromKontekstEgenskaper(
-        kontekstEgenskaper.filter((k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN),
-        kontekstType,
-      ) ?? [currentlyEditingInndelinger?.[0] != null ? currentlyEditingInndelinger[0].id : ""],
+      getKommunerIdFromKontekstEgenskaper(kontekstEgenskaper, kontekstType) ?? [
+        currentlyEditingInndelinger?.[0] != null ? currentlyEditingInndelinger[0].id : "",
+      ],
     [kontekstType, currentlyEditingInndelinger, kontekstEgenskaper],
   );
 
@@ -174,7 +172,6 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
       .filter((kommune) => kommunerId.some((id) => id === kommune.id.lokalid.value))
       .map((kommune) => ({ id: kommune.id.lokalid.value, nummer: kommune.nummer }));
   }, [kommuneResponses, kommunerId]);
-
   const [tilhorighetOptions, setTilhorighetValg] = useState<TilhorighetOptions>();
 
   // wrapper for setter av tilhørighetoptions. Spreader inn nye kretser i hver dropdown.

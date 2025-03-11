@@ -20,7 +20,6 @@ const useGetMuligeKretserForAdministrativGrense = (
   kommuneId: string | null | undefined,
 ) => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  // for fylker er problemet at samme fylkeId blir brukt for alternativ A og B lista, mens vi må hente fra.
   const urlForKrets =
     kontekstType === KontekstType.GRUNNKRETS ? "/v1/kommuner/{id}/grunnkretser" : "/v1/kommuner/{id}/stemmekretser";
   const url = kommuneId != null ? urlForKrets : null;
