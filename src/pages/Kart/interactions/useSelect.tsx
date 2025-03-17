@@ -11,7 +11,6 @@ import { FeatureProperties } from "../../../types/api";
 import {
   getFeatureFremtidigEndringDato,
   getFlateRepresentasjonpunkterWithFremtidigEndring,
-  isFeatureEditable,
   isFeatureToBeArchived,
   isTeigFeature,
 } from "../../../utils/features";
@@ -21,6 +20,7 @@ import { areCoordsWithinNibasHitTolerance } from "../OverlayPanels/NavigasjonPan
 import { SelectedFeatureList } from "../OverlayPopups/SelectedFeatureList";
 import { useGetFeatures } from "./interaction-utils";
 import { map } from "../constants";
+import { useFeatureEditability } from "./useFeatureEditability";
 
 export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 export type SelectFeature = {
@@ -41,7 +41,7 @@ const useSelect = () => {
   const { closeOverlayPanel, openOverlayPanel } = useOverlayPanel();
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const { openOverlayPopup, closeOverlayPopup } = useOverlayPopup();
-
+  const { isFeatureEditable } = useFeatureEditability();
   useEffect(() => {
     if (!(activeTool === "grenseinfo")) {
       closeOverlayPopup();

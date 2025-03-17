@@ -29,6 +29,7 @@ import SnapMenu from "./SnapMenu";
 import ZoomButtons from "./ZoomButtons";
 import { ToolbarMenu } from "./ToolbarMenu";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { useFeatureEditability } from "../interactions/useFeatureEditability";
 
 export type MenuItems = (MenuItemProps & {
   $isActive: boolean;
@@ -49,6 +50,7 @@ const Toolbar = () => {
     toggleOverlayModal,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
+  const { isFeatureEditable } = useFeatureEditability();
 
   const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
   const isEditing = currentlyEditingInndelinger.length > 0;
@@ -255,7 +257,7 @@ const Toolbar = () => {
                   onClick={() => disableModeTool("move")}
                   isActive={!activeModeTools.includes("move")}
                   aria-label="Flytt eller rediger grenser i kartet"
-                  isDisabled={!isEditing || !anyFeatureIsEditable()}
+                  isDisabled={!isEditing || !anyFeatureIsEditable(isFeatureEditable)}
                   tooltip={{
                     text: "Flytt eller rediger grenser i kartet",
                     shortcut: "edit",

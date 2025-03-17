@@ -1,5 +1,5 @@
 import { editSource, grenserLayers } from "hooks/layers/constants";
-import { GrenseType, LayerId, editableGrenseTypes, getInndelingtypeFromGrensetype } from "hooks/layers/types";
+import { GrenseType, LayerId, getInndelingtypeFromGrensetype } from "hooks/layers/types";
 import { Feature } from "ol";
 import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
@@ -213,24 +213,6 @@ export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.
 
 export const isFeatureWithFutureChange = (feature: FeatureLike) => getFeatureFremtidigEndringDato(feature) != null;
 
-export const isFeatureOfEditableGrensetype = (feature: FeatureLike) =>
-  editableGrenseTypes.includes(feature.get("type"));
-
-export const isFeatureMetadataEditable = (feature: FeatureLike) =>
-  isFeatureOfEditableGrensetype(feature) && !isFeatureToBeArchived(feature);
-
-export const isFeatureEditable = (feature: FeatureLike) => {
-  if (
-    !isFeatureOfEditableGrensetype(feature) ||
-    isFeatureToBeArchived(feature) ||
-    !isFeatureMetadataEditable(feature) ||
-    isFeatureWithFutureChange(feature)
-  ) {
-    return false;
-  }
-  return true;
-};
-
 export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString>) => {
   const previousFeatureCoordinates = feature.get(previousCoordinateKey) as Coordinate[] | undefined;
   const currentFeatureCoordinates = feature.getGeometry()?.getCoordinates();
@@ -293,6 +275,6 @@ export const getFlateRepresentasjonpunkterWithFremtidigEndring = (feature: Featu
   return relevantRepresentasjonspunkter;
 };
 
-export const anyFeatureIsEditable = (): boolean => {
-  return editSource.getFeatures().some((feature) => isFeatureEditable(feature));
+export const anyFeatureIsEditable = (condition: (feature: FeatureLike) => boolean): boolean => {
+  return editSource.getFeatures().some((feature) => condition(feature));
 };

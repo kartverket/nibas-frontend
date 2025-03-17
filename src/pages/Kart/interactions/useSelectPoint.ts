@@ -7,7 +7,7 @@ import { useEffect, useMemo } from "react";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import { useToast } from "@kvib/react";
 import { useGetFeatures } from "./interaction-utils";
-import { isFeatureEditable } from "utils/features";
+import { useFeatureEditability } from "./useFeatureEditability";
 
 const useSelectPoint = () => {
   const toast = useToast();
@@ -15,6 +15,7 @@ const useSelectPoint = () => {
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { selectPointOnFeature, selectedFeatures, selectedPoint, clearSelection } = useFeatureStyle();
   const { getFeaturesAtPixel } = useGetFeatures();
+  const { isFeatureEditable } = useFeatureEditability();
 
   const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
 

@@ -16,6 +16,7 @@ import {
   addGrenseDeleteEntryFromFeatureList,
 } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import ToolbarPopup from "./ToolbarPopup";
+import { useFeatureEditability } from "../interactions/useFeatureEditability";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
@@ -25,6 +26,7 @@ const ToolbarPopups = () => {
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
   const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
+  const { isFeatureEditable } = useFeatureEditability();
 
   const archiveFeatures = () => {
     const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
@@ -124,7 +126,7 @@ const ToolbarPopups = () => {
   const getActiveToolPopup = () => {
     switch (activeTool) {
       case null:
-        if (!activeModeTools.includes("move") && anyFeatureIsEditable()) {
+        if (!activeModeTools.includes("move") && anyFeatureIsEditable(isFeatureEditable)) {
           return (
             <ToolbarPopup
               text={

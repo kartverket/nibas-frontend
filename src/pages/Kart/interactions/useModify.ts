@@ -15,7 +15,7 @@ import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { Style } from "ol/style";
 import { useEffect, useMemo } from "react";
 import { FeatureProperties, Metadata } from "types/api";
-import { isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
+import { isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { isAdministrativGrense } from "utils/grenser";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import { isTeiggrenseMetadata } from "../OverlayPanels/GrenseinformasjonPanel/Matrikkelgrenseinformasjon";
@@ -23,6 +23,7 @@ import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
+import { useFeatureEditability } from "./useFeatureEditability";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
@@ -48,6 +49,7 @@ const useModify = () => {
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const { performFeatureSplit } = useSplit();
   const confirmationModal = useConfirmationModal();
+  const { isFeatureEditable } = useFeatureEditability();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
   const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "grenseinfo", "archive", "koordinater"], []);
@@ -141,11 +143,12 @@ const useModify = () => {
       },
     });
   }, [
-    activeModeTools,
-    activeTool,
     selectedFeatures,
+    activeModeTools,
     disallowedPointModes,
+    activeTool,
     getLineStringFeaturesAtPixel,
+    isFeatureEditable,
     toast,
     removeToast,
   ]);
@@ -353,6 +356,7 @@ const useModify = () => {
     addHistoryEntry,
     confirmationModal,
     getLineStringFeaturesAtPixel,
+    isFeatureEditable,
     modify,
     performFeatureSplit,
     selectedFeatures,

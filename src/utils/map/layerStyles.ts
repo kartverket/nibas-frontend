@@ -10,10 +10,11 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style, { StyleFunction } from "ol/style/Style";
 import Text from "ol/style/Text";
-import { getFeatureFremtidigEndringDato, isFeatureEditable, isTeigFeature } from "utils/features";
+import { getFeatureFremtidigEndringDato, isTeigFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
 import { getRepresentasjonspunktId } from "./source";
+import { isFeatureEditableStateless } from "pages/Kart/interactions/useFeatureEditability";
 
 const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
@@ -186,7 +187,7 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
   }
 
   if (isGrenseType(grenseType)) {
-    if (grenseId === "edit" && isFeatureEditable(feature) === true) {
+    if (grenseId === "edit" && isFeatureEditableStateless(feature) === true) {
       return grenseStyles.edit;
     }
 

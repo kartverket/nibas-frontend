@@ -6,30 +6,11 @@ import {
   PropertyEntry,
 } from "contexts/HistoryContext/types";
 import { isDate } from "date-fns";
-import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
-import { isFeatureMetadataEditable } from "utils/features";
 import { removeNil } from "utils/list-utils";
-
-export const isGrenseinformasjonPanelDisabled = (feature: Feature | undefined) => {
-  if (feature) {
-    const isMetadataEditable = isFeatureMetadataEditable(feature);
-
-    if (!isMetadataEditable) {
-      return true;
-    }
-
-    const isFeatureInEditLayer = editSource
-      .getFeatures()
-      .some((editFeature) => editFeature.getId() === feature.getId());
-
-    return !isFeatureInEditLayer;
-  }
-  return true;
-};
 
 export const datestringToFormattedDatestring = (dateString: string) => {
   const date = new Date(dateString);

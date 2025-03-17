@@ -6,7 +6,7 @@ import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/a
 import { useState } from "react";
 import { isAdministrativGrense } from "utils/grenser";
 import { isGrenseType } from "utils/type-utils";
-import { isGrenseinformasjonPanelDisabled } from "../grenseinformasjon-utils";
+import { useFeatureEditability } from "pages/Kart/interactions/useFeatureEditability";
 
 export type Referanse = {
   beskrivelse: string;
@@ -40,6 +40,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   const [formViewState, setFormViewState] = useState<FormViewState>("creating");
   const [iconHovered, setIconHovered] = useState(false);
   const [selectedVedtak, setSelectedVedtak] = useState<DokumentasjonsreferanseDTO | undefined>(undefined);
+  const { isFeatureMetadataEditable } = useFeatureEditability();
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata | undefined;
   const vedtaksinfoCollection = metadata?.dokumentasjonsreferanser;
@@ -69,7 +70,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
           size="sm"
           variant="secondary"
           rightIcon="add"
-          isDisabled={isGrenseinformasjonPanelDisabled(feature)}
+          isDisabled={isFeatureMetadataEditable(feature)}
           aria-label="Legg til dokumentreferanse"
           onClick={() => {
             setFormViewState("creating");
@@ -100,7 +101,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
         isOpen={isOpen}
         onClose={closeModal}
         feature={feature}
-        isDisabled={isGrenseinformasjonPanelDisabled(feature)}
+        isDisabled={isFeatureMetadataEditable(feature)}
       />
     </>
   );
