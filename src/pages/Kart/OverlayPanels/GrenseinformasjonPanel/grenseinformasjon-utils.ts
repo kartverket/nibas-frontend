@@ -1,22 +1,22 @@
-import { Feature } from "ol";
-import LineString from "ol/geom/LineString";
 import {
-  PropertyEntry,
   GrenseArkiveringsEntry,
   GrenseTilhorighetEntry,
   HistoryChange,
   NyGrenseDeleteEntry,
+  PropertyEntry,
 } from "contexts/HistoryContext/types";
-import { FeatureProperties, KontekstEgenskaper } from "types/api";
-import { removeNil } from "utils/list-utils";
 import { isDate } from "date-fns";
-import { Geometry } from "ol/geom";
 import { editSource } from "hooks/layers/constants";
-import { isFeatureMetadataEditable, isFeatureToBeArchived } from "utils/features";
+import { Feature } from "ol";
+import { Geometry } from "ol/geom";
+import LineString from "ol/geom/LineString";
+import { FeatureProperties, KontekstEgenskaper } from "types/api";
+import { isFeatureMetadataEditable } from "utils/features";
+import { removeNil } from "utils/list-utils";
 
 export const isGrenseinformasjonPanelDisabled = (feature: Feature | undefined) => {
   if (feature) {
-    const isMetadataEditable = isFeatureMetadataEditable(feature, isFeatureToBeArchived(feature));
+    const isMetadataEditable = isFeatureMetadataEditable(feature);
 
     if (!isMetadataEditable) {
       return true;

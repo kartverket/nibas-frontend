@@ -15,7 +15,7 @@ import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { Style } from "ol/style";
 import { useEffect, useMemo } from "react";
 import { FeatureProperties, Metadata } from "types/api";
-import { isFeatureEditable, isFeatureToBeArchived, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
+import { isFeatureEditable, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { isAdministrativGrense } from "utils/grenser";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import { isTeiggrenseMetadata } from "../OverlayPanels/GrenseinformasjonPanel/Matrikkelgrenseinformasjon";
@@ -72,7 +72,7 @@ const useModify = () => {
         }
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-        if (selectedFeatures.some((feature) => !isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
+        if (selectedFeatures.some((feature) => !isFeatureEditable(feature))) {
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",
@@ -101,7 +101,7 @@ const useModify = () => {
         if (activeTool === "remove" && click(event)) {
           const activeFeatures = getLineStringFeaturesAtPixel(event, ["edit"]);
 
-          if (!activeFeatures.every((feature) => isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
+          if (!activeFeatures.every((feature) => isFeatureEditable(feature))) {
             return false;
           }
 

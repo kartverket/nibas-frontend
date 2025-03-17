@@ -149,7 +149,7 @@ const useSelect = () => {
         const fremtidigEndringRepresentasjonspunkter =
           getFlateRepresentasjonpunkterWithFremtidigEndring(clickedFeature);
 
-        if (!isFeatureEditable(clickedFeature, isFeatureToBeArchived(clickedFeature))) {
+        if (!isFeatureEditable(clickedFeature)) {
           toast({ status: "error", title: "Denne grensen er ikke redigerbar" });
           event.stopPropagation();
           return;

@@ -5,12 +5,10 @@ import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
 import { Geometry, LineString } from "ol/geom";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
-import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
-import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
+import { FeatureProperties, Metadata } from "types/api";
+import { MetadataDiscriminator, getMetadataDiscriminatorFromType } from "./grenser";
 import { removeNil } from "./list-utils";
 import { getRepresentasjonspunktId } from "./map/source";
-import { isGrenseType, isNotNil } from "./type-utils";
-import { isNonEditableFeatureId, isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) {
@@ -211,61 +209,26 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
   return properties;
 };
 
-export const isFeatureEditable = (
-  feature: FeatureLike,
-  isArchived = false,
-  requireAllContextsVisible: boolean = true,
-) => {
-  if (isNonEditableFeatureId(feature.getId())) {
+export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;
+
+export const isFeatureWithFutureChange = (feature: FeatureLike) => getFeatureFremtidigEndringDato(feature) != null;
+
+export const isFeatureOfEditableGrensetype = (feature: FeatureLike) =>
+  editableGrenseTypes.includes(feature.get("type"));
+
+export const isFeatureMetadataEditable = (feature: FeatureLike) =>
+  isFeatureOfEditableGrensetype(feature) && !isFeatureToBeArchived(feature);
+
+export const isFeatureEditable = (feature: FeatureLike) => {
+  if (
+    !isFeatureOfEditableGrensetype(feature) ||
+    isFeatureToBeArchived(feature) ||
+    !isFeatureMetadataEditable(feature) ||
+    isFeatureWithFutureChange(feature)
+  ) {
     return false;
   }
-
-  const isMetadataEditable = isFeatureMetadataEditable(feature, isArchived);
-
-  const featureType = feature.get("type");
-
-  if (isGrenseType(featureType) && isAdministrativGrense(featureType) && requireAllContextsVisible) {
-    if (isTempFeatureId(feature.getId())) {
-      return true;
-    }
-
-    const properties = feature.getProperties() as FeatureProperties;
-    const kontekstEgenskaper = properties.kontekstEgenskaper as KontekstEgenskaper[];
-
-    if (kontekstEgenskaper.length === 0) {
-      return false;
-    }
-
-    const layerSources = Object.values(grenserLayers)
-      .map((layer) => layer.getSource())
-      .filter(isNotNil);
-
-    // Kontekstegenskaper inneholder hvilke kretser som grensen tilhører (f. eks stemme/grunnkrets)
-    // Alle disse kretsene må være synlige for at en administrativ grense skal være synlig
-    // Vi kan sjekke gjennom alle layer sources for å se om lokalIDen til representasjonspunktet er tilgjengelig som en feature.
-    // Dersom den er tilgjengelig, kan vi anta at kretsen er synlig
-    const alleKretserIKontekstEgenskaperErSynlig = kontekstEgenskaper.every((egenskap) => {
-      const lokalId = egenskap.id?.lokalid.value;
-      if (lokalId === undefined) {
-        return false;
-      }
-
-      // TODO Velge riktig layerSource basert på kontekstegenskaptype?
-      return layerSources.some((source) => source.getFeatureById(getRepresentasjonspunktId(lokalId)) !== null);
-    });
-
-    if (!alleKretserIKontekstEgenskaperErSynlig) {
-      return false;
-    }
-  }
-
-  return isMetadataEditable;
-};
-
-export const isFeatureMetadataEditable = (feature: FeatureLike, isArchived: boolean) => {
-  const featureType = feature.get("type");
-  const isEditableFeatureType = isGrenseType(featureType) && editableGrenseTypes.includes(featureType);
-  return isEditableFeatureType && !isArchived;
+  return true;
 };
 
 export const isPreviousAndCurrentCoordinatesEqual = (feature: Feature<LineString>) => {
@@ -293,8 +256,6 @@ export const isTeigFeature = (feature: FeatureLike) => {
 
   return false;
 };
-
-export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;
 
 export const getFeatureFremtidigEndringDato = (feature: FeatureLike | undefined) => {
   if (feature) {

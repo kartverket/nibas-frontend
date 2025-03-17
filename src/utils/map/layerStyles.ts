@@ -186,7 +186,7 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
   }
 
   if (isGrenseType(grenseType)) {
-    if (grenseId === "edit" && isFeatureEditable(feature, archived) === true) {
+    if (grenseId === "edit" && isFeatureEditable(feature) === true) {
       return grenseStyles.edit;
     }
 
