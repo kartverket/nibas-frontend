@@ -1,6 +1,7 @@
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { GrenseId, GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
+import { FeatureLike } from "ol/Feature";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import MultiPoint from "ol/geom/MultiPoint";
@@ -12,9 +13,7 @@ import Style, { StyleFunction } from "ol/style/Style";
 import Text from "ol/style/Text";
 import { getFeatureFremtidigEndringDato, isTeigFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
-import { FeatureLike } from "ol/Feature";
 import { getRepresentasjonspunktId } from "./source";
-import { isFeatureEditableStateless } from "pages/Kart/interactions/useFeatureEditability";
 
 const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
@@ -187,7 +186,7 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
   }
 
   if (isGrenseType(grenseType)) {
-    if (grenseId === "edit" && isFeatureEditableStateless(feature) === true) {
+    if (grenseId === "edit") {
       return grenseStyles.edit;
     }
 
