@@ -1,4 +1,4 @@
-import { Button, Divider, Icon, IconButton, Text, useDisclosure } from "@kvib/react";
+import { Button, Divider, Icon, Text, useDisclosure } from "@kvib/react";
 import AlertModal from "components/Modals/AlertModal";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
