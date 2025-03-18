@@ -17,7 +17,7 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
     <Container>
       <ArrowButtons>
         <IconButton
-          variant="secondary"
+          variant="ghost"
           size="sm"
           icon="arrow_upward"
           aria-label="Flytt kartlag opp"
@@ -25,7 +25,7 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
           isDisabled={index === 0}
         />
         <IconButton
-          variant="secondary"
+          variant="ghost"
           size="sm"
           icon="arrow_downward"
           aria-label="Flytt kartlag ned"
@@ -45,13 +45,12 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
 const Container = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 `;
 
 const ArrowButtons = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 4px;
 `;
 
 export default Kartlag;

@@ -94,7 +94,7 @@ const UtkastOpprett = () => {
         Opprett et nytt utkast
       </Button>
 
-      <Modal isOpen={isOpen} onClose={handleCloseModal} size="xl" isCentered>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} size="4xl" isCentered>
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={handleSubmit(opprettUtkast)}>

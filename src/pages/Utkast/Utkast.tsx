@@ -59,7 +59,7 @@ const Utkast = () => {
         <TitleContainer>
           <ReturnButton to={routes.index}>
             <Icon icon="arrow_back" />
-            <span>Gå tilbake</span>
+            <span>Tilbake til forsiden</span>
           </ReturnButton>
           <Heading as="h1" size="lg">
             Upubliserte utkast
@@ -119,7 +119,7 @@ const UtkastPage = styled(Page)`
     "left right";
   justify-items: unset;
   gap: 48px;
-  padding: 64px;
+  padding: 64px 120px;
 `;
 
 const TitleContainer = styled.div`

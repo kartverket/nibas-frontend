@@ -54,7 +54,7 @@ const ToolbarPopups = () => {
       toast({
         status: "error",
         title: "Kan ikke slette eksisterende grenser",
-        description: "Ønsker du å fjerne en eksisterende grense må du bruke arkivering",
+        description: "Ønsker du å fjerne en eksisterende grense må du benytte Arkiver grense-verktøyet.",
       });
       return;
     }
@@ -129,6 +129,7 @@ const ToolbarPopups = () => {
         if (!activeModeTools.includes("move") && anyFeatureIsEditable(isFeatureEditable)) {
           return (
             <ToolbarPopup
+              icon="control_camera"
               text={
                 selectedFeatures.length === 0
                   ? "Velg én eller flere grenser du ønsker å flytte"
@@ -142,19 +143,21 @@ const ToolbarPopups = () => {
       case "draw":
         return (
           <ToolbarPopup
-            text="Start tegning ved å klikke på kartet"
-            subtext="Tegninger kan snappes til punkter eller startes fritt utenfor andre grenser. Dobbelklikk for å avslutte tegning. Ønsker du å panorere underveis, bruk piltastene."
+            icon="draw"
+            text="Start tegning ved å klikke på kartet. Avslutt med dobbeltklikk."
+            subtext="Tegninger kan startes i eksisterende punkter eller på et tomt område. Ønsker du å panorere underveis, bruk piltastene."
             onClose={resetTool}
           />
         );
 
       case "split":
         if (selectedFeatures.length === 0) {
-          return <ToolbarPopup text="Velg grensen du ønsker å dele" onClose={resetTool} />;
+          return <ToolbarPopup icon="cut" text="Velg grensen du ønsker å dele" onClose={resetTool} />;
         }
         if (selectedFeatures.length === 1) {
           return (
             <ToolbarPopup
+              icon="cut"
               text="Velg hvilket punkt du ønsker å dele grensen på"
               buttonText="Del grense"
               onClick={() => handleSplit()}
@@ -171,16 +174,30 @@ const ToolbarPopups = () => {
             <ToolbarPopup
               text="Du kan kun se informasjon om én grense om gangen. Velg grensen på nytt som du ønsker å se informasjon til."
               onClose={resetTool}
+              icon={"function"}
             />
           );
         }
-        return <ToolbarPopup text="Velg en grense i kartet for å se grenseinformasjon" onClose={resetTool} />;
+        return (
+          <ToolbarPopup
+            text="Velg en grense i kartet for å se grenseinformasjon"
+            onClose={resetTool}
+            icon={"function"}
+          />
+        );
       case "grensecoordinates":
-        return <ToolbarPopup text="Hold over punktet du ønsker å se koordinatet til" onClose={resetTool} />;
+        return (
+          <ToolbarPopup
+            icon="my_location"
+            text="Hold over punktet du ønsker å se koordinatet til"
+            onClose={resetTool}
+          />
+        );
       case "measure":
         return (
           <ToolbarPopup
-            text="Velg i kartet der du ønsker å starte målingen. Avslutt med dobbeltklikk."
+            icon={"straighten"}
+            text="Start målingen ved å velge startpunkt i kartet. Avslutt med dobbeltklikk."
             subtext="Målingen kan snappes til punkter eller startes fritt utenfor andre grenser. Ønsker du å panorere underveis, bruk piltastene."
             onClose={resetTool}
           />
@@ -188,6 +205,7 @@ const ToolbarPopups = () => {
       case "archive":
         return (
           <ToolbarPopup
+            icon="archive"
             text="Velg en eller flere grenser du ønsker å arkivere"
             buttonText="Arkiver"
             onClick={archiveFeatures}
@@ -199,6 +217,7 @@ const ToolbarPopups = () => {
       case "delete":
         return (
           <ToolbarPopup
+            icon="delete_forever"
             text="Velg en eller flere grenser du ønsker å slette"
             buttonText="Slett"
             onClick={deleteFeatures}
@@ -208,11 +227,18 @@ const ToolbarPopups = () => {
         );
 
       case "koordinater":
-        return <ToolbarPopup text="Velg et punkt på en grense for å åpne koordinatmenyen" onClose={resetTool} />;
+        return (
+          <ToolbarPopup
+            icon="my_location"
+            text="Velg et punkt på en grense for å åpne koordinatmenyen"
+            onClose={resetTool}
+          />
+        );
 
       case "add":
         return (
           <ToolbarPopup
+            icon="add_circle"
             text={
               selectedFeatures.length === 0
                 ? "Velg én eller flere grenser du ønsker å legge til punkt på"
@@ -225,6 +251,7 @@ const ToolbarPopups = () => {
       case "remove":
         return (
           <ToolbarPopup
+            icon="do_not_disturb_on"
             text={
               selectedFeatures.length === 0
                 ? "Velg én eller flere grenser du ønsker å fjerne punkt fra"
@@ -242,6 +269,7 @@ const ToolbarPopups = () => {
     <>
       {activeModeTools.includes("matrikkel") && (
         <ToolbarPopup
+          icon="holiday_village"
           text="Hent og vis eiendomsgrenser fra matrikkelen"
           subtext="Grensene hentes ut basert på kartutsnittet du ser på."
           buttonText="Hent grenser"

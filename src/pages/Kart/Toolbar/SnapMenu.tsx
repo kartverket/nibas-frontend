@@ -1,10 +1,11 @@
-import { Menu, MenuList, Switch, CloseButton, MenuDivider, MenuItem, Spacer, useToast, Box } from "@kvib/react";
+import { Menu, MenuList, Switch, Text, CloseButton, MenuDivider, MenuItem, Spacer, useToast, Box } from "@kvib/react";
 import { useToolbar } from "contexts/ToolbarContext";
 import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 import CheckboxWithShortcutDesc from "./CheckboxWithShortcutDesc";
+
 type Props = {
   isOpen: boolean;
   onClose: () => void;
@@ -56,20 +57,23 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         aria-label="Snap til andre grenser i kartet"
         isOpen={isOpen}
         onClick={onToggle}
-        icon="align_justify_space_between"
+        icon="close_fullscreen"
         isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
-        tooltip={{ text: "Skru av/på snapping mot andre grenser.", shortcut: "snap" }}
+        tooltip={{ text: "Snapping" }}
       >
         Snap
       </MenuButtonWithChevron>
       <MenuList minWidth="240px" marginBottom="10px">
         <SnapMenuHeader>
           <Switch
-            aria-label="Switch medium"
+            aria-label="Slå av/på snapping"
             isChecked={activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")}
             onChange={() => toggleSnapping()}
           />
           <span>Snapping</span>
+          <Text fontSize="sm" sx={{ color: "gray.600" }}>
+            {KeyboardShortcuts["snap"].displayString}
+          </Text>
           <Spacer />
           <CloseButton onClick={onClose} />
         </SnapMenuHeader>
@@ -94,7 +98,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
               isChecked={activeModeTools.includes("snap_matrikkel")}
               shortcut={KeyboardShortcuts["snap_matrikkel"].displayString}
             >
-              Snap til teiggrenser
+              Snap til eiendomsgrenser
             </CheckboxWithShortcutDesc>
           </Box>
         </MenuItem>
