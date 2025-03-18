@@ -307,20 +307,20 @@ const FlyttKoordinaterPanel = () => {
           <InputRow>
             <Input
               type="text"
-              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
-              {...registerWithClearErrorsOnChange("east")}
-              validationError={{
-                showError: !!formErrors.east,
-                message: formErrors.east?.message ?? "",
-              }}
-            />
-            <Input
-              type="text"
               label={getLabelsFromProjection(projectionOfCoordinates).y ?? ""}
               {...registerWithClearErrorsOnChange("north")}
               validationError={{
                 showError: !!formErrors.north,
                 message: formErrors.north?.message ?? "",
+              }}
+            />
+            <Input
+              type="text"
+              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
+              {...registerWithClearErrorsOnChange("east")}
+              validationError={{
+                showError: !!formErrors.east,
+                message: formErrors.east?.message ?? "",
               }}
             />
           </InputRow>

@@ -125,5 +125,5 @@ export const formatCoordinatesNor = (coordinates: number[] | undefined) => {
   if (!coordinates) {
     return "";
   }
-  return `${coordinates[0].toFixed(2)}Ø  ${coordinates[1].toFixed(2)}N`;
+  return `${coordinates[1].toFixed(2)}N ${coordinates[0].toFixed(2)}Ø`;
 };
