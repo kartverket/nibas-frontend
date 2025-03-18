@@ -32,6 +32,18 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
 
+  const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+  const utkastSammenslaaingInformasjon: Record<string, string | undefined> =
+    utkastSammenslaaingEndring?.stemmekretserTilSammenslaaing
+      .concat(utkastSammenslaaingEndring?.viderefoertStemmekrets)
+      .reduce(
+        (acc, sk) => {
+          acc[sk.lokalId] = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.informasjon;
+          return acc;
+        },
+        {} as Record<string, string | undefined>,
+      ) ?? {};
+
   const flatedata = useFlatedata(mainInndeling) ?? [];
 
   const allInndelingerHasFremtidigEndring = flatedata.every(
@@ -147,6 +159,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 formMethods={formMethods}
                 previousValues={previousValues}
                 allInndelinger={flatedata}
+                sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
               />
             );
           })}
@@ -166,7 +179,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         tooltip={
           allInndelingerHasFremtidigEndring
             ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
-            : utkastHarSammenslaainger() === true
+            : utkastHarSammenslaainger()
               ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
               : utkast && mainInndeling.isEditing
                 ? null

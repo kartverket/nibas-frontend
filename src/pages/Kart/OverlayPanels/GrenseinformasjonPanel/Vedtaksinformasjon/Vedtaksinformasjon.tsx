@@ -4,9 +4,9 @@ import { Feature } from "ol";
 import { VedtaksinfoDetaljer } from "./VedtaksinfoDetaljer";
 import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/api";
 import { useState } from "react";
-import useIsGrenseinformasjonPanelDisabled from "../../hooks/useIsGrenseInformasjonPanelDisabled";
 import { isAdministrativGrense } from "utils/grenser";
 import { isGrenseType } from "utils/type-utils";
+import { isGrenseinformasjonPanelDisabled } from "../grenseinformasjon-utils";
 
 export type Referanse = {
   beskrivelse: string;
@@ -44,8 +44,6 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
   const metadata = properties.metadata as Metadata | undefined;
   const vedtaksinfoCollection = metadata?.dokumentasjonsreferanser;
 
-  const isGrenseinfoPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
-
   const closeModal = () => {
     setFormViewState("creating");
     setSelectedVedtak(undefined);
@@ -71,7 +69,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
           size="sm"
           variant="secondary"
           rightIcon="add"
-          isDisabled={isGrenseinfoPanelDisabled}
+          isDisabled={isGrenseinformasjonPanelDisabled(feature)}
           aria-label="Legg til dokumentreferanse"
           onClick={() => {
             setFormViewState("creating");
@@ -102,7 +100,7 @@ export const Vedtaksinformasjon = ({ feature }: { feature: Feature }) => {
         isOpen={isOpen}
         onClose={closeModal}
         feature={feature}
-        isDisabled={isGrenseinfoPanelDisabled}
+        isDisabled={isGrenseinformasjonPanelDisabled(feature)}
       />
     </>
   );

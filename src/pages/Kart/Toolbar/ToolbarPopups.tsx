@@ -1,21 +1,21 @@
-import { useToolbar } from "contexts/ToolbarContext";
-import ToolbarPopup from "./ToolbarPopup";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import useSplit from "../interactions/useSplit";
-import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { useToast } from "@kvib/react";
+import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useToolbar } from "contexts/ToolbarContext";
+import { useState } from "react";
+import { anyFeatureIsEditable } from "utils/features";
+import { removeNil } from "utils/list-utils";
+import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
+import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { map } from "../constants";
+import { isTempFeatureId } from "../interactions/feature-id-utils";
+import useSplit from "../interactions/useSplit";
 import {
   addArchivingEntryFromFeatureList,
   addGrenseDeleteEntryFromFeatureList,
 } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
-import { map } from "../constants";
-import { useState } from "react";
-import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { removeNil } from "utils/list-utils";
-import { anyFeatureIsEditable } from "utils/features";
-import { isTempFeatureId } from "../interactions/feature-id-utils";
+import ToolbarPopup from "./ToolbarPopup";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);

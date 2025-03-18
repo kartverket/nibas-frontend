@@ -2,7 +2,6 @@ import { Divider, Flex, Icon, MenuItem, MenuItemProps, MenuList, useDisclosure }
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useOverlayPopup } from "contexts/OverlayPopupContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
@@ -140,9 +139,6 @@ const Toolbar = () => {
     () => disableModeTool("move"),
     isPanningAllowed,
   );
-
-  const { closeOverlayPopup } = useOverlayPopup();
-
   // Alt her er en prioritert rekkefølge på hva som bør "exites" først. Det kan sikkert itereres litt på, men dette er et foreløpig forslag
   useKeyboardShortcut("escape", () => {
     if (activeTool === "draw") {
@@ -172,8 +168,6 @@ const Toolbar = () => {
     }
 
     if (activeOverlayPanel) {
-      // TODO: Når vi får flere overlaypopups må vi ha mulighet for å lukke spesifikke popups, i dette tilfellet "aktivefeatures"
-      closeOverlayPopup();
       closeOverlayPanel();
       return;
     }
