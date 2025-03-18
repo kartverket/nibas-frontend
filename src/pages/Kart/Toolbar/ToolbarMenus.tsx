@@ -8,11 +8,13 @@ import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
 import { anyFeatureIsEditable } from "utils/features";
 import CustomTooltip from "./CustomTooltip";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
+import { useFeatureEditability } from "../interactions/useFeatureEditability";
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool, disableModeTool, activeModeTools } = useToolbar();
   const { activeOverlayPanel, closeOverlayPanel, toggleOverlayPanel, toggleOverlayModal, activeOverlayModal } =
     useOverlayPanel();
+  const { isFeatureEditable } = useFeatureEditability();
 
   const theme = useTheme();
   const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
@@ -99,7 +101,7 @@ const ToolbarMenus = () => {
       label: "Flytt punkt (frihånd)",
       icon: <Icon icon="control_camera" />,
       command: KeyboardShortcuts["edit"].displayString,
-      isDisabled: !isEditing || !anyFeatureIsEditable(),
+      isDisabled: !isEditing || !anyFeatureIsEditable(isFeatureEditable),
       onClick: () => disableModeTool("move"),
       $isActive: !activeModeTools.includes("move"),
       "aria-label": "Flytt punkt med frihånd",
