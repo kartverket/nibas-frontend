@@ -48,6 +48,7 @@ export const editableGrenseTypes: GrenseType[] = [
   "Grunnkretsgrense",
   "Stemmekretsgrense",
   "Kommunegrense",
+  "Fylkesgrense",
 ];
 
 export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): GrenseType | undefined => {

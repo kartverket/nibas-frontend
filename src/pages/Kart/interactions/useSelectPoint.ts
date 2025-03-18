@@ -1,13 +1,14 @@
-import { Feature, MapBrowserEvent } from "ol";
-import LineString from "ol/geom/LineString";
+import { useToast } from "@kvib/react";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { Feature, MapBrowserEvent } from "ol";
+import LineString from "ol/geom/LineString";
 import { useEffect, useMemo } from "react";
-import { findNearbyVertexOnFeature } from "utils/map/map-utils";
-import { useToast } from "@kvib/react";
-import { useGetFeatures } from "./interaction-utils";
 import { isFeatureEditable } from "utils/features";
+import { findNearbyVertexOnFeature } from "utils/map/map-utils";
+import { useGetFeatures } from "./interaction-utils";
+import { isSplittingEditableGrense } from "./useSplit";
 
 const useSelectPoint = () => {
   const toast = useToast();
@@ -43,7 +44,11 @@ const useSelectPoint = () => {
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense
-      if (!nonArchivedFeatures.every((feature) => isFeatureEditable(feature))) {
+      if (
+        !nonArchivedFeatures.every(
+          (feature) => isFeatureEditable(feature) || isSplittingEditableGrense(feature, activeTool),
+        )
+      ) {
         toast({
           status: "error",
           title: "Denne grensen er ikke redigerbar.",
