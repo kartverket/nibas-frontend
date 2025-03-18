@@ -1,18 +1,15 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, Hide, Icon, Text, useDisclosure } from "@kvib/react";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { styled } from "styled-components";
-import HeaderButton, { HeaderSection } from "./HeaderButton";
-import UtkastEndreModal from "components/Modals/UtkastEndreModal";
-import HeaderHome from "./HeaderHome";
-import { useNavigate } from "react-router-dom";
-import { routes } from "utils/routes";
-import useAlertModal from "hooks/useAlertModal";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { Button, Divider, Icon, Text } from "@kvib/react";
 import AlertModal from "components/Modals/AlertModal";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import useAlertModal from "hooks/useAlertModal";
+import { useNavigate } from "react-router-dom";
+import { styled } from "styled-components";
+import { routes } from "utils/routes";
 import CustomTooltip from "../Toolbar/CustomTooltip";
+import { HeaderSection } from "./HeaderButton";
 
 const HeaderBreadcrumb = () => {
-  const { isOpen, onClose, onOpen } = useDisclosure();
   const { utkast } = useUtkast();
   const { canSave } = useHistory();
   const navigate = useNavigate();
@@ -36,32 +33,15 @@ const HeaderBreadcrumb = () => {
 
   return (
     <HeaderSection>
-      <HeaderHome />
-      <Breadcrumb separator="">
-        <CustomTooltip text="Gå tilbake til utkastoversikten" hasArrow>
-          <BreadcrumbItem>
-            <BreadcrumbLink onClick={handleHome}>Utkast</BreadcrumbLink>
-            <Separator icon="chevron_right" />
-          </BreadcrumbItem>
-        </CustomTooltip>
-        <Hide below="xl">
-          <BreadcrumbItem>
-            <Crumb>{utkast.endringstype}</Crumb>
-            <Separator icon="chevron_right" />
-          </BreadcrumbItem>
-        </Hide>
-        <BreadcrumbItem>
-          <Text noOfLines={1}>{utkast.navn}</Text>
-        </BreadcrumbItem>
-      </Breadcrumb>
-      <HeaderButton
-        label="Rediger utkast"
-        icon="edit_note"
-        onClick={onOpen}
-        isLabelHidden={true}
-        tooltip={{ text: "Rediger detaljene til dette utkastet" }}
-      />
-      <UtkastEndreModal isOpen={isOpen} onClose={onClose} utkast={utkast} />
+      <CustomTooltip text="Gå tilbake til utkastoversikten">
+        <Button leftIcon="arrow_back" variant="tertiary" size="sm" onClick={handleHome}>
+          Se alle utkast
+        </Button>
+      </CustomTooltip>
+      <Divider marginLeft="8px" orientation="vertical" />
+      <Text paddingLeft="14px" noOfLines={1}>
+        {utkast.navn}
+      </Text>
       <AlertModal
         status="warning"
         title={modalTitle}
@@ -84,10 +64,6 @@ const HeaderBreadcrumb = () => {
 export const Separator = styled(Icon)`
   line-height: 30px;
   font-size: 20px;
-`;
-
-const Crumb = styled.span`
-  white-space: nowrap;
 `;
 
 export default HeaderBreadcrumb;
