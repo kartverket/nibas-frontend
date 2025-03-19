@@ -16,11 +16,12 @@ import {
   isTeigFeature,
 } from "../../../utils/features";
 import { getUniqueItemsBy, removeNil } from "../../../utils/list-utils";
+import { map } from "../constants";
 import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import { areCoordsWithinNibasHitTolerance } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 import { SelectedFeatureList } from "../OverlayPopups/SelectedFeatureList";
 import { useGetFeatures } from "./interaction-utils";
-import { map } from "../constants";
+import { editSource } from "hooks/layers/constants";
 
 export const exclusiveSelectTools: Tool[] = ["grenseinfo", "split"];
 export type SelectFeature = {
@@ -49,7 +50,7 @@ const useSelect = () => {
   }, [activeTool, closeOverlayPopup]);
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
-  const safeTools: Tool[] = ["grenseinfo", "split"];
+  const safeTools: Tool[] = ["grenseinfo", "split", "duplicate"];
   const pointTools: Tool[] = ["add", "remove", "split"];
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();
@@ -227,6 +228,22 @@ const useSelect = () => {
         toast({
           status: "error",
           title: "Kan ikke arkivere grenser som allerede er arkivert",
+        });
+        event.stopPropagation();
+        return;
+      }
+
+      const clickedFeatureId = clickedFeature.getId();
+      if (
+        activeTool === "duplicate" &&
+        clickedFeatureId != null &&
+        editSource.getFeatureById(clickedFeatureId) != null
+      ) {
+        toast({
+          status: "error",
+          title: isFeatureEditable(clickedFeature)
+            ? "Du kan ikke duplisere grenser som allerede er redigerbare"
+            : "Denne grensen er ikke redigerbar",
         });
         event.stopPropagation();
         return;

@@ -2,14 +2,17 @@ import { useToast } from "@kvib/react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useToolbar } from "contexts/ToolbarContext";
+import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useState } from "react";
-import { anyFeatureIsEditable } from "utils/features";
+import { anyFeatureIsEditable, setDefaultFeatureProperties } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { map } from "../constants";
-import { isTempFeatureId } from "../interactions/feature-id-utils";
+import { getTempFeatureId, isTempFeatureId } from "../interactions/feature-id-utils";
+import { createNyGrenseHistoryChange } from "../interactions/grense-history-utils";
 import useSplit from "../interactions/useSplit";
 import {
   addArchivingEntryFromFeatureList,
@@ -25,6 +28,7 @@ const ToolbarPopups = () => {
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
   const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
+  const { currentlyEditingInndelinger } = useInndelinger();
 
   const archiveFeatures = () => {
     const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
@@ -41,6 +45,29 @@ const ToolbarPopups = () => {
       title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble arkivert`,
       description: "Husk å eventuelt sette tilhørighet på berørte grenser",
     });
+  };
+
+  const duplicateFeaturesToEditLayer = () => {
+    const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
+    const duplicateFeatures = selectedFeatures.map((sf) => {
+      const duplicateFeature = sf.clone();
+      duplicateFeature.setId(getTempFeatureId());
+      setDefaultFeatureProperties(duplicateFeature, grenseType);
+      return duplicateFeature;
+    });
+    if (grenseType != null && duplicateFeatures.length > 0) {
+      addFeaturesToSource("edit", duplicateFeatures);
+      addHistoryEntry({
+        type: "nygrense",
+        changes: removeNil(duplicateFeatures.map((df) => createNyGrenseHistoryChange(df, grenseType, []))),
+      });
+      clearSelection();
+      toast({
+        status: "success",
+        title: `${selectedFeatures.length} grense${selectedFeatures.length > 1 ? "r" : ""} ble duplisert`,
+        description: "Husk å oppdatere relevante egenskaper for de berørte grensene",
+      });
+    }
   };
 
   const deleteFeatures = () => {
@@ -219,6 +246,17 @@ const ToolbarPopups = () => {
             text="Velg en eller flere grenser du ønsker å slette"
             buttonText="Slett"
             onClick={deleteFeatures}
+            isDisabled={selectedFeatures.length === 0}
+            onClose={resetTool}
+          />
+        );
+      case "duplicate":
+        return (
+          <ToolbarPopup
+            icon="copy_all"
+            text="Velg en eller flere grenser du ønsker å duplisere"
+            buttonText="Dupliser"
+            onClick={duplicateFeaturesToEditLayer}
             isDisabled={selectedFeatures.length === 0}
             onClose={resetTool}
           />
