@@ -11,12 +11,14 @@ import {
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { map } from "../constants";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { removeNil } from "utils/list-utils";
 import { anyFeatureIsEditable } from "utils/features";
 import { isTempFeatureId } from "../interactions/feature-id-utils";
 
+import useGetHistoriskeGrenser from "../interactions/useGetHistoriskeGrenser";
+import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
@@ -25,6 +27,14 @@ const ToolbarPopups = () => {
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
   const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
+  const {
+    historiskeGrenserIsLoading,
+    allFeatures: historiskeGrenserAllFeatures,
+    getHistoriskeGrenser,
+    gjenopprettHistoriskeGrenser,
+  } = useGetHistoriskeGrenser();
+  const [historiskeGrenserFetched, setHistoriskeGrenserFetched] = useState(false);
+  const [historiskGrenseSelected, setHistoriskGrenseSelected] = useState(false);
 
   const archiveFeatures = () => {
     const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
@@ -68,6 +78,43 @@ const ToolbarPopups = () => {
       status: "success",
       title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble slettet`,
     });
+  };
+
+  const handleHistoriskeGrenser = async (gyldigTilDate: string) => {
+    getHistoriskeGrenser(gyldigTilDate);
+  };
+  useEffect(() => {
+    // Sjekk om vi er klare til å vise historiske grenser
+    const shouldFetch =
+      !historiskeGrenserIsLoading && activeTool === "historiskeGrenser" && historiskeGrenserAllFeatures.length > 0;
+    setHistoriskeGrenserFetched(shouldFetch);
+    if (!shouldFetch) {
+      return;
+    }
+    // Er de valgte features'ene er historiske? Hvis ikke er gjenoppsett-knappen disabled
+    // TODO: Ikke alltid setHIstoriskeGrenserFetched blir satt riktig selv når man trykker på en historisk grense
+    const areHistorical =
+      selectedFeatures.length > 0
+        ? removeNil(selectedFeatures.map((feature) => feature.getId()?.toString())).every((id) =>
+            historiskeGrenserAllFeatures.some((feature) => feature.getId() === id),
+          )
+        : false;
+
+    setHistoriskGrenseSelected(areHistorical);
+  }, [
+    historiskeGrenserAllFeatures.length,
+    historiskeGrenserIsLoading,
+    activeTool,
+    historiskeGrenserAllFeatures,
+    selectedFeatures,
+  ]);
+
+  const handleHistoriskeGrenserChangeDate = () => {
+    setHistoriskeGrenserFetched(false);
+  };
+  const handleRestoreHistoriskeGrenser = () => {
+    gjenopprettHistoriskeGrenser(selectedFeatures);
+    clearSelection();
   };
 
   const handleSplit = () => {
@@ -204,7 +251,31 @@ const ToolbarPopups = () => {
             onClose={resetTool}
           />
         );
-
+      case "historiskeGrenser":
+        return (
+          <>
+            {historiskeGrenserFetched === false && (
+              <HistoriskeGrenserDatoModal
+                isOpen={activeTool === "historiskeGrenser"}
+                onClose={resetTool}
+                onSubmit={handleHistoriskeGrenser}
+              />
+            )}
+            {historiskeGrenserFetched === true && (
+              <ToolbarPopup
+                text="Velg grensene du ønsker å gjenopprette"
+                subtext=""
+                buttonText="Gjenopprett"
+                secondaryButtonText="Endre tidsrom"
+                onClick={handleRestoreHistoriskeGrenser}
+                secondaryOnClick={handleHistoriskeGrenserChangeDate} // Denne blir også disabled, litt dumt at begge knappene deler samme disabled
+                onClose={resetTool}
+                isDisabled={historiskGrenseSelected === false}
+                isLoading={historiskeGrenserIsLoading}
+              />
+            )}
+          </>
+        );
       case "koordinater":
         return <ToolbarPopup text="Velg et punkt på en grense for å åpne koordinatmenyen" onClose={resetTool} />;
 

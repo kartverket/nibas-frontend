@@ -133,6 +133,7 @@ export const grenseStyles = {
   error: lineAndPointStyles({ color: "#FF0000FF" }),
   fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"] }),
   matrikkel: lineAndPointStyles({ color: "#C0AFFBFF", pointRadius: 1.5, endpointRadius: 2 }),
+  historiskGrense: lineAndPointStyles({ color: "#FF00FF", pointRadius: 1.5, dashed: true, lineStrokeWidth: 2 }),
   sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
   flate: flateStyles,
   sammenslaaingOverlapping: lineAndPointStyles({
@@ -196,6 +197,11 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
   if (isTeigFeature(feature)) {
     return grenseStyles.matrikkel;
   }
+  console.log(grenseType);
+  console.log(grenseId);
+  if (grenseId === "historiskGrense") {
+    return grenseStyles.historiskGrense;
+  }
 
   return [];
 };
@@ -218,7 +224,8 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) =
     name == null ||
     number == null ||
     grenseId === "archived" ||
-    grenseId === "matrikkel"
+    grenseId === "matrikkel" ||
+    grenseId === "historiskGrense"
   ) {
     return new Style();
   }

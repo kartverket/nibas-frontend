@@ -42,7 +42,7 @@ const useSelect = () => {
   const { openOverlayPopup, closeOverlayPopup } = useOverlayPopup();
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
-  const safeTools: Tool[] = ["grenseinfo"];
+  const safeTools: Tool[] = ["grenseinfo", "historiskeGrenser"];
   const pointTools: Tool[] = ["add", "remove", "split"];
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();

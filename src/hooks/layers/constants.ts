@@ -64,4 +64,5 @@ export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource<Feature>>>
   archived: createVectorLayer("archived", archivedSource),
   edit: createVectorLayer("edit", editSource),
   measure: createVectorLayer("measure", measureSource),
+  historiskGrense: createVectorLayer("historiskGrense"),
 };

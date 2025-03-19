@@ -25,7 +25,8 @@ export type GrenseId =
   | "stemmekrets"
   | "archived"
   | "edit"
-  | "measure";
+  | "measure"
+  | "historiskGrense";
 
 export const GRENSETYPER = [
   "Kommunegrense",

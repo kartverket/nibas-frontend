@@ -52,6 +52,9 @@ export interface paths {
   "/v1/kommuner/{id}/stemmekretsgrenser": {
     get: operations["hentKommunesStemmekretsgrenser"];
   };
+  "/v1/kommuner/{id}/stemmekretsgrenserHistoriske": {
+    get: operations["hentKommunesStemmekretsgrenserHistoriske"];
+  };
   "/v1/kommuner/{id}/stemmekretser": {
     /** Henter alle stemmekretser som tilhører en kommune. */
     get: operations["hentKommunesStemmekretser"];
@@ -64,6 +67,9 @@ export interface paths {
   };
   "/v1/kommuner/{id}/grunnkretsgrenser": {
     get: operations["hentKommunesGrunnkretsgrenser"];
+  };
+  "/v1/kommuner/{id}/grunnkretsgrenserHistoriske": {
+    get: operations["hentKommunesGrunnkretsgrenserHistoriske"];
   };
   "/v1/kommuner/{id}/grunnkretser": {
     /** Henter alle grunnkretser som tilhører en kommune. */
@@ -466,7 +472,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -962,7 +974,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1044,7 +1062,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1652,6 +1676,38 @@ export interface operations {
       };
     };
   };
+  hentKommunesStemmekretsgrenserHistoriske: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente stemmekretsgrensene til */
+        id: string;
+      };
+      query: {
+        /** gyldigTilDate for kommune (default = dagens dato */
+        gyldigTilDate: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
   /** Henter alle stemmekretser som tilhører en kommune. */
   hentKommunesStemmekretser: {
     parameters: {
@@ -1775,6 +1831,38 @@ export interface operations {
       };
     };
   };
+  hentKommunesGrunnkretsgrenserHistoriske: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente grunnkretsgrensene til */
+        id: string;
+      };
+      query: {
+        /** gyldigTilDate for kommune (default = dagens dato */
+        gyldigTilDate: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
   /** Henter alle grunnkretser som tilhører en kommune. */
   hentKommunesGrunnkretser: {
     parameters: {
@@ -1862,7 +1950,14 @@ export interface operations {
         /** Maksgrense for antall treff man ønsker seg */
         limit?: number;
         /** Hvilke typer inndelinger man ønsker å søke etter */
-        filter?: ("FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS")[];
+        filter?: (
+          | "FYLKE"
+          | "KOMMUNE"
+          | "NASJON"
+          | "GRUNNKRETS"
+          | "STEMMEKRETS"
+          | "SKOLEKRETS"
+        )[];
       };
     };
     responses: {

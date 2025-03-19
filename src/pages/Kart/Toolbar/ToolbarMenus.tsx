@@ -46,6 +46,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
   useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditing);
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
+  useKeyboardShortcut("historiskeGrenser", () => toggleTool("historiskeGrenser"), isEditing);
 
   // For å kunne vise at en meny er aktiv må vi kunne sjekke hvorvidt noen av menuitems er aktive
   // Korteste vei til mål da blir å kunne iterere gjennom menu items
@@ -85,6 +86,15 @@ const ToolbarMenus = () => {
       isDisabled: !isEditing,
       onClick: () => toggleTool("delete"),
       "aria-label": "Slett grense",
+    },
+    {
+      label: "Vis historiske grenser",
+      icon: <Icon icon="history" />,
+      command: KeyboardShortcuts["historiskeGrenser"].displayString,
+      $isActive: activeTool === "historiskeGrenser",
+      isDisabled: !isEditing,
+      onClick: () => toggleTool("historiskeGrenser"),
+      "aria-label": "Vis historiske grenser",
     },
   ];
   const punktMenuItems: MenuItems = [
