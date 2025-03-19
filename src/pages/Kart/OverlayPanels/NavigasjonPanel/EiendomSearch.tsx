@@ -185,7 +185,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
       <InputContainer>
         <Input
           type="number"
-          placeholder="Fyll inn gårdsnummer ..."
+          placeholder="Fyll ut gårdsnummer ..."
           label={"Gårdsnummer"}
           {...registerWithClearErrorsOnChange("gaardsnummer")}
           validationError={{
@@ -196,7 +196,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
 
         <Input
           type="number"
-          placeholder="Fyll inn bruksnummer ..."
+          placeholder="Fyll ut bruksnummer ..."
           label={"Bruksnummer"}
           {...registerWithClearErrorsOnChange("bruksnummer")}
           validationError={{
@@ -207,7 +207,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
 
         <Input
           type="number"
-          placeholder="Fyll inn festenummer ..."
+          placeholder="Fyll ut festenummer ..."
           label={"Festenummer (valgfritt)"}
           {...registerWithClearErrorsOnChange("festenummer")}
           validationError={{

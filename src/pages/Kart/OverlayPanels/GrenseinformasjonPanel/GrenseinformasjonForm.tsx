@@ -304,7 +304,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
               leftIcon="auto_fix_high"
               onClick={() => autoFillFormValues()}
             >
-              Fyll inn automatisk
+              Fyll ut automatisk
             </Button>
             <Button size={"sm"} variant="secondary" onClick={() => onCloseAutofill()}>
               Nei, jeg vil fylle inn selv
@@ -441,7 +441,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         valueLabel={getValues("opphav")}
         isEditing={isEditing}
       >
-        <Input placeholder="Fyll inn informasjon om opphav" {...register("opphav")} />
+        <Input placeholder="Fyll ut informasjon om opphav" {...register("opphav")} />
       </GrenseinformasjonRow>
 
       <GrenseinformasjonRow
@@ -452,7 +452,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         }
         isEditing={isEditing}
       >
-        <Textarea placeholder="Fyll inn ekstra informasjon" {...register("informasjon")} />
+        <Textarea placeholder="Fyll ut ekstra informasjon" {...register("informasjon")} />
       </GrenseinformasjonRow>
     </FormContainer>
   );

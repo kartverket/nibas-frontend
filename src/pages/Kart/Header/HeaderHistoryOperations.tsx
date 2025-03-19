@@ -1,23 +1,19 @@
-import { Badge, Button, Icon, Menu, MenuButton, MenuList, useDisclosure } from "@kvib/react";
+import { Badge, useDisclosure } from "@kvib/react";
 import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
-import UtkastEndreModal from "components/Modals/UtkastEndreModal";
 import UtkastSlettModal from "components/Modals/UtkastSlettModal";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { styled } from "styled-components";
 import { statusCode } from "utils/api";
-import CustomTooltip from "../Toolbar/CustomTooltip";
-import { MenuItems, ToolbarMenuItem } from "../Toolbar/Toolbar";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { canSave, undo, redo } = useHistory();
   const { isOpen: isEndringsloggOpen, onClose: onEndringsloggClose, onOpen: onEndringsloggOpen } = useDisclosure();
-  const { isOpen: isEndreUtkastOpen, onClose: onEndreUtkastClose, onOpen: onEndreUtkastOpen } = useDisclosure();
   const { isOpen: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
   const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
@@ -30,24 +26,6 @@ const HeaderHistoryOperations = () => {
       }
     }
   };
-  const utkastMenuItems: MenuItems = [
-    {
-      label: "Slett utkast",
-      icon: <Icon icon="delete" />,
-      $isActive: false,
-      isDisabled: false,
-      onClick: onSlettOpen,
-      "aria-label": "Slett utkastet",
-    },
-    {
-      label: "Endre navn og type",
-      icon: <Icon icon="edit_note" />,
-      $isActive: false,
-      isDisabled: false,
-      onClick: onEndreUtkastOpen,
-      "aria-label": "Informasjon om grense",
-    },
-  ];
 
   useKeyboardShortcut("save", handleSave, canSave);
   useKeyboardShortcut("undo", undo, !!undo);
@@ -98,33 +76,16 @@ const HeaderHistoryOperations = () => {
         }}
         alert={antallEndringer > 0 && <AlertIcon count={antallEndringer} />}
       />
-      <Menu autoSelect={false}>
-        {({ isOpen }) => (
-          <div>
-            <CustomTooltip text="Flere valg for utkastet">
-              <MenuButton
-                as={Button}
-                rightIcon={isOpen ? "expand_less" : "expand_more"}
-                aria-label="Vis flere valg for utkastet"
-                variant="ghost"
-                size="sm"
-              >
-                Flere valg
-              </MenuButton>
-            </CustomTooltip>
-            <MenuList>
-              {utkastMenuItems.map((umi) => (
-                <ToolbarMenuItem key={umi.label} {...umi}>
-                  {umi.label}
-                </ToolbarMenuItem>
-              ))}
-            </MenuList>
-          </div>
-        )}
-      </Menu>
+      <HeaderButton
+        label="Slett utkast"
+        icon="delete"
+        onClick={onSlettOpen}
+        tooltip={{
+          text: "Slett utkastet og endringene som er gjort",
+        }}
+      />
       <EndringsloggModal isOpen={isEndringsloggOpen} onClose={onEndringsloggClose} utkast={utkast} />
       <UtkastSlettModal isOpen={isSlettOpen} onClose={onSlettClose} utkast={utkast} />
-      <UtkastEndreModal isOpen={isEndreUtkastOpen} onClose={onEndreUtkastClose} utkast={utkast} />
     </HeaderSection>
   );
 };
