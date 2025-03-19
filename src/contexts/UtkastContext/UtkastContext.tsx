@@ -244,10 +244,13 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     if (!utkast?.operasjoner) {
       return false;
     }
-    return (
+    if (
       utkast.operasjoner.stemmekretsSammenslaaingsendring != null ||
       utkast.operasjoner.grunnkretsSammenslaaingsendring != null
-    );
+    ) {
+      return true;
+    }
+    return false;
   };
 
   const value = {

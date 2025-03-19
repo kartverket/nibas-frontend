@@ -2,7 +2,7 @@ import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { LineString } from "ol/geom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "../../../contexts/OverlayPanelContext";
 import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
@@ -32,6 +32,7 @@ export type SelectData = {
   coordinates: Coordinate;
   selectFeatures: SelectFeature[];
 };
+
 const useSelect = () => {
   const toast = useToast();
   const { activeTool, activeModeTools } = useToolbar();
@@ -41,8 +42,14 @@ const useSelect = () => {
   const { getLineStringFeaturesAtPixel } = useGetFeatures();
   const { openOverlayPopup, closeOverlayPopup } = useOverlayPopup();
 
+  useEffect(() => {
+    if (!(activeTool === "grenseinfo")) {
+      closeOverlayPopup();
+    }
+  }, [activeTool, closeOverlayPopup]);
+
   const disallowedTools: Tool[] = ["draw", "koordinater"];
-  const safeTools: Tool[] = ["grenseinfo", "historiskeGrenser"];
+  const safeTools: Tool[] = ["grenseinfo", "split", "historiskeGrenser"];
   const pointTools: Tool[] = ["add", "remove", "split"];
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();
@@ -75,7 +82,7 @@ const useSelect = () => {
       // Dette gjør at gjentatte klikk itererer gjennom grenser som ligger på samme sted.
       let clickedFeature = activeFeatures[0];
       const currentZoomLevel = map.getView().getZoom() ?? -Infinity;
-      if (activeFeatures.length > 1 && currentZoomLevel > 10) {
+      if (activeTool === "grenseinfo" && activeFeatures.length > 1 && currentZoomLevel > 10) {
         const activeFeaturesSorted = activeFeatures.toSorted((a, b) => {
           const sortStringA = isTeigFeature(a) ? "Teiggrense" : (a.getProperties() as FeatureProperties).type;
           const sortStringB = isTeigFeature(b) ? "Teiggrense" : (b.getProperties() as FeatureProperties).type;

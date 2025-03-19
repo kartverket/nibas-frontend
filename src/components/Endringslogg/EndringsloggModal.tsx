@@ -41,13 +41,13 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
           {!harEndringer && !harUlagredeEndringer && !laster && <Empty>Det er ingen endringer i dette utkastet</Empty>}
-          <Stack spacing={6}>
+          <Stack spacing={4}>
             <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
             <Center>
               {laster && (
                 <Flex alignItems="center" gap="var(--kvib-space-4)">
                   <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="lg" />
-                  <Text>Laster inn endringslogg ...</Text>
+                  <Text>Laster inn endringer</Text>
                 </Flex>
               )}
             </Center>

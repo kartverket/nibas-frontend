@@ -27,7 +27,6 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
       <Tooltip
         label={`Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`}
         placement="left"
-        hasArrow
       >
         <IconContainer>
           <Icon
@@ -45,6 +44,7 @@ const IconContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  cursor: help;
 `;
 
 type Props = {
@@ -55,6 +55,7 @@ type Props = {
   formMethods: UseFormReturn<FlatedataInputs>;
   previousValues: React.MutableRefObject<FlatedataInputs | undefined>;
   allInndelinger: MetadataResponse[];
+  sammenslaaingInformasjon: string | undefined;
 };
 
 export const FlatedataTableRow = ({
@@ -65,6 +66,7 @@ export const FlatedataTableRow = ({
   formMethods,
   previousValues,
   allInndelinger,
+  sammenslaaingInformasjon,
 }: Props) => {
   const {
     setValue,
@@ -258,7 +260,7 @@ export const FlatedataTableRow = ({
           <InputCell
             isEditing={isEditing}
             isDisabled={disabledDate != null}
-            data={getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
+            data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
           {!isKommuneInndeling(inndeling) && !isStemmekretsInndeling(inndeling) && (

@@ -14,6 +14,7 @@ export type Shortcut =
   | "snap_matrikkel"
   | "open"
   | "grenseinfo"
+  | "tegnforklaring"
   | "grensecoordinates"
   | "measure"
   | "grensesplit"
@@ -25,6 +26,7 @@ export type Shortcut =
   | "flatesplit"
   | "draw"
   | "escape"
+  | "preview"
   | "goto";
 
 type KeyboardShortcut = {
@@ -78,9 +80,10 @@ const createShortcut = (key: string, modifierKeys: ModifierKeysOption): Keyboard
 
 export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   // Mode Tools
-  move: createShortcut("v", {}),
   edit: createShortcut("r", {}),
+  move: createShortcut("p", {}),
   matrikkel: createShortcut("e", { control: true }),
+  preview: createShortcut("p", { control: true }),
 
   // Grense Tools
   archive: createShortcut("a", { control: true }),
@@ -108,6 +111,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   snap_matrikkel: createShortcut("g", { control: true, shift: true }),
   layers: createShortcut("k", { control: true }),
   goto: createShortcut("Enter", { control: true }),
+  tegnforklaring: createShortcut("q", { control: true, shift: true }),
 
   // Utkast / History Tools
   redo: createShortcut("z", { control: true, shift: true }),

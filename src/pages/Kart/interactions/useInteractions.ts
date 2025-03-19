@@ -36,13 +36,18 @@ const useInteractions = () => {
   useCursorStyles({
     isEnabled: !activeModeTools.includes("move") && crosshairCursorTools.includes(activeTool),
     defaultCursor: () => "crosshair",
+    eventsAndCursor: [
+      {
+        name: "pointerdrag",
+        cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "crosshair"),
+      },
+    ],
   });
 
   useCursorStyles({
     isEnabled: pointerCursorTools.includes(activeTool),
     defaultCursor: () => "pointer",
   });
-
   useCursorStyles({
     isEnabled: !pointerCursorTools.includes(activeTool) && activeModeTools.includes("move"),
     defaultCursor: () => "grab",

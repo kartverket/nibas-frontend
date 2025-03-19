@@ -2,6 +2,7 @@ import { Alert, AlertIcon, Button, FormControl, FormErrorMessage, FormLabel, Sel
 import Input from "components/Input";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { GrenseEntry, HistoryChange, HistoryDirection, MinimalGrense } from "contexts/HistoryContext/types";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -22,8 +23,7 @@ import {
   isPointInsideMultiPolygon,
   transformCoordinatesToProjection,
 } from "./NavigasjonPanel/koordinater-utils";
-import { AbsolutePanel, PanelHeader } from "./Panel";
-import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { PanelHeader, SidePanel } from "./Panel";
 
 type KoordinaterFormData = {
   north: number;
@@ -277,7 +277,7 @@ const FlyttKoordinaterPanel = () => {
   };
 
   return (
-    <AbsolutePanel>
+    <SidePanel>
       <PanelHeader onClose={onKoordinaterPanelClose} isSmall>
         Flytt punkt med koordinater
       </PanelHeader>
@@ -307,20 +307,20 @@ const FlyttKoordinaterPanel = () => {
           <InputRow>
             <Input
               type="text"
-              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
-              {...registerWithClearErrorsOnChange("east")}
-              validationError={{
-                showError: !!formErrors.east,
-                message: formErrors.east?.message ?? "",
-              }}
-            />
-            <Input
-              type="text"
               label={getLabelsFromProjection(projectionOfCoordinates).y ?? ""}
               {...registerWithClearErrorsOnChange("north")}
               validationError={{
                 showError: !!formErrors.north,
                 message: formErrors.north?.message ?? "",
+              }}
+            />
+            <Input
+              type="text"
+              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
+              {...registerWithClearErrorsOnChange("east")}
+              validationError={{
+                showError: !!formErrors.east,
+                message: formErrors.east?.message ?? "",
               }}
             />
           </InputRow>
@@ -335,7 +335,7 @@ const FlyttKoordinaterPanel = () => {
           </Button>
         </ButtonRow>
       </Form>
-    </AbsolutePanel>
+    </SidePanel>
   );
 };
 

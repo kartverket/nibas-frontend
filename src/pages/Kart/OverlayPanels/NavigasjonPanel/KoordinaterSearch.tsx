@@ -151,21 +151,7 @@ export const KoordinaterSearch = ({ onSearchSuccess }: SearchProps) => {
           <InputGroup>
             <Input
               type="text"
-              placeholder="Fyll inn koordinat ..."
-              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
-              {...registerWithClearErrorsOnChange("east")}
-              validationError={{
-                showError: !!formErrors.east,
-                message: formErrors.east?.message ?? "",
-              }}
-            />
-          </InputGroup>
-          {formErrors.east != null && <StyledFormErrorMessage>{formErrors.east.message}</StyledFormErrorMessage>}
-
-          <InputGroup>
-            <Input
-              type="text"
-              placeholder="Fyll inn koordinat ..."
+              placeholder="Fyll ut koordinat ..."
               label={getLabelsFromProjection(projectionOfCoordinates).y ?? ""}
               {...registerWithClearErrorsOnChange("north")}
               validationError={{
@@ -175,6 +161,20 @@ export const KoordinaterSearch = ({ onSearchSuccess }: SearchProps) => {
             />
           </InputGroup>
           {formErrors.north != null && <StyledFormErrorMessage>{formErrors.north.message}</StyledFormErrorMessage>}
+
+          <InputGroup>
+            <Input
+              type="text"
+              placeholder="Fyll ut koordinat ..."
+              label={getLabelsFromProjection(projectionOfCoordinates).x ?? ""}
+              {...registerWithClearErrorsOnChange("east")}
+              validationError={{
+                showError: !!formErrors.east,
+                message: formErrors.east?.message ?? "",
+              }}
+            />
+          </InputGroup>
+          {formErrors.east != null && <StyledFormErrorMessage>{formErrors.east.message}</StyledFormErrorMessage>}
         </InputContainer>
         {formErrors.globalErrorDummyField != null && (
           <StyledFormErrorMessage>{formErrors.globalErrorDummyField.message}</StyledFormErrorMessage>

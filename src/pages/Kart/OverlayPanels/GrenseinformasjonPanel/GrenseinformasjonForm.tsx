@@ -10,12 +10,15 @@ import {
   Input,
   Select,
   Textarea,
+  Tooltip,
   useDisclosure,
   useToast,
 } from "@kvib/react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useInndelingFeatures from "contexts/InndelingerContext/useInndelingFeatures";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { GrenseType } from "hooks/layers/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
@@ -26,15 +29,21 @@ import {
   isTempFeatureId,
 } from "pages/Kart/interactions/feature-id-utils";
 import { ContextualPosisjonskvalitet } from "pages/Kart/interactions/useModify";
+import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import { styled } from "styled-components";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
+import { removeNil } from "utils/list-utils";
 import { isLineStringFeature } from "utils/type-utils";
+import { getKretsIdFromKontekstegenskaper } from "../hooks/tilhorighet-utils";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
-import useIsGrenseinformasjonPanelDisabled from "../hooks/useIsGrenseInformasjonPanelDisabled";
 import { PanelHeader } from "../Panel";
-import { dateToFormattedDatestring, datestringToFormattedDatestring } from "./grenseinformasjon-utils";
+import {
+  dateToFormattedDatestring,
+  datestringToFormattedDatestring,
+  isGrenseinformasjonPanelDisabled,
+} from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
 
@@ -53,19 +62,32 @@ type EditGrenseInfoButtonProps = {
   isEditing: boolean;
   handleSubmit: () => void;
   toggleEdit: () => void;
+  tooltip: string | null;
+  isDisabled: boolean;
 };
 
-export const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: EditGrenseInfoButtonProps) => {
+export const EditGrenseInfoButton = ({
+  isEditing,
+  handleSubmit,
+  toggleEdit,
+  tooltip,
+  isDisabled,
+}: EditGrenseInfoButtonProps) => {
   return isEditing ? (
     <Button
       onClick={() => {
         handleSubmit();
         toggleEdit();
       }}
+      isDisabled={isDisabled}
       rightIcon="check_circle"
     >
       Fullfør redigering
     </Button>
+  ) : tooltip != null && isDisabled ? (
+    <Tooltip hasArrow placement="left" label={<TooltipBody text={tooltip != null ? tooltip : ""} />}>
+      {<Button isDisabled={true}>Rediger</Button>}
+    </Tooltip>
   ) : (
     <Button onClick={() => toggleEdit()}>Rediger</Button>
   );
@@ -74,19 +96,20 @@ export const EditGrenseInfoButton = ({ isEditing, handleSubmit, toggleEdit }: Ed
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { currentlyEditingInndelinger } = useInndelinger();
+  const { utkast } = useUtkast();
+  const { inndelingFeatures } = useInndelingFeatures(currentlyEditingInndelinger);
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
-  const isGrenseinformasjonPanelDisabled = useIsGrenseinformasjonPanelDisabled(feature);
   const { openAsync } = useConfirmationModal();
   const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
   const toast = useToast();
-
+  const { utkastHarSammenslaainger } = useUtkast();
   const featureId = feature.getId()?.toString();
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
   const gyldigTil = metadata.common?.gyldigTil;
-  const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled || metadata?.common?.gyldigTil != null;
+  const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled(feature) || metadata?.common?.gyldigTil != null;
 
   const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
     if (id === undefined || id.length === 0) {
@@ -187,6 +210,28 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     }
   }, [relevantPosisjonskvaliteter, onOpenAutofill]);
 
+  const featureIsMergeFeatureInUtkast = (): boolean => {
+    const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
+    const involverteKretserLokalids =
+      sammenslaaing?.stemmekretserTilSammenslaaing
+        .flatMap((sk) => sk.lokalId)
+        .concat(sammenslaaing.viderefoertStemmekrets.lokalId) ?? [];
+    const mergeFeatures = inndelingFeatures
+      .flatMap((i) => i.features)
+      .filter((f) => {
+        // Finner kontekstegenskapene til featuren (kretsene featuren er en del av)
+        const kretserIdFromKontekst = removeNil(
+          (f.getProperties() as FeatureProperties).kontekstEgenskaper.map((ke) => getKretsIdFromKontekstegenskaper(ke)),
+        );
+        // hvis featuren har to av de involverte kretsene som kontekster så betyr det at det er en feature som deler de to kretsene
+        const overlap = new Set(involverteKretserLokalids.filter((id) => new Set(kretserIdFromKontekst).has(id)));
+        return overlap.size >= 2;
+      });
+
+    return mergeFeatures.map((mf) => mf.getId()).includes(featureId);
+  };
+  const mergeInformasjon = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.informasjon;
+
   return (
     <FormContainer>
       <PanelHeader
@@ -214,6 +259,11 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             ? EditGrenseInfoButton({
                 isEditing: isEditing,
                 handleSubmit: handleSubmit(onSubmit),
+                isDisabled: utkastHarSammenslaainger(),
+                tooltip:
+                  utkastHarSammenslaainger() === true
+                    ? "Utkastet har sammenslåinger og grenseinformasjon kan derfor ikke redigeres"
+                    : null,
                 toggleEdit: () => {
                   if (isEditing) {
                     reset(getDefaultValues(feature));
@@ -254,7 +304,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
               leftIcon="auto_fix_high"
               onClick={() => autoFillFormValues()}
             >
-              Fyll inn automatisk
+              Fyll ut automatisk
             </Button>
             <Button size={"sm"} variant="secondary" onClick={() => onCloseAutofill()}>
               Nei, jeg vil fylle inn selv
@@ -391,16 +441,18 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         valueLabel={getValues("opphav")}
         isEditing={isEditing}
       >
-        <Input placeholder="Fyll inn informasjon om opphav" {...register("opphav")} />
+        <Input placeholder="Fyll ut informasjon om opphav" {...register("opphav")} />
       </GrenseinformasjonRow>
 
       <GrenseinformasjonRow
         name="Ekstra informasjon"
         tooltipLabel="Åpent felt med ekstra informasjon om grensen"
-        valueLabel={getValues("informasjon")}
+        valueLabel={
+          featureIsMergeFeatureInUtkast() && mergeInformasjon != null ? mergeInformasjon : getValues("informasjon")
+        }
         isEditing={isEditing}
       >
-        <Textarea placeholder="Fyll inn ekstra informasjon" {...register("informasjon")} />
+        <Textarea placeholder="Fyll ut ekstra informasjon" {...register("informasjon")} />
       </GrenseinformasjonRow>
     </FormContainer>
   );
