@@ -17,7 +17,6 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { grenseStyles } from "utils/map/layerStyles";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
-import { setDefaultFeatureProperties } from "utils/features";
 const useGetHistoriskeGrenser = () => {
   const [historiskeGrenserIsLoading, setHistoriskeGrenserIsLoading] = useState(false);
   const [allFeatures, setAllFeatures] = useState<Feature[]>([]);
@@ -86,23 +85,22 @@ const useGetHistoriskeGrenser = () => {
     if (featuresToRestore.length === 0) {
       return;
     }
-    const addRestoredToHistory = (featureToRestore: Feature<LineString>) => {
+
+    let countSaved = 0;
+    featuresToRestore.forEach((featureToRestore, idx, array) => {
       // Sjekk om det er en historisk grense og om den er i allFeatures (Egentlig sjekket ved klikk på grense, så denne er mest sannsynlig unødvendig)
-      if (!allFeatures.some((feature) => feature.getId() === featureToRestore.getId())) {
+      if (!allFeatures.some((f) => f.getId() === featureToRestore.getId())) {
         return;
       }
       const splittedFeatures: SplittedFeature[] = [];
       const properties = featureToRestore.getProperties() as FeatureProperties | undefined;
-      if (!properties) {
+      const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
+      if (!properties || !grenseType) {
         return;
       }
-      setDefaultFeatureProperties(
-        featureToRestore,
-        getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype),
-      );
 
       const metadata = properties.metadata as Metadata | undefined;
-      // Endre featureens gyldigTil til å være null
+      // Endre featureens gyldigTil til å være null, resten av metadata tar vi vare på
       featureToRestore.setProperties({
         ...properties,
         metadata: {
@@ -113,32 +111,31 @@ const useGetHistoriskeGrenser = () => {
           },
         },
       });
+      // Fjerner grense fra historiskGrense-laget og legger tilbake i edit-laget
       removeFeaturesFromSourceByIds("historiskGrense", [featureToRestore.getId() as string]);
       addFeaturesToSource("edit", [featureToRestore]);
+      featureToRestore.setStyle(grenseType === "STEMMEKRETS" ? grenseStyles.stemmekrets : grenseStyles.grunnkrets);
       if (currentlyEditingInndelinger.length === 0) {
         return;
       }
-      const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
-      if (grenseType) {
-        const change = createNyGrenseHistoryChange(featureToRestore, grenseType, splittedFeatures);
-        if (change == null) {
-          return;
-        }
-        addHistoryEntry({
-          type: "nygrense",
-          changes: [change],
-        });
-        count++;
+
+      // Legger den 'gjenopprettede' grensa til history som en nygrense
+      const change = createNyGrenseHistoryChange(featureToRestore, grenseType, splittedFeatures);
+      if (change == null) {
+        return;
       }
-    };
-    let count = 0;
-    featuresToRestore.forEach((feature, idx, array) => {
-      addRestoredToHistory(feature);
+      addHistoryEntry({
+        type: "nygrense",
+        changes: [change],
+      });
+      countSaved++;
+
+      // Hvis vi er på siste feature, vis toast
       if (idx === array.length - 1) {
-        if (count > 0) {
+        if (countSaved > 0) {
           toast({
             status: "success",
-            title: `Gjenopprettet ${count > 1 ? count + " historiske grenser" : count + " historisk grense"}`,
+            title: `Gjenopprettet ${countSaved > 1 ? countSaved + " historiske grenser" : countSaved + " historisk grense"}`,
             description: `Husk å sette tilhørighet på grensene`,
           });
         } else {
@@ -151,6 +148,7 @@ const useGetHistoriskeGrenser = () => {
       }
     });
   };
+
   const clearHistoriskeGrenser = () => {
     const source = grenserLayers.historiskGrense.getSource();
 
@@ -165,7 +163,7 @@ const useGetHistoriskeGrenser = () => {
   useEffect(() => {
     if (
       activeTool !== "historiskeGrenser" &&
-      activeTool !== "grenseinfo" &&
+      activeTool !== "grenseinfo" && // (tillater bruk av grenseinfo samtidig)
       allFeatures.length > 0 &&
       !historiskeGrenserIsLoading
     ) {

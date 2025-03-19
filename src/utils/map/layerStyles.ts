@@ -197,8 +197,6 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
   if (isTeigFeature(feature)) {
     return grenseStyles.matrikkel;
   }
-  console.log(grenseType);
-  console.log(grenseId);
   if (grenseId === "historiskGrense") {
     return grenseStyles.historiskGrense;
   }

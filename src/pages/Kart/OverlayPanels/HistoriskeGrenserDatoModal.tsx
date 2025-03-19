@@ -17,7 +17,7 @@ import {
 } from "@kvib/react";
 import { useValgtGyldighetsdato } from "../../../contexts/GyldighetsdatoContext";
 import { useForm } from "react-hook-form";
-import { format, parseISO } from "date-fns";
+import { format } from "date-fns";
 
 type Props = {
   isOpen: boolean;
@@ -41,11 +41,9 @@ const HistoriskeGrenserDatoModal = ({ isOpen, onClose, onSubmit, gyldigTilDate }
   });
 
   const onBekreft = (data: FormType) => {
-    // const valgtDatoStart = data.datoStart ?? new Date();
     const valgtGyldigTilDate = data.gyldigTilDate ?? new Date();
-    // const valgtDatoStartAsString = format(valgtDatoStart, "yyyy-MM-dd");
-    const valgtDatoSluttAsString = format(valgtGyldigTilDate, "yyyy-MM-dd");
-    onSubmit(valgtDatoSluttAsString);
+    const valgtGyldigTilDateAsString = format(valgtGyldigTilDate, "yyyy-MM-dd");
+    onSubmit(valgtGyldigTilDateAsString);
   };
 
   return (
@@ -70,7 +68,6 @@ const HistoriskeGrenserDatoModal = ({ isOpen, onClose, onSubmit, gyldigTilDate }
               </Datepickerlabel>
               <Datepicker
                 id="datepicker"
-                // fromDate={parseISO("2023-11-07")}
                 defaultSelected={defaultGyldigTilDate}
                 onChange={(e) => setValue("gyldigTilDate", new Date(e.target.value))}
               />
