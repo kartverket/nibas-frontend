@@ -29,7 +29,7 @@ export const OverlayPopupProvider = ({ children }: { children: ReactNode }) => {
 
   const openOverlayPopup = (popupContent: ReactNode, position: Coordinate) => {
     clearTimeout(timeout);
-    timoutSet(setTimeout(closeOverlayPopup, 1250));
+    timoutSet(setTimeout(closeOverlayPopup, 2000));
     setOverlayPopupPosition(position);
     setOverlayPopupContent(popupContent);
   };
