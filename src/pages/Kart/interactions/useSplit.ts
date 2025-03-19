@@ -1,7 +1,7 @@
 import LineString from "ol/geom/LineString";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { useToolbar } from "contexts/ToolbarContext";
+import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { Point } from "ol/geom";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Feature } from "ol";
@@ -9,11 +9,17 @@ import Geometry from "ol/geom/Geometry";
 import { Coordinate } from "ol/coordinate";
 import { equals } from "ol/array";
 import { getTempFeatureId, isTempFeatureId } from "./feature-id-utils";
+import { editableGrenseTypes } from "hooks/layers/types";
+import { FeatureLike } from "ol/Feature";
 
 export type SplittedFeature = {
   oldFeatureId: string;
   newFeatures: Feature<Geometry>[];
   oldFeature: Feature<Geometry>;
+};
+
+export const isSplittingEditableGrense = (feature: FeatureLike, activeTool: Tool) => {
+  return editableGrenseTypes.includes(feature.get("type")) && activeTool === "split";
 };
 
 // OBS! Per nå skiller denne seg fra de andre interaksjonene ved at den ikke legges til som et event i kartet
