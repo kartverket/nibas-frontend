@@ -45,10 +45,6 @@ const useGetHistoriskeGrenser = () => {
       token,
       inndelingstype === "stemmekrets" ? "stemmekrets" : "grunnkrets",
     );
-    // const featureCollection = {
-    //   type: "FeatureCollection" as const,
-    //   features: grenserFeatures,
-    // };
     const featureCollection: FeatureCollection = {
       type: "FeatureCollection",
       features: grenserFeatures,

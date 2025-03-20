@@ -82,6 +82,7 @@ const ToolbarPopups = () => {
 
   const handleHistoriskeGrenser = async (gyldigTilDate: string) => {
     getHistoriskeGrenser(gyldigTilDate);
+    clearSelection();
   };
   useEffect(() => {
     // Sjekk om vi er klare til å vise historiske grenser
@@ -92,14 +93,12 @@ const ToolbarPopups = () => {
       return;
     }
     // Er de valgte features'ene er historiske? Hvis ikke er gjenoppsett-knappen disabled
-    // TODO: Ikke alltid setHIstoriskeGrenserFetched blir satt riktig selv når man trykker på en historisk grense
     const areHistorical =
       selectedFeatures.length > 0
         ? removeNil(selectedFeatures.map((feature) => feature.getId()?.toString())).every((id) =>
             historiskeGrenserAllFeatures.some((feature) => feature.getId() === id),
           )
         : false;
-
     setHistoriskGrenseSelected(areHistorical);
   }, [
     historiskeGrenserAllFeatures.length,

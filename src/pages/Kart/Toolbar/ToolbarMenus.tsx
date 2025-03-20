@@ -19,7 +19,7 @@ const ToolbarMenus = () => {
 
   const isEditing = currentlyEditingInndelinger.length > 0;
 
-  const flatedetaljerIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
+  const validInndelingstype = currentlyEditingInndelinger.some((inndeling) => {
     return inndeling.inndelingtype === "stemmekrets" || inndeling.inndelingtype === "grunnkrets";
   });
 
@@ -99,7 +99,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="history" />,
       command: KeyboardShortcuts["historiskeGrenser"].displayString,
       $isActive: activeTool === "historiskeGrenser",
-      isDisabled: !isEditing,
+      isDisabled: !validInndelingstype,
       onClick: () => toggleTool("historiskeGrenser"),
       "aria-label": "Vis historiske grenser",
     },
@@ -165,7 +165,7 @@ const ToolbarMenus = () => {
       label: "Splitt flate",
       icon: <Icon icon="splitscreen" />,
       $isActive: activeOverlayPanel === "splitting",
-      isDisabled: !flatedetaljerIsAvailable,
+      isDisabled: !validInndelingstype,
       onClick: () => toggleOverlayPanel("splitting"),
       "aria-label": "Splitt flate",
       command: KeyboardShortcuts["flatesplit"].displayString,
