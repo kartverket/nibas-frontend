@@ -76,7 +76,6 @@ const useModify = () => {
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
         if (selectedFeatures.some((feature) => !isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
-          console.log("yo");
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",
