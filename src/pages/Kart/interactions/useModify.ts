@@ -50,7 +50,10 @@ const useModify = () => {
   const confirmationModal = useConfirmationModal();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
-  const disallowedPointModes: Tool[] = useMemo(() => ["draw", "split", "grenseinfo", "archive", "koordinater"], []);
+  const disallowedPointModes: Tool[] = useMemo(
+    () => ["draw", "split", "grenseinfo", "archive", "koordinater", "duplicate"],
+    [],
+  );
 
   const modify = useMemo(() => {
     return new Modify({
@@ -73,6 +76,7 @@ const useModify = () => {
 
         // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
         if (selectedFeatures.some((feature) => !isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
+          console.log("yo");
           toast({
             status: "error",
             title: "Denne grensen er ikke redigerbar",
