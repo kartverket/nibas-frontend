@@ -6,7 +6,7 @@ import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "../../../uti
 import { grenserLayers } from "../../../hooks/layers/constants";
 import { useToolbar } from "../../../contexts/ToolbarContext";
 import { useToast } from "@kvib/react";
-import { FeatureProperties, Metadata } from "../../../types/api";
+import { FeatureCollection, FeatureProperties, Metadata } from "../../../types/api";
 import { LineString } from "ol/geom";
 import { useHistory } from "../../../contexts/HistoryContext/HistoryContext";
 import { createNyGrenseHistoryChange } from "./grense-history-utils";
@@ -26,7 +26,6 @@ const useGetHistoriskeGrenser = () => {
   const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoriskeGrenserStyles } = useFeatureStyle();
   const auth = useAuthentication();
-  // Todo: Fjerne tidligere hentede historiske-grenser hvis man henter på nytt
   async function getHistoriskeGrenser(gyldigTilDate: string) {
     clearHistoriskeGrenser();
     setHistoriskeGrenserIsLoading(true);
@@ -46,8 +45,12 @@ const useGetHistoriskeGrenser = () => {
       token,
       inndelingstype === "stemmekrets" ? "stemmekrets" : "grunnkrets",
     );
-    const featureCollection = {
-      type: "FeatureCollection" as const,
+    // const featureCollection = {
+    //   type: "FeatureCollection" as const,
+    //   features: grenserFeatures,
+    // };
+    const featureCollection: FeatureCollection = {
+      type: "FeatureCollection",
       features: grenserFeatures,
     };
     const featureGeometryCollection = geoJsonToSource(featureCollection).getFeatures();
