@@ -287,9 +287,10 @@ const ToolbarPopups = () => {
                 buttonText="Gjenopprett"
                 secondaryButtonText="Endre tidsrom"
                 onClick={handleRestoreHistoriskeGrenser}
-                secondaryOnClick={handleHistoriskeGrenserChangeDate} // Denne blir også disabled, litt dumt at begge knappene deler samme disabled
+                secondaryOnClick={handleHistoriskeGrenserChangeDate}
                 onClose={resetTool}
                 isDisabled={historiskGrenseSelected === false}
+                isSecondaryButtonDisabled={false}
                 isLoading={historiskeGrenserIsLoading}
                 icon={"history"}
               />
