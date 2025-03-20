@@ -6,7 +6,8 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useState } from "react";
-import { anyFeatureIsEditable, setDefaultFeatureProperties } from "utils/features";
+import { FeatureProperties, Metadata } from "types/api";
+import { anyFeatureIsEditable, isTeigFeature, setDefaultFeatureProperties } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
@@ -49,24 +50,50 @@ const ToolbarPopups = () => {
 
   const duplicateFeaturesToEditLayer = () => {
     const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
-    const duplicateFeatures = selectedFeatures.map((sf) => {
-      const duplicateFeature = sf.clone();
-      duplicateFeature.setId(getTempFeatureId());
-      setDefaultFeatureProperties(duplicateFeature, grenseType);
-      return duplicateFeature;
-    });
-    if (grenseType != null && duplicateFeatures.length > 0) {
-      addFeaturesToSource("edit", duplicateFeatures);
-      addHistoryEntry({
-        type: "nygrense",
-        changes: removeNil(duplicateFeatures.map((df) => createNyGrenseHistoryChange(df, grenseType, []))),
+    if (grenseType != null) {
+      const duplicateFeatures = selectedFeatures.map((sf) => {
+        const duplicateFeature = sf.clone();
+        duplicateFeature.setId(getTempFeatureId());
+        setDefaultFeatureProperties(duplicateFeature, grenseType);
+        if (!isTeigFeature(sf)) {
+          const newDefaultFeatureProperties = duplicateFeature.getProperties() as FeatureProperties;
+          const copiedFeatureProperties = sf.getProperties() as FeatureProperties;
+          const newDefaultMetadata = newDefaultFeatureProperties.metadata as Metadata;
+          const copiedMetadata = copiedFeatureProperties.metadata as Metadata;
+          const newDefaultCommonMetadata = newDefaultMetadata.common;
+          if (newDefaultCommonMetadata != null) {
+            const newProperties: FeatureProperties = {
+              ...newDefaultFeatureProperties,
+              type: grenseType,
+              kontekstEgenskaper: [],
+              metadata: {
+                ...newDefaultMetadata,
+                commonGrense: copiedMetadata.commonGrense,
+                common: {
+                  ...newDefaultCommonMetadata,
+                  informasjon: copiedFeatureProperties.metadata?.common?.informasjon,
+                  opphav: copiedFeatureProperties.metadata?.common?.opphav,
+                },
+              },
+            };
+            duplicateFeature.setProperties(newProperties);
+          }
+        }
+        return duplicateFeature;
       });
-      clearSelection();
-      toast({
-        status: "success",
-        title: `${selectedFeatures.length} grense${selectedFeatures.length > 1 ? "r" : ""} ble duplisert`,
-        description: "Husk å oppdatere relevante egenskaper for de berørte grensene",
-      });
+      if (duplicateFeatures.length > 0) {
+        addFeaturesToSource("edit", duplicateFeatures);
+        addHistoryEntry({
+          type: "nygrense",
+          changes: removeNil(duplicateFeatures.map((df) => createNyGrenseHistoryChange(df, grenseType, []))),
+        });
+        clearSelection();
+        toast({
+          status: "success",
+          title: `${selectedFeatures.length} grense${selectedFeatures.length > 1 ? "r" : ""} ble duplisert`,
+          description: "Husk å oppdatere relevante egenskaper for de berørte grensene",
+        });
+      }
     }
   };
 
