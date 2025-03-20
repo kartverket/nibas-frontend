@@ -6,13 +6,12 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useState } from "react";
-import { FeatureProperties, Metadata } from "types/api";
-import { anyFeatureIsEditable, isTeigFeature, setDefaultFeatureProperties } from "utils/features";
+import { anyFeatureIsEditable, createDuplicateOfFeature } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { map } from "../constants";
-import { getTempFeatureId, isTempFeatureId } from "../interactions/feature-id-utils";
+import { isTempFeatureId } from "../interactions/feature-id-utils";
 import { createNyGrenseHistoryChange } from "../interactions/grense-history-utils";
 import useSplit from "../interactions/useSplit";
 import {
@@ -51,36 +50,7 @@ const ToolbarPopups = () => {
   const duplicateFeaturesToEditLayer = () => {
     const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
     if (grenseType != null) {
-      const duplicateFeatures = selectedFeatures.map((sf) => {
-        const duplicateFeature = sf.clone();
-        duplicateFeature.setId(getTempFeatureId());
-        setDefaultFeatureProperties(duplicateFeature, grenseType);
-        if (!isTeigFeature(sf)) {
-          const newDefaultFeatureProperties = duplicateFeature.getProperties() as FeatureProperties;
-          const copiedFeatureProperties = sf.getProperties() as FeatureProperties;
-          const newDefaultMetadata = newDefaultFeatureProperties.metadata as Metadata;
-          const copiedMetadata = copiedFeatureProperties.metadata as Metadata;
-          const newDefaultCommonMetadata = newDefaultMetadata.common;
-          if (newDefaultCommonMetadata != null) {
-            const newProperties: FeatureProperties = {
-              ...newDefaultFeatureProperties,
-              type: grenseType,
-              kontekstEgenskaper: [],
-              metadata: {
-                ...newDefaultMetadata,
-                commonGrense: copiedMetadata.commonGrense,
-                common: {
-                  ...newDefaultCommonMetadata,
-                  informasjon: copiedFeatureProperties.metadata?.common?.informasjon,
-                  opphav: copiedFeatureProperties.metadata?.common?.opphav,
-                },
-              },
-            };
-            duplicateFeature.setProperties(newProperties);
-          }
-        }
-        return duplicateFeature;
-      });
+      const duplicateFeatures = selectedFeatures.map((sf) => createDuplicateOfFeature(sf, grenseType));
       if (duplicateFeatures.length > 0) {
         addFeaturesToSource("edit", duplicateFeatures);
         addHistoryEntry({
