@@ -3,7 +3,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useToolbar } from "contexts/ToolbarContext";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { anyFeatureIsEditable } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
@@ -17,7 +17,7 @@ import {
 } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import ToolbarPopup from "./ToolbarPopup";
 
-import useGetHistoriskeGrenser from "../interactions/useGetHistoriskeGrenser";
+import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
 import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
@@ -29,12 +29,11 @@ const ToolbarPopups = () => {
   const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
   const {
     historiskeGrenserIsLoading,
-    allFeatures: historiskeGrenserAllFeatures,
     getHistoriskeGrenser,
     gjenopprettHistoriskeGrenser,
-  } = useGetHistoriskeGrenser();
-  const [historiskeGrenserFetched, setHistoriskeGrenserFetched] = useState(false);
-  const [historiskGrenseSelected, setHistoriskGrenseSelected] = useState(false);
+    historiskeGrenserFetched,
+    resetHistoriskeGrenser,
+  } = useHistoriskeGrenser();
 
   const archiveFeatures = () => {
     const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
@@ -84,38 +83,16 @@ const ToolbarPopups = () => {
     getHistoriskeGrenser(gyldigTilDate);
     clearSelection();
   };
-  useEffect(() => {
-    // Sjekk om vi er klare til å vise historiske grenser
-    const shouldFetch =
-      !historiskeGrenserIsLoading && activeTool === "historiskeGrenser" && historiskeGrenserAllFeatures.length > 0;
-    setHistoriskeGrenserFetched(shouldFetch);
-    if (!shouldFetch) {
-      return;
-    }
-    // Er de valgte features'ene er historiske? Hvis ikke er gjenoppsett-knappen disabled
-    const areHistorical =
-      selectedFeatures.length > 0
-        ? removeNil(selectedFeatures.map((feature) => feature.getId()?.toString())).every((id) =>
-            historiskeGrenserAllFeatures.some((feature) => feature.getId() === id),
-          )
-        : false;
-    setHistoriskGrenseSelected(areHistorical);
-  }, [
-    historiskeGrenserAllFeatures.length,
-    historiskeGrenserIsLoading,
-    activeTool,
-    historiskeGrenserAllFeatures,
-    selectedFeatures,
-  ]);
-
   const handleHistoriskeGrenserChangeDate = () => {
-    setHistoriskeGrenserFetched(false);
+    resetHistoriskeGrenser();
   };
   const handleRestoreHistoriskeGrenser = () => {
     gjenopprettHistoriskeGrenser(selectedFeatures);
     clearSelection();
   };
-
+  const isNotHistorical = () => {
+    return selectedFeatures.some((feature) => feature.getProperties().isHistorical !== true);
+  };
   const handleSplit = () => {
     split();
     clearSelection();
@@ -288,7 +265,7 @@ const ToolbarPopups = () => {
                 onClick={handleRestoreHistoriskeGrenser}
                 secondaryOnClick={handleHistoriskeGrenserChangeDate}
                 onClose={resetTool}
-                isDisabled={historiskGrenseSelected === false}
+                isDisabled={selectedFeatures.length === 0 || isNotHistorical()}
                 isSecondaryButtonDisabled={false}
                 isLoading={historiskeGrenserIsLoading}
                 icon={"history"}

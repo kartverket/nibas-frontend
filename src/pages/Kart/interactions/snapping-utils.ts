@@ -159,5 +159,5 @@ export const createKartlagSnapsData = (
   archived: createSnapDataForSource("archived", activeModeTools, activeTool),
   edit: createSnapDataForSource("edit", activeModeTools, activeTool),
   measure: createSnapDataForSource("measure", activeModeTools, activeTool),
-  historiskGrense: createSnapDataForSource("historiskGrense", activeModeTools, activeTool),
+  historical: createSnapDataForSource("historical", activeModeTools, activeTool),
 });

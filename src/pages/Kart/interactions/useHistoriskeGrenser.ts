@@ -12,13 +12,14 @@ import { useHistory } from "../../../contexts/HistoryContext/HistoryContext";
 import { createNyGrenseHistoryChange } from "./grense-history-utils";
 import { SplittedFeature } from "./useSplit";
 import { getTempFeatureId } from "./feature-id-utils";
-import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
+import { getGrensetypeFromInndelingtype } from "../../../hooks/layers/types";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { grenseStyles } from "utils/map/layerStyles";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
-const useGetHistoriskeGrenser = () => {
+const useHistoriskeGrenser = () => {
   const [historiskeGrenserIsLoading, setHistoriskeGrenserIsLoading] = useState(false);
+  const [historiskeGrenserFetched, setHistoriskeGrenserFetched] = useState(false);
   const [allFeatures, setAllFeatures] = useState<Feature[]>([]);
   const { activeTool, activeModeTools } = useToolbar();
   const toast = useToast();
@@ -39,6 +40,7 @@ const useGetHistoriskeGrenser = () => {
     if (inndelingsIds.length === 0) {
       return;
     }
+
     const grenserFeatures = await historiskeGrenserFetcher(
       inndelingsIds,
       gyldigTilDate,
@@ -54,14 +56,16 @@ const useGetHistoriskeGrenser = () => {
       // Legger til en midlertidig id på featuren, så grensene ikke erstatter andre versjoner av grensa i kartet med samme id
       const newId = getTempFeatureId();
       feature.setId(newId);
+      feature.setProperties({ isHistorical: true });
     });
 
     if (featureGeometryCollection.length > 0) {
       setAllFeatures(featureGeometryCollection);
       addHistoriskeGrenserStyles(featureGeometryCollection.map((f) => f.getId() as string));
-      addFeaturesToSource("historiskGrense", featureGeometryCollection);
+      addFeaturesToSource("historical", featureGeometryCollection);
+      setHistoriskeGrenserFetched(true);
       for (const feature of featureGeometryCollection) {
-        feature.setStyle(grenseStyles.historiskGrense);
+        feature.setStyle(grenseStyles.historical);
       }
     }
     if (featureGeometryCollection.length === 0) {
@@ -79,6 +83,11 @@ const useGetHistoriskeGrenser = () => {
     }
     setHistoriskeGrenserIsLoading(false);
   }
+  const resetHistoriskeGrenser = () => {
+    clearHistoriskeGrenser();
+    setAllFeatures([]);
+    setHistoriskeGrenserFetched(false);
+  };
 
   const gjenopprettHistoriskeGrenser = (featuresToRestore: Feature<LineString>[]) => {
     if (featuresToRestore.length === 0) {
@@ -87,7 +96,7 @@ const useGetHistoriskeGrenser = () => {
 
     let countSaved = 0;
     featuresToRestore.forEach((featureToRestore, idx, array) => {
-      // Sjekk om det er en historisk grense og om den er i allFeatures (Egentlig sjekket ved klikk på grense, så denne er mest sannsynlig unødvendig)
+      // Sjekk om det er en historisk grense, hvis ikke gjør vi ingenting med den
       if (!allFeatures.some((f) => f.getId() === featureToRestore.getId())) {
         return;
       }
@@ -110,8 +119,9 @@ const useGetHistoriskeGrenser = () => {
           },
         },
       });
-      // Fjerner grense fra historiskGrense-laget og legger tilbake i edit-laget
-      removeFeaturesFromSourceByIds("historiskGrense", [featureToRestore.getId() as string]);
+      featureToRestore.unset("isHistorical");
+      // Fjerner grense fra historical-laget og legger tilbake i edit-laget
+      removeFeaturesFromSourceByIds("historical", [featureToRestore.getId() as string]);
       addFeaturesToSource("edit", [featureToRestore]);
       featureToRestore.setStyle(grenseType === "STEMMEKRETS" ? grenseStyles.stemmekrets : grenseStyles.grunnkrets);
       if (currentlyEditingInndelinger.length === 0) {
@@ -149,7 +159,7 @@ const useGetHistoriskeGrenser = () => {
   };
 
   const clearHistoriskeGrenser = () => {
-    const source = grenserLayers.historiskGrense.getSource();
+    const source = grenserLayers.historical.getSource();
 
     if (source) {
       source.clear();
@@ -167,11 +177,12 @@ const useGetHistoriskeGrenser = () => {
       !historiskeGrenserIsLoading
     ) {
       allFeatures.forEach((feature) => {
-        removeFeaturesFromSourceByIds("historiskGrense", [feature.getId() as string]);
+        removeFeaturesFromSourceByIds("historical", [feature.getId() as string]);
       });
       clearHistoriskeGrenser();
       setAllFeatures([]);
       setHistoriskeGrenserIsLoading(false);
+      setHistoriskeGrenserFetched(false);
     }
   }, [activeTool, activeModeTools, allFeatures, historiskeGrenserIsLoading]);
 
@@ -180,7 +191,9 @@ const useGetHistoriskeGrenser = () => {
     allFeatures,
     getHistoriskeGrenser,
     gjenopprettHistoriskeGrenser,
+    historiskeGrenserFetched,
+    resetHistoriskeGrenser,
   };
 };
 
-export default useGetHistoriskeGrenser;
+export default useHistoriskeGrenser;

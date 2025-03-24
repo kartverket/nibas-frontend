@@ -64,7 +64,7 @@ const HistoriskeGrenserDatoModal = ({ isOpen, onClose, onSubmit, gyldigTilDate }
             <div>
               <DatepickerHeading>Velg gyldig til-dato</DatepickerHeading>
               <Datepickerlabel htmlFor="datepicker">
-                Kun grenser gyldig på datoen du velger vil være synlige i kartet.
+                Kun grenser som var gyldig til på datoen du velger vil legges til i kartet.
               </Datepickerlabel>
               <Datepicker
                 id="datepicker"
@@ -92,20 +92,20 @@ const HistoriskeGrenserDatoModal = ({ isOpen, onClose, onSubmit, gyldigTilDate }
 const Body = styled(ModalBody)`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--kvib-space-4);
 `;
 
 const DatepickerHeading = styled.p`
-  font-size: 17px;
-  font-weight: 900;
-  margin-top: 12px;
-  margin-bottom: 8px;
+  font-size: var(--kvib-fontSizes-md);
+  font-weight: var(--kvib-fontWeights-bold);
+  margin-top: var(--kvib-space-3);
+  margin-bottom: var(--kvib-space-2);
 `;
 
 const Datepickerlabel = styled(FormLabel)`
-  margin-bottom: 8px;
+  margin-bottom: var(--kvib-space-2);
   color: var(--kvib-colors-gray-500);
-  font-weight: 600;
+  font-weight: var(--kvib-fontWeights-semibold);
   display: block;
   width: 100%;
 `;
