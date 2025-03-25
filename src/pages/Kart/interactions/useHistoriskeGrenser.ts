@@ -13,10 +13,10 @@ import { createNyGrenseHistoryChange } from "./grense-history-utils";
 import { SplittedFeature } from "./useSplit";
 import { getTempFeatureId } from "./feature-id-utils";
 import { getGrensetypeFromInndelingtype } from "../../../hooks/layers/types";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { grenseStyles } from "utils/map/layerStyles";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useInndelinger } from "../../../contexts/InndelingerContext/InndelingerContext";
+import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
+import { useAuthentication } from "../../../components/Authentication/AuthenticationHook";
+import { grenseStyles } from "../../../utils/map/layerStyles";
 const useHistoriskeGrenser = () => {
   const [historiskeGrenserIsLoading, setHistoriskeGrenserIsLoading] = useState(false);
   const [historiskeGrenserFetched, setHistoriskeGrenserFetched] = useState(false);
@@ -27,7 +27,7 @@ const useHistoriskeGrenser = () => {
   const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoriskeGrenserStyles } = useFeatureStyle();
   const auth = useAuthentication();
-  async function getHistoriskeGrenser(gyldigTilDate: string) {
+  const getHistoriskeGrenser = async (gyldigTilDate: string) => {
     clearHistoriskeGrenser();
     setHistoriskeGrenserIsLoading(true);
     setAllFeatures([]);
@@ -82,7 +82,7 @@ const useHistoriskeGrenser = () => {
       });
     }
     setHistoriskeGrenserIsLoading(false);
-  }
+  };
   const resetHistoriskeGrenser = () => {
     clearHistoriskeGrenser();
     setAllFeatures([]);
@@ -108,7 +108,7 @@ const useHistoriskeGrenser = () => {
       }
 
       const metadata = properties.metadata as Metadata | undefined;
-      // Endre featureens gyldigTil til å være null, resten av metadata tar vi vare på
+      // Endre featurens gyldigTil til å være null, resten av metadata tar vi vare på
       featureToRestore.setProperties({
         ...properties,
         metadata: {
