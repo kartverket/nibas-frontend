@@ -17,6 +17,8 @@ import {
 } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import ToolbarPopup from "./ToolbarPopup";
 
+import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
+import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
@@ -25,6 +27,13 @@ const ToolbarPopups = () => {
   const { addHistoryEntry } = useHistory();
   const { activeModeTools, activeTool, resetModeTools, resetTool } = useToolbar();
   const { selectedFeatures, selectedPoint, addArchivedStyles, clearSelection } = useFeatureStyle();
+  const {
+    historiskeGrenserIsLoading,
+    getHistoriskeGrenser,
+    gjenopprettHistoriskeGrenser,
+    historiskeGrenserFetched,
+    resetHistoriskeGrenser,
+  } = useHistoriskeGrenser();
 
   const archiveFeatures = () => {
     const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
@@ -70,6 +79,20 @@ const ToolbarPopups = () => {
     });
   };
 
+  const handleHistoriskeGrenser = async (gyldigTilDate: string) => {
+    getHistoriskeGrenser(gyldigTilDate);
+    clearSelection();
+  };
+  const handleHistoriskeGrenserChangeDate = () => {
+    resetHistoriskeGrenser();
+  };
+  const handleRestoreHistoriskeGrenser = () => {
+    gjenopprettHistoriskeGrenser(selectedFeatures);
+    clearSelection();
+  };
+  const isNotHistorical = () => {
+    return selectedFeatures.some((feature) => feature.getProperties().isHistorical !== true);
+  };
   const handleSplit = () => {
     split();
     clearSelection();
@@ -223,7 +246,33 @@ const ToolbarPopups = () => {
             onClose={resetTool}
           />
         );
-
+      case "historiskeGrenser":
+        return (
+          <>
+            {historiskeGrenserFetched === false && (
+              <HistoriskeGrenserDatoModal
+                isOpen={activeTool === "historiskeGrenser"}
+                onClose={resetTool}
+                onSubmit={handleHistoriskeGrenser}
+              />
+            )}
+            {historiskeGrenserFetched === true && (
+              <ToolbarPopup
+                text="Velg grensene du ønsker å gjenopprette"
+                subtext=""
+                buttonText="Gjenopprett"
+                secondaryButtonText="Endre tidsrom"
+                onClick={handleRestoreHistoriskeGrenser}
+                secondaryOnClick={handleHistoriskeGrenserChangeDate}
+                onClose={resetTool}
+                isDisabled={selectedFeatures.length === 0 || isNotHistorical()}
+                isSecondaryButtonDisabled={false}
+                isLoading={historiskeGrenserIsLoading}
+                icon={"history"}
+              />
+            )}
+          </>
+        );
       case "koordinater":
         return (
           <ToolbarPopup

@@ -130,5 +130,10 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
       dotted: isDottedStyle(grenseStyles.fremtidigEndring),
       color: getColorFromStyle(grenseStyles.fremtidigEndring),
     },
+    {
+      text: "Historisk grense",
+      dotted: isDottedStyle(grenseStyles.historical),
+      color: getColorFromStyle(grenseStyles.historical),
+    },
   ],
 ];

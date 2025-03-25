@@ -49,7 +49,7 @@ const useSelect = () => {
   }, [activeTool, closeOverlayPopup]);
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
-  const safeTools: Tool[] = ["grenseinfo", "split"];
+  const safeTools: Tool[] = ["grenseinfo", "split", "historiskeGrenser"];
   const pointTools: Tool[] = ["add", "remove", "split"];
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();
