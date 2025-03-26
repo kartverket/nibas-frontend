@@ -4,6 +4,10 @@
  */
 
 export interface paths {
+  "/v1/avvik": {
+    /** Henter alle utkast med gitt status og som er gyldige fra og med gitt dato. */
+    get: operations["avvik"];
+  };
   "/v1/utkast/{id}": {
     /** Henter utkast med gitt id */
     get: operations["hentUtkast"];
@@ -91,6 +95,14 @@ export interface paths {
   "/v1/grunnkretser/{id}/grenser": {
     /** Henter grensene til en grunnkrets med gitt id */
     get: operations["hentGrenserForGrunnkrets"];
+  };
+  "/v1/grenser": {
+    /** Henter alle administrative grenser (Kommunegrense, Fylkesgrense, Riksgrense og Territorialgrense) */
+    get: operations["hentGrenser"];
+  };
+  "/v1/grenser/{lokalid}": {
+    /** Henter en spesifikk administrativ grense basert på lokalid */
+    get: operations["hentGrense"];
   };
   "/v1/fylker": {
     /** Henter alle fylker i Nasjonal inndelingsbase. */
@@ -1036,10 +1048,10 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
       coordinate?: components["schemas"]["Coordinate"];
+      valid?: boolean;
     };
     InndelingSearchResponse: {
       /** @description Lokalid til inndelingen */
@@ -1055,6 +1067,130 @@ export interface components {
       nummer: string;
       /** @description Koordinatet til representasjonspunktet til inndelingen. */
       representasjonspunkt: components["schemas"]["Coordinate"];
+    };
+    Page: {
+      /** Format: int64 */
+      totalElements?: number;
+      /** Format: int32 */
+      totalPages?: number;
+      first?: boolean;
+      last?: boolean;
+      /** Format: int32 */
+      numberOfElements?: number;
+      pageable?: components["schemas"]["PageableObject"];
+      /** Format: int32 */
+      size?: number;
+      content?: { [key: string]: unknown }[];
+      /** Format: int32 */
+      number?: number;
+      sort?: components["schemas"]["SortObject"];
+      empty?: boolean;
+    };
+    PageableObject: {
+      paged?: boolean;
+      /** Format: int32 */
+      pageNumber?: number;
+      /** Format: int32 */
+      pageSize?: number;
+      unpaged?: boolean;
+      /** Format: int64 */
+      offset?: number;
+      sort?: components["schemas"]["SortObject"];
+    };
+    SortObject: {
+      sorted?: boolean;
+      unsorted?: boolean;
+      empty?: boolean;
+    };
+    /** @description Representasjon av en grense */
+    GrenseResponse: {
+      /** @description Unik ID for grensen */
+      id: string;
+      /** @description Lokal ID for grensen */
+      lokalid: string;
+      /**
+       * @description Type grense
+       * @enum {string}
+       */
+      grensetype:
+        | "Kommunegrense"
+        | "Fylkesgrense"
+        | "Riksgrense"
+        | "AvtaltAvgrensningslinje"
+        | "Territorialgrense"
+        | "Grunnlinje"
+        | "Lovvirkeomraadegrense"
+        | "Grunnkretsgrense"
+        | "Delomraadegrense"
+        | "Stemmekretsgrense";
+      /** @description Geometri for grensen (GeoJSON format) */
+      geometri:
+        | components["schemas"]["LineString"]
+        | components["schemas"]["MultiPolygon"]
+        | components["schemas"]["Point"];
+      /** @description Gyldighetsperiode for grensen */
+      gyldighet: components["schemas"]["GyldighetResponse"];
+      /**
+       * Format: date-time
+       * @description Dato for datafangst
+       */
+      datafangstdato?: string;
+      /**
+       * Format: date-time
+       * @description Dato for første digitalisering
+       */
+      foerstedigitaliseringsdato: string;
+      /** @description Opphav/kilde til grensen */
+      opphav?: string;
+      /** @description Tilleggsinformasjon om grensen */
+      informasjon?: string;
+      /** @description Brukeren som sist endret grensen */
+      endretAv: string;
+      /**
+       * Format: date-time
+       * @description Dato for siste endring
+       */
+      endretDato: string;
+      /**
+       * @description Type endring som ble gjort
+       * @enum {string}
+       */
+      typeEndring:
+        | "KVALITETSHEVING"
+        | "RETTING"
+        | "VEDTATT_DELING"
+        | "VEDTATT_SLETTING"
+        | "VEDTATT_SAMMENSLAAING"
+        | "VEDTATT_GRENSEJUSTERING"
+        | "FASTSETTING"
+        | "NAVNEENDRING"
+        | "NUMMERENDRING"
+        | "IMPORT";
+      /** @description Metode for måling */
+      maalemetode?: string;
+      /**
+       * Format: int32
+       * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer (oppgitt i cm)
+       */
+      noeyaktighet?: number;
+    };
+    PageGrenseResponse: {
+      /** Format: int64 */
+      totalElements?: number;
+      /** Format: int32 */
+      totalPages?: number;
+      first?: boolean;
+      last?: boolean;
+      /** Format: int32 */
+      numberOfElements?: number;
+      pageable?: components["schemas"]["PageableObject"];
+      /** Format: int32 */
+      size?: number;
+      content?: components["schemas"]["GrenseResponse"][];
+      /** Format: int32 */
+      number?: number;
+      sort?: components["schemas"]["SortObject"];
+      empty?: boolean;
     };
     /** @description Representasjon av et fylke */
     FylkeResponse: {
@@ -1257,6 +1393,36 @@ export interface components {
 }
 
 export interface operations {
+  /** Henter utkast med gitt id */
+  avvik: {
+    parameters: {
+      path: {
+        /** ID-en til utkastet man vil hente */
+        size: number;
+        page: number;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["UtkastResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+    };
+  };
   /** Henter utkast med gitt id */
   hentUtkast: {
     parameters: {
@@ -1979,6 +2145,81 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
+  /** Henter alle administrative grenser (Kommunegrense, Fylkesgrense, Riksgrense og Territorialgrense) */
+  hentGrenser: {
+    parameters: {
+      query: {
+        /** Parameter ignoreres, da kun administrative grenser returneres (Kommunegrense, Fylkesgrense, Riksgrense og Territorialgrense) */
+        grensetyper?: (
+          | "Kommunegrense"
+          | "Fylkesgrense"
+          | "Riksgrense"
+          | "AvtaltAvgrensningslinje"
+          | "Territorialgrense"
+          | "Grunnlinje"
+          | "Lovvirkeomraadegrense"
+          | "Grunnkretsgrense"
+          | "Delomraadegrense"
+          | "Stemmekretsgrense"
+        )[];
+        /** Dato for gyldighet av grensene (standard er dagens dato) */
+        gyldighetsdato?: string;
+        /** Sidenummer for paginering (starter på 0) */
+        side?: number;
+        /** Antall resultater per side (standard er 10) */
+        antall?: number;
+      };
+    };
+    responses: {
+      /** Vellykket operasjon */
+      200: {
+        content: {
+          "application/json": components["schemas"]["Page"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Ikke funnet */
+      404: {
+        content: {
+          "application/json": components["schemas"]["PageGrenseResponse"];
+        };
+      };
+    };
+  };
+  /** Henter en spesifikk administrativ grense basert på lokalid */
+  hentGrense: {
+    parameters: {
+      path: {
+        /** Lokal ID for grensen som skal hentes */
+        lokalid: string;
+      };
+    };
+    responses: {
+      /** Vellykket operasjon */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrenseResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Ikke funnet */
+      404: {
+        content: {
+          "application/json": components["schemas"]["GrenseResponse"];
         };
       };
     };

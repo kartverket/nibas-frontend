@@ -9,15 +9,17 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import { styled } from "styled-components";
 import { statusCode } from "utils/api";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { canSave, undo, redo } = useHistory();
   const { isOpen: isEndringsloggOpen, onClose: onEndringsloggClose, onOpen: onEndringsloggOpen } = useDisclosure();
   const { isOpen: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
+  const { toggleOverlayPanel } = useOverlayPanel();
   const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
-
+  const antallAvvik = 12;
   const handleSave = async () => {
     if (utkast && canSave) {
       const responseCode = await updateUtkastWithHistory();
@@ -25,6 +27,9 @@ const HeaderHistoryOperations = () => {
         setAuthRenewError(true);
       }
     }
+  };
+  const handleAvvik = () => {
+    toggleOverlayPanel("avvik");
   };
 
   useKeyboardShortcut("save", handleSave, canSave);
@@ -66,6 +71,15 @@ const HeaderHistoryOperations = () => {
           text: "Lagre endringene til utkastet",
           shortcut: "save",
         }}
+      />
+      <HeaderButton
+        label="Avvik fra matrikkelen"
+        icon="warning"
+        onClick={handleAvvik}
+        tooltip={{
+          text: "Se en liste over alle avvik",
+        }}
+        alert={antallAvvik > 0 && <AlertIcon count={antallAvvik} />}
       />
       <HeaderButton
         label="Endringslogg"

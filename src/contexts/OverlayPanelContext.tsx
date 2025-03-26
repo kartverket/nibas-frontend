@@ -8,6 +8,7 @@ const overlayPanelValues = [
   "tegnforklaring",
   "koordinater",
   "kartlag",
+  "avvik",
 ] as const;
 export type OverlayPanel = (typeof overlayPanelValues)[number];
 const overlayModalValues = ["inndelinger", "inndelinger-view", "flatedata", "navigasjon"] as const;
