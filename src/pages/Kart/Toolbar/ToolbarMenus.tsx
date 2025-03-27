@@ -95,6 +95,15 @@ const ToolbarMenus = () => {
       "aria-label": "Slett grense",
     },
     {
+      label: "Dupliser grense",
+      icon: <Icon icon="copy_all" />,
+      command: KeyboardShortcuts["duplicate"].displayString,
+      $isActive: activeTool === "duplicate",
+      isDisabled: !isEditing,
+      onClick: () => toggleTool("duplicate"),
+      "aria-label": "Dupliser grense",
+    },
+    {
       label: "Vis historiske grenser",
       icon: <Icon icon="history" />,
       command: KeyboardShortcuts["historiskeGrenser"].displayString,

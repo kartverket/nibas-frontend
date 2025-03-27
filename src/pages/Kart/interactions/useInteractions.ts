@@ -30,6 +30,7 @@ const useInteractions = () => {
     "koordinater",
     "split",
     "delete",
+    "duplicate",
     "historiskeGrenser",
   ];
 

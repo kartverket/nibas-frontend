@@ -27,7 +27,8 @@ export type Shortcut =
   | "draw"
   | "escape"
   | "preview"
-  | "goto";
+  | "goto"
+  | "duplicate";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -94,6 +95,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   grensecoordinates: createShortcut("k", { control: true, shift: true }),
   grensesplit: createShortcut("p", { control: true, shift: true }),
   measure: createShortcut("d", { control: true }),
+  duplicate: createShortcut("1", { control: true }),
 
   // Point Tools
   add: createShortcut("l", { control: true }),

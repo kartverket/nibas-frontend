@@ -5,12 +5,52 @@ import { FeatureLike } from "ol/Feature";
 import { Coordinate, equals } from "ol/coordinate";
 import { Geometry, LineString } from "ol/geom";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
+import { getTempFeatureId, isNonEditableFeatureId, isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
 import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { removeNil } from "./list-utils";
 import { getRepresentasjonspunktId } from "./map/source";
 import { isGrenseType, isNotNil } from "./type-utils";
-import { isNonEditableFeatureId, isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
+
+export const createDuplicateOfFeature = (feature: Feature<Geometry>, asGrenseType: GrenseType): Feature<Geometry> => {
+  const duplicateFeature = feature.clone();
+  duplicateFeature.setId(getTempFeatureId());
+  duplicateFeature.setProperties({ ...getPropertiesForDuplicateOfFeature(feature, asGrenseType) });
+  return duplicateFeature;
+};
+
+export const getPropertiesForDuplicateOfFeature = (
+  originalFeature: Feature<Geometry>,
+  asGrenseType: GrenseType,
+): FeatureProperties | undefined => {
+  const newDefaultFeatureProperties = getDefaultFeatureProperties(asGrenseType);
+  if (newDefaultFeatureProperties != null) {
+    if (!isTeigFeature(originalFeature)) {
+      const copiedFeatureProperties = originalFeature.getProperties() as FeatureProperties;
+      const newDefaultMetadata = newDefaultFeatureProperties.metadata as Metadata;
+      const copiedMetadata = copiedFeatureProperties.metadata as Metadata;
+      const newDefaultCommonMetadata = newDefaultMetadata.common;
+      if (newDefaultCommonMetadata != null) {
+        const newInheritedProperties: FeatureProperties = {
+          ...newDefaultFeatureProperties,
+          type: asGrenseType,
+          kontekstEgenskaper: [],
+          metadata: {
+            ...newDefaultMetadata,
+            commonGrense: copiedMetadata.commonGrense,
+            common: {
+              ...newDefaultCommonMetadata,
+              informasjon: copiedFeatureProperties.metadata?.common?.informasjon,
+              opphav: copiedFeatureProperties.metadata?.common?.opphav,
+            },
+          },
+        };
+        return newInheritedProperties;
+      }
+    }
+    return newDefaultFeatureProperties;
+  }
+};
 
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) {
