@@ -41,10 +41,11 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const dirtyStyleFunctions = useCustomStyles(grenseStyles.dirty);
   const errorStyleFunctions = useCustomStyles(grenseStyles.error);
   const fremtidigEndringStyleFunctions = useCustomStyles(grenseStyles.fremtidigEndring);
-
+  const historiskeGrenserStyleFunctions = useCustomStyles(grenseStyles.historical);
   // OBS! Rekkefølgen avgjør prioriteten til stilene, høyest i listen er høyest prioritet.
   const customStyles = useMemo(
     () => [
+      historiskeGrenserStyleFunctions,
       sammenslaaingOverlappingStyleFunctions,
       sammenslaaingStyleFunctions,
       archivedStyleFunctions,
@@ -59,6 +60,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       fremtidigEndringStyleFunctions,
       sammenslaaingOverlappingStyleFunctions,
       sammenslaaingStyleFunctions,
+      historiskeGrenserStyleFunctions,
     ],
   );
 
@@ -68,7 +70,6 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     if (featureId !== undefined) {
       // Dersom featuren har en aktiv stil faller vi tilbake til den
       const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
-
       // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
       const matchingSavedCustomStyle = customStyles.find((customStyle) =>
         customStyle.savedCustomFeatureIds.includes(featureId),
@@ -270,6 +271,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
     addErrorStyles: errorStyleFunctions.addCustomStyles,
     addArchivedStyles: archivedStyleFunctions.addCustomStyles,
+    addHistoriskeGrenserStyles: historiskeGrenserStyleFunctions.addCustomStyles,
 
     setAndSaveFremtidigEndringStyles: fremtidigEndringStyleFunctions.setAndSaveCustomStyles,
 

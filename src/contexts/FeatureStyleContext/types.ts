@@ -21,6 +21,7 @@ export type FeatureStyleContextValue = {
   addDirtyStyles: (featureIds: string[]) => void;
   addErrorStyles: (featureIds: string[]) => void;
   addArchivedStyles: (featureIds: string[]) => void;
+  addHistoriskeGrenserStyles: (featureIds: string[]) => void;
   setAndSaveFremtidigEndringStyles: (featureIds: string[]) => void;
 
   setFeatureStylesForUtkast: (editedFeatures: Feature<Geometry>[], sammenslaaingFeatures: Feature<Geometry>[]) => void;

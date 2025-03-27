@@ -1,0 +1,23 @@
+import { FeatureCollection } from "types/api";
+import { fetcherWithToken } from "utils/api";
+import { removeNil } from "utils/list-utils";
+import { getUrlWithParameters } from "hooks/useNibasApi";
+
+export const historiskeGrenserFetcher = async (
+  kretsIds: string[],
+  gyldigTilDate: string,
+  token: string | undefined,
+  kretsType: "stemmekrets" | "grunnkrets",
+) => {
+  const urlPath =
+    kretsType === "stemmekrets"
+      ? "/v1/kommuner/{id}/stemmekretsgrenserHistoriske"
+      : "/v1/kommuner/{id}/grunnkretsgrenserHistoriske";
+  const promises: Promise<FeatureCollection>[] = kretsIds.map(async (kretsId) =>
+    fetcherWithToken([getUrlWithParameters(urlPath, { id: kretsId, gyldigTilDate }), token]),
+  );
+
+  const kretsFeatures = await Promise.all(promises);
+  const features = removeNil(kretsFeatures.flatMap((feature) => feature.features));
+  return features;
+};

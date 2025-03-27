@@ -52,6 +52,9 @@ export interface paths {
   "/v1/kommuner/{id}/stemmekretsgrenser": {
     get: operations["hentKommunesStemmekretsgrenser"];
   };
+  "/v1/kommuner/{id}/stemmekretsgrenserHistoriske": {
+    get: operations["hentKommunesStemmekretsgrenserHistoriske"];
+  };
   "/v1/kommuner/{id}/stemmekretser": {
     /** Henter alle stemmekretser som tilhører en kommune. */
     get: operations["hentKommunesStemmekretser"];
@@ -64,6 +67,9 @@ export interface paths {
   };
   "/v1/kommuner/{id}/grunnkretsgrenser": {
     get: operations["hentKommunesGrunnkretsgrenser"];
+  };
+  "/v1/kommuner/{id}/grunnkretsgrenserHistoriske": {
+    get: operations["hentKommunesGrunnkretsgrenserHistoriske"];
   };
   "/v1/kommuner/{id}/grunnkretser": {
     /** Henter alle grunnkretser som tilhører en kommune. */
@@ -1656,6 +1662,38 @@ export interface operations {
       };
     };
   };
+  hentKommunesStemmekretsgrenserHistoriske: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente stemmekretsgrensene til */
+        id: string;
+      };
+      query: {
+        /** gyldigTilDate for kommune (default = dagens dato */
+        gyldigTilDate: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
   /** Henter alle stemmekretser som tilhører en kommune. */
   hentKommunesStemmekretser: {
     parameters: {
@@ -1756,6 +1794,38 @@ export interface operations {
       query: {
         /** Eventuell gyldighetsdato for kommune (default = dagens dato */
         gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
+  hentKommunesGrunnkretsgrenserHistoriske: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente grunnkretsgrensene til */
+        id: string;
+      };
+      query: {
+        /** gyldigTilDate for kommune (default = dagens dato */
+        gyldigTilDate: string;
       };
     };
     responses: {

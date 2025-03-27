@@ -20,6 +20,7 @@ export type Shortcut =
   | "grensesplit"
   | "archive"
   | "delete"
+  | "historiskeGrenser"
   | "matrikkel"
   | "flatedata"
   | "flatesplit"
@@ -88,6 +89,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   // Grense Tools
   archive: createShortcut("a", { control: true }),
   delete: createShortcut("a", { control: true, shift: true }),
+  historiskeGrenser: createShortcut("h", { control: true }),
   draw: createShortcut("t", { control: true }),
   grenseinfo: createShortcut("i", { control: true }),
   grensecoordinates: createShortcut("k", { control: true, shift: true }),

@@ -31,6 +31,7 @@ const useInteractions = () => {
     "split",
     "delete",
     "duplicate",
+    "historiskeGrenser",
   ];
 
   useCursorStyles({
