@@ -16,10 +16,14 @@ const grunnkretsFetcher = async ([grunnkretsIds, gyldighetsdato, token]: [
   return await Promise.all(promises);
 };
 
-export const useGrunnkretser = (grunnkretsId: string[], gyldighetsdato: string | undefined) => {
+export const useGrunnkretser = (
+  grunnkretsId: string[],
+  gyldighetsdato: string | undefined,
+  shouldFetch: boolean = true,
+) => {
   const auth = useAuthentication();
   return useSWRImmutable(
-    grunnkretsId.length > 0 ? [grunnkretsId, gyldighetsdato, auth.token] : null,
+    grunnkretsId.length > 0 && shouldFetch ? [grunnkretsId, gyldighetsdato, auth.token] : null,
     grunnkretsFetcher,
   );
 };

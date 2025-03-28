@@ -12,7 +12,7 @@ const useInndelingerPanel = () => {
   const { selectInndelinger, getAllInndelinger, setSelectedFylkeId } = useInndelinger();
 
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
-  const [activePanelFylkeId, setActivePanelFylkeId] = useState<string>("");
+  const [activePanelFylkeId, setActivePanelFylkeId] = useState<string | null>(null);
   const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>(getAllInndelinger());
 
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
@@ -63,7 +63,7 @@ const useInndelingerPanel = () => {
   const resetInndelingerPanel = () => {
     closeOverlayModal();
     setSelectedInndelingtype(null);
-    setActivePanelFylkeId("");
+    setActivePanelFylkeId(null);
     resetSelection();
   };
 
@@ -74,7 +74,7 @@ const useInndelingerPanel = () => {
 
     if (selectedInndelingtype !== inndelingtype) {
       setSelectedInndelingtype(inndelingtype);
-      setActivePanelFylkeId("");
+      setActivePanelFylkeId(null);
     }
   };
 

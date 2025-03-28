@@ -8,8 +8,8 @@ type Props = {
 };
 
 const UtkastPubliser = ({ utkast }: Props) => {
-  const { harEndringer } = useUtkastEndringer(utkast);
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const { harEndringer } = useUtkastEndringer(utkast, isOpen);
 
   return (
     <>

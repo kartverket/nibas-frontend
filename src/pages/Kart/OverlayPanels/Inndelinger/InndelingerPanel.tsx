@@ -31,7 +31,7 @@ const InndelingerPanel = () => {
   } = useInndelingerPanel();
 
   const { fylker } = useFylker(gyldighetsdato);
-  const { kommuner } = useKommuner(activePanelFylkeId, gyldighetsdato);
+  const { kommuner } = useKommuner(activePanelFylkeId, gyldighetsdato, activePanelFylkeId != null);
 
   return (
     <Modal isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">
@@ -95,7 +95,7 @@ const InndelingerPanel = () => {
             <Divider orientation="vertical" />
             <InndelingerList>
               {kommuner ? (
-                activePanelFylkeId &&
+                activePanelFylkeId != null &&
                 selectedInndelingtype &&
                 kommuner.map((kommune) => {
                   const kommuneId = getIdFromEntity(kommune);

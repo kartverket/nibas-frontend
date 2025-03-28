@@ -84,7 +84,9 @@ const HeaderHistoryOperations = () => {
           text: "Slett utkastet og endringene som er gjort",
         }}
       />
-      <EndringsloggModal isOpen={isEndringsloggOpen} onClose={onEndringsloggClose} utkast={utkast} />
+      {isEndringsloggOpen && (
+        <EndringsloggModal isOpen={isEndringsloggOpen} onClose={onEndringsloggClose} utkast={utkast} />
+      )}
       <UtkastSlettModal isOpen={isSlettOpen} onClose={onSlettClose} utkast={utkast} />
     </HeaderSection>
   );
