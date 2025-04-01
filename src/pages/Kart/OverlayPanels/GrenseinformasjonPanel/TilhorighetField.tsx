@@ -13,6 +13,7 @@ import { isAdministrativGrense, isFylkesGrense, isKommuneGrense } from "utils/gr
 import { capitalize } from "utils/string-utils";
 import { isGrenseType } from "utils/type-utils";
 import {
+  CustomOption,
   KontekstType,
   Tilhorighet,
   TilhorighetChoice,
@@ -154,9 +155,13 @@ const TilhorighetFieldController = ({
   const submit = () => {
     const oppdaterteGrunnkretsKontekster = grunnkretsTilhorighetForm?.getCurrentOppdaterteKontekstEgenskaper() ?? [];
     const oppdaterteStemmekretsKontekster = stemmekretsTilhorighetForm?.getCurrentOppdaterteKontekstEgenskaper() ?? [];
+
+    // Vi ønsker ikke å sende med NOT_CHOSEN kontekstegenskaper. Hvis det er feil antall håndteres dette i backend.
     addKontekstEntryFromFeature(
       feature as Feature<LineString>,
-      [...oppdaterteGrunnkretsKontekster, ...oppdaterteStemmekretsKontekster],
+      [...oppdaterteGrunnkretsKontekster, ...oppdaterteStemmekretsKontekster].filter(
+        (ke) => ke.id?.lokalid.value !== CustomOption.NOT_CHOSEN,
+      ),
       addHistoryEntry,
     );
   };
