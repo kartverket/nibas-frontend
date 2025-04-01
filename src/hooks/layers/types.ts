@@ -52,6 +52,7 @@ export const editableGrenseTypes: GrenseType[] = [
   "Fylkesgrense",
   "Territorialgrense",
   "Riksgrense",
+  "AvtaltAvgrensningslinje",
 ];
 
 export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): GrenseType | undefined => {
