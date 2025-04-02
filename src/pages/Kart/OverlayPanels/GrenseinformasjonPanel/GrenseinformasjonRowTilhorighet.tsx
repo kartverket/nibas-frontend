@@ -42,7 +42,7 @@ const GrenseinformasjonRow = ({
         {isEditing ? (
           <FormControl isInvalid={!isValid && isSubmitted}>
             <Field>{children}</Field>
-            {!isValid && isSubmitted && <FormErrorMessage>Du må velge 2 tilhørigheter for grensen</FormErrorMessage>}
+            {!isValid && isSubmitted && <FormErrorMessage>Du må velge tilhørigheter for grensen</FormErrorMessage>}
           </FormControl>
         ) : isLoading ? (
           <SkeletonText noOfLines={1} skeletonHeight={5} marginTop="8px" />

@@ -5,7 +5,6 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { TilhorighetSearch } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/TilhorighetSearch";
-import { useTilhorighetIkkeRedigerbar } from "pages/Kart/OverlayPanels/hooks/useTilhorighetIkkeRedigerbar";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
@@ -14,6 +13,7 @@ import { isAdministrativGrense, isFylkesGrense, isKommuneGrense } from "utils/gr
 import { capitalize } from "utils/string-utils";
 import { isGrenseType } from "utils/type-utils";
 import {
+  CustomOption,
   KontekstType,
   Tilhorighet,
   TilhorighetChoice,
@@ -34,6 +34,7 @@ type TilhorighetRowProps = {
   isSubmitted: boolean;
   isEditing: boolean;
 };
+
 const TilhorighetRow = ({
   feature,
   useTilhorighet: { kontekstType, tilhorighetOptions, formState, setValue, isLoading },
@@ -73,6 +74,43 @@ const TilhorighetRow = ({
           </div>
         ))}
       </Stack>
+    </GrenseinformasjonRowTilhorighet>
+  );
+};
+
+const TilhorighetRowLandgrense = ({
+  feature,
+  useTilhorighet: { kontekstType, tilhorighetOptions, formState, setValue, isLoading },
+  isSubmitted,
+  isValid,
+  isEditing,
+}: TilhorighetRowProps) => {
+  return (
+    <GrenseinformasjonRowTilhorighet
+      isEditing={isEditing}
+      isSubmitted={isSubmitted}
+      name={capitalize(kontekstType.toLocaleLowerCase())}
+      valueLabel={
+        getLandgrenseTilhorighetValueFormatted(formState[kontekstType], tilhorighetOptions) ??
+        (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
+      }
+      isValid={isValid}
+      isLoading={isLoading}
+      tooltipLabel={`
+      Definerer hvilken ${kontekstType.toLocaleLowerCase()} grensen har på sin norske side. Obs! Endring av dette feltet impliserer geometriendringer.
+      `}
+    >
+      <TilhorighetSearch
+        value={formState[kontekstType][Tilhorighet.A]}
+        kretsType={kontekstType}
+        onChange={(newValue) => setValue(Tilhorighet.A, newValue)}
+        options={
+          tilhorighetOptions?.[Tilhorighet.A]?.map((krets) => ({
+            value: krets.id.lokalid.value,
+            label: formatKretsNavn(krets),
+          })) ?? []
+        }
+      />
     </GrenseinformasjonRowTilhorighet>
   );
 };
@@ -117,9 +155,13 @@ const TilhorighetFieldController = ({
   const submit = () => {
     const oppdaterteGrunnkretsKontekster = grunnkretsTilhorighetForm?.getCurrentOppdaterteKontekstEgenskaper() ?? [];
     const oppdaterteStemmekretsKontekster = stemmekretsTilhorighetForm?.getCurrentOppdaterteKontekstEgenskaper() ?? [];
+
+    // Vi ønsker ikke å sende med NOT_CHOSEN kontekstegenskaper. Hvis det er feil antall håndteres dette i backend.
     addKontekstEntryFromFeature(
       feature as Feature<LineString>,
-      [...oppdaterteGrunnkretsKontekster, ...oppdaterteStemmekretsKontekster],
+      [...oppdaterteGrunnkretsKontekster, ...oppdaterteStemmekretsKontekster].filter(
+        (ke) => ke.id?.lokalid.value !== CustomOption.NOT_CHOSEN,
+      ),
       addHistoryEntry,
     );
   };
@@ -249,10 +291,9 @@ const AdministrativTilhorighetField = ({ feature, isDisabled, tooltip }: Tilhori
   );
 };
 
-const IkkeRedigerbarAdministrativGrense = ({ feature, isDisabled, tooltip }: TilhorighetProps) => {
-  const useTilhorighetGrunnkrets = useTilhorighetIkkeRedigerbar(feature, KontekstType.GRUNNKRETS);
-  const useTilhorighetStemmekrets = useTilhorighetIkkeRedigerbar(feature, KontekstType.STEMMEKRETS);
-
+const LandgrenseTilhørighetField = ({ feature, isDisabled, tooltip }: TilhorighetProps) => {
+  const useTilhorighetGrunnkrets = useAdministrativTilhorighet(feature, KontekstType.GRUNNKRETS);
+  const useTilhorighetStemmekrets = useAdministrativTilhorighet(feature, KontekstType.STEMMEKRETS);
   return (
     <TilhorighetFieldController
       feature={feature}
@@ -262,14 +303,14 @@ const IkkeRedigerbarAdministrativGrense = ({ feature, isDisabled, tooltip }: Til
       stemmekretsTilhorighetForm={useTilhorighetStemmekrets}
       renderChildren={({ isEditing, isSubmitted, isGrunnkretserValid, isStemmekretserValid }) => (
         <>
-          <TilhorighetRow
+          <TilhorighetRowLandgrense
             isEditing={isEditing}
             isSubmitted={isSubmitted}
             isValid={isGrunnkretserValid}
             feature={feature}
             useTilhorighet={useTilhorighetGrunnkrets}
           />
-          <TilhorighetRow
+          <TilhorighetRowLandgrense
             isEditing={isEditing}
             isSubmitted={isSubmitted}
             isValid={isStemmekretserValid}
@@ -294,7 +335,7 @@ export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetPro
   if (isGrenseType(featureType) && (isKommuneGrense(featureType) || isFylkesGrense(featureType))) {
     return <AdministrativTilhorighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
   } else if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
-    return <IkkeRedigerbarAdministrativGrense feature={feature} isDisabled={true} tooltip={tooltip} />;
+    return <LandgrenseTilhørighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
   }
   return <CommonTilhorighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
 };
@@ -320,6 +361,23 @@ const getTilhorighetValuesFormatted = (
           <Text>{formatKretsNavn(kretsB)}</Text>
         </>
       );
+    }
+  }
+};
+
+const getLandgrenseTilhorighetValueFormatted = (
+  formState: TilhorighetChoice,
+  tilhorighetOptions: TilhorighetOptions | null | undefined,
+) => {
+  if (formState.a != null && tilhorighetOptions) {
+    const kretsA = tilhorighetOptions[Tilhorighet.A].find(
+      (krets) => krets.id.lokalid.value === formState[Tilhorighet.A],
+    );
+
+    if (!kretsA) {
+      return undefined;
+    } else {
+      return <Text>{formatKretsNavn(kretsA)}</Text>;
     }
   }
 };

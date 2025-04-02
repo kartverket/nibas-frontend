@@ -16,10 +16,10 @@ import {
 } from "@kvib/react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useInndelingFeatures from "contexts/InndelingerContext/useInndelingFeatures";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { GrenseType } from "hooks/layers/types";
+import { editableGrenseTypes } from "hooks/layers/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
@@ -40,8 +40,8 @@ import { getKretsIdFromKontekstegenskaper } from "../hooks/tilhorighet-utils";
 import { useGrenseinformasjonForm } from "../hooks/useGrenseinformasjonForm";
 import { PanelHeader } from "../Panel";
 import {
-  dateToFormattedDatestring,
   datestringToFormattedDatestring,
+  dateToFormattedDatestring,
   isGrenseinformasjonPanelDisabled,
 } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
@@ -121,19 +121,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       return maalemetode?.kode + " " + maalemetode?.label;
     }
     return "Ukjent målemetode er registrert på grensen";
-  };
-
-  const getPossibleGrenseTypesFromInndelingtype = (inndelingtype: Inndelingtype | undefined): GrenseType[] => {
-    switch (inndelingtype) {
-      case "stemmekrets":
-        return ["Stemmekretsgrense", "Kommunegrense"];
-      case "grunnkrets":
-        return ["Grunnkretsgrense", "Delområdegrense", "Kommunegrense"];
-      case "kommune":
-        return ["Kommunegrense", "Delområdegrense", "Grunnkretsgrense", "Stemmekretsgrense"];
-      default:
-        return [];
-    }
   };
 
   const getSistOppdatert = () => {
@@ -348,7 +335,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
       >
         <Select {...register("grenseType")}>
-          {getPossibleGrenseTypesFromInndelingtype(currentlyEditingInndelinger[0]?.inndelingtype).map((type) => (
+          {editableGrenseTypes.map((type) => (
             <option key={type} value={type}>
               {type}
             </option>
