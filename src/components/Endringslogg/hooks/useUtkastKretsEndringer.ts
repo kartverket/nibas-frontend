@@ -1,15 +1,15 @@
-import { useMemo } from "react";
-import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
-import useNibasApi from "hooks/useNibasApi";
-import { UtkastResponse } from "types/api";
-import { KretsendringerForKommune } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import {
   getGrunnkretsEndringer,
   getKretserAvTypeMedEndringer,
   getStemmekretsEndringer,
 } from "components/Endringslogg/hooks/endringerUtils";
+import { KretsendringerForKommune } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import useKommuner from "hooks/inndelinger/useKommuner";
+import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
+import { useMemo } from "react";
+import { UtkastResponse } from "types/api";
 
 type useUtkastKretsEndringerReturnType = {
   harEndringer: boolean;
@@ -17,10 +17,11 @@ type useUtkastKretsEndringerReturnType = {
   endringer: KretsendringerForKommune[] | null;
 };
 
-export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkastKretsEndringerReturnType => {
-  const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner", {
-    gyldighetsdato: utkast.gyldigFra,
-  });
+export const useUtkastStemmekretsEndringer = (
+  utkast: UtkastResponse,
+  shouldFetchEndringer: boolean = true,
+): useUtkastKretsEndringerReturnType => {
+  const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
   const stemmekretserMedEndringer = useMemo(() => {
@@ -30,6 +31,7 @@ export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkast
   const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(
     stemmekretserMedEndringer,
     utkast.gyldigFra,
+    shouldFetchEndringer,
   );
 
   const lasterData = lasterStemmekretser || lasterKommuner;
@@ -48,10 +50,11 @@ export const useUtkastStemmekretsEndringer = (utkast: UtkastResponse): useUtkast
   };
 };
 
-export const useUtkastGrunnkretsEndringer = (utkast: UtkastResponse): useUtkastKretsEndringerReturnType => {
-  const { data: kommuner, isValidating: lasterKommuner } = useNibasApi("/v1/kommuner", {
-    gyldighetsdato: utkast.gyldigFra,
-  });
+export const useUtkastGrunnkretsEndringer = (
+  utkast: UtkastResponse,
+  shouldFetchEndringer: boolean = true,
+): useUtkastKretsEndringerReturnType => {
+  const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
   const grunnkretserMedEndringer = useMemo(() => {
@@ -61,6 +64,7 @@ export const useUtkastGrunnkretsEndringer = (utkast: UtkastResponse): useUtkastK
   const { data: grunnkretser, isValidating: lasterGrunnkretser } = useGrunnkretser(
     grunnkretserMedEndringer,
     utkast.gyldigFra,
+    shouldFetchEndringer,
   );
 
   const lasterData = lasterGrunnkretser || lasterKommuner;

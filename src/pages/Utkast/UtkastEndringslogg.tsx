@@ -21,6 +21,10 @@ import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenT
 type Props = {
   utkast: UtkastResponse;
 };
+type EndringsloggAccordionProps = {
+  utkast: UtkastResponse;
+  isOpen: boolean;
+};
 
 const UtkastEndringslogg = ({ utkast }: Props) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
@@ -34,9 +38,9 @@ const UtkastEndringslogg = ({ utkast }: Props) => {
   );
 };
 
-export const EndringsloggAccordion = ({ utkast }: Props) => {
+export const EndringsloggAccordion = ({ utkast, isOpen }: EndringsloggAccordionProps) => {
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer, endringerutentilhorighet } =
-    useUtkastEndringer(utkast);
+    useUtkastEndringer(utkast, isOpen);
   const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (

@@ -20,24 +20,27 @@ type UseUtkastEndringerReturnType = {
   kommunendringer: KommuneendringerForFylke[] | null;
 };
 
-export const useUtkastEndringer = (utkast: UtkastResponse): UseUtkastEndringerReturnType => {
+export const useUtkastEndringer = (
+  utkast: UtkastResponse,
+  shouldFetchEndringer: boolean = true,
+): UseUtkastEndringerReturnType => {
   const {
     endringer: stemmekretsEndringer,
     harEndringer: harStemmekretsEndringer,
     laster: lasterStemmekretsEndringer,
-  } = useUtkastStemmekretsEndringer(utkast);
+  } = useUtkastStemmekretsEndringer(utkast, shouldFetchEndringer);
 
   const {
     endringer: grunnkretsEndringer,
     harEndringer: harGrunnkretsEndringer,
     laster: lasterGrunnkretsEndringer,
-  } = useUtkastGrunnkretsEndringer(utkast);
+  } = useUtkastGrunnkretsEndringer(utkast, shouldFetchEndringer);
 
   const {
     endringer: kommuneEndringer,
     harEndringer: harKommuneEndringer,
     laster: lasterKommuneEndringer,
-  } = useUtkastKommuneEndringer(utkast);
+  } = useUtkastKommuneEndringer(utkast, shouldFetchEndringer);
 
   const { endringer: endringerUtenTilhorighet, harEndringer: harEndringerUtenTilhorhget } =
     useUtkastUtenTilhorighetEndringer(utkast);

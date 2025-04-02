@@ -31,7 +31,11 @@ const InndelingerPanel = () => {
   } = useInndelingerPanel();
 
   const { fylker } = useFylker(gyldighetsdato);
-  const { kommuner } = useKommuner(activePanelFylkeId, gyldighetsdato);
+  const { kommuner, isLoading: kommunerIsLoading } = useKommuner(
+    activePanelFylkeId,
+    gyldighetsdato,
+    activePanelFylkeId != null,
+  );
 
   return (
     <Modal isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">
@@ -94,34 +98,34 @@ const InndelingerPanel = () => {
             </InndelingerList>
             <Divider orientation="vertical" />
             <InndelingerList>
-              {kommuner ? (
-                activePanelFylkeId &&
-                selectedInndelingtype &&
-                kommuner.map((kommune) => {
-                  const kommuneId = getIdFromEntity(kommune);
+              {kommuner
+                ? activePanelFylkeId != null &&
+                  selectedInndelingtype &&
+                  kommuner.map((kommune) => {
+                    const kommuneId = getIdFromEntity(kommune);
 
-                  const kommuneInndeling: BaseInndeling = {
-                    id: kommuneId,
-                    nummer: kommune.nummer,
-                    navn: kommune.navn,
-                    inndelingtype: selectedInndelingtype,
-                  };
-                  return (
-                    <InndelingOption
-                      key={kommuneId}
-                      isActive={isInndelingSelected(selectedInndelingtype, kommuneId)}
-                      onClick={() => toggleKommune(kommuneInndeling)}
-                      type={selectedInndelingtype === "kommune" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"}
-                    >
-                      {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
-                    </InndelingOption>
-                  );
-                })
-              ) : (
-                <InndelingSpinnerContainer>
-                  <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
-                </InndelingSpinnerContainer>
-              )}
+                    const kommuneInndeling: BaseInndeling = {
+                      id: kommuneId,
+                      nummer: kommune.nummer,
+                      navn: kommune.navn,
+                      inndelingtype: selectedInndelingtype,
+                    };
+                    return (
+                      <InndelingOption
+                        key={kommuneId}
+                        isActive={isInndelingSelected(selectedInndelingtype, kommuneId)}
+                        onClick={() => toggleKommune(kommuneInndeling)}
+                        type={selectedInndelingtype === "kommune" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"}
+                      >
+                        {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
+                      </InndelingOption>
+                    );
+                  })
+                : kommunerIsLoading && (
+                    <InndelingSpinnerContainer>
+                      <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+                    </InndelingSpinnerContainer>
+                  )}
             </InndelingerList>
           </InndelingerLayout>
           <Divider></Divider>

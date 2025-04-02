@@ -29,7 +29,7 @@ type Props = {
 
 const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
   const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer, endringerutentilhorighet } =
-    useUtkastEndringer(utkast);
+    useUtkastEndringer(utkast, isOpen);
   const { history } = useHistory();
   const harUlagredeEndringer = history.index > 0;
 
