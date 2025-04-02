@@ -1,6 +1,9 @@
-export const avvikFetcher = async (token: string | undefined, page: number, size: number) => {
+// TODO: Endre her når arbeidsliste er klart på skip
+import { fetcherWithToken, getUrlForPath } from "utils/api";
+import { getUrlWithParameters } from "hooks/useNibasApi";
+export const avvikFetcher = async (token: string | undefined, kommuneLokalID: string) => {
   try {
-    const url = `http://localhost:8082/api/v1/avvik?side=${page}&antall=${size}`;
+    const url = `http://localhost:8082/api/v1/avvik/kommune/${kommuneLokalID}?grensetyper=Fylkesgrense&grensetyper=Kommunegrense`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -20,9 +23,12 @@ export const avvikFetcher = async (token: string | undefined, page: number, size
     throw error;
   }
 };
-export const avvikKommunerFetcher = async (token: string | undefined) => {
+export const avvikKommunerFetcher = async (token: string | undefined, page: number, size: number) => {
   try {
-    const url = `http://localhost:8082/api/v1/avvik/kommuner`;
+    const url = `http://localhost:8082/api/v1/avvik/kommuner?side=${page}&antall=${size}&grensetyper=Fylkesgrense&grensetyper=Kommunegrense`;
+    // fetcherWithToken([getUrlWithParameters("/v1/avvik", { id: kretsId, gyldighetsdato }), token]);
+
+    //   const stemmekretsFeatures = await Promise.all(promises);
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -41,4 +47,15 @@ export const avvikKommunerFetcher = async (token: string | undefined) => {
     console.error("Error fetching avvik:", error);
     throw error;
   }
+};
+
+export const avvikUpdateStatus = (id: number, status: string, token?: string) => {
+  return fetch(getUrlForPath(`v1/avvik/${id}`), {
+    method: "PUT",
+    body: JSON.stringify(status),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + token,
+    },
+  });
 };

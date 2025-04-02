@@ -19,7 +19,6 @@ const HeaderHistoryOperations = () => {
   const { toggleOverlayPanel } = useOverlayPanel();
   const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
-  const antallAvvik = 12;
   const handleSave = async () => {
     if (utkast && canSave) {
       const responseCode = await updateUtkastWithHistory();
@@ -79,7 +78,6 @@ const HeaderHistoryOperations = () => {
         tooltip={{
           text: "Se en liste over alle avvik",
         }}
-        alert={antallAvvik > 0 && <AlertIcon count={antallAvvik} />}
       />
       <HeaderButton
         label="Endringslogg"

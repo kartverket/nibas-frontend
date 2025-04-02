@@ -2,21 +2,14 @@ import { Box, Text } from "@kvib/react";
 import { styled } from "styled-components";
 
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
+import { KommunerMedAvvik } from "./avvik-utils";
 interface Props {
-  fylkeId: string;
-  kommuneId: string;
-  kommuneNavn: string;
-  kommuneNummer: string;
-  antallAvvik: number;
+  kommuneMedAvvikItem: KommunerMedAvvik;
   handleGoToKommuneClick: (fylkeId: string, kommuneId: string, kommuneNavn: string, kommuneNummer: string) => void;
 }
 
 const AvvikRowKommuner = ({
-  fylkeId,
-  kommuneId,
-  kommuneNavn,
-  kommuneNummer,
-  antallAvvik,
+  kommuneMedAvvikItem: { kommuneNavn, kommuneNummer, kommuneLokalID, fylkesLokalID, antallAvvik },
   handleGoToKommuneClick,
 }: Props) => {
   return (
@@ -33,7 +26,7 @@ const AvvikRowKommuner = ({
           </Box>
           <ToolbarButton
             icon={"arrow_forward"}
-            onClick={() => handleGoToKommuneClick(fylkeId, kommuneId, kommuneNavn, kommuneNummer)} // Call the row click handler
+            onClick={() => handleGoToKommuneClick(fylkesLokalID, kommuneLokalID, kommuneNavn, kommuneNummer)}
             aria-label={"Åpne inndeling med avvik"}
             tooltip={{
               text: "Åpne inndeling med avvik",
@@ -48,8 +41,7 @@ const Row = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 0;
-  gap: var(--kvib-spacing-12);
+  padding: var(--kvib-space-2);
   width: 100%;
 `;
 const ButtonGroup = styled.div`
@@ -59,7 +51,6 @@ const ButtonGroup = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
   width: 100%;
 `;
 
