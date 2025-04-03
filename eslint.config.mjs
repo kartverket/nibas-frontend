@@ -48,7 +48,7 @@ export default [
       sourceType: "module",
       parserOptions: {
         ecmaFeatures: { jsx: true },
-        project: ["./tsconfig.json", "./tsconfig.node.json"],
+        project: ["./tsconfig.json", "./tsconfig.node.json", "./tsconfig.eslint.json"],
         tsconfigRootDir: __dirname,
       },
     },
@@ -83,6 +83,7 @@ export default [
       "@typescript-eslint/prefer-optional-chain": "warn",
       "@typescript-eslint/strict-boolean-expressions": "error",
       "@typescript-eslint/switch-exhaustiveness-check": "error",
+      "@typescript-eslint/no-unused-expressions": "error",
       "no-unused-vars": "off",
       curly: "warn",
       "no-shadow": "off",
@@ -102,6 +103,12 @@ export default [
         },
       ],
       eqeqeq: ["error", "smart"],
+    },
+  },
+  {
+    files: ["**/*.test.ts", "**/*.test.tsx"],
+    rules: {
+      "@typescript-eslint/no-unused-expressions": "off",
     },
   },
 ];
