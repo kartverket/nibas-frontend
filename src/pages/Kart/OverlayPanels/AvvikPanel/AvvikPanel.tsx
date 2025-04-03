@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useState } from "react";
 import { PanelHeader, SidePanel } from "../Panel";
 import { useOverlayPanel } from "../../../../contexts/OverlayPanelContext";
-import { Divider, IconButton, Spinner, Text } from "@kvib/react";
+import { Divider, IconButton, Spinner, Tab, TabList, TabPanels, Tabs, Text } from "@kvib/react";
 import AvvikRow from "./AvvikRow";
 import AvvikRowKommuner from "./AvvikRowKommuner";
 import { AvvikForKommuneResponse, KommunerMedAvvik, PaginationInfo } from "./avvik-utils";
@@ -43,11 +43,21 @@ export const AvvikPanel = () => {
 
   // Viser hvilken rad som er valgt (avvik)
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
-  // ========== 1. Hent kommuner med avvik én gang ==========
+
+  // Gjør kall til API for å oppdatere status på avviket, men oppdaterer bare lokalt i state for å slippe fetching hver gang
+  const updateStatusForAvvikLokalt = async (avvikId: number, status: string): Promise<boolean> => {
+    const res = await updateStatusForAvvik(avvikId, status);
+    if (res) {
+      setAvvikData((prev) => prev.map((item) => (item.id === avvikId ? { ...item, status: status } : item)));
+      return true;
+    }
+    return false;
+  };
+
+  // ==========  Hent kommuner med avvik én gang ==========
   useEffect(() => {
     const fetchKommunerMedAvvik = async () => {
       const kommuner = await getKommunerMedAvvik(currentPage, size);
-      // setKommunerMedAvvik(kommuner);
       setKommunerMedAvvik(kommuner.content);
       setPagination({
         totalPages: kommuner.totalPages,
@@ -70,6 +80,7 @@ export const AvvikPanel = () => {
       setSelectedKommuneNummer(inndeling.nummer);
     }
   }, [currentlyEditingInndelinger, selectedInndelinger, selectedFylkeId]);
+
   // ========== Klikk på en kommune i lista =============
   const handleRowClickForKommune = (fylkeId: string, kommuneId: string, kommuneNavn: string, kommuneNummer: string) => {
     setSelectedKommuneId(kommuneId);
@@ -93,7 +104,7 @@ export const AvvikPanel = () => {
       setIsLoadingAvvik(true);
       try {
         const avvik = await getAvvik(selectedKommuneId);
-        setAvvikData(avvik);
+        setAvvikData([...avvik]);
       } finally {
         setIsLoadingAvvik(false);
       }
@@ -102,22 +113,30 @@ export const AvvikPanel = () => {
     fetchAvvik();
   }, [selectedKommuneId, getAvvik]);
 
-  // ==========  Fjerner avviksraden fra listen (ved "Utført" f.eks) =====================
-  const handleRemoveRow = (avvikId: number) => {
-    setAvvikData((prevRows) => prevRows.filter((row) => row.id !== avvikId)); // Remove the row
-  };
-
   const handleBackButton = () => {
     setSelectedKommuneId(null);
     setAvvikData([]);
-    setPagination(null);
     setSelectedInndelinger([]);
     setSelectedKommuneNavn("");
     setSelectedKommuneNummer("");
     setSelectedAvvikId(null);
     setSelectedFylkeId("");
-    setCurrentPage(0);
+    setTabIndex(0);
     resetInndeling();
+  };
+  const [tabIndex, setTabIndex] = useState(0);
+  // const tabList = {"Ny", "Fikset", "På vent"];
+  const tabList = [
+    { label: "Uløst", value: "NY" },
+    { label: "Løst", value: "FIKSET" },
+    { label: "Utsatt", value: "NEDPRIORITERT" },
+  ];
+
+  const handleTabsChange = (index: number) => {
+    setTabIndex(index);
+  };
+  const getAvvikCountByStatus = (status: string): number => {
+    return avvikData.filter((row) => row.status.toLowerCase() === status.toLowerCase()).length;
   };
   return (
     <SidePanel>
@@ -125,37 +144,58 @@ export const AvvikPanel = () => {
       {selectedKommuneId != null ? (
         // ========== VIS AVVIK for den valgte kommunen ==========
         <>
-          <PanelHeader onClose={closeOverlayPanel}>
+          <AvvikPanelHeader onClose={closeOverlayPanel}>
             <IconButton aria-label="Tilbake" icon="arrow_back" onClick={() => handleBackButton()}></IconButton>
             <Text width={"100%"} fontSize={"lg"} padding={"12px"} gap={"var(--kvib-spacing-12)"}>
               Avvik for {selectedKommuneNummer + " " + selectedKommuneNavn}
             </Text>
-          </PanelHeader>
-          {isLoadingAvvik && (
-            <AvvikSpinnerContainer>
-              <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
-            </AvvikSpinnerContainer>
-          )}
-
-          {!isLoadingAvvik &&
-            avvikData?.map((row) => (
-              <Fragment key={row.id}>
-                <AvvikRow
-                  avvikItem={row}
-                  handleGoToCoordinatesAndFetchMatrikkel={handleGoToCoordinatesAndFetchMatrikkel}
-                  selectedAvvikId={selectedAvvikId}
-                  setSelectedAvvikId={setSelectedAvvikId}
-                  onRemoveRow={handleRemoveRow}
-                  updateStatusForAvvik={updateStatusForAvvik}
-                />
-                <Divider />
-              </Fragment>
-            ))}
+          </AvvikPanelHeader>
+          <AvvikTabs size="md" index={tabIndex} onChange={handleTabsChange}>
+            <AvvikTabList>
+              {tabList.map((tab) => (
+                <AvvikTab key={tab.value}>
+                  {tab.label} ({getAvvikCountByStatus(tab.value)})
+                </AvvikTab>
+              ))}
+            </AvvikTabList>
+            <AvvikTabPanels>
+              {isLoadingAvvik && (
+                <AvvikSpinnerContainer>
+                  <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+                </AvvikSpinnerContainer>
+              )}
+              {isLoadingAvvik ? (
+                <AvvikSpinnerContainer>
+                  <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+                </AvvikSpinnerContainer>
+              ) : (
+                avvikData
+                  ?.filter((row) => row.status.toLowerCase() === tabList[tabIndex].value.toLowerCase())
+                  .map((row) => (
+                    <Fragment key={row.id}>
+                      <AvvikRow
+                        avvikItem={row}
+                        handleGoToCoordinatesAndFetchMatrikkel={handleGoToCoordinatesAndFetchMatrikkel}
+                        selectedAvvikId={selectedAvvikId}
+                        setSelectedAvvikId={setSelectedAvvikId}
+                        updateStatusForAvvik={updateStatusForAvvikLokalt}
+                        onStatusUpdated={(id: number, nyStatus: string) => {
+                          setAvvikData((prev) =>
+                            prev.map((item) => (item.id === id ? { ...item, status: nyStatus } : item)),
+                          );
+                        }}
+                      />
+                      <Divider />
+                    </Fragment>
+                  ))
+              )}
+            </AvvikTabPanels>
+          </AvvikTabs>
         </>
       ) : (
         // ========== VIS KOMMUNER med avvik (ingenting valgt enda) ==========
         <>
-          <PanelHeader onClose={closeOverlayPanel}>Avvik fra matrikkelen {}</PanelHeader>
+          <AvvikPanelHeader onClose={closeOverlayPanel}>Avvik fra matrikkelen {}</AvvikPanelHeader>
           {kommunerMedAvvikData.map((row) => (
             <Fragment key={row.kommuneLokalID}>
               <AvvikRowKommuner kommuneMedAvvikItem={row} handleGoToKommuneClick={handleRowClickForKommune} />
@@ -180,6 +220,11 @@ export const AvvikPanel = () => {
     </SidePanel>
   );
 };
+
+const AvvikPanelHeader = styled(PanelHeader)`
+  border: none;
+  margin-bottom: 8px;
+`;
 export const PaginationButton = styled.button`
   font-weight: var(--kvib-fontWeights-normal);
   font-size: var(--kvib-fontSizes-md);
@@ -207,4 +252,44 @@ const AvvikSpinnerContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+`;
+
+const AvvikTabs = styled(Tabs)`
+  display: grid;
+  grid-template-rows: auto 1fr;
+  width: calc(100% + var(--panel-padding) * 2);
+  margin: 0 calc(var(--panel-padding) * -1);
+  overflow: hidden;
+`;
+
+const AvvikTabList = styled(TabList)`
+  position: relative;
+  overflow-x: auto;
+  border-bottom: none;
+  box-shadow: inset 0 -2px var(--kvib-colors-chakra-border-color);
+  padding-left: 16px;
+
+  &::after {
+    content: "";
+    position: sticky;
+    top: 0;
+    right: 0;
+    padding: 0 24px;
+    margin-bottom: 2px;
+    background: linear-gradient(to right, transparent, white);
+  }
+`;
+
+const AvvikTabPanels = styled(TabPanels)`
+  height: 100%;
+  overflow: hidden;
+`;
+
+const AvvikTab = styled(Tab)`
+  white-space: nowrap;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
 `;

@@ -1,5 +1,4 @@
 import { Point } from "ol/geom";
-
 export interface KommunerMedAvvik {
   kommuneNavn: string;
   kommuneNummer: string;
@@ -8,7 +7,7 @@ export interface KommunerMedAvvik {
   antallAvvik: number;
 }
 export interface KommunerIAvvik {
-  //TODO: Gjøre disse like i backend-responsen
+  //TODO: Gjøre disse like i backend-responsen?
   kommunenavn: string;
   kommunenummer: string;
   kommuneLokalID: string;

@@ -25,7 +25,7 @@ const useKommuner = (fylkeId: string | null = null, gyldighetsdato: string | und
   };
 };
 
-const kommunerFetcher = async ([kommuneIds, gyldighetsdato, token]: [
+export const kommunerFetcher = async ([kommuneIds, gyldighetsdato, token]: [
   string[],
   string | undefined,
   string | undefined,

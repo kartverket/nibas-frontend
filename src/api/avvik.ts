@@ -49,10 +49,14 @@ export const avvikKommunerFetcher = async (token: string | undefined, page: numb
   }
 };
 
-export const avvikUpdateStatus = (id: number, status: string, token?: string) => {
-  return fetch(getUrlForPath(`v1/avvik/${id}`), {
-    method: "PUT",
-    body: JSON.stringify(status),
+export const avvikUpdateStatus = (updates: { id: number; status: string }[], token?: string) => {
+  const requestBody = {
+    avvikUpdates: updates,
+  };
+  const url = "http://localhost:8082/api/v1/avvik";
+  return fetch(url, {
+    method: "POST",
+    body: JSON.stringify(requestBody),
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + token,

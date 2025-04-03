@@ -1,48 +1,35 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus } from "api/avvik";
 import { useAuthentication } from "../../../../components/Authentication/AuthenticationHook";
-import { getUrlWithParameters } from "hooks/useNibasApi";
+import { kommunerFetcher } from "hooks/inndelinger/useKommuner";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
-import { transformCoordinatesToProjection } from "../NavigasjonPanel/koordinater-utils";
-import { EPSGCode, mapProjectionEPSGCode } from "utils/map/projections";
-import { map } from "pages/Kart/constants";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { KommuneResponse } from "types/api";
-import { fetcherWithToken } from "utils/api";
+
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { AvvikForKommuneResponse, AvvikKommunerResponse } from "./avvik-utils";
-// 1. Get kommuner med avvik
-// 2. Hvis klikk på kommune, gå til inndeling (fylkeid og kommuneid får vi fra Row)
-// 3. Sammenligne fylkeid og kommuneid fra avvik med fylkeid og kommuneid fra inndeling
-// 4. Sett så til denne inndelingen
-// 5. Viser da avvikene for kommunen i AvvikPAnel
-// 6. Ved klikk på Row, gå til koordinatene i kartet for avviket og så hent matrikkelgrenser
+import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
+
 export const useAvvik = () => {
   const { token } = useAuthentication();
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  const [projectionOfCoordinates] = useState<EPSGCode>(mapProjectionEPSGCode);
   const { selectInndelinger, setSelectedFylkeId } = useInndelinger();
-  const kommuneFetcher = async ([kommuneIdFraRow]: [string, string | undefined]) => {
-    if (!kommuneIdFraRow) {
-      return;
-    }
-
-    const url = getUrlWithParameters("/v1/kommuner/{id}", { id: kommuneIdFraRow, gyldighetsdato });
-    return await fetcherWithToken([url, token]);
-  };
-
   const updateFylkeIdAndKommuneId = async (fylkeIdFraRow: string, kommuneIdFraRow: string) => {
     setSelectedFylkeId(fylkeIdFraRow);
     if (fylkeIdFraRow === "") {
       clearMatrikkelLayer();
       return;
     }
-    const kommuneFetch = await kommuneFetcher([kommuneIdFraRow, token]);
-    const kommuneForAvvik = kommuneFetch as KommuneResponse;
-    openInndelingForAvvik(kommuneForAvvik);
+    const kommuneArr = kommuneIdFraRow.split(",");
+    const kommuneFetch = await kommunerFetcher([kommuneArr, gyldighetsdato, token]);
+    const kommuneForAvvik = (kommuneFetch as KommuneResponse[])[0];
+    if (kommuneForAvvik !== null) {
+      openInndelingForAvvik(kommuneForAvvik);
+    }
   };
   const updateStatusForAvvik = async (id: number, status: string): Promise<boolean> => {
-    const success = await avvikUpdateStatus(id, status, token);
+    const updates = [{ id, status }];
+    const success = await avvikUpdateStatus(updates, token);
     if (success?.ok) {
       return true;
     } else {
@@ -66,16 +53,16 @@ export const useAvvik = () => {
 
   const getKommunerMedAvvik: (page: number, size: number) => Promise<AvvikKommunerResponse> = useCallback(
     async (page: number, size: number) => {
-      const avvikJson = await avvikKommunerFetcher(token, page, size);
+      const result = await avvikKommunerFetcher(token, page, size);
       return {
-        content: avvikJson.content,
-        totalPages: avvikJson.totalPages,
-        totalElements: avvikJson.totalElements,
-        size: avvikJson.size,
-        number: avvikJson.number,
-        first: avvikJson.first,
-        last: avvikJson.last,
-        empty: avvikJson.empty,
+        content: result.content,
+        totalPages: result.totalPages,
+        totalElements: result.totalElements,
+        size: result.size,
+        number: result.number,
+        first: result.first,
+        last: result.last,
+        empty: result.empty,
       };
     },
     [token],
@@ -83,65 +70,26 @@ export const useAvvik = () => {
 
   const getAvvik: (pKommuneId: string) => Promise<AvvikForKommuneResponse> = useCallback(
     async (pKommuneId) => {
-      const avvikJson = await avvikFetcher(token, pKommuneId);
-      return avvikJson;
+      const result = await avvikFetcher(token, pKommuneId);
+      return result;
     },
     [token],
   );
-
-  const centerOnCoordinate = (
-    north: number | null,
-    east: number | null,
-    zoom?: number | undefined,
-    duration?: number | undefined,
-  ): Promise<boolean> => {
-    return new Promise((resolve) => {
-      // Bruker promise her for å hente matrikkelgrenser med engang vi er ferdige med å zoome inn
-      if (north !== null && east !== null) {
-        const view = map.getView();
-        view.animate(
-          {
-            duration: duration !== undefined ? duration : 1,
-            center: [east, north],
-            zoom: zoom !== undefined ? zoom : 28,
-          },
-          () => {
-            resolve(true);
-          },
-        );
-      } else {
-        resolve(false); // resolve med en gang hvis koordinater er ugyldige
-      }
-    });
-  };
-  const goToCoordinates = async (
-    coordinates: number[],
-    zoom?: number | undefined,
-    duration?: number | undefined,
-  ): Promise<boolean> => {
-    const [east, north] = coordinates;
-    if (north != null && east != null) {
-      const transformedCoordinates = transformCoordinatesToProjection(
-        east,
-        north,
-        projectionOfCoordinates,
-        mapProjectionEPSGCode,
-      );
-      if (transformedCoordinates != null) {
-        const success = await centerOnCoordinate(transformedCoordinates[1], transformedCoordinates[0], zoom, duration);
-        return success;
-      }
-    }
-    return false;
-  };
   const handleGoToCoordinatesAndFetchMatrikkel = async (coordinates: number[]): Promise<boolean> => {
     try {
-      const goToSuccess = await goToCoordinates(coordinates); // Wait for goToCoordinates to complete
-      const matrikkelSuccess = await getMatrikkelFeatures(); // Fetch matrikkel features after centering
-      if (!goToSuccess || !matrikkelSuccess) {
-        return false; // Return false if either operation fails
+      let zoomLevel = 28;
+      const minZoomLevel = 20;
+      // Her forsøker vi mindre zoom helt til matrikkelFeatures har innhold, eller zoomLevel er mindre enn minZoomLevel
+      // pga ikke alltid finner man ikke nærliggende matr.grenser ved maks zoom.
+      while (zoomLevel >= minZoomLevel) {
+        centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
+        const matrikkelGrenser = await getMatrikkelFeatures();
+        if (matrikkelGrenser && matrikkelGrenser.length > 0) {
+          return true;
+        }
+        zoomLevel--;
       }
-      return true;
+      return false;
     } catch (error) {
       return false;
     }
@@ -150,7 +98,8 @@ export const useAvvik = () => {
     updateFylkeIdAndKommuneId("", "");
     setSelectedFylkeId("");
     selectInndelinger([]);
-    goToCoordinates([328380.81, 7111142.73], 6, 2000);
+    // Zoomer ut for "å vise" at man ikke har valgt inndeling lenger
+    centerOnCoordinate(7111142.73, 328380.81, 6, 2000);
   };
 
   return {
