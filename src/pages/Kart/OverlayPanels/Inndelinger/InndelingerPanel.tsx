@@ -1,16 +1,16 @@
-import { Button, Link, ButtonGroup, Divider, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
-import { PanelHeader, ModalPanel } from "../Panel";
+import { Button, ButtonGroup, Divider, Link, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { BaseInndeling, INNDELINGTYPER } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { INNDELINGTYPER, BaseInndeling } from "contexts/InndelingerContext/InndelingerContext";
-import { getIdFromEntity } from "utils/api";
-import { getNavnInSpraak } from "utils/language/language";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { styled } from "styled-components";
-import InndelingOption from "./InndelingOption";
+import { getIdFromEntity } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
+import { ModalPanel, PanelHeader } from "../Panel";
+import InndelingOption from "./InndelingOption";
 import useInndelingerPanel from "./useInndelingerPanel";
-import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 const InndelingerPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
@@ -27,7 +27,7 @@ const InndelingerPanel = () => {
     isInndelingSelected,
     isSelectionAvailable,
     selectNewInndelinger,
-    resetSelection,
+    clearInndelingerForPanel,
   } = useInndelingerPanel();
 
   const { fylker } = useFylker(gyldighetsdato);
@@ -126,8 +126,14 @@ const InndelingerPanel = () => {
           </InndelingerLayout>
           <Divider></Divider>
           <ButtonContainer>
-            <Link size={"md"} onClick={resetSelection}>
-              Nullstill markering
+            <Link
+              size={"md"}
+              onClick={() => {
+                clearInndelingerForPanel();
+                resetInndelingerPanel();
+              }}
+            >
+              {`Nullstill ${isEditingPanel ? "redigering" : "visning"}`}
             </Link>
             <ButtonGroup>
               <Button variant="tertiary" size={"md"} onClick={closeOverlayModal}>
