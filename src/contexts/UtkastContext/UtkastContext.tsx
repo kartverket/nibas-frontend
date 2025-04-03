@@ -52,7 +52,6 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     {
       // id blir ikke brukt før den er truthy, så vi kan trygt si at den
       // ikke er null her
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       id: utkastId!,
     },
     {
