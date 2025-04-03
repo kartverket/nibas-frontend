@@ -95,7 +95,7 @@ const InndelingerPanel = () => {
             <Divider orientation="vertical" />
             <InndelingerList>
               {kommuner ? (
-                activePanelFylkeId &&
+                activePanelFylkeId != null &&
                 selectedInndelingtype &&
                 kommuner.map((kommune) => {
                   const kommuneId = getIdFromEntity(kommune);
