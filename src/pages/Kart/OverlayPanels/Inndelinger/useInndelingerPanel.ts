@@ -14,7 +14,7 @@ const useInndelingerPanel = () => {
     getAllInndelinger,
     setSelectedFylkeId,
     clearViewingLayersAndInndelinger,
-    clearEditLayerAndInndeling,
+    clearEditLayerAndInndelinger,
   } = useInndelinger();
 
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
@@ -38,7 +38,7 @@ const useInndelingerPanel = () => {
   };
 
   const clearInndelingerForPanel = () =>
-    isEditingPanel ? clearEditLayerAndInndeling() : clearViewingLayersAndInndelinger();
+    isEditingPanel ? clearEditLayerAndInndelinger() : clearViewingLayersAndInndelinger();
 
   const isSelectionAvailable = selectedInndelinger.some((inndeling) =>
     isEditingPanel ? inndeling.isEditing : inndeling.isViewing,

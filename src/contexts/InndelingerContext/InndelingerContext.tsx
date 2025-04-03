@@ -91,7 +91,7 @@ export type InndelingerContextValue = {
 
   clearInndelingerAndSources: () => void;
   clearViewingLayersAndInndelinger: () => void;
-  clearEditLayerAndInndeling: () => void;
+  clearEditLayerAndInndelinger: () => void;
 
   selectedFylkeId: string;
   setSelectedFylkeId: (id: string) => void;
@@ -402,7 +402,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     });
   };
 
-  const clearEditLayerAndInndeling = () => {
+  const clearEditLayerAndInndelinger = () => {
     clearEditLayer();
     setInndelingerToFetch((currentState) => currentState.filter((i) => i.isViewing));
     setInndelinger((currentState) => {
@@ -520,7 +520,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
     clearInndelingerAndSources,
     clearViewingLayersAndInndelinger,
-    clearEditLayerAndInndeling,
+    clearEditLayerAndInndelinger,
 
     selectedFylkeId,
     setSelectedFylkeId,
