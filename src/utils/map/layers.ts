@@ -66,6 +66,9 @@ export const getMatrikkelFeatures = async () => {
       clearMatrikkelLayer();
       addFeaturesToSource("matrikkel", fetchedFeatures);
       return fetchedFeatures;
+    } else {
+      // Returnerer selv om det er 0 grenser for å vise toast-warning
+      return fetchedFeatures;
     }
   } catch {
     return;
