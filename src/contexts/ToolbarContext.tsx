@@ -26,6 +26,7 @@ export const toolValues = [
   "measure",
   "duplicate",
   "historiskeGrenser",
+  "combine",
   null,
 ] as const;
 export type Tool = (typeof toolValues)[number];
