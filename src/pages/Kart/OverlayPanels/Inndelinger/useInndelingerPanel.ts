@@ -22,9 +22,11 @@ const useInndelingerPanel = () => {
   const hasUnsavedChangesInHistory = history.entries.length > 0;
 
   useEffect(() => {
-    isEditingPanel
-      ? setSelectedInndelinger([])
-      : setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isViewing));
+    if (isEditingPanel) {
+      setSelectedInndelinger([]);
+    } else {
+      setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isViewing));
+    }
   }, [getAllInndelinger, isEditingPanel]);
 
   const resetSelection = () => {

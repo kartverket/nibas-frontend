@@ -121,7 +121,6 @@ const Toolbar = () => {
       }
     } else {
       enableModeTool("move");
-      panningEnabled;
     }
   });
   useKeyboardShortcut("preview", () => toggleOverlayModal("inndelinger-view"));
