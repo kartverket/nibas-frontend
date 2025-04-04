@@ -281,6 +281,17 @@ const ToolbarPopups = () => {
             onClose={resetTool}
           />
         );
+      case "merge_grenser":
+        return (
+          <ToolbarPopup
+            icon="merge"
+            text="Velg en eller flere grenser du ønsker å slå sammen"
+            buttonText="Slå sammen"
+            onClick={() => {}}
+            isDisabled={selectedFeatures.length === 0}
+            onClose={resetTool}
+          />
+        );
 
       case "historiskeGrenser":
         return (

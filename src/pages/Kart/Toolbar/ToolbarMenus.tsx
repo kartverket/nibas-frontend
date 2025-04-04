@@ -115,10 +115,10 @@ const ToolbarMenus = () => {
     {
       label: "Slå sammen grenser",
       icon: <Icon icon="merge" />,
-      command: KeyboardShortcuts["combine"].displayString,
-      $isActive: activeTool === "combine",
+      command: KeyboardShortcuts["merge_grenser"].displayString,
+      $isActive: activeTool === "merge_grenser",
       isDisabled: !validInndelingstype,
-      onClick: () => toggleTool("combine"),
+      onClick: () => toggleTool("merge_grenser"),
       "aria-label": "Slå sammen grenser",
     },
   ];

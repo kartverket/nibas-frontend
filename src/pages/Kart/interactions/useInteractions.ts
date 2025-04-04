@@ -32,7 +32,7 @@ const useInteractions = () => {
     "delete",
     "duplicate",
     "historiskeGrenser",
-    "combine",
+    "merge_grenser",
   ];
 
   useCursorStyles({

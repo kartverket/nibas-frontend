@@ -29,7 +29,7 @@ export type Shortcut =
   | "preview"
   | "goto"
   | "duplicate"
-  | "combine";
+  | "merge_grenser";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -97,7 +97,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   grensesplit: createShortcut("p", { control: true, shift: true }),
   measure: createShortcut("d", { control: true }),
   duplicate: createShortcut("1", { control: true }),
-  combine: createShortcut("m", { control: true, shift: true }),
+  merge_grenser: createShortcut("m", { control: true, shift: true }),
 
   // Point Tools
   add: createShortcut("l", { control: true }),
