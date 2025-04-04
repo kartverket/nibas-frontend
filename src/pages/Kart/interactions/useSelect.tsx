@@ -50,7 +50,7 @@ const useSelect = () => {
   }, [activeTool, closeOverlayPopup]);
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
-  const safeTools: Tool[] = ["grenseinfo", "split", "duplicate", "historiskeGrenser"];
+  const safeTools: Tool[] = ["grenseinfo", "split", "duplicate", "historiskeGrenser", "combine"];
   const pointTools: Tool[] = ["add", "remove", "split"];
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();
@@ -244,6 +244,15 @@ const useSelect = () => {
           title: isFeatureEditable(clickedFeature)
             ? "Du kan ikke duplisere grenser som allerede er redigerbare"
             : "Denne grensen er ikke redigerbar",
+        });
+        event.stopPropagation();
+        return;
+      }
+
+      if (activeTool === "combine" && !isFeatureEditable(clickedFeature)) {
+        toast({
+          status: "error",
+          title: "Du kan ikke slå sammen grenser som ikke er redigerbare",
         });
         event.stopPropagation();
         return;
