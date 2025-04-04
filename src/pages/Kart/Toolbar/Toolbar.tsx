@@ -98,6 +98,7 @@ const Toolbar = () => {
     return true;
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [panningEnabled, setPanningEnabled] = useState(true);
 
   addEventListener("mouseup", () => {
