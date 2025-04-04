@@ -70,7 +70,7 @@
     "@typescript-eslint/parser": "8.29.0",
     "@vitejs/plugin-react": "^4.3.4",
     "cross-env": "^7.0.3",
-    "eslint": "09.11.0",
+    "eslint": "~09.23.0",
     "eslint-config-prettier": "~10.1.1",
     "eslint-import-resolver-typescript": "~4.3.1",
     "eslint-plugin-import": "~2.31.0",
