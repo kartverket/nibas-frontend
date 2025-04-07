@@ -98,21 +98,6 @@ const Toolbar = () => {
     return true;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [panningEnabled, setPanningEnabled] = useState(true);
-
-  addEventListener("mouseup", () => {
-    if (activeTool == null || activeTool !== "draw") {
-      return;
-    }
-
-    if (isPanningAllowed()) {
-      setPanningEnabled(true);
-    } else {
-      setPanningEnabled(false);
-    }
-  });
-
   useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("move", () => {
