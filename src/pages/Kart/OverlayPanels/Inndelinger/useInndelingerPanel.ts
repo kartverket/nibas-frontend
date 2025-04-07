@@ -1,15 +1,21 @@
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import {
+  BaseInndeling,
+  Inndeling,
   Inndelingtype,
   useInndelinger,
-  Inndeling,
-  BaseInndeling,
 } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useEffect, useState } from "react";
 
 const useInndelingerPanel = () => {
-  const { selectInndelinger, getAllInndelinger, setSelectedFylkeId } = useInndelinger();
+  const {
+    selectInndelinger,
+    getAllInndelinger,
+    setSelectedFylkeId,
+    clearViewingLayersAndInndelinger,
+    clearEditLayerAndInndelinger,
+  } = useInndelinger();
 
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
   const [activePanelFylkeId, setActivePanelFylkeId] = useState<string | null>(null);
@@ -30,6 +36,9 @@ const useInndelingerPanel = () => {
   const resetSelection = () => {
     setSelectedInndelinger([]);
   };
+
+  const clearInndelingerForPanel = () =>
+    isEditingPanel ? clearEditLayerAndInndelinger() : clearViewingLayersAndInndelinger();
 
   const isSelectionAvailable = selectedInndelinger.some((inndeling) =>
     isEditingPanel ? inndeling.isEditing : inndeling.isViewing,
@@ -154,6 +163,7 @@ const useInndelingerPanel = () => {
     isInndelingSelected,
     isSelectionAvailable,
     selectNewInndelinger,
+    clearInndelingerForPanel,
   };
 };
 

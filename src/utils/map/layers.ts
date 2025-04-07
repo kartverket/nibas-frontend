@@ -1,5 +1,6 @@
 import { grenserLayers, kartlagLayers } from "hooks/layers/constants";
 import { LayerId } from "hooks/layers/types";
+import { Feature } from "ol";
 import { WFS } from "ol/format";
 import BaseLayer from "ol/layer/Base";
 import TileLayer from "ol/layer/Tile";
@@ -11,7 +12,6 @@ import { map } from "pages/Kart/constants";
 import { getFeaturesFromGeoJson } from "./geoJson";
 import { mapProjectionEPSGCode } from "./projections";
 import { addFeaturesToSource } from "./source";
-import { Feature } from "ol";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -26,6 +26,19 @@ export const getLayerById = <T extends LayerId>(id: T) => {
 
   return layersWithId[0] as (typeof kartlagLayers & typeof grenserLayers)[T];
 };
+
+export const getAllViewingLayers = (): VectorLayer<VectorSource<Feature>>[] =>
+  getLayersArray()
+    .filter((l) => isVectorLayer(l))
+    .filter((l) => ["fylke", "grunnkrets", "stemmekrets", "kommune", "nasjon"].includes(l.get("id")));
+
+export const clearViewingLayers = () => {
+  for (const layer of getAllViewingLayers()) {
+    layer.getSource()?.clear();
+  }
+};
+
+export const clearEditLayer = () => getLayerById("edit").getSource()?.clear();
 
 export const isWMTSLayer = (layer: BaseLayer): layer is TileLayer<WMTS> => {
   return layer instanceof TileLayer && layer.getSource() instanceof WMTS;
