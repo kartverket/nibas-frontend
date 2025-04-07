@@ -84,8 +84,9 @@ const useDraw = () => {
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {
+    // Tvinger useMemo til å kjøre på nytt når abortDrawMemoHelper endres
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const _ = abortDrawMemoHelper; //TODO: Fjerne?
+    const _ = abortDrawMemoHelper;
     return new Draw({
       type: "LineString",
       snapTolerance: pixelTolerance,
