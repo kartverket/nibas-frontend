@@ -6,12 +6,11 @@ import { checker } from "vite-plugin-checker";
 
 export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
-
+  // Husk å restarte etter endringer i f.eks env.local
   const matWfsAuth = process.env.VITE_MATRIKKELWFS_AUTH;
-
   const baatUsername = process.env.VITE_BAAT_USERNAME;
   const baatPassword = process.env.VITE_BAAT_PASSWORD;
-
+  const localhost = process.env.VITE_ENVIRONMENT_LOCALHOST; // Sett denne til "localhost" i .env.local
   return {
     build: {
       outDir: "build",
@@ -44,7 +43,10 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
         "/geoservergeo/wfs/matrikkel": {
-          target: "https://prodtest.matrikkel.no",
+          target:
+            localhost === "localhost"
+              ? "https://nibas.atkv3-dev.kartverket-intern.cloud"
+              : "https://prodtest.matrikkel.no",
           changeOrigin: true,
           headers: {
             Authorization: `Basic ${matWfsAuth}`,
