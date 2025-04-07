@@ -80,7 +80,7 @@
     "prettier": "^3.5.3",
     "stylelint": "^16.17.0",
     "stylelint-config-standard": "^37.0.0",
-    "typescript": "~5.8.2",
+    "typescript": "~5.8.3",
     "vite": "^6.2.5",
     "vite-plugin-checker": "^0.9.1",
     "vite-plugin-eslint": "^1.8.1",
