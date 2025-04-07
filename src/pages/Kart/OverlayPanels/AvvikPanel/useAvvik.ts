@@ -82,7 +82,7 @@ export const useAvvik = () => {
       selectInndelinger([currentMainInndeling, newInndeling]);
 
       setTimeout(() => {
-        setShouldZoom(false);
+        setShouldZoom(true);
       }, 5000);
     }
   };
@@ -112,23 +112,19 @@ export const useAvvik = () => {
     [token],
   );
   const goToCoordinatesAndFetchMatrikkel = async (coordinates: number[]): Promise<boolean> => {
-    try {
-      let zoomLevel = 30;
-      const minZoomLevel = 20;
-      // Her forsøker vi mindre zoom helt til matrikkelFeatures har innhold, eller zoomLevel er mindre enn minZoomLevel
-      // pga ikke alltid finner man ikke nærliggende matr.grenser ved maks zoom.
-      while (zoomLevel >= minZoomLevel) {
-        centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
-        const matrikkelGrenser = await getMatrikkelFeatures();
-        if (matrikkelGrenser && matrikkelGrenser.length > 0) {
-          return true;
-        }
-        zoomLevel--;
+    let zoomLevel = 30;
+    const minZoomLevel = 20;
+    // Her forsøker vi mindre zoom helt til matrikkelFeatures har innhold, eller zoomLevel er mindre enn minZoomLevel
+    // pga ikke alltid finner man ikke nærliggende matr.grenser ved maks zoom.
+    while (zoomLevel >= minZoomLevel) {
+      centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
+      const matrikkelGrenser = await getMatrikkelFeatures();
+      if (matrikkelGrenser && matrikkelGrenser.length > 0) {
+        return true;
       }
-      return false;
-    } catch (error) {
-      return false;
+      zoomLevel--;
     }
+    return false;
   };
 
   const resetInndeling = () => {

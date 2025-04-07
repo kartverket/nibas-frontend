@@ -147,7 +147,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         addToSelection(selectedFeatures[0]);
       }
     } else {
-      if (shouldZoom !== true) {
+      if (shouldZoom === true) {
         zoomToFeatures(
           inndelingFeatures
             .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
