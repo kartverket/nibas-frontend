@@ -4,14 +4,6 @@
  */
 
 export interface paths {
-  "/v1/avvik": {
-    /** Henter alle utkast med gitt status og som er gyldige fra og med gitt dato. */
-    get: operations["avvik"];
-  };
-  "/v1/avvik/kommuner": {
-    /** Henter alle utkast med gitt status og som er gyldige fra og med gitt dato. */
-    get: operations["avvikKommuner"];
-  };
   "/v1/utkast/{id}": {
     /** Henter utkast med gitt id */
     get: operations["hentUtkast"];
@@ -1397,66 +1389,6 @@ export interface components {
 }
 
 export interface operations {
-  /** Henter alle avvik for en kommune */
-  avvik: {
-    parameters: {
-      path: {
-        /** ID-en til utkastet man vil hente */
-        size: number;
-        page: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["UtkastResponse"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["ApiErrorResponse"];
-        };
-      };
-    };
-  };
-  /** Henter alle kommuner med avvik */
-  avvikKommuner: {
-    // parameters: {
-    //   path: {
-    //     /** ID-en til utkastet man vil hente */
-    //     size: number;
-    //     page: number;
-    //   };
-    // };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": components["schemas"]["UtkastResponse"];
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Not Found */
-      404: {
-        content: {
-          "application/json": components["schemas"]["ApiErrorResponse"];
-        };
-      };
-    };
-  };
   /** Henter utkast med gitt id */
   hentUtkast: {
     parameters: {

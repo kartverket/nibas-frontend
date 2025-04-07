@@ -4,7 +4,7 @@ import { useOverlayPanel } from "../../../../contexts/OverlayPanelContext";
 import { Divider, IconButton, Spinner, Tab, TabList, TabPanels, Tabs, Text } from "@kvib/react";
 import AvvikRow from "./AvvikRow";
 import AvvikRowKommuner from "./AvvikRowKommuner";
-import { AvvikForKommuneResponse, KommunerMedAvvik, PaginationInfo } from "./avvik-utils";
+import { AvvikForKommuneResponse, KommunerMedAvvik, PaginationInfo, AvvikStatus } from "./avvik-utils";
 import { useAvvik } from "./useAvvik";
 import { styled } from "styled-components";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -13,7 +13,8 @@ export const AvvikPanel = () => {
   const {
     getKommunerMedAvvik,
     getAvvik,
-    handleGoToCoordinatesAndFetchMatrikkel,
+    addInndelingForAvvik,
+    goToCoordinatesAndFetchMatrikkel,
     updateFylkeIdAndKommuneId,
     resetInndeling,
     updateStatusForAvvik,
@@ -69,11 +70,11 @@ export const AvvikPanel = () => {
       });
     };
     fetchKommunerMedAvvik();
-  }, [getKommunerMedAvvik, currentPage]);
+  }, [getKommunerMedAvvik, currentPage, selectedKommuneId]);
 
   // ========== Hvis inndeling allerede valgt henter vi automatisk avvik for den kommunen ==========
   useEffect(() => {
-    if (currentlyEditingInndelinger.length === 1 && selectedInndelinger[0] !== undefined && selectedFylkeId !== "") {
+    if (currentlyEditingInndelinger.length > 0 && selectedInndelinger[0] !== undefined && selectedFylkeId !== "") {
       const inndeling = selectedInndelinger[0];
       setSelectedKommuneId(inndeling.id);
       setSelectedKommuneNavn(inndeling.navn[0].navn);
@@ -125,11 +126,10 @@ export const AvvikPanel = () => {
     resetInndeling();
   };
   const [tabIndex, setTabIndex] = useState(0);
-  // const tabList = {"Ny", "Fikset", "På vent"];
   const tabList = [
-    { label: "Uløst", value: "NY" },
-    { label: "Løst", value: "FIKSET" },
-    { label: "Utsatt", value: "NEDPRIORITERT" },
+    { label: "Uløst", value: AvvikStatus.NY },
+    { label: "Løst", value: AvvikStatus.FIKSET },
+    { label: "Utsatt", value: AvvikStatus.VENT },
   ];
 
   const handleTabsChange = (index: number) => {
@@ -175,11 +175,12 @@ export const AvvikPanel = () => {
                     <Fragment key={row.id}>
                       <AvvikRow
                         avvikItem={row}
-                        handleGoToCoordinatesAndFetchMatrikkel={handleGoToCoordinatesAndFetchMatrikkel}
+                        addInndelingForAvvik={addInndelingForAvvik}
+                        goToCoordinatesAndFetchMatrikkel={goToCoordinatesAndFetchMatrikkel}
                         selectedAvvikId={selectedAvvikId}
                         setSelectedAvvikId={setSelectedAvvikId}
                         updateStatusForAvvik={updateStatusForAvvikLokalt}
-                        onStatusUpdated={(id: number, nyStatus: string) => {
+                        onStatusUpdated={(id: number, nyStatus: AvvikStatus) => {
                           setAvvikData((prev) =>
                             prev.map((item) => (item.id === id ? { ...item, status: nyStatus } : item)),
                           );
@@ -193,7 +194,7 @@ export const AvvikPanel = () => {
           </AvvikTabs>
         </>
       ) : (
-        // ========== VIS KOMMUNER med avvik (ingenting valgt enda) ==========
+        // ========== VIS KOMMUNER med avvik, første steg ==========
         <>
           <AvvikPanelHeader onClose={closeOverlayPanel}>Avvik fra matrikkelen {}</AvvikPanelHeader>
           {kommunerMedAvvikData.map((row) => (
@@ -257,8 +258,9 @@ const AvvikSpinnerContainer = styled.div`
 const AvvikTabs = styled(Tabs)`
   display: grid;
   grid-template-rows: auto 1fr;
-  width: calc(100% + var(--panel-padding) * 2);
-  margin: 0 calc(var(--panel-padding) * -1);
+  width: calc(100%);
+
+  /* margin: 0 calc(var(--panel-padding) * -1); */
   overflow: hidden;
 `;
 
@@ -274,7 +276,6 @@ const AvvikTabList = styled(TabList)`
     position: sticky;
     top: 0;
     right: 0;
-    padding: 0 24px;
     margin-bottom: 2px;
     background: linear-gradient(to right, transparent, white);
   }

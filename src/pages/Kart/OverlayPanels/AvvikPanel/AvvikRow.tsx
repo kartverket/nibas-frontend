@@ -1,37 +1,42 @@
 import { Box, Button, Stack, Text, useToast } from "@kvib/react";
 import { styled } from "styled-components";
-import { AvvikForKommune } from "./avvik-utils";
+import { AvvikForKommune, AvvikStatus, KommunerIAvvik } from "./avvik-utils";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
+import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
 
 interface Props {
   avvikItem: AvvikForKommune;
-  handleGoToCoordinatesAndFetchMatrikkel: (coordinates: number[]) => Promise<boolean>;
-  selectedAvvikId: number | null;
-  setSelectedAvvikId: (avvikId: number | null) => void;
+  addInndelingForAvvik: (kommuner: KommunerIAvvik[]) => Promise<void>;
+  goToCoordinatesAndFetchMatrikkel: (coordinates: number[]) => Promise<boolean>;
+  selectedAvvikId: number | null; // ==> AvvikId fra parent
+  setSelectedAvvikId: (avvikId: number | null) => void; // <== Setter avvikId i parent
   updateStatusForAvvik: (avvikId: number, status: string) => Promise<boolean>;
-  onStatusUpdated: (id: number, nyStatus: string) => void;
+  onStatusUpdated: (id: number, nyStatus: AvvikStatus) => void;
 }
 
 interface RowProps {
   $active: boolean;
   $removing: boolean;
-  $status: string;
+  $status: AvvikStatus;
 }
 
 const AvvikRow = ({
   avvikItem,
-  handleGoToCoordinatesAndFetchMatrikkel,
+  addInndelingForAvvik,
+  goToCoordinatesAndFetchMatrikkel,
   selectedAvvikId,
   setSelectedAvvikId,
   updateStatusForAvvik,
 }: Props) => {
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
-  const [rowStatus, setRowStatus] = useState(avvikItem.status.toLowerCase());
+  const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
   const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
-  const goToCoordinatesAndGetMatrikkelFeatures = async (coordinates: number[]) => {
-    const success = await handleGoToCoordinatesAndFetchMatrikkel(coordinates);
+
+  const handlePanorerBtn = async (coordinates: number[]) => {
+    addInndelingForAvvik(avvikItem.kommuner);
+    const success = await goToCoordinatesAndFetchMatrikkel(coordinates);
 
     if (!success) {
       toast({
@@ -40,24 +45,24 @@ const AvvikRow = ({
       });
     }
   };
-  const handleStatusEndring = async (status: string) => {
+  const handleStatusEndring = async (status: AvvikStatus) => {
     setIsRemoving(true);
-    setRowStatus(status.toLowerCase());
+    setRowStatus(status);
     setTimeout(async () => {
-      const success = await updateStatusForAvvik(avvikItem.id, status); // Lagrer ny status i databasen
+      const success = await updateStatusForAvvik(avvikItem.id, status);
       if (success) {
-        setIsRemoving(false); // tilbakestill
+        setIsRemoving(false);
       } else {
         toast({
           status: "error",
           title: "Fikk ikke oppdatert status på avviket",
         });
-        setIsRemoving(false); // tilbakestill
+        setIsRemoving(false);
       }
     }, 500); // samsvar med CSS-animasjonen
   };
   const isActive = selectedAvvikId === avvikItem?.id;
-  const status = avvikItem.status?.toLowerCase();
+  const status = avvikItem.status;
 
   return (
     <Container>
@@ -78,12 +83,12 @@ const AvvikRow = ({
               <Text fontSize={"xs"}>{"ID: " + avvikItem.id}</Text>
             </Box>
           </InfoGroup>
-          {status === "ny" && (
+          {status === AvvikStatus.NY && (
             <>
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  goToCoordinatesAndGetMatrikkelFeatures(koordinaterAvvikNibas[0]);
+                  handlePanorerBtn(koordinaterAvvikNibas[0]);
                   setSelectedAvvikId(avvikItem.id);
                 }}
                 aria-label={"Panorer til avvik"}
@@ -92,37 +97,28 @@ const AvvikRow = ({
               <ToolbarButton
                 icon={"schedule"}
                 colorScheme="blue"
-                onClick={() => handleStatusEndring("NEDPRIORITERT")}
+                onClick={() => handleStatusEndring(AvvikStatus.VENT)}
                 aria-label={"Marker som utsatt"}
                 tooltip={{ text: "Marker som utsatt" }}
               />
-              <ToolbarButton
-                // icon={"check_box_outline_blank"}
-                icon="check_box"
-                iconFill
-                colorScheme="blue"
-                onClick={() => handleStatusEndring("FIKSET")}
-                aria-label={"Marker som løst"}
-                tooltip={{ text: "Marker som løst", placement: "left" }}
-              />
-              {/* TODO: Fikse ny knapp med tooltip */}
-              {/* <Button
-                colorScheme="blue"
-                leftIcon="check"
-                width={"12px"}
-                onClick={() => handleStatusEndring("FIKSET")}
-                aria-label={"Marker som løst"}
-                // tooltip={{ text: "Marker som løst", placement: "left" }}
-              /> */}
+              <CustomTooltip text="Marker som løst" placement="left">
+                <Button
+                  colorScheme="blue"
+                  leftIcon="check"
+                  width={"12px"}
+                  onClick={() => handleStatusEndring(AvvikStatus.FIKSET)}
+                  aria-label={"Marker som løst"}
+                />
+              </CustomTooltip>
             </>
           )}
 
-          {status === "fikset" && (
+          {status === AvvikStatus.FIKSET && (
             <>
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  goToCoordinatesAndGetMatrikkelFeatures(koordinaterAvvikNibas[0]);
+                  handlePanorerBtn(koordinaterAvvikNibas[0]);
                   setSelectedAvvikId(avvikItem.id);
                 }}
                 aria-label={"Panorer til avvik"}
@@ -132,19 +128,19 @@ const AvvikRow = ({
                 icon={"undo"}
                 iconFill
                 colorScheme="red"
-                onClick={() => handleStatusEndring("NY")}
+                onClick={() => handleStatusEndring(AvvikStatus.NY)}
                 aria-label={"Marker som uløst"}
                 tooltip={{ text: "Marker som uløst", placement: "left" }}
               />
             </>
           )}
 
-          {status === "nedprioritert" && (
+          {status === AvvikStatus.VENT && (
             <>
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  goToCoordinatesAndGetMatrikkelFeatures(koordinaterAvvikNibas[0]);
+                  handlePanorerBtn(koordinaterAvvikNibas[0]);
                   setSelectedAvvikId(avvikItem.id);
                 }}
                 aria-label={"Panorer til avvik"}
@@ -154,18 +150,19 @@ const AvvikRow = ({
                 icon={"undo"}
                 iconFill
                 colorScheme="red"
-                onClick={() => handleStatusEndring("NY")}
+                onClick={() => handleStatusEndring(AvvikStatus.NY)}
                 aria-label={"Marker som uløst"}
                 tooltip={{ text: "Marker som uløst", placement: "left" }}
               />
-              <ToolbarButton
-                icon={"check_box"}
-                iconFill
-                colorScheme="blue"
-                onClick={() => handleStatusEndring("FIKSET")}
-                aria-label={"Marker som løst"}
-                tooltip={{ text: "Marker som løst", placement: "left" }}
-              />
+              <CustomTooltip text="Marker som løst" placement="left">
+                <Button
+                  colorScheme="blue"
+                  leftIcon="check"
+                  width={"12px"}
+                  onClick={() => handleStatusEndring(AvvikStatus.FIKSET)}
+                  aria-label={"Marker som løst"}
+                />
+              </CustomTooltip>
             </>
           )}
         </ButtonGroup>
@@ -178,14 +175,14 @@ const Row = styled.div<RowProps & { $removing: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--kvib-space-2) var(--kvib-space-2);
   gap: var(--kvib-spacing-12);
   width: 100%;
+  padding: var(--kvib-space-2) var(--kvib-space-2);
   background-color: ${({ $active, $removing, $status }) =>
     $removing
-      ? $status === "nedprioritert"
+      ? $status === AvvikStatus.VENT
         ? "var(--kvib-colors-yellow-100)"
-        : $status === "ny"
+        : $status === AvvikStatus.NY
           ? "var(--kvib-colors-red-100)"
           : "var(--kvib-colors-green-100)"
       : $active
@@ -196,7 +193,7 @@ const Row = styled.div<RowProps & { $removing: boolean }>`
     transform 0.5s ease;
   transform: ${({ $removing, $status }) =>
     $removing
-      ? $status === "ny"
+      ? $status === AvvikStatus.NY
         ? "translateX(-100%)" // Slider til venstre hvis status blir satt til "ny" / uløst
         : "translateX(100%)" // ellers til høyre
       : "translateX(0)"};

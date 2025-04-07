@@ -1,6 +1,4 @@
 // TODO: Endre her når arbeidsliste er klart på skip
-import { fetcherWithToken, getUrlForPath } from "utils/api";
-import { getUrlWithParameters } from "hooks/useNibasApi";
 export const avvikFetcher = async (token: string | undefined, kommuneLokalID: string) => {
   try {
     const url = `http://localhost:8082/api/v1/avvik/kommune/${kommuneLokalID}?grensetyper=Fylkesgrense&grensetyper=Kommunegrense`;

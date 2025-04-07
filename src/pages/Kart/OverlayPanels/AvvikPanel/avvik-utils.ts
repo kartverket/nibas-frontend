@@ -48,3 +48,9 @@ export interface AvvikKommunerResponse extends PaginationInfo {
   empty: boolean;
 }
 export type AvvikForKommuneResponse = AvvikForKommune[];
+
+export enum AvvikStatus {
+  NY = "NY",
+  FIKSET = "FIKSET",
+  VENT = "VENT",
+}
