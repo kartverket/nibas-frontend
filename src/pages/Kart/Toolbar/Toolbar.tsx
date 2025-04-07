@@ -7,7 +7,7 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 import { useHoldButtonToggle, useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { Draw } from "ol/interaction";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { styled } from "styled-components";
 import { anyFeatureIsEditable } from "utils/features";
 import { getLayerById } from "utils/map/layers";
