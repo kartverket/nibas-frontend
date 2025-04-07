@@ -83,7 +83,7 @@ const getEmptyInndelinger = (): Inndelinger => {
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndelinger: (inndelinger: Inndeling[]) => void;
-  setShouldZoom?: (shouldZoom: boolean) => void;
+  setShouldZoom: (shouldZoom: boolean) => void;
   currentlyEditingInndelinger: Inndeling[];
   isLoadingInndeling: boolean;
 

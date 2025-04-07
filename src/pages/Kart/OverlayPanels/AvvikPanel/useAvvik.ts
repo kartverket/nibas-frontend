@@ -68,7 +68,7 @@ export const useAvvik = () => {
     const secondKommuneFetched = await getKommuneFromId(secondKommune?.kommuneLokalID);
     if (currentMainInndeling && secondKommuneFetched !== null) {
       // Ønsker ikke å zoome inn / resette zoomen når vi legger til inndelingen
-      setShouldZoom ? setShouldZoom(false) : null;
+      setShouldZoom(false);
       const inndelingtype = "kommune";
       const newInndeling: Inndeling = {
         navn: secondKommuneFetched.navn,
@@ -82,7 +82,7 @@ export const useAvvik = () => {
       selectInndelinger([currentMainInndeling, newInndeling]);
 
       setTimeout(() => {
-        setShouldZoom ? setShouldZoom(false) : null;
+        setShouldZoom(false);
       }, 5000);
     }
   };
@@ -135,7 +135,7 @@ export const useAvvik = () => {
     updateFylkeIdAndKommuneId("", "");
     setSelectedFylkeId("");
     selectInndelinger([]);
-    setShouldZoom ? setShouldZoom(false) : null;
+    setShouldZoom(false);
     // Zoomer ut for "å vise" at man ikke har valgt inndeling lenger
     centerOnCoordinate(7111142.73, 328380.81, 6, 2000);
   };
