@@ -21,6 +21,7 @@ import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
+import { isNotNil } from "utils/type-utils";
 
 const Header = () => {
   const { utkast } = useUtkast();
@@ -32,8 +33,8 @@ const Header = () => {
 
   const { currentlyEditingInndelinger, selectedFylkeId } = useInndelinger();
 
-  const { fylker } = useFylker(gyldighetsdato, selectedFylkeId !== "");
-  const { kommuner } = useKommuner(selectedFylkeId, gyldighetsdato, selectedFylkeId !== "");
+  const { fylker } = useFylker(gyldighetsdato, isNotNil(selectedFylkeId));
+  const { kommuner } = useKommuner(selectedFylkeId, gyldighetsdato, isNotNil(selectedFylkeId));
 
   const activeFylke = fylker?.find((fylke) => fylke.id.lokalid.value === selectedFylkeId);
   const activeKommuner = kommuner?.filter((kommune) =>

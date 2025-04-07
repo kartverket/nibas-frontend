@@ -5,8 +5,8 @@ import { UtkastResponse } from "types/api";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 
 const HeaderUtkastOperations = ({ utkast }: { utkast: UtkastResponse }) => {
-  const { harEndringer } = useUtkastEndringer(utkast);
   const { isOpen: isPubliserOpen, onClose: onPubliserClose, onOpen: onPubliserOpen } = useDisclosure();
+  const { harEndringer } = useUtkastEndringer(utkast, isPubliserOpen);
 
   return (
     <HeaderSection>

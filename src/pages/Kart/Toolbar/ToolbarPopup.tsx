@@ -11,6 +11,7 @@ type Props = {
   onClose?: () => void;
   buttonText?: string;
   isDisabled?: boolean;
+  isSecondaryButtonDisabled?: boolean;
   isLoading?: boolean;
 };
 
@@ -24,6 +25,7 @@ const ToolbarPopup = ({
   secondaryButtonText = "",
   secondaryOnClick,
   isDisabled = false,
+  isSecondaryButtonDisabled = undefined,
   isLoading = false,
 }: Props) => {
   return (
@@ -41,7 +43,12 @@ const ToolbarPopup = ({
         </Button>
       )}
       {secondaryButtonText && secondaryOnClick && (
-        <Button size="sm" isDisabled={isDisabled || isLoading} onClick={secondaryOnClick} variant="tertiary">
+        <Button
+          size="sm"
+          isDisabled={(isSecondaryButtonDisabled !== undefined ? isSecondaryButtonDisabled : isDisabled) || isLoading}
+          onClick={secondaryOnClick}
+          variant="tertiary"
+        >
           {secondaryButtonText}
         </Button>
       )}

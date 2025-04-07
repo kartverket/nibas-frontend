@@ -5,9 +5,9 @@ import {
   getNavnendringForKommune,
   getSamiskforvaltningsomraadednring,
 } from "components/Endringslogg/hooks/endringerUtils";
-import useNibasApi from "hooks/useNibasApi";
 import { getUniqueItems } from "utils/list-utils";
 import { inndelingResponseNavnToString } from "utils/language/language";
+import useKommuner from "hooks/inndelinger/useKommuner";
 
 type UseUtkastKommuneEndringerReturnType = {
   harEndringer: boolean;
@@ -15,9 +15,12 @@ type UseUtkastKommuneEndringerReturnType = {
   endringer: KommuneendringerForFylke[] | null;
 };
 
-export const useUtkastKommuneEndringer = (utkast: UtkastResponse): UseUtkastKommuneEndringerReturnType => {
-  const { data: kommuner, isLoading: lasterKommuner } = useNibasApi("/v1/kommuner");
-  const { isLoading: lasterFylker, fylker } = useFylker(utkast.gyldigFra);
+export const useUtkastKommuneEndringer = (
+  utkast: UtkastResponse,
+  shouldFetchEndringer: boolean = true,
+): UseUtkastKommuneEndringerReturnType => {
+  const { kommuner, isLoading: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
+  const { isLoading: lasterFylker, fylker } = useFylker(utkast.gyldigFra, shouldFetchEndringer);
 
   const endringer = getEndringerForKommuner(utkast, kommuner);
   const fylkerMedEndringer = getUniqueItems(endringer.map((endring) => endring.nummer.slice(0, 2)));

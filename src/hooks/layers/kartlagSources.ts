@@ -8,7 +8,7 @@ import { mapProjectionEPSGCode } from "utils/map/projections";
 import { KartlagId } from "./types";
 
 const tileGrid = createXYZ({
-  extent: [-2465144.8, 4102893.55, 776625.76, 9408555.22],
+  extent: [-2465144.8, 4102893.55, 1176625.76, 9408555.22],
   tileSize: 1024,
 });
 
@@ -38,25 +38,7 @@ type WMTSConfig = {
   style: string;
   format: string;
 };
-/*
-const topoWMTSConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/",
-  layer: "topo",
-  matrixSet: "utm33n",
-  tileGrid: getBaseGrid(),
-  style: "default",
-  format: "image/png",
-};
 
-const toporasterWMTSConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/v1/wmts/1.0.0/toporaster/default/",
-  layer: "toporaster",
-  matrixSet: "utm33n",
-  tileGrid: getBaseGrid(),
-  style: "default",
-  format: "image/png",
-};
-*/
 const topograatoneWMTSConfig: WMTSConfig = {
   url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/",
   layer: "topograatone",
@@ -125,17 +107,17 @@ export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
   topograatone: createWMTS("topograatone", topograatoneWMTSConfig),
   norgeIBilder: createWMTS("norgeIBilder", norgeIBilderConfig),
   administrativeGrenser: createTileWMS("administrativeGrenser", "https://wms.geonorge.no/skwms1/wms.adm_enheter2"),
-  stedsnavn: createTileWMS("stedsnavn", "https://openwms.statkart.no/skwms1/wms.stedsnavnenkel"),
-  norgesMaritimeGrenser: createTileWMS("norgesMaritimeGrenser", "https://openwms.statkart.no/skwms1/wms.nmg"),
+  stedsnavn: createTileWMS("stedsnavn", "https://wms.geonorge.no/skwms1/wms.stedsnavnenkel"),
+  norgesMaritimeGrenser: createTileWMS("norgesMaritimeGrenser", "https://wms.geonorge.no/skwms1/wms.nmg"),
   administrativeGrenserHistorisk: createTileWMS(
     "administrativeGrenserHistorisk",
     "https://wms.geonorge.no/skwms1/wms.adm_enheter_historisk",
   ),
-  grunnkretserWMS: createTileWMS("grunnkretserWMS", "https://openwms.statkart.no/skwms1/wms.grunnkretser"),
-  n5Raster2: createTileWMS("n5Raster2", "https://openwms.statkart.no/skwms1/wms.n5raster2"),
-  kartbladinndelinger: createTileWMS("kartbladinndelinger", "https://openwms.statkart.no/skwms1/wms.kartblad"),
+  grunnkretserWMS: createTileWMS("grunnkretserWMS", "https://wms.geonorge.no/skwms1/wms.grunnkretser"),
+  n5Raster2: createTileWMS("n5Raster2", "https://wms.geonorge.no/skwms1/wms.n5raster2"),
+  kartbladinndelinger: createTileWMS("kartbladinndelinger", "https://wms.geonorge.no/skwms1/wms.kartblad"),
   sjokartDybdedata: createTileWMS("sjokartDybdedata", "https://wms.geonorge.no/skwms1/wms.dybdedata2"),
-  stedsnavnSSR: createTileWMS("stedsnavnSSR", "https://openwms.statkart.no/skwms1/wms.ssr2"),
+  stedsnavnSSR: createTileWMS("stedsnavnSSR", "https://wms.geonorge.no/skwms1/wms.ssr2"),
   historiskeKart: createTileWMS("historiskeKart", "https://wms.geonorge.no/skwms1/wms.historiskekart"),
   matrikkelenWMS: createAuthedTileWMS("matrikkelenWMS", "/skwms1/wms.matrikkel.v1", "background"),
   sjokartElektroniske: createAuthedTileWMS("sjokartElektroniske", "/skwms1/wms.ecc_enc", "background"),

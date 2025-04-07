@@ -25,7 +25,8 @@ export type GrenseId =
   | "stemmekrets"
   | "archived"
   | "edit"
-  | "measure";
+  | "measure"
+  | "historical";
 
 export const GRENSETYPER = [
   "Kommunegrense",
@@ -49,6 +50,9 @@ export const editableGrenseTypes: GrenseType[] = [
   "Stemmekretsgrense",
   "Kommunegrense",
   "Fylkesgrense",
+  "Territorialgrense",
+  "Riksgrense",
+  "AvtaltAvgrensningslinje",
 ];
 
 export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): GrenseType | undefined => {

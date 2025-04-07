@@ -16,11 +16,15 @@ const stemmekretserFetcher = async ([stemmekretsIds, gyldighetsdato, token]: [
   return await Promise.all(promises);
 };
 
-export const useStemmekretser = (stemmekretsIds: string[], gyldighetsdato: string | undefined) => {
+export const useStemmekretser = (
+  stemmekretsIds: string[],
+  gyldighetsdato: string | undefined,
+  shouldFetch: boolean = true,
+) => {
   const { token } = useAuthentication();
 
   return useSWRImmutable(
-    stemmekretsIds.length > 0 ? [stemmekretsIds, gyldighetsdato, token] : null,
+    stemmekretsIds.length > 0 && shouldFetch ? [stemmekretsIds, gyldighetsdato, token] : null,
     stemmekretserFetcher,
   );
 };

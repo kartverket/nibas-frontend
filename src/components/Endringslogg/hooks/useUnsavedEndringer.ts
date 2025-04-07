@@ -41,7 +41,7 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
   const { getHistoryEntries } = useHistory();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const history = getHistoryEntries();
-  const { isLoading: lasterKommuner, kommuner: alleKommuner } = useKommuner(null, gyldighetsdato);
+  const { isLoading: lasterKommuner, kommuner: alleKommuner } = useKommuner(null, gyldighetsdato, history.length > 0);
 
   const nyeGrenser = getNyeGrenser(history);
   const arkiverteGrenser = getArkiverteGrenser(history);

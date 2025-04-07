@@ -129,7 +129,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
           </Alert>
 
           {antallEndringer > 0 && <UnsavedEndringerCollapse />}
-          <EndringsloggAccordion utkast={utkast} />
+          <EndringsloggAccordion utkast={utkast} isOpen={isOpen} />
         </Body>
         <ModalFooter>
           <ButtonGroup>

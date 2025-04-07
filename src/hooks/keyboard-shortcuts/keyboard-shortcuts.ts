@@ -20,13 +20,15 @@ export type Shortcut =
   | "grensesplit"
   | "archive"
   | "delete"
+  | "historiskeGrenser"
   | "matrikkel"
   | "flatedata"
   | "flatesplit"
   | "draw"
   | "escape"
   | "preview"
-  | "goto";
+  | "goto"
+  | "duplicate";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -87,11 +89,13 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   // Grense Tools
   archive: createShortcut("a", { control: true }),
   delete: createShortcut("a", { control: true, shift: true }),
+  historiskeGrenser: createShortcut("h", { control: true }),
   draw: createShortcut("t", { control: true }),
   grenseinfo: createShortcut("i", { control: true }),
   grensecoordinates: createShortcut("k", { control: true, shift: true }),
   grensesplit: createShortcut("p", { control: true, shift: true }),
   measure: createShortcut("d", { control: true }),
+  duplicate: createShortcut("1", { control: true }),
 
   // Point Tools
   add: createShortcut("l", { control: true }),

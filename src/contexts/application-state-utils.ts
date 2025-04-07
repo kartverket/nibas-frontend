@@ -54,7 +54,7 @@ export type MapPosition = {
 };
 
 export type SelectedInndelinger = {
-  selectedFylkeId: string;
+  selectedFylkeId: string | null;
   inndelinger: Inndeling[];
 };
 

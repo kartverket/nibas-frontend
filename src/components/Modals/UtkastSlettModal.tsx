@@ -84,7 +84,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
               </AlertDescription>
             </div>
           </Alert>
-          <EndringsloggAccordion utkast={utkast} />
+          <EndringsloggAccordion utkast={utkast} isOpen={isOpen} />
         </Body>
         <ModalFooter>
           <ButtonGroup>
