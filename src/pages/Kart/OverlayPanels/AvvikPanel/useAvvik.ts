@@ -52,6 +52,7 @@ export const useAvvik = () => {
   };
   const openInndelingForAvvik = (kommuneForAvvik: KommuneResponse) => {
     if (kommuneForAvvik !== null) {
+      setShouldZoom(true);
       const inndelingtype = "kommune";
       const newInndeling: Inndeling = {
         navn: kommuneForAvvik.navn,
@@ -87,9 +88,10 @@ export const useAvvik = () => {
 
       selectInndelinger([currentMainInndeling, newInndeling]);
 
+      // Dårlig løsning, men vet ikke når inndelingen er ferdig lagt til i kartet, så må vente litt før vi re-aktiverer normal innzooming i inndelingercontext
       setTimeout(() => {
         setShouldZoom(true);
-      }, 5000);
+      }, 7000);
     }
   };
 

@@ -45,10 +45,10 @@ export const AvvikPanel = () => {
   // Viser hvilken rad som er valgt (avvik)
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
 
-  // Gjør kall til API for å oppdatere status på avviket, men oppdaterer bare avvikData lokalt i state for å slippe fetching hver gang
+  // Gjør kall til API for å oppdatere status på avviket, men oppdaterer bare lokalt i state for å slippe fetching hver gang
   const updateStatusForAvvikLokalt = async (avvikId: number, status: string): Promise<boolean> => {
     const res = await updateStatusForAvvik(avvikId, status);
-    if (res) {
+    if (res === true) {
       setAvvikData((prev) => prev.map((item) => (item.id === avvikId ? { ...item, status: status } : item)));
       return true;
     }
