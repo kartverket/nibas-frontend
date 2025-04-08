@@ -6,11 +6,98 @@ import { Coordinate, equals } from "ol/coordinate";
 import { Geometry, LineString } from "ol/geom";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { getTempFeatureId, isNonEditableFeatureId, isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { FeatureProperties, KontekstEgenskaper, Metadata } from "types/api";
+import { FeatureProperties, KontekstEgenskaper, Metadata, Posisjonskvalitet } from "types/api";
 import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { removeNil } from "./list-utils";
 import { getRepresentasjonspunktId } from "./map/source";
 import { isGrenseType, isNotNil } from "./type-utils";
+
+const getPosisjonskvalitetForFeature = (feature: Feature<Geometry>): Posisjonskvalitet => {
+  return ((feature.getProperties() as FeatureProperties).metadata as Metadata).commonGrense?.posisjonskvalitet;
+};
+export const validateEqualPosisjonskvaliteter = (features: Feature<Geometry>[]): boolean => {
+  return (
+    new Set(features.map((f) => getPosisjonskvalitetForFeature(f)?.maalemetode.id)).size === 1 &&
+    new Set(features.map((f) => getPosisjonskvalitetForFeature(f)?.noeyaktighet)).size === 1
+  );
+};
+
+const coordsEqual = (a: Coordinate, b: Coordinate) => a[0] === b[0] && a[1] === b[1];
+
+// Grådig algoritme for å slå sammen features til én feature. Den forventer listen ikke inneholder branches.
+const mergeUnorderedConnectedLineStrings = (features: Feature<LineString>[]) => {
+  const segments = removeNil(features.map((f) => f.getGeometry()).map((g) => g?.getCoordinates()));
+  if (segments.length === 0) {
+    return null;
+  }
+
+  const mergedLine = [];
+  mergedLine.push(...segments[0]);
+
+  const used: boolean[] = new Array(segments.length).fill(false);
+  used[0] = true;
+
+  let changed = true;
+  while (changed) {
+    changed = false;
+
+    for (let i = 1; i < segments.length; i++) {
+      if (used[i]) {
+        continue;
+      }
+
+      const currentLine = segments[i];
+      const currentLineStart = currentLine[0];
+      const currentLineEnd = currentLine[currentLine.length - 1];
+      const mergedLineStart = mergedLine[0];
+      const mergedLineEnd = mergedLine[mergedLine.length - 1];
+
+      // Legger linjestykket enten på start eller slutten av den sammenslåtte linja enten i nåværende rekkefølge eller i revers
+      if (coordsEqual(currentLineStart, mergedLineEnd)) {
+        mergedLine.push(...currentLine.slice(1));
+        used[i] = true;
+        changed = true;
+        break;
+      } else if (coordsEqual(currentLineEnd, mergedLineEnd)) {
+        mergedLine.push(...currentLine.slice(0, -1).reverse());
+        used[i] = true;
+        changed = true;
+        break;
+      } else if (coordsEqual(currentLineEnd, mergedLineStart)) {
+        mergedLine.unshift(...currentLine.slice(0, -1));
+        used[i] = true;
+        changed = true;
+        break;
+      } else if (coordsEqual(currentLineStart, mergedLineStart)) {
+        mergedLine.unshift(...currentLine.slice(1).reverse());
+        used[i] = true;
+        changed = true;
+        break;
+      }
+    }
+  }
+  // hvis vi ikke har brukt alle er linjen ikke sammenhengende og vi returnerer null
+  if (used.some((u) => !u)) {
+    return null;
+  }
+  return new Feature({ geometry: new LineString(mergedLine) });
+};
+
+export const mergeFeaturesToNewFeature = (
+  features: Feature<LineString>[],
+  asGrenseType: GrenseType,
+): Feature<LineString> | null => {
+  if (validateEqualPosisjonskvaliteter(features) === false) {
+    return null;
+  }
+  const newLineString = mergeUnorderedConnectedLineStrings(features);
+  if (newLineString == null) {
+    return null;
+  }
+  newLineString.setId(getTempFeatureId());
+  newLineString.setProperties({ ...getDefaultFeatureProperties(asGrenseType) });
+  return newLineString;
+};
 
 export const createDuplicateOfFeature = (feature: Feature<Geometry>, asGrenseType: GrenseType): Feature<Geometry> => {
   const duplicateFeature = feature.clone();

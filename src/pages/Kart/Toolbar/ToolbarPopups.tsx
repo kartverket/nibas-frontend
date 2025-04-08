@@ -6,13 +6,13 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useState } from "react";
-import { anyFeatureIsEditable, createDuplicateOfFeature } from "utils/features";
+import { anyFeatureIsEditable, createDuplicateOfFeature, mergeFeaturesToNewFeature } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { map } from "../constants";
 import { isTempFeatureId } from "../interactions/feature-id-utils";
-import { createNyGrenseHistoryChange } from "../interactions/grense-history-utils";
+import { createMergeGrenserHistoryChange, createNyGrenseHistoryChange } from "../interactions/grense-history-utils";
 import useSplit from "../interactions/useSplit";
 import {
   addArchivingEntryFromFeatureList,
@@ -22,6 +22,9 @@ import ToolbarPopup from "./ToolbarPopup";
 
 import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
 import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
+import { Feature } from "ol";
+import { LineString } from "ol/geom";
+
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
@@ -39,19 +42,13 @@ const ToolbarPopups = () => {
     resetHistoriskeGrenser,
   } = useHistoriskeGrenser();
 
-  const archiveFeatures = () => {
-    const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
-
+  const archiveSelectedFeatures = () => {
+    archiveFeatures(selectedFeatures);
     addArchivingEntryFromFeatureList(selectedFeatures, addHistoryEntry);
-
-    addArchivedStyles(selectedFeatureIds);
     clearSelection();
-    removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
-    addFeaturesToSource("archived", selectedFeatures);
-
     toast({
       status: "success",
-      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble arkivert`,
+      title: `${selectedFeatures.length} grense${selectedFeatures.length > 1 ? "r" : ""} ble arkivert`,
       description: "Husk å eventuelt sette tilhørighet på berørte grenser",
     });
   };
@@ -74,6 +71,38 @@ const ToolbarPopups = () => {
         });
       }
     }
+  };
+
+  // Hjelpemetode for å arkivere features. Denne lager ikke historikk, så det må gjøres separat.
+  const archiveFeatures = (features: Feature<LineString>[]) => {
+    const featuresId = removeNil(features.map((feature) => feature.getId()?.toString()));
+    addArchivedStyles(featuresId);
+    removeFeaturesFromSourceByIds("edit", featuresId);
+    addFeaturesToSource("archived", features);
+  };
+
+  const mergeSelectedFeatures = () => {
+    const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
+    if (grenseType == null) {
+      return;
+    }
+    const mergeFeature = mergeFeaturesToNewFeature(selectedFeatures, grenseType);
+    if (mergeFeature == null) {
+      return;
+    }
+    archiveFeatures(selectedFeatures);
+    addFeaturesToSource("edit", [mergeFeature]);
+    addHistoryEntry({
+      type: "merge_grenser",
+      changes: removeNil([createMergeGrenserHistoryChange(selectedFeatures, mergeFeature)]),
+    });
+
+    clearSelection();
+    toast({
+      status: "success",
+      title: `${selectedFeatures.length} grense${selectedFeatures.length > 1 ? "r" : ""} ble slått sammen til en ny grense`,
+      description: "Husk å oppdatere relevante egenskaper for den nye grensen",
+    });
   };
 
   const deleteFeatures = () => {
@@ -253,7 +282,7 @@ const ToolbarPopups = () => {
             icon="archive"
             text="Velg en eller flere grenser du ønsker å arkivere"
             buttonText="Arkiver"
-            onClick={archiveFeatures}
+            onClick={archiveSelectedFeatures}
             isDisabled={selectedFeatures.length === 0}
             onClose={resetTool}
           />
@@ -287,8 +316,8 @@ const ToolbarPopups = () => {
             icon="merge"
             text="Velg en eller flere grenser du ønsker å slå sammen"
             buttonText="Slå sammen"
-            onClick={() => {}}
-            isDisabled={selectedFeatures.length === 0}
+            onClick={mergeSelectedFeatures}
+            isDisabled={selectedFeatures.length < 2}
             onClose={resetTool}
           />
         );

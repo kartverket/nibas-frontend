@@ -1,11 +1,22 @@
-import { HistoryChange, MinimalGrense, NyGrense } from "contexts/HistoryContext/types";
+import { HistoryChange, MergeGrenseModel, MinimalGrense, NyGrense } from "contexts/HistoryContext/types";
+import { GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
-import { previousCoordinateKey } from "./constants";
-import { GrenseType } from "hooks/layers/types";
-import { getMetadataDiscriminatorFromType } from "utils/grenser";
 import { getDefaultFeatureProperties } from "utils/features";
+import { getMetadataDiscriminatorFromType } from "utils/grenser";
+import { previousCoordinateKey } from "./constants";
 import { SplittedFeature } from "./useSplit";
+
+export const createMergeGrenserHistoryChange = (
+  featuresBeingArchived: Feature<LineString>[],
+  newMergedFeature: Feature<LineString>,
+): HistoryChange<MergeGrenseModel> | null => {
+  const mergedFeatureId = newMergedFeature.getId()?.toString();
+  if (mergedFeatureId != null) {
+    return { from: featuresBeingArchived, to: [newMergedFeature], id: mergedFeatureId };
+  }
+  return null;
+};
 
 export const createGrenseHistoryChange = (features: Feature[], grenseType?: GrenseType) => {
   const changes: HistoryChange<MinimalGrense>[] = [];

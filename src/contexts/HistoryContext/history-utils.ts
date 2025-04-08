@@ -17,6 +17,7 @@ import {
   KretsdelingEntry,
   KommuneEntry,
   NyGrenseDeleteEntry,
+  MergeGrenseEntry,
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -29,6 +30,7 @@ import { Coordinate } from "ol/coordinate";
 import { getEntriesUpToIndex, removeDuplicateIds } from "contexts/FeatureStyleContext/feature-style-utils";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
+import { getInndelingtypeFromGrensetype, GrenseType } from "hooks/layers/types";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -113,6 +115,36 @@ const createDummyGrensedelingEntry = (delteFeatures: Feature[], newFeatures: Fea
     },
   ],
 });
+
+export const handleGrenseMerge = (entry: MergeGrenseEntry, direction: HistoryDirection) => {
+  // Det er kun én change i grense_merge entries, så vi kan ta index 0.
+  const archivedGrenser: Feature<LineString>[] = entry.changes[0].from;
+  // "to" inneholder kun én feature (den som blir ny sammenslått grense)
+  const mergeGrense: Feature<LineString> = entry.changes[0].to[0];
+  const mergedGrenseId = mergeGrense.getId()?.toString();
+  const archivedGrenserId = removeNil(archivedGrenser.map((f) => f.getId()?.toString()));
+  const grensetyper = Array.from(
+    new Set(archivedGrenser.map((g) => (g.getProperties() as FeatureProperties).type)),
+  ) as GrenseType[];
+
+  if (grensetyper.length !== 1) {
+    throw new Error("Fant noe annet enn én grensetype ved angring av grensesammenslåing.");
+  }
+
+  const sourceId = getInndelingtypeFromGrensetype(grensetyper[0]);
+
+  if (mergedGrenseId != null && sourceId != null) {
+    if (direction === "from") {
+      removeFeaturesFromSourceByIds("edit", [mergedGrenseId]);
+      removeFeaturesFromSourceByIds("archived", archivedGrenserId);
+      addFeaturesToSource("edit", archivedGrenser);
+    } else if (direction === "to") {
+      addFeaturesToSource("edit", [mergeGrense]);
+      addFeaturesToSource("archived", archivedGrenser);
+      removeFeaturesFromSourceByIds("edit", archivedGrenserId);
+    }
+  }
+};
 
 export const handleNyGrense = (entry: NyGrenseEntry, direction: HistoryDirection) => {
   const delteFeatures = removeNil(entry.changes.flatMap((e) => e.from.grensedeling));
