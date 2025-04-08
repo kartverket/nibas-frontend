@@ -56,7 +56,7 @@ export const useEiendom = () => {
         } else if (statusCode.isError(response.status)) {
           searchErrorToast();
         }
-      } catch (error) {
+      } catch {
         searchErrorToast();
       }
     }

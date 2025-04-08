@@ -211,6 +211,7 @@ export const getKontekstTypeForFeature = (
 };
 
 const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (grenseType) {
     case "Stemmekretsgrense":
       return KontekstType.STEMMEKRETS;

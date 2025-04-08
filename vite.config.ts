@@ -58,9 +58,9 @@ export default defineConfig(({ mode }) => {
           pathRewrite: (path) => {
             let tjenesteId = "";
 
-            if (path.includes("tjenesteid=wms.ecc_enc")) {
+            if (path.indexOf("tjenesteid=wms.ecc_enc") !== -1) {
               tjenesteId = "wms.ecc_enc";
-            } else if (path.includes("tjenesteid=wms.nib")) {
+            } else if (path.indexOf("tjenesteid=wms.nib") !== -1) {
               tjenesteId = "wms.nib";
             }
 

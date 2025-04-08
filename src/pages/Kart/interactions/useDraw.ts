@@ -84,10 +84,9 @@ const useDraw = () => {
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
   const draw = useMemo(() => {
-    // Denne er kun her for å få ESLint til å ikke ønske å legge til en regel-ignorering, da det ikke går an å legge til
-    // ignoreringer for spesifikke dependencies i dependency arrayet.
-    // It ain't clean, but it works.
-    abortDrawMemoHelper;
+    // Tvinger useMemo til å kjøre på nytt når abortDrawMemoHelper endres
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const _ = abortDrawMemoHelper;
     return new Draw({
       type: "LineString",
       snapTolerance: pixelTolerance,
@@ -229,6 +228,7 @@ const useDraw = () => {
           if (!equals(coordinate, head) && !equals(coordinate, tail)) {
             return coordinates.some((toBeSplitCoordinate) => equals(toBeSplitCoordinate, coordinate));
           }
+          return false;
         });
 
         if (coordinatesToSplitAt.length > 0) {

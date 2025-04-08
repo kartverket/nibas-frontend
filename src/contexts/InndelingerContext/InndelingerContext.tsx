@@ -1,30 +1,30 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { addFeaturesToSource } from "utils/map/source";
-import { zoomToFeatures } from "utils/map/map-utils";
-import { editSource, grenserLayers } from "hooks/layers/constants";
-import { removeNil } from "utils/list-utils";
-import { getLayerById } from "utils/map/layers";
-import { GrenseId } from "hooks/layers/types";
-import { Feature } from "ol";
-import { Geometry, LineString } from "ol/geom";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { AdministrativEnhetNavn, FeatureProperties } from "types/api";
-import useInndelingFeatures from "./useInndelingFeatures";
-import { getFeatureFremtidigEndringDato } from "utils/features";
 import {
   fetchActiveOverlayModalFromSessionStorage,
   fetchActiveOverlayPanelFromSessionStorage,
   fetchHistoryFromSessionStorage,
+  fetchMapPositionFromSessionStorage,
   fetchSelectedFeaturesFromSessionStorage,
   fetchSelectedPointFromSessionStorage,
-  fetchMapPositionFromSessionStorage,
 } from "contexts/application-state-utils";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { exclusiveSelectTools } from "pages/Kart/interactions/useSelect";
 import { useToolbar } from "contexts/ToolbarContext";
-import { map } from "pages/Kart/constants";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { editSource, grenserLayers } from "hooks/layers/constants";
+import { GrenseId } from "hooks/layers/types";
+import { Feature } from "ol";
+import { Geometry, LineString } from "ol/geom";
+import { map } from "pages/Kart/constants";
+import { exclusiveSelectTools } from "pages/Kart/interactions/useSelect";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { AdministrativEnhetNavn, FeatureProperties } from "types/api";
+import { getFeatureFremtidigEndringDato } from "utils/features";
+import { removeNil } from "utils/list-utils";
+import { clearEditLayer, clearViewingLayers, getLayerById } from "utils/map/layers";
+import { zoomToFeatures } from "utils/map/map-utils";
+import { addFeaturesToSource } from "utils/map/source";
+import useInndelingFeatures from "./useInndelingFeatures";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 export type Inndelingtyper = typeof INNDELINGTYPER;
@@ -90,6 +90,8 @@ export type InndelingerContextValue = {
   getAllInndelinger: () => Inndeling[];
 
   clearInndelingerAndSources: () => void;
+  clearViewingLayersAndInndelinger: () => void;
+  clearEditLayerAndInndelinger: () => void;
 
   selectedFylkeId: string | null;
   setSelectedFylkeId: (id: string | null) => void;
@@ -384,6 +386,44 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     getAllInndelingerId,
   ]);
 
+  const clearViewingLayersAndInndelinger = () => {
+    clearViewingLayers();
+    setInndelingerToFetch((currentState) => currentState.filter((i) => i.isEditing));
+    setInndelinger((currentState) => {
+      const newState = structuredClone(currentState);
+      for (const type of INNDELINGTYPER) {
+        newState[type] = new Map(
+          [...newState[type]].map(([key, i]) => {
+            if (i.isViewing) {
+              return [key, { ...i, isViewing: false }];
+            }
+            return [key, i];
+          }),
+        );
+      }
+      return newState;
+    });
+  };
+
+  const clearEditLayerAndInndelinger = () => {
+    clearEditLayer();
+    setInndelingerToFetch((currentState) => currentState.filter((i) => i.isViewing));
+    setInndelinger((currentState) => {
+      const newState = structuredClone(currentState);
+      for (const type of INNDELINGTYPER) {
+        newState[type] = new Map(
+          [...newState[type]].map(([key, i]) => {
+            if (i.isEditing) {
+              return [key, { ...i, isEditing: false }];
+            }
+            return [key, i];
+          }),
+        );
+      }
+      return newState;
+    });
+  };
+
   const clearInndelingerAndSources = () => {
     for (const layer of Object.values(grenserLayers)) {
       const source = layer.getSource();
@@ -482,6 +522,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
 
     clearInndelingerAndSources,
+    clearViewingLayersAndInndelinger,
+    clearEditLayerAndInndelinger,
 
     selectedFylkeId,
     setSelectedFylkeId,

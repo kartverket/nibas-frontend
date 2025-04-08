@@ -75,6 +75,7 @@ export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): Gr
 };
 
 export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelingtype | undefined => {
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (grenseType) {
     case "Fylkesgrense":
       return "fylke";
@@ -87,9 +88,8 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
 
     case "Grunnkretsgrense":
       return "grunnkrets";
-
     default:
-      break;
+      return undefined;
   }
 };
 

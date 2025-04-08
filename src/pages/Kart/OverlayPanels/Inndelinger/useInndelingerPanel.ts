@@ -1,15 +1,21 @@
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import {
+  BaseInndeling,
+  Inndeling,
   Inndelingtype,
   useInndelinger,
-  Inndeling,
-  BaseInndeling,
 } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useEffect, useState } from "react";
 
 const useInndelingerPanel = () => {
-  const { selectInndelinger, getAllInndelinger, setSelectedFylkeId } = useInndelinger();
+  const {
+    selectInndelinger,
+    getAllInndelinger,
+    setSelectedFylkeId,
+    clearViewingLayersAndInndelinger,
+    clearEditLayerAndInndelinger,
+  } = useInndelinger();
 
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
   const [activePanelFylkeId, setActivePanelFylkeId] = useState<string | null>(null);
@@ -22,14 +28,19 @@ const useInndelingerPanel = () => {
   const hasUnsavedChangesInHistory = history.entries.length > 0;
 
   useEffect(() => {
-    isEditingPanel
-      ? setSelectedInndelinger([])
-      : setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isViewing));
+    if (isEditingPanel) {
+      setSelectedInndelinger([]);
+    } else {
+      setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isViewing));
+    }
   }, [getAllInndelinger, isEditingPanel]);
 
   const resetSelection = () => {
     setSelectedInndelinger([]);
   };
+
+  const clearInndelingerForPanel = () =>
+    isEditingPanel ? clearEditLayerAndInndelinger() : clearViewingLayersAndInndelinger();
 
   const isSelectionAvailable = selectedInndelinger.some((inndeling) =>
     isEditingPanel ? inndeling.isEditing : inndeling.isViewing,
@@ -154,6 +165,7 @@ const useInndelingerPanel = () => {
     isInndelingSelected,
     isSelectionAvailable,
     selectNewInndelinger,
+    clearInndelingerForPanel,
   };
 };
 

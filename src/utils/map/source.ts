@@ -93,7 +93,7 @@ export const removeFeaturesFromSourceByIds = (sourceId: LayerId, featureIds: str
 
     try {
       source.removeFeature(featureToRemove);
-    } catch (error) {
+    } catch {
       // ikke tryn når vi prøver å fjerne grense som allerede er fjernet
       // dette er en bug, grensen burde ikke ha vært fjernet
     }

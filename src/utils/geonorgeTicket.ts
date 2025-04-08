@@ -1,6 +1,3 @@
-/* eslint-disable no-console */
-// logge en del nå i starten, så kan det fjernes etter vi er helt sikker
-// på at det funker som tiltenkt
 import WMSCapabilities from "ol/format/WMSCapabilities";
 import { getUrlForPath } from "utils/api";
 

@@ -1,7 +1,6 @@
 import React from "react";
 
 // du kan override lokal verdi ved å opprette key i .env.local
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const getLocalEnvironmentOverride = (envKey: string) => {
   return import.meta.env[envKey] === "true";
 };
