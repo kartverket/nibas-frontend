@@ -45,7 +45,7 @@ export const AvvikPanel = () => {
   // Viser hvilken rad som er valgt (avvik)
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
 
-  // Gjør kall til API for å oppdatere status på avviket, men oppdaterer bare lokalt i state for å slippe fetching hver gang
+  // Gjør kall til API for å oppdatere status på avviket, men oppdaterer bare avvikData lokalt i state for å slippe fetching hver gang
   const updateStatusForAvvikLokalt = async (avvikId: number, status: string): Promise<boolean> => {
     const res = await updateStatusForAvvik(avvikId, status);
     if (res) {
@@ -121,7 +121,7 @@ export const AvvikPanel = () => {
     setSelectedKommuneNavn("");
     setSelectedKommuneNummer("");
     setSelectedAvvikId(null);
-    setSelectedFylkeId("");
+    setSelectedFylkeId(null);
     setTabIndex(0);
     resetInndeling();
   };
@@ -136,7 +136,7 @@ export const AvvikPanel = () => {
     setTabIndex(index);
   };
   const getAvvikCountByStatus = (status: string): number => {
-    return avvikData.filter((row) => row.status.toLowerCase() === status.toLowerCase()).length;
+    return avvikData.filter((row) => row.status === status).length;
   };
   return (
     <SidePanel>

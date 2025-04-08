@@ -13,7 +13,13 @@ import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
 export const useAvvik = () => {
   const { token } = useAuthentication();
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  const { selectInndelinger, setSelectedFylkeId, currentlyEditingInndelinger, setShouldZoom } = useInndelinger();
+  const {
+    selectInndelinger,
+    setSelectedFylkeId,
+    currentlyEditingInndelinger,
+    setShouldZoom,
+    clearEditLayerAndInndelinger,
+  } = useInndelinger();
   const [selectedKommuneId, setSelectedKommuneId] = useState<string>("");
 
   const getKommuneFromId = async (kommuneId: string) => {
@@ -129,9 +135,10 @@ export const useAvvik = () => {
 
   const resetInndeling = () => {
     updateFylkeIdAndKommuneId("", "");
-    setSelectedFylkeId("");
+    setSelectedFylkeId(null);
     selectInndelinger([]);
-    setShouldZoom(false);
+    setShouldZoom(true);
+    clearEditLayerAndInndelinger();
     // Zoomer ut for "å vise" at man ikke har valgt inndeling lenger
     centerOnCoordinate(7111142.73, 328380.81, 6, 2000);
   };
