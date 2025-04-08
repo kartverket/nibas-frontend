@@ -88,6 +88,11 @@ const ToolbarPopups = () => {
     }
     const mergeFeature = mergeFeaturesToNewFeature(selectedFeatures, grenseType);
     if (mergeFeature == null) {
+      toast({
+        status: "error",
+        title: "Du kan ikke slå sammen disse grensene",
+        description: "Husk at grensene må være sammenkoblet, og at de må ha samme nøyaktighet og målemetode",
+      });
       return;
     }
     archiveFeatures(selectedFeatures);
