@@ -383,3 +383,7 @@ export const getNyGrenserEntriesEntries = (entries: HistoryEntry[]): NyGrenseEnt
 export const getGrenseArkiveringEntries = (entries: HistoryEntry[]): GrenseArkiveringsEntry[] => {
   return entries.filter((entry) => entry.type === "grensearkivering") as GrenseArkiveringsEntry[];
 };
+
+export const getGrenseMergeEntries = (entries: HistoryEntry[]): MergeGrenseEntry[] => {
+  return entries.filter((entry) => entry.type === "merge_grenser") as MergeGrenseEntry[];
+};
