@@ -127,7 +127,8 @@ const ToolbarPopups = () => {
       toast({
         status: "error",
         title: "Du kan ikke slå sammen disse grensene",
-        description: "Husk at grensene må være sammenkoblet, og at de må ha samme nøyaktighet og målemetode",
+        description:
+          "Husk at grensene må være sammenkoblet, være samme grensetype, og at de må ha samme nøyaktighet og målemetode",
       });
       return;
     }
