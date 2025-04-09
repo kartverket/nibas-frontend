@@ -7,7 +7,7 @@ import {
   HistoryChange,
   NyGrenseDeleteEntry,
 } from "contexts/HistoryContext/types";
-import { FeatureProperties, KontekstEgenskaper } from "types/api";
+import { FeatureProperties, KodelisteRespons, KontekstEgenskaper, MatrikkelKodelisterRespons } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isDate } from "date-fns";
 import { Geometry } from "ol/geom";
@@ -170,4 +170,17 @@ export const addKontekstEntryFromFeature = (
       },
     ],
   });
+};
+
+export const mapMatrikkelkodelisteToKodelisteType = (
+  matrikkelkodeliste: MatrikkelKodelisterRespons,
+): KodelisteRespons | undefined => {
+  return {
+    type: "MAALEMETODE_KODE",
+    items: matrikkelkodeliste.maalemetodeKodeliste.map((item: { id: number; kodeverdi: string; navn: string }) => ({
+      id: item.id.toString(),
+      kode: item.kodeverdi,
+      label: item.navn.trim().substring(2, item.navn.length), // Fjerner unødvendig gjentagende kodeverdi på starten
+    })),
+  };
 };
