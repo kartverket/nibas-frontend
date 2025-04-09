@@ -55,7 +55,7 @@
     "@eslint/compat": "^1.2.8",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.23.0",
-    "@grafana/faro-react": "^1.14.3",
+    "@grafana/faro-react": "^1.15.0",
     "@testing-library/jest-dom": "~6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
