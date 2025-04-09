@@ -33,7 +33,7 @@ import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import { styled } from "styled-components";
-import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
+import { FeatureProperties, KodelisteRespons, MatrikkelKodelisterRespons, Metadata } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isLineStringFeature } from "utils/type-utils";
 import { getKretsIdFromKontekstegenskaper } from "../hooks/tilhorighet-utils";
@@ -43,6 +43,7 @@ import {
   datestringToFormattedDatestring,
   dateToFormattedDatestring,
   isGrenseinformasjonPanelDisabled,
+  mapMatrikkelkodelisteToKodelisteType,
 } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
@@ -95,6 +96,8 @@ export const EditGrenseInfoButton = ({
 
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+  const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
+  const [kodelisteToUse, setKodelisteToUse] = useState<KodelisteRespons | undefined>(kodeliste);
   const { currentlyEditingInndelinger } = useInndelinger();
   const { utkast } = useUtkast();
   const { inndelingFeatures } = useInndelingFeatures(currentlyEditingInndelinger);
@@ -119,6 +122,13 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
     if (maalemetode) {
       return maalemetode?.kode + " " + maalemetode?.label;
+    } else if (matrikkelkodeliste) {
+      // Hvis vi ikke finner målemetoden i kodelisten, sjekk matrikkelkodelisten (de har helt forskjellig type id'er)
+      const matrikkelKodelisteMapped = mapMatrikkelkodelisteToKodelisteType(matrikkelkodeliste);
+      const matrikkelMaalemetode = matrikkelKodelisteMapped?.items.find((item) => item.id === id);
+      if (matrikkelMaalemetode) {
+        return matrikkelMaalemetode.kode + " " + matrikkelMaalemetode?.label;
+      }
     }
     return "Ukjent målemetode er registrert på grensen";
   };
@@ -141,6 +151,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       const featureCoordinatesAsString =
         featureCoordinates != null ? featureCoordinates.map((coord) => coord.toString()) : [];
       // Hvis man har snappet bort fra en grense man tidligere snappet til i utkastet ønsker vi ikke å bruke denne posisjonskvaliteten
+      const allowedGrensetyper = ["nibas", "teig"];
       const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
         .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
         .map(([, posisjonskvalitet]) => posisjonskvalitet)
@@ -150,7 +161,8 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             posisjonskvalitet.maalemetode !== eksisterendePosisjonskvalitet?.maalemetode.id,
         )
         // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
-        .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
+        // .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
+        .filter((posisjonskvalitet) => allowedGrensetyper.includes(posisjonskvalitet.grensetype));
       return relevant;
     }
     return [];
@@ -166,14 +178,36 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 
   const autoFillFormValues = () => {
     if (relevantPosisjonskvaliteter != null) {
+      // Usikker på denne prioriteringen, om det er riktig å prioritere teig over nibas selv om den har dårligere kvaliteter?
+      // Separerer "teig" og "nibas"
+      const teigPosisjonskvaliteter = relevantPosisjonskvaliteter.filter(
+        (posisjonskvalitet) => posisjonskvalitet.grensetype === "teig",
+      );
+      const nibasPosisjonskvaliteter = relevantPosisjonskvaliteter.filter(
+        (posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas",
+      );
+
+      // Prioriterer posisjonskvaliteter fra teiggrense hvis de finnes, ellers bruker nibas
+      const prioritizedPosisjonskvaliteter =
+        teigPosisjonskvaliteter.length > 0 ? teigPosisjonskvaliteter : nibasPosisjonskvaliteter;
+
       // Finner den dårligste posisjonskvaliteten basert på nøyaktighet
-      const worstPosisjonskvalitet = relevantPosisjonskvaliteter.toSorted((a, b) => {
+      const worstPosisjonskvalitet = prioritizedPosisjonskvaliteter.toSorted((a, b) => {
         if (a != null && b != null && a.noeyaktighet != null && b.noeyaktighet != null) {
           return a.noeyaktighet - b.noeyaktighet;
         }
         return 0;
-      })[relevantPosisjonskvaliteter.length - 1];
-      if (worstPosisjonskvalitet != null && kodeliste != null) {
+      })[prioritizedPosisjonskvaliteter.length - 1];
+      if (worstPosisjonskvalitet != null && (kodeliste != null || matrikkelkodeliste != null)) {
+        // Bruker matrikkelkodeliste hvis det er teig, ellers bruker vi nibas
+        if (worstPosisjonskvalitet.grensetype === "teig") {
+          const mappedKodeliste = matrikkelkodeliste
+            ? mapMatrikkelkodelisteToKodelisteType(matrikkelkodeliste)
+            : undefined;
+          if (mappedKodeliste) {
+            setKodelisteToUse(mappedKodeliste);
+          }
+        }
         setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
         setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
         handleSubmit(onSubmit)();
@@ -394,14 +428,16 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       <GrenseinformasjonRow
         name="Målemetode"
         tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
-        valueLabel={kodeliste ? getMaalemetodeText(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
+        valueLabel={
+          kodelisteToUse ? getMaalemetodeText(kodelisteToUse, getValues("maalemetode")) : getValues("maalemetode")
+        }
         isEditing={isEditing}
         isLoading={autofillLoading}
       >
-        {kodeliste && (
+        {kodelisteToUse && (
           <Select {...register("maalemetode")}>
             <option value="">Velg målemetode</option>
-            {kodeliste.items
+            {kodelisteToUse.items
               .sort((a, b) => Number(a.kode) - Number(b.kode))
               .map((item) => (
                 <option key={item.id} value={item.id}>
