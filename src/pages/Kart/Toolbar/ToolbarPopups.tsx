@@ -14,16 +14,15 @@ import { map } from "../constants";
 import { isTempFeatureId } from "../interactions/feature-id-utils";
 import { createMergeGrenserHistoryChange, createNyGrenseHistoryChange } from "../interactions/grense-history-utils";
 import useSplit from "../interactions/useSplit";
-import {
-  addArchivingEntryFromFeatureList,
-  addGrenseDeleteEntryFromFeatureList,
-} from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { addGrenseDeleteEntryFromFeatureList } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import ToolbarPopup from "./ToolbarPopup";
 
-import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
-import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
+import { HistoryChange } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
+import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
+import { FeatureProperties } from "types/api";
+import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
@@ -43,8 +42,7 @@ const ToolbarPopups = () => {
   } = useHistoriskeGrenser();
 
   const archiveSelectedFeatures = () => {
-    archiveFeatures(selectedFeatures);
-    addArchivingEntryFromFeatureList(selectedFeatures, addHistoryEntry);
+    archiveFeatures(selectedFeatures, true);
     clearSelection();
     toast({
       status: "success",
@@ -73,12 +71,50 @@ const ToolbarPopups = () => {
     }
   };
 
-  // Hjelpemetode for å arkivere features. Denne lager ikke historikk, så det må gjøres separat.
-  const archiveFeatures = (features: Feature<LineString>[]) => {
-    const featuresId = removeNil(features.map((feature) => feature.getId()?.toString()));
+  const archiveFeatures = (features: Feature<LineString>[], shouldAddHistoryEntry?: boolean) => {
+    const oldPropertiesMap = features.reduce(
+      (acc, feature) => {
+        const id = feature.getId()?.toString();
+        if (id != null) {
+          acc[id] = feature.getProperties() as FeatureProperties;
+        }
+        return acc;
+      },
+      {} as Record<string, FeatureProperties>,
+    );
+    const featuresId = Object.keys(oldPropertiesMap);
+    // Setter shouldArchive på alle features som arkiveres
+    for (const feature of features) {
+      const featureId = feature.getId()?.toString();
+      if (featureId != null) {
+        const newProperties: FeatureProperties = {
+          ...oldPropertiesMap[featureId],
+          shouldArchive: true,
+        };
+        feature.setProperties(newProperties);
+      }
+    }
     addArchivedStyles(featuresId);
     removeFeaturesFromSourceByIds("edit", featuresId);
     addFeaturesToSource("archived", features);
+    if (shouldAddHistoryEntry ?? false) {
+      const changeEntries: HistoryChange<FeatureProperties>[] = removeNil(
+        features.map((feature) => {
+          const id = feature.getId()?.toString();
+          if (id != null) {
+            return {
+              id: id,
+              from: oldPropertiesMap[id],
+              to: feature.getProperties() as FeatureProperties,
+            };
+          }
+        }),
+      );
+      addHistoryEntry({
+        type: "grensearkivering",
+        changes: changeEntries,
+      });
+    }
   };
 
   const mergeSelectedFeatures = () => {
