@@ -15,11 +15,19 @@ import { isGrenseType, isNotNil } from "./type-utils";
 const getPosisjonskvalitetForFeature = (feature: Feature<Geometry>): Posisjonskvalitet => {
   return ((feature.getProperties() as FeatureProperties).metadata as Metadata).commonGrense?.posisjonskvalitet;
 };
-export const validateEqualPosisjonskvaliteter = (features: Feature<Geometry>[]): boolean => {
+const validateEqualPosisjonskvaliteter = (features: Feature<Geometry>[]): boolean => {
   return (
     new Set(features.map((f) => getPosisjonskvalitetForFeature(f)?.maalemetode.id)).size === 1 &&
     new Set(features.map((f) => getPosisjonskvalitetForFeature(f)?.noeyaktighet)).size === 1
   );
+};
+
+const validateEqualGrensetyper = (features: Feature<Geometry>[]): boolean => {
+  return new Set(features.map((f) => (f.getProperties() as FeatureProperties).type)).size === 1;
+};
+
+const validateCanMergeFeatures = (features: Feature<Geometry>[]): boolean => {
+  return validateEqualPosisjonskvaliteter(features) && validateEqualGrensetyper(features);
 };
 
 const coordsEqual = (a: Coordinate, b: Coordinate) => a[0] === b[0] && a[1] === b[1];
@@ -87,7 +95,7 @@ export const mergeFeaturesToNewFeature = (
   features: Feature<LineString>[],
   asGrenseType: GrenseType,
 ): Feature<LineString> | null => {
-  if (validateEqualPosisjonskvaliteter(features) === false) {
+  if (validateCanMergeFeatures(features) === false) {
     return null;
   }
   const newLineString = mergeUnorderedConnectedLineStrings(features);
