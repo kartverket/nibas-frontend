@@ -112,6 +112,15 @@ const ToolbarMenus = () => {
       onClick: () => toggleTool("historiskeGrenser"),
       "aria-label": "Vis historiske grenser",
     },
+    {
+      label: "Slå sammen grenser",
+      icon: <Icon icon="merge" />,
+      command: KeyboardShortcuts["merge_grenser"].displayString,
+      $isActive: activeTool === "merge_grenser",
+      isDisabled: !validInndelingstype,
+      onClick: () => toggleTool("merge_grenser"),
+      "aria-label": "Slå sammen grenser",
+    },
   ];
   const punktMenuItems: MenuItems = [
     {
