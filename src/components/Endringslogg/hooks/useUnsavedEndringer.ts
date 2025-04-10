@@ -128,7 +128,7 @@ const getArkiverteGrenser = (entries: HistoryEntry[]): string[] => {
     .flatMap((entry) => entry.changes)
     .map((change) => change.id);
 
-  const arikiverteGrenserFraGrensedelinger = removeNil(
+  const arkiverteGrenserFraGrensedelinger = removeNil(
     getGrenseDelingEntries(entries)
       .flatMap((entry) => entry.changes)
       .flatMap((change) => change.from)
@@ -142,7 +142,7 @@ const getArkiverteGrenser = (entries: HistoryEntry[]): string[] => {
   );
 
   return getUniqueItems(
-    arkiverteGrenser.concat(arikiverteGrenserFraGrensedelinger).concat(arkiverteGrenserFraGrenseMerge),
+    arkiverteGrenser.concat(arkiverteGrenserFraGrensedelinger).concat(arkiverteGrenserFraGrenseMerge),
   );
 };
 
