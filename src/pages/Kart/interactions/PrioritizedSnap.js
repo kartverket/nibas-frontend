@@ -27,19 +27,32 @@ export class PrioritizedSnap extends Snap {
 
     let closestVertex;
     let minSquaredDistance = Infinity;
+    let closestEndpointVertex;
+    let minSquaredEndpointDistance = Infinity;
+
     let closestFeature;
+    let closestEndpointFeature;
     let closestSegment = null;
 
     const squaredPixelTolerance = this.pixelTolerance_ * this.pixelTolerance_;
     const getResult = () => {
-      if (closestVertex != null) {
-        const vertexPixel = map.getPixelFromCoordinate(closestVertex);
-        const squaredPixelDistance = squaredDistance(pixel, vertexPixel);
-        if (squaredPixelDistance <= squaredPixelTolerance) {
+      if (closestVertex != null || closestEndpointVertex != null) {
+        const vertexPixel = closestVertex != null ? map.getPixelFromCoordinate(closestVertex) : null;
+        const squaredPixelDistance = vertexPixel != null ? squaredDistance(pixel, vertexPixel) : Infinity;
+
+        const endpointVertexPixel =
+          closestEndpointVertex != null ? map.getPixelFromCoordinate(closestEndpointVertex) : null;
+        const endpointSquaredPixelDistance =
+          endpointVertexPixel != null ? squaredDistance(pixel, endpointVertexPixel) : Infinity;
+        if (squaredPixelDistance <= squaredPixelTolerance || endpointSquaredPixelDistance <= squaredPixelTolerance) {
           return {
-            vertex: closestVertex,
-            vertexPixel: [Math.round(vertexPixel[0]), Math.round(vertexPixel[1])],
-            feature: closestFeature,
+            // Vi prioriterer det nærmeste endepunktet hvis det eksisterer
+            vertex: closestEndpointVertex ?? closestVertex,
+            vertexPixel:
+              closestEndpointVertex != null
+                ? [Math.round(endpointVertexPixel[0]), Math.round(endpointVertexPixel[1])]
+                : [Math.round(vertexPixel[0]), Math.round(vertexPixel[1])],
+            feature: closestEndpointFeature ?? closestFeature,
             segment: closestSegment,
           };
         }
@@ -51,13 +64,23 @@ export class PrioritizedSnap extends Snap {
       for (let i = 0; i < segmentsLength; ++i) {
         const segmentData = segments[i];
         if (segmentData.feature.getGeometry().getType() !== "Circle") {
+          const coords = segmentData.feature.getGeometry().getCoordinates();
+
           segmentData.segment.forEach((vertex) => {
+            const isEndpoint =
+              (coords.length >= 2 && vertex[0] === coords[0][0] && vertex[1] === coords[0][1]) ||
+              (vertex[0] === coords[coords.length - 1][0] && vertex[1] === coords[coords.length - 1][1]);
+
             const tempVertexCoord = fromUserCoordinate(vertex, projection);
             const delta = squaredDistance(projectedCoordinate, tempVertexCoord);
-            if (delta < minSquaredDistance) {
+            if (delta < minSquaredDistance && !isEndpoint) {
               closestVertex = vertex;
               minSquaredDistance = delta;
               closestFeature = segmentData.feature;
+            } else if (delta < minSquaredEndpointDistance && isEndpoint) {
+              closestEndpointVertex = vertex;
+              minSquaredEndpointDistance = delta;
+              closestEndpointFeature = segmentData.feature;
             }
           });
         }
