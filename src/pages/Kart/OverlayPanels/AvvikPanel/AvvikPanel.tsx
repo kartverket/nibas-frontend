@@ -5,7 +5,7 @@ import { Divider, IconButton, Spinner, Tab, TabList, TabPanels, Tabs, Text } fro
 import AvvikRow from "./AvvikRow";
 import AvvikRowKommuner from "./AvvikRowKommuner";
 import { AvvikForKommuneResponse, KommunerMedAvvik, PaginationInfo, AvvikStatus } from "./avvik-utils";
-import { useAvvik } from "./useAvvik";
+import { useAvvik } from "./useAvvikPanel";
 import { styled } from "styled-components";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
