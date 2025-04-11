@@ -12,6 +12,7 @@ import useMeasure from "./useMeasure";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useSelectPoint from "./useSelectPoint";
+import { ListenerFunction } from "ol/events";
 const useInteractions = () => {
   const { modify } = useModify();
   const { dragPan, dragZoom } = useDragInteractions();
@@ -41,7 +42,7 @@ const useInteractions = () => {
     eventsAndCursor: [
       {
         name: "pointerdrag",
-        cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "crosshair"),
+        cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<PointerEvent>) ? "zoom-in" : "crosshair"),
       },
     ],
   });
@@ -56,7 +57,7 @@ const useInteractions = () => {
     eventsAndCursor: [
       {
         name: "pointerdrag",
-        cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<UIEvent>) ? "zoom-in" : "grabbing"),
+        cursor: (e) => (shiftKeyOnly(e as MapBrowserEvent<PointerEvent>) ? "zoom-in" : "grabbing"),
       },
       {
         name: "mouseup",
@@ -82,8 +83,8 @@ const useInteractions = () => {
   }, [activeTool, draw]);
   useEffect(() => {
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
-    map.on("click", select);
-    map.on("click", selectPoint);
+    map.on("click", select as ListenerFunction);
+    map.on("click", selectPoint as ListenerFunction);
     map.addInteraction(dragPan);
     map.addInteraction(modify);
     map.addInteraction(dragZoom);
@@ -100,8 +101,8 @@ const useInteractions = () => {
     });
 
     return () => {
-      map.un("click", select);
-      map.un("click", selectPoint);
+      map.un("click", select as ListenerFunction);
+      map.un("click", selectPoint as ListenerFunction);
       map.removeInteraction(dragPan);
       map.removeInteraction(modify);
       map.removeInteraction(dragZoom);

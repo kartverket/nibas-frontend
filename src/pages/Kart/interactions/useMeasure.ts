@@ -5,7 +5,7 @@ import { unByKey } from "ol/Observable";
 import { getLength } from "ol/sphere";
 import { LineString } from "ol/geom";
 import { map } from "../constants";
-import { EventsKey } from "ol/events";
+import { EventsKey, ListenerFunction } from "ol/events";
 import { noModifierKeys } from "ol/events/condition";
 import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
 import { pixelTolerance } from "./constants";
@@ -94,7 +94,7 @@ const useMeasure = () => {
       snapTolerance: pixelTolerance,
       style: grenseStyles.measure,
       stopClick: true,
-      condition: (event: MapBrowserEvent<MouseEvent>) => {
+      condition: (event) => {
         const currentTool = activeToolRef.current;
         const currentModeTools = activeModeToolsRef.current;
         if (!noModifierKeys(event) || currentTool !== "measure" || currentModeTools.includes("move")) {
@@ -130,7 +130,7 @@ const useMeasure = () => {
         map.addOverlay(measureTooltipRef.current);
       }
 
-      const pointerMoveHandler = (evt: MapBrowserEvent<UIEvent>) => {
+      const pointerMoveHandler = (evt: MapBrowserEvent<PointerEvent>) => {
         if (evt.dragging) {
           return;
         }
@@ -147,7 +147,7 @@ const useMeasure = () => {
       };
 
       if (!pointerMoveListenerRef.current) {
-        pointerMoveListenerRef.current = map.on("pointermove", pointerMoveHandler);
+        pointerMoveListenerRef.current = map.on("pointermove", pointerMoveHandler as ListenerFunction);
       }
 
       // 4) drawstart
