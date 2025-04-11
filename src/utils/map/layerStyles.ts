@@ -15,6 +15,8 @@ import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
 import { getRepresentasjonspunktId } from "./source";
 
+export const endpointStyleZIndex = 9999;
+
 const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
   if (geometry instanceof LineString) {
@@ -65,6 +67,7 @@ const lineAndPointStyles = ({
     geometry: getNonEndpointsOnFeature,
   }),
   new Style({
+    zIndex: endpointStyleZIndex,
     image: new Circle({
       radius: points ? endpointRadius : 0,
       fill: new Fill({
