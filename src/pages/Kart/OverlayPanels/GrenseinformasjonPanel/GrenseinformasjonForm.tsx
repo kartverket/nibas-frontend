@@ -33,7 +33,7 @@ import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
 import { styled } from "styled-components";
-import { FeatureProperties, KodelisteRespons, MatrikkelKodelisterRespons, Metadata } from "types/api";
+import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isLineStringFeature } from "utils/type-utils";
 import { getKretsIdFromKontekstegenskaper } from "../hooks/tilhorighet-utils";
@@ -123,7 +123,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     if (maalemetode) {
       return maalemetode?.kode + " " + maalemetode?.label;
     } else if (matrikkelkodeliste) {
-      // Hvis vi ikke finner målemetoden i kodelisten, sjekk matrikkelkodelisten (de har helt forskjellig type id'er)
+      // Hvis vi ikke finner målemetoden i kodelisten, sjekk matrikkelkodelisten (de har helt forskjellig type id'er: uuid vs to siffer)
       const matrikkelKodelisteMapped = mapMatrikkelkodelisteToKodelisteType(matrikkelkodeliste);
       const matrikkelMaalemetode = matrikkelKodelisteMapped?.items.find((item) => item.id === id);
       if (matrikkelMaalemetode) {
@@ -160,8 +160,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             posisjonskvalitet.noeyaktighet !== eksisterendePosisjonskvalitet?.noeyaktighet ||
             posisjonskvalitet.maalemetode !== eksisterendePosisjonskvalitet?.maalemetode.id,
         )
-        // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
-        // .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
         .filter((posisjonskvalitet) => allowedGrensetyper.includes(posisjonskvalitet.grensetype));
       return relevant;
     }
@@ -178,7 +176,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 
   const autoFillFormValues = () => {
     if (relevantPosisjonskvaliteter != null) {
-      // Usikker på denne prioriteringen, om det er riktig å prioritere teig over nibas selv om den har dårligere kvaliteter?
       // Separerer "teig" og "nibas"
       const teigPosisjonskvaliteter = relevantPosisjonskvaliteter.filter(
         (posisjonskvalitet) => posisjonskvalitet.grensetype === "teig",

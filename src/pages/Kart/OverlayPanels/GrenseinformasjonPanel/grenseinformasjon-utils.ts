@@ -180,7 +180,7 @@ export const mapMatrikkelkodelisteToKodelisteType = (
     items: matrikkelkodeliste.maalemetodeKodeliste.map((item: { id: number; kodeverdi: string; navn: string }) => ({
       id: item.id.toString(),
       kode: item.kodeverdi,
-      label: item.navn.trim().substring(2, item.navn.length), // Fjerner unødvendig gjentagende kodeverdi på starten
+      label: item.navn.trim().split(" ").slice(1).join(" "), // Fjerner unødvendig gjentagende kodeverdi på starten
     })),
   };
 };
