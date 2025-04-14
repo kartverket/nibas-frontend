@@ -10,7 +10,7 @@ import {
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
 import { Feature } from "ol";
-import { Geometry } from "ol/geom";
+import { Geometry, LineString } from "ol/geom";
 
 // Obs: navnsetting for å unngå overlapp med innebygd History type
 export type HistoryState = {
@@ -37,7 +37,8 @@ export type HistoryTypeValues =
   | "grensetilhorighetendring"
   | "nygrense"
   | "grensedeling"
-  | "grensedelete";
+  | "grensedelete"
+  | "merge_grenser";
 
 export type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
   type: HistoryType;
@@ -65,6 +66,8 @@ export type KommuneEntry = BaseHistoryEntry<"kommune", KommuneRequest> & {
   fylkeId: string;
 };
 
+export type MergeGrenseModel = Feature<LineString>[];
+
 export type MetadataEntry = KommuneEntry | StemmekretsEntry | GrunnkretsEntry;
 
 type UtkastEntry = BaseHistoryEntry<"utkast", UtkastRequestWithoutOperations>;
@@ -86,6 +89,8 @@ export type GrenseDelingEntry = BaseHistoryEntry<"grensedeling", Feature[]>;
 
 export type NyGrenseDeleteEntry = BaseHistoryEntry<"grensedelete", Feature<Geometry> | null>;
 
+export type MergeGrenseEntry = BaseHistoryEntry<"merge_grenser", MergeGrenseModel>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -98,7 +103,8 @@ export type HistoryEntry =
   | GrenseDelingEntry
   | NyGrenseEntry
   | PropertyEntry
-  | NyGrenseDeleteEntry;
+  | NyGrenseDeleteEntry
+  | MergeGrenseEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;

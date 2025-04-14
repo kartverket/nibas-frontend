@@ -6,22 +6,24 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useState } from "react";
-import { anyFeatureIsEditable, createDuplicateOfFeature } from "utils/features";
+import { anyFeatureIsEditable, createDuplicateOfFeature, mergeFeaturesToNewFeature } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { map } from "../constants";
 import { isTempFeatureId } from "../interactions/feature-id-utils";
-import { createNyGrenseHistoryChange } from "../interactions/grense-history-utils";
+import { createMergeGrenserHistoryChange, createNyGrenseHistoryChange } from "../interactions/grense-history-utils";
 import useSplit from "../interactions/useSplit";
-import {
-  addArchivingEntryFromFeatureList,
-  addGrenseDeleteEntryFromFeatureList,
-} from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { addGrenseDeleteEntryFromFeatureList } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import ToolbarPopup from "./ToolbarPopup";
 
-import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
+import { HistoryChange } from "contexts/HistoryContext/types";
+import { Feature } from "ol";
+import { LineString } from "ol/geom";
 import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
+import { FeatureProperties } from "types/api";
+import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
+
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
   const { setError } = useErrorHandling();
@@ -39,19 +41,12 @@ const ToolbarPopups = () => {
     resetHistoriskeGrenser,
   } = useHistoriskeGrenser();
 
-  const archiveFeatures = () => {
-    const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
-
-    addArchivingEntryFromFeatureList(selectedFeatures, addHistoryEntry);
-
-    addArchivedStyles(selectedFeatureIds);
+  const archiveSelectedFeatures = () => {
+    archiveFeatures(selectedFeatures, true);
     clearSelection();
-    removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
-    addFeaturesToSource("archived", selectedFeatures);
-
     toast({
       status: "success",
-      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble arkivert`,
+      title: `${selectedFeatures.length} grense${selectedFeatures.length > 1 ? "r" : ""} ble arkivert`,
       description: "Husk å eventuelt sette tilhørighet på berørte grenser",
     });
   };
@@ -74,6 +69,82 @@ const ToolbarPopups = () => {
         });
       }
     }
+  };
+
+  const archiveFeatures = (features: Feature<LineString>[], shouldAddHistoryEntry?: boolean) => {
+    const oldPropertiesMap = features.reduce(
+      (acc, feature) => {
+        const id = feature.getId()?.toString();
+        if (id != null) {
+          acc[id] = feature.getProperties() as FeatureProperties;
+        }
+        return acc;
+      },
+      {} as Record<string, FeatureProperties>,
+    );
+    const featuresId = Object.keys(oldPropertiesMap);
+    // Setter shouldArchive på alle features som arkiveres
+    for (const feature of features) {
+      const featureId = feature.getId()?.toString();
+      if (featureId != null) {
+        const newProperties: FeatureProperties = {
+          ...oldPropertiesMap[featureId],
+          shouldArchive: true,
+        };
+        feature.setProperties(newProperties);
+      }
+    }
+    addArchivedStyles(featuresId);
+    removeFeaturesFromSourceByIds("edit", featuresId);
+    addFeaturesToSource("archived", features);
+    if (shouldAddHistoryEntry ?? false) {
+      const changeEntries: HistoryChange<FeatureProperties>[] = removeNil(
+        features.map((feature) => {
+          const id = feature.getId()?.toString();
+          if (id != null) {
+            return {
+              id: id,
+              from: oldPropertiesMap[id],
+              to: feature.getProperties() as FeatureProperties,
+            };
+          }
+        }),
+      );
+      addHistoryEntry({
+        type: "grensearkivering",
+        changes: changeEntries,
+      });
+    }
+  };
+
+  const mergeSelectedFeatures = () => {
+    const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
+    if (grenseType == null) {
+      return;
+    }
+    const mergeFeature = mergeFeaturesToNewFeature(selectedFeatures, grenseType);
+    if (mergeFeature == null) {
+      toast({
+        status: "error",
+        title: "Du kan ikke slå sammen disse grensene",
+        description:
+          "Husk at grensene må være sammenkoblet, være samme grensetype, og at de må ha samme nøyaktighet og målemetode",
+      });
+      return;
+    }
+    archiveFeatures(selectedFeatures);
+    addFeaturesToSource("edit", [mergeFeature]);
+    addHistoryEntry({
+      type: "merge_grenser",
+      changes: removeNil([createMergeGrenserHistoryChange(selectedFeatures, mergeFeature)]),
+    });
+
+    clearSelection();
+    toast({
+      status: "success",
+      title: `${selectedFeatures.length} grense${selectedFeatures.length > 1 ? "r" : ""} ble slått sammen til en ny grense`,
+      description: "Husk å oppdatere relevante egenskaper for den nye grensen",
+    });
   };
 
   const deleteFeatures = () => {
@@ -253,7 +324,7 @@ const ToolbarPopups = () => {
             icon="archive"
             text="Velg en eller flere grenser du ønsker å arkivere"
             buttonText="Arkiver"
-            onClick={archiveFeatures}
+            onClick={archiveSelectedFeatures}
             isDisabled={selectedFeatures.length === 0}
             onClose={resetTool}
           />
@@ -278,6 +349,17 @@ const ToolbarPopups = () => {
             buttonText="Dupliser"
             onClick={duplicateFeaturesToEditLayer}
             isDisabled={selectedFeatures.length === 0}
+            onClose={resetTool}
+          />
+        );
+      case "merge_grenser":
+        return (
+          <ToolbarPopup
+            icon="merge"
+            text="Velg en eller flere grenser du ønsker å slå sammen"
+            buttonText="Slå sammen"
+            onClick={mergeSelectedFeatures}
+            isDisabled={selectedFeatures.length < 2}
             onClose={resetTool}
           />
         );

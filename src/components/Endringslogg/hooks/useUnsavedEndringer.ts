@@ -19,6 +19,7 @@ import {
 import {
   getGrenseArkiveringEntries,
   getGrenseDelingEntries,
+  getGrenseMergeEntries,
   getGrunnkretsMetadataEntries,
   getKommuneMetadataEntries,
   getKretsDelingEntries,
@@ -127,14 +128,22 @@ const getArkiverteGrenser = (entries: HistoryEntry[]): string[] => {
     .flatMap((entry) => entry.changes)
     .map((change) => change.id);
 
-  const arikiverteGrenserFraGrensedelinger = removeNil(
+  const arkiverteGrenserFraGrensedelinger = removeNil(
     getGrenseDelingEntries(entries)
       .flatMap((entry) => entry.changes)
       .flatMap((change) => change.from)
       .map((feature) => feature.getId()?.toString()),
   );
 
-  return getUniqueItems(arkiverteGrenser.concat(arikiverteGrenserFraGrensedelinger));
+  const arkiverteGrenserFraGrenseMerge = removeNil(
+    getGrenseMergeEntries(entries)
+      .flatMap((entry) => entry.changes[0].from)
+      .map((f) => f.getId()?.toString()),
+  );
+
+  return getUniqueItems(
+    arkiverteGrenser.concat(arkiverteGrenserFraGrensedelinger).concat(arkiverteGrenserFraGrenseMerge),
+  );
 };
 
 const getNyeGrenser = (entries: HistoryEntry[]): string[] => {
@@ -151,7 +160,13 @@ const getNyeGrenser = (entries: HistoryEntry[]): string[] => {
       .map((feature) => feature.getId()?.toString()),
   );
 
-  return getUniqueItems(nyeGrenser.concat(nyeGrenserFraGrensedelinger));
+  const nyeGrenserFraGrenseMerge = removeNil(
+    getGrenseMergeEntries(entries)
+      .flatMap((entry) => entry.changes[0].to)
+      .map((f) => f.getId()?.toString()),
+  );
+
+  return getUniqueItems(nyeGrenser.concat(nyeGrenserFraGrensedelinger).concat(nyeGrenserFraGrenseMerge));
 };
 
 const getEndredeGrenser = (entries: HistoryEntry[]): string[] => {

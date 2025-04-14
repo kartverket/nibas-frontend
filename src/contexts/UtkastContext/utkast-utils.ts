@@ -10,6 +10,7 @@ import {
   StemmekretsSammenslaaingsendringEntry,
   NyGrense,
   NyGrenseDeleteEntry,
+  MergeGrenseModel,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
@@ -161,6 +162,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     "grensetilhorighetendring",
     "nygrense",
     "grensedeling",
+    "merge_grenser",
   ];
 
   const relevantHistoryEntries = historyToCurrentIndex.filter((entry) =>
@@ -228,6 +230,12 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
           newFeatures.forEach((id) => {
             addFeatureToEditedFeaturesIfNotAlreadyAdded(id);
           });
+        }
+      } else if (entry.type === "merge_grenser") {
+        // I merge grenser er change.id lik tempID til den nye grensen, men vi må også legge til de arkiverte.
+        const archivedFeaturesId = removeNil((change.from as MergeGrenseModel).map((f) => f.getId()?.toString()));
+        for (const archivedFeatureId of archivedFeaturesId) {
+          addFeatureToEditedFeaturesIfNotAlreadyAdded(archivedFeatureId);
         }
       }
     });

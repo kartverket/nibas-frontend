@@ -1,18 +1,17 @@
-import { Feature } from "ol";
-import LineString from "ol/geom/LineString";
 import {
-  PropertyEntry,
-  GrenseArkiveringsEntry,
   GrenseTilhorighetEntry,
   HistoryChange,
   NyGrenseDeleteEntry,
+  PropertyEntry,
 } from "contexts/HistoryContext/types";
-import { FeatureProperties, KodelisteRespons, KontekstEgenskaper, MatrikkelKodelisterRespons } from "types/api";
-import { removeNil } from "utils/list-utils";
 import { isDate } from "date-fns";
-import { Geometry } from "ol/geom";
 import { editSource } from "hooks/layers/constants";
+import { Feature } from "ol";
+import { Geometry } from "ol/geom";
+import LineString from "ol/geom/LineString";
+import { FeatureProperties, KodelisteRespons, KontekstEgenskaper, MatrikkelKodelisterRespons } from "types/api";
 import { isFeatureMetadataEditable, isFeatureToBeArchived } from "utils/features";
+import { removeNil } from "utils/list-utils";
 
 export const isGrenseinformasjonPanelDisabled = (feature: Feature | undefined) => {
   if (feature) {
@@ -82,38 +81,6 @@ export const addFeaturePropertiesEntryFromFeature = (
         to: extractPropertiesFromOLProperties(updatedFeatureProperties),
       },
     ],
-  });
-};
-
-export const addArchivingEntryFromFeatureList = (
-  features: Feature<LineString>[],
-  addHistoryEntry: (entry: GrenseArkiveringsEntry) => void,
-) => {
-  const changeEntries: HistoryChange<FeatureProperties>[] = removeNil(
-    features.map((feature) => {
-      const id = feature.getId()?.toString();
-      if (id == null) {
-        return;
-      }
-
-      const oldProperties = feature.getProperties() as FeatureProperties;
-      const newProperties: FeatureProperties = {
-        ...oldProperties,
-        shouldArchive: true,
-      };
-      feature.setProperties(newProperties);
-
-      return {
-        id: id,
-        from: oldProperties,
-        to: newProperties,
-      };
-    }),
-  );
-
-  addHistoryEntry({
-    type: "grensearkivering",
-    changes: changeEntries,
   });
 };
 

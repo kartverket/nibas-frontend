@@ -11,6 +11,7 @@ import {
   setRepresentasjonspunktForEntry,
   undoDelete,
   redoDelete,
+  handleGrenseMerge,
 } from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
 
@@ -83,6 +84,9 @@ const onUndo = (entry: HistoryEntry) => {
     case "grensedeling": {
       return handleGrensedeling(entry, "from");
     }
+    case "merge_grenser": {
+      return handleGrenseMerge(entry, "from");
+    }
   }
 };
 
@@ -154,6 +158,9 @@ const onRedo = (entry: HistoryEntry) => {
     }
     case "grensedeling": {
       return handleGrensedeling(entry, "to");
+    }
+    case "merge_grenser": {
+      return handleGrenseMerge(entry, "to");
     }
   }
 };
