@@ -2,14 +2,14 @@ import { Box, Text } from "@kvib/react";
 import { styled } from "styled-components";
 
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
-import { KommunerMedAvvik } from "./avvik-utils";
+import { KommuneMedAvvik } from "./avvik-utils";
 interface Props {
-  kommuneMedAvvikItem: KommunerMedAvvik;
-  handleGoToKommuneClick: (fylkeId: string, kommuneId: string, kommuneNavn: string, kommuneNummer: string) => void;
+  kommuneMedAvvikItem: KommuneMedAvvik;
+  handleGoToKommuneClick: (kommuneLokalID: string) => void;
 }
 
 const AvvikRowKommuner = ({
-  kommuneMedAvvikItem: { kommuneNavn, kommuneNummer, kommuneLokalID, fylkesLokalID, antallAvvik },
+  kommuneMedAvvikItem: { kommuneNavn, kommuneNummer, kommuneLokalID, antallAvvik },
   handleGoToKommuneClick,
 }: Props) => {
   return (
@@ -26,7 +26,7 @@ const AvvikRowKommuner = ({
           </Box>
           <ToolbarButton
             icon={"arrow_forward"}
-            onClick={() => handleGoToKommuneClick(fylkesLokalID, kommuneLokalID, kommuneNavn, kommuneNummer)}
+            onClick={() => handleGoToKommuneClick(kommuneLokalID ?? "")}
             aria-label={"Åpne inndeling med avvik"}
             tooltip={{
               text: "Åpne inndeling med avvik",

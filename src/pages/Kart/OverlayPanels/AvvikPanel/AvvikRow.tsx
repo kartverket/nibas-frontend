@@ -1,18 +1,17 @@
 import { Box, Button, Stack, Text, useToast } from "@kvib/react";
 import { styled } from "styled-components";
-import { AvvikForKommune, AvvikStatus, KommunerIAvvik } from "./avvik-utils";
+import { AvvikForKommune, AvvikStatus, KommuneIAvvik } from "./avvik-utils";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
 
 interface Props {
   avvikItem: AvvikForKommune;
-  addInndelingForAvvik: (kommuner: KommunerIAvvik[]) => Promise<void>;
+  findSecondKommune: (kommuner: KommuneIAvvik[]) => void;
   goToCoordinatesAndFetchMatrikkel: (coordinates: number[]) => Promise<boolean>;
-  selectedAvvikId: number | null; // ==> AvvikId fra parent
-  setSelectedAvvikId: (avvikId: number | null) => void; // <== Setter avvikId i parent
-  updateStatusForAvvik: (avvikId: number, status: string) => Promise<boolean>;
-  onStatusUpdated: (id: number, nyStatus: AvvikStatus) => void;
+  selectedAvvikId: number | null;
+  setSelectedAvvikId: (avvikId: number | null) => void;
+  updateStatus: (avvikId: number, status: AvvikStatus) => Promise<boolean>;
 }
 
 interface RowProps {
@@ -23,11 +22,11 @@ interface RowProps {
 
 const AvvikRow = ({
   avvikItem,
-  addInndelingForAvvik,
   goToCoordinatesAndFetchMatrikkel,
   selectedAvvikId,
   setSelectedAvvikId,
-  updateStatusForAvvik,
+  updateStatus,
+  findSecondKommune,
 }: Props) => {
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
@@ -35,9 +34,8 @@ const AvvikRow = ({
   const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
 
   const handlePanorerBtn = async (coordinates: number[]) => {
-    addInndelingForAvvik(avvikItem.kommuner);
+    findSecondKommune(avvikItem.kommuner);
     const success = await goToCoordinatesAndFetchMatrikkel(coordinates);
-
     if (!success) {
       toast({
         status: "error",
@@ -49,17 +47,16 @@ const AvvikRow = ({
     setIsRemoving(true);
     setRowStatus(status);
     setTimeout(async () => {
-      const success = await updateStatusForAvvik(avvikItem.id, status);
-      if (success) {
-        setIsRemoving(false);
-      } else {
+      const success = await updateStatus(avvikItem.id, status);
+      if (!success) {
         toast({
           status: "error",
           title: "Fikk ikke oppdatert status på avviket",
         });
-        setIsRemoving(false);
+        setRowStatus(avvikItem.status);
       }
-    }, 500); // samsvar med CSS-animasjonen
+      setIsRemoving(false);
+    }, 500);
   };
   const isActive = selectedAvvikId === avvikItem?.id;
   const status = avvikItem.status;
@@ -70,7 +67,7 @@ const AvvikRow = ({
         <Stack spacing="1">
           {avvikItem.kommuner.map((kommune, index) => (
             <Text key={index} fontSize={"sm"}>
-              {kommune.kommunenummer} - {kommune.kommunenavn ?? "-"}
+              {kommune.kommunenummer} - {kommune.kommunenavn}
             </Text>
           ))}
         </Stack>
@@ -88,7 +85,7 @@ const AvvikRow = ({
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  handlePanorerBtn(koordinaterAvvikNibas[0]);
+                  handlePanorerBtn(koordinaterAvvikNibas[0]); // Per nå går vi kun til det første punktet i avviket, selv om det kan være flere
                   setSelectedAvvikId(avvikItem.id);
                 }}
                 aria-label={"Panorer til avvik"}

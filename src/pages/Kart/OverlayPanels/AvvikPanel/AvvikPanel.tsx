@@ -1,130 +1,31 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { PanelHeader, SidePanel } from "../Panel";
 import { useOverlayPanel } from "../../../../contexts/OverlayPanelContext";
 import { Divider, IconButton, Spinner, Tab, TabList, TabPanels, Tabs, Text } from "@kvib/react";
 import AvvikRow from "./AvvikRow";
 import AvvikRowKommuner from "./AvvikRowKommuner";
-import { AvvikForKommuneResponse, KommunerMedAvvik, PaginationInfo, AvvikStatus } from "./avvik-utils";
-import { useAvvik } from "./useAvvikPanel";
+import { AvvikStatus } from "./avvik-utils";
+import { useAvvikPanel } from "./useAvvikPanel";
 import { styled } from "styled-components";
-import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 
 export const AvvikPanel = () => {
   const {
-    getKommunerMedAvvik,
-    getAvvik,
-    addInndelingForAvvik,
     goToCoordinatesAndFetchMatrikkel,
-    updateFylkeIdAndKommuneId,
-    resetInndeling,
-    updateStatusForAvvik,
-  } = useAvvik();
+    resetAvvikPanel,
+    selectedKommune,
+    isLoadingAvvik,
+    selectedAvvikId,
+    setSelectedAvvikId,
+    setCurrentPage,
+    avvikData,
+    kommunerMedAvvikData,
+    pagination,
+    currentPage,
+    updateStatus,
+    findSecondKommune,
+    handleGoToKommuneClick,
+  } = useAvvikPanel();
   const { closeOverlayPanel } = useOverlayPanel();
-  const { getAllInndelinger, setSelectedFylkeId, currentlyEditingInndelinger, selectedFylkeId } = useInndelinger();
-  const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>(getAllInndelinger());
-
-  // State for liste over alle kommuner med avvik:
-  const [kommunerMedAvvikData, setKommunerMedAvvik] = useState<KommunerMedAvvik[]>([]);
-
-  // State for avvik i én valgt kommune:
-  const [avvikData, setAvvikData] = useState<AvvikForKommuneResponse>([]);
-
-  // State for hvilken kommune som er valgt:
-  const [selectedKommuneId, setSelectedKommuneId] = useState<string | null>(null);
-  const [selectedKommuneNavn, setSelectedKommuneNavn] = useState<string>("");
-  const [selectedKommuneNummer, setSelectedKommuneNummer] = useState<string>("");
-
-  // Pagination
-  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
-  const [currentPage, setCurrentPage] = useState<number>(0);
-  const size = 15;
-
-  // Loading
-  const [isLoadingAvvik, setIsLoadingAvvik] = useState<boolean>(false);
-
-  // Viser hvilken rad som er valgt (avvik)
-  const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
-
-  // Gjør kall til API for å oppdatere status på avviket, men oppdaterer bare lokalt i state for å slippe fetching hver gang
-  const updateStatusForAvvikLokalt = async (avvikId: number, status: string): Promise<boolean> => {
-    const res = await updateStatusForAvvik(avvikId, status);
-    if (res === true) {
-      setAvvikData((prev) => prev.map((item) => (item.id === avvikId ? { ...item, status: status } : item)));
-      return true;
-    }
-    return false;
-  };
-
-  // ==========  Hent kommuner med avvik én gang ==========
-  useEffect(() => {
-    const fetchKommunerMedAvvik = async () => {
-      const kommuner = await getKommunerMedAvvik(currentPage, size);
-      setKommunerMedAvvik(kommuner.content);
-      setPagination({
-        totalPages: kommuner.totalPages,
-        totalElements: kommuner.totalElements,
-        size: kommuner.size,
-        number: kommuner.number,
-        first: kommuner.first,
-        last: kommuner.last,
-      });
-    };
-    fetchKommunerMedAvvik();
-  }, [getKommunerMedAvvik, currentPage, selectedKommuneId]);
-
-  // ========== Hvis inndeling allerede valgt henter vi automatisk avvik for den kommunen ==========
-  useEffect(() => {
-    if (currentlyEditingInndelinger.length > 0 && selectedInndelinger[0] !== undefined && selectedFylkeId !== "") {
-      const inndeling = selectedInndelinger[0];
-      setSelectedKommuneId(inndeling.id);
-      setSelectedKommuneNavn(inndeling.navn[0].navn);
-      setSelectedKommuneNummer(inndeling.nummer);
-    }
-  }, [currentlyEditingInndelinger, selectedInndelinger, selectedFylkeId]);
-
-  // ========== Klikk på en kommune i lista =============
-  const handleRowClickForKommune = (fylkeId: string, kommuneId: string, kommuneNavn: string, kommuneNummer: string) => {
-    setSelectedKommuneId(kommuneId);
-    setSelectedKommuneNavn(kommuneNavn);
-    setSelectedKommuneNummer(kommuneNummer);
-
-    updateFylkeIdAndKommuneId(fylkeId, kommuneId);
-  };
-
-  // ==========  Pagination-handling =====================
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  // ========== Hent avvik for valgt kommune ==========
-  useEffect(() => {
-    if (selectedKommuneId == null) {
-      return;
-    }
-    const fetchAvvik = async () => {
-      setIsLoadingAvvik(true);
-      try {
-        const avvik = await getAvvik(selectedKommuneId);
-        setAvvikData([...avvik]);
-      } finally {
-        setIsLoadingAvvik(false);
-      }
-    };
-
-    fetchAvvik();
-  }, [selectedKommuneId, getAvvik]);
-
-  const handleBackButton = () => {
-    setSelectedKommuneId(null);
-    setAvvikData([]);
-    setSelectedInndelinger([]);
-    setSelectedKommuneNavn("");
-    setSelectedKommuneNummer("");
-    setSelectedAvvikId(null);
-    setSelectedFylkeId(null);
-    setTabIndex(0);
-    resetInndeling();
-  };
   const [tabIndex, setTabIndex] = useState(0);
   const tabList = [
     { label: "Uløst", value: AvvikStatus.NY },
@@ -135,19 +36,23 @@ export const AvvikPanel = () => {
   const handleTabsChange = (index: number) => {
     setTabIndex(index);
   };
-  const getAvvikCountByStatus = (status: string): number => {
+  const getAvvikCountByStatus = (status: AvvikStatus): number => {
     return avvikData.filter((row) => row.status === status).length;
+  };
+  const handleBackButton = () => {
+    setTabIndex(0);
+    resetAvvikPanel();
   };
   return (
     <SidePanel>
       {/* ========== VISER ENTEN Avvik-liste for valgt kommune ELLER Kommuneliste ========== */}
-      {selectedKommuneId != null ? (
+      {selectedKommune ? (
         // ========== VIS AVVIK for den valgte kommunen ==========
         <>
           <AvvikPanelHeader onClose={closeOverlayPanel}>
             <IconButton aria-label="Tilbake" icon="arrow_back" onClick={() => handleBackButton()}></IconButton>
             <Text width={"100%"} fontSize={"lg"} padding={"12px"} gap={"var(--kvib-spacing-12)"}>
-              Avvik for {selectedKommuneNummer + " " + selectedKommuneNavn}
+              Avvik for {selectedKommune?.nummer + " " + selectedKommune?.navn[0].navn}
             </Text>
           </AvvikPanelHeader>
           <AvvikTabs size="md" index={tabIndex} onChange={handleTabsChange}>
@@ -159,11 +64,6 @@ export const AvvikPanel = () => {
               ))}
             </AvvikTabList>
             <AvvikTabPanels>
-              {isLoadingAvvik && (
-                <AvvikSpinnerContainer>
-                  <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
-                </AvvikSpinnerContainer>
-              )}
               {isLoadingAvvik ? (
                 <AvvikSpinnerContainer>
                   <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
@@ -175,16 +75,11 @@ export const AvvikPanel = () => {
                     <Fragment key={row.id}>
                       <AvvikRow
                         avvikItem={row}
-                        addInndelingForAvvik={addInndelingForAvvik}
+                        findSecondKommune={findSecondKommune}
                         goToCoordinatesAndFetchMatrikkel={goToCoordinatesAndFetchMatrikkel}
                         selectedAvvikId={selectedAvvikId}
                         setSelectedAvvikId={setSelectedAvvikId}
-                        updateStatusForAvvik={updateStatusForAvvikLokalt}
-                        onStatusUpdated={(id: number, nyStatus: AvvikStatus) => {
-                          setAvvikData((prev) =>
-                            prev.map((item) => (item.id === id ? { ...item, status: nyStatus } : item)),
-                          );
-                        }}
+                        updateStatus={updateStatus}
                       />
                       <Divider />
                     </Fragment>
@@ -199,19 +94,19 @@ export const AvvikPanel = () => {
           <AvvikPanelHeader onClose={closeOverlayPanel}>Avvik fra matrikkelen {}</AvvikPanelHeader>
           {kommunerMedAvvikData.map((row) => (
             <Fragment key={row.kommuneLokalID}>
-              <AvvikRowKommuner kommuneMedAvvikItem={row} handleGoToKommuneClick={handleRowClickForKommune} />
+              <AvvikRowKommuner kommuneMedAvvikItem={row} handleGoToKommuneClick={handleGoToKommuneClick} />
               <Divider />
             </Fragment>
           ))}
-          {pagination && (
+          {pagination !== undefined && pagination !== null && (
             <PaginationContainer>
-              <PaginationButton disabled={pagination.first} onClick={() => handlePageChange(currentPage - 1)}>
+              <PaginationButton disabled={pagination.first} onClick={() => setCurrentPage(currentPage - 1)}>
                 Forrige
               </PaginationButton>
               <PaginationSpan>
-                Side {pagination.number + 1} av {pagination.totalPages}
+                Side {(pagination.number ?? 0) + 1} av {pagination.totalPages}
               </PaginationSpan>
-              <PaginationButton disabled={pagination.last} onClick={() => handlePageChange(currentPage + 1)}>
+              <PaginationButton disabled={pagination.last} onClick={() => setCurrentPage(currentPage + 1)}>
                 Neste
               </PaginationButton>
             </PaginationContainer>

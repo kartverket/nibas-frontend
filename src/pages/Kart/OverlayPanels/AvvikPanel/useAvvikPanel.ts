@@ -1,103 +1,147 @@
-import { useCallback, useState } from "react";
-import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus } from "pages/Kart/OverlayPanels/AvvikPanel/useAvvik";
+import { useCallback, useEffect, useState } from "react";
 import { useAuthentication } from "../../../../components/Authentication/AuthenticationHook";
-import { kommunerFetcher } from "hooks/inndelinger/useKommuner";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { KommuneResponse } from "types/api";
-
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
-import { AvvikForKommuneResponse, AvvikKommunerResponse, KommunerIAvvik } from "./avvik-utils";
+import {
+  AvvikForKommuneResponse,
+  AvvikKommunerResponse,
+  AvvikStatus,
+  KommuneIAvvik,
+  KommuneMedAvvik,
+  PaginationInfo,
+} from "./avvik-utils";
 import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
-
-export const useAvvik = () => {
+import { useKommune } from "hooks/inndelinger/useKommuner";
+import { resetMapView } from "utils/map/map-utils";
+import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus } from "./useAvvik";
+export const useAvvikPanel = () => {
   const { token } = useAuthentication();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const {
     selectInndelinger,
     setSelectedFylkeId,
+    selectedFylkeId,
     currentlyEditingInndelinger,
     setShouldZoom,
     clearEditLayerAndInndelinger,
+    getAllInndelinger,
   } = useInndelinger();
+  const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>(getAllInndelinger());
   const [selectedKommuneId, setSelectedKommuneId] = useState<string>("");
+  const { kommune: selectedKommune, isLoading: isLoadingKommune } = useKommune(
+    selectedKommuneId ?? "",
+    gyldighetsdato,
+    !!selectedKommuneId,
+  );
+  const [secondKommuneId, setSecondKommuneId] = useState<string | null>(null);
+  const { kommune: secondKommune, isLoading: isLoadingSecondKommune } = useKommune(
+    secondKommuneId ?? "",
+    gyldighetsdato,
+    !(secondKommuneId == null),
+  );
 
-  const getKommuneFromId = async (kommuneId: string) => {
-    const kommuneArr = kommuneId.split(",");
-    const kommuneFetch = await kommunerFetcher([kommuneArr, gyldighetsdato, token]);
-    return (kommuneFetch as KommuneResponse[])[0];
-  };
+  const [kommunerMedAvvikData, setKommunerMedAvvik] = useState<KommuneMedAvvik[]>([]);
+  const [avvikData, setAvvikData] = useState<AvvikForKommuneResponse>([]);
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [isLoadingAvvik, setIsLoadingAvvik] = useState<boolean>(false);
+  const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
 
-  const updateFylkeIdAndKommuneId = async (fylkeIdFraRow: string, kommuneIdFraRow: string) => {
-    setSelectedFylkeId(fylkeIdFraRow);
-    setSelectedKommuneId(kommuneIdFraRow);
-    if (fylkeIdFraRow === "") {
-      clearMatrikkelLayer();
-      return;
-    }
-    const kommuneForAvvik = await getKommuneFromId(kommuneIdFraRow);
-    if (kommuneForAvvik !== null) {
-      openInndelingForAvvik(kommuneForAvvik);
-    }
-  };
-
-  const updateStatusForAvvik = async (id: number, status: string): Promise<boolean> => {
+  // Gjør kall til API for å oppdatere status på avviket, men oppdaterer bare lokalt i state for å slippe fetching hver gang
+  const updateStatus = async (avvikId: number, status: AvvikStatus): Promise<boolean> => {
+    const previousData = avvikData;
+    setAvvikData((prev) => prev.map((item) => (item.id === avvikId ? { ...item, status } : item)));
+    const id = avvikId;
     const updates = [{ id, status }];
     const success = await avvikUpdateStatus(updates, token);
     if (success?.ok) {
       return true;
     } else {
+      setAvvikData(previousData); // Setter tilbake igjen ved feil i kallet
       return false;
     }
   };
-  const openInndelingForAvvik = (kommuneForAvvik: KommuneResponse) => {
-    if (kommuneForAvvik !== null) {
-      setShouldZoom(true);
+
+  const findSecondKommune = (kommunerFromRow: KommuneIAvvik[]) => {
+    const secondKommuneFromRow = kommunerFromRow.find((k) => k.kommuneLokalID !== selectedKommuneId);
+    if (secondKommuneFromRow === undefined) {
+      return;
+    }
+    setSecondKommuneId(secondKommuneFromRow.kommuneLokalID);
+  };
+
+  const handleInndelingForAvvik = useCallback(() => {
+    if (selectedKommune && !isLoadingKommune) {
       const inndelingtype = "kommune";
       const newInndeling: Inndeling = {
-        navn: kommuneForAvvik.navn,
-        nummer: kommuneForAvvik.nummer,
-        id: kommuneForAvvik.id.lokalid.value,
+        navn: selectedKommune.navn,
+        nummer: selectedKommune.nummer,
+        id: selectedKommune.id.lokalid.value,
         inndelingtype: inndelingtype,
         isEditing: true,
         isViewing: false,
       };
-      selectInndelinger([newInndeling]);
-    }
-  };
 
-  const addInndelingForAvvik = async (kommunerFromRow: KommunerIAvvik[]) => {
+      const isAlreadySelected = currentlyEditingInndelinger.some(
+        (inndeling) => inndeling.id === selectedKommune.id.lokalid.value,
+      );
+
+      if (!isAlreadySelected) {
+        setShouldZoom(true);
+        selectInndelinger([newInndeling]);
+      }
+    }
+
     // Per nå 07.04.25 er det kun en fylkeid om gangen, brukeren ser derfor ikke at det  blir lagt til flere kommuner dersom de er i et annet fylke f.eks Oslo og legger så til Bærum.
     // Men man kan fortsatt redigere da grensa i mellom
+    if (secondKommune && !isLoadingSecondKommune) {
+      const currentMainInndeling = currentlyEditingInndelinger.find((inndeling) => inndeling.id === selectedKommuneId);
 
-    const currentMainInndeling = currentlyEditingInndelinger.find((inndeling) => inndeling.id === selectedKommuneId);
-    const secondKommune = kommunerFromRow.filter((kommune) => kommune.kommuneLokalID !== selectedKommuneId)[0];
-    const secondKommuneFetched = await getKommuneFromId(secondKommune?.kommuneLokalID);
-    if (currentMainInndeling && secondKommuneFetched !== null) {
-      // Ønsker ikke å zoome inn / resette zoomen når vi legger til inndelingen
-      setShouldZoom(false);
-      const inndelingtype = "kommune";
-      const newInndeling: Inndeling = {
-        navn: secondKommuneFetched.navn,
-        nummer: secondKommuneFetched.nummer,
-        id: secondKommuneFetched.id.lokalid.value,
-        inndelingtype: inndelingtype,
-        isEditing: true,
-        isViewing: false,
-      };
+      if (currentMainInndeling) {
+        const isAlreadySelected = currentlyEditingInndelinger.some(
+          (inndeling) => inndeling.id === secondKommune.id.lokalid.value,
+        );
 
-      selectInndelinger([currentMainInndeling, newInndeling]);
+        if (!isAlreadySelected) {
+          const inndelingtype = "kommune";
+          const newInndeling: Inndeling = {
+            navn: secondKommune.navn,
+            nummer: secondKommune.nummer,
+            id: secondKommune.id.lokalid.value,
+            inndelingtype: inndelingtype,
+            isEditing: true,
+            isViewing: false,
+          };
 
-      // Dårlig løsning, men vet ikke når inndelingen er ferdig lagt til i kartet, så må vente litt før vi re-aktiverer normal innzooming i inndelingercontext
-      setTimeout(() => {
-        setShouldZoom(true);
-      }, 7000);
+          setShouldZoom(false);
+          selectInndelinger([currentMainInndeling, newInndeling]);
+
+          setTimeout(() => {
+            setShouldZoom(true);
+          }, 4000);
+        }
+      }
     }
-  };
+  }, [
+    selectedKommune,
+    secondKommune,
+    isLoadingKommune,
+    isLoadingSecondKommune,
+    currentlyEditingInndelinger,
+    selectedKommuneId,
+    setShouldZoom,
+    selectInndelinger,
+  ]);
 
-  const getKommunerMedAvvik: (page: number, size: number) => Promise<AvvikKommunerResponse> = useCallback(
-    async (page: number, size: number) => {
-      const result = await avvikKommunerFetcher(token, page, size);
+  useEffect(() => {
+    handleInndelingForAvvik();
+  }, [handleInndelingForAvvik]);
+
+  const getKommunerMedAvvik: (page: number) => Promise<AvvikKommunerResponse> = useCallback(
+    async (page: number) => {
+      const paginationSize = 15;
+      const result = await avvikKommunerFetcher(token, page, paginationSize);
       return {
         content: result.content,
         totalPages: result.totalPages,
@@ -112,7 +156,7 @@ export const useAvvik = () => {
     [token],
   );
 
-  const getAvvik: (pKommuneId: string) => Promise<AvvikForKommuneResponse> = useCallback(
+  const getAvvikForKommune: (pKommuneId: string) => Promise<AvvikForKommuneResponse> = useCallback(
     async (pKommuneId) => {
       const result = await avvikFetcher(token, pKommuneId);
       return result;
@@ -135,24 +179,87 @@ export const useAvvik = () => {
     return false;
   };
 
-  const resetInndeling = () => {
-    updateFylkeIdAndKommuneId("", "");
+  // ========== Hent avvik for valgt kommune ==========
+  useEffect(() => {
+    if (selectedKommuneId == null || selectedKommuneId === "") {
+      return;
+    }
+    const fetchAvvik = async () => {
+      setIsLoadingAvvik(true);
+      try {
+        const avvik = await getAvvikForKommune(selectedKommuneId);
+        setAvvikData([...avvik]);
+      } finally {
+        setIsLoadingAvvik(false);
+      }
+    };
+
+    fetchAvvik();
+  }, [selectedKommuneId, getAvvikForKommune]);
+
+  // ==========  Hent kommuner med avvik én gang ==========
+  useEffect(() => {
+    if (!selectedKommune) {
+      const fetchKommunerMedAvvik = async () => {
+        const kommuner = await getKommunerMedAvvik(currentPage);
+        setKommunerMedAvvik(kommuner.content);
+        setPagination({
+          totalPages: kommuner.totalPages,
+          totalElements: kommuner.totalElements,
+          size: kommuner.size,
+          number: kommuner.number,
+          first: kommuner.first,
+          last: kommuner.last,
+        });
+      };
+      fetchKommunerMedAvvik();
+    }
+  }, [getKommunerMedAvvik, currentPage, selectedKommuneId, token, selectedKommune]);
+
+  // ========== Hvis inndeling allerede valgt henter vi automatisk avvik for den kommunen ==========
+  useEffect(() => {
+    if (currentlyEditingInndelinger.length > 0 && selectedInndelinger[0] !== undefined && selectedFylkeId !== "") {
+      const inndeling = selectedInndelinger[0];
+      setSelectedKommuneId(inndeling.id);
+    }
+  }, [currentlyEditingInndelinger, selectedInndelinger, selectedFylkeId, setSelectedKommuneId]);
+
+  const resetAvvikPanel = () => {
+    setSelectedKommuneId("");
     setSelectedFylkeId(null);
+    setSecondKommuneId(null);
     selectInndelinger([]);
     setShouldZoom(true);
+    setAvvikData([]);
+    setSelectedInndelinger([]);
+    setSelectedAvvikId(null);
     clearEditLayerAndInndelinger();
-    // Zoomer ut for "å vise" at man ikke har valgt inndeling lenger
-    centerOnCoordinate(7111142.73, 328380.81, 6, 2000);
+    clearMatrikkelLayer();
+    resetMapView();
   };
-
+  const handleGoToKommuneClick = async (kommuneLokalID: string) => {
+    const kommune = kommunerMedAvvikData.find((k) => k.kommuneLokalID === kommuneLokalID);
+    if (kommune == null) {
+      return;
+    }
+    setSelectedFylkeId(kommune.fylkesLokalID ?? null);
+    setSelectedKommuneId(kommuneLokalID);
+  };
   return {
-    getKommunerMedAvvik,
-    getAvvik,
-    addInndelingForAvvik,
     goToCoordinatesAndFetchMatrikkel,
-    openInndelingForAvvik,
-    updateFylkeIdAndKommuneId,
-    resetInndeling,
-    updateStatusForAvvik,
+    resetAvvikPanel,
+    selectedKommune,
+    isLoadingAvvik,
+    selectedAvvikId,
+    setSelectedAvvikId,
+    handleGoToKommuneClick,
+    avvikData,
+    kommunerMedAvvikData,
+    setAvvikData,
+    pagination,
+    currentPage,
+    setCurrentPage,
+    updateStatus,
+    findSecondKommune,
   };
 };
