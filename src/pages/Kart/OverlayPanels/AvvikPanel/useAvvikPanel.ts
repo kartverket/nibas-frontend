@@ -6,6 +6,9 @@ import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import {
   AvvikForKommuneResponse,
   AvvikKommunerResponse,
+  AvvikPanelProps,
+  AvvikRowKommunerProps,
+  AvvikRowProps,
   AvvikStatus,
   KommuneIAvvik,
   KommuneMedAvvik,
@@ -48,7 +51,7 @@ export const useAvvikPanel = () => {
   const [isLoadingAvvik, setIsLoadingAvvik] = useState<boolean>(false);
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
 
-  // Gjør kall til API for å oppdatere status på avviket, men oppdaterer bare lokalt i state for å slippe fetching hver gang
+  // Oppdaterer avvikstatus, optimistisk
   const updateStatus = async (avvikId: number, status: AvvikStatus): Promise<boolean> => {
     const previousData = avvikData;
     setAvvikData((prev) => prev.map((item) => (item.id === avvikId ? { ...item, status } : item)));
@@ -245,21 +248,32 @@ export const useAvvikPanel = () => {
     setSelectedFylkeId(kommune.fylkesLokalID ?? null);
     setSelectedKommuneId(kommuneLokalID);
   };
-  return {
+  const avvikRowProps: AvvikRowProps = {
     goToCoordinatesAndFetchMatrikkel,
-    resetAvvikPanel,
-    selectedKommune,
-    isLoadingAvvik,
+    findSecondKommune,
     selectedAvvikId,
     setSelectedAvvikId,
-    handleGoToKommuneClick,
+    updateStatus,
+  };
+  const avvikPanelProps: AvvikPanelProps = {
+    isLoadingAvvik,
+    selectedKommune,
     avvikData,
-    kommunerMedAvvikData,
     setAvvikData,
+    kommunerMedAvvikData,
     pagination,
     currentPage,
     setCurrentPage,
-    updateStatus,
-    findSecondKommune,
+    resetAvvikPanel,
+    handleGoToKommuneClick,
+  };
+  const avvikRowKommunerProps: AvvikRowKommunerProps = {
+    kommuneMedAvvikItem: {} as KommuneMedAvvik,
+    handleGoToKommuneClick,
+  };
+  return {
+    avvikPanelProps, // Panel
+    avvikRowKommunerProps, // AvvikRowKommuner
+    avvikRowProps, // AvvikRow
   };
 };

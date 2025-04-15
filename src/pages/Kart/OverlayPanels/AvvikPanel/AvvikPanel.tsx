@@ -9,22 +9,7 @@ import { useAvvikPanel } from "./useAvvikPanel";
 import { styled } from "styled-components";
 
 export const AvvikPanel = () => {
-  const {
-    goToCoordinatesAndFetchMatrikkel,
-    resetAvvikPanel,
-    selectedKommune,
-    isLoadingAvvik,
-    selectedAvvikId,
-    setSelectedAvvikId,
-    setCurrentPage,
-    avvikData,
-    kommunerMedAvvikData,
-    pagination,
-    currentPage,
-    updateStatus,
-    findSecondKommune,
-    handleGoToKommuneClick,
-  } = useAvvikPanel();
+  const { avvikPanelProps, avvikRowKommunerProps, avvikRowProps } = useAvvikPanel();
   const { closeOverlayPanel } = useOverlayPanel();
   const [tabIndex, setTabIndex] = useState(0);
   const tabList = [
@@ -43,6 +28,15 @@ export const AvvikPanel = () => {
     setTabIndex(0);
     resetAvvikPanel();
   };
+  const selectedKommune = avvikPanelProps.selectedKommune;
+  const isLoadingAvvik = avvikPanelProps.isLoadingAvvik;
+  const avvikData = avvikPanelProps.avvikData;
+  const kommunerMedAvvikData = avvikPanelProps.kommunerMedAvvikData;
+  const pagination = avvikPanelProps.pagination;
+  const currentPage = avvikPanelProps.currentPage;
+  const setCurrentPage = avvikPanelProps.setCurrentPage;
+  const resetAvvikPanel = avvikPanelProps.resetAvvikPanel;
+
   return (
     <SidePanel>
       {/* ========== VISER ENTEN Avvik-liste for valgt kommune ELLER Kommuneliste ========== */}
@@ -73,14 +67,7 @@ export const AvvikPanel = () => {
                   ?.filter((row) => row.status.toLowerCase() === tabList[tabIndex].value.toLowerCase())
                   .map((row) => (
                     <Fragment key={row.id}>
-                      <AvvikRow
-                        avvikItem={row}
-                        findSecondKommune={findSecondKommune}
-                        goToCoordinatesAndFetchMatrikkel={goToCoordinatesAndFetchMatrikkel}
-                        selectedAvvikId={selectedAvvikId}
-                        setSelectedAvvikId={setSelectedAvvikId}
-                        updateStatus={updateStatus}
-                      />
+                      <AvvikRow avvikItem={row} {...avvikRowProps} />
                       <Divider />
                     </Fragment>
                   ))
@@ -94,7 +81,10 @@ export const AvvikPanel = () => {
           <AvvikPanelHeader onClose={closeOverlayPanel}>Avvik fra matrikkelen {}</AvvikPanelHeader>
           {kommunerMedAvvikData.map((row) => (
             <Fragment key={row.kommuneLokalID}>
-              <AvvikRowKommuner kommuneMedAvvikItem={row} handleGoToKommuneClick={handleGoToKommuneClick} />
+              <AvvikRowKommuner
+                kommuneMedAvvikItem={row}
+                handleGoToKommuneClick={avvikRowKommunerProps.handleGoToKommuneClick}
+              />
               <Divider />
             </Fragment>
           ))}

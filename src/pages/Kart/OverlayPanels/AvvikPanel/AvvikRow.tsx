@@ -1,20 +1,11 @@
 import { Box, Button, Stack, Text, useToast } from "@kvib/react";
 import { styled } from "styled-components";
-import { AvvikForKommune, AvvikStatus, KommuneIAvvik } from "./avvik-utils";
+import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
 
-interface Props {
-  avvikItem: AvvikForKommune;
-  findSecondKommune: (kommuner: KommuneIAvvik[]) => void;
-  goToCoordinatesAndFetchMatrikkel: (coordinates: number[]) => Promise<boolean>;
-  selectedAvvikId: number | null;
-  setSelectedAvvikId: (avvikId: number | null) => void;
-  updateStatus: (avvikId: number, status: AvvikStatus) => Promise<boolean>;
-}
-
-interface RowProps {
+interface StyledRowProps {
   $active: boolean;
   $removing: boolean;
   $status: AvvikStatus;
@@ -27,7 +18,7 @@ const AvvikRow = ({
   setSelectedAvvikId,
   updateStatus,
   findSecondKommune,
-}: Props) => {
+}: AvvikRowPropsExtended) => {
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
@@ -168,7 +159,7 @@ const AvvikRow = ({
   );
 };
 
-const Row = styled.div<RowProps & { $removing: boolean }>`
+const Row = styled.div<StyledRowProps & { $removing: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;

@@ -1,4 +1,5 @@
 import { Point } from "ol/geom";
+import { KommuneResponse } from "types/api";
 import { components } from "types/api-gen-arbeidsliste";
 
 export type KommuneMedAvvik = components["schemas"]["KommuneAvvikDTO"];
@@ -44,4 +45,33 @@ export enum AvvikStatus {
   NY = "NY",
   FIKSET = "FIKSET",
   VENT = "VENT",
+}
+
+export type AvvikPanelProps = {
+  isLoadingAvvik: boolean;
+  selectedKommune: KommuneResponse | undefined;
+  avvikData: AvvikForKommuneResponse;
+  setAvvikData: (avvikData: AvvikForKommuneResponse) => void;
+  kommunerMedAvvikData: KommuneMedAvvik[];
+  pagination: PaginationInfo | null;
+  currentPage: number;
+  setCurrentPage: (page: number) => void;
+  resetAvvikPanel: () => void;
+  handleGoToKommuneClick: (kommuneLokalID: string) => Promise<void>;
+};
+
+export interface AvvikRowKommunerProps {
+  kommuneMedAvvikItem: KommuneMedAvvik;
+  handleGoToKommuneClick: (kommuneLokalID: string) => void;
+}
+
+export type AvvikRowProps = {
+  goToCoordinatesAndFetchMatrikkel: (coordinates: number[]) => Promise<boolean>;
+  findSecondKommune: (kommunerFromRow: KommuneIAvvik[]) => void;
+  selectedAvvikId: number | null;
+  setSelectedAvvikId: (id: number | null) => void;
+  updateStatus: (avvikId: number, status: AvvikStatus) => Promise<boolean>;
+};
+export interface AvvikRowPropsExtended extends AvvikRowProps {
+  avvikItem: AvvikForKommune;
 }

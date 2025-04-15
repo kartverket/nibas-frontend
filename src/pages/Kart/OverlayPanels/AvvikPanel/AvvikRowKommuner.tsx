@@ -2,16 +2,12 @@ import { Box, Text } from "@kvib/react";
 import { styled } from "styled-components";
 
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
-import { KommuneMedAvvik } from "./avvik-utils";
-interface Props {
-  kommuneMedAvvikItem: KommuneMedAvvik;
-  handleGoToKommuneClick: (kommuneLokalID: string) => void;
-}
+import { AvvikRowKommunerProps } from "./avvik-utils";
 
 const AvvikRowKommuner = ({
   kommuneMedAvvikItem: { kommuneNavn, kommuneNummer, kommuneLokalID, antallAvvik },
   handleGoToKommuneClick,
-}: Props) => {
+}: AvvikRowKommunerProps) => {
   return (
     <Container>
       <Row>
