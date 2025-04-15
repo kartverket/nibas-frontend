@@ -43,7 +43,6 @@ import {
   datestringToFormattedDatestring,
   dateToFormattedDatestring,
   isGrenseinformasjonPanelDisabled,
-  mapMatrikkelkodelisteToKodelisteType,
 } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
@@ -97,7 +96,6 @@ export const EditGrenseInfoButton = ({
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
-  const [kodelisteToUse, setKodelisteToUse] = useState<KodelisteRespons | undefined>(kodeliste);
   const { currentlyEditingInndelinger } = useInndelinger();
   const { utkast } = useUtkast();
   const { inndelingFeatures } = useInndelingFeatures(currentlyEditingInndelinger);
@@ -114,11 +112,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const gyldigTil = metadata.common?.gyldigTil;
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled(feature) || metadata?.common?.gyldigTil != null;
 
-  useEffect(() => {
-    if (kodeliste) {
-      setKodelisteToUse(kodeliste);
-    }
-  }, [kodeliste]);
   const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
     if (id === undefined || id.length === 0) {
       return "Ikke spesifisert";
@@ -127,12 +120,15 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
     if (maalemetode) {
       return maalemetode?.kode + " " + maalemetode?.label;
-    } else if (matrikkelkodeliste) {
-      // Hvis vi ikke finner målemetoden i kodelisten, sjekk matrikkelkodelisten (de har helt forskjellig type id'er: uuid vs to siffer)
-      const matrikkelKodelisteMapped = mapMatrikkelkodelisteToKodelisteType(matrikkelkodeliste);
-      const matrikkelMaalemetode = matrikkelKodelisteMapped?.items.find((item) => item.id === id);
-      if (matrikkelMaalemetode) {
-        return matrikkelMaalemetode.kode + " " + matrikkelMaalemetode?.label;
+    } else if (matrikkelkodeliste !== undefined) {
+      // Hvis målemetode ikke finnes i kodeliste med den id'n, sjekk matrikkelkodeliste
+      const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find((item) => item.id?.toString() === id);
+      if (matrikkelMaalemetode !== undefined) {
+        // Matcher kodeverdi fra matrikkelkodeliste med kodeliste
+        const match = maalemetoder.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
+        if (match) {
+          return match.kode + " " + match.label;
+        }
       }
     }
     return "Ukjent målemetode er registrert på grensen";
@@ -159,7 +155,26 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       const allowedGrensetyper = ["nibas", "teig"];
       const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
         .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
-        .map(([, posisjonskvalitet]) => posisjonskvalitet)
+        .map(([, posisjonskvalitet]) => {
+          // Gjør matching fra matrikkelkodeliste til kodeliste
+          if (matrikkelkodeliste !== undefined && posisjonskvalitet.maalemetode !== undefined) {
+            const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find(
+              (item) => item.id?.toString() === posisjonskvalitet.maalemetode,
+            );
+
+            if (matrikkelMaalemetode !== undefined) {
+              const match = kodeliste?.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
+              if (match) {
+                // Oppdater maalemetode til å bruke ID fra kodeliste istedenfor matrikkelkodeliste-id'en
+                return {
+                  ...posisjonskvalitet,
+                  maalemetode: match.id,
+                };
+              }
+            }
+          }
+          return posisjonskvalitet;
+        })
         .filter(
           (posisjonskvalitet) =>
             posisjonskvalitet.noeyaktighet !== eksisterendePosisjonskvalitet?.noeyaktighet ||
@@ -169,7 +184,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       return relevant;
     }
     return [];
-  }, [feature, metadata.commonGrense?.posisjonskvalitet]);
+  }, [feature, metadata.commonGrense?.posisjonskvalitet, matrikkelkodeliste, kodeliste]);
 
   const [autofillLoading, setAutofillLoading] = useState(false);
   const mockAutofillLoading = () => {
@@ -201,17 +216,22 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         return 0;
       })[prioritizedPosisjonskvaliteter.length - 1];
       if (worstPosisjonskvalitet != null && (kodeliste != null || matrikkelkodeliste != null)) {
-        // Bruker matrikkelkodeliste hvis det er teig, ellers bruker vi nibas
-        if (worstPosisjonskvalitet.grensetype === "teig") {
-          const mappedKodeliste = matrikkelkodeliste
-            ? mapMatrikkelkodelisteToKodelisteType(matrikkelkodeliste)
-            : undefined;
-          if (mappedKodeliste) {
-            setKodelisteToUse(mappedKodeliste);
+        // Bruker matrikkelkodeliste hvis det er teig, ellers bruker vi nibas-kodeliste
+        let maalemetodeIdToSet = worstPosisjonskvalitet.maalemetode;
+        if (matrikkelkodeliste !== undefined) {
+          const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find(
+            (item) => item.id?.toString() === worstPosisjonskvalitet.maalemetode,
+          );
+          if (matrikkelMaalemetode !== undefined) {
+            // Finn match i kodeliste basert på kodeverdien fra matrikkelkodeliste
+            const match = kodeliste?.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
+            if (match) {
+              maalemetodeIdToSet = match.id; // Bruk ID-en fra kodeliste, ikke fra matrikkelkodeliste
+            }
           }
         }
         setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
-        setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
+        setValue("maalemetode", maalemetodeIdToSet, { shouldDirty: true, shouldValidate: true });
         handleSubmit(onSubmit)();
         mockAutofillLoading();
         onCloseAutofill();
@@ -430,16 +450,14 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       <GrenseinformasjonRow
         name="Målemetode"
         tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
-        valueLabel={
-          kodelisteToUse ? getMaalemetodeText(kodelisteToUse, getValues("maalemetode")) : getValues("maalemetode")
-        }
+        valueLabel={kodeliste ? getMaalemetodeText(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
         isEditing={isEditing}
         isLoading={autofillLoading}
       >
-        {kodelisteToUse && (
+        {kodeliste && (
           <Select {...register("maalemetode")}>
             <option value="">Velg målemetode</option>
-            {kodelisteToUse.items
+            {kodeliste.items
               .sort((a, b) => Number(a.kode) - Number(b.kode))
               .map((item) => (
                 <option key={item.id} value={item.id}>

@@ -9,7 +9,7 @@ import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
-import { FeatureProperties, KodelisteRespons, KontekstEgenskaper, MatrikkelKodelisterRespons } from "types/api";
+import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import { isFeatureMetadataEditable, isFeatureToBeArchived } from "utils/features";
 import { removeNil } from "utils/list-utils";
 
@@ -137,17 +137,4 @@ export const addKontekstEntryFromFeature = (
       },
     ],
   });
-};
-
-export const mapMatrikkelkodelisteToKodelisteType = (
-  matrikkelkodeliste: MatrikkelKodelisterRespons,
-): KodelisteRespons | undefined => {
-  return {
-    type: "MAALEMETODE_KODE",
-    items: matrikkelkodeliste.maalemetodeKodeliste.map((item: { id: number; kodeverdi: string; navn: string }) => ({
-      id: item.id.toString(),
-      kode: item.kodeverdi,
-      label: item.navn.trim().split(" ").slice(1).join(" "), // Fjerner unødvendig gjentagende kodeverdi på starten
-    })),
-  };
 };
