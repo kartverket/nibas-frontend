@@ -18,7 +18,9 @@ import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
 import { useKommune } from "hooks/inndelinger/useKommuner";
 import { resetMapView } from "utils/map/map-utils";
 import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus } from "./useAvvik";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 export const useAvvikPanel = () => {
+  const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const { token } = useAuthentication();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const {
@@ -221,11 +223,21 @@ export const useAvvikPanel = () => {
 
   // ========== Hvis inndeling allerede valgt henter vi automatisk avvik for den kommunen ==========
   useEffect(() => {
-    if (currentlyEditingInndelinger.length > 0 && selectedInndelinger[0] !== undefined && selectedFylkeId !== "") {
-      const inndeling = selectedInndelinger[0];
+    if (activeOverlayModal === "inndelinger") {
+      closeOverlayPanel(); // Gjør det enkelt og lukker avvikPanel hvis inndelinger-modal er åpen
+    }
+    if (currentlyEditingInndelinger.length > 0 && selectedFylkeId !== "") {
+      const inndeling = currentlyEditingInndelinger[0];
       setSelectedKommuneId(inndeling.id);
     }
-  }, [currentlyEditingInndelinger, selectedInndelinger, selectedFylkeId, setSelectedKommuneId]);
+  }, [
+    currentlyEditingInndelinger,
+    selectedInndelinger,
+    selectedFylkeId,
+    setSelectedKommuneId,
+    activeOverlayModal,
+    closeOverlayPanel,
+  ]);
 
   const resetAvvikPanel = () => {
     setSelectedKommuneId("");
