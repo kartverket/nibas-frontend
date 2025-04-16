@@ -28,7 +28,7 @@ jobs:
       version: ${{ needs.build.outputs.version }}
       digest: ${{ needs.build.outputs.digest }}
       deploy_dev: true
-      identify: nibas
+      identity: nibas
 
   run-cypress:
     permissions:
