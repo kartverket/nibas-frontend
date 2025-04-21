@@ -112,14 +112,37 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
     }));
   }, [kommuner, reset, suggestedKommunerInndelingOptions]);
 
-  const eiendomFieldValidator: Partial<Record<keyof Eiendom, RegisterOptions>> = {
-    kommune: { required: "Du må oppgi en kommune for eiendommen" },
-    gaardsnummer: { required: "Du må oppgi et gårdsnummer for eiendommen" },
-    bruksnummer: { required: "Du må oppgi et bruksnummer for eiendommen" },
+  const eiendomFieldValidator = {
+    kommune: {
+      required: "Du må oppgi en kommune for eiendommen",
+    } as RegisterOptions<Eiendom, "kommune">,
+    gaardsnummer: {
+      required: "Du må oppgi et gårdsnummer for eiendommen",
+      min: {
+        value: 1,
+        message: "Gårdsnummer må være større enn 0",
+      },
+    } as RegisterOptions<Eiendom, "gaardsnummer">,
+    bruksnummer: {
+      required: "Du må oppgi et bruksnummer for eiendommen",
+      min: {
+        value: 1,
+        message: "Bruksnummer må være større enn 0",
+      },
+    } as RegisterOptions<Eiendom, "bruksnummer">,
+    festenummer: {
+      min: {
+        value: 1,
+        message: "Festenummer må være større enn 0",
+      },
+    } as RegisterOptions<Eiendom, "festenummer">,
   };
 
   const registerWithClearErrorsOnChange = (field: keyof Eiendom) => {
-    const { onChange, ...rest } = register(field, eiendomFieldValidator[field]);
+    const { onChange, ...rest } = register(
+      field,
+      eiendomFieldValidator[field] as RegisterOptions<Eiendom, keyof Eiendom>,
+    );
     const handleOnChange = (event: BaseSyntheticEvent<InputEvent>) => {
       clearErrors(field);
       setNotFound(false);
@@ -149,23 +172,25 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
     }
   };
 
+  const handleKommuneChange = () => {
+    clearErrors("kommune");
+    setNotFound(false);
+  };
+
   return (
     <StyledForm onSubmit={handleSubmit(handleSearch)}>
-      <InndelingSearchField
+      <InndelingSearchField<Eiendom, "kommune">
         label="Kommune"
         placeholder="Skriv inn navnet eller nummeret til kommunen"
         fieldName="kommune"
         control={control}
         rules={eiendomFieldValidator["kommune"]}
         inndelingstypeFilter={["KOMMUNE"]}
-        onSelectInndeling={() => {
-          clearErrors("kommune");
-          setNotFound(false);
-        }}
         validationError={{
           showError: !!formErrors.kommune,
           message: formErrors.kommune?.message ?? "",
         }}
+        onSelectInndeling={handleKommuneChange}
       />
       {suggestedKommunerInndelingOptions != null && suggestedKommunerInndelingOptions.length > 1 && (
         <SuggestionsContainer>
