@@ -18,6 +18,8 @@ import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
+export type { SplittingForm };
+
 const getDefaultSplittingValue = () => ({
   opprinneligKrets: {
     lokalId: CustomOption.NOT_CHOSEN,

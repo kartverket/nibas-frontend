@@ -13,12 +13,13 @@ import {
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { ChangeEvent, useEffect } from "react";
+import { RegisterOptions } from "react-hook-form";
 import { styled } from "styled-components";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { PanelHeader, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
-import { useSplittingForm } from "./useSplittingForm";
+import { useSplittingForm, SplittingForm } from "./useSplittingForm";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -166,7 +167,12 @@ export const SplittingPanel = () => {
                         {...triggerRevalidateOnChangeAfterSubmit(
                           register(
                             `nyeKretser.${index}.kretsNummer`,
-                            index !== 0 ? (nummerRegisterOptions ? nummerRegisterOptions : {}) : {},
+                            index !== 0
+                              ? ((nummerRegisterOptions ? nummerRegisterOptions : {}) as RegisterOptions<
+                                  SplittingForm,
+                                  `nyeKretser.${number}.kretsNummer`
+                                >)
+                              : {},
                           ),
                         )}
                       />

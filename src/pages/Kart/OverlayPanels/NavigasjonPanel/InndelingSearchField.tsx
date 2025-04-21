@@ -13,18 +13,18 @@ export type InndelingOption = InndelingSearchResponse & {
   label: string;
 };
 
-type InndelingSearchFieldProps<T extends FieldValues> = {
+type InndelingSearchFieldProps<T extends FieldValues, K extends Path<T>> = {
   label?: string;
   placeholder?: string;
-  fieldName: Path<T>;
+  fieldName: K;
   control?: Control<T>;
-  rules?: RegisterOptions;
+  rules?: RegisterOptions<T, K>;
   inndelingstypeFilter: InndelingSearchType[];
   validationError?: ValidationError;
   onSelectInndeling?: (inndeling: InndelingOption | null) => void;
 };
 
-export const InndelingSearchField = <T extends FieldValues>({
+export const InndelingSearchField = <T extends FieldValues, K extends Path<T>>({
   label: fieldLabel,
   placeholder,
   fieldName,
@@ -33,7 +33,7 @@ export const InndelingSearchField = <T extends FieldValues>({
   inndelingstypeFilter,
   validationError,
   onSelectInndeling,
-}: InndelingSearchFieldProps<T>) => {
+}: InndelingSearchFieldProps<T, K>) => {
   const searchInndelinger = useInndelingerSearch();
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
