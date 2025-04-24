@@ -4,7 +4,7 @@ import { LineString } from "ol/geom";
 import { PropsWithChildren } from "react";
 import { styled } from "styled-components";
 import { PanelHeader } from "../Panel";
-import useNibasApi from "hooks/useNibasApi";
+import { useKodeliste } from "contexts/KodelisteContext";
 
 type TeiggrenseInformasjonProps = {
   feature: Feature<LineString>;
@@ -82,7 +82,7 @@ const getNoyaktighetsklasseDescriptionFromKode = (kode: number) => {
 export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjonProps) => {
   const featureProperties = feature.getProperties();
   const teiggrenseProperties = isTeiggrenseMetadata(featureProperties) ? featureProperties : null;
-  const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
+  const { matrikkelkodeliste } = useKodeliste();
   const maalemetode = matrikkelkodeliste?.maalemetodeKodeliste.find(
     (item) => item.id.toString() === teiggrenseProperties?.MALEMETODE?.toString(),
   );
