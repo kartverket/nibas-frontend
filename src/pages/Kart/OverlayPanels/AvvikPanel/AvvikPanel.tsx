@@ -114,6 +114,13 @@ const AvvikPanelHeader = styled(PanelHeader)`
 export const PaginationButton = styled.button`
   font-weight: var(--kvib-fontWeights-normal);
   font-size: var(--kvib-fontSizes-md);
+  border-radius: var(--kvib-radii-md);
+  padding: var(--kvib-space-2) var(--kvib-space-4);
+
+  &:hover {
+    background-color: var(--kvib-colors-gray-200);
+    color: var(--kvib-colors-blue-500);
+  }
 
   &:disabled {
     opacity: 0.5;
