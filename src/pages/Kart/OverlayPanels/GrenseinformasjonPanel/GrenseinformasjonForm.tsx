@@ -20,6 +20,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import useInndelingFeatures from "contexts/InndelingerContext/useInndelingFeatures";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { editableGrenseTypes } from "hooks/layers/types";
+import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import {
@@ -45,7 +46,6 @@ import {
 } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
-import { useKodeliste } from "contexts/KodelisteContext";
 
 type Props = {
   feature: Feature<Geometry>;
@@ -94,7 +94,8 @@ export const EditGrenseInfoButton = ({
 };
 
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
-  const { kodeliste, matrikkelkodeliste } = useKodeliste();
+  const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+  const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
   const { currentlyEditingInndelinger } = useInndelinger();
   const { utkast } = useUtkast();
   const { inndelingFeatures } = useInndelingFeatures(currentlyEditingInndelinger);
@@ -119,13 +120,13 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
     if (maalemetode) {
       return maalemetode?.kode + " " + maalemetode?.label;
-    } else if (matrikkelkodeliste !== null) {
+    } else if (matrikkelkodeliste !== undefined) {
       // Hvis målemetode ikke finnes i kodeliste med den id'n, sjekk matrikkelkodeliste
       const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find((item) => item.id?.toString() === id);
       if (matrikkelMaalemetode !== undefined) {
         // Matcher kodeverdi fra matrikkelkodeliste med kodeliste
         const match = maalemetoder.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
-        if (match !== undefined) {
+        if (match) {
           return match.kode + " " + match.label;
         }
       }
@@ -156,14 +157,14 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
         .map(([, posisjonskvalitet]) => {
           // Gjør matching fra matrikkelkodeliste til kodeliste
-          if (matrikkelkodeliste !== null && posisjonskvalitet.maalemetode !== undefined) {
+          if (matrikkelkodeliste !== undefined && posisjonskvalitet.maalemetode !== undefined) {
             const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find(
               (item) => item.id?.toString() === posisjonskvalitet.maalemetode,
             );
 
             if (matrikkelMaalemetode !== undefined) {
               const match = kodeliste?.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
-              if (match !== undefined) {
+              if (match) {
                 // Oppdater maalemetode til å bruke ID fra kodeliste istedenfor matrikkelkodeliste-id'en
                 return {
                   ...posisjonskvalitet,
@@ -217,14 +218,14 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       if (worstPosisjonskvalitet != null && (kodeliste != null || matrikkelkodeliste != null)) {
         // Bruker matrikkelkodeliste hvis det er teig, ellers bruker vi nibas-kodeliste
         let maalemetodeIdToSet = worstPosisjonskvalitet.maalemetode;
-        if (matrikkelkodeliste !== null) {
+        if (matrikkelkodeliste !== undefined) {
           const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find(
             (item) => item.id?.toString() === worstPosisjonskvalitet.maalemetode,
           );
           if (matrikkelMaalemetode !== undefined) {
             // Finn match i kodeliste basert på kodeverdien fra matrikkelkodeliste
             const match = kodeliste?.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
-            if (match !== undefined) {
+            if (match) {
               maalemetodeIdToSet = match.id; // Bruk ID-en fra kodeliste, ikke fra matrikkelkodeliste
             }
           }
@@ -449,18 +450,16 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       <GrenseinformasjonRow
         name="Målemetode"
         tooltipLabel="Metode som ligger til grunn for registrering av posisjon."
-        valueLabel={
-          kodeliste !== null ? getMaalemetodeText(kodeliste, getValues("maalemetode")) : getValues("maalemetode")
-        }
+        valueLabel={kodeliste ? getMaalemetodeText(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
         isEditing={isEditing}
         isLoading={autofillLoading}
       >
-        {kodeliste !== null && (
+        {kodeliste && (
           <Select {...register("maalemetode")}>
             <option value="">Velg målemetode</option>
             {kodeliste.items
-              .sort((a: { kode: string }, b: { kode: string }) => Number(a.kode) - Number(b.kode))
-              .map((item: { id: string; kode: string; label: string }) => (
+              .sort((a, b) => Number(a.kode) - Number(b.kode))
+              .map((item) => (
                 <option key={item.id} value={item.id}>
                   {item.kode} {item.label}
                 </option>

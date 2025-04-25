@@ -10,7 +10,6 @@ import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
 import { InndelingerProvider } from "contexts/InndelingerContext/InndelingerContext";
 import { AuthRenewProvider } from "components/Authentication/AuthRenewError";
 import { GyldighetsdatoProvider } from "contexts/GyldighetsdatoContext";
-import { KodelisteProvider } from "contexts/KodelisteContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -25,9 +24,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
                     <ToolbarProvider>
                       <KartlagProvider>
                         <UtkastProvider>
-                          <InndelingerProvider>
-                            <KodelisteProvider>{children}</KodelisteProvider>
-                          </InndelingerProvider>
+                          <InndelingerProvider>{children}</InndelingerProvider>
                         </UtkastProvider>
                       </KartlagProvider>
                     </ToolbarProvider>
