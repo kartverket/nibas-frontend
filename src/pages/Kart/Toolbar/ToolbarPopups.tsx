@@ -213,6 +213,11 @@ const ToolbarPopups = () => {
             status: "warning",
             title: "Utsnittet inneholder for mange grenser. Zoom nærmere, og prøv igjen.",
           });
+        } else if (matrikkelFeatures.length === 0) {
+          toast({
+            status: "warning",
+            title: `Fant ingen grenser for dette utsnittet, forsøk å zoom ut eller panorer.`,
+          });
         } else {
           toast({
             status: "success",

@@ -8,6 +8,7 @@ import { SplittingPanel } from "./SplittingPanel/SplittingPanel";
 import InndelingerPanel from "./Inndelinger/InndelingerPanel";
 import NavigasjonPanel from "./NavigasjonPanel/NavigasjonPanel";
 import FlatedataPanel from "./FlatedataPanel/FlatedataPanel";
+import { AvvikPanel } from "./AvvikPanel/AvvikPanel";
 
 const OverlayPanels = () => {
   return (
@@ -42,6 +43,9 @@ const OverlayPanel = () => {
     }
     case "kartlag": {
       return <KartlagPanel />;
+    }
+    case "avvik": {
+      return <AvvikPanel />;
     }
   }
 };
