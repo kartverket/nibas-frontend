@@ -43,7 +43,7 @@ export const getArbeidslisteUrlForPath = (path: string): string => {
   const baseUrl = document.location.origin ?? "http://localhost:3000";
 
   // Prepend proxy path for arbeidsliste API
-  const proxyBasePath = "/v1/proxy/arbeidsliste/";
+  const proxyBasePath = "/v1/proxy/arbeidsliste";
   if (!path.startsWith(proxyBasePath)) {
     path = `${proxyBasePath}${path}`;
   }
