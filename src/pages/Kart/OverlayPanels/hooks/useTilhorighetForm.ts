@@ -142,7 +142,7 @@ const getKretserFromHistory = (
 export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: KontekstType) => {
   const { getHistoryEntries } = useHistory();
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  const { data: kommuneResponses } = useNibasApi("/v1/kommuner", { gyldighetsdato });
+  const { data: kommuneResponses, isLoading } = useNibasApi("/v1/kommuner", { gyldighetsdato });
   const { utkast } = useUtkast();
   const previousFeature = usePrevious(feature);
 
@@ -263,5 +263,6 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     kommunerId,
     kontekstType,
     getCurrentOppdaterteKontekstEgenskaper,
+    isLoading,
   };
 };

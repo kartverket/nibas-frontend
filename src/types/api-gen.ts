@@ -815,6 +815,7 @@ export interface components {
       endredeGrunnkretser: string[];
       endredeKommuner: string[];
       endredeFylker: string[];
+      endredeNasjoner: string[];
     };
     /** @description Representasjon av utkast */
     UtkastResponse: {
@@ -965,6 +966,10 @@ export interface components {
       maalemetodeKodeliste: components["schemas"]["KodelisteEntryDTO"][];
       /** @description Liste av hjelpelinjetyper fra Matrikkelen. */
       hjelpelinjetypeKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+      /** @description Liste av administrativ grensekoder fra Matrikkelen. */
+      administrativGrenseKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+      /** @description Liste av terrengdetaljkoder fra Matrikkelen. */
+      terrengdetaljKodeliste: components["schemas"]["KodelisteEntryDTO"][];
     };
     /** @description Representasjon av en kommune */
     KommuneResponse: {
@@ -1072,8 +1077,8 @@ export interface components {
       z?: number;
       /** Format: double */
       m?: number;
-      coordinate?: components["schemas"]["Coordinate"];
       valid?: boolean;
+      coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {
       /** @description Lokalid til inndelingen */
@@ -2839,5 +2844,4 @@ export interface operations {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface external {}
