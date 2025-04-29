@@ -6,12 +6,13 @@ import { useState } from "react";
 import { ChangeHandler, useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { EPSGCode, mapProjectionEPSGCode, projectionDefinitions } from "utils/map/projections";
-import { centerOnCoordinate, SearchProps } from "./NavigasjonPanel";
+import { SearchProps } from "./NavigasjonPanel";
 import {
   decimalCoordinatePattern,
   dmsCoordinatePattern,
   isPointInsideMultiPolygon,
   transformCoordinatesToProjection,
+  centerOnCoordinate,
 } from "./koordinater-utils";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 

@@ -45,6 +45,7 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     kommunerId,
     kontekstType,
     getCurrentOppdaterteKontekstEgenskaper,
+    isLoading,
   } = useTilhorighetForm(feature);
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
@@ -70,7 +71,7 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     resetTilhorighet,
     formState,
     setValue,
-    isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading,
+    isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading || isLoading,
     getCurrentOppdaterteKontekstEgenskaper,
   };
 };

@@ -138,6 +138,8 @@ const TilhorighetFieldController = ({
 }: TilhorighetFieldControllerProps) => {
   const { addHistoryEntry } = useHistory();
 
+  const isLoading = (grunnkretsTilhorighetForm?.isLoading ?? false) || (stemmekretsTilhorighetForm?.isLoading ?? false);
+
   const isGrunnkretserValid =
     grunnkretsTilhorighetForm?.formState[KontekstType.GRUNNKRETS][Tilhorighet.A] != null &&
     grunnkretsTilhorighetForm?.formState[KontekstType.GRUNNKRETS][Tilhorighet.B] != null;
@@ -198,7 +200,7 @@ const TilhorighetFieldController = ({
         </Text>
         <EditAndSaveButton
           isEditing={isEditing}
-          isDisabled={isDisabled}
+          isDisabled={isDisabled === true || isLoading === true}
           tooltip={tooltip}
           tooltipPlacement="left"
           size="sm"

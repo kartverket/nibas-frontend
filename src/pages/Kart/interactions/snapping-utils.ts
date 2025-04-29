@@ -2,12 +2,13 @@ import { ModeTool, Tool } from "contexts/ToolbarContext";
 import { GrenseId } from "hooks/layers/types";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
-import { Modify, Snap } from "ol/interaction";
+import { Modify } from "ol/interaction";
 import { Collection } from "ol";
 import { grenserLayers } from "hooks/layers/constants";
+import { PrioritizedSnap } from "./PrioritizedSnap";
 
 export type SnapData = {
-  snap: Snap;
+  snap: PrioritizedSnap;
   hover: Modify;
 };
 
@@ -29,7 +30,7 @@ const createSnapDataForSource = (
   }
 
   const config = getSnapDataConfig(grenseId, activeModeTools, activeTool);
-  const snap = new Snap({ source, pixelTolerance });
+  const snap = new PrioritizedSnap({ source, pixelTolerance });
   const modify = new Modify({
     condition: () => false,
     style: selectedPointStyle,

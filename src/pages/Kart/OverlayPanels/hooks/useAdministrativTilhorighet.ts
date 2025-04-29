@@ -54,6 +54,7 @@ export const useAdministrativTilhorighet = (feature: Feature, kontekstType: Kont
     isDirty,
     resetTilhorighet,
     getCurrentOppdaterteKontekstEgenskaper,
+    isLoading,
   } = useTilhorighetForm(feature, kontekstType);
   const { currentlyEditingInndelinger } = useInndelinger();
 
@@ -93,7 +94,7 @@ export const useAdministrativTilhorighet = (feature: Feature, kontekstType: Kont
     resetTilhorighet,
     formState,
     setValue,
-    isLoading: isLoadingA || isLoadingB,
+    isLoading: isLoadingA || isLoadingB || isLoading,
     getCurrentOppdaterteKontekstEgenskaper,
   };
 };
