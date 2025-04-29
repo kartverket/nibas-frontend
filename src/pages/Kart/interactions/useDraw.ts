@@ -92,14 +92,16 @@ const useDraw = () => {
       snapTolerance: pixelTolerance,
       style: grenseStyles.select,
       freehandCondition: () => false,
-      condition: (event: MapBrowserEvent<MouseEvent>) => {
+      condition: (event) => {
         // Hent nåværende verdi fra ref
         const currentTool = activeToolRef.current;
         const currentModeTools = activeModeToolsRef.current;
         if (!noModifierKeys(event) || currentTool !== "draw" || currentModeTools.includes("move")) {
           return false;
         }
-        const featuresAtPixel = getLineStringFeaturesAtPixelRef.current(event, ["edit"]);
+        const featuresAtPixel = getLineStringFeaturesAtPixelRef.current(event as MapBrowserEvent<PointerEvent>, [
+          "edit",
+        ]);
         // Legg til feature hvis vi ikke treffer noen andre features
         if (featuresAtPixel.length === 0) {
           draw.changed();

@@ -55,7 +55,7 @@ const useSelect = () => {
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();
 
-  const select = (event: MapBrowserEvent<MouseEvent>) => {
+  const select = (event: MapBrowserEvent<PointerEvent>) => {
     if (
       !event.dragging &&
       !disallowedTools.includes(activeTool) &&
