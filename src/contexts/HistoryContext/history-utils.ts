@@ -135,10 +135,16 @@ export const handleGrenseMerge = (entry: MergeGrenseEntry, direction: HistoryDir
 
   if (mergedGrenseId != null && sourceId != null) {
     if (direction === "from") {
+      for (const feature of archivedGrenser) {
+        feature.set("shouldArchive", false);
+      }
       removeFeaturesFromSourceByIds("edit", [mergedGrenseId]);
       removeFeaturesFromSourceByIds("archived", archivedGrenserId);
       addFeaturesToSource("edit", archivedGrenser);
     } else if (direction === "to") {
+      for (const feature of archivedGrenser) {
+        feature.set("shouldArchive", true);
+      }
       addFeaturesToSource("edit", [mergeGrense]);
       addFeaturesToSource("archived", archivedGrenser);
       removeFeaturesFromSourceByIds("edit", archivedGrenserId);
