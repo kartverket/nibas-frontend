@@ -33,6 +33,7 @@ const utkast: UtkastResponse = {
     endredeGrunnkretser: [],
     endredeKommuner: [],
     endredeFylker: [],
+    endredeNasjoner: [],
   },
 };
 
