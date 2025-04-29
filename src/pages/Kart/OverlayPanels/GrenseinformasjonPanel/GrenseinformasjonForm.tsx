@@ -95,6 +95,7 @@ export const EditGrenseInfoButton = ({
 
 const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+  const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
   const { currentlyEditingInndelinger } = useInndelinger();
   const { utkast } = useUtkast();
   const { inndelingFeatures } = useInndelingFeatures(currentlyEditingInndelinger);
@@ -119,7 +120,18 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     const maalemetode = maalemetoder.items.find((item) => item.id === id);
     if (maalemetode) {
       return maalemetode?.kode + " " + maalemetode?.label;
+    } else if (matrikkelkodeliste !== undefined) {
+      // Hvis målemetode ikke finnes i kodeliste med den id'n, sjekk matrikkelkodeliste
+      const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find((item) => item.id?.toString() === id);
+      if (matrikkelMaalemetode !== undefined) {
+        // Matcher kodeverdi fra matrikkelkodeliste med kodeliste
+        const match = maalemetoder.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
+        if (match) {
+          return match.kode + " " + match.label;
+        }
+      }
     }
+
     return "Ukjent målemetode er registrert på grensen";
   };
 
@@ -141,20 +153,39 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       const featureCoordinatesAsString =
         featureCoordinates != null ? featureCoordinates.map((coord) => coord.toString()) : [];
       // Hvis man har snappet bort fra en grense man tidligere snappet til i utkastet ønsker vi ikke å bruke denne posisjonskvaliteten
+      const allowedGrensetyper = ["nibas", "teig"];
       const relevant: ContextualPosisjonskvalitet[] = [...posisjonskvaliteter.entries()]
         .filter(([coordKey]) => featureCoordinatesAsString.includes(coordKey))
-        .map(([, posisjonskvalitet]) => posisjonskvalitet)
+        .map(([, posisjonskvalitet]) => {
+          // Gjør matching fra matrikkelkodeliste til kodeliste
+          if (matrikkelkodeliste !== undefined && posisjonskvalitet.maalemetode !== undefined) {
+            const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find(
+              (item) => item.id?.toString() === posisjonskvalitet.maalemetode,
+            );
+
+            if (matrikkelMaalemetode !== undefined) {
+              const match = kodeliste?.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
+              if (match) {
+                // Oppdater maalemetode til å bruke ID fra kodeliste istedenfor matrikkelkodeliste-id'en
+                return {
+                  ...posisjonskvalitet,
+                  maalemetode: match.id,
+                };
+              }
+            }
+          }
+          return posisjonskvalitet;
+        })
         .filter(
           (posisjonskvalitet) =>
             posisjonskvalitet.noeyaktighet !== eksisterendePosisjonskvalitet?.noeyaktighet ||
             posisjonskvalitet.maalemetode !== eksisterendePosisjonskvalitet?.maalemetode.id,
         )
-        // TODO: håndter matrikkelgrenser når vi kan få målemetode fra matrikkel
-        .filter((posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas");
+        .filter((posisjonskvalitet) => allowedGrensetyper.includes(posisjonskvalitet.grensetype));
       return relevant;
     }
     return [];
-  }, [feature, metadata.commonGrense?.posisjonskvalitet]);
+  }, [feature, metadata.commonGrense?.posisjonskvalitet, matrikkelkodeliste, kodeliste]);
 
   const [autofillLoading, setAutofillLoading] = useState(false);
   const mockAutofillLoading = () => {
@@ -166,16 +197,42 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
 
   const autoFillFormValues = () => {
     if (relevantPosisjonskvaliteter != null) {
+      // Separerer "teig" og "nibas"
+      const teigPosisjonskvaliteter = relevantPosisjonskvaliteter.filter(
+        (posisjonskvalitet) => posisjonskvalitet.grensetype === "teig",
+      );
+      const nibasPosisjonskvaliteter = relevantPosisjonskvaliteter.filter(
+        (posisjonskvalitet) => posisjonskvalitet.grensetype === "nibas",
+      );
+
+      // Prioriterer posisjonskvaliteter fra teiggrense hvis de finnes, ellers bruker nibas
+      const prioritizedPosisjonskvaliteter =
+        teigPosisjonskvaliteter.length > 0 ? teigPosisjonskvaliteter : nibasPosisjonskvaliteter;
+
       // Finner den dårligste posisjonskvaliteten basert på nøyaktighet
-      const worstPosisjonskvalitet = relevantPosisjonskvaliteter.toSorted((a, b) => {
+      const worstPosisjonskvalitet = prioritizedPosisjonskvaliteter.toSorted((a, b) => {
         if (a != null && b != null && a.noeyaktighet != null && b.noeyaktighet != null) {
           return a.noeyaktighet - b.noeyaktighet;
         }
         return 0;
-      })[relevantPosisjonskvaliteter.length - 1];
-      if (worstPosisjonskvalitet != null && kodeliste != null) {
+      })[prioritizedPosisjonskvaliteter.length - 1];
+      if (worstPosisjonskvalitet != null && (kodeliste != null || matrikkelkodeliste != null)) {
+        // Bruker matrikkelkodeliste hvis det er teig, ellers bruker vi nibas-kodeliste
+        let maalemetodeIdToSet = worstPosisjonskvalitet.maalemetode;
+        if (matrikkelkodeliste !== undefined) {
+          const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find(
+            (item) => item.id?.toString() === worstPosisjonskvalitet.maalemetode,
+          );
+          if (matrikkelMaalemetode !== undefined) {
+            // Finn match i kodeliste basert på kodeverdien fra matrikkelkodeliste
+            const match = kodeliste?.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
+            if (match) {
+              maalemetodeIdToSet = match.id; // Bruk ID-en fra kodeliste, ikke fra matrikkelkodeliste
+            }
+          }
+        }
         setValue("noeyaktighet", worstPosisjonskvalitet.noeyaktighet, { shouldDirty: true, shouldValidate: true });
-        setValue("maalemetode", worstPosisjonskvalitet.maalemetode, { shouldDirty: true, shouldValidate: true });
+        setValue("maalemetode", maalemetodeIdToSet, { shouldDirty: true, shouldValidate: true });
         handleSubmit(onSubmit)();
         mockAutofillLoading();
         onCloseAutofill();
