@@ -1,0 +1,59 @@
+name: Release PR
+on:
+  workflow_dispatch:
+    inputs:
+      jira-issue:
+        description: "JIRA issue key associated with this release"
+        required: true
+
+env:
+  image_name: nibas-frontend
+  registry: ghcr.io
+  registry_path: kartverket
+
+jobs:
+  build:
+    permissions:
+      contents: write
+      packages: write
+      security-events: write
+      actions: read
+    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@main
+    with:
+      deploy_ghcr: true
+    secrets: inherit
+
+  test:
+    permissions:
+      contents: write
+      actions: read
+    uses: kartverket/nibas-frontend/.github/workflows/test-app.yml@main
+    secrets: inherit
+
+  pharos:
+    name: Run Pharos security scan
+    needs: build
+    permissions:
+      actions: read
+      packages: read
+      contents: read
+      security-events: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run Pharos"
+        uses: kartverket/pharos@v0.3.1
+        with:
+          allow_severity_level: critical
+          image_url: ${{ needs.build.outputs.image_url }}
+
+  deploy-pull-request:
+    permissions:
+      id-token: write
+    needs: [build, test, pharos]
+    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
+    with:
+      jira-issue: ${{ inputs.jira-issue }}
+      application: nibas-frontend
+      version: ${{ needs.build.outputs.version }}
+      digest: ${{ needs.build.outputs.digest }}
+      identity: nibas
