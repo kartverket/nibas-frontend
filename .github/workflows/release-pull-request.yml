@@ -15,6 +15,19 @@ env:
   registry_path: kartverket
 
 jobs:
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    name: Validate branch-name input
+    steps:
+      - name: Validate branch-name is valid hostname label
+        run: |
+          BRANCH_NAME="${{ inputs.branch-name }}"
+          if [[ ! "$BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
+            echo "❌ branch-name is invalid as hostname label: $BRANCH_NAME"
+            exit 1
+          fi
+          echo "✅ branch-name is valid as hostname label: $BRANCH_NAME"
+
   build:
     permissions:
       contents: write
@@ -72,3 +85,18 @@ jobs:
           version: ${{ needs.build.outputs.version }}
           digest: ${{ needs.build.outputs.digest }}
           identity: nibas
+
+  post-deployed-message:
+    needs: [deploy-pull-request]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Post a comment to the PR
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            🚀 Feature branch was successfully deployed!
+
+            🌐 Preview it here: [https://nibas-${{ inputs.branch-name }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ inputs.branch-name }}.atkv3-dev.kartverket-intern.cloud)
