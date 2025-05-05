@@ -59,15 +59,15 @@ jobs:
         id: determine-branch
         run: |
           if [ "${{ inputs.branch-name }}" != "" ]; then
-            echo "branch_name=${{ inputs.branch-name }}" >> $GITHUB_ENV
+            echo "BRANCH_NAME=${{ inputs.branch-name }}" >> $GITHUB_ENV
           else
-            echo "branch_name=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+            echo "BRANCH_NAME=${GITHUB_REF_NAME}" >> $GITHUB_ENV
           fi
 
       - name: Deploy Pull Request
         uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
         with:
-          branch-name: ${{ env.branch_name }}
+          branch-name: ${{ env.BRANCH_NAME }}
           application: nibas-frontend
           version: ${{ needs.build.outputs.version }}
           digest: ${{ needs.build.outputs.digest }}
