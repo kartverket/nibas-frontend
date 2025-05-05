@@ -2,9 +2,12 @@ name: Release PR
 on:
   workflow_dispatch:
     inputs:
-      jira-issue:
-        description: "JIRA issue key associated with this release"
+      branch-name:
+        description: "Name of the branch to create feature-branch for"
         required: true
+  pull_request:
+    branches:
+      - main
 
 env:
   image_name: nibas-frontend
@@ -50,10 +53,22 @@ jobs:
     permissions:
       id-token: write
     needs: [build, test, pharos]
-    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
-    with:
-      jira-issue: ${{ inputs.jira-issue }}
-      application: nibas-frontend
-      version: ${{ needs.build.outputs.version }}
-      digest: ${{ needs.build.outputs.digest }}
-      identity: nibas
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine branch name
+        id: determine-branch
+        run: |
+          if [ "${{ inputs.branch-name }}" != "" ]; then
+            echo "branch_name=${{ inputs.branch-name }}" >> $GITHUB_ENV
+          else
+            echo "branch_name=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy Pull Request
+        uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
+        with:
+          branch-name: ${{ env.branch_name }}
+          application: nibas-frontend
+          version: ${{ needs.build.outputs.version }}
+          digest: ${{ needs.build.outputs.digest }}
+          identity: nibas
