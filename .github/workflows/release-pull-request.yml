@@ -15,6 +15,11 @@ env:
   registry_path: kartverket
 
 jobs:
+  resolve-branch-name:
+    uses: kartverket/nibas-frontend/.github/workflows/resolve-branch-name.yml@main
+    with:
+      branch-name: ${{ inputs.branch-name }}
+
   build:
     permissions:
       contents: write
@@ -49,43 +54,14 @@ jobs:
           allow_severity_level: critical
           image_url: ${{ needs.build.outputs.image_url }}
 
-  determine-branch-name:
-    name: Determine Branch Name
-    needs: [build, test, pharos]
-    runs-on: ubuntu-latest
-    outputs:
-      BRANCH_NAME: ${{ steps.determine-branch.outputs.branch_name_output }}
-    steps:
-      - name: Determine branch name
-        id: determine-branch
-        run: |
-          if [ "${{ inputs.branch-name }}" != "" ]; then
-            echo "branch_name_output=${{ inputs.branch-name }}" >> $GITHUB_OUTPUT
-          else
-            echo "branch_name_output=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
-
-  validate-branch-name:
-    runs-on: ubuntu-latest
-    name: Validate branch-name input
-    needs: [determine-branch-name]
-    steps:
-      - name: Validate branch-name is valid hostname label
-        run: |
-          BRANCH_NAME="${{ needs.determine-branch-name.outputs.BRANCH_NAME }}"
-          if [[ ! "$BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
-            echo "❌ branch-name is invalid as hostname label: $BRANCH_NAME"
-            exit 1
-          fi
-          echo "✅ branch-name is valid as hostname label: $BRANCH_NAME"
-
   deploy-pull-request:
     name: Deploy Pull Request
-    needs: [validate-branch-name]
+    needs: [resolve-branch-name, build, test, pharos]
     permissions:
       id-token: write
     uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
     with:
-      branch-name: ${{ needs.determine-branch-name.outputs.BRANCH_NAME }}
+      branch-name: ${{ needs.resolve-branch-name.outputs.BRANCH_NAME }}
       application: nibas-frontend
       version: ${{ needs.build.outputs.version }}
       digest: ${{ needs.build.outputs.digest }}
@@ -104,4 +80,4 @@ jobs:
           body: |
             🚀 Feature branch was successfully deployed!
 
-            🌐 Preview it here: [https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud)
+            🌐 Preview it here: [https://nibas-${{ needs.resolve-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ needs.resolve-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud)
