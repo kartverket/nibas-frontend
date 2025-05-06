@@ -41,6 +41,9 @@ export interface paths {
     /** Henter nasjon på en gitt dato */
     get: operations["hentNasjon"];
   };
+  "/v1/matrikkelkodelister": {
+    get: operations["fetchMatrikkelKodelister"];
+  };
   "/v1/kommuner": {
     /** Henter alle kommuner i Nasjonal inndelingsbase. */
     get: operations["hentKommuner"];
@@ -159,6 +162,14 @@ export interface paths {
   "/v1/ekstern/grunnkretser/{id}/grenser": {
     /** Henter grensene til en grunnkrets med gitt id */
     get: operations["hentGrenserForGrunnkrets_1"];
+  };
+  "/v1/ekstern/grenser": {
+    /** Henter Kommunegrense, Fylkesgrense, Riksgrense, Territorialgrense og AvtaltAvgrensningslinje */
+    get: operations["hentGrenser"];
+  };
+  "/v1/ekstern/grenser/{lokalid}": {
+    /** Henter en spesifikk grense basert på lokalid */
+    get: operations["hentGrense"];
   };
   "/v1/ekstern/fylker": {
     /** Henter alle fylker i Nasjonal inndelingsbase. */
@@ -804,6 +815,7 @@ export interface components {
       endredeGrunnkretser: string[];
       endredeKommuner: string[];
       endredeFylker: string[];
+      endredeNasjoner: string[];
     };
     /** @description Representasjon av utkast */
     UtkastResponse: {
@@ -938,6 +950,27 @@ export interface components {
        */
       version: number;
     };
+    KodelisteEntryDTO: {
+      /**
+       * Format: int64
+       * @description Id til koden.
+       */
+      id: number;
+      /** @description Kodeverdi for koden, kan være SOSI-kodeverdi. */
+      kodeverdi: string;
+      /** @description Beskrivende navn til koden på bokmål. */
+      navn: string;
+    };
+    MatrikkelKodelisterRespons: {
+      /** @description Liste av målemetodekoder fra Matrikkelen. */
+      maalemetodeKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+      /** @description Liste av hjelpelinjetyper fra Matrikkelen. */
+      hjelpelinjetypeKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+      /** @description Liste av administrativ grensekoder fra Matrikkelen. */
+      administrativGrenseKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+      /** @description Liste av terrengdetaljkoder fra Matrikkelen. */
+      terrengdetaljKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+    };
     /** @description Representasjon av en kommune */
     KommuneResponse: {
       /** @description ID-en til kommunen */
@@ -1042,9 +1075,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
+      valid?: boolean;
       coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {
@@ -1208,6 +1241,113 @@ export interface components {
        * @description Teknisk versjon for å støtte samhandling og redigering
        */
       version: number;
+    };
+    PaginertRespons: {
+      innhold: { [key: string]: unknown }[];
+      /** Format: int32 */
+      side: number;
+      /** Format: int32 */
+      antallPerSide: number;
+      /** Format: int64 */
+      totaltAntall: number;
+      /** Format: int32 */
+      totaltAntallSider: number;
+    };
+    /** @description Representasjon av en grense */
+    GrenseResponse: {
+      /** @description Unik ID for grensen */
+      id: string;
+      /** @description Lokal ID for grensen */
+      lokalid: string;
+      /**
+       * @description Type grense
+       * @enum {string}
+       */
+      grensetype:
+        | "Kommunegrense"
+        | "Fylkesgrense"
+        | "Riksgrense"
+        | "AvtaltAvgrensningslinje"
+        | "Territorialgrense"
+        | "Grunnlinje"
+        | "Lovvirkeomraadegrense"
+        | "Grunnkretsgrense"
+        | "Delomraadegrense"
+        | "Stemmekretsgrense";
+      /** @description Geometri for grensen (GeoJSON format) */
+      geometri:
+        | components["schemas"]["LineString"]
+        | components["schemas"]["MultiPolygon"]
+        | components["schemas"]["Point"];
+      /** @description Gyldighetsperiode for grensen */
+      gyldighet: components["schemas"]["GyldighetResponse"];
+      /**
+       * Format: date-time
+       * @description Dato for datafangst
+       */
+      datafangstdato?: string;
+      /**
+       * Format: date-time
+       * @description Dato for første digitalisering
+       */
+      foerstedigitaliseringsdato: string;
+      /** @description Opphav/kilde til grensen */
+      opphav?: string;
+      /** @description Tilleggsinformasjon om grensen */
+      informasjon?: string;
+      /** @description Brukeren som sist endret grensen */
+      endretAv: string;
+      /**
+       * Format: date-time
+       * @description Dato for siste endring
+       */
+      endretDato: string;
+      /**
+       * @description Type endring som ble gjort
+       * @enum {string}
+       */
+      typeEndring:
+        | "KVALITETSHEVING"
+        | "RETTING"
+        | "VEDTATT_DELING"
+        | "VEDTATT_SLETTING"
+        | "VEDTATT_SAMMENSLAAING"
+        | "VEDTATT_GRENSEJUSTERING"
+        | "FASTSETTING"
+        | "NAVNEENDRING"
+        | "NUMMERENDRING"
+        | "IMPORT";
+      /** @description Metode for måling */
+      maalemetode?: string;
+      /**
+       * Format: int32
+       * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer (oppgitt i cm)
+       */
+      noeyaktighet?: number;
+      /** @description Kommuner på grensen med side-informasjon */
+      kommuner: components["schemas"]["KommuneInfoDTO"][];
+    };
+    /** @description Informasjon om en kommune på en side av en grense */
+    KommuneInfoDTO: {
+      /** @description Fylkes Lokal ID */
+      fylkesLokalID?: string;
+      /** @description Kommune Lokal ID */
+      kommuneLokalID: string;
+      /** @description Kommunenummer */
+      kommunenummer: string;
+      /** @description Kommunenavn */
+      kommunenavn: string;
+    };
+    PaginertResponsGrenseResponse: {
+      innhold: components["schemas"]["GrenseResponse"][];
+      /** Format: int32 */
+      side: number;
+      /** Format: int32 */
+      antallPerSide: number;
+      /** Format: int64 */
+      totaltAntall: number;
+      /** Format: int32 */
+      totaltAntallSider: number;
     };
     /** @description En referanse til et fylke */
     EksternFylkeRef: {
@@ -1572,6 +1712,22 @@ export interface operations {
       };
     };
   };
+  fetchMatrikkelKodelister: {
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["MatrikkelKodelisterRespons"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
   /** Henter alle kommuner i Nasjonal inndelingsbase. */
   hentKommuner: {
     parameters: {
@@ -1669,7 +1825,7 @@ export interface operations {
         id: string;
       };
       query: {
-        /** gyldigTilDate for kommune (default = dagens dato */
+        /** gyldigTilDate for da stemmekretsgrensene ble historiske */
         gyldigTilDate: string;
       };
     };
@@ -1824,7 +1980,7 @@ export interface operations {
         id: string;
       };
       query: {
-        /** gyldigTilDate for kommune (default = dagens dato */
+        /** gyldigTilDate for da grunnkretsgrensene ble historiske */
         gyldigTilDate: string;
       };
     };
@@ -2545,6 +2701,68 @@ export interface operations {
       };
     };
   };
+  /** Henter Kommunegrense, Fylkesgrense, Riksgrense, Territorialgrense og AvtaltAvgrensningslinje */
+  hentGrenser: {
+    parameters: {
+      query: {
+        /** Dato for gyldighet av grensene (standard er dagens dato) */
+        gyldighetsdato?: string;
+        /** Sidenummer for paginering (starter på 0) */
+        side?: number;
+        /** Antall resultater per side (standard er 10) */
+        antall?: number;
+      };
+    };
+    responses: {
+      /** Vellykket operasjon */
+      200: {
+        content: {
+          "application/json": components["schemas"]["PaginertRespons"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Ikke funnet */
+      404: {
+        content: {
+          "application/json": components["schemas"]["PaginertResponsGrenseResponse"];
+        };
+      };
+    };
+  };
+  /** Henter en spesifikk grense basert på lokalid */
+  hentGrense: {
+    parameters: {
+      path: {
+        /** Lokal ID for grensen som skal hentes */
+        lokalid: string;
+      };
+    };
+    responses: {
+      /** Vellykket operasjon */
+      200: {
+        content: {
+          "application/json": components["schemas"]["GrenseResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Ikke funnet */
+      404: {
+        content: {
+          "application/json": components["schemas"]["GrenseResponse"];
+        };
+      };
+    };
+  };
   /** Henter alle fylker i Nasjonal inndelingsbase. */
   hentFylker_1: {
     parameters: {
@@ -2625,6 +2843,5 @@ export interface operations {
     };
   };
 }
-
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface external {}

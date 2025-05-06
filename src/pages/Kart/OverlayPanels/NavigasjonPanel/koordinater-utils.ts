@@ -80,3 +80,14 @@ export const areCoordsWithinNibasHitTolerance = (coord1: Coordinate, coord2: Coo
 
   return Math.sqrt(dx * dx + dy * dy) <= pixelTolerance;
 };
+
+export const centerOnCoordinate = (north: number, east: number, zoom?: number, duration?: number) => {
+  if (north !== null && east !== null) {
+    const view = map.getView();
+    view.animate({
+      duration: duration !== null ? duration : 0,
+      center: [east, north],
+      zoom: zoom != null ? zoom : 18,
+    });
+  }
+};

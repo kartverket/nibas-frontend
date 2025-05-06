@@ -10,7 +10,7 @@ export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e";
 export enum NibasOrigin {
   LOCALHOST = "http://localhost:3000",
   DEV_E2E = "https://nibas-e2e.atkv3-dev.kartverket-intern.cloud",
-  DEV_MAIN = "https://nibas.atkv3-dev.kartverket-intern.cloud",
+  DEV_MAIN = "https://nibas-main.atkv3-dev.kartverket-intern.cloud",
   PROD = "https://nibas.kartverket-intern.cloud",
 }
 

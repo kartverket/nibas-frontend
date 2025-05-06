@@ -6,6 +6,7 @@ export type CustomTooltipProps = {
   text: string;
   icon?: MaterialSymbol;
   additionalInfo?: string;
+  placement?: TooltipProps["placement"];
 } & ShortcutTextProps;
 
 type ShortcutTextProps = {
@@ -47,7 +48,7 @@ export const TooltipBody = ({ text, icon, shortcut, holdButton, additionalInfo }
 const CustomTooltip = ({ text, icon, shortcut, children, holdButton, additionalInfo, ...restProps }: Props) => {
   return (
     <Tooltip
-      placement="top"
+      placement={restProps.placement ?? "top"}
       {...restProps}
       label={
         <TooltipBody

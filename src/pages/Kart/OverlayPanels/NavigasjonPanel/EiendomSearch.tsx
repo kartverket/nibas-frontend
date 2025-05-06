@@ -8,7 +8,8 @@ import { RegisterOptions, useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { KommuneResponse } from "types/api";
 import { InndelingOption, InndelingSearchField } from "./InndelingSearchField";
-import { centerOnCoordinate, SearchProps } from "./NavigasjonPanel";
+import { SearchProps } from "./NavigasjonPanel";
+import { centerOnCoordinate } from "./koordinater-utils";
 import { useEiendom } from "./useEiendom";
 import { processFormValuesToCommonNull } from "utils/form-utils";
 

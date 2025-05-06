@@ -401,6 +401,7 @@ export const mockUtkast: UtkastResponse = {
     endredeGrunnkretser: [],
     endredeKommuner: [],
     endredeFylker: [],
+    endredeNasjoner: [],
   },
 };
 
@@ -425,6 +426,7 @@ export const mockUtkastIngenEndringer: UtkastResponse = {
     endredeGrunnkretser: [],
     endredeKommuner: [],
     endredeFylker: [],
+    endredeNasjoner: [],
   },
 };
 
@@ -506,6 +508,7 @@ export const mockUtkast1: UtkastResponse = {
     endredeGrunnkretser: [],
     endredeKommuner: [],
     endredeFylker: [],
+    endredeNasjoner: [],
   },
 };
 
@@ -540,5 +543,6 @@ export const mockUtkast2: UtkastResponse = {
     endredeGrunnkretser: [],
     endredeKommuner: [],
     endredeFylker: [],
+    endredeNasjoner: [],
   },
 };

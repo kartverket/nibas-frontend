@@ -59,7 +59,7 @@ const useModify = () => {
     return new Modify({
       features: new Collection(selectedFeatures),
       pixelTolerance: pixelTolerance,
-      condition: (event: MapBrowserEvent<MouseEvent>) => {
+      condition: (event) => {
         if (activeModeTools.includes("move")) {
           return false;
         }
@@ -67,7 +67,7 @@ const useModify = () => {
           return false;
         }
 
-        const activeFeatures = getLineStringFeaturesAtPixel(event, ["edit"]);
+        const activeFeatures = getLineStringFeaturesAtPixel(event as MapBrowserEvent<PointerEvent>, ["edit"]);
 
         // Unngå interaksjon med inaktive features (representasjonspunkter f.eks.)
         if (activeFeatures.length === 0) {
@@ -96,13 +96,13 @@ const useModify = () => {
         }
         return false;
       },
-      deleteCondition: (event: MapBrowserEvent<MouseEvent>) => {
+      deleteCondition: (event) => {
         if (activeModeTools.includes("move")) {
           return false;
         }
 
         if (activeTool === "remove" && click(event)) {
-          const activeFeatures = getLineStringFeaturesAtPixel(event, ["edit"]);
+          const activeFeatures = getLineStringFeaturesAtPixel(event as MapBrowserEvent<PointerEvent>, ["edit"]);
 
           if (!activeFeatures.every((feature) => isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
             return false;
@@ -214,7 +214,7 @@ const useModify = () => {
 
     const onSnap = (event: ModifyEvent, actingLineString: Feature<Geometry>, pointCoords: Coordinate) => {
       // Vi ønsker ikke å arve posisjonskvalitet fra grenser i redigeringsmodus
-      const targetFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, [
+      const targetFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
         "matrikkel",
         "fylke",
         "kommune",
@@ -267,7 +267,9 @@ const useModify = () => {
           return;
         }
 
-        const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent, ["edit"]);
+        const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
+          "edit",
+        ]);
 
         const nonSelectedActiveFeatures = activeFeatures.filter(
           (feature) => selectedFeature.getId() !== feature.getId(),

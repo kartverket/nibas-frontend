@@ -83,7 +83,7 @@ const getEmptyInndelinger = (): Inndelinger => {
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndelinger: (inndelinger: Inndeling[]) => void;
-
+  setShouldZoom: (shouldZoom: boolean) => void;
   currentlyEditingInndelinger: Inndeling[];
   isLoadingInndeling: boolean;
 
@@ -103,7 +103,7 @@ export const InndelingerContext = createContext<InndelingerContextValue | undefi
 
 export const InndelingerProvider = ({ children }: { children: React.ReactNode }) => {
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
-
+  const [shouldZoom, setShouldZoom] = useState(true);
   const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles, addDirtyStyles } = useFeatureStyle();
 
   const [selectedFylkeId, setSelectedFylkeId] = useState<string | null>(null);
@@ -132,27 +132,30 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const restoreApplicationState = useCallback(() => {
     const sessionStorageHistory = fetchHistoryFromSessionStorage();
-
     // TODO: Selected feature/point style virker ikke.
     const selectedFeatures = fetchSelectedFeaturesFromSessionStorage();
     if (selectedFeatures != null && selectedFeatures.length > 0) {
       const mapPosition = fetchMapPositionFromSessionStorage();
 
-      map.getView().animate({
-        center: mapPosition?.center,
-        zoom: mapPosition?.zoom,
-      });
+      if (shouldZoom === true) {
+        map.getView().animate({
+          center: mapPosition?.center,
+          zoom: mapPosition?.zoom,
+        });
+      }
       if (exclusiveSelectTools.includes(activeTool) === true) {
         selectFeatures(selectedFeatures);
       } else {
         addToSelection(selectedFeatures[0]);
       }
     } else {
-      zoomToFeatures(
-        inndelingFeatures
-          .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
-          .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
-      );
+      if (shouldZoom === true) {
+        zoomToFeatures(
+          inndelingFeatures
+            .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
+            .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
+        );
+      }
     }
 
     const selectedPointFromSessionStorage = fetchSelectedPointFromSessionStorage();
@@ -189,6 +192,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     restoreHistoryState,
     selectFeatures,
     selectPointOnFeature,
+    shouldZoom,
   ]);
 
   /**
@@ -362,7 +366,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
         );
       }
     }
-
     // Reapply historikken slik at eventuelle features som har blitt endret på siden siste lagring er i sync med historikken
     reapplyCurrentEntries();
     restoreApplicationState();
@@ -514,7 +517,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const value = {
     inndelinger,
     selectInndelinger,
-
+    setShouldZoom,
     getAllInndelinger,
     currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
 

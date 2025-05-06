@@ -30,7 +30,7 @@ const useSelectPoint = () => {
     }
   }, [activeOverlayPanel, activeTool, allowedPointModes, clearSelection, closeOverlayPanel, selectedPoint]);
 
-  const selectPoint = (event: MapBrowserEvent<MouseEvent>) => {
+  const selectPoint = (event: MapBrowserEvent<PointerEvent>) => {
     if (!activeModeTools.includes("move") && allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
