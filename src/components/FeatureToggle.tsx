@@ -5,7 +5,7 @@ const getLocalEnvironmentOverride = (envKey: string) => {
   return import.meta.env[envKey] === "true";
 };
 
-export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e";
+export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e" | "feature-branch";
 
 export enum NibasOrigin {
   LOCALHOST = "http://localhost:3000",
@@ -33,12 +33,14 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
     "dev-main": getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
     "dev-e2e": getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
     localhost: getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
+    "feature-branch": getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
   },
 };
 
+// Hvis vi ikke er på en kjent og definert url antar vi at det er en feature-branch.
 export const getCurrentEnvironment = (): Environment => {
   const { origin } = window.location;
-  return environmentByUrl[origin] ?? "prod";
+  return environmentByUrl[origin] ?? "feature-branch";
 };
 
 export const featureEnabled = (key: Keys): boolean => {
