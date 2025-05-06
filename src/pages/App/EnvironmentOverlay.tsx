@@ -1,8 +1,16 @@
-import { Environment, getCurrentEnvironment } from "components/FeatureToggle";
+import { Select, Spinner } from "@kvib/react";
+import { Environment, getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
 import { styled } from "styled-components";
+import useSWR from "swr";
+import { GitHubPullRequest } from "types/github-api-types";
 import { zindex } from "utils/constants";
 
 type EnvironmentStyle = { label: string; color: string };
+
+const getFeatureBranchName = () => {
+  return window.location.hostname.split(".")[0];
+};
+
 const styles: Record<Environment, EnvironmentStyle> = {
   "dev-main": {
     label: "Utviklingsmiljø",
@@ -20,21 +28,122 @@ const styles: Record<Environment, EnvironmentStyle> = {
     label: "Lokalt utviklingsmiljø",
     color: "var(--kvib-colors-red-200)",
   },
+  "feature-branch": {
+    label: getFeatureBranchName(),
+    color: "var(--kvib-colors-purple-200)",
+  },
+};
+
+type EnvironmentOption = { title: string; branch_url: string; author: string };
+
+const currentEnvironments: EnvironmentOption[] = [
+  {
+    title: "nibas-main",
+    branch_url: NibasOrigin.DEV_MAIN,
+    author: "SMIA",
+  },
+  {
+    title: "localhost",
+    branch_url: NibasOrigin.LOCALHOST,
+    author: "SMIA",
+  },
+];
+
+const fetchNibasRepoPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
+  const response = await fetch(`/repos/kartverket/${repo}/pulls`);
+  const data = await response.json();
+  if (response.ok) {
+    return data;
+  } else {
+    return [];
+  }
+};
+
+const mapPRtoOptionObject = (pr: GitHubPullRequest | null | undefined): EnvironmentOption | null => {
+  if (pr == null) {
+    return null;
+  }
+  return {
+    title: pr.title,
+    branch_url: "https://nibas-" + pr.head.ref + ".atkv3-dev.kartverket-intern.cloud",
+    author: pr.user.login,
+  };
 };
 
 const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
   const env = getCurrentEnvironment();
   const style = styles[env];
 
+  const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR("nibas-frontend", fetchNibasRepoPRs);
+  const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR("nibas-backend", fetchNibasRepoPRs);
+  const { data: nibasEventsPRs, isLoading: isEventsPRsLoading } = useSWR("nibas-events", fetchNibasRepoPRs);
+  const { data: nibasArbeidslistePRs, isLoading: isArbeidslistePRsLoading } = useSWR(
+    "nibas-arbeidsliste",
+    fetchNibasRepoPRs,
+  );
+
+  const isLoading = isFrontendPRsLoading || isBackendPRsLoading || isArbeidslistePRsLoading || isEventsPRsLoading;
+
+  const allPRs = [
+    ...(nibasFrontendPRs || []),
+    ...(nibasBackendPRs || []),
+    ...(nibasEventsPRs || []),
+    ...(nibasArbeidslistePRs || []),
+  ];
+  const allEnvironmentOptions = currentEnvironments
+    .concat(allPRs.map(mapPRtoOptionObject).filter((pr) => pr !== null))
+    // Dependabot oppretter brancher med ugylidig hostname label.
+    // Dette kan fikses ved å eksplisitt håndtere dette i wokflows som oppretter feature-namespaces, men det er ikke gjort per nå.
+    .filter((option) => option.author !== "dependabot[bot]");
+
+  const onSelectEnvironment = (url: string) => {
+    window.location.href = url;
+  };
+
   return (
     <>
       {children}
       <Overlay color={style.color}>
         <OverlayLabel color={style.color}>{style.label}</OverlayLabel>
+        {env !== "dev-e2e" && env !== "prod" && (
+          <EnvironmentSelectContainer color={style.color}>
+            {isLoading ? (
+              <Spinner color="white" />
+            ) : (
+              <EnvironmentSelect
+                size={"sm"}
+                onChange={(e) => onSelectEnvironment(e.target.value)}
+                value={window.location.origin}
+              >
+                {allEnvironmentOptions?.map((pr, i) => (
+                  <option key={i} value={pr.branch_url}>
+                    [{pr.title}] - {pr.author}
+                  </option>
+                ))}
+              </EnvironmentSelect>
+            )}
+          </EnvironmentSelectContainer>
+        )}
       </Overlay>
     </>
   );
 };
+
+const EnvironmentSelectContainer = styled.div<{ color: string }>`
+  z-index: ${zindex.environmentOverlay};
+  background-color: ${(props) => props.color};
+  position: fixed;
+  bottom: 0;
+  padding: 5px 5px 5px 0;
+  border-top-right-radius: 8px;
+`;
+
+const EnvironmentSelect = styled(Select)`
+  border-radius: 5px;
+  background: white;
+  pointer-events: auto;
+  width: auto;
+`;
 
 const Overlay = styled.div<{ color: string }>`
   position: fixed;
