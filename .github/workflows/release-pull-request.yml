@@ -30,6 +30,20 @@ jobs:
             echo "branch_name_output=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
           fi
 
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    name: Validate branch-name input
+    needs: [determine-branch-name]
+    steps:
+      - name: Validate branch-name is valid hostname label
+        run: |
+          DETERMINED_BRANCH_NAME="${{ needs.determine-branch-name.outputs.BRANCH_NAME }}"
+          if [[ ! "$DETERMINED_BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
+            echo "❌ Branchname is invalid as hostname label: $DETERMINED_BRANCH_NAME"
+            exit 1
+          fi
+          echo "✅ Branchname is valid as hostname label: $DETERMINED_BRANCH_NAME"
+
   build:
     permissions:
       contents: write
@@ -66,7 +80,7 @@ jobs:
 
   deploy-pull-request:
     name: Deploy Pull Request
-    needs: [determine-branch-name, build, test, pharos]
+    needs: [validate-branch-name, determine-branch-name, build, test, pharos]
     permissions:
       id-token: write
     uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@fix-checkout
@@ -79,7 +93,7 @@ jobs:
 
   post-deployed-message:
     runs-on: ubuntu-latest
-    needs: [determine-branch-name, deploy-pull-request]
+    needs: [validate-branch-name, determine-branch-name, deploy-pull-request]
     if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Post deployment comment
