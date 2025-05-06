@@ -90,4 +90,4 @@ jobs:
           body: |
             🚀 Feature branch was successfully deployed!
 
-            🌐 Preview it here: [https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud)
+            🌐 Preview it at: [https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud)
