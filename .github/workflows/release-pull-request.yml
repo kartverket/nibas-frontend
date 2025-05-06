@@ -69,7 +69,7 @@ jobs:
     needs: [determine-branch-name, build, test, pharos]
     permissions:
       id-token: write
-    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
+    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@fix-checkout
     with:
       branch-name: ${{ needs.determine-branch-name.outputs.BRANCH_NAME }}
       application: nibas-frontend
@@ -79,7 +79,7 @@ jobs:
 
   post-deployed-message:
     runs-on: ubuntu-latest
-    needs: [deploy-pull-request]
+    needs: [determine-branch-name, deploy-pull-request]
     if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Post deployment comment
