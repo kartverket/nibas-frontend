@@ -1,0 +1,102 @@
+name: Release PR
+on:
+  workflow_dispatch:
+    inputs:
+      branch-name:
+        description: "Name of the branch to create feature-branch for"
+        required: true
+  pull_request:
+    branches:
+      - main
+
+env:
+  image_name: nibas-frontend
+  registry: ghcr.io
+  registry_path: kartverket
+
+jobs:
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    name: Validate branch-name input
+    steps:
+      - name: Validate branch-name is valid hostname label
+        run: |
+          BRANCH_NAME="${{ inputs.branch-name }}"
+          if [[ ! "$BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
+            echo "❌ branch-name is invalid as hostname label: $BRANCH_NAME"
+            exit 1
+          fi
+          echo "✅ branch-name is valid as hostname label: $BRANCH_NAME"
+
+  build:
+    permissions:
+      contents: write
+      packages: write
+      security-events: write
+      actions: read
+    uses: kartverket/nibas-frontend/.github/workflows/build-app.yml@main
+    with:
+      deploy_ghcr: true
+    secrets: inherit
+
+  test:
+    permissions:
+      contents: write
+      actions: read
+    uses: kartverket/nibas-frontend/.github/workflows/test-app.yml@main
+    secrets: inherit
+
+  pharos:
+    name: Run Pharos security scan
+    needs: build
+    permissions:
+      actions: read
+      packages: read
+      contents: read
+      security-events: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Run Pharos"
+        uses: kartverket/pharos@v0.3.1
+        with:
+          allow_severity_level: critical
+          image_url: ${{ needs.build.outputs.image_url }}
+
+  deploy-pull-request:
+    permissions:
+      id-token: write
+    needs: [build, test, pharos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Determine branch name
+        id: determine-branch
+        run: |
+          if [ "${{ inputs.branch-name }}" != "" ]; then
+            echo "BRANCH_NAME=${{ inputs.branch-name }}" >> $GITHUB_ENV
+          else
+            echo "BRANCH_NAME=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          fi
+
+      - name: Deploy Pull Request
+        uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
+        with:
+          branch-name: ${{ env.BRANCH_NAME }}
+          application: nibas-frontend
+          version: ${{ needs.build.outputs.version }}
+          digest: ${{ needs.build.outputs.digest }}
+          identity: nibas
+
+  post-deployed-message:
+    needs: [deploy-pull-request]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
+    steps:
+      - name: Post a comment to the PR
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            🚀 Feature branch was successfully deployed!
+
+            🌐 Preview it here: [https://nibas-${{ inputs.branch-name }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ inputs.branch-name }}.atkv3-dev.kartverket-intern.cloud)

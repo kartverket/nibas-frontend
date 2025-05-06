@@ -1,0 +1,32 @@
+name: Takedown PR
+on:
+  workflow_dispatch:
+    inputs:
+      branch-name:
+        description: "Name of the branch to takedown feature-branch"
+        required: true
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  takedown-pull-request:
+    permissions:
+      id-token: write
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') }}
+    steps:
+      - name: Determine branch name
+        id: determine-branch
+        run: |
+          if [ "${{ inputs.branch-name }}" != "" ]; then
+            echo "BRANCH_NAME=${{ inputs.branch-name }}" >> $GITHUB_ENV
+          else
+            echo "BRANCH_NAME=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+          fi
+
+      - name: Takedown Pull Request
+        uses: kartverket/smia-apps/.github/workflows/delete-feature-branch.yml@main
+        with:
+          branch-name: ${{ env.BRANCH_NAME }}
+          identity: nibas
