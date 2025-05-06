@@ -15,19 +15,6 @@ env:
   registry_path: kartverket
 
 jobs:
-  validate-branch-name:
-    runs-on: ubuntu-latest
-    name: Validate branch-name input
-    steps:
-      - name: Validate branch-name is valid hostname label
-        run: |
-          BRANCH_NAME="${{ inputs.branch-name }}"
-          if [[ ! "$BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
-            echo "❌ branch-name is invalid as hostname label: $BRANCH_NAME"
-            exit 1
-          fi
-          echo "✅ branch-name is valid as hostname label: $BRANCH_NAME"
-
   build:
     permissions:
       contents: write
@@ -62,36 +49,54 @@ jobs:
           allow_severity_level: critical
           image_url: ${{ needs.build.outputs.image_url }}
 
-  deploy-pull-request:
-    permissions:
-      id-token: write
+  determine-branch-name:
+    name: Determine Branch Name
     needs: [build, test, pharos]
     runs-on: ubuntu-latest
+    outputs:
+      BRANCH_NAME: ${{ steps.determine-branch.outputs.branch_name_output }}
     steps:
       - name: Determine branch name
         id: determine-branch
         run: |
           if [ "${{ inputs.branch-name }}" != "" ]; then
-            echo "BRANCH_NAME=${{ inputs.branch-name }}" >> $GITHUB_ENV
+            echo "branch_name_output=${{ inputs.branch-name }}" >> $GITHUB_OUTPUT
           else
-            echo "BRANCH_NAME=${GITHUB_REF_NAME}" >> $GITHUB_ENV
-          fi
+            echo "branch_name_output=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
 
-      - name: Deploy Pull Request
-        uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
-        with:
-          branch-name: ${{ env.BRANCH_NAME }}
-          application: nibas-frontend
-          version: ${{ needs.build.outputs.version }}
-          digest: ${{ needs.build.outputs.digest }}
-          identity: nibas
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    name: Validate branch-name input
+    needs: [determine-branch-name]
+    steps:
+      - name: Validate branch-name is valid hostname label
+        run: |
+          BRANCH_NAME="${{ needs.determine-branch-name.outputs.BRANCH_NAME }}"
+          if [[ ! "$BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
+            echo "❌ branch-name is invalid as hostname label: $BRANCH_NAME"
+            exit 1
+          fi
+          echo "✅ branch-name is valid as hostname label: $BRANCH_NAME"
+
+  deploy-pull-request:
+    name: Deploy Pull Request
+    needs: [validate-branch-name]
+    permissions:
+      id-token: write
+    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
+    with:
+      branch-name: ${{ needs.determine-branch-name.outputs.BRANCH_NAME }}
+      application: nibas-frontend
+      version: ${{ needs.build.outputs.version }}
+      digest: ${{ needs.build.outputs.digest }}
+      identity: nibas
 
   post-deployed-message:
-    needs: [deploy-pull-request]
     runs-on: ubuntu-latest
+    needs: [deploy-pull-request]
     if: ${{ github.event_name == 'pull_request' }}
     steps:
-      - name: Post a comment to the PR
+      - name: Post deployment comment
         uses: peter-evans/create-or-update-comment@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -99,4 +104,4 @@ jobs:
           body: |
             🚀 Feature branch was successfully deployed!
 
-            🌐 Preview it here: [https://nibas-${{ inputs.branch-name }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ inputs.branch-name }}.atkv3-dev.kartverket-intern.cloud)
+            🌐 Preview it here: [https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud)
