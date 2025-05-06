@@ -64,7 +64,7 @@ handle {
     header @jsonFiles Content-Type application/json
 }
 
-handle_path /repos/kartverket/* {
+handle /repos/kartverket/* {
     reverse_proxy https://api.github.com {
         header_up Accept "application/vnd.github+json"
         header_up Authorization "Bearer {$REPO_PR_ACCESS}"
