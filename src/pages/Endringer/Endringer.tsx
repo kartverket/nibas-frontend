@@ -24,6 +24,7 @@ import { useAuthentication } from "components/Authentication/AuthenticationHook"
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { format, subDays, addDays } from "date-fns";
+import { useNasjonByIds } from "hooks/inndelinger/useNasjoner";
 import { useFylkerByIds } from "hooks/inndelinger/useFylker";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
@@ -132,6 +133,8 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
 
   const { data: endredeFylker } = useFylkerByIds(utkast.endredeInndelinger.endredeFylker, beforePublisering);
 
+  const { data: endredeNasjoner } = useNasjonByIds(utkast.endredeInndelinger.endredeNasjoner, beforePublisering);
+
   const opprettFeilrettingUtkast = async () => {
     const response = await createUtkast(
       {
@@ -186,6 +189,11 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
         <InndelingerList bulletcolor={inndelingColors.fylke}>
           {endredeFylker?.map((inndeling) => (
             <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
+          ))}
+        </InndelingerList>
+        <InndelingerList bulletcolor={inndelingColors.nasjon}>
+          {endredeNasjoner?.map((inndeling) => (
+            <li key={inndeling.id.lokalid.value}>{`${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
           ))}
         </InndelingerList>
       </StyledCell>
