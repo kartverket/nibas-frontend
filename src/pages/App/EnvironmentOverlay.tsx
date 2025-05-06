@@ -3,6 +3,11 @@ import { styled } from "styled-components";
 import { zindex } from "utils/constants";
 
 type EnvironmentStyle = { label: string; color: string };
+
+const getFeatureBranchName = () => {
+  return window.location.hostname.split(".")[0];
+};
+
 const styles: Record<Environment, EnvironmentStyle> = {
   "dev-main": {
     label: "Utviklingsmiljø",
@@ -19,6 +24,10 @@ const styles: Record<Environment, EnvironmentStyle> = {
   localhost: {
     label: "Lokalt utviklingsmiljø",
     color: "var(--kvib-colors-red-200)",
+  },
+  "feature-branch": {
+    label: getFeatureBranchName(),
+    color: "var(--kvib-colors-purple-200)",
   },
 };
 
