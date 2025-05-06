@@ -15,10 +15,20 @@ env:
   registry_path: kartverket
 
 jobs:
-  resolve-branch-name:
-    uses: kartverket/nibas-frontend/.github/workflows/resolve-branch-name.yml@fix-pr-workflows
-    with:
-      branch-name: ${{ inputs.branch-name }}
+  determine-branch-name:
+    name: Determine Branch Name
+    runs-on: ubuntu-latest
+    outputs:
+      BRANCH_NAME: ${{ steps.determine-branch.outputs.branch_name_output }}
+    steps:
+      - name: Determine branch name
+        id: determine-branch
+        run: |
+          if [ "${{ inputs.branch-name }}" != "" ]; then
+            echo "branch_name_output=${{ inputs.branch-name }}" >> $GITHUB_OUTPUT
+          else
+            echo "branch_name_output=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+          fi
 
   build:
     permissions:
@@ -56,12 +66,12 @@ jobs:
 
   deploy-pull-request:
     name: Deploy Pull Request
-    needs: [resolve-branch-name, build, test, pharos]
+    needs: [determine-branch-name, build, test, pharos]
     permissions:
       id-token: write
     uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
     with:
-      branch-name: ${{ needs.resolve-branch-name.outputs.BRANCH_NAME }}
+      branch-name: ${{ needs.determine-branch-name.outputs.BRANCH_NAME }}
       application: nibas-frontend
       version: ${{ needs.build.outputs.version }}
       digest: ${{ needs.build.outputs.digest }}
@@ -80,4 +90,4 @@ jobs:
           body: |
             🚀 Feature branch was successfully deployed!
 
-            🌐 Preview it here: [https://nibas-${{ needs.resolve-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ needs.resolve-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud)
+            🌐 Preview it here: [https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud](https://nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}.atkv3-dev.kartverket-intern.cloud)
