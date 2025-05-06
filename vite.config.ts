@@ -45,7 +45,7 @@ export default defineConfig(({ mode }) => {
         "/geoservergeo/wfs/matrikkel": {
           target:
             localhost === "localhost"
-              ? "https://nibas.atkv3-dev.kartverket-intern.cloud"
+              ? "https://nibas-main.atkv3-dev.kartverket-intern.cloud"
               : "https://prodtest.matrikkel.no",
           changeOrigin: true,
           headers: {
