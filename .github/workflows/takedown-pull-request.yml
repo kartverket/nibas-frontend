@@ -11,7 +11,7 @@ on:
 
 jobs:
   resolve-branch-name:
-    uses: kartverket/nibas-frontend/.github/workflows/resolve-branch-name.yml@main
+    uses: kartverket/nibas-frontend/.github/workflows/resolve-branch-name.yml@fix-pr-workflows
     with:
       branch-name: ${{ inputs.branch-name }}
 
