@@ -13,7 +13,6 @@ import {
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { ChangeEvent, useEffect } from "react";
-import { RegisterOptions } from "react-hook-form";
 import { styled } from "styled-components";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
@@ -107,7 +106,10 @@ export const SplittingPanel = () => {
   };
   const kommunenummer = opprinneligFlateOptions?.[0].kommunenummer;
   const existingInndelingNummere = opprinneligFlateOptions?.map((inndeling) => inndeling.nummer);
-  const getInndelingNummerRegisterOptions = inndelingtype && getNumberValidatorFunctionForInndelingType(inndelingtype);
+  const getInndelingNummerRegisterOptions =
+    inndelingtype &&
+    getNumberValidatorFunctionForInndelingType<SplittingForm, `nyeKretser.${number}.kretsNummer`>(inndelingtype);
+
   const nummerRegisterOptions =
     getInndelingNummerRegisterOptions &&
     getInndelingNummerRegisterOptions({
@@ -165,15 +167,7 @@ export const SplittingPanel = () => {
                         disabled={index === 0}
                         type="number"
                         {...triggerRevalidateOnChangeAfterSubmit(
-                          register(
-                            `nyeKretser.${index}.kretsNummer`,
-                            index !== 0
-                              ? ((nummerRegisterOptions ? nummerRegisterOptions : {}) as RegisterOptions<
-                                  SplittingForm,
-                                  `nyeKretser.${number}.kretsNummer`
-                                >)
-                              : {},
-                          ),
+                          register(`nyeKretser.${index}.kretsNummer`, index !== 0 ? (nummerRegisterOptions ?? {}) : {}),
                         )}
                       />
                     </FormControl>

@@ -3,7 +3,7 @@ import { PanelHeader, SidePanel } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import { StemmekretsResponse, StemmekretsSammenslaaingsendringRequest } from "types/api";
-import { FormProvider, useForm, RegisterOptions } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useCallback } from "react";
@@ -252,9 +252,9 @@ const MergePanel = () => {
                   label="Stemmekretsnr."
                   {...register(
                     "nummer",
-                    getNumberValidatorFunctionForInndelingType("stemmekrets")({
+                    getNumberValidatorFunctionForInndelingType<MergeFormData, "nummer">("stemmekrets")({
                       shouldNotBeEqualWith: getExistingStemmekretsnummere(),
-                    }) as RegisterOptions<MergeFormData, "nummer">,
+                    }),
                   )}
                   validationError={{
                     showError: !!errors?.nummer,
