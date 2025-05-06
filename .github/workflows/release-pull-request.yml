@@ -15,19 +15,6 @@ env:
   registry_path: kartverket
 
 jobs:
-  validate-branch-name:
-    runs-on: ubuntu-latest
-    name: Validate branch-name input
-    steps:
-      - name: Validate branch-name is valid hostname label
-        run: |
-          BRANCH_NAME="${{ inputs.branch-name }}"
-          if [[ ! "$BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
-            echo "❌ branch-name is invalid as hostname label: $BRANCH_NAME"
-            exit 1
-          fi
-          echo "✅ branch-name is valid as hostname label: $BRANCH_NAME"
-
   build:
     permissions:
       contents: write
@@ -77,9 +64,23 @@ jobs:
           else
             echo "branch_name_output=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
 
+  validate-branch-name:
+    runs-on: ubuntu-latest
+    name: Validate branch-name input
+    needs: [determine-branch-name]
+    steps:
+      - name: Validate branch-name is valid hostname label
+        run: |
+          BRANCH_NAME="${{ needs.determine-branch-name.outputs.BRANCH_NAME }}"
+          if [[ ! "$BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
+            echo "❌ branch-name is invalid as hostname label: $BRANCH_NAME"
+            exit 1
+          fi
+          echo "✅ branch-name is valid as hostname label: $BRANCH_NAME"
+
   deploy-pull-request:
     name: Deploy Pull Request
-    needs: [determine-branch-name]
+    needs: [validate-branch-name]
     permissions:
       id-token: write
     uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
@@ -92,7 +93,7 @@ jobs:
 
   post-deployed-message:
     runs-on: ubuntu-latest
-    needs: [determine-branch-name, deploy-pull-request]
+    needs: [deploy-pull-request]
     if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Post deployment comment
