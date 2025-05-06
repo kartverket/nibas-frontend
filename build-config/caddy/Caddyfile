@@ -67,7 +67,7 @@ handle {
 handle /repos/kartverket/* {
     reverse_proxy https://api.github.com {
         header_up Accept "application/vnd.github+json"
-        header_up Authorization "Bearer {$REPO_PR_ACCESS}"
+        header_up Authorization "Bearer $REPO_PR_ACCESS"
         header_up X-GitHub-Api-Version "2022-11-28"
     }
 }
