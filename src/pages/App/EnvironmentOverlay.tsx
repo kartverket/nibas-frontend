@@ -1,6 +1,6 @@
 import { IconButton, Select, Spinner } from "@kvib/react";
 import { Environment, getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { styled } from "styled-components";
 import useSWR from "swr";
 import { GitHubPullRequest } from "types/github-api-types";
@@ -71,11 +71,12 @@ const mapPRtoOptionObject = (pr: GitHubPullRequest | null | undefined): Environm
   };
 };
 
+const selectWidth = 300;
+
 const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
   const env = getCurrentEnvironment();
   const style = styles[env];
   const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
 
   const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR("nibas-frontend", fetchNibasRepoPRs);
   const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR("nibas-backend", fetchNibasRepoPRs);
@@ -112,17 +113,12 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
       <Overlay color={style.color}>
         <OverlayLabel color={style.color}>{style.label}</OverlayLabel>
         {env !== "dev-e2e" && env !== "prod" && (
-          <EnvironmentSelectContainer
-            $color={style.color}
-            $isOpen={environmentContainerOpen}
-            $onCloseWidth={ref.current != null ? ref.current.clientWidth : 0}
-          >
+          <EnvironmentSelectContainer $color={style.color} $isOpen={environmentContainerOpen}>
             {isLoading ? (
               <Spinner color="white" />
             ) : (
               <>
                 <EnvironmentSelect
-                  ref={ref}
                   size={"sm"}
                   onChange={(e) => onSelectEnvironment(e.target.value)}
                   value={window.location.origin}
@@ -150,7 +146,7 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const EnvironmentSelectContainer = styled.div<{ $color: string; $isOpen: boolean; $onCloseWidth: number }>`
+const EnvironmentSelectContainer = styled.div<{ $color: string; $isOpen: boolean }>`
   z-index: ${zindex.environmentOverlay};
   background-color: ${(props) => props.$color};
   position: fixed;
@@ -160,7 +156,7 @@ const EnvironmentSelectContainer = styled.div<{ $color: string; $isOpen: boolean
   display: flex;
   align-items: center;
   column-gap: 5px;
-  left: ${(props) => (props.$isOpen ? `-${props.$onCloseWidth + 1}px` : "4px")};
+  left: ${(props) => (!props.$isOpen ? `-${selectWidth}px` : "4px")};
   transition: left 0.5s ease-in-out;
 `;
 
@@ -168,7 +164,7 @@ const EnvironmentSelect = styled(Select)`
   border-radius: 5px;
   background: white;
   pointer-events: auto;
-  width: auto;
+  width: ${selectWidth}px;
 `;
 
 const Overlay = styled.div<{ color: string }>`
@@ -196,7 +192,7 @@ const OverlayLabel = styled.span<{ color: string }>`
 const StyledIconButton = styled(IconButton)<{ $isOpen: boolean }>`
   pointer-events: auto;
   transition: transform 0.5s ease-in-out;
-  transform: ${(props) => (props.$isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+  transform: ${(props) => (!props.$isOpen ? "rotate(180deg)" : "rotate(0deg)")};
 `;
 
 export default EnvironmentOverlay;
