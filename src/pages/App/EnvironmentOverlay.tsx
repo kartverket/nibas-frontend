@@ -1,5 +1,6 @@
-import { Select, Spinner } from "@kvib/react";
+import { IconButton, Select, Spinner } from "@kvib/react";
 import { Environment, getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
+import { useRef, useState } from "react";
 import { styled } from "styled-components";
 import useSWR from "swr";
 import { GitHubPullRequest } from "types/github-api-types";
@@ -73,6 +74,8 @@ const mapPRtoOptionObject = (pr: GitHubPullRequest | null | undefined): Environm
 const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
   const env = getCurrentEnvironment();
   const style = styles[env];
+  const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR("nibas-frontend", fetchNibasRepoPRs);
   const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR("nibas-backend", fetchNibasRepoPRs);
@@ -97,8 +100,11 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
     .filter((option) => option.author !== "dependabot[bot]");
 
   const onSelectEnvironment = (url: string) => {
-    window.location.href = url;
+    // bruker samme database for alle dev-miljøer, så dermed skal vi kunne gå til samme paths på tvers av miljøer i dev.
+    window.location.href = url.concat(window.location.pathname);
   };
+
+  const onToggleEnvironmentSelectContainer = () => setEnvironmentContainerOpen((prevState) => !prevState);
 
   return (
     <>
@@ -106,21 +112,36 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
       <Overlay color={style.color}>
         <OverlayLabel color={style.color}>{style.label}</OverlayLabel>
         {env !== "dev-e2e" && env !== "prod" && (
-          <EnvironmentSelectContainer color={style.color}>
+          <EnvironmentSelectContainer
+            $color={style.color}
+            $isOpen={environmentContainerOpen}
+            $onCloseWidth={ref.current != null ? ref.current.clientWidth : 0}
+          >
             {isLoading ? (
               <Spinner color="white" />
             ) : (
-              <EnvironmentSelect
-                size={"sm"}
-                onChange={(e) => onSelectEnvironment(e.target.value)}
-                value={window.location.origin}
-              >
-                {allEnvironmentOptions?.map((pr, i) => (
-                  <option key={i} value={pr.branch_url}>
-                    [{pr.title}] - {pr.author}
-                  </option>
-                ))}
-              </EnvironmentSelect>
+              <>
+                <EnvironmentSelect
+                  ref={ref}
+                  size={"sm"}
+                  onChange={(e) => onSelectEnvironment(e.target.value)}
+                  value={window.location.origin}
+                >
+                  {allEnvironmentOptions?.map((pr, i) => (
+                    <option key={i} value={pr.branch_url}>
+                      [{pr.title}] - {pr.author}
+                    </option>
+                  ))}
+                </EnvironmentSelect>
+                <StyledIconButton
+                  $isOpen={environmentContainerOpen}
+                  aria-label={"lukk miljøvelger"}
+                  icon={"chevron_left"}
+                  variant="ghost"
+                  size={"sm"}
+                  onClick={onToggleEnvironmentSelectContainer}
+                />
+              </>
             )}
           </EnvironmentSelectContainer>
         )}
@@ -129,13 +150,18 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-const EnvironmentSelectContainer = styled.div<{ color: string }>`
+const EnvironmentSelectContainer = styled.div<{ $color: string; $isOpen: boolean; $onCloseWidth: number }>`
   z-index: ${zindex.environmentOverlay};
-  background-color: ${(props) => props.color};
+  background-color: ${(props) => props.$color};
   position: fixed;
   bottom: 0;
   padding: 5px 5px 5px 0;
   border-top-right-radius: 8px;
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+  left: ${(props) => (props.$isOpen ? `-${props.$onCloseWidth + 1}px` : "4px")};
+  transition: left 0.5s ease-in-out;
 `;
 
 const EnvironmentSelect = styled(Select)`
@@ -165,6 +191,12 @@ const OverlayLabel = styled.span<{ color: string }>`
   padding: 16px 8px 16px 4px;
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
+`;
+
+const StyledIconButton = styled(IconButton)<{ $isOpen: boolean }>`
+  pointer-events: auto;
+  transition: transform 0.5s ease-in-out;
+  transform: ${(props) => (props.$isOpen ? "rotate(180deg)" : "rotate(0deg)")};
 `;
 
 export default EnvironmentOverlay;
