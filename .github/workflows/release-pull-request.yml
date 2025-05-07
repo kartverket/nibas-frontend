@@ -83,7 +83,7 @@ jobs:
     needs: [validate-branch-name, determine-branch-name, build, test, pharos]
     permissions:
       id-token: write
-    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@fix-checkout
+    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
     with:
       branch-name: ${{ needs.determine-branch-name.outputs.BRANCH_NAME }}
       application: nibas-frontend
