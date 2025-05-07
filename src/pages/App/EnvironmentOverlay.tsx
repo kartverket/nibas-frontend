@@ -75,14 +75,25 @@ const selectWidth = 300;
 
 const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
   const env = getCurrentEnvironment();
+
+  const envSwitchEnabeled = env !== "dev-e2e" && env !== "prod";
   const style = styles[env];
   const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
 
-  const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR("nibas-frontend", fetchNibasRepoPRs);
-  const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR("nibas-backend", fetchNibasRepoPRs);
-  const { data: nibasEventsPRs, isLoading: isEventsPRsLoading } = useSWR("nibas-events", fetchNibasRepoPRs);
+  const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
+    envSwitchEnabeled ? "nibas-frontend" : null,
+    fetchNibasRepoPRs,
+  );
+  const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR(
+    envSwitchEnabeled ? "nibas-backend" : null,
+    fetchNibasRepoPRs,
+  );
+  const { data: nibasEventsPRs, isLoading: isEventsPRsLoading } = useSWR(
+    envSwitchEnabeled ? "nibas-events" : null,
+    fetchNibasRepoPRs,
+  );
   const { data: nibasArbeidslistePRs, isLoading: isArbeidslistePRsLoading } = useSWR(
-    "nibas-arbeidsliste",
+    envSwitchEnabeled ? "nibas-arbeidsliste" : null,
     fetchNibasRepoPRs,
   );
 
@@ -117,7 +128,7 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
       {children}
       <Overlay color={style.color}>
         <OverlayLabel color={style.color}>{style.label}</OverlayLabel>
-        {env !== "dev-e2e" && env !== "prod" && (
+        {envSwitchEnabeled && (
           <EnvironmentSelectContainer $color={style.color} $isOpen={environmentContainerOpen}>
             {isLoading ? (
               <Spinner color="white" />
