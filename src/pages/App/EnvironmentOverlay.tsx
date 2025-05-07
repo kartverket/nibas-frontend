@@ -1,6 +1,6 @@
 import { IconButton, Select, Spinner } from "@kvib/react";
 import { Environment, getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { styled } from "styled-components";
 import useSWR from "swr";
 import { GitHubPullRequest } from "types/github-api-types";
@@ -88,17 +88,22 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
 
   const isLoading = isFrontendPRsLoading || isBackendPRsLoading || isArbeidslistePRsLoading || isEventsPRsLoading;
 
-  const allPRs = [
-    ...(nibasFrontendPRs || []),
-    ...(nibasBackendPRs || []),
-    ...(nibasEventsPRs || []),
-    ...(nibasArbeidslistePRs || []),
-  ];
-  const allEnvironmentOptions = currentEnvironments
-    .concat(allPRs.map(mapPRtoOptionObject).filter((pr) => pr !== null))
-    // Dependabot oppretter brancher med ugylidig hostname label.
-    // Dette kan fikses ved å eksplisitt håndtere dette i wokflows som oppretter feature-namespaces, men det er ikke gjort per nå.
-    .filter((option) => option.author !== "dependabot[bot]");
+  const allEnvironmentOptions = useMemo(() => {
+    const allPRs = [
+      ...(nibasFrontendPRs || []),
+      ...(nibasBackendPRs || []),
+      ...(nibasEventsPRs || []),
+      ...(nibasArbeidslistePRs || []),
+    ];
+
+    return (
+      currentEnvironments
+        .concat(allPRs.map(mapPRtoOptionObject).filter((pr) => pr !== null))
+        // Dependabot oppretter brancher med ugylidig hostname label.
+        // Dette kan fikses ved å eksplisitt håndtere dette i wokflows som oppretter feature-namespaces, men det er ikke gjort per nå.
+        .filter((option) => option.author !== "dependabot[bot]")
+    );
+  }, [nibasArbeidslistePRs, nibasBackendPRs, nibasEventsPRs, nibasFrontendPRs]);
 
   const onSelectEnvironment = (url: string) => {
     // bruker samme database for alle dev-miljøer, så dermed skal vi kunne gå til samme paths på tvers av miljøer i dev.
