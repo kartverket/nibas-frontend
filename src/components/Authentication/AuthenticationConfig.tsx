@@ -25,6 +25,14 @@ const prodConfig = {
   redirect_uri: `${NibasOrigin.PROD}/authenticated`,
 };
 
+const getFeatureBranchConfig = () => {
+  return {
+    authority: "https://test.idporten.no",
+    client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
+    redirect_uri: `${window.location.origin}/authenticated`,
+  };
+};
+
 const devConfig = {
   authority: "https://test.idporten.no",
   client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
@@ -54,5 +62,8 @@ export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
       return nibasE2EConfig;
     case "localhost":
       return localConfig;
+    case "feature-branch": {
+      return getFeatureBranchConfig();
+    }
   }
 };
