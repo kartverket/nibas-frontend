@@ -28,8 +28,8 @@ const prodConfig = {
 const getDevEnvConfig = () => {
   return {
     authority: "https://test.idporten.no",
-    client_id: import.meta.env.VITE_OIDC_CLIENT_ID,
-    redirect_uri: import.meta.env.VITE_OIDC_REDIRECT_URI,
+    client_id: import.meta.env["VITE_OIDC_CLIENT_ID"],
+    redirect_uri: import.meta.env["VITE_OIDC_REDIRECT_URI"],
   };
 };
 
