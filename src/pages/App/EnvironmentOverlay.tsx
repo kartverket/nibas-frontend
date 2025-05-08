@@ -36,18 +36,16 @@ const styles: Record<Environment, EnvironmentStyle> = {
   },
 };
 
-type EnvironmentOption = { title: string; branch_url: string; author: string };
+type EnvironmentOption = { title: string; branch_url: string; author?: string };
 
 const currentEnvironments: EnvironmentOption[] = [
   {
     title: "nibas-main",
     branch_url: NibasOrigin.DEV_MAIN,
-    author: "SMIA",
   },
   {
     title: "localhost",
     branch_url: NibasOrigin.LOCALHOST,
-    author: "SMIA",
   },
 ];
 
@@ -143,7 +141,7 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
                 >
                   {allEnvironmentOptions?.map((pr, i) => (
                     <option key={i} value={pr.branch_url}>
-                      [{pr.title}] - {pr.author}
+                      [{pr.title}]{pr.author != null && `- ${pr.author}`}
                     </option>
                   ))}
                 </EnvironmentSelect>
