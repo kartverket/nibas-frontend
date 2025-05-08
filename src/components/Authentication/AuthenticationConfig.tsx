@@ -25,45 +25,19 @@ const prodConfig = {
   redirect_uri: `${NibasOrigin.PROD}/authenticated`,
 };
 
-const getFeatureBranchConfig = () => {
+const getDevEnvConfig = () => {
   return {
     authority: "https://test.idporten.no",
-    client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-    redirect_uri: `${window.location.origin}/authenticated`,
+    client_id: import.meta.env.VITE_OIDC_CLIENT_ID,
+    redirect_uri: import.meta.env.VITE_OIDC_REDIRECT_URI,
   };
-};
-
-const devConfig = {
-  authority: "https://test.idporten.no",
-  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-  redirect_uri: `${NibasOrigin.DEV_MAIN}/authenticated`,
-};
-
-const nibasE2EConfig = {
-  authority: "https://test.idporten.no",
-  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-  redirect_uri: `${NibasOrigin.DEV_E2E}/authenticated`,
-};
-
-const localConfig = {
-  authority: "https://test.idporten.no",
-  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-  redirect_uri: `${NibasOrigin.LOCALHOST}/authenticated`,
 };
 
 export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
   const environment = getCurrentEnvironment();
-  switch (environment) {
-    case "dev-main":
-      return devConfig;
-    case "prod":
-      return prodConfig;
-    case "dev-e2e":
-      return nibasE2EConfig;
-    case "localhost":
-      return localConfig;
-    case "feature-branch": {
-      return getFeatureBranchConfig();
-    }
+  if (environment === "prod") {
+    return prodConfig;
+  } else {
+    return getDevEnvConfig();
   }
 };
