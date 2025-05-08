@@ -141,7 +141,7 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
                 >
                   {allEnvironmentOptions?.map((pr, i) => (
                     <option key={i} value={pr.branch_url}>
-                      [{pr.title}]{pr.author != null && `- ${pr.author}`}
+                      [{pr.title}]{pr.author != null && ` - ${pr.author}`}
                     </option>
                   ))}
                 </EnvironmentSelect>
