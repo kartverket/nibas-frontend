@@ -1,4 +1,5 @@
 import { IconButton, Select, Spinner } from "@kvib/react";
+import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { Environment, getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
 import { useMemo, useState } from "react";
 import { styled } from "styled-components";
@@ -75,8 +76,9 @@ const selectWidth = 300;
 
 const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
   const env = getCurrentEnvironment();
+  const { isAuthenticated } = useAuthentication();
 
-  const envSwitchEnabeled = env !== "dev-e2e" && env !== "prod";
+  const envSwitchEnabeled = isAuthenticated && env !== "dev-e2e" && env !== "prod";
   const style = styles[env];
   const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
 
