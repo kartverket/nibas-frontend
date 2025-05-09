@@ -21,9 +21,7 @@ updates:
       interval: daily
     open-pull-requests-limit: 10
     groups:
-      patch-updates:
+      non-major-updates:
         update-types:
           - "patch"
-      minor-updates:
-        update-types:
           - "minor"
