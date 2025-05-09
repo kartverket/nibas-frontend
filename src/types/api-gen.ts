@@ -179,9 +179,13 @@ export interface paths {
     /** Henter fylke med gitt id */
     get: operations["hentFylke_1"];
   };
-  "/v1/authz/status": {
+  "/v1/auth/status": {
     /** Henter status for autorisering */
     get: operations["getStatus"];
+  };
+  "/v1/auth/config": {
+    /** Henter konfigurasjon for autorisering */
+    get: operations["getAuthConfig"];
   };
 }
 
@@ -1078,7 +1082,7 @@ export interface components {
       /** Format: double */
       m?: number;
       valid?: boolean;
-      coordinate?: components["schemas"]["Coordinate"];
+      coordinate?: unknown;
     };
     InndelingSearchResponse: {
       /** @description Lokalid til inndelingen */
@@ -1243,7 +1247,7 @@ export interface components {
       version: number;
     };
     PaginertRespons: {
-      innhold: { [key: string]: unknown }[];
+      innhold: unknown[];
       /** Format: int32 */
       side: number;
       /** Format: int32 */
@@ -1395,9 +1399,15 @@ export interface components {
        */
       version: number;
     };
-    AuthZStatusResponse: {
+    AuthStatusResponse: {
       /** @description Status for autorisering */
       authorized: boolean;
+    };
+    AuthConfigResponse: {
+      /** @description Config for autorisering mot id-porten */
+      authority: string;
+      client_id: string;
+      redirect_uri: string;
     };
   };
 }
@@ -2825,7 +2835,7 @@ export interface operations {
       /** Bruker er autorisert */
       200: {
         content: {
-          "application/json": components["schemas"]["AuthZStatusResponse"];
+          "application/json": components["schemas"]["AuthStatusResponse"];
         };
       };
       /** Bad Request */
@@ -2837,11 +2847,26 @@ export interface operations {
       /** Bruker er ikke autorisert */
       403: {
         content: {
-          "application/json": components["schemas"]["AuthZStatusResponse"];
+          "application/json": components["schemas"]["AuthStatusResponse"];
+        };
+      };
+    };
+  };
+  /** Henter konfigurasjon for autorisering */
+  getAuthConfig: {
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AuthConfigResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
     };
   };
 }
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface external {}

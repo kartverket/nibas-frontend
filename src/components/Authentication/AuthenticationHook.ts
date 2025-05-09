@@ -2,8 +2,8 @@ import { useAuth } from "react-oidc-context";
 import { User, SigninRedirectArgs, UserManagerEvents } from "oidc-client-ts";
 import { fetcherWithToken } from "utils/api";
 import { useCallback } from "react";
-import { isAuthDisabled, isAuthEnabled } from "components/Authentication/AuthenticationConfig";
 import { ResponseError } from "ol/net";
+import { isAuthDisabled, isAuthEnabled } from "./useAuthenticationConfig";
 
 type AuthorizationState = "OK" | "NOT_AUTHORIZED" | "ERROR";
 
@@ -38,7 +38,7 @@ export const useAuthentication = (): UseAuthenticationReturnType => {
     }
 
     try {
-      await fetcherWithToken(["/v1/authz/status", auth.user?.access_token]);
+      await fetcherWithToken(["/v1/auth/status", auth.user?.access_token]);
       return "OK";
     } catch (e: unknown) {
       if (isResponseError(e)) {
