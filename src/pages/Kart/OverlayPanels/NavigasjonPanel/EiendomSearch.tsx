@@ -4,7 +4,7 @@ import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
 import { BaseSyntheticEvent, useEffect, useMemo, useState } from "react";
-import { RegisterOptions, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { KommuneResponse } from "types/api";
 import { InndelingOption, InndelingSearchField } from "./InndelingSearchField";
@@ -113,10 +113,30 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
     }));
   }, [kommuner, reset, suggestedKommunerInndelingOptions]);
 
-  const eiendomFieldValidator: Partial<Record<keyof Eiendom, RegisterOptions>> = {
-    kommune: { required: "Du må oppgi en kommune for eiendommen" },
-    gaardsnummer: { required: "Du må oppgi et gårdsnummer for eiendommen" },
-    bruksnummer: { required: "Du må oppgi et bruksnummer for eiendommen" },
+  const eiendomFieldValidator = {
+    kommune: {
+      required: "Du må oppgi en kommune for eiendommen",
+    },
+    gaardsnummer: {
+      required: "Du må oppgi et gårdsnummer for eiendommen",
+      min: {
+        value: 1,
+        message: "Gårdsnummer må være større enn 0",
+      },
+    },
+    bruksnummer: {
+      required: "Du må oppgi et bruksnummer for eiendommen",
+      min: {
+        value: 1,
+        message: "Bruksnummer må være større enn 0",
+      },
+    },
+    festenummer: {
+      min: {
+        value: 1,
+        message: "Festenummer må være større enn 0",
+      },
+    },
   };
 
   const registerWithClearErrorsOnChange = (field: keyof Eiendom) => {
@@ -150,23 +170,25 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
     }
   };
 
+  const handleKommuneChange = () => {
+    clearErrors("kommune");
+    setNotFound(false);
+  };
+
   return (
     <StyledForm onSubmit={handleSubmit(handleSearch)}>
-      <InndelingSearchField
+      <InndelingSearchField<Eiendom, "kommune">
         label="Kommune"
         placeholder="Skriv inn navnet eller nummeret til kommunen"
         fieldName="kommune"
         control={control}
         rules={eiendomFieldValidator["kommune"]}
         inndelingstypeFilter={["KOMMUNE"]}
-        onSelectInndeling={() => {
-          clearErrors("kommune");
-          setNotFound(false);
-        }}
         validationError={{
           showError: !!formErrors.kommune,
           message: formErrors.kommune?.message ?? "",
         }}
+        onSelectInndeling={handleKommuneChange}
       />
       {suggestedKommunerInndelingOptions != null && suggestedKommunerInndelingOptions.length > 1 && (
         <SuggestionsContainer>
