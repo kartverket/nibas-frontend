@@ -18,7 +18,7 @@ import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { PanelHeader, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
-import { useSplittingForm } from "./useSplittingForm";
+import { useSplittingForm, SplittingForm } from "./useSplittingForm";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -106,7 +106,10 @@ export const SplittingPanel = () => {
   };
   const kommunenummer = opprinneligFlateOptions?.[0].kommunenummer;
   const existingInndelingNummere = opprinneligFlateOptions?.map((inndeling) => inndeling.nummer);
-  const getInndelingNummerRegisterOptions = inndelingtype && getNumberValidatorFunctionForInndelingType(inndelingtype);
+  const getInndelingNummerRegisterOptions =
+    inndelingtype &&
+    getNumberValidatorFunctionForInndelingType<SplittingForm, `nyeKretser.${number}.kretsNummer`>(inndelingtype);
+
   const nummerRegisterOptions =
     getInndelingNummerRegisterOptions &&
     getInndelingNummerRegisterOptions({
@@ -164,10 +167,7 @@ export const SplittingPanel = () => {
                         disabled={index === 0}
                         type="number"
                         {...triggerRevalidateOnChangeAfterSubmit(
-                          register(
-                            `nyeKretser.${index}.kretsNummer`,
-                            index !== 0 ? (nummerRegisterOptions ? nummerRegisterOptions : {}) : {},
-                          ),
+                          register(`nyeKretser.${index}.kretsNummer`, index !== 0 ? (nummerRegisterOptions ?? {}) : {}),
                         )}
                       />
                     </FormControl>

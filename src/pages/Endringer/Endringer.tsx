@@ -188,6 +188,9 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
             <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
           ))}
         </InndelingerList>
+        <InndelingerList bulletcolor={inndelingColors.nasjon}>
+          {utkast.endredeInndelinger.endredeNasjoner.length > 0 && <li key={`nasjon-${utkast.id}`}>Norge</li>}
+        </InndelingerList>
       </StyledCell>
       <OptionsCell>
         <Menu>
