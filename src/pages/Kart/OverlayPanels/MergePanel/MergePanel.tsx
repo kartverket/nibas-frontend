@@ -252,7 +252,7 @@ const MergePanel = () => {
                   label="Stemmekretsnr."
                   {...register(
                     "nummer",
-                    getNumberValidatorFunctionForInndelingType("stemmekrets")({
+                    getNumberValidatorFunctionForInndelingType<MergeFormData, "nummer">("stemmekrets")({
                       shouldNotBeEqualWith: getExistingStemmekretsnummere(),
                     }),
                   )}

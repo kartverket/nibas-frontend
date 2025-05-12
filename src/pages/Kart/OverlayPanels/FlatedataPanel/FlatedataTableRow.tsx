@@ -87,7 +87,10 @@ export const FlatedataTableRow = ({
     return watchedValues;
   };
   const prefixNumber = "kommunenummer" in inndeling ? inndeling.kommunenummer.kodeverdi : undefined;
-  const validateInndelingNumber = getNumberValidatorFunctionForInndelingType(inndelingtype);
+  const validateInndelingNumber = getNumberValidatorFunctionForInndelingType<FlatedataInputs, `${string}.nummer`>(
+    inndelingtype,
+  );
+
   const registerOptions = {
     nummer: validateInndelingNumber({
       shouldNotBeEqualWith: getExistingIndelingtypeNumbers(),

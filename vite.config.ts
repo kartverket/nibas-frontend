@@ -44,11 +44,6 @@ export default defineConfig(({ mode }) => {
             "X-GitHub-Api-Version": "2022-11-28",
           },
         },
-        "/api/auth/": {
-          // bytt ut med lokalt kjørende aut-idporten evt.
-          target: "https://aut-idporten.dev.skip.statkart.no",
-          changeOrigin: true,
-        },
         "/v1": {
           target: "http://localhost:8080",
           changeOrigin: true,

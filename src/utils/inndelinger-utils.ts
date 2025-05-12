@@ -1,19 +1,22 @@
 import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
-import { RegisterOptions, ValidateResult } from "react-hook-form";
+import { Path, RegisterOptions, ValidateResult } from "react-hook-form";
 import { capitalize } from "./string-utils";
 import { isIntegerString } from "./type-utils";
 
-const getCommonInndelingNumberValidator = (
+const getCommonInndelingNumberValidator = <TForm extends Record<string, unknown>, TFieldName extends Path<TForm>>(
   inndelingType: Inndelingtype,
   minLength: number,
   maxLength: number,
   shouldNotBeEqualWith: string[],
   additionalValidation?: (number: string) => ValidateResult,
-): RegisterOptions => {
+): RegisterOptions<TForm, TFieldName> => {
   const formattedInndelingType = capitalize(inndelingType);
   return {
     required: `${formattedInndelingType}nummer kan ikke være tomt`,
-    validate: (number: string) => {
+    validate: (number) => {
+      if (typeof number !== "string") {
+        return true;
+      }
       if (!isIntegerString(number)) {
         return `${formattedInndelingType}nummer kan kun inneholde siffer`;
       }
@@ -37,52 +40,43 @@ const getCommonInndelingNumberValidator = (
   };
 };
 
-interface StemmekretsNumberValidatorConfig {
-  shouldNotBeEqualWith: string[];
-  additionalValidation?: (number: string) => ValidateResult;
-}
-interface GrunnkretsNumberValidatorConfig {
+interface NumberValidatorConfig {
   shouldNotBeEqualWith: string[];
   additionalValidation?: (number: string) => ValidateResult;
   prefixNumber?: string;
-}
-interface KommuneNumberValidatorConfig {
-  shouldNotBeEqualWith: string[];
-  additionalValidation?: (number: string) => ValidateResult;
-  prefixNumber?: string;
-}
-interface FylkeNumberValidatorConfig {
-  shouldNotBeEqualWith: string[];
-  additionalValidation?: (number: string) => ValidateResult;
 }
 
-export const getStemmekretsNumberValidator = ({
+export function getStemmekretsNumberValidator<TForm extends Record<string, unknown>, TFieldName extends Path<TForm>>({
   shouldNotBeEqualWith,
   additionalValidation,
-}: StemmekretsNumberValidatorConfig): RegisterOptions => {
+}: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
   return getCommonInndelingNumberValidator("stemmekrets", 1, 4, shouldNotBeEqualWith, additionalValidation);
-};
-
-export const getGrunnkretsNumberValidator = ({
+}
+export function getGrunnkretsNumberValidator<TForm extends Record<string, unknown>, TFieldName extends Path<TForm>>({
   shouldNotBeEqualWith,
   additionalValidation,
   prefixNumber,
-}: GrunnkretsNumberValidatorConfig): RegisterOptions => {
-  const { validate, ...rest } = getCommonInndelingNumberValidator(
+}: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
+  const { validate, ...rest } = getCommonInndelingNumberValidator<TForm, TFieldName>(
     "grunnkrets",
     8,
     8,
     shouldNotBeEqualWith,
     additionalValidation,
   );
+
   return {
     ...rest,
-    validate: (number: string, fields) => {
-      if (prefixNumber != null && !number.startsWith(prefixNumber)) {
+    validate: (value, fields) => {
+      if (typeof value !== "string") {
+        return true;
+      }
+
+      if (prefixNumber != null && !value.startsWith(prefixNumber)) {
         return `Grunnkretsnummer må starte med kommunenummeret: ${prefixNumber}`;
       }
       if (typeof validate === "function") {
-        const commonValidationResult = validate(number, fields);
+        const commonValidationResult = validate(value, fields);
         if (commonValidationResult !== true) {
           return commonValidationResult;
         }
@@ -90,23 +84,27 @@ export const getGrunnkretsNumberValidator = ({
       return true;
     },
   };
-};
+}
 
-export const getKommuneNumberValidator = ({
+export function getKommuneNumberValidator<TForm extends Record<string, unknown>, TFieldName extends Path<TForm>>({
   shouldNotBeEqualWith,
   additionalValidation,
   prefixNumber,
-}: KommuneNumberValidatorConfig): RegisterOptions => {
-  const { validate, ...rest } = getCommonInndelingNumberValidator(
+}: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
+  const { validate, ...rest } = getCommonInndelingNumberValidator<TForm, TFieldName>(
     "kommune",
     8,
     8,
     shouldNotBeEqualWith,
     additionalValidation,
   );
+
   return {
     ...rest,
-    validate: (number: string, fields) => {
+    validate: (number, fields) => {
+      if (typeof number !== "string") {
+        return true;
+      }
       if (prefixNumber != null && !number.startsWith(prefixNumber)) {
         return `Kommunenummeret må starte med fylkesnummeret: ${prefixNumber}`;
       }
@@ -119,28 +117,29 @@ export const getKommuneNumberValidator = ({
       return true;
     },
   };
-};
+}
 
-export const getFylkeNumberValidator = ({
+export function getFylkeNumberValidator<TForm extends Record<string, unknown>, TFieldName extends Path<TForm>>({
   shouldNotBeEqualWith,
   additionalValidation,
-}: FylkeNumberValidatorConfig): RegisterOptions => {
+}: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
   return getCommonInndelingNumberValidator("fylke", 1, 2, shouldNotBeEqualWith, additionalValidation);
-};
+}
 
-export const getNumberValidatorFunctionForInndelingType = (inndelingType: Inndelingtype) => {
+export const getNumberValidatorFunctionForInndelingType = <
+  TForm extends Record<string, unknown>,
+  TFieldName extends Path<TForm>,
+>(
+  inndelingType: Inndelingtype,
+): ((config: NumberValidatorConfig) => RegisterOptions<TForm, TFieldName>) => {
   switch (inndelingType) {
-    case "fylke": {
+    case "fylke":
       return getFylkeNumberValidator;
-    }
-    case "kommune": {
+    case "kommune":
       return getKommuneNumberValidator;
-    }
-    case "stemmekrets": {
+    case "stemmekrets":
       return getStemmekretsNumberValidator;
-    }
-    case "grunnkrets": {
+    case "grunnkrets":
       return getGrunnkretsNumberValidator;
-    }
   }
 };
