@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => {
             Accept: "application/vnd.github+json",
             Authorization: `Bearer ${repo_pr_access}`,
             "X-GitHub-Api-Version": "2022-11-28",
+            Host: "api.github.com",
           },
         },
         "/v1": {

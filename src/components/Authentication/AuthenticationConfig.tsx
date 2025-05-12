@@ -25,24 +25,12 @@ const prodConfig = {
   redirect_uri: `${NibasOrigin.PROD}/authenticated`,
 };
 
-const getFeatureBranchConfig = () => {
+const getDevConfig = () => {
   return {
     authority: "https://test.idporten.no",
-    client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
+    client_id: "7543d671-d166-4222-8f53-a92718cc7b92",
     redirect_uri: `${window.location.origin}/authenticated`,
   };
-};
-
-const devConfig = {
-  authority: "https://test.idporten.no",
-  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-  redirect_uri: `${NibasOrigin.DEV_MAIN}/authenticated`,
-};
-
-const nibasE2EConfig = {
-  authority: "https://test.idporten.no",
-  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-  redirect_uri: `${NibasOrigin.DEV_E2E}/authenticated`,
 };
 
 const localConfig = {
@@ -55,15 +43,15 @@ export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
   const environment = getCurrentEnvironment();
   switch (environment) {
     case "dev-main":
-      return devConfig;
+      return getDevConfig();
     case "prod":
       return prodConfig;
     case "dev-e2e":
-      return nibasE2EConfig;
+      return getDevConfig();
     case "localhost":
       return localConfig;
     case "feature-branch": {
-      return getFeatureBranchConfig();
+      return getDevConfig();
     }
   }
 };
