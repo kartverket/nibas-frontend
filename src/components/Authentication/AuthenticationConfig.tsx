@@ -33,12 +33,6 @@ const getDevConfig = () => {
   };
 };
 
-const localConfig = {
-  authority: "https://test.idporten.no",
-  client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
-  redirect_uri: `${NibasOrigin.LOCALHOST}/authenticated`,
-};
-
 export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
   const environment = getCurrentEnvironment();
   switch (environment) {
@@ -49,7 +43,7 @@ export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
     case "dev-e2e":
       return getDevConfig();
     case "localhost":
-      return localConfig;
+      return getDevConfig();
     case "feature-branch": {
       return getDevConfig();
     }
