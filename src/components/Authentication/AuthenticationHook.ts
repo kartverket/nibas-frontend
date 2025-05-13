@@ -63,8 +63,12 @@ export const useAuthentication = (): UseAuthenticationReturnType => {
     user: auth.user,
     token: auth.user?.access_token,
     userId: userId as string | undefined,
-    signIn: (args?: SigninRedirectArgs) => auth.signinRedirect(args),
-    signOut: () => auth.signoutRedirect({ post_logout_redirect_uri: signOutRedirectUrl }),
+    signIn: isAuthEnabled()
+      ? (args?: SigninRedirectArgs) => auth.signinRedirect(args)
+      : () => (window.location.href = window.location.origin + "/authenticated"),
+    signOut: isAuthEnabled()
+      ? () => auth.signoutRedirect({ post_logout_redirect_uri: signOutRedirectUrl })
+      : () => (window.location.href = window.location.origin + "/auth"),
     checkAuthorization: checkAuthorization,
   };
 };
