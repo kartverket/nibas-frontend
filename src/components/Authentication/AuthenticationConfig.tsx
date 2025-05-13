@@ -1,16 +1,11 @@
 import { NibasOrigin, getCurrentEnvironment } from "components/FeatureToggle";
 
-const isLocalhost = () => {
-  const { hostname } = window.location;
-  return hostname.includes("localhost") || hostname.includes("127.0.0.1");
-};
-
 export const isAuthEnabled = () => {
   return !isAuthDisabled();
 };
 
 export const isAuthDisabled = () => {
-  return isLocalhost() && import.meta.env["VITE_DISABLE_AUTH"] === "true";
+  return getCurrentEnvironment() !== "prod";
 };
 
 type AuthConfig = {
