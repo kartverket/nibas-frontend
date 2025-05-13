@@ -11,6 +11,8 @@ export default defineConfig(({ mode }) => {
   const baatUsername = process.env.VITE_BAAT_USERNAME;
   const baatPassword = process.env.VITE_BAAT_PASSWORD;
   const localhost = process.env.VITE_ENVIRONMENT_LOCALHOST; // Sett denne til "localhost" i .env.local
+  const repo_pr_access = process.env.VITE_REPO_PR_ACCESS; // finnes på gcp under samme navn
+
   return {
     build: {
       outDir: "build",
@@ -33,10 +35,15 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       open: true,
       proxy: {
-        "/api/auth/": {
-          // bytt ut med lokalt kjørende aut-idporten evt.
-          target: "https://aut-idporten.dev.skip.statkart.no",
+        "/repos/kartverket/": {
+          target: "https://api.github.com",
           changeOrigin: true,
+          headers: {
+            Accept: "application/vnd.github+json",
+            Authorization: `Bearer ${repo_pr_access}`,
+            "X-GitHub-Api-Version": "2022-11-28",
+            Host: "api.github.com",
+          },
         },
         "/v1": {
           target: "http://localhost:8080",
