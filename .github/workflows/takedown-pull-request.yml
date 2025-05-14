@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       branch-name:
-        description: "Name of the branch to takedown feature-branch"
+        description: "Name of the feature environment to be deleted."
         required: true
   pull_request:
     types:
