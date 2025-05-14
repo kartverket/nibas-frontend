@@ -80,6 +80,9 @@ const useInteractions = () => {
     } else {
       map.removeInteraction(draw);
     }
+    return () => {
+      map.removeInteraction(draw);
+    };
   }, [activeTool, draw]);
   useEffect(() => {
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
