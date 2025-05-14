@@ -51,7 +51,7 @@ export const useAuthentication = (): UseAuthenticationReturnType => {
   const { protocol, host } = window.location;
   const signOutRedirectUrl = `${protocol}//${host}/logout`;
 
-  const isAuthenticated = isAuthEnabled() ? auth.isAuthenticated : true;
+  const isAuthenticated = isAuthEnabled() ? auth.isAuthenticated : window.location.pathname === "/auth" ? false : true;
   const userId = isAuthEnabled() ? auth.user?.profile["pid"] : "Mock-bruker";
 
   return {
