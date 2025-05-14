@@ -5,7 +5,7 @@ export const isAuthEnabled = () => {
 };
 
 export const isAuthDisabled = () => {
-  return getCurrentEnvironment() !== "prod";
+  return getCurrentEnvironment() === "feature-branch";
 };
 
 type AuthConfig = {
@@ -23,7 +23,7 @@ const prodConfig = {
 const getDevConfig = () => {
   return {
     authority: "https://test.idporten.no",
-    client_id: "7543d671-d166-4222-8f53-a92718cc7b92",
+    client_id: "91a73378-76d8-40cd-af04-6b7ce3d87667",
     redirect_uri: `${window.location.origin}/authenticated`,
   };
 };
