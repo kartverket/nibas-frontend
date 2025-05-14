@@ -6,6 +6,7 @@ on:
         description: "The name of the environemt the branch will be deployed to. Must be a valid hostname label."
         required: true
   pull_request:
+    types: [opened, ready_for_review, synchronize, reopened]
     branches:
       - main
 
@@ -20,6 +21,7 @@ env:
 
 jobs:
   determine-branch-name:
+    if: ${{ github.event.pull_request.draft == false }}
     name: Determine Branch Name
     runs-on: ubuntu-latest
     outputs:
@@ -35,6 +37,7 @@ jobs:
           fi
 
   validate-branch-name:
+    if: ${{ github.event.pull_request.draft == false }}
     runs-on: ubuntu-latest
     name: Validate branch-name input
     needs: [determine-branch-name]
@@ -49,6 +52,7 @@ jobs:
           echo "✅ Branchname is valid as hostname label: $DETERMINED_BRANCH_NAME"
 
   build:
+    if: ${{ github.event.pull_request.draft == false }}
     permissions:
       contents: write
       packages: write
@@ -60,6 +64,7 @@ jobs:
     secrets: inherit
 
   test:
+    if: ${{ github.event.pull_request.draft == false }}
     permissions:
       contents: write
       actions: read
@@ -67,6 +72,7 @@ jobs:
     secrets: inherit
 
   pharos:
+    if: ${{ github.event.pull_request.draft == false }}
     name: Run Pharos security scan
     needs: build
     permissions:
@@ -83,6 +89,7 @@ jobs:
           image_url: ${{ needs.build.outputs.image_url }}
 
   deploy-pull-request:
+    if: ${{ github.event.pull_request.draft == false }}
     name: Deploy Pull Request
     needs: [validate-branch-name, determine-branch-name, build, test, pharos]
     permissions:
@@ -96,9 +103,9 @@ jobs:
       identity: nibas
 
   post-deployed-message:
+    if: ${{ github.event.pull_request.draft == false }} && ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     needs: [validate-branch-name, determine-branch-name, deploy-pull-request]
-    if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Post deployment comment
         uses: peter-evans/create-or-update-comment@v4
