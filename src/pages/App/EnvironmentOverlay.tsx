@@ -174,7 +174,7 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
         {envSwitchEnabeled && (
           <EnvironmentSelectContainer $color={style.color} $isOpen={environmentContainerOpen}>
             {isLoading ? (
-              <Spinner color="white" />
+              <Spinner size={"lg"} color="white" />
             ) : (
               <>
                 <EnvironmentSelect
