@@ -112,8 +112,6 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
     fetchNibasRepoPRs,
   );
 
-  console.log(nibasFrontendPRs);
-
   const isLoading = isFrontendPRsLoading || isBackendPRsLoading || isArbeidslistePRsLoading || isEventsPRsLoading;
 
   const allEnvironmentOptions = useMemo(() => {
