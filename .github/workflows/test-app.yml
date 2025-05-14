@@ -1,8 +1,6 @@
 name: Test app
 on:
   merge_group:
-  pull_request:
-    branches: [main]
   workflow_call:
 
 env:
