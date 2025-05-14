@@ -1,4 +1,4 @@
-import { IconButton, Spinner } from "@kvib/react";
+import { Icon, IconButton, Spinner } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { Environment, getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
 import { useMemo, useState } from "react";
@@ -6,7 +6,7 @@ import { styled } from "styled-components";
 import useSWR from "swr";
 import { GitHubPullRequest } from "types/github-api-types";
 import { zindex } from "utils/constants";
-import Select, { StylesConfig } from "react-select";
+import Select, { StylesConfig, components, DropdownIndicatorProps } from "react-select";
 
 type EnvironmentStyle = { label: string; color: string };
 
@@ -132,6 +132,18 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
     window.location.href = url.concat(window.location.pathname);
   };
 
+  const CustomDropdownIndicator = (props: DropdownIndicatorProps<EnvironmentOption, false>) => {
+    const { selectProps } = props;
+    const isMenuOpen = selectProps.menuIsOpen;
+    const placement = selectProps.menuPlacement;
+
+    return (
+      <components.DropdownIndicator {...props}>
+        {placement === "top" && isMenuOpen ? <Icon icon={"arrow_downward"} /> : <Icon icon={"arrow_upward"} />}
+      </components.DropdownIndicator>
+    );
+  };
+
   const onToggleEnvironmentSelectContainer = () => setEnvironmentContainerOpen((prevState) => !prevState);
 
   const selectedOption = allEnvironmentOptions.find((opt) => opt.value === window.location.origin);
@@ -166,6 +178,7 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
             ) : (
               <>
                 <EnvironmentSelect
+                  components={{ DropdownIndicator: CustomDropdownIndicator, IndicatorSeparator: null }}
                   styles={customStyles}
                   onChange={(option) => {
                     if (option) {
