@@ -37,7 +37,13 @@ const styles: Record<Environment, EnvironmentStyle> = {
   },
 };
 
-type EnvironmentOption = { label: string; value: string; author?: string; profile_pic_url?: string };
+type EnvironmentOption = {
+  label: string;
+  value: string;
+  author?: string;
+  profile_pic_url?: string;
+  repository?: string;
+};
 
 const currentEnvironments: EnvironmentOption[] = [
   {
@@ -69,13 +75,18 @@ const mapPRtoOptionObject = (pr: GitHubPullRequest | null | undefined): Environm
     value: "https://nibas-" + pr.head.ref + ".atkv3-dev.kartverket-intern.cloud",
     author: pr.user.login,
     profile_pic_url: pr.user.avatar_url,
+    repository: pr.head.repo.name,
   };
 };
 
 const mapToEnvironmentSelectOption = (option: EnvironmentOption) => {
   return (
     <SelectContainer>
-      <TruncatedLabel>{option.label}</TruncatedLabel>
+      <TitlesContainer>
+        <TruncatedLabel>{option.label}</TruncatedLabel>
+        <RepositoryLabel>{option.repository}</RepositoryLabel>
+      </TitlesContainer>
+
       {option.author != null && (
         <AuthorContainer>
           {option.author} <AuthorImage src={option.profile_pic_url} />
@@ -275,12 +286,21 @@ const AuthorImage = styled.img`
   border-radius: 50%;
 `;
 
-const TruncatedLabel = styled.span`
-  overflow: hidden;
-  white-space: nowrap;
+const TruncatedLabel = styled.div`
   text-overflow: ellipsis;
-  max-width: 50%;
-  display: block;
+  overflow: hidden;
 `;
 
+const TitlesContainer = styled.div`
+  white-space: nowrap;
+  max-width: 50%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const RepositoryLabel = styled.span`
+  font-size: 12px;
+  color: var(--kvib-colors-gray-500);
+  font-style: italic;
+`;
 export default EnvironmentOverlay;
