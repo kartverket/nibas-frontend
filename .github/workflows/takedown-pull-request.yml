@@ -3,30 +3,34 @@ on:
   workflow_dispatch:
     inputs:
       branch-name:
-        description: "Name of the branch to takedown feature-branch"
+        description: "Name of the feature environment to be deleted."
         required: true
   pull_request:
     types:
       - closed
 
 jobs:
-  takedown-pull-request:
-    permissions:
-      id-token: write
+  determine-branch-name:
+    name: Determine Branch Name
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') }}
+    outputs:
+      BRANCH_NAME: ${{ steps.determine-branch.outputs.branch_name_output }}
     steps:
       - name: Determine branch name
         id: determine-branch
         run: |
           if [ "${{ inputs.branch-name }}" != "" ]; then
-            echo "BRANCH_NAME=${{ inputs.branch-name }}" >> $GITHUB_ENV
+            echo "branch_name_output=${{ inputs.branch-name }}" >> $GITHUB_OUTPUT
           else
-            echo "BRANCH_NAME=${GITHUB_REF_NAME}" >> $GITHUB_ENV
+            echo "branch_name_output=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: Takedown Pull Request
-        uses: kartverket/smia-apps/.github/workflows/delete-feature-branch.yml@main
-        with:
-          branch-name: ${{ env.BRANCH_NAME }}
-          identity: nibas
+  takedown-pull-request:
+    needs: [determine-branch-name]
+    permissions:
+      id-token: write
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') }}
+    uses: kartverket/smia-apps/.github/workflows/delete-feature-branch.yml@main
+    with:
+      branch-name: ${{ needs.determine-branch-name.outputs.BRANCH_NAME }}
+      identity: nibas
