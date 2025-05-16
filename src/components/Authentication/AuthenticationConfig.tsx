@@ -5,7 +5,7 @@ export const isAuthEnabled = () => {
 };
 
 export const isAuthDisabled = () => {
-  return getCurrentEnvironment() === "feature-branch";
+  return getCurrentEnvironment() === "feature-branch" || getCurrentEnvironment() === "localhost";
 };
 
 type AuthConfig = {
