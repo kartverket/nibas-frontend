@@ -20,6 +20,10 @@ env:
   registry_path: kartverket
 
 jobs:
+  should-create-feature-env:
+    uses: .github/workflows/check-changes.yml
+    with:
+      ignore-paths: "README.md,.github/,.vscode/,.security/"
   determine-branch-name:
     if: ${{ github.event.pull_request.draft == false }}
     name: Determine Branch Name
