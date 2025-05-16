@@ -27,7 +27,7 @@ jobs:
 
   determine-branch-name:
     needs: should-create-feature-env
-    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
     name: Determine Branch Name
     runs-on: ubuntu-latest
     outputs:
@@ -43,10 +43,10 @@ jobs:
           fi
 
   validate-branch-name:
-    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
     runs-on: ubuntu-latest
     name: Validate branch-name input
-    needs: [determine-branch-name]
+    needs: [should-create-feature-env, determine-branch-name]
     steps:
       - name: Validate branch-name is valid hostname label
         run: |
@@ -58,8 +58,8 @@ jobs:
           echo "✅ Branchname is valid as hostname label: $DETERMINED_BRANCH_NAME"
 
   build:
-    needs: [validate-branch-name]
-    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
+    needs: [should-create-feature-env]
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
     permissions:
       contents: write
       packages: write
@@ -71,8 +71,8 @@ jobs:
     secrets: inherit
 
   test:
-    needs: [validate-branch-name]
-    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
+    needs: [should-create-feature-env]
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
     permissions:
       contents: write
       actions: read
@@ -80,8 +80,9 @@ jobs:
     secrets: inherit
 
   pharos:
-    needs: [validate-branch-name, build]
-    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
+    needs: [should-create-feature-env, build]
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+
     name: Run Pharos security scan
     permissions:
       actions: read
@@ -97,9 +98,10 @@ jobs:
           image_url: ${{ needs.build.outputs.image_url }}
 
   deploy-pull-request:
-    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+
     name: Deploy Pull Request
-    needs: [validate-branch-name, determine-branch-name, build, test, pharos]
+    needs: [should-create-feature-env, validate-branch-name, determine-branch-name, build, test, pharos]
     permissions:
       id-token: write
     uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
@@ -111,9 +113,9 @@ jobs:
       identity: nibas
 
   post-deployed-message:
-    if: ${{ github.event.pull_request.draft == false }} && ${{ github.event_name == 'pull_request' }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
     runs-on: ubuntu-latest
-    needs: [validate-branch-name, determine-branch-name, deploy-pull-request]
+    needs: [should-create-feature-env, validate-branch-name, determine-branch-name, deploy-pull-request]
     steps:
       - name: Post deployment comment
         uses: peter-evans/create-or-update-comment@v4
