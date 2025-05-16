@@ -24,9 +24,10 @@ jobs:
     uses: kartverket/nibas-frontend/.github/workflows/check-changes.yml@TS-2307
     with:
       ignore-paths: "README.md,.github/,.vscode/,.security/"
+
   determine-branch-name:
     needs: should-create-feature-env
-    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == 'true'}}
+    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
     name: Determine Branch Name
     runs-on: ubuntu-latest
     outputs:
@@ -42,7 +43,7 @@ jobs:
           fi
 
   validate-branch-name:
-    if: ${{ github.event.pull_request.draft == false }}
+    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
     runs-on: ubuntu-latest
     name: Validate branch-name input
     needs: [determine-branch-name]
@@ -57,7 +58,8 @@ jobs:
           echo "✅ Branchname is valid as hostname label: $DETERMINED_BRANCH_NAME"
 
   build:
-    if: ${{ github.event.pull_request.draft == false }}
+    needs: [validate-branch-name]
+    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
     permissions:
       contents: write
       packages: write
@@ -69,7 +71,8 @@ jobs:
     secrets: inherit
 
   test:
-    if: ${{ github.event.pull_request.draft == false }}
+    needs: [validate-branch-name]
+    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
     permissions:
       contents: write
       actions: read
@@ -77,9 +80,9 @@ jobs:
     secrets: inherit
 
   pharos:
-    if: ${{ github.event.pull_request.draft == false }}
+    needs: [validate-branch-name, build]
+    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
     name: Run Pharos security scan
-    needs: build
     permissions:
       actions: read
       packages: read
@@ -94,7 +97,7 @@ jobs:
           image_url: ${{ needs.build.outputs.image_url }}
 
   deploy-pull-request:
-    if: ${{ github.event.pull_request.draft == false }}
+    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
     name: Deploy Pull Request
     needs: [validate-branch-name, determine-branch-name, build, test, pharos]
     permissions:
@@ -108,7 +111,7 @@ jobs:
       identity: nibas
 
   post-deployed-message:
-    if: ${{ github.event.pull_request.draft == false }} && ${{ github.event_name == 'pull_request' }}
+    if: ${{ github.event.pull_request.draft == false }} && ${{ github.event_name == 'pull_request' }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == true}}
     runs-on: ubuntu-latest
     needs: [validate-branch-name, determine-branch-name, deploy-pull-request]
     steps:
