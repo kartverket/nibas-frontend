@@ -21,7 +21,7 @@ env:
 
 jobs:
   should-create-feature-env:
-    uses: .github/workflows/check-changes.yml
+    uses: .github/workflows/check-changes.yml@TS-2307
     with:
       ignore-paths: "README.md,.github/,.vscode/,.security/"
   determine-branch-name:
