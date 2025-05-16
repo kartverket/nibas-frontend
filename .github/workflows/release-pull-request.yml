@@ -48,15 +48,19 @@ jobs:
     runs-on: ubuntu-latest
     name: Validate branch-name input
     needs: [should-create-feature-env, determine-branch-name]
+    outputs:
+      IS_VALID: ${{ steps.validate.outputs.is_valid }}
     steps:
       - name: Validate branch-name is valid hostname label
+        id: validate
         run: |
           DETERMINED_BRANCH_NAME="${{ needs.determine-branch-name.outputs.BRANCH_NAME }}"
           if [[ ! "$DETERMINED_BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
             echo "❌ Branchname is invalid as hostname label: $DETERMINED_BRANCH_NAME"
-            exit 1
+            echo "is_valid=false" >> $GITHUB_OUTPUT
           fi
           echo "✅ Branchname is valid as hostname label: $DETERMINED_BRANCH_NAME"
+          echo "is_valid=true" >> $GITHUB_OUTPUT
 
   build:
     needs: [should-create-feature-env]
@@ -99,7 +103,7 @@ jobs:
           image_url: ${{ needs.build.outputs.image_url }}
 
   deploy-pull-request:
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+    if: ${{ needs.validate-branch-name.outputs.IS_VALID == 'true' && github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
 
     name: Deploy Pull Request
     needs: [should-create-feature-env, validate-branch-name, determine-branch-name, build, test, pharos]
@@ -114,7 +118,7 @@ jobs:
       identity: nibas
 
   post-deployed-message:
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+    if: ${{ needs.validate-branch-name.outputs.IS_VALID == 'true' && github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
     runs-on: ubuntu-latest
     needs: [should-create-feature-env, validate-branch-name, determine-branch-name, deploy-pull-request]
     steps:
