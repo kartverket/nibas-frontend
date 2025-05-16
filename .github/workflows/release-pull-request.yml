@@ -25,7 +25,8 @@ jobs:
     with:
       ignore-paths: "README.md,.github/,.vscode/,.security/"
   determine-branch-name:
-    if: ${{ github.event.pull_request.draft == false }}
+    needs: should-create-feature-env
+    if: ${{ github.event.pull_request.draft == false }} && ${{ needs.should-create-feature-env.outputs.has-relevant-changes == 'true'}}
     name: Determine Branch Name
     runs-on: ubuntu-latest
     outputs:
