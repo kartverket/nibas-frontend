@@ -29,7 +29,6 @@ jobs:
     needs: [determine-branch-name]
     permissions:
       id-token: write
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main') }}
     uses: kartverket/smia-apps/.github/workflows/delete-feature-branch.yml@main
     with:
       branch-name: ${{ needs.determine-branch-name.outputs.BRANCH_NAME }}
