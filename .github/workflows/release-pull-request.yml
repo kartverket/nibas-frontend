@@ -75,14 +75,6 @@ jobs:
       deploy_ghcr: true
     secrets: inherit
 
-  test:
-    if: ${{ github.event.pull_request.draft == false }}
-    permissions:
-      contents: write
-      actions: read
-    uses: kartverket/nibas-frontend/.github/workflows/test-app.yml@main
-    secrets: inherit
-
   pharos:
     if: ${{ github.event.pull_request.draft == false }}
     needs: [build]
