@@ -1,7 +1,7 @@
 # Denne workflowen sjekker om det er endringer utover paths definert i ignore-paths.
 # Kan brukes av andre workflows for å sjekke om de skal kjøre eller ikke.
 # Hvis det er endringer utover filene under ignore-paths, vil den returnere true
-# NB Fungerer kun i workflows som kjører på pull_request
+# NB! Fungerer kun i workflows som kjører på pull_request
 name: Check Changes
 
 on:

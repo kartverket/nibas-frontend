@@ -64,8 +64,7 @@ jobs:
           fi
 
   build:
-    needs: [should-create-feature-env, validate-branch-name]
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
+    if: ${{ github.event.pull_request.draft == false }}
     permissions:
       contents: write
       packages: write
@@ -77,8 +76,7 @@ jobs:
     secrets: inherit
 
   test:
-    needs: [should-create-feature-env, validate-branch-name]
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
+    if: ${{ github.event.pull_request.draft == false }}
     permissions:
       contents: write
       actions: read
@@ -86,9 +84,8 @@ jobs:
     secrets: inherit
 
   pharos:
-    needs: [should-create-feature-env, build, validate-branch-name]
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
-
+    if: ${{ github.event.pull_request.draft == false }}
+    needs: [build]
     name: Run Pharos security scan
     permissions:
       actions: read
