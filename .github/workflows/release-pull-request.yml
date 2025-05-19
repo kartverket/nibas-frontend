@@ -96,7 +96,7 @@ jobs:
     if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
 
     name: Deploy Pull Request
-    needs: [should-create-feature-env, validate-branch-name, determine-branch-name, build, test, pharos]
+    needs: [should-create-feature-env, validate-branch-name, determine-branch-name, build, pharos]
     permissions:
       id-token: write
     uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
