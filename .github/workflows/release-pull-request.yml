@@ -48,19 +48,24 @@ jobs:
     runs-on: ubuntu-latest
     name: Validate branch-name input
     needs: [should-create-feature-env, determine-branch-name]
+    outputs:
+      valid: ${{ steps.validate.outputs.valid }}
     steps:
       - name: Validate branch-name is valid hostname label
+        id: validate
         run: |
           DETERMINED_BRANCH_NAME="${{ needs.determine-branch-name.outputs.BRANCH_NAME }}"
           if [[ ! "$DETERMINED_BRANCH_NAME" =~ ^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$ ]]; then
-            echo "❌ Branchname is invalid as hostname label: $DETERMINED_BRANCH_NAME"
-            exit 1
+            echo "Branchname is invalid as hostname label: $DETERMINED_BRANCH_NAME"
+            echo "valid=false" >> $GITHUB_OUTPUT
+          else
+            echo "Branchname is valid as hostname label: $DETERMINED_BRANCH_NAME"
+            echo "valid=true" >> $GITHUB_OUTPUT
           fi
-          echo "✅ Branchname is valid as hostname label: $DETERMINED_BRANCH_NAME"
 
   build:
-    needs: [should-create-feature-env]
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+    needs: [should-create-feature-env, validate-branch-name]
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
     permissions:
       contents: write
       packages: write
@@ -72,8 +77,8 @@ jobs:
     secrets: inherit
 
   test:
-    needs: [should-create-feature-env]
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+    needs: [should-create-feature-env, validate-branch-name]
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
     permissions:
       contents: write
       actions: read
@@ -81,8 +86,8 @@ jobs:
     secrets: inherit
 
   pharos:
-    needs: [should-create-feature-env, build]
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+    needs: [should-create-feature-env, build, validate-branch-name]
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
 
     name: Run Pharos security scan
     permissions:
@@ -99,7 +104,7 @@ jobs:
           image_url: ${{ needs.build.outputs.image_url }}
 
   deploy-pull-request:
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
 
     name: Deploy Pull Request
     needs: [should-create-feature-env, validate-branch-name, determine-branch-name, build, test, pharos]
@@ -114,7 +119,7 @@ jobs:
       identity: nibas
 
   post-deployed-message:
-    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name.outputs.valid == 'true'}}
     runs-on: ubuntu-latest
     needs: [should-create-feature-env, validate-branch-name, determine-branch-name, deploy-pull-request]
     steps:
