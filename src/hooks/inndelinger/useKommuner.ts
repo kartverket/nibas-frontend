@@ -4,16 +4,21 @@ import { useAuthentication } from "components/Authentication/AuthenticationHook"
 import useSWRImmutable from "swr/immutable";
 import { fetcherWithToken } from "utils/api";
 
-const useKommuner = (fylkeId: string | null = null, gyldighetsdato: string | undefined, shouldFetch = true) => {
-  const { data: kommuner, ...rest } = useNibasApi(
-    shouldFetch ? "/v1/kommuner" : null,
-    fylkeId != null
-      ? {
-          fylkeid: fylkeId,
-          gyldighetsdato,
-        }
-      : undefined,
-  );
+const useKommuner = (
+  fylkeIds: string[] | string | null = null,
+  gyldighetsdato: string | undefined,
+  shouldFetch = true,
+) => {
+  const fylkeIder: string[] | null = typeof fylkeIds === "string" ? [fylkeIds] : fylkeIds;
+
+  const url = fylkeIder === null || fylkeIder.length < 2 ? "/v1/kommuner" : "/v1/kommuner/forFylker";
+
+  const params =
+    fylkeIder === null || fylkeIder.length < 2
+      ? { gyldighetsdato, fylkeid: fylkeIder?.[0] }
+      : { fylkeid: fylkeIder, gyldighetsdato };
+
+  const { data: kommuner, ...rest } = useNibasApi(shouldFetch ? url : null, params);
 
   const sortedKommuner = kommuner?.sort((a, b) => {
     return Number(a.nummer) - Number(b.nummer);
