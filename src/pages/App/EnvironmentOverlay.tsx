@@ -181,7 +181,7 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
     <>
       {children}
       <Overlay color={style.color}>
-        <OverlayLabel color={style.color}>{style.label}</OverlayLabel>
+        <OverlayLabel color={style.color}>yo</OverlayLabel>
         {envSwitchEnabeled && (
           <EnvironmentSelectContainer $color={style.color} $isOpen={environmentContainerOpen}>
             {isLoading ? (
