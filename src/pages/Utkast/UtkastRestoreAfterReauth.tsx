@@ -6,19 +6,19 @@ import { useAuthentication } from "components/Authentication/AuthenticationHook"
 
 export const UtkastRestoreAfterReauth = () => {
   const outlet = useOutlet();
-  const { selectInndelinger, setSelectedFylkeId } = useInndelinger();
+  const { selectInndelinger, setSelectedFylkeIds } = useInndelinger();
   const { user } = useAuthentication();
 
   useEffect(() => {
     const selectedInndelingerFromSessionStorage = fetchInndelingFromSessionStorage();
     if (selectedInndelingerFromSessionStorage != null) {
       selectInndelinger(selectedInndelingerFromSessionStorage.inndelinger);
-      setSelectedFylkeId(selectedInndelingerFromSessionStorage.selectedFylkeId);
+      setSelectedFylkeIds(selectedInndelingerFromSessionStorage.selectedFylkeIds);
       if (user?.state != null && user.state instanceof Object && "utkastId" in user.state) {
         user.state.utkastId = undefined;
       }
     }
-  }, [selectInndelinger, setSelectedFylkeId, user]);
+  }, [selectInndelinger, setSelectedFylkeIds, user]);
 
   return outlet;
 };
