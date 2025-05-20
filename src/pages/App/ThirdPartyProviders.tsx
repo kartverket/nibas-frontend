@@ -14,7 +14,7 @@ const swrGlobalConfig = {
   revalidateOnFocus: false,
 };
 
-const customTheme = extendTheme(withDefaultColorScheme({ colorScheme: "blue" }), defaultKvibTheme);
+const customTheme = extendTheme(withDefaultColorScheme({ colorScheme: "green" }), defaultKvibTheme);
 
 const defaultToastOptions: UseToastOptions = {
   position: "top",
