@@ -83,7 +83,7 @@ const InndelingerPanel = () => {
                     <InndelingOption
                       isActive={
                         selectedInndelingtype === "fylke"
-                          ? isInndelingSelected(selectedInndelingtype, fylkeId)
+                          ? (isInndelingSelected(selectedInndelingtype, fylkeId) ?? false)
                           : activePanelFylkeId === fylkeId
                       }
                       key={fylkeId}
@@ -98,7 +98,7 @@ const InndelingerPanel = () => {
             </InndelingerList>
             <Divider orientation="vertical" />
             <InndelingerList>
-              {kommuner
+              {kommuner !== undefined
                 ? activePanelFylkeId != null &&
                   selectedInndelingtype &&
                   kommuner.map((kommune) => {
@@ -113,7 +113,7 @@ const InndelingerPanel = () => {
                     return (
                       <InndelingOption
                         key={kommuneId}
-                        isActive={isInndelingSelected(selectedInndelingtype, kommuneId)}
+                        isActive={isInndelingSelected(selectedInndelingtype, kommuneId) ?? false}
                         onClick={() => toggleKommune(kommuneInndeling)}
                         type={selectedInndelingtype === "kommune" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"}
                       >

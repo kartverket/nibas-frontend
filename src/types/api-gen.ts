@@ -82,6 +82,10 @@ export interface paths {
     /** Henter grensene til en kommune med gitt id */
     get: operations["hentGrenserForKommune"];
   };
+  "/v1/kommuner/forFylker": {
+    /** Henter alle kommuner i gitte fylker. */
+    get: operations["hentKommunerForFylker"];
+  };
   "/v1/kodeliste/maalemetode-koder": {
     get: operations["fetchMaalemetodeKoder"];
   };
@@ -1075,10 +1079,10 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
+      valid?: boolean;
       /** Format: double */
       m?: number;
-      valid?: boolean;
-      coordinate?: components["schemas"]["Coordinate"];
+      coordinate?: unknown;
     };
     InndelingSearchResponse: {
       /** @description Lokalid til inndelingen */
@@ -1243,7 +1247,7 @@ export interface components {
       version: number;
     };
     PaginertRespons: {
-      innhold: { [key: string]: unknown }[];
+      innhold: unknown[];
       /** Format: int32 */
       side: number;
       /** Format: int32 */
@@ -2061,6 +2065,31 @@ export interface operations {
       404: {
         content: {
           "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
+  /** Henter alle kommuner i gitte fylker. */
+  hentKommunerForFylker: {
+    parameters: {
+      query: {
+        /** Liste med fylkeid'er for å hente kommuner i flere fylker */
+        fylkeid: string[];
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KommuneResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
         };
       };
     };
