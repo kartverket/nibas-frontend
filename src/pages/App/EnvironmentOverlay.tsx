@@ -70,9 +70,10 @@ const mapPRtoOptionObject = (pr: GitHubPullRequest | null | undefined): Environm
   if (pr == null) {
     return null;
   }
+  // Branchnavn blir lowercase i workflow, så vi må også gjøre det i denne koden
   return {
     label: pr.title,
-    value: "https://nibas-" + pr.head.ref + ".atkv3-dev.kartverket-intern.cloud",
+    value: "https://nibas-" + pr.head.ref.toLowerCase() + ".atkv3-dev.kartverket-intern.cloud",
     author: pr.user.login,
     profile_pic_url: pr.user.avatar_url,
     repository: pr.head.repo.name,
