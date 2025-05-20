@@ -18,7 +18,7 @@ jobs:
 
   determine-branch-name:
     needs: should-takedown-feature-env
-    if: ${{ needs.should-takedown-feature-env.outputs.has-relevant-changes == 'true' }}
+    if: ${{ github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' }}
     name: Determine Branch Name
     runs-on: ubuntu-latest
     outputs:
@@ -28,10 +28,12 @@ jobs:
         id: determine-branch
         run: |
           if [ "${{ inputs.branch-name }}" != "" ]; then
-            echo "branch_name_output=${{ inputs.branch-name }}" >> $GITHUB_OUTPUT
+            BRANCH_NAME="${{ inputs.branch-name }}"
           else
-            echo "branch_name_output=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+            BRANCH_NAME="${{ github.event.pull_request.head.ref }}"
           fi
+          BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
+          echo "branch_name_output=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
   takedown-pull-request:
     needs: [should-takedown-feature-env, determine-branch-name]
