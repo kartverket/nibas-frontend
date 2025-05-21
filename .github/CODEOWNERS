@@ -3,5 +3,5 @@
 # Denne koden forvaltes av:   Team Smia
 # Dokumentasjon:              https://kartverket.atlassian.net/wiki/spaces/NIBAS/overview
 
-* @kartverket/nibas
+* @kartverket/smia
 /.security/ @kristmh
