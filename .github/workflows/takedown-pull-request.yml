@@ -46,11 +46,21 @@ jobs:
           echo "branch_name_output=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
   takedown-pull-request:
-    needs: [determine-branch-name-pr, determine-branch-name-manual]
-    if: ${{ needs.determine-branch-name-pr.result == 'success' || needs.determine-branch-name-manual.result == 'success' }}
+    needs: [determine-branch-name-pr]
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.draft == false && needs.should-takedown-feature-env.outputs.has-relevant-changes == 'true' }}
     permissions:
       id-token: write
     uses: kartverket/smia-apps/.github/workflows/delete-feature-branch.yml@main
     with:
-      branch-name: ${{ needs.determine-branch-name-pr.outputs.BRANCH_NAME || needs.determine-branch-name-manual.outputs.BRANCH_NAME }}
+      branch-name: ${{ needs.determine-branch-name-pr.outputs.BRANCH_NAME }}
+      identity: nibas
+
+  takedown-manual:
+    needs: [determine-branch-name-manual]
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    permissions:
+      id-token: write
+    uses: kartverket/smia-apps/.github/workflows/delete-feature-branch.yml@main
+    with:
+      branch-name: ${{ needs.determine-branch-name-manual.outputs.BRANCH_NAME }}
       identity: nibas
