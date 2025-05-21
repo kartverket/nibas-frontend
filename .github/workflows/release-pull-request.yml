@@ -3,8 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       branch-name:
-        description: "The name of the environemt the branch will be deployed to. Must be a valid hostname label."
-        required: true
+        description: "Will be 'nibas-{branch-name}' in the environment. Must be a valid hostname label. If not provided, the current branch's name will be used."
+        required: false
   pull_request:
     types: [opened, ready_for_review, synchronize, reopened]
     branches:
@@ -51,7 +51,11 @@ jobs:
       - name: Determine branch name
         id: determine-branch
         run: |
-          BRANCH_NAME="${{ inputs.branch-name }}"
+          if [ "${{ inputs.branch-name }}" != "" ]; then
+            BRANCH_NAME="${{ inputs.branch-name }}"
+          else
+            BRANCH_NAME="${{ github.ref_name }}"
+          fi
           BRANCH_NAME=$(echo "$BRANCH_NAME" | tr '[:upper:]' '[:lower:]')
           echo "branch_name_output=$BRANCH_NAME" >> $GITHUB_OUTPUT
 
