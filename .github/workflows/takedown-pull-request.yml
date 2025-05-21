@@ -18,7 +18,7 @@ jobs:
 
   determine-branch-name:
     needs: should-takedown-feature-env
-    if: ${{ github.event.pull_request.draft == false && needs.should-takedown-feature-env.outputs.has-relevant-changes == 'true' }}
+    if: ${{ github.event.pull_request.draft == false && (needs.should-create-feature-env.outputs.has-relevant-changes == 'true' || github.event_name == 'workflow_dispatch') }}
     name: Determine Branch Name
     runs-on: ubuntu-latest
     outputs:
@@ -37,7 +37,7 @@ jobs:
 
   takedown-pull-request:
     needs: [should-takedown-feature-env, determine-branch-name]
-    if: ${{ needs.should-takedown-feature-env.outputs.has-relevant-changes == 'true' }}
+    if: ${{ needs.should-create-feature-env.outputs.has-relevant-changes == 'true' || github.event_name == 'workflow_dispatch' }}
     permissions:
       id-token: write
     uses: kartverket/smia-apps/.github/workflows/delete-feature-branch.yml@main
