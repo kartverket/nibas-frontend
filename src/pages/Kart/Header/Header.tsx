@@ -21,7 +21,6 @@ import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
-import { isNotNil } from "utils/type-utils";
 
 const Header = () => {
   const { utkast } = useUtkast();
@@ -31,12 +30,12 @@ const Header = () => {
   const { openAsync } = useConfirmationModal();
   const navigate = useNavigate();
 
-  const { currentlyEditingInndelinger, selectedFylkeId } = useInndelinger();
+  const { currentlyEditingInndelinger, selectedFylkeIds } = useInndelinger();
 
-  const { fylker } = useFylker(gyldighetsdato, isNotNil(selectedFylkeId));
-  const { kommuner } = useKommuner(selectedFylkeId, gyldighetsdato, isNotNil(selectedFylkeId));
+  const { fylker } = useFylker(gyldighetsdato, selectedFylkeIds.length > 0);
+  const { kommuner } = useKommuner(selectedFylkeIds, gyldighetsdato, selectedFylkeIds.length > 0);
 
-  const activeFylke = fylker?.find((fylke) => fylke.id.lokalid.value === selectedFylkeId);
+  const activeFylker = fylker?.filter((fylke) => selectedFylkeIds.includes(fylke.id.lokalid.value));
   const activeKommuner = kommuner?.filter((kommune) =>
     currentlyEditingInndelinger.map((inndeling) => inndeling.id).includes(kommune.id.lokalid.value),
   );
@@ -117,7 +116,7 @@ const Header = () => {
             />
           )}
           {utkast &&
-            (activeFylke && currentlyEditingInndelinger.length > 0 ? (
+            (activeFylker && activeFylker.length > 0 && currentlyEditingInndelinger.length > 0 ? (
               <Flex alignItems="center" gap={1} padding="0 12px">
                 <Text sx={{ color: "gray.600" }}>Redigerer</Text>
                 <InndelingText sx={{ color: "gray.600" }}>
@@ -141,6 +140,27 @@ const Header = () => {
                       </Tooltip>
                     ) : (
                       <InndelingText>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
+                    )}
+                  </Text>
+                )}
+
+                {/* Fylker */}
+                {activeFylker.length > 0 && (!activeKommuner || activeKommuner.length === 0) && (
+                  <Text fontWeight="600">
+                    {activeFylker.length > 4 ? (
+                      <Tooltip
+                        label={activeFylker.map((fylke) => (
+                          <p key={fylke.nummer}>
+                            {fylke.nummer} {inndelingResponseNavnToString(fylke.navn)}
+                          </p>
+                        ))}
+                      >
+                        <InndelingText>{activeFylker.length} fylker redigeres</InndelingText>
+                      </Tooltip>
+                    ) : (
+                      <InndelingText>
+                        {activeFylker.map((f) => inndelingResponseNavnToString(f.navn)).join(", ")}
+                      </InndelingText>
                     )}
                   </Text>
                 )}

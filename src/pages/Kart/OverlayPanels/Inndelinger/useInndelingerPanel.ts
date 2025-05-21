@@ -12,14 +12,15 @@ const useInndelingerPanel = () => {
   const {
     selectInndelinger,
     getAllInndelinger,
-    setSelectedFylkeId,
+    setSelectedFylkeIds,
     clearViewingLayersAndInndelinger,
     clearEditLayerAndInndelinger,
   } = useInndelinger();
 
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
   const [activePanelFylkeId, setActivePanelFylkeId] = useState<string | null>(null);
-  const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>(getAllInndelinger());
+  const [tempInndelinger, setTempInndelinger] = useState<Inndeling[]>([]);
+  const [tempFylkeIds, setTempFylkeIds] = useState<string[]>([]);
 
   const { closeOverlayModal, activeOverlayModal } = useOverlayPanel();
   const isEditingPanel = activeOverlayModal === "inndelinger";
@@ -29,20 +30,25 @@ const useInndelingerPanel = () => {
 
   useEffect(() => {
     if (isEditingPanel) {
-      setSelectedInndelinger([]);
+      setTempInndelinger([]);
+      setTempFylkeIds([]);
     } else {
-      setSelectedInndelinger(getAllInndelinger().filter((inndeling) => inndeling.isViewing));
+      const viewingInndelinger = getAllInndelinger().filter((i) => i.isViewing);
+      setTempInndelinger(viewingInndelinger);
+      const fylkeIds = viewingInndelinger.filter((i) => i.inndelingtype === "fylke").map((i) => i.id);
+      setTempFylkeIds(fylkeIds);
     }
-  }, [getAllInndelinger, isEditingPanel]);
+  }, [isEditingPanel, getAllInndelinger]);
 
   const resetSelection = () => {
-    setSelectedInndelinger([]);
+    setTempInndelinger([]);
+    setTempFylkeIds([]);
   };
 
   const clearInndelingerForPanel = () =>
     isEditingPanel ? clearEditLayerAndInndelinger() : clearViewingLayersAndInndelinger();
 
-  const isSelectionAvailable = selectedInndelinger.some((inndeling) =>
+  const isSelectionAvailable = tempInndelinger.some((inndeling) =>
     isEditingPanel ? inndeling.isEditing : inndeling.isViewing,
   );
 
@@ -51,7 +57,8 @@ const useInndelingerPanel = () => {
       clearHistory();
     }
 
-    selectInndelinger(selectedInndelinger);
+    selectInndelinger(tempInndelinger);
+    setSelectedFylkeIds(tempFylkeIds);
     resetInndelingerPanel();
   };
 
@@ -60,7 +67,7 @@ const useInndelingerPanel = () => {
       return false;
     }
 
-    const inndelingIfSelected = selectedInndelinger.find((inndeling) => {
+    const inndelingIfSelected = tempInndelinger.find((inndeling) => {
       return inndeling.inndelingtype === inndelingtype && inndeling.id === inndelingId;
     });
 
@@ -90,15 +97,10 @@ const useInndelingerPanel = () => {
   };
 
   const toggleFylke = (fylke: BaseInndeling) => {
-    if (isEditingPanel) {
-      resetSelection();
-    }
-
     if (selectedInndelingtype === "fylke") {
-      const isAlreadySelected = selectedInndelinger.findIndex(
+      const isAlreadySelected = tempInndelinger.findIndex(
         (inndeling) => inndeling.id === fylke.id && inndeling.inndelingtype === selectedInndelingtype,
       );
-
       if (isAlreadySelected < 0) {
         const newInndeling: Inndeling = {
           navn: fylke.navn,
@@ -108,14 +110,19 @@ const useInndelingerPanel = () => {
           isEditing: isEditingPanel,
           isViewing: !isEditingPanel,
         };
-        setSelectedInndelinger(selectedInndelinger.concat(newInndeling));
+        setTempInndelinger(tempInndelinger.concat(newInndeling));
+        setTempFylkeIds([...tempFylkeIds, fylke.id]);
         return;
       }
 
-      setSelectedInndelinger(selectedInndelinger.filter((_, index) => isAlreadySelected !== index));
+      setTempInndelinger(tempInndelinger.filter((_, index) => isAlreadySelected !== index));
+      setTempFylkeIds(tempFylkeIds.filter((id) => id !== fylke.id));
     } else {
       setActivePanelFylkeId(fylke.id);
-      setSelectedFylkeId(fylke.id);
+      const updatedFylkeIds = tempFylkeIds.includes(fylke.id)
+        ? tempFylkeIds.filter((id) => id !== fylke.id)
+        : [...tempFylkeIds, fylke.id];
+      setTempFylkeIds(updatedFylkeIds);
     }
   };
 
@@ -132,24 +139,24 @@ const useInndelingerPanel = () => {
 
       if (isEditingPanel) {
         if (selectedInndelingtype === "grunnkrets" || selectedInndelingtype === "stemmekrets") {
-          const selectedInndelingerWithoutSelectedInndeling = selectedInndelinger.filter(
+          const selectedInndelingerWithoutSelectedInndeling = tempInndelinger.filter(
             (inndeling) => inndeling.inndelingtype !== selectedInndelingtype,
           );
-          setSelectedInndelinger([...selectedInndelingerWithoutSelectedInndeling, newInndeling]);
+          setTempInndelinger([...selectedInndelingerWithoutSelectedInndeling, newInndeling]);
           return;
         }
       }
 
-      const isAlreadySelected = selectedInndelinger.findIndex(
+      const isAlreadySelected = tempInndelinger.findIndex(
         (inndeling) => inndeling.id === kommune.id && inndeling.inndelingtype === selectedInndelingtype,
       );
 
       if (isAlreadySelected === -1) {
-        setSelectedInndelinger(selectedInndelinger.concat(newInndeling));
+        setTempInndelinger(tempInndelinger.concat(newInndeling));
         return;
       }
 
-      setSelectedInndelinger(selectedInndelinger.filter((_, index) => isAlreadySelected !== index));
+      setTempInndelinger(tempInndelinger.filter((_, index) => isAlreadySelected !== index));
     }
   };
 
