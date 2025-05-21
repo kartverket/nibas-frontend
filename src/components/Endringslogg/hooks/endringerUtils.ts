@@ -322,7 +322,7 @@ const getEndringerForKommune = <T extends KontekstType>(
   };
 };
 
-export const getGrenserndringerUtenTilhorighet = (operasjoner: UtkastOperasjoner): Kretsendringer => {
+export const getGrenseendringerUtenTilhorighet = (operasjoner: UtkastOperasjoner): Kretsendringer => {
   const featuresUtenTilhorighet = operasjoner.grenseendringer.endredeFeatures.filter(
     (feature) => feature.properties.kontekstEgenskaper.length === 0,
   );
