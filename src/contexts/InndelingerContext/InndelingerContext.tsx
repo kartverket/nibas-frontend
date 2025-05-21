@@ -93,8 +93,8 @@ export type InndelingerContextValue = {
   clearViewingLayersAndInndelinger: () => void;
   clearEditLayerAndInndelinger: () => void;
 
-  selectedFylkeId: string | null;
-  setSelectedFylkeId: (id: string | null) => void;
+  selectedFylkeIds: string[];
+  setSelectedFylkeIds: (id: string[]) => void;
 
   isSameInndelinger: (a: Inndeling, b: Inndeling) => boolean;
 };
@@ -106,7 +106,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const [shouldZoom, setShouldZoom] = useState(true);
   const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles, addDirtyStyles } = useFeatureStyle();
 
-  const [selectedFylkeId, setSelectedFylkeId] = useState<string | null>(null);
+  const [selectedFylkeIds, setSelectedFylkeIds] = useState<string[]>([]);
   const [inndelingerToFetch, setInndelingerToFetch] = useState<Inndeling[]>([]);
 
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(inndelingerToFetch);
@@ -525,8 +525,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     clearViewingLayersAndInndelinger,
     clearEditLayerAndInndelinger,
 
-    selectedFylkeId,
-    setSelectedFylkeId,
+    selectedFylkeIds,
+    setSelectedFylkeIds,
 
     isLoadingInndeling: isFetching && inndelingFeatures.length === 0,
     isSameInndelinger,
