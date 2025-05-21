@@ -19,6 +19,7 @@ const useInndelingerPanel = () => {
 
   const [selectedInndelingtype, setSelectedInndelingtype] = useState<Inndelingtype | null>(null);
   const [activePanelFylkeId, setActivePanelFylkeId] = useState<string | null>(null);
+
   const [tempInndelinger, setTempInndelinger] = useState<Inndeling[]>([]);
   const [tempFylkeIds, setTempFylkeIds] = useState<string[]>([]);
 
