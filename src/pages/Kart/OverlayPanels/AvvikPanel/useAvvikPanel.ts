@@ -25,8 +25,8 @@ export const useAvvikPanel = () => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const {
     selectInndelinger,
-    setSelectedFylkeId,
-    selectedFylkeId,
+    setSelectedFylkeIds,
+    selectedFylkeIds,
     currentlyEditingInndelinger,
     setShouldZoom,
     clearEditLayerAndInndelinger,
@@ -226,14 +226,14 @@ export const useAvvikPanel = () => {
     if (activeOverlayModal === "inndelinger") {
       closeOverlayPanel(); // Gjør det enkelt og lukker avvikPanel hvis inndelinger-modal er åpen
     }
-    if (currentlyEditingInndelinger.length > 0 && selectedFylkeId !== "") {
+    if (currentlyEditingInndelinger.length > 0 && selectedFylkeIds.length > 0) {
       const inndeling = currentlyEditingInndelinger[0];
       setSelectedKommuneId(inndeling.id);
     }
   }, [
     currentlyEditingInndelinger,
     selectedInndelinger,
-    selectedFylkeId,
+    selectedFylkeIds,
     setSelectedKommuneId,
     activeOverlayModal,
     closeOverlayPanel,
@@ -241,7 +241,7 @@ export const useAvvikPanel = () => {
 
   const resetAvvikPanel = () => {
     setSelectedKommuneId("");
-    setSelectedFylkeId(null);
+    setSelectedFylkeIds([]);
     setSecondKommuneId(null);
     selectInndelinger([]);
     setShouldZoom(true);
@@ -257,7 +257,12 @@ export const useAvvikPanel = () => {
     if (kommune == null) {
       return;
     }
-    setSelectedFylkeId(kommune.fylkesLokalID ?? null);
+
+    const fylkeId = kommune.fylkesLokalID;
+    if (fylkeId != null && !selectedFylkeIds.includes(fylkeId)) {
+      setSelectedFylkeIds([...selectedFylkeIds, fylkeId]);
+    }
+
     setSelectedKommuneId(kommuneLokalID);
   };
   const avvikRowProps: AvvikRowProps = {
