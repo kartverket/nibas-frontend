@@ -327,7 +327,7 @@ type Step = {
   completed_at: string;
 };
 
-type Job = {
+export type Job = {
   id: number;
   run_id: number;
   name: string;

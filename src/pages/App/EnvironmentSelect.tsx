@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 import Select, { DropdownIndicatorProps, components, StylesConfig } from "react-select";
 import { styled } from "styled-components";
 import useSWR from "swr";
-import { GitHubPullRequest, ListJobsResponse, ListWorkflowRunsResponse } from "types/github-api-types";
+import { GitHubPullRequest, Job, ListJobsResponse, ListWorkflowRunsResponse } from "types/github-api-types";
 import { zindex } from "utils/constants";
 import { styles } from "./EnvironmentOverlay";
 
@@ -30,46 +30,47 @@ const currentEnvironments: EnvironmentOption[] = [
 
 const fetchNibasRepoPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
   const response = await fetch(`/repos/kartverket/${repo}/pulls`);
-  if (!response.ok) {
+  if (response.ok === false) {
     return [];
   }
   return await response.json();
 };
 
-const fetchDeployedPRs = async (repo: string) => {
+const isSuccessfulDeployJob = (job: Job): boolean => {
+  return job.name.includes("Deploy Pull Request") && job.conclusion === "success";
+};
+
+const fetchDeployedPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
   const PRs = await fetchNibasRepoPRs(repo);
-  const deployedPRs = [];
+  const deployedPRs: GitHubPullRequest[] = [];
 
   // Hvis vi ikke får response om deploymentstatus så dropper vi bare å vise den i selecten
   for (const pr of PRs) {
     const runsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs?head_sha=${pr.head.sha}`);
-    if (!runsResponse.ok) {
+    if (runsResponse.ok === false) {
       continue;
     }
     const workflowRuns: ListWorkflowRunsResponse = await runsResponse.json();
-    const latestRun = workflowRuns.workflow_runs[0];
+    const latestRun = workflowRuns.workflow_runs?.[0];
     if (latestRun == null) {
       continue;
     }
 
     const jobsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs/${latestRun.id}/jobs`);
-    if (!jobsResponse.ok) {
+    if (jobsResponse.ok === false) {
       continue;
     }
     const jobsList: ListJobsResponse = await jobsResponse.json();
-
-    const isPRDeployed =
-      jobsList.jobs.find((job) => job.name === "Deploy Pull Request / create-folder" && job.conclusion === "success") !=
-      null;
-    if (isPRDeployed) {
+    const isPRDeployed = jobsList.jobs.some((job) => isSuccessfulDeployJob(job) === true);
+    if (isPRDeployed === true) {
       deployedPRs.push(pr);
     }
   }
   return deployedPRs;
 };
 
-const mapPRtoOptionObject = (pr: GitHubPullRequest | null | undefined): EnvironmentOption | null => {
-  if (pr == null) {
+const mapPRtoOptionObject = (pr: GitHubPullRequest): EnvironmentOption | null => {
+  if (pr === null || pr === undefined) {
     return null;
   }
   // Branchnavn blir lowercase i workflow, så vi må også gjøre det i denne koden
@@ -135,7 +136,7 @@ export const EnvironmentSelect = () => {
       ...(nibasBackendPRs || []),
       ...(nibasEventsPRs || []),
       ...(nibasArbeidslistePRs || []),
-    ].filter((pr) => pr.draft !== true && pr.user.login !== "dependabot[bot]");
+    ];
 
     return currentEnvironments.concat(allPRs.map(mapPRtoOptionObject).filter((pr) => pr !== null));
   }, [nibasArbeidslistePRs, nibasBackendPRs, nibasEventsPRs, nibasFrontendPRs]);
