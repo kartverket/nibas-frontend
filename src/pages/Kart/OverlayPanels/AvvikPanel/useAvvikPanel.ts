@@ -259,7 +259,7 @@ export const useAvvikPanel = () => {
     }
 
     const fylkeId = kommune.fylkesLokalID;
-    if (fylkeId !== null && fylkeId !== undefined && !selectedFylkeIds.includes(fylkeId)) {
+    if (fylkeId != null && !selectedFylkeIds.includes(fylkeId)) {
       setSelectedFylkeIds([...selectedFylkeIds, fylkeId]);
     }
 

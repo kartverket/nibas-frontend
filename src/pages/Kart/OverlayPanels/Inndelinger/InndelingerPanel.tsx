@@ -98,7 +98,7 @@ const InndelingerPanel = () => {
             </InndelingerList>
             <Divider orientation="vertical" />
             <InndelingerList>
-              {kommuner !== undefined
+              {kommuner != null
                 ? activePanelFylkeId != null &&
                   selectedInndelingtype &&
                   kommuner.map((kommune) => {
