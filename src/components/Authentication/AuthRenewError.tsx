@@ -25,7 +25,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   const { utkast } = useUtkast();
   const { history } = useHistory();
   const { authRenewError, setAuthRenewError } = useAuthRenewError();
-  const { currentlyEditingInndelinger, selectedFylkeId } = useInndelinger();
+  const { currentlyEditingInndelinger, selectedFylkeIds } = useInndelinger();
   const { selectedPoint, selectedFeatures } = useFeatureStyle();
   const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayModal, activeOverlayPanel } = useOverlayPanel();
@@ -54,7 +54,7 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
         utkast: utkast,
         selectedInndelinger: {
           inndelinger: currentlyEditingInndelinger,
-          selectedFylkeId,
+          selectedFylkeIds,
         },
         selectedPoint,
         selectedFeatures,
