@@ -34,9 +34,7 @@ export const styles: Record<Environment, EnvironmentStyle> = {
 
 const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
   const env = getCurrentEnvironment();
-
   const style = styles[env];
-
   return (
     <>
       {children}

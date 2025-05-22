@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 import Select, { DropdownIndicatorProps, components, StylesConfig } from "react-select";
 import { styled } from "styled-components";
 import useSWR from "swr";
-import { GitHubPullRequest } from "types/github-api-types";
+import { GitHubPullRequest, ListJobsResponse, ListWorkflowRunsResponse } from "types/github-api-types";
 import { zindex } from "utils/constants";
 import { styles } from "./EnvironmentOverlay";
 
@@ -27,14 +27,45 @@ const currentEnvironments: EnvironmentOption[] = [
     value: NibasOrigin.LOCALHOST,
   },
 ];
+
 const fetchNibasRepoPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
   const response = await fetch(`/repos/kartverket/${repo}/pulls`);
-  const data = await response.json();
-  if (response.ok) {
-    return data;
-  } else {
+  if (!response.ok) {
     return [];
   }
+  return await response.json();
+};
+
+const fetchDeployedPRs = async (repo: string) => {
+  const PRs = await fetchNibasRepoPRs(repo);
+  const deployedPRs = [];
+
+  // Hvis vi ikke får response om deploymentstatus så dropper vi bare å vise den i selecten
+  for (const pr of PRs) {
+    const runsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs?head_sha=${pr.head.sha}`);
+    if (!runsResponse.ok) {
+      continue;
+    }
+    const workflowRuns: ListWorkflowRunsResponse = await runsResponse.json();
+    const latestRun = workflowRuns.workflow_runs[0];
+    if (latestRun == null) {
+      continue;
+    }
+
+    const jobsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs/${latestRun.id}/jobs`);
+    if (!jobsResponse.ok) {
+      continue;
+    }
+    const jobsList: ListJobsResponse = await jobsResponse.json();
+
+    const isPRDeployed =
+      jobsList.jobs.find((job) => job.name === "Deploy Pull Request / create-folder" && job.conclusion === "success") !=
+      null;
+    if (isPRDeployed) {
+      deployedPRs.push(pr);
+    }
+  }
+  return deployedPRs;
 };
 
 const mapPRtoOptionObject = (pr: GitHubPullRequest | null | undefined): EnvironmentOption | null => {
@@ -79,19 +110,19 @@ export const EnvironmentSelect = () => {
 
   const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
     envSwitchEnabeled ? "nibas-frontend" : null,
-    fetchNibasRepoPRs,
+    fetchDeployedPRs,
   );
   const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR(
     envSwitchEnabeled ? "nibas-backend" : null,
-    fetchNibasRepoPRs,
+    fetchDeployedPRs,
   );
   const { data: nibasEventsPRs, isLoading: isEventsPRsLoading } = useSWR(
     envSwitchEnabeled ? "nibas-events" : null,
-    fetchNibasRepoPRs,
+    fetchDeployedPRs,
   );
   const { data: nibasArbeidslistePRs, isLoading: isArbeidslistePRsLoading } = useSWR(
     envSwitchEnabeled ? "nibas-arbeidsliste" : null,
-    fetchNibasRepoPRs,
+    fetchDeployedPRs,
   );
 
   const isLoading = isFrontendPRsLoading || isBackendPRsLoading || isArbeidslistePRsLoading || isEventsPRsLoading;
