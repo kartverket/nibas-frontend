@@ -17,8 +17,11 @@ import {
 import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
 import { useKommune } from "hooks/inndelinger/useKommuner";
 import { resetMapView } from "utils/map/map-utils";
-import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus } from "./useAvvik";
+import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus, hentGrenselinjer } from "./useAvvik";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { FeatureCollection } from "types/api";
+import { getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { addFeaturesToSource } from "utils/map/source";
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const { token } = useAuthentication();
@@ -168,6 +171,25 @@ export const useAvvikPanel = () => {
     },
     [token],
   );
+  const getMatrikkelKommuneGrense = useCallback(
+    async (kommuneNummer: string | undefined) => {
+      if (kommuneNummer == null) {
+        return [];
+      }
+      const matrikkelKommuneGrense = await hentGrenselinjer(token, kommuneNummer);
+      const fetchedFeatures = getFeaturesFromGeoJson(matrikkelKommuneGrense);
+
+      if (fetchedFeatures.length > 0) {
+        clearMatrikkelLayer();
+        addFeaturesToSource("matrikkel", fetchedFeatures);
+        return fetchedFeatures;
+      } else {
+        // Returnerer selv om det er 0 grenser for å vise toast-warning
+        return fetchedFeatures;
+      }
+    },
+    [token],
+  );
   const goToCoordinatesAndFetchMatrikkel = async (coordinates: number[]): Promise<boolean> => {
     let zoomLevel = 30;
     const minZoomLevel = 20;
@@ -175,10 +197,14 @@ export const useAvvikPanel = () => {
     // pga ikke alltid finner man ikke nærliggende matr.grenser ved maks zoom.
     while (zoomLevel >= minZoomLevel) {
       centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
-      const matrikkelGrenser = await getMatrikkelFeatures();
-      if (matrikkelGrenser && matrikkelGrenser.length > 0) {
-        return true;
-      }
+      // const matrikkelGrenser = await getMatrikkelFeatures();
+      // if (matrikkelGrenser && matrikkelGrenser.length > 0) {
+      //   return true;
+      // }
+      const kommuneNummer = selectedKommune?.nummer;
+      getMatrikkelKommuneGrense(kommuneNummer);
+
+      return true;
       zoomLevel--;
     }
     return false;
