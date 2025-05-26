@@ -68,17 +68,17 @@ const fetchDeployedPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
 
   const prJobsPromises = prsWithReleaseRuns.map(async (pr) => {
     const prWorkflow = prWorkflowResults.find((result) => result.pr === pr);
-    if (!prWorkflow?.workflowRuns) {
+    if (prWorkflow?.workflowRuns == null) {
       return null;
     }
 
     const releasePRRun = prWorkflow.workflowRuns.workflow_runs?.find((run) => run.name.includes("Release PR"));
-    if (!releasePRRun) {
+    if (releasePRRun == null) {
       return null;
     }
 
     const jobsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs/${releasePRRun.id}/jobs`);
-    if (!jobsResponse.ok) {
+    if (jobsResponse.ok === false) {
       return null;
     }
     return {
