@@ -35,7 +35,7 @@ const Header = () => {
   const { fylker } = useFylker(gyldighetsdato, selectedFylkeIds.length > 0);
   const { kommuner } = useKommuner(selectedFylkeIds, gyldighetsdato, selectedFylkeIds.length > 0);
 
-  const activeFylker = fylker?.filter((fylke) => selectedFylkeIds.includes(fylke.id.lokalid.value));
+  const activeFylker = fylker?.filter((fylke) => selectedFylkeIds.includes(fylke.id.lokalid.value) === true);
   const activeKommuner = kommuner?.filter((kommune) =>
     currentlyEditingInndelinger.map((inndeling) => inndeling.id).includes(kommune.id.lokalid.value),
   );
