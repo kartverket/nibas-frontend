@@ -14,7 +14,7 @@ import {
   KommuneMedAvvik,
   PaginationInfo,
 } from "./avvik-utils";
-import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
+import { useToast } from "@kvib/react";
 import { useKommune } from "hooks/inndelinger/useKommuner";
 import { resetMapView } from "utils/map/map-utils";
 import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus, hentGrenselinjer } from "./useAvvik";
@@ -23,6 +23,7 @@ import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { addFeaturesToSource } from "utils/map/source";
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
+  const toast = useToast();
   const { token } = useAuthentication();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const {
@@ -75,9 +76,33 @@ export const useAvvikPanel = () => {
     if (secondKommuneFromRow === undefined) {
       return;
     }
+    if (secondKommuneFromRow.kommuneLokalID === secondKommuneId) {
+      return;
+    }
     setSecondKommuneId(secondKommuneFromRow.kommuneLokalID);
   };
 
+  const getMatrikkelKommuneGrense = useCallback(
+    async (kommuneNummer: string | undefined) => {
+      if (kommuneNummer == null) {
+        return [];
+      }
+      try {
+        const matrikkelKommuneGrense = await hentGrenselinjer(token, kommuneNummer);
+        const fetchedFeatures = getFeaturesFromGeoJson(matrikkelKommuneGrense);
+        if (fetchedFeatures.length > 0) {
+          clearMatrikkelLayer();
+          addFeaturesToSource("matrikkel", fetchedFeatures);
+          return fetchedFeatures;
+        } else {
+          return fetchedFeatures;
+        }
+      } catch {
+        return [];
+      }
+    },
+    [token],
+  );
   const handleInndelingForAvvik = useCallback(() => {
     if (selectedKommune && !isLoadingKommune) {
       const inndelingtype = "kommune";
@@ -97,6 +122,7 @@ export const useAvvikPanel = () => {
       if (!isAlreadySelected) {
         setShouldZoom(true);
         selectInndelinger([newInndeling]);
+        getMatrikkelKommuneGrense(selectedKommune.nummer);
       }
     }
 
@@ -137,6 +163,7 @@ export const useAvvikPanel = () => {
     selectedKommuneId,
     setShouldZoom,
     selectInndelinger,
+    getMatrikkelKommuneGrense,
   ]);
 
   useEffect(() => {
@@ -168,34 +195,6 @@ export const useAvvikPanel = () => {
     },
     [token],
   );
-  const getMatrikkelKommuneGrense = useCallback(
-    async (kommuneNummer: string | undefined) => {
-      if (kommuneNummer == null) {
-        return [];
-      }
-      try {
-        const matrikkelKommuneGrense = await hentGrenselinjer(token, kommuneNummer);
-        const fetchedFeatures = getFeaturesFromGeoJson(matrikkelKommuneGrense);
-        if (fetchedFeatures.length > 0) {
-          clearMatrikkelLayer();
-          addFeaturesToSource("matrikkel", fetchedFeatures);
-          return fetchedFeatures;
-        } else {
-          return fetchedFeatures;
-        }
-      } catch {
-        return [];
-      }
-    },
-    [token],
-  );
-  const goToCoordinatesAndFetchMatrikkel = async (coordinates: number[]): Promise<boolean> => {
-    const zoomLevel = 40;
-    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
-    const kommuneNummer = selectedKommune?.nummer;
-    const m22Grenser = await getMatrikkelKommuneGrense(kommuneNummer);
-    return m22Grenser.length > 0 ? true : false;
-  };
 
   // ========== Hent avvik for valgt kommune ==========
   useEffect(() => {
@@ -277,9 +276,15 @@ export const useAvvikPanel = () => {
     }
 
     setSelectedKommuneId(kommuneLokalID);
+    const m22Grenser = await getMatrikkelKommuneGrense(kommune.kommuneNummer);
+    if (m22Grenser.length < 1) {
+      toast({
+        status: "error",
+        title: "Klarte ikke å hente inn teiggrenser for " + kommune.kommuneNavn,
+      });
+    }
   };
   const avvikRowProps: AvvikRowProps = {
-    goToCoordinatesAndFetchMatrikkel,
     findSecondKommune,
     selectedAvvikId,
     setSelectedAvvikId,
