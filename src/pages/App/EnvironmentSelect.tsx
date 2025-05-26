@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { GitHubPullRequest, ListJobsResponse, ListWorkflowRunsResponse } from "types/github-api-types";
 import { zindex } from "utils/constants";
 import { styles } from "./EnvironmentOverlay";
+import { removeNil } from "utils/list-utils";
 
 type EnvironmentOption = {
   label: string;
@@ -38,34 +39,61 @@ const fetchNibasRepoPRs = async (repo: string): Promise<GitHubPullRequest[]> => 
 
 const fetchDeployedPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
   const PRs = await fetchNibasRepoPRs(repo);
-  const deployedPRs: GitHubPullRequest[] = [];
+  if (PRs.length === 0) {
+    return [];
+  }
 
-  // Hvis vi ikke får response om deploymentstatus så dropper vi bare å vise den i selecten
-  for (const pr of PRs) {
-    const runsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs?head_sha=${pr.head.sha}`);
-    if (runsResponse.ok === false) {
-      continue;
+  const prWorkflowPromises = PRs.map((pr) => ({
+    pr,
+    workflowPromise: fetch(`/repos/kartverket/${repo}/actions/runs?head_sha=${pr.head.sha}`).then((response) =>
+      response.ok ? (response.json() as Promise<ListWorkflowRunsResponse>) : null,
+    ),
+  }));
+
+  const prWorkflowResults = await Promise.all(
+    prWorkflowPromises.map(async ({ pr, workflowPromise }) => ({
+      pr,
+      workflowRuns: await workflowPromise,
+    })),
+  );
+
+  const prsWithReleaseRuns = prWorkflowResults
+    .filter((result) => result.workflowRuns != null)
+    .filter(({ workflowRuns }) => workflowRuns?.workflow_runs?.some((run) => run.name.includes("Release PR")) ?? false)
+    .map(({ pr }) => pr);
+
+  if (prsWithReleaseRuns.length === 0) {
+    return [];
+  }
+
+  const prJobsPromises = prsWithReleaseRuns.map(async (pr) => {
+    const prWorkflow = prWorkflowResults.find((result) => result.pr === pr);
+    if (!prWorkflow?.workflowRuns) {
+      return null;
     }
-    const workflowRuns: ListWorkflowRunsResponse = await runsResponse.json();
-    const releasePRRun = workflowRuns.workflow_runs?.find((run) => run.name.includes("Release PR"));
-    if (releasePRRun == null) {
-      continue;
+
+    const releasePRRun = prWorkflow.workflowRuns.workflow_runs?.find((run) => run.name.includes("Release PR"));
+    if (!releasePRRun) {
+      return null;
     }
 
     const jobsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs/${releasePRRun.id}/jobs`);
-    if (jobsResponse.ok === false) {
-      continue;
+    if (!jobsResponse.ok) {
+      return null;
     }
+    return {
+      pr,
+      jobs: (await jobsResponse.json()) as ListJobsResponse,
+    };
+  });
 
-    const jobsList: ListJobsResponse = await jobsResponse.json();
-    const isPRDeployed = jobsList.jobs.some(
-      (job) => job.name.includes("Deploy Pull Request") === true && job.conclusion === "success",
-    );
-    if (isPRDeployed === true) {
-      deployedPRs.push(pr);
-    }
-  }
-  return deployedPRs;
+  const prJobsResults = removeNil(await Promise.all(prJobsPromises));
+
+  return prJobsResults
+    .filter(({ jobs }) =>
+      jobs.jobs.some((job) => job.name.includes("Deploy Pull Request") && job.conclusion === "success"),
+    )
+    .map(({ pr }) => pr);
 };
 
 const mapPRtoOptionObject = (pr: GitHubPullRequest): EnvironmentOption | null => {
