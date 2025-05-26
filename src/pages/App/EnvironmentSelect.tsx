@@ -37,7 +37,7 @@ const fetchNibasRepoPRs = async (repo: string): Promise<GitHubPullRequest[]> => 
 };
 
 const isSuccessfulDeployJob = (job: Job): boolean => {
-  return job.name.includes("Deploy Pull Request") && job.conclusion === "success";
+  return job.name.includes("Deploy Pull Request") === true && job.conclusion === "success";
 };
 
 const fetchDeployedPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
@@ -70,7 +70,7 @@ const fetchDeployedPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
 };
 
 const mapPRtoOptionObject = (pr: GitHubPullRequest): EnvironmentOption | null => {
-  if (pr === null || pr === undefined) {
+  if (pr == null) {
     return null;
   }
   // Branchnavn blir lowercase i workflow, så vi må også gjøre det i denne koden
@@ -106,23 +106,23 @@ export const EnvironmentSelect = () => {
   const style = styles[env];
   const { isAuthenticated } = useAuthentication();
 
-  const envSwitchEnabeled = isAuthenticated && env !== "dev-e2e" && env !== "prod";
+  const envSwitchEnabled = isAuthenticated && env !== "dev-e2e" && env !== "prod";
   const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(true);
 
   const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
-    envSwitchEnabeled ? "nibas-frontend" : null,
+    envSwitchEnabled ? "nibas-frontend" : null,
     fetchDeployedPRs,
   );
   const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR(
-    envSwitchEnabeled ? "nibas-backend" : null,
+    envSwitchEnabled ? "nibas-backend" : null,
     fetchDeployedPRs,
   );
   const { data: nibasEventsPRs, isLoading: isEventsPRsLoading } = useSWR(
-    envSwitchEnabeled ? "nibas-events" : null,
+    envSwitchEnabled ? "nibas-events" : null,
     fetchDeployedPRs,
   );
   const { data: nibasArbeidslistePRs, isLoading: isArbeidslistePRsLoading } = useSWR(
-    envSwitchEnabeled ? "nibas-arbeidsliste" : null,
+    envSwitchEnabled ? "nibas-arbeidsliste" : null,
     fetchDeployedPRs,
   );
 
@@ -180,7 +180,7 @@ export const EnvironmentSelect = () => {
     }),
   };
   return (
-    envSwitchEnabeled === true && (
+    envSwitchEnabled === true && (
       <EnvironmentSelectContainer $color={style.color} $isOpen={environmentContainerOpen}>
         {isLoading ? (
           <Spinner size={"lg"} color="white" />
