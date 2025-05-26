@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuthentication } from "../../../../components/Authentication/AuthenticationHook";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
+import { clearMatrikkelLayer } from "utils/map/layers";
 import {
   AvvikForKommuneResponse,
   AvvikKommunerResponse,
@@ -14,13 +14,17 @@ import {
   KommuneMedAvvik,
   PaginationInfo,
 } from "./avvik-utils";
-import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
+import { useToast } from "@kvib/react";
 import { useKommune } from "hooks/inndelinger/useKommuner";
 import { resetMapView } from "utils/map/map-utils";
 import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus } from "./useAvvik";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { getFeaturesFromGeoJson } from "utils/map/geoJson";
+import { addFeaturesToSource } from "utils/map/source";
+import { hentGrenselinjer } from "../hooks/useMatrikkelGrenser";
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
+  const toast = useToast();
   const { token } = useAuthentication();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const {
@@ -73,9 +77,40 @@ export const useAvvikPanel = () => {
     if (secondKommuneFromRow === undefined) {
       return;
     }
+    if (secondKommuneFromRow.kommuneLokalID === secondKommuneId) {
+      return;
+    }
     setSecondKommuneId(secondKommuneFromRow.kommuneLokalID);
   };
 
+  const getMatrikkelKommuneGrense = useCallback(
+    async (kommuneNummer: string | undefined) => {
+      if (kommuneNummer == null) {
+        return [];
+      }
+      try {
+        const matrikkelKommuneGrense = await hentGrenselinjer(token, kommuneNummer);
+        const fetchedFeatures = getFeaturesFromGeoJson(matrikkelKommuneGrense);
+        if (fetchedFeatures.length > 0) {
+          clearMatrikkelLayer();
+          addFeaturesToSource("matrikkel", fetchedFeatures);
+          return fetchedFeatures;
+        } else {
+          toast({
+            status: "error",
+            title: "Klarte ikke å hente inn teiggrenser for kommunen",
+          });
+        }
+      } catch {
+        toast({
+          status: "error",
+          title: "Klarte ikke å hente inn teiggrenser for kommunen",
+        });
+        return [];
+      }
+    },
+    [token, toast],
+  );
   const handleInndelingForAvvik = useCallback(() => {
     if (selectedKommune && !isLoadingKommune) {
       const inndelingtype = "kommune";
@@ -98,8 +133,6 @@ export const useAvvikPanel = () => {
       }
     }
 
-    // Per nå 07.04.25 er det kun en fylkeid om gangen, brukeren ser derfor ikke at det  blir lagt til flere kommuner dersom de er i et annet fylke f.eks Oslo og legger så til Bærum.
-    // Men man kan fortsatt redigere da grensa i mellom
     if (secondKommune && !isLoadingSecondKommune) {
       const currentMainInndeling = currentlyEditingInndelinger.find((inndeling) => inndeling.id === selectedKommuneId);
 
@@ -138,7 +171,11 @@ export const useAvvikPanel = () => {
     setShouldZoom,
     selectInndelinger,
   ]);
-
+  useEffect(() => {
+    if (selectedKommune && !isLoadingKommune) {
+      getMatrikkelKommuneGrense(selectedKommune.nummer);
+    }
+  }, [selectedKommune, isLoadingKommune, getMatrikkelKommuneGrense]);
   useEffect(() => {
     handleInndelingForAvvik();
   }, [handleInndelingForAvvik]);
@@ -168,21 +205,6 @@ export const useAvvikPanel = () => {
     },
     [token],
   );
-  const goToCoordinatesAndFetchMatrikkel = async (coordinates: number[]): Promise<boolean> => {
-    let zoomLevel = 30;
-    const minZoomLevel = 20;
-    // Her forsøker vi mindre zoom helt til matrikkelFeatures har innhold, eller zoomLevel er mindre enn minZoomLevel
-    // pga ikke alltid finner man ikke nærliggende matr.grenser ved maks zoom.
-    while (zoomLevel >= minZoomLevel) {
-      centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
-      const matrikkelGrenser = await getMatrikkelFeatures();
-      if (matrikkelGrenser && matrikkelGrenser.length > 0) {
-        return true;
-      }
-      zoomLevel--;
-    }
-    return false;
-  };
 
   // ========== Hent avvik for valgt kommune ==========
   useEffect(() => {
@@ -266,7 +288,6 @@ export const useAvvikPanel = () => {
     setSelectedKommuneId(kommuneLokalID);
   };
   const avvikRowProps: AvvikRowProps = {
-    goToCoordinatesAndFetchMatrikkel,
     findSecondKommune,
     selectedAvvikId,
     setSelectedAvvikId,

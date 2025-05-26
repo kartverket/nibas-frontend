@@ -14,8 +14,8 @@ export const AvvikPanel = () => {
   const [tabIndex, setTabIndex] = useState(0);
   const tabList = [
     { label: "Uløst", value: AvvikStatus.NY },
-    { label: "Løst", value: AvvikStatus.FIKSET },
     { label: "Utsatt", value: AvvikStatus.VENT },
+    { label: "Løst", value: AvvikStatus.FIKSET },
   ];
 
   const handleTabsChange = (index: number) => {

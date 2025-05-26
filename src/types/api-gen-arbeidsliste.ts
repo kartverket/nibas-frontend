@@ -10,6 +10,14 @@ export interface paths {
     /** Oppdaterer flere avvik samtidig med ny status og informasjon */
     post: operations["oppdaterFlereAvvik"];
   };
+  "/api/v1/matrikkel/grenselinjer": {
+    /** Henter alle grenselinjer for en kommuner fra Matrikkelen. */
+    get: operations["hentGrenselinjer"];
+  };
+  "/api/v1/matrikkel/grenselinjer/kommuner": {
+    /** Henter en liste over alle kommuner som har tilgjengelige grenselinjer */
+    get: operations["hentTilgjengeligeKommuner"];
+  };
   "/api/v1/avvik/kommuner": {
     /** Henter liste over kommuner med avvik og antall avvik per kommune */
     get: operations["hentKommunerMedAvvikSummary"];
@@ -31,14 +39,43 @@ export interface components {
     BulkAvvikRequestDTO: {
       avvikUpdates: components["schemas"]["AvvikRequestDTO"][];
     };
-    Page: {
+    GeometryDto: {
+      type: string;
+      coordinates: number[][];
+    };
+    MatrikkelGrenselinjeDto: {
+      type: string;
+      geometry: components["schemas"]["GeometryDto"];
+      properties: components["schemas"]["PropertiesDto"];
+    };
+    MatrikkelGrenselinjeFeatureCollection: {
+      type: string;
+      features: components["schemas"]["MatrikkelGrenselinjeDto"][];
+    };
+    PropertiesDto: {
+      /** Format: int64 */
+      id: number;
+      kommunenr1?: string;
+      kommunenr2?: string;
       /** Format: int32 */
-      totalPages?: number;
+      hjelpelinjetypeId?: number;
+      /** Format: int32 */
+      administrativgrensekodeId?: number;
+      /** Format: int32 */
+      malemetodeId?: number;
+      /** Format: int32 */
+      noyaktighet?: number;
+      /** Format: int32 */
+      lagretNoyaktighetsklasse?: number;
+    };
+    Page: {
       /** Format: int64 */
       totalElements?: number;
       /** Format: int32 */
+      totalPages?: number;
+      /** Format: int32 */
       size?: number;
-      content?: { [key: string]: unknown }[];
+      content?: unknown[];
       /** Format: int32 */
       number?: number;
       sort?: components["schemas"]["SortObject"];
@@ -55,9 +92,9 @@ export interface components {
       sort?: components["schemas"]["SortObject"];
       paged?: boolean;
       /** Format: int32 */
-      pageSize?: number;
-      /** Format: int32 */
       pageNumber?: number;
+      /** Format: int32 */
+      pageSize?: number;
       unpaged?: boolean;
     };
     SortObject: {
@@ -116,6 +153,37 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["BulkAvvikRequestDTO"];
+      };
+    };
+  };
+  /** Henter alle grenselinjer for en kommuner fra Matrikkelen. */
+  hentGrenselinjer: {
+    parameters: {
+      query: {
+        kommunenummer?: string;
+      };
+    };
+    responses: {
+      /** Grenselinjene ble funnet */
+      200: {
+        content: {
+          "application/geo+json": components["schemas"]["MatrikkelGrenselinjeFeatureCollection"];
+        };
+      };
+      /** Ugyldig forespørsel */
+      400: unknown;
+      /** Ingen grenselinjer funnet for kommunen */
+      404: unknown;
+    };
+  };
+  /** Henter en liste over alle kommuner som har tilgjengelige grenselinjer */
+  hentTilgjengeligeKommuner: {
+    responses: {
+      /** Liste over tilgjengelige kommuner */
+      200: {
+        content: {
+          "application/json": string[];
+        };
       };
     };
   };
