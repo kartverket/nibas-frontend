@@ -122,6 +122,8 @@ export const useAvvikPanel = () => {
       if (!isAlreadySelected) {
         setShouldZoom(true);
         selectInndelinger([newInndeling]);
+      } else {
+        // Hvis inndeling allerede er valgt utenom avvikspanelet, så henter vi matrikkelkommunegrensene for kommunen når vi åpner avvikspanelet
         getMatrikkelKommuneGrense(selectedKommune.nummer);
       }
     }
