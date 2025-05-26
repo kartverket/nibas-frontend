@@ -36,10 +36,6 @@ const fetchNibasRepoPRs = async (repo: string): Promise<GitHubPullRequest[]> => 
   return await response.json();
 };
 
-const isSuccessfulDeployJob = (job: Job): boolean => {
-  return job.name.includes("Deploy Pull Request") === true && job.conclusion === "success";
-};
-
 const fetchDeployedPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
   const PRs = await fetchNibasRepoPRs(repo);
   const deployedPRs: GitHubPullRequest[] = [];
@@ -51,17 +47,20 @@ const fetchDeployedPRs = async (repo: string): Promise<GitHubPullRequest[]> => {
       continue;
     }
     const workflowRuns: ListWorkflowRunsResponse = await runsResponse.json();
-    const latestRun = workflowRuns.workflow_runs?.[0];
-    if (latestRun == null) {
+    const releasePRRun = workflowRuns.workflow_runs?.find((run) => run.name.includes("Release PR"));
+    if (releasePRRun == null) {
       continue;
     }
 
-    const jobsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs/${latestRun.id}/jobs`);
+    const jobsResponse = await fetch(`/repos/kartverket/${repo}/actions/runs/${releasePRRun.id}/jobs`);
     if (jobsResponse.ok === false) {
       continue;
     }
+
     const jobsList: ListJobsResponse = await jobsResponse.json();
-    const isPRDeployed = jobsList.jobs.some((job) => isSuccessfulDeployJob(job) === true);
+    const isPRDeployed = jobsList.jobs.some(
+      (job) => job.name.includes("Deploy Pull Request") === true && job.conclusion === "success",
+    );
     if (isPRDeployed === true) {
       deployedPRs.push(pr);
     }
