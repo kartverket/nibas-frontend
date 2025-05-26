@@ -25,7 +25,7 @@ const AvvikRow = ({
   const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
 
   const panAndZoom = async (coordinates: number[]) => {
-    const zoomLevel = 13; //
+    const zoomLevel = 30;
     centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
   };
   const handleStatusEndring = async (status: AvvikStatus) => {
