@@ -5,7 +5,7 @@ import { useState, useMemo } from "react";
 import Select, { DropdownIndicatorProps, components, StylesConfig } from "react-select";
 import { styled } from "styled-components";
 import useSWR from "swr";
-import { GitHubPullRequest, Job, ListJobsResponse, ListWorkflowRunsResponse } from "types/github-api-types";
+import { GitHubPullRequest, ListJobsResponse, ListWorkflowRunsResponse } from "types/github-api-types";
 import { zindex } from "utils/constants";
 import { styles } from "./EnvironmentOverlay";
 
