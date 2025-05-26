@@ -290,3 +290,51 @@ interface GitHubMilestone {
   closed_at: string | null;
   due_on: string | null;
 }
+
+export type ListWorkflowRunsResponse = {
+  total_count: number;
+  workflow_runs: WorkflowRun[];
+};
+type WorkflowRun = {
+  id: number;
+  name: string;
+  head_branch: string;
+  head_sha: string;
+  event: string;
+  status: "queued" | "in_progress" | "completed";
+  conclusion: "success" | "failure" | "neutral" | "cancelled" | "skipped" | "timed_out" | "action_required" | null;
+  created_at: string;
+  updated_at: string;
+  run_attempt: number;
+  run_number: number;
+  url: string;
+  html_url: string;
+  jobs_url: string;
+  logs_url: string;
+};
+
+export type ListJobsResponse = {
+  total_count: number;
+  jobs: Job[];
+};
+
+type Step = {
+  name: string;
+  status: "queued" | "in_progress" | "completed";
+  conclusion: "success" | "failure" | "skipped" | "cancelled" | null;
+  number: number;
+  started_at: string;
+  completed_at: string;
+};
+
+export type Job = {
+  id: number;
+  run_id: number;
+  name: string;
+  status: "queued" | "in_progress" | "completed";
+  conclusion: "success" | "failure" | "skipped" | "cancelled" | null;
+  started_at: string;
+  completed_at: string;
+  steps: Step[];
+  workflow_name: string;
+};
