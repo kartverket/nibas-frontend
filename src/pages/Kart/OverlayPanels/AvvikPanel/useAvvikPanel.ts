@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useAuthentication } from "../../../../components/Authentication/AuthenticationHook";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
+import { clearMatrikkelLayer } from "utils/map/layers";
 import {
   AvvikForKommuneResponse,
   AvvikKommunerResponse,
@@ -19,7 +19,6 @@ import { useKommune } from "hooks/inndelinger/useKommuner";
 import { resetMapView } from "utils/map/map-utils";
 import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus, hentGrenselinjer } from "./useAvvik";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { FeatureCollection } from "types/api";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { addFeaturesToSource } from "utils/map/source";
 export const useAvvikPanel = () => {
@@ -101,8 +100,6 @@ export const useAvvikPanel = () => {
       }
     }
 
-    // Per nå 07.04.25 er det kun en fylkeid om gangen, brukeren ser derfor ikke at det  blir lagt til flere kommuner dersom de er i et annet fylke f.eks Oslo og legger så til Bærum.
-    // Men man kan fortsatt redigere da grensa i mellom
     if (secondKommune && !isLoadingSecondKommune) {
       const currentMainInndeling = currentlyEditingInndelinger.find((inndeling) => inndeling.id === selectedKommuneId);
 
@@ -176,38 +173,28 @@ export const useAvvikPanel = () => {
       if (kommuneNummer == null) {
         return [];
       }
-      const matrikkelKommuneGrense = await hentGrenselinjer(token, kommuneNummer);
-      const fetchedFeatures = getFeaturesFromGeoJson(matrikkelKommuneGrense);
-
-      if (fetchedFeatures.length > 0) {
-        clearMatrikkelLayer();
-        addFeaturesToSource("matrikkel", fetchedFeatures);
-        return fetchedFeatures;
-      } else {
-        // Returnerer selv om det er 0 grenser for å vise toast-warning
-        return fetchedFeatures;
+      try {
+        const matrikkelKommuneGrense = await hentGrenselinjer(token, kommuneNummer);
+        const fetchedFeatures = getFeaturesFromGeoJson(matrikkelKommuneGrense);
+        if (fetchedFeatures.length > 0) {
+          clearMatrikkelLayer();
+          addFeaturesToSource("matrikkel", fetchedFeatures);
+          return fetchedFeatures;
+        } else {
+          return fetchedFeatures;
+        }
+      } catch {
+        return [];
       }
     },
     [token],
   );
   const goToCoordinatesAndFetchMatrikkel = async (coordinates: number[]): Promise<boolean> => {
-    let zoomLevel = 30;
-    const minZoomLevel = 20;
-    // Her forsøker vi mindre zoom helt til matrikkelFeatures har innhold, eller zoomLevel er mindre enn minZoomLevel
-    // pga ikke alltid finner man ikke nærliggende matr.grenser ved maks zoom.
-    while (zoomLevel >= minZoomLevel) {
-      centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
-      // const matrikkelGrenser = await getMatrikkelFeatures();
-      // if (matrikkelGrenser && matrikkelGrenser.length > 0) {
-      //   return true;
-      // }
-      const kommuneNummer = selectedKommune?.nummer;
-      getMatrikkelKommuneGrense(kommuneNummer);
-
-      return true;
-      zoomLevel--;
-    }
-    return false;
+    const zoomLevel = 40;
+    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
+    const kommuneNummer = selectedKommune?.nummer;
+    const m22Grenser = await getMatrikkelKommuneGrense(kommuneNummer);
+    return m22Grenser.length > 0 ? true : false;
   };
 
   // ========== Hent avvik for valgt kommune ==========

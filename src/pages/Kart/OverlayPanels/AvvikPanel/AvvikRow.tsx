@@ -30,7 +30,7 @@ const AvvikRow = ({
     if (!success) {
       toast({
         status: "error",
-        title: "Fikk ikke panorert til avvik eller hentet teiggrenser",
+        title: "Klarte ikke å hente inn teiggrenser",
       });
     }
   };
