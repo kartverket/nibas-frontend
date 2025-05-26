@@ -95,13 +95,20 @@ export const useAvvikPanel = () => {
           addFeaturesToSource("matrikkel", fetchedFeatures);
           return fetchedFeatures;
         } else {
-          return fetchedFeatures;
+          toast({
+            status: "error",
+            title: "Klarte ikke å hente inn teiggrenser for kommunen",
+          });
         }
       } catch {
+        toast({
+          status: "error",
+          title: "Klarte ikke å hente inn teiggrenser for kommunen",
+        });
         return [];
       }
     },
-    [token],
+    [token, toast],
   );
   const handleInndelingForAvvik = useCallback(() => {
     if (selectedKommune && !isLoadingKommune) {
@@ -122,9 +129,6 @@ export const useAvvikPanel = () => {
       if (!isAlreadySelected) {
         setShouldZoom(true);
         selectInndelinger([newInndeling]);
-      } else {
-        // Hvis inndeling allerede er valgt utenom avvikspanelet, så henter vi matrikkelkommunegrensene for kommunen når vi åpner avvikspanelet
-        getMatrikkelKommuneGrense(selectedKommune.nummer);
       }
     }
 
@@ -165,9 +169,12 @@ export const useAvvikPanel = () => {
     selectedKommuneId,
     setShouldZoom,
     selectInndelinger,
-    getMatrikkelKommuneGrense,
   ]);
-
+  useEffect(() => {
+    if (selectedKommune && !isLoadingKommune) {
+      getMatrikkelKommuneGrense(selectedKommune.nummer);
+    }
+  }, [selectedKommune, isLoadingKommune, getMatrikkelKommuneGrense]);
   useEffect(() => {
     handleInndelingForAvvik();
   }, [handleInndelingForAvvik]);
@@ -278,13 +285,6 @@ export const useAvvikPanel = () => {
     }
 
     setSelectedKommuneId(kommuneLokalID);
-    const m22Grenser = await getMatrikkelKommuneGrense(kommune.kommuneNummer);
-    if (m22Grenser.length < 1) {
-      toast({
-        status: "error",
-        title: "Klarte ikke å hente inn teiggrenser for " + kommune.kommuneNavn,
-      });
-    }
   };
   const avvikRowProps: AvvikRowProps = {
     findSecondKommune,

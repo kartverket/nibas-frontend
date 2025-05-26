@@ -28,6 +28,11 @@ const AvvikRow = ({
     const zoomLevel = 30;
     centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
   };
+  const handlePanAndSelect = () => {
+    panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik
+    findSecondKommune(avvikItem.kommuner);
+    setSelectedAvvikId(avvikItem.id);
+  };
   const handleStatusEndring = async (status: AvvikStatus) => {
     setIsRemoving(true);
     setRowStatus(status);
@@ -70,9 +75,7 @@ const AvvikRow = ({
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  panAndZoom(koordinaterAvvikNibas[0]); // Per nå går vi kun til det første punktet i avviket, selv om det kan være flere
-                  findSecondKommune(avvikItem.kommuner);
-                  setSelectedAvvikId(avvikItem.id);
+                  handlePanAndSelect();
                 }}
                 aria-label={"Panorer til avvik"}
                 tooltip={{ text: "Panorer til avvik" }}
@@ -101,9 +104,7 @@ const AvvikRow = ({
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  panAndZoom(koordinaterAvvikNibas[0]);
-                  findSecondKommune(avvikItem.kommuner);
-                  setSelectedAvvikId(avvikItem.id);
+                  handlePanAndSelect();
                 }}
                 aria-label={"Panorer til avvik"}
                 tooltip={{ text: "Panorer til avvik" }}
@@ -124,9 +125,7 @@ const AvvikRow = ({
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  panAndZoom(koordinaterAvvikNibas[0]);
-                  findSecondKommune(avvikItem.kommuner);
-                  setSelectedAvvikId(avvikItem.id);
+                  handlePanAndSelect();
                 }}
                 aria-label={"Panorer til avvik"}
                 tooltip={{ text: "Panorer til avvik" }}
