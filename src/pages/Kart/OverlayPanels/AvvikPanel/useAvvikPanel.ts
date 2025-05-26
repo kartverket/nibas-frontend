@@ -17,10 +17,11 @@ import {
 import { useToast } from "@kvib/react";
 import { useKommune } from "hooks/inndelinger/useKommuner";
 import { resetMapView } from "utils/map/map-utils";
-import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus, hentGrenselinjer } from "./useAvvik";
+import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus } from "./useAvvik";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { addFeaturesToSource } from "utils/map/source";
+import { hentGrenselinjer } from "../hooks/useMatrikkelGrenser";
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const toast = useToast();
