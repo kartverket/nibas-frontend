@@ -66,7 +66,6 @@ export interface AvvikRowKommunerProps {
 }
 
 export type AvvikRowProps = {
-  goToCoordinatesAndFetchMatrikkel: (coordinates: number[]) => Promise<boolean>;
   findSecondKommune: (kommunerFromRow: KommuneIAvvik[]) => void;
   selectedAvvikId: number | null;
   setSelectedAvvikId: (id: number | null) => void;

@@ -423,7 +423,12 @@ export const isTeigFeature = (feature: FeatureLike) => {
   const featureId = feature.getId()?.toString();
 
   if (featureId != null) {
-    return featureId.includes("TEIGGRENSEWFS");
+    if (featureId.includes("TEIGGRENSEWFS")) {
+      return true;
+    }
+    if (featureId.includes("M22AdministrativeGrenser")) {
+      return true;
+    }
   }
 
   return false;

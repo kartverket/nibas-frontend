@@ -21,3 +21,9 @@ export type HentAlleAvvik = paths["/api/v1/avvik"]["get"];
 export type OppdaterFlereAvvik = paths["/api/v1/avvik"]["post"];
 export type HentKommunerMedAvvikSummary = paths["/api/v1/avvik/kommuner"]["get"];
 export type HentAvvik = paths["/api/v1/avvik/kommune/{lokalId}"]["get"];
+
+export type HentGrenselinjer = paths["/api/v1/matrikkel/grenselinjer"]["get"];
+export type HentGrenselinjerResponse = components["schemas"]["MatrikkelGrenselinjeFeatureCollection"];
+
+export type HentTilgjengeligeKommuner = paths["/api/v1/matrikkel/grenselinjer/kommuner"]["get"];
+export type HentTilgjengeligeKommunerResponse = string[];
