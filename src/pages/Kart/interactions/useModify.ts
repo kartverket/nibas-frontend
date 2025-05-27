@@ -239,11 +239,11 @@ const useModify = () => {
             noeyaktighet: posisjonskvalitet?.noeyaktighet,
           };
         } else {
-          if (typeof featureProperties.MALEMETODE === "number" && typeof featureProperties.NOYAKTIGHET === "number") {
+          if (typeof featureProperties.malemetodeId === "number" && typeof featureProperties.noyaktighet === "number") {
             targetLineStringPosisjonskvalitet = {
               grensetype: "teig",
-              maalemetode: featureProperties.MALEMETODE.toString(),
-              noeyaktighet: featureProperties.NOYAKTIGHET,
+              maalemetode: featureProperties.malemetodeId.toString(),
+              noeyaktighet: featureProperties.noyaktighet,
             };
           }
         }
