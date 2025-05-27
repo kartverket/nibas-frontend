@@ -28,26 +28,68 @@ const TeiggrenseProperty = styled.div`
   row-gap: 8px;
 `;
 
+type OldTeiggrenseMetadata = {
+  BUE?: number | string | null;
+  KOMMUNENR?: string | null;
+  MALEMETODE?: number | string | null;
+  NOYAKTIGHET?: number | string | null;
+  NOYAKTIGHETSKLASSE?: number | string | null;
+  OMTVISTET?: string | number | null;
+  TEIGGRENSEID?: number | string | null;
+  TEIGGRENSETYPE?: string | null;
+  geometry?: unknown;
+};
+
 const teiggrenseMetadataValues = [
-  "BUE",
-  "KOMMUNENR",
-  "MALEMETODE",
-  "NOYAKTIGHET",
-  "NOYAKTIGHETSKLASSE",
-  "OMTVISTET",
-  "TEIGGRENSEID",
-  "TEIGGRENSETYPE",
-  "geometry",
+  "id",
+  "kommunenr1",
+  "kommunenr2",
+  "hjelpelinjetypeId",
+  "administrativgrensekodeId",
+  "malemetodeId",
+  "noyaktighet",
+  "lagretNoyaktighetsklasse",
+  "omtvistet",
 ] as const;
 
 type TeiggrenseMetadata = {
   [K in (typeof teiggrenseMetadataValues)[number]]: number | string | null;
 };
-
-export const isTeiggrenseMetadata = (value: object): value is TeiggrenseMetadata => {
-  return teiggrenseMetadataValues.every((key) => key in value);
+// 27.05.2025 Kan vel fjerne oldTeiggrensemetadata når vi en gang skroter innhenting via matrikkelWFS og kun bruker arbeidslisteAPI'et
+// Sjekk om grensa er på gammelt format
+const isOldTeiggrenseMetadata = (value: object): boolean => {
+  const oldKeys = [
+    "BUE",
+    "KOMMUNENR",
+    "MALEMETODE",
+    "NOYAKTIGHET",
+    "NOYAKTIGHETSKLASSE",
+    "OMTVISTET",
+    "TEIGGRENSEID",
+    "TEIGGRENSETYPE",
+    "geometry",
+  ];
+  return oldKeys.every((key) => key in value);
 };
 
+// Mapper fra gammelt til nytt format
+const mapOldToNewTeiggrenseMetadata = (oldObj: OldTeiggrenseMetadata): TeiggrenseMetadata => ({
+  id: typeof oldObj.TEIGGRENSEID === "number" ? oldObj.TEIGGRENSEID : null,
+  kommunenr1: oldObj.KOMMUNENR ?? null,
+  kommunenr2: null,
+  hjelpelinjetypeId: null,
+  administrativgrensekodeId: null,
+  malemetodeId: oldObj.MALEMETODE ?? null,
+  noyaktighet: oldObj.NOYAKTIGHET ?? null,
+  lagretNoyaktighetsklasse: oldObj.NOYAKTIGHETSKLASSE ?? null,
+  omtvistet: oldObj.OMTVISTET === "1" ? 1 : 0,
+});
+
+// Type guard for nytt format
+const requiredKeys = teiggrenseMetadataValues.filter((k) => k !== "omtvistet");
+export const isTeiggrenseMetadata = (value: object): value is TeiggrenseMetadata => {
+  return requiredKeys.every((key) => key in value);
+};
 type Props = {
   label: string;
 } & PropsWithChildren;
@@ -81,10 +123,18 @@ const getNoyaktighetsklasseDescriptionFromKode = (kode: number) => {
 
 export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjonProps) => {
   const featureProperties = feature.getProperties();
-  const teiggrenseProperties = isTeiggrenseMetadata(featureProperties) ? featureProperties : null;
+  let teiggrenseProperties: TeiggrenseMetadata | null = null;
+  if (isTeiggrenseMetadata(featureProperties)) {
+    teiggrenseProperties = {
+      ...featureProperties,
+      omtvistet: featureProperties.omtvistet ?? null,
+    };
+  } else if (isOldTeiggrenseMetadata(featureProperties)) {
+    teiggrenseProperties = mapOldToNewTeiggrenseMetadata(featureProperties);
+  }
   const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
   const maalemetode = matrikkelkodeliste?.maalemetodeKodeliste.find(
-    (item) => item.id.toString() === teiggrenseProperties?.MALEMETODE?.toString(),
+    (item) => item.id.toString() === teiggrenseProperties?.malemetodeId?.toString(),
   );
   return (
     <GrensePanelContent>
@@ -97,21 +147,25 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
             {maalemetode != null ? `${maalemetode.navn}` : <ItalicText>Ikke oppgitt. Se nøyaktighetsklasse</ItalicText>}
           </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label={"Nøyaktighet (cm)"}>
-            {teiggrenseProperties.NOYAKTIGHET != null ? (
-              teiggrenseProperties.NOYAKTIGHET
+            {teiggrenseProperties.noyaktighet != null ? (
+              teiggrenseProperties.noyaktighet
             ) : (
               <ItalicText>Ikke oppgitt. Se nøyaktighetsklasse</ItalicText>
             )}
           </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label={"Nøyaktighetsklasse"}>
             {getNoyaktighetsklasseDescriptionFromKode(
-              typeof teiggrenseProperties.NOYAKTIGHETSKLASSE === "number"
-                ? teiggrenseProperties.NOYAKTIGHETSKLASSE
+              typeof teiggrenseProperties.lagretNoyaktighetsklasse === "number"
+                ? teiggrenseProperties.lagretNoyaktighetsklasse
                 : -1,
             )}
           </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label="Omtvistet">
-            {teiggrenseProperties.OMTVISTET === 1 ? "Ja" : "Nei"}
+            {teiggrenseProperties.omtvistet === null || teiggrenseProperties.omtvistet === undefined
+              ? "Uvisst"
+              : teiggrenseProperties.omtvistet === 1
+                ? "Ja"
+                : "Nei"}
           </TeiggrensePropertyRow>
         </>
       ) : (
