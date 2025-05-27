@@ -4,24 +4,20 @@ import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { clearMatrikkelLayer } from "utils/map/layers";
 import {
-  AvvikForKommuneResponse,
-  AvvikKommunerResponse,
   AvvikPanelProps,
   AvvikRowKommunerProps,
   AvvikRowProps,
   AvvikStatus,
   KommuneIAvvik,
   KommuneMedAvvik,
-  PaginationInfo,
 } from "./avvik-utils";
 import { useToast } from "@kvib/react";
 import { useKommune } from "hooks/inndelinger/useKommuner";
 import { resetMapView } from "utils/map/map-utils";
-import { avvikFetcher, avvikKommunerFetcher, avvikUpdateStatus } from "./useAvvik";
+import { avvikUpdateStatus, useAvvikForKommune, useKommunerMedAvvik } from "./useAvvik";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 import { addFeaturesToSource } from "utils/map/source";
-import { hentGrenselinjer } from "../hooks/useMatrikkelGrenser";
+import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const toast = useToast();
@@ -50,26 +46,70 @@ export const useAvvikPanel = () => {
     !(secondKommuneId == null),
   );
 
-  const [kommunerMedAvvikData, setKommunerMedAvvik] = useState<KommuneMedAvvik[]>([]);
-  const [avvikData, setAvvikData] = useState<AvvikForKommuneResponse>([]);
-  const [pagination, setPagination] = useState<PaginationInfo | null>(null);
   const [currentPage, setCurrentPage] = useState<number>(0);
-  const [isLoadingAvvik, setIsLoadingAvvik] = useState<boolean>(false);
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
+
+  // ========== Henter kommuner med avvik ==========
+  const { data: kommunerMedAvvikResponse, isLoading: isLoadingKommunerMedAvvik } = useKommunerMedAvvik(
+    !selectedKommune,
+    currentPage,
+    token,
+  );
+
+  const kommunerMedAvvikData = kommunerMedAvvikResponse?.content ?? [];
+  const pagination =
+    kommunerMedAvvikResponse != null
+      ? {
+          totalPages: kommunerMedAvvikResponse.totalPages,
+          totalElements: kommunerMedAvvikResponse.totalElements,
+          size: kommunerMedAvvikResponse.size,
+          number: kommunerMedAvvikResponse.number,
+          first: kommunerMedAvvikResponse.first,
+          last: kommunerMedAvvikResponse.last,
+        }
+      : null;
+
+  // ========== Henter avvik for valgt kommune ==========
+  const {
+    data: avvikData = [],
+    isLoading: isLoadingAvvik,
+    mutate: mutateAvvikData,
+  } = useAvvikForKommune(selectedKommuneId, token);
+
+  // ========== Henter matrikkelgrenser for valgt kommune ==========
+  const {
+    features,
+    isLoading: isLoadingMatrikkelGrenser,
+    isError,
+  } = useMatrikkelGrenser(token, selectedKommune?.nummer != null ? selectedKommune.nummer : "");
+
+  useEffect(() => {
+    if (selectedKommuneId == null) {
+      return;
+    }
+    if (features.length > 0) {
+      clearMatrikkelLayer();
+      addFeaturesToSource("matrikkel", features);
+    } else if (!isLoadingMatrikkelGrenser && isError) {
+      toast({
+        status: "error",
+        title: "Klarte ikke å hente inn teiggrenser for kommunen",
+      });
+    }
+  }, [features, isLoadingMatrikkelGrenser, isError, toast, selectedKommuneId]);
 
   // Oppdaterer avvikstatus, optimistisk
   const updateStatus = async (avvikId: number, status: AvvikStatus): Promise<boolean> => {
-    const previousData = avvikData;
-    setAvvikData((prev) => prev.map((item) => (item.id === avvikId ? { ...item, status } : item)));
     const id = avvikId;
     const updates = [{ id, status }];
+    const optimistiskeData = avvikData.map((item: { id: number }) =>
+      item.id === avvikId ? { ...item, status } : item,
+    );
+
+    mutateAvvikData(optimistiskeData, false);
     const success = await avvikUpdateStatus(updates, token);
-    if (success?.ok) {
-      return true;
-    } else {
-      setAvvikData(previousData); // Setter tilbake igjen ved feil i kallet
-      return false;
-    }
+    mutateAvvikData();
+    return success?.ok ? true : false;
   };
 
   const findSecondKommune = (kommunerFromRow: KommuneIAvvik[]) => {
@@ -83,34 +123,6 @@ export const useAvvikPanel = () => {
     setSecondKommuneId(secondKommuneFromRow.kommuneLokalID);
   };
 
-  const getMatrikkelKommuneGrense = useCallback(
-    async (kommuneNummer: string | undefined) => {
-      if (kommuneNummer == null) {
-        return [];
-      }
-      try {
-        const matrikkelKommuneGrense = await hentGrenselinjer(token, kommuneNummer);
-        const fetchedFeatures = getFeaturesFromGeoJson(matrikkelKommuneGrense);
-        if (fetchedFeatures.length > 0) {
-          clearMatrikkelLayer();
-          addFeaturesToSource("matrikkel", fetchedFeatures);
-          return fetchedFeatures;
-        } else {
-          toast({
-            status: "error",
-            title: "Klarte ikke å hente inn teiggrenser for kommunen",
-          });
-        }
-      } catch {
-        toast({
-          status: "error",
-          title: "Klarte ikke å hente inn teiggrenser for kommunen",
-        });
-        return [];
-      }
-    },
-    [token, toast],
-  );
   const handleInndelingForAvvik = useCallback(() => {
     if (selectedKommune && !isLoadingKommune) {
       const inndelingtype = "kommune";
@@ -171,77 +183,10 @@ export const useAvvikPanel = () => {
     setShouldZoom,
     selectInndelinger,
   ]);
-  useEffect(() => {
-    if (selectedKommune && !isLoadingKommune) {
-      getMatrikkelKommuneGrense(selectedKommune.nummer);
-    }
-  }, [selectedKommune, isLoadingKommune, getMatrikkelKommuneGrense]);
+
   useEffect(() => {
     handleInndelingForAvvik();
   }, [handleInndelingForAvvik]);
-
-  const getKommunerMedAvvik: (page: number) => Promise<AvvikKommunerResponse> = useCallback(
-    async (page: number) => {
-      const paginationSize = 15;
-      const result = await avvikKommunerFetcher(token, page, paginationSize);
-      return {
-        content: result.content,
-        totalPages: result.totalPages,
-        totalElements: result.totalElements,
-        size: result.size,
-        number: result.number,
-        first: result.first,
-        last: result.last,
-        empty: result.empty,
-      };
-    },
-    [token],
-  );
-
-  const getAvvikForKommune: (pKommuneId: string) => Promise<AvvikForKommuneResponse> = useCallback(
-    async (pKommuneId) => {
-      const result = await avvikFetcher(token, pKommuneId);
-      return result;
-    },
-    [token],
-  );
-
-  // ========== Hent avvik for valgt kommune ==========
-  useEffect(() => {
-    if (selectedKommuneId == null || selectedKommuneId === "") {
-      return;
-    }
-    const fetchAvvik = async () => {
-      setIsLoadingAvvik(true);
-      try {
-        const avvik = await getAvvikForKommune(selectedKommuneId);
-        setAvvikData([...avvik]);
-      } finally {
-        setIsLoadingAvvik(false);
-      }
-    };
-
-    fetchAvvik();
-  }, [selectedKommuneId, getAvvikForKommune]);
-
-  // ==========  Hent kommuner med avvik én gang ==========
-  useEffect(() => {
-    if (!selectedKommune) {
-      const fetchKommunerMedAvvik = async () => {
-        const kommuner = await getKommunerMedAvvik(currentPage);
-        setKommunerMedAvvik(kommuner.content);
-        setPagination({
-          totalPages: kommuner.totalPages,
-          totalElements: kommuner.totalElements,
-          size: kommuner.size,
-          number: kommuner.number,
-          first: kommuner.first,
-          last: kommuner.last,
-        });
-      };
-      fetchKommunerMedAvvik();
-    }
-  }, [getKommunerMedAvvik, currentPage, selectedKommuneId, token, selectedKommune]);
 
   // ========== Hvis inndeling allerede valgt henter vi automatisk avvik for den kommunen ==========
   useEffect(() => {
@@ -267,15 +212,15 @@ export const useAvvikPanel = () => {
     setSecondKommuneId(null);
     selectInndelinger([]);
     setShouldZoom(true);
-    setAvvikData([]);
     setSelectedInndelinger([]);
     setSelectedAvvikId(null);
     clearEditLayerAndInndelinger();
     clearMatrikkelLayer();
     resetMapView();
   };
+
   const handleGoToKommuneClick = async (kommuneLokalID: string) => {
-    const kommune = kommunerMedAvvikData.find((k) => k.kommuneLokalID === kommuneLokalID);
+    const kommune = kommunerMedAvvikData.find((k: { kommuneLokalID: string }) => k.kommuneLokalID === kommuneLokalID);
     if (kommune == null) {
       return;
     }
@@ -294,10 +239,10 @@ export const useAvvikPanel = () => {
     updateStatus,
   };
   const avvikPanelProps: AvvikPanelProps = {
+    isLoadingKommunerMedAvvik,
     isLoadingAvvik,
     selectedKommune,
     avvikData,
-    setAvvikData,
     kommunerMedAvvikData,
     pagination,
     currentPage,
@@ -310,8 +255,8 @@ export const useAvvikPanel = () => {
     handleGoToKommuneClick,
   };
   return {
-    avvikPanelProps, // Panel
-    avvikRowKommunerProps, // AvvikRowKommuner
-    avvikRowProps, // AvvikRow
+    avvikPanelProps,
+    avvikRowKommunerProps,
+    avvikRowProps,
   };
 };

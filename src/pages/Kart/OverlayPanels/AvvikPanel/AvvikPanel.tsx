@@ -31,6 +31,7 @@ export const AvvikPanel = () => {
   const selectedKommune = avvikPanelProps.selectedKommune;
   const isLoadingAvvik = avvikPanelProps.isLoadingAvvik;
   const avvikData = avvikPanelProps.avvikData;
+  const isLoadingKommunerMedAvvik = avvikPanelProps.isLoadingKommunerMedAvvik;
   const kommunerMedAvvikData = avvikPanelProps.kommunerMedAvvikData;
   const pagination = avvikPanelProps.pagination;
   const currentPage = avvikPanelProps.currentPage;
@@ -78,16 +79,22 @@ export const AvvikPanel = () => {
       ) : (
         // ========== VIS KOMMUNER med avvik, første steg ==========
         <>
-          <AvvikPanelHeader onClose={closeOverlayPanel}>Avvik fra matrikkelen {}</AvvikPanelHeader>
-          {kommunerMedAvvikData.map((row) => (
-            <Fragment key={row.kommuneLokalID}>
-              <AvvikRowKommuner
-                kommuneMedAvvikItem={row}
-                handleGoToKommuneClick={avvikRowKommunerProps.handleGoToKommuneClick}
-              />
-              <Divider />
-            </Fragment>
-          ))}
+          <AvvikPanelHeader onClose={closeOverlayPanel}>Avvik fra matrikkelen</AvvikPanelHeader>
+          {isLoadingKommunerMedAvvik === true ? (
+            <AvvikSpinnerContainer>
+              <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+            </AvvikSpinnerContainer>
+          ) : (
+            kommunerMedAvvikData.map((row) => (
+              <Fragment key={row.kommuneLokalID}>
+                <AvvikRowKommuner
+                  kommuneMedAvvikItem={row}
+                  handleGoToKommuneClick={avvikRowKommunerProps.handleGoToKommuneClick}
+                />
+                <Divider />
+              </Fragment>
+            ))
+          )}
           {pagination !== undefined && pagination !== null && (
             <PaginationContainer>
               <PaginationButton disabled={pagination.first} onClick={() => setCurrentPage(currentPage - 1)}>
@@ -151,8 +158,6 @@ const AvvikTabs = styled(Tabs)`
   display: grid;
   grid-template-rows: auto 1fr;
   width: calc(100%);
-
-  /* margin: 0 calc(var(--panel-padding) * -1); */
   overflow: hidden;
 `;
 

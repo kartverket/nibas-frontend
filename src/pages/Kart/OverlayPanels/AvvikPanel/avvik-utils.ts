@@ -48,10 +48,10 @@ export enum AvvikStatus {
 }
 
 export type AvvikPanelProps = {
+  isLoadingKommunerMedAvvik: boolean;
   isLoadingAvvik: boolean;
   selectedKommune: KommuneResponse | undefined;
   avvikData: AvvikForKommuneResponse;
-  setAvvikData: (avvikData: AvvikForKommuneResponse) => void;
   kommunerMedAvvikData: KommuneMedAvvik[];
   pagination: PaginationInfo | null;
   currentPage: number;
