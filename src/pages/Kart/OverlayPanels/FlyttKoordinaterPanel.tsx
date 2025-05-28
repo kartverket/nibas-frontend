@@ -258,7 +258,7 @@ const FlyttKoordinaterPanel = () => {
     pattern: {
       value: new RegExp(`(${decimalCoordinatePattern.source})|(${dmsCoordinatePattern.source})`),
       message:
-        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall med 3 desimaler eller DMS-format (00°00'00\")",
     },
   };
 
