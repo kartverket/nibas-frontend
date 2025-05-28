@@ -195,12 +195,14 @@ export const resetWMSLayer = (layer: TileLayer<TileSource>) => {
 export const setWMTSLayerVisibility = (layer: TileLayer<TileSource>, willBeVisible: boolean, newLayerId?: string) => {
   const source = layer.getSource();
   if (source instanceof WMTS) {
+    // OpenLayers lar deg ikke sette layer for WMTS-lag, så vi må bytte ut hele sourcen med ny layer-verdi
+    // og sørge for at den har riktig konfigurasjon
     const layerId = newLayerId ?? source.get("config")?.layer;
     if (layerId == null) {
       return "";
     }
 
-    const newConfig = generateWMTSConfig(layerId); // Sørger for riktig konfigurasjon for det nye laget
+    const newConfig = generateWMTSConfig(layerId);
     const newSource = new WMTS(newConfig);
     newSource.set("config", newConfig);
 
