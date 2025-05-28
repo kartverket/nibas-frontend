@@ -29,7 +29,6 @@ const getWMTSTileGrid = (extent: number[], setMatrixId: (i: number) => string) =
 };
 
 const getBaseGrid = () => getWMTSTileGrid([-2500000, 3500000, 3045984, 9045984], (z) => z.toString());
-
 type WMTSConfig = {
   url: string;
   layer: string;
@@ -37,17 +36,27 @@ type WMTSConfig = {
   tileGrid: WMTSTileGrid;
   style: string;
   format: string;
+  requestEncoding?: "REST" | "KVP";
 };
 
+// const topograatoneWMTSConfig: WMTSConfig = {
+//   url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/",
+//   layer: "topograatone",
+//   matrixSet: "utm33n",
+//   tileGrid: getBaseGrid(),
+//   style: "default",
+//   format: "image/png",
+// };
 const topograatoneWMTSConfig: WMTSConfig = {
-  url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/",
+  // url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/",
+  url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/utm33n/{TileMatrix}/{TileRow}/{TileCol}.png",
   layer: "topograatone",
   matrixSet: "utm33n",
   tileGrid: getBaseGrid(),
   style: "default",
   format: "image/png",
+  requestEncoding: "REST",
 };
-
 const norgeIBilderConfig: WMTSConfig = {
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
   layer: "Nibcache_UTM33_EUREF89_v2",
