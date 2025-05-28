@@ -252,7 +252,7 @@ const FlyttKoordinaterPanel = () => {
       }
     } else {
       setGlobalFormError(
-        "Koordinatene er ikke på samme format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+        "Koordinatene er ikke på samme format. Benytt enten desimaltall med 3 desimaler eller DMS-format (00°00'00\")",
       );
     }
   };
