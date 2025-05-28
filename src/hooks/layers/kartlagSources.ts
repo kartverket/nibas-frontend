@@ -39,23 +39,17 @@ type WMTSConfig = {
   requestEncoding?: "REST" | "KVP";
 };
 
-// const topograatoneWMTSConfig: WMTSConfig = {
-//   url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/",
-//   layer: "topograatone",
-//   matrixSet: "utm33n",
-//   tileGrid: getBaseGrid(),
-//   style: "default",
-//   format: "image/png",
-// };
-const topograatoneWMTSConfig: WMTSConfig = {
-  // url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/",
-  url: "https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/utm33n/{TileMatrix}/{TileRow}/{TileCol}.png",
-  layer: "topograatone",
-  matrixSet: "utm33n",
-  tileGrid: getBaseGrid(),
-  style: "default",
-  format: "image/png",
-  requestEncoding: "REST",
+// Genererer WMTS-konfigurasjon for et gitt lag (f.eks "topograatone" eller "toporaster" osv)
+export const generateWMTSConfig = (layerId: string): WMTSConfig => {
+  return {
+    url: `https://cache.kartverket.no/v1/wmts/1.0.0/${layerId}/default/utm33n/{TileMatrix}/{TileRow}/{TileCol}.png`,
+    layer: layerId,
+    matrixSet: "utm33n",
+    tileGrid: getBaseGrid(),
+    style: "default",
+    format: "image/png",
+    requestEncoding: "REST",
+  };
 };
 const norgeIBilderConfig: WMTSConfig = {
   url: "https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2",
@@ -113,7 +107,7 @@ const createAuthedTileWMS = (id: KartlagId, url: string, tjenesteId: string) => 
 };
 
 export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
-  topograatone: createWMTS("topograatone", topograatoneWMTSConfig),
+  topograatone: createWMTS("topograatone", generateWMTSConfig("topograatone")),
   norgeIBilder: createWMTS("norgeIBilder", norgeIBilderConfig),
   administrativeGrenser: createTileWMS("administrativeGrenser", "https://wms.geonorge.no/skwms1/wms.adm_enheter2"),
   stedsnavn: createTileWMS("stedsnavn", "https://wms.geonorge.no/skwms1/wms.stedsnavnenkel"),

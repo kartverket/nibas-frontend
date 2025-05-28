@@ -76,6 +76,13 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   }, [mappedLayers]);
 
   const toggleKartlag = (mappedLayer: MappedLayer, indexPath: number[]) => {
+    const { sourceId, id } = mappedLayer;
+    if (sourceId === "topograatone" && id !== sourceId) {
+      const layer = getLayerById(sourceId);
+      if (layer != null) {
+        setWMTSLayerVisibility(layer, true, id);
+      }
+    }
     const toggledLayers = toggleLayerVisibility(0, mappedLayers, indexPath, !mappedLayer.isVisible);
     setMappedLayers(toggledLayers);
   };
