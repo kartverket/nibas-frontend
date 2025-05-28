@@ -70,7 +70,6 @@ const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): Ma
 
 export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | WMTS) => {
   const urls = source.getUrls();
-
   if (!urls || urls.length === 0) {
     return null;
   }
@@ -78,26 +77,25 @@ export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | 
   const url = urls[0];
 
   let capabilitiesUrl: string;
-
-  if (url.includes("?")) {
+  if (url.includes("wmts")) {
+    capabilitiesUrl = "https://cache.kartverket.no/v1/wmts/1.0.0/WMTSCapabilities.xml";
+  } else if (url.includes("?")) {
     capabilitiesUrl = `${url}&request=GetCapabilities`;
   } else {
     capabilitiesUrl = `${url}?request=GetCapabilities`;
   }
-
   let serviceParam: string;
 
   if (source instanceof TileWMS) {
     serviceParam = "&service=WMS";
-  } else {
-    serviceParam = "&service=WMTS";
+    capabilitiesUrl += serviceParam;
   }
-
-  capabilitiesUrl += serviceParam;
 
   if (source.get("protectedTjenesteId") != null) {
     const ticket = await getTicketForTjeneste(source.get("protectedTjenesteId"), url);
-    capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
+    if (ticket) {
+      capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
+    }
   }
 
   try {
