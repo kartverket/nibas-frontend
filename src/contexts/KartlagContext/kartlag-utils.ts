@@ -4,6 +4,7 @@ import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { getLayerById } from "utils/map/layers";
 import { MappedLayer } from "./KartlagContext";
+import { generateWMTSConfig } from "hooks/layers/kartlagSources";
 
 /**
  * Navigerer rekursivt gjennom kartlagene for å finne laget som skal endres
@@ -195,16 +196,20 @@ export const setWMTSLayerVisibility = (layer: TileLayer<TileSource>, willBeVisib
   const source = layer.getSource();
   if (source instanceof WMTS) {
     // OpenLayers lar deg ikke sette layer for WMTS-lag, så vi må bytte ut hele sourcen med ny layer-verdi
-    const config = source.get("config");
-    const newLayer = newLayerId ?? (config.layer as string);
-    const newSource = new WMTS({
-      ...config,
-      layer: newLayer,
-    });
-    newSource.set("config", config);
+    // og sørge for at den har riktig konfigurasjon
+    const layerId = newLayerId ?? source.get("config")?.layer;
+    if (layerId == null) {
+      return "";
+    }
+
+    const newConfig = generateWMTSConfig(layerId);
+    const newSource = new WMTS(newConfig);
+    newSource.set("config", newConfig);
+
     layer.setSource(newSource);
     layer.setVisible(willBeVisible);
-    return newLayer;
+
+    return layerId;
   }
   return "";
 };
