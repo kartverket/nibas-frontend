@@ -24,6 +24,7 @@ import {
   transformCoordinatesToProjection,
 } from "./NavigasjonPanel/koordinater-utils";
 import { PanelHeader, SidePanel } from "./Panel";
+import { Decimal } from "decimal.js";
 
 type KoordinaterFormData = {
   north: number;
@@ -225,9 +226,18 @@ const FlyttKoordinaterPanel = () => {
   const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/", { gyldighetsdato });
   const [globalFormError, setGlobalFormError] = useState<string | null>();
 
+  const roundToNearestHalf = (value: number): number => {
+    const factor = 1 / 0.005;
+    const scaled = value * factor;
+    const floor = Math.floor(scaled);
+    const diff = scaled - floor;
+
+    return Math.abs(diff - 0.5) < 1e-10 ? floor / factor + 0.0025 : Math.round(scaled) / factor;
+  };
+
   const movePointToCoordinates = () => {
     setGlobalFormError(null);
-    const [east, north] = [getValues("east"), getValues("north")];
+    const [east, north] = [roundToNearestHalf(getValues("east")), roundToNearestHalf(getValues("north"))];
     const transformedCoordinates = transformCoordinatesToProjection(
       east,
       north,
@@ -248,7 +258,7 @@ const FlyttKoordinaterPanel = () => {
       }
     } else {
       setGlobalFormError(
-        "Koordinatene er ikke på samme format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+        "Koordinatene er ikke på samme format. Benytt enten desimaltall med maks 3 desimaler eller DMS-format (00°00'00\")",
       );
     }
   };
@@ -258,7 +268,7 @@ const FlyttKoordinaterPanel = () => {
     pattern: {
       value: new RegExp(`(${decimalCoordinatePattern.source})|(${dmsCoordinatePattern.source})`),
       message:
-        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall med maks 3 desimaler eller DMS-format (00°00'00\")",
     },
   };
 
