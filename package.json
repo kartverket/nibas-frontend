@@ -7,7 +7,6 @@
     "@grafana/faro-react": "^1.18.2",
     "@kvib/react": "^4.3.3",
     "date-fns": "^4.1.0",
-    "decimal.js": "^10.5.0",
     "lodash.get": "^4.4.2",
     "material-symbols": "^0.31.3",
     "ol": "^10.5.0",
