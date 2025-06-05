@@ -24,7 +24,6 @@ import {
   transformCoordinatesToProjection,
 } from "./NavigasjonPanel/koordinater-utils";
 import { PanelHeader, SidePanel } from "./Panel";
-import { Decimal } from "decimal.js";
 
 type KoordinaterFormData = {
   north: number;
