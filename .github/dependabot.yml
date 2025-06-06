@@ -3,22 +3,34 @@ updates:
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: daily
+      interval: "weekly"
+      day: "monday"
+      time: "03:23"
+      timezone: "Europe/Oslo"
 
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
-      interval: daily
+      interval: "weekly"
+      day: "monday"
+      time: "03:23"
+      timezone: "Europe/Oslo"
 
   - package-ecosystem: "terraform"
     directory: "/terraform"
     schedule:
-      interval: daily
+      interval: "weekly"
+      day: "monday"
+      time: "03:23"
+      timezone: "Europe/Oslo"
 
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: daily
+      interval: "weekly"
+      day: "monday"
+      time: "03:23"
+      timezone: "Europe/Oslo"
     open-pull-requests-limit: 10
     groups:
       non-major-updates:
