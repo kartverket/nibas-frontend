@@ -87,7 +87,7 @@
     "eslint-plugin-react-hooks": "~5.2.0",
     "globals": "^16.2.0",
     "jsdom": "^26.1.0",
-    "msw": "~2.9.0",
+    "msw": "~2.10.1",
     "postcss-styled-syntax": "^0.7.1",
     "prettier": "^3.5.3",
     "stylelint": "^16.20.0",
