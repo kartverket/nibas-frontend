@@ -4,6 +4,7 @@ import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
+import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
 
 interface StyledRowProps {
   $active: boolean;
@@ -13,7 +14,6 @@ interface StyledRowProps {
 
 const AvvikRow = ({
   avvikItem,
-  goToCoordinatesAndFetchMatrikkel,
   selectedAvvikId,
   setSelectedAvvikId,
   updateStatus,
@@ -24,15 +24,14 @@ const AvvikRow = ({
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
   const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
 
-  const handlePanorerBtn = async (coordinates: number[]) => {
+  const panAndZoom = async (coordinates: number[]) => {
+    const zoomLevel = 30;
+    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
+  };
+  const handlePanAndSelect = () => {
+    panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik
     findSecondKommune(avvikItem.kommuner);
-    const success = await goToCoordinatesAndFetchMatrikkel(coordinates);
-    if (!success) {
-      toast({
-        status: "error",
-        title: "Fikk ikke panorert til avvik eller hentet teiggrenser",
-      });
-    }
+    setSelectedAvvikId(avvikItem.id);
   };
   const handleStatusEndring = async (status: AvvikStatus) => {
     setIsRemoving(true);
@@ -76,8 +75,7 @@ const AvvikRow = ({
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  handlePanorerBtn(koordinaterAvvikNibas[0]); // Per nå går vi kun til det første punktet i avviket, selv om det kan være flere
-                  setSelectedAvvikId(avvikItem.id);
+                  handlePanAndSelect();
                 }}
                 aria-label={"Panorer til avvik"}
                 tooltip={{ text: "Panorer til avvik" }}
@@ -106,8 +104,7 @@ const AvvikRow = ({
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  handlePanorerBtn(koordinaterAvvikNibas[0]);
-                  setSelectedAvvikId(avvikItem.id);
+                  handlePanAndSelect();
                 }}
                 aria-label={"Panorer til avvik"}
                 tooltip={{ text: "Panorer til avvik" }}
@@ -128,8 +125,7 @@ const AvvikRow = ({
               <ToolbarButton
                 icon={"find_in_page"}
                 onClick={() => {
-                  handlePanorerBtn(koordinaterAvvikNibas[0]);
-                  setSelectedAvvikId(avvikItem.id);
+                  handlePanAndSelect();
                 }}
                 aria-label={"Panorer til avvik"}
                 tooltip={{ text: "Panorer til avvik" }}
