@@ -13,7 +13,7 @@ export const isPointInsideMultiPolygon = (east: number, north: number, multipoly
 
 // regex som matcher mot koordinater på dms format for North og East (vi trenger ikke S og W i nibas)
 export const dmsCoordinatePattern = /^\d{1,3}°\d{1,2}'\d{1,2}\.?\d{1,}['"]?[NE]?$/i;
-export const decimalCoordinatePattern = /^-?\d+(\.\d+)?$/;
+export const decimalCoordinatePattern = /^-?\d+(\.\d{1,3})?$/;
 
 interface DMSCoordinates {
   degrees: number;

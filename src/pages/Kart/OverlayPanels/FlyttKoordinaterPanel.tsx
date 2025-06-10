@@ -84,9 +84,10 @@ const FlyttKoordinaterPanel = () => {
   };
 
   const {
-    register,
     handleSubmit,
     getValues,
+    setValue,
+    register,
     reset,
     clearErrors,
     formState: { isDirty, errors: formErrors },
@@ -225,9 +226,18 @@ const FlyttKoordinaterPanel = () => {
   const { data: nasjon, isLoading, error: nasjonFetchError } = useNibasApi("/v1/nasjon/", { gyldighetsdato });
   const [globalFormError, setGlobalFormError] = useState<string | null>();
 
+  const roundToNearestHalf = (value: number): number => {
+    const factor = 1 / 0.005;
+    const scaled = value * factor;
+    const floor = Math.floor(scaled);
+    const diff = scaled - floor;
+
+    return Math.abs(diff - 0.5) < 1e-10 ? floor / factor + 0.0025 : Math.round(scaled) / factor;
+  };
+
   const movePointToCoordinates = () => {
     setGlobalFormError(null);
-    const [east, north] = [getValues("east"), getValues("north")];
+    const [east, north] = [roundToNearestHalf(getValues("east")), roundToNearestHalf(getValues("north"))];
     const transformedCoordinates = transformCoordinatesToProjection(
       east,
       north,
@@ -236,19 +246,23 @@ const FlyttKoordinaterPanel = () => {
     );
     if (transformedCoordinates != null) {
       if (nasjonFetchError != null) {
+        setValue("north", transformedCoordinates[1]);
+        setValue("east", transformedCoordinates[0]);
         movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
       } else if (
         isLoading === false &&
         nasjon?.omraade?.coordinates != null &&
         isPointInsideMultiPolygon(transformedCoordinates[0], transformedCoordinates[1], nasjon?.omraade?.coordinates)
       ) {
+        setValue("north", transformedCoordinates[1]);
+        setValue("east", transformedCoordinates[0]);
         movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
       } else {
         setGlobalFormError("Koordinatene må være innenfor Norge sine grenser");
       }
     } else {
       setGlobalFormError(
-        "Koordinatene er ikke på samme format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+        "Koordinatene er ikke på samme format. Benytt enten desimaltall med maks 3 desimaler eller DMS-format (00°00'00\")",
       );
     }
   };
@@ -258,7 +272,7 @@ const FlyttKoordinaterPanel = () => {
     pattern: {
       value: new RegExp(`(${decimalCoordinatePattern.source})|(${dmsCoordinatePattern.source})`),
       message:
-        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall eller DMS-format (00°00'00\")",
+        "Koordinatet er ikke skrevet på et gyldig format. Benytt enten desimaltall med maks 3 desimaler eller DMS-format (00°00'00\")",
     },
   };
 
