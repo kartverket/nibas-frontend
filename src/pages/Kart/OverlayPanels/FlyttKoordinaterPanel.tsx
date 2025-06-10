@@ -84,9 +84,10 @@ const FlyttKoordinaterPanel = () => {
   };
 
   const {
-    register,
     handleSubmit,
     getValues,
+    setValue,
+    register,
     reset,
     clearErrors,
     formState: { isDirty, errors: formErrors },
@@ -245,12 +246,16 @@ const FlyttKoordinaterPanel = () => {
     );
     if (transformedCoordinates != null) {
       if (nasjonFetchError != null) {
+        setValue("north", transformedCoordinates[1]);
+        setValue("east", transformedCoordinates[0]);
         movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
       } else if (
         isLoading === false &&
         nasjon?.omraade?.coordinates != null &&
         isPointInsideMultiPolygon(transformedCoordinates[0], transformedCoordinates[1], nasjon?.omraade?.coordinates)
       ) {
+        setValue("north", transformedCoordinates[1]);
+        setValue("east", transformedCoordinates[0]);
         movePoint([transformedCoordinates[0], transformedCoordinates[1]]);
       } else {
         setGlobalFormError("Koordinatene må være innenfor Norge sine grenser");
