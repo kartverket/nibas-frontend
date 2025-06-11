@@ -17,6 +17,7 @@ import { useInndelinger } from "../../../contexts/InndelingerContext/Inndelinger
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
 import { useAuthentication } from "../../../components/Authentication/AuthenticationHook";
 import { grenseStyles } from "../../../utils/map/layerStyles";
+import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 const useHistoriskeGrenser = () => {
   const [historiskeGrenserIsLoading, setHistoriskeGrenserIsLoading] = useState(false);
   const [historiskeGrenserFetched, setHistoriskeGrenserFetched] = useState(false);
@@ -93,7 +94,7 @@ const useHistoriskeGrenser = () => {
     if (featuresToRestore.length === 0) {
       return;
     }
-
+    let anyRounded = false;
     let countSaved = 0;
     featuresToRestore.forEach((featureToRestore, idx, array) => {
       // Sjekk om det er en historisk grense, hvis ikke gjør vi ingenting med den
@@ -120,12 +121,27 @@ const useHistoriskeGrenser = () => {
         },
       });
       featureToRestore.unset("isHistorical");
+
       // Fjerner grense fra historical-laget og legger tilbake i edit-laget
       removeFeaturesFromSourceByIds("historical", [featureToRestore.getId() as string]);
       addFeaturesToSource("edit", [featureToRestore]);
       featureToRestore.setStyle(grenseType === "STEMMEKRETS" ? grenseStyles.stemmekrets : grenseStyles.grunnkrets);
       if (currentlyEditingInndelinger.length === 0) {
         return;
+      }
+
+      // Avrunder koordinatene til nærmeste halve cm, maks 3 desimaler
+      const geometry = featureToRestore != null ? featureToRestore.getGeometry() : undefined;
+      if (geometry) {
+        const roundedCoordinates = geometry.getCoordinates().map((coord) => {
+          const rounded = [roundToNearestHalf(coord[0]), roundToNearestHalf(coord[1])];
+          // Sjekk om noen koordinater ble avrundet
+          if (!anyRounded && (coord[0] !== rounded[0] || coord[1] !== rounded[1])) {
+            anyRounded = true;
+          }
+          return rounded;
+        });
+        geometry.setCoordinates(roundedCoordinates);
       }
 
       // Legger den 'gjenopprettede' grensa til history som en nygrense
@@ -141,11 +157,20 @@ const useHistoriskeGrenser = () => {
 
       // Hvis vi er på siste feature, vis toast
       if (idx === array.length - 1) {
+        if (anyRounded) {
+          toast({
+            status: "info",
+            title: "Koordinater avrundet",
+            description: "Noen punkter ble avrundet til 3 desimaler.",
+            duration: 5000,
+          });
+        }
         if (countSaved > 0) {
           toast({
             status: "success",
             title: `Gjenopprettet ${countSaved > 1 ? countSaved + " historiske grenser" : countSaved + " historisk grense"}`,
             description: `Husk å sette tilhørighet på grensene`,
+            duration: 5000,
           });
         } else {
           toast({

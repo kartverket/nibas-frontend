@@ -47,6 +47,15 @@ const dmsToDecimal = (dmsString: string): number | null => {
   return null;
 };
 
+export const roundToNearestHalf = (value: number): number => {
+  const factor = 1 / 0.005;
+  const scaled = value * factor;
+  const floor = Math.floor(scaled);
+  const diff = scaled - floor;
+
+  return Math.abs(diff - 0.5) < 1e-10 ? floor / factor + 0.0025 : Math.round(scaled) / factor;
+};
+
 export const transformCoordinatesToProjection = (
   east: number,
   north: number,
