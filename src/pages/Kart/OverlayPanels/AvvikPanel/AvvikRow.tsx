@@ -23,10 +23,13 @@ const AvvikRow = ({
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
   const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
-
   const panAndZoom = async (coordinates: number[]) => {
-    const zoomLevel = 30;
-    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
+    let zoomLevel = 12;
+    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 1000);
+    setTimeout(() => {
+      zoomLevel = 24;
+      centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 1000);
+    }, 2000);
   };
   const handlePanAndSelect = () => {
     panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik

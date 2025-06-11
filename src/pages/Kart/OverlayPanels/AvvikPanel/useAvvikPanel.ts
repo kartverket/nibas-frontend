@@ -71,10 +71,34 @@ export const useAvvikPanel = () => {
 
   // ========== Henter avvik for valgt kommune ==========
   const {
-    data: avvikData = [],
+    data: avvikDataRaw = [],
     isLoading: isLoadingAvvik,
     mutate: mutateAvvikData,
   } = useAvvikForKommune(selectedKommuneId, token);
+
+  // Sorterer på kommunenummer som ikke er selectedKommune
+  const avvikData = [...avvikDataRaw]
+    .map((avvik) => {
+      const selected = avvik.kommuner.filter(
+        (k: { kommunenummer: string | undefined }) => k.kommunenummer === selectedKommune?.nummer,
+      );
+      const others = avvik.kommuner
+        .filter((k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer)
+        .sort((a: KommuneIAvvik, b: KommuneIAvvik) => a.kommunenummer.localeCompare(b.kommunenummer, "nb"));
+      return {
+        ...avvik,
+        kommuner: [...selected, ...others],
+      };
+    })
+    .sort((a, b) => {
+      const aOther = a.kommuner.find(
+        (k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer,
+      );
+      const bOther = b.kommuner.find(
+        (k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer,
+      );
+      return (aOther?.kommunenummer ?? "").localeCompare(bOther?.kommunenummer ?? "", "nb");
+    });
 
   // ========== Henter matrikkelgrenser for valgt kommune ==========
   const {
@@ -166,10 +190,6 @@ export const useAvvikPanel = () => {
 
           setShouldZoom(false);
           selectInndelinger([currentMainInndeling, newInndeling]);
-
-          setTimeout(() => {
-            setShouldZoom(true);
-          }, 4000);
         }
       }
     }
