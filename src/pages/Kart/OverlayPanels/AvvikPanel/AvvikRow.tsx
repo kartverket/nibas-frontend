@@ -5,7 +5,10 @@ import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
 import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
-
+import Feature from "ol/Feature";
+import { Circle as CircleGeom } from "ol/geom";
+import { Style, Stroke, Fill } from "ol/style";
+import { highlightSource } from "hooks/layers/constants";
 interface StyledRowProps {
   $active: boolean;
   $removing: boolean;
@@ -19,6 +22,21 @@ const AvvikRow = ({
   updateStatus,
   findSecondKommune,
 }: AvvikRowPropsExtended) => {
+  const showHighlightCircle = (coordinate: number[], radius = 1200) => {
+    highlightSource.clear();
+    const circleFeature = new Feature(new CircleGeom(coordinate, radius));
+    circleFeature.setStyle(
+      new Style({
+        stroke: new Stroke({ color: "rgba(255,174,73,0.8)", width: 12 }),
+        fill: new Fill({ color: "rgba(255,174,73,0.2)" }),
+      }),
+    );
+    highlightSource.addFeature(circleFeature);
+  };
+
+  const clearHighlightCircle = () => {
+    highlightSource.clear();
+  };
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
@@ -35,6 +53,14 @@ const AvvikRow = ({
     panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik
     findSecondKommune(avvikItem.kommuner);
     setSelectedAvvikId(avvikItem.id);
+  };
+  const highlightAvvik = async () => {
+    const coordinates = avvikItem.koordinaterMedAvvik[0]?.nibasKoordinat.coordinates;
+    showHighlightCircle(coordinates);
+  };
+
+  const removeHighlight = () => {
+    clearHighlightCircle();
   };
   const handleStatusEndring = async (status: AvvikStatus) => {
     setIsRemoving(true);
@@ -56,7 +82,17 @@ const AvvikRow = ({
 
   return (
     <Container>
-      <Row $active={isActive} $removing={isRemoving} $status={rowStatus}>
+      <Row
+        $active={isActive}
+        $removing={isRemoving}
+        $status={rowStatus}
+        onMouseOver={() => {
+          highlightAvvik();
+        }}
+        onMouseLeave={() => {
+          removeHighlight();
+        }}
+      >
         <Stack spacing="1">
           {avvikItem.kommuner.map((kommune, index) => (
             <Text key={index} fontSize={"sm"}>
@@ -184,6 +220,11 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
         ? "translateX(-100%)" // Slider til venstre hvis status blir satt til "ny" / uløst
         : "translateX(100%)" // ellers til høyre
       : "translateX(0)"};
+
+  &:hover {
+    background-color: var(--kvib-colors-gray-100);
+    cursor: pointer;
+  }
 `;
 const InfoGroup = styled.div`
   display: flex;
