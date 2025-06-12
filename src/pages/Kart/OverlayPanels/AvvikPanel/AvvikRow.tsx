@@ -40,7 +40,7 @@ const AvvikRow = ({
     const circleFeature = new Feature(new CircleGeom(coordinate, radius));
     circleFeature.setStyle(
       new Style({
-        stroke: new Stroke({ color: strokeColor, width: 12 }),
+        stroke: new Stroke({ color: strokeColor, width: 5 }),
         fill: new Fill({ color: fillColor }),
       }),
     );
@@ -230,7 +230,6 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
 
   &:hover {
     border-left: 4px solid var(--kvib-colors-orange-200);
-    cursor: pointer;
   }
 `;
 const InfoGroup = styled.div`
