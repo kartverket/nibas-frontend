@@ -66,3 +66,18 @@ export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource<Feature>>>
   measure: createVectorLayer("measure", measureSource),
   historical: createVectorLayer("historical"),
 };
+
+export const highlightSource = new VectorSource();
+
+const createHighlightVectorLayer = (id: string, source: VectorSource) => {
+  const newLayer = new VectorLayer({
+    source,
+    zIndex: 1000,
+    declutter: false,
+  });
+  newLayer.set("id", id);
+  map.addLayer(newLayer);
+  return newLayer;
+};
+
+export const highlightLayer = createHighlightVectorLayer("highlight", highlightSource);

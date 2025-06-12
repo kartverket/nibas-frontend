@@ -4,8 +4,11 @@ import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
-import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
-
+import Feature from "ol/Feature";
+import { Circle as CircleGeom } from "ol/geom";
+import { Style, Stroke, Fill } from "ol/style";
+import { highlightSource } from "hooks/layers/constants";
+import { map } from "pages/Kart/constants";
 interface StyledRowProps {
   $active: boolean;
   $removing: boolean;
@@ -18,20 +21,52 @@ const AvvikRow = ({
   setSelectedAvvikId,
   updateStatus,
   findSecondKommune,
+  panAndZoom,
 }: AvvikRowPropsExtended) => {
+  const showHighlightCircle = (coordinate: number[]) => {
+    const currentZoom = map.getView().getZoom();
+    const zoomRef = 12;
+    const standardRadius = 1200;
+    const strokeColor = "rgba(247, 192, 72, 0.9)";
+    const fillColor = "rgba(247, 192, 72, 0.2)";
+    let radius = standardRadius;
+    if (currentZoom != null) {
+      radius = standardRadius * Math.pow(2, zoomRef - currentZoom);
+      if (radius > 1200) {
+        radius = 1200;
+      }
+    }
+    highlightSource.clear();
+    const circleFeature = new Feature(new CircleGeom(coordinate, radius));
+    circleFeature.setStyle(
+      new Style({
+        stroke: new Stroke({ color: strokeColor, width: 5 }),
+        fill: new Fill({ color: fillColor }),
+      }),
+    );
+    highlightSource.addFeature(circleFeature);
+  };
+
+  const clearHighlightCircle = () => {
+    highlightSource.clear();
+  };
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
   const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
 
-  const panAndZoom = async (coordinates: number[]) => {
-    const zoomLevel = 30;
-    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 0);
-  };
-  const handlePanAndSelect = () => {
-    panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik
+  const handlePanAndSelect = async () => {
     findSecondKommune(avvikItem.kommuner);
+    panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik
     setSelectedAvvikId(avvikItem.id);
+  };
+  const highlightAvvik = async () => {
+    const coordinates = avvikItem.koordinaterMedAvvik[0]?.nibasKoordinat.coordinates;
+    showHighlightCircle(coordinates);
+  };
+
+  const removeHighlight = () => {
+    clearHighlightCircle();
   };
   const handleStatusEndring = async (status: AvvikStatus) => {
     setIsRemoving(true);
@@ -53,7 +88,17 @@ const AvvikRow = ({
 
   return (
     <Container>
-      <Row $active={isActive} $removing={isRemoving} $status={rowStatus}>
+      <Row
+        $active={isActive}
+        $removing={isRemoving}
+        $status={rowStatus}
+        onMouseOver={() => {
+          highlightAvvik();
+        }}
+        onMouseLeave={() => {
+          removeHighlight();
+        }}
+      >
         <Stack spacing="1">
           {avvikItem.kommuner.map((kommune, index) => (
             <Text key={index} fontSize={"sm"}>
@@ -162,6 +207,7 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
   gap: var(--kvib-spacing-12);
   width: 100%;
   padding: var(--kvib-space-2) var(--kvib-space-2);
+  border-left: 4px solid transparent;
   background-color: ${({ $active, $removing, $status }) =>
     $removing
       ? $status === AvvikStatus.VENT
@@ -181,6 +227,10 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
         ? "translateX(-100%)" // Slider til venstre hvis status blir satt til "ny" / uløst
         : "translateX(100%)" // ellers til høyre
       : "translateX(0)"};
+
+  &:hover {
+    border-left: 4px solid var(--kvib-colors-orange-200);
+  }
 `;
 const InfoGroup = styled.div`
   display: flex;

@@ -13,11 +13,13 @@ import {
 } from "./avvik-utils";
 import { useToast } from "@kvib/react";
 import { useKommune } from "hooks/inndelinger/useKommuner";
-import { resetMapView } from "utils/map/map-utils";
+import { pixelDistance, resetMapView } from "utils/map/map-utils";
 import { avvikUpdateStatus, useAvvikForKommune, useKommunerMedAvvik } from "./useAvvik";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { addFeaturesToSource } from "utils/map/source";
 import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
+import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
+import { map } from "pages/Kart/constants";
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const toast = useToast();
@@ -49,6 +51,7 @@ export const useAvvikPanel = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
 
+  const [previousCoordinates, setPreviousCoordinates] = useState<number[]>([]);
   // ========== Henter kommuner med avvik ==========
   const { data: kommunerMedAvvikResponse, isLoading: isLoadingKommunerMedAvvik } = useKommunerMedAvvik(
     !selectedKommune,
@@ -71,10 +74,43 @@ export const useAvvikPanel = () => {
 
   // ========== Henter avvik for valgt kommune ==========
   const {
-    data: avvikData = [],
+    data: avvikDataRaw = [],
     isLoading: isLoadingAvvik,
     mutate: mutateAvvikData,
   } = useAvvikForKommune(selectedKommuneId, token);
+
+  // Sorterer på kommunenummer som ikke er selectedKommune
+  const avvikData = [...avvikDataRaw]
+    .map((avvik) => {
+      const selected = avvik.kommuner.filter(
+        (k: { kommunenummer: string | undefined }) => k.kommunenummer === selectedKommune?.nummer,
+      );
+      const others = avvik.kommuner
+        .filter((k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer)
+        .sort((a: KommuneIAvvik, b: KommuneIAvvik) => a.kommunenummer.localeCompare(b.kommunenummer, "nb"));
+      return {
+        ...avvik,
+        kommuner: [...selected, ...others],
+      };
+    })
+    .sort((a, b) => {
+      const aOther = a.kommuner.find(
+        (k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer,
+      );
+      const bOther = b.kommuner.find(
+        (k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer,
+      );
+      const kommuneCompare = (aOther?.kommunenummer ?? "").localeCompare(bOther?.kommunenummer ?? "", "nb");
+      if (kommuneCompare !== 0) {
+        return kommuneCompare;
+      }
+      const aCoord = a.koordinaterMedAvvik?.[0]?.nibasKoordinat?.coordinates ?? [0, 0];
+      const bCoord = b.koordinaterMedAvvik?.[0]?.nibasKoordinat?.coordinates ?? [0, 0];
+      if (aCoord[0] !== bCoord[0]) {
+        return aCoord[0] - bCoord[0];
+      }
+      return aCoord[1] - bCoord[1];
+    });
 
   // ========== Henter matrikkelgrenser for valgt kommune ==========
   const {
@@ -166,10 +202,6 @@ export const useAvvikPanel = () => {
 
           setShouldZoom(false);
           selectInndelinger([currentMainInndeling, newInndeling]);
-
-          setTimeout(() => {
-            setShouldZoom(true);
-          }, 4000);
         }
       }
     }
@@ -232,11 +264,46 @@ export const useAvvikPanel = () => {
 
     setSelectedKommuneId(kommuneLokalID);
   };
+
+  const calculateZoomLevel = (coordinates: number[]) => {
+    const zoomLevels = [
+      { threshold: 100000, zoom: 14 },
+      { threshold: 50000, zoom: 18 },
+      { threshold: 30000, zoom: 20 },
+      { threshold: 10000, zoom: 22 },
+    ];
+    if (previousCoordinates.length === 0) {
+      return 12;
+    }
+    const distance = pixelDistance(previousCoordinates, coordinates);
+    for (const { threshold, zoom } of zoomLevels) {
+      if (distance > threshold) {
+        return zoom;
+      }
+    }
+    return 24;
+  };
+  const panAndZoom = async (coordinates: number[]) => {
+    let zoomLevel = 12;
+    const currentZoom = map.getView().getZoom();
+    if (currentZoom != null && currentZoom > 12) {
+      zoomLevel = calculateZoomLevel(coordinates);
+    }
+    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 2000);
+    if (zoomLevel < 24) {
+      setTimeout(() => {
+        zoomLevel = 24;
+        centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 2000);
+      }, 2500);
+    }
+    setPreviousCoordinates(coordinates);
+  };
   const avvikRowProps: AvvikRowProps = {
     findSecondKommune,
     selectedAvvikId,
     setSelectedAvvikId,
     updateStatus,
+    panAndZoom,
   };
   const avvikPanelProps: AvvikPanelProps = {
     isLoadingKommunerMedAvvik,
