@@ -27,8 +27,8 @@ const AvvikRow = ({
     const currentZoom = map.getView().getZoom();
     const zoomRef = 12;
     const standardRadius = 1200;
-    const strokeColor = "rgba(255,174,73,0.8)";
-    const fillColor = "rgba(255,174,73,0.2)";
+    const strokeColor = "rgba(247, 192, 72, 0.9)";
+    const fillColor = "rgba(247, 192, 72, 0.2)";
     let radius = standardRadius;
     if (currentZoom != null) {
       radius = standardRadius * Math.pow(2, zoomRef - currentZoom);
@@ -207,6 +207,7 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
   gap: var(--kvib-spacing-12);
   width: 100%;
   padding: var(--kvib-space-2) var(--kvib-space-2);
+  border-left: 4px solid transparent;
   background-color: ${({ $active, $removing, $status }) =>
     $removing
       ? $status === AvvikStatus.VENT
@@ -228,7 +229,7 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
       : "translateX(0)"};
 
   &:hover {
-    background-color: var(--kvib-colors-gray-100);
+    border-left: 4px solid var(--kvib-colors-orange-200);
     cursor: pointer;
   }
 `;
