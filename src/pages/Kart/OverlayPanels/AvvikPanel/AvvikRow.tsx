@@ -4,11 +4,11 @@ import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
-import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
 import Feature from "ol/Feature";
 import { Circle as CircleGeom } from "ol/geom";
 import { Style, Stroke, Fill } from "ol/style";
 import { highlightSource } from "hooks/layers/constants";
+import { map } from "pages/Kart/constants";
 interface StyledRowProps {
   $active: boolean;
   $removing: boolean;
@@ -21,14 +21,27 @@ const AvvikRow = ({
   setSelectedAvvikId,
   updateStatus,
   findSecondKommune,
+  panAndZoom,
 }: AvvikRowPropsExtended) => {
-  const showHighlightCircle = (coordinate: number[], radius = 1200) => {
+  const showHighlightCircle = (coordinate: number[]) => {
+    const currentZoom = map.getView().getZoom();
+    const zoomRef = 12;
+    const standardRadius = 1200;
+    const strokeColor = "rgba(255,174,73,0.8)";
+    const fillColor = "rgba(255,174,73,0.2)";
+    let radius = standardRadius;
+    if (currentZoom != null) {
+      radius = standardRadius * Math.pow(2, zoomRef - currentZoom);
+      if (radius > 1200) {
+        radius = 1200;
+      }
+    }
     highlightSource.clear();
     const circleFeature = new Feature(new CircleGeom(coordinate, radius));
     circleFeature.setStyle(
       new Style({
-        stroke: new Stroke({ color: "rgba(255,174,73,0.8)", width: 12 }),
-        fill: new Fill({ color: "rgba(255,174,73,0.2)" }),
+        stroke: new Stroke({ color: strokeColor, width: 12 }),
+        fill: new Fill({ color: fillColor }),
       }),
     );
     highlightSource.addFeature(circleFeature);
@@ -41,17 +54,10 @@ const AvvikRow = ({
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
   const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
-  const panAndZoom = async (coordinates: number[]) => {
-    let zoomLevel = 12;
-    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 1000);
-    setTimeout(() => {
-      zoomLevel = 24;
-      centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 1000);
-    }, 2000);
-  };
-  const handlePanAndSelect = () => {
-    panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik
+
+  const handlePanAndSelect = async () => {
     findSecondKommune(avvikItem.kommuner);
+    panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik
     setSelectedAvvikId(avvikItem.id);
   };
   const highlightAvvik = async () => {
