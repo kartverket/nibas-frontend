@@ -5,6 +5,10 @@ export const isAuthEnabled = () => {
 };
 
 export const isAuthDisabled = () => {
+  return false;
+};
+
+export const isMockAuthEnabled = () => {
   return getCurrentEnvironment() === "feature-branch";
 };
 
@@ -28,6 +32,14 @@ const getDevConfig = () => {
   };
 };
 
+const getMockConfig = () => {
+  return {
+    authority: "https://mock-oauth2-server.atkv3-dev.kartverket-intern.cloud/idporten",
+    client_id: "mock-client-id",
+    redirect_uri: `${window.location.origin}/authenticated`,
+  };
+};
+
 export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
   const environment = getCurrentEnvironment();
   switch (environment) {
@@ -40,7 +52,7 @@ export const getAuthConfigForCurrentEnvironment = (): AuthConfig => {
     case "localhost":
       return getDevConfig();
     case "feature-branch": {
-      return getDevConfig();
+      return getMockConfig();
     }
   }
 };

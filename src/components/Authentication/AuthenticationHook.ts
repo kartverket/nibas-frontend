@@ -2,7 +2,7 @@ import { useAuth } from "react-oidc-context";
 import { User, SigninRedirectArgs, UserManagerEvents } from "oidc-client-ts";
 import { fetcherWithToken } from "utils/api";
 import { useCallback } from "react";
-import { isAuthDisabled, isAuthEnabled } from "components/Authentication/AuthenticationConfig";
+import { isAuthDisabled, isAuthEnabled, isMockAuthEnabled } from "components/Authentication/AuthenticationConfig";
 import { ResponseError } from "ol/net";
 
 type AuthorizationState = "OK" | "NOT_AUTHORIZED" | "ERROR";
@@ -52,7 +52,11 @@ export const useAuthentication = (): UseAuthenticationReturnType => {
   const signOutRedirectUrl = `${protocol}//${host}/logout`;
 
   const isAuthenticated = isAuthEnabled() ? auth.isAuthenticated : window.location.pathname === "/auth" ? false : true;
-  const userId = isAuthEnabled() ? auth.user?.profile["pid"] : "Mock-bruker";
+  const userId = isAuthEnabled()
+    ? isMockAuthEnabled()
+      ? auth.user?.profile.sub
+      : auth.user?.profile["pid"]
+    : "Mock-bruker";
 
   return {
     events: auth.events,
