@@ -70,6 +70,7 @@ export type AvvikRowProps = {
   selectedAvvikId: number | null;
   setSelectedAvvikId: (id: number | null) => void;
   updateStatus: (avvikId: number, status: AvvikStatus) => Promise<boolean>;
+  panAndZoom: (coordinates: number[]) => void;
 };
 export interface AvvikRowPropsExtended extends AvvikRowProps {
   avvikItem: AvvikForKommune;

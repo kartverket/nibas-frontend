@@ -56,7 +56,7 @@ export const zoomToFeatures = (features: Feature<Geometry>[]) => {
 };
 
 /** Euklidisk avstand mellom to koordinater i piksler */
-const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
+export const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
   const pixel1 = map.getPixelFromCoordinate(coord1);
   const pixel2 = map.getPixelFromCoordinate(coord2);
   const dx = pixel1[0] - pixel2[0];
