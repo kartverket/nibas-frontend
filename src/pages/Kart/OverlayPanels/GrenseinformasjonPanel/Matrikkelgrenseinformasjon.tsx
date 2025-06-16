@@ -5,7 +5,6 @@ import { PropsWithChildren } from "react";
 import { styled } from "styled-components";
 import { PanelHeader } from "../Panel";
 import useNibasApi from "hooks/useNibasApi";
-
 type TeiggrenseInformasjonProps = {
   feature: Feature<LineString>;
   onClose: () => void;
@@ -73,17 +72,29 @@ const isOldTeiggrenseMetadata = (value: object): boolean => {
 };
 
 // Mapper fra gammelt til nytt format
-const mapOldToNewTeiggrenseMetadata = (oldObj: OldTeiggrenseMetadata): TeiggrenseMetadata => ({
-  id: typeof oldObj.TEIGGRENSEID === "number" ? oldObj.TEIGGRENSEID : null,
-  kommunenr1: oldObj.KOMMUNENR ?? null,
-  kommunenr2: null,
-  hjelpelinjetypeId: null,
-  administrativgrensekodeId: null,
-  malemetodeId: oldObj.MALEMETODE ?? null,
-  noyaktighet: oldObj.NOYAKTIGHET ?? null,
-  lagretNoyaktighetsklasse: oldObj.NOYAKTIGHETSKLASSE ?? null,
-  omtvistet: oldObj.OMTVISTET === "1" ? 1 : 0,
-});
+const mapOldToNewTeiggrenseMetadata = (oldObj: OldTeiggrenseMetadata): TeiggrenseMetadata => {
+  let kommunenr1: string | null = null;
+  let kommunenr2: string | null = null;
+  if (typeof oldObj.KOMMUNENR === "string") {
+    const parts = oldObj.KOMMUNENR.split(",").map((s) => s.trim());
+    kommunenr1 = parts[0] ?? null;
+    kommunenr2 = parts[1] ?? null;
+  } else if (oldObj.KOMMUNENR != null) {
+    kommunenr1 = oldObj.KOMMUNENR;
+  }
+
+  return {
+    id: typeof oldObj.TEIGGRENSEID === "number" ? oldObj.TEIGGRENSEID : null,
+    kommunenr1,
+    kommunenr2,
+    hjelpelinjetypeId: oldObj.TEIGGRENSETYPE != null ? parseInt(oldObj.TEIGGRENSETYPE, 10) : null,
+    administrativgrensekodeId: null,
+    malemetodeId: oldObj.MALEMETODE ?? null,
+    noyaktighet: oldObj.NOYAKTIGHET ?? null,
+    lagretNoyaktighetsklasse: oldObj.NOYAKTIGHETSKLASSE ?? null,
+    omtvistet: oldObj.OMTVISTET === "1" ? 1 : 0,
+  };
+};
 
 // Type guard for nytt format
 const requiredKeys = teiggrenseMetadataValues.filter((k) => k !== "omtvistet");
@@ -136,6 +147,12 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
   const maalemetode = matrikkelkodeliste?.maalemetodeKodeliste.find(
     (item) => item.id.toString() === teiggrenseProperties?.malemetodeId?.toString(),
   );
+  const administrativGrenseType = matrikkelkodeliste?.administrativGrenseKodeliste.find(
+    (item) => item.id.toString() === teiggrenseProperties?.administrativgrensekodeId?.toString(),
+  );
+  const hjelpelinjetype = matrikkelkodeliste?.hjelpelinjetypeKodeliste.find(
+    (item) => item.id.toString() === teiggrenseProperties?.hjelpelinjetypeId?.toString(),
+  );
   return (
     <GrensePanelContent>
       <PanelHeader noMargin onClose={onClose}>
@@ -143,6 +160,27 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
       </PanelHeader>
       {teiggrenseProperties ? (
         <>
+          <TeiggrensePropertyRow label={"Identifikator (ID)"}>
+            {teiggrenseProperties.id != null ? `${teiggrenseProperties.id}` : <ItalicText>Ikke oppgitt </ItalicText>}
+          </TeiggrensePropertyRow>
+          <TeiggrensePropertyRow label={"Grensetype"}>
+            {administrativGrenseType != null ? (
+              `${administrativGrenseType.navn}`
+            ) : (
+              <ItalicText>Ikke oppgitt </ItalicText>
+            )}
+          </TeiggrensePropertyRow>
+          <TeiggrensePropertyRow label={teiggrenseProperties.kommunenr2 != null ? "Kommuner" : "Kommune"}>
+            <Text>
+              {teiggrenseProperties.kommunenr1 != null && teiggrenseProperties.kommunenr2 != null ? (
+                `${teiggrenseProperties.kommunenr1}, ${teiggrenseProperties.kommunenr2}`
+              ) : teiggrenseProperties.kommunenr1 != null ? (
+                teiggrenseProperties.kommunenr1
+              ) : (
+                <ItalicText>Ikke oppgitt</ItalicText>
+              )}
+            </Text>
+          </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label={"Målemetode"}>
             {maalemetode != null ? `${maalemetode.navn}` : <ItalicText>Ikke oppgitt. Se nøyaktighetsklasse</ItalicText>}
           </TeiggrensePropertyRow>
@@ -161,11 +199,10 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
             )}
           </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label="Omtvistet">
-            {teiggrenseProperties.omtvistet === null || teiggrenseProperties.omtvistet === undefined
-              ? "Uvisst"
-              : teiggrenseProperties.omtvistet === 1
-                ? "Ja"
-                : "Nei"}
+            {teiggrenseProperties.omtvistet == null || teiggrenseProperties.omtvistet === 0 ? "Nei" : "Ja"}
+          </TeiggrensePropertyRow>
+          <TeiggrensePropertyRow label={"Hjelpelinjetype"}>
+            {hjelpelinjetype != null ? `${hjelpelinjetype.navn}` : <ItalicText>Ikke oppgitt </ItalicText>}
           </TeiggrensePropertyRow>
         </>
       ) : (
