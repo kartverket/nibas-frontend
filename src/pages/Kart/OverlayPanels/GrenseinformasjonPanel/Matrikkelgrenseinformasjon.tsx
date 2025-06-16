@@ -75,15 +75,10 @@ const isOldTeiggrenseMetadata = (value: object): boolean => {
 const mapOldToNewTeiggrenseMetadata = (oldObj: OldTeiggrenseMetadata): TeiggrenseMetadata => {
   let kommunenr1: string | null = null;
   let kommunenr2: string | null = null;
-  let administrativgrensekodeId: number | null = null;
-
   if (typeof oldObj.KOMMUNENR === "string") {
     const parts = oldObj.KOMMUNENR.split(",").map((s) => s.trim());
     kommunenr1 = parts[0] ?? null;
     kommunenr2 = parts[1] ?? null;
-    if (parts.length === 2) {
-      administrativgrensekodeId = 1; // Hvis det er to kommuner, så er det kommunegrense (administrativ grensekode 1)
-    }
   } else if (oldObj.KOMMUNENR != null) {
     kommunenr1 = oldObj.KOMMUNENR;
   }
@@ -92,8 +87,8 @@ const mapOldToNewTeiggrenseMetadata = (oldObj: OldTeiggrenseMetadata): Teiggrens
     id: typeof oldObj.TEIGGRENSEID === "number" ? oldObj.TEIGGRENSEID : null,
     kommunenr1,
     kommunenr2,
-    hjelpelinjetypeId: null,
-    administrativgrensekodeId,
+    hjelpelinjetypeId: oldObj.TEIGGRENSETYPE != null ? parseInt(oldObj.TEIGGRENSETYPE, 10) : null,
+    administrativgrensekodeId: null,
     malemetodeId: oldObj.MALEMETODE ?? null,
     noyaktighet: oldObj.NOYAKTIGHET ?? null,
     lagretNoyaktighetsklasse: oldObj.NOYAKTIGHETSKLASSE ?? null,
