@@ -98,6 +98,9 @@ const AvvikRow = ({
         onMouseLeave={() => {
           removeHighlight();
         }}
+        onClick={() => {
+          handlePanAndSelect();
+        }}
       >
         <Stack spacing="1">
           {avvikItem.kommuner.map((kommune, index) => (
@@ -118,17 +121,12 @@ const AvvikRow = ({
           {status === AvvikStatus.NY && (
             <>
               <ToolbarButton
-                icon={"find_in_page"}
-                onClick={() => {
-                  handlePanAndSelect();
-                }}
-                aria-label={"Panorer til avvik"}
-                tooltip={{ text: "Panorer til avvik" }}
-              />
-              <ToolbarButton
                 icon={"schedule"}
                 colorScheme="blue"
-                onClick={() => handleStatusEndring(AvvikStatus.VENT)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleStatusEndring(AvvikStatus.VENT);
+                }}
                 aria-label={"Marker som utsatt"}
                 tooltip={{ text: "Marker som utsatt" }}
               />
@@ -137,7 +135,10 @@ const AvvikRow = ({
                   colorScheme="blue"
                   leftIcon="check"
                   width={"12px"}
-                  onClick={() => handleStatusEndring(AvvikStatus.FIKSET)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStatusEndring(AvvikStatus.FIKSET);
+                  }}
                   aria-label={"Marker som løst"}
                 />
               </CustomTooltip>
@@ -147,18 +148,13 @@ const AvvikRow = ({
           {status === AvvikStatus.FIKSET && (
             <>
               <ToolbarButton
-                icon={"find_in_page"}
-                onClick={() => {
-                  handlePanAndSelect();
-                }}
-                aria-label={"Panorer til avvik"}
-                tooltip={{ text: "Panorer til avvik" }}
-              />
-              <ToolbarButton
                 icon={"undo"}
                 iconFill
                 colorScheme="red"
-                onClick={() => handleStatusEndring(AvvikStatus.NY)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleStatusEndring(AvvikStatus.NY);
+                }}
                 aria-label={"Marker som uløst"}
                 tooltip={{ text: "Marker som uløst", placement: "left" }}
               />
@@ -168,18 +164,13 @@ const AvvikRow = ({
           {status === AvvikStatus.VENT && (
             <>
               <ToolbarButton
-                icon={"find_in_page"}
-                onClick={() => {
-                  handlePanAndSelect();
-                }}
-                aria-label={"Panorer til avvik"}
-                tooltip={{ text: "Panorer til avvik" }}
-              />
-              <ToolbarButton
                 icon={"undo"}
                 iconFill
                 colorScheme="red"
-                onClick={() => handleStatusEndring(AvvikStatus.NY)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleStatusEndring(AvvikStatus.NY);
+                }}
                 aria-label={"Marker som uløst"}
                 tooltip={{ text: "Marker som uløst", placement: "left" }}
               />
@@ -188,7 +179,10 @@ const AvvikRow = ({
                   colorScheme="blue"
                   leftIcon="check"
                   width={"12px"}
-                  onClick={() => handleStatusEndring(AvvikStatus.FIKSET)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStatusEndring(AvvikStatus.FIKSET);
+                  }}
                   aria-label={"Marker som løst"}
                 />
               </CustomTooltip>
@@ -230,6 +224,8 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
 
   &:hover {
     border-left: 4px solid var(--kvib-colors-orange-200);
+    background-color: var(--kvib-colors-gray-50);
+    cursor: pointer;
   }
 `;
 const InfoGroup = styled.div`
