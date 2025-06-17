@@ -210,7 +210,7 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
           ? "var(--kvib-colors-red-100)"
           : "var(--kvib-colors-green-100)"
       : $active
-        ? "var(--kvib-colors-gray-50)"
+        ? "var(--kvib-colors-gray-100)"
         : "transparent"};
   transition:
     background-color 0.3s ease,
@@ -224,7 +224,7 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
 
   &:hover {
     border-left: 4px solid var(--kvib-colors-orange-200);
-    background-color: var(--kvib-colors-gray-50);
+    background-color: var(--kvib-colors-gray-100);
     cursor: pointer;
   }
 `;
