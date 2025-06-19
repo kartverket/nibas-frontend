@@ -65,7 +65,7 @@ export const useAdministrativTilhorighet = (feature: Feature, kontekstType: Kont
           (k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN,
         ),
         kontekstType,
-      ) ?? [currentlyEditingInndelinger?.[0] != null ? currentlyEditingInndelinger[0].id : ""],
+      ) ?? (currentlyEditingInndelinger?.length ? currentlyEditingInndelinger.map((i) => i.id) : []),
     [feature, kontekstType, currentlyEditingInndelinger],
   );
 
