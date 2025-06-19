@@ -205,7 +205,7 @@ export const SplittingPanel = () => {
               </Button>
             </Stack>
             <StyledButtonGroup>
-              <Button variant="tertiary" onClick={() => closeOverlayPanel}>
+              <Button variant="tertiary" onClick={() => closeOverlayPanel()}>
                 Avbryt
               </Button>
               <Button
