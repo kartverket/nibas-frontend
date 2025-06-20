@@ -12,7 +12,7 @@ import {
 } from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
@@ -65,6 +65,15 @@ export const SplittingPanel = () => {
     trigger,
     isSubmitted,
   } = useSplittingForm(currentlyEditingInndelinger[0]);
+
+  // Vi ønsker å lukke panelet hvis vi bytter inndeling
+  const currentInndeling = useState(currentlyEditingInndelinger[0]);
+
+  useEffect(() => {
+    if (currentInndeling[0] !== currentlyEditingInndelinger[0]) {
+      closeOverlayPanel();
+    }
+  }, [closeOverlayPanel, currentInndeling, currentlyEditingInndelinger]);
 
   const triggerRevalidateOnChangeAfterSubmit = ({ onChange, ...restProps }: InputProps) => {
     return {
