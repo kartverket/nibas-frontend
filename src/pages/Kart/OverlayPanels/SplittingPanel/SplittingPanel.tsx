@@ -12,13 +12,13 @@ import {
 } from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { PanelHeader, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
-import { useSplittingForm, SplittingForm } from "./useSplittingForm";
+import { SplittingForm, useSplittingForm } from "./useSplittingForm";
 
 const NyKretsField = styled.div`
   display: flex;
@@ -57,7 +57,6 @@ export const SplittingPanel = () => {
     register,
     append,
     remove,
-    resetSplitting,
     addSplittingRequestToHistory,
     getValues,
     handleOpprinneligKretsChange,
@@ -67,15 +66,14 @@ export const SplittingPanel = () => {
     isSubmitted,
   } = useSplittingForm(currentlyEditingInndelinger[0]);
 
-  // TODO: Kan vi trigge reset på en bedre måte enn useEffect her? Bruk av useEffect til dette gjør at vi trenger fler rerenders og kan fort føre til bugs og dårlig ytelse
-  useEffect(() => {
-    resetSplitting();
-  }, [currentlyEditingInndelinger, resetSplitting]); // Vi ønsker å kalle reset hvis vi bytter inndeling
+  // Vi ønsker å lukke panelet hvis vi bytter inndeling
+  const currentInndeling = useState(currentlyEditingInndelinger[0]);
 
-  const closeAndResetForm = () => {
-    closeOverlayPanel();
-    resetSplitting();
-  };
+  useEffect(() => {
+    if (currentInndeling[0] !== currentlyEditingInndelinger[0]) {
+      closeOverlayPanel();
+    }
+  }, [closeOverlayPanel, currentInndeling, currentlyEditingInndelinger]);
 
   const triggerRevalidateOnChangeAfterSubmit = ({ onChange, ...restProps }: InputProps) => {
     return {
@@ -120,7 +118,7 @@ export const SplittingPanel = () => {
 
   return (
     <SidePanel>
-      <PanelHeader onClose={closeAndResetForm}>Splitt flate</PanelHeader>
+      <PanelHeader onClose={closeOverlayPanel}>Splitt flate</PanelHeader>
 
       <Stack spacing={8}>
         <FormControl>
@@ -216,7 +214,7 @@ export const SplittingPanel = () => {
               </Button>
             </Stack>
             <StyledButtonGroup>
-              <Button variant="tertiary" onClick={closeAndResetForm}>
+              <Button variant="tertiary" onClick={() => closeOverlayPanel()}>
                 Avbryt
               </Button>
               <Button
