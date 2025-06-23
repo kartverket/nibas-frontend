@@ -27,6 +27,7 @@ import { datestringToFormattedDatestring } from "../OverlayPanels/Grenseinformas
 import { map } from "../constants";
 import { CollectionEvent } from "ol/Collection";
 import { Interaction } from "ol/interaction";
+import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
   const { currentlyEditingInndelinger } = useInndelinger();
@@ -247,7 +248,13 @@ const useDraw = () => {
     const onDrawEnd = async (e: DrawEvent) => {
       const drawnFeature = e.feature as Feature<LineString>;
       const drawnFeatureGeometry = drawnFeature.getGeometry();
-
+      // Avrund koordinater ved bruk av roundToNearestHalf
+      if (drawnFeatureGeometry instanceof LineString) {
+        const coordinates = drawnFeatureGeometry.getCoordinates().map((coordinate) => {
+          return [roundToNearestHalf(coordinate[0]), roundToNearestHalf(coordinate[1])];
+        });
+        drawnFeatureGeometry.setCoordinates(coordinates);
+      }
       // Skal ikke være mulig da tegneverktøyet bare skal være tilgjengelig i redigering
       if (
         currentlyEditingInndelinger.length === 0 ||
