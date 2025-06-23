@@ -23,6 +23,7 @@ import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
+import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
@@ -195,7 +196,16 @@ const useModify = () => {
 
   useEffect(() => {
     const addModificationToHistory = (features: Feature<Geometry>[]) => {
+      // Avrunder koordinatene til nærmeste halve cm, maks 3 desimaler før lagring i historikken
       if (features.length > 0) {
+        features.forEach((feature) => {
+          const geometry = feature.getGeometry();
+          if (geometry != null && geometry instanceof LineString) {
+            const coords = geometry.getCoordinates();
+            const rounded = coords.map((coord) => [roundToNearestHalf(coord[0]), roundToNearestHalf(coord[1])]);
+            geometry.setCoordinates(rounded);
+          }
+        });
         addHistoryEntry({
           type: "grense",
           changes: createGrenseHistoryChange(features),
