@@ -68,6 +68,21 @@ const Header = () => {
 
   useKeyboardShortcut("open", () => toggleOverlayModal(utkast ? "inndelinger" : "inndelinger-view"));
 
+  function getInndelingsTypeString(inndelingtype: "fylke" | "kommune" | "stemmekrets" | "grunnkrets", antall: number) {
+    switch (inndelingtype) {
+      case "fylke":
+        return antall > 1 ? "fylkene" : "fylket";
+      case "kommune":
+        return antall > 1 ? "kommunene" : "kommunen";
+      case "stemmekrets":
+        return "stemmekretser";
+      case "grunnkrets":
+        return "grunnkretser";
+      default:
+        return "";
+    }
+  }
+
   return (
     <Container>
       <UtkastBar>
@@ -118,16 +133,7 @@ const Header = () => {
           {utkast &&
             (activeFylker && activeFylker.length > 0 && currentlyEditingInndelinger.length > 0 ? (
               <Flex alignItems="center" gap={1} padding="0 12px">
-                {activeFylker.length <= 4 && (
-                  <>
-                    <Text sx={{ color: "gray.600" }}>Redigerer</Text>
-                    <InndelingText sx={{ color: "gray.600" }}>
-                      {currentlyEditingInndelinger[0].inndelingtype}
-                      {(currentlyEditingInndelinger[0].inndelingtype === "stemmekrets" ||
-                        currentlyEditingInndelinger[0].inndelingtype === "grunnkrets") && <span>er i</span>}
-                    </InndelingText>
-                  </>
-                )}
+                {/* Kommuner */}
                 {activeKommuner && activeKommuner.length > 0 && (
                   <TextWrapper>
                     {activeKommuner.length > 4 ? (
@@ -138,10 +144,12 @@ const Header = () => {
                           </p>
                         ))}
                       >
-                        <InndelingText>{activeKommuner.length} inndelinger redigeres</InndelingText>
+                        <InndelingText>{activeKommuner.length} kommuner redigeres</InndelingText>
                       </Tooltip>
                     ) : (
-                      <InndelingText>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
+                      <InndelingText>
+                        {`Redigerer ${getInndelingsTypeString(currentlyEditingInndelinger[0].inndelingtype, currentlyEditingInndelinger.length)} ${currentlyEditingInndelinger[0].inndelingtype === "kommune" || currentlyEditingInndelinger[0].inndelingtype === "fylke" ? "" : "i"} ${getReadableStringFromKommuner(activeKommuner)}`}
+                      </InndelingText>
                     )}
                   </TextWrapper>
                 )}
@@ -161,7 +169,7 @@ const Header = () => {
                       </Tooltip>
                     ) : (
                       <InndelingText>
-                        {activeFylker.map((f) => inndelingResponseNavnToString(f.navn)).join(", ")}
+                        {`Redigerer ${getInndelingsTypeString(currentlyEditingInndelinger[0].inndelingtype, currentlyEditingInndelinger.length)} ${currentlyEditingInndelinger[0].inndelingtype === "kommune" || currentlyEditingInndelinger[0].inndelingtype === "fylke" ? "" : "i"} ${activeFylker.map((f) => inndelingResponseNavnToString(f.navn)).join(", ")}`}
                       </InndelingText>
                     )}
                   </TextWrapper>
