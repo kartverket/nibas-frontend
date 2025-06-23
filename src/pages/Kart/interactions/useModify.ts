@@ -158,12 +158,11 @@ const useModify = () => {
     const createAddPointGrenseEntry = (ev: BaseEvent) => {
       const changedFeature = ev.target as Feature<Geometry>;
       if (changedFeature.getGeometry() instanceof LineString) {
-        // Avrund koordinater ved bruk av roundToNearestHalf
-        if (changedFeature instanceof LineString) {
-          const coordinates = changedFeature.getCoordinates().map((coordinate) => {
-            return [roundToNearestHalf(coordinate[0]), roundToNearestHalf(coordinate[1])];
-          });
-          changedFeature.setCoordinates(coordinates);
+        const geometry = changedFeature.getGeometry();
+        if (geometry != null && geometry instanceof LineString) {
+          const coords = geometry.getCoordinates();
+          const roundedCoords = coords.map((c) => [roundToNearestHalf(c[0]), roundToNearestHalf(c[1])]);
+          geometry.setCoordinates(roundedCoords);
         }
         addToast();
         addHistoryEntry({
