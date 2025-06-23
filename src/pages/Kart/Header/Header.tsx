@@ -118,16 +118,18 @@ const Header = () => {
           {utkast &&
             (activeFylker && activeFylker.length > 0 && currentlyEditingInndelinger.length > 0 ? (
               <Flex alignItems="center" gap={1} padding="0 12px">
-                <Text sx={{ color: "gray.600" }}>Redigerer</Text>
-                <InndelingText sx={{ color: "gray.600" }}>
-                  {currentlyEditingInndelinger[0].inndelingtype}
-                  {(currentlyEditingInndelinger[0].inndelingtype === "stemmekrets" ||
-                    currentlyEditingInndelinger[0].inndelingtype === "grunnkrets") && (
-                    <Text sx={{ color: "gray.600" }}>er i</Text>
-                  )}
-                </InndelingText>
+                {activeFylker.length <= 4 && (
+                  <>
+                    <Text sx={{ color: "gray.600" }}>Redigerer</Text>
+                    <InndelingText sx={{ color: "gray.600" }}>
+                      {currentlyEditingInndelinger[0].inndelingtype}
+                      {(currentlyEditingInndelinger[0].inndelingtype === "stemmekrets" ||
+                        currentlyEditingInndelinger[0].inndelingtype === "grunnkrets") && <span>er i</span>}
+                    </InndelingText>
+                  </>
+                )}
                 {activeKommuner && activeKommuner.length > 0 && (
-                  <Text fontWeight="600">
+                  <TextWrapper>
                     {activeKommuner.length > 4 ? (
                       <Tooltip
                         label={activeKommuner.map((kommune) => (
@@ -141,12 +143,12 @@ const Header = () => {
                     ) : (
                       <InndelingText>{getReadableStringFromKommuner(activeKommuner)}</InndelingText>
                     )}
-                  </Text>
+                  </TextWrapper>
                 )}
 
                 {/* Fylker */}
                 {activeFylker.length > 0 && (!activeKommuner || activeKommuner.length === 0) && (
-                  <Text fontWeight="600">
+                  <TextWrapper>
                     {activeFylker.length > 4 ? (
                       <Tooltip
                         label={activeFylker.map((fylke) => (
@@ -162,7 +164,7 @@ const Header = () => {
                         {activeFylker.map((f) => inndelingResponseNavnToString(f.navn)).join(", ")}
                       </InndelingText>
                     )}
-                  </Text>
+                  </TextWrapper>
                 )}
               </Flex>
             ) : (
@@ -177,6 +179,10 @@ const Header = () => {
 const InndelingText = styled(Text)<{ $isBold?: boolean }>`
   ${(props) => props.$isBold === true && "font-weight: var(--kvib-fontWeights-bold)"};
   display: flex;
+`;
+
+const TextWrapper = styled.div`
+  font-weight: 600;
 `;
 
 const Container = styled.div`
