@@ -23,6 +23,7 @@ import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
+import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
@@ -157,6 +158,25 @@ const useModify = () => {
     const createAddPointGrenseEntry = (ev: BaseEvent) => {
       const changedFeature = ev.target as Feature<Geometry>;
       if (changedFeature.getGeometry() instanceof LineString) {
+        const geometry = changedFeature.getGeometry();
+        // Avrunder bare det nye punktet som er lagt til
+        if (geometry != null && geometry instanceof LineString) {
+          const prevCoords = changedFeature.get(previousCoordinateKey) as [number, number][];
+          const newCoords = geometry.getCoordinates();
+
+          if (prevCoords != null && newCoords.length > prevCoords.length) {
+            // Finn det nye punktet
+            const updatedCoords = [...newCoords];
+            const newPoint = updatedCoords.find(
+              (coord) => !prevCoords.some((prev) => prev[0] === coord[0] && prev[1] === coord[1]),
+            );
+            if (newPoint) {
+              const idx = updatedCoords.findIndex((coord) => coord[0] === newPoint[0] && coord[1] === newPoint[1]);
+              updatedCoords[idx] = [roundToNearestHalf(newPoint[0]), roundToNearestHalf(newPoint[1])];
+              geometry.setCoordinates(updatedCoords);
+            }
+          }
+        }
         addToast();
         addHistoryEntry({
           type: "grense",
