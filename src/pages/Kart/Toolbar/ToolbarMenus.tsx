@@ -32,7 +32,7 @@ const ToolbarMenus = () => {
 
   // TODO Sjekk om vi kan fjerne ubrukte inndelinger
   const flatedataIsAvailable =
-    getAllInndelinger().filter((inndeling) => inndeling.isViewing || inndeling.isEditing).length > 0;
+    getAllInndelinger().filter((inndeling) => inndeling.isViewing === true || inndeling.isEditing === true).length > 0;
 
   const toggleMovePoint = () => {
     toggleTool("koordinater");
@@ -178,6 +178,7 @@ const ToolbarMenus = () => {
       isDisabled: !mergeIsAvailable,
       onClick: () => toggleOverlayPanel("sammenslåing"),
       "aria-label": "Slå sammen stemmekretser",
+      tooltipTextOverride: "Åpne stemmekretser for å slå sammen",
     },
     {
       label: "Splitt flate",
@@ -205,7 +206,7 @@ const ToolbarMenus = () => {
               {punktMenuItems.map((pmi) =>
                 pmi.isDisabled ? (
                   <CustomTooltip
-                    text="Åpne en inndeling for å aktivere"
+                    text={pmi.tooltipTextOverride ?? "Åpne en inndeling for å aktivere"}
                     aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
                     key={pmi.label}
                   >
@@ -230,7 +231,7 @@ const ToolbarMenus = () => {
               {grenseMenuItems.map((gmi) =>
                 gmi.isDisabled ? (
                   <CustomTooltip
-                    text="Åpne en inndeling for å aktivere"
+                    text={gmi.tooltipTextOverride ?? "Åpne en inndeling for å aktivere"}
                     aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
                     key={gmi.label}
                   >
@@ -255,7 +256,7 @@ const ToolbarMenus = () => {
               {flateMenuItems.map((fmi) =>
                 fmi.isDisabled ? (
                   <CustomTooltip
-                    text="Åpne en inndeling for å aktivere"
+                    text={fmi.tooltipTextOverride ?? "Åpne en inndeling for å aktivere"}
                     aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
                     key={fmi.label}
                   >
@@ -288,7 +289,7 @@ const ToolbarMenus = () => {
               {punktMenuItems.map((pmi) =>
                 pmi.isDisabled ? (
                   <CustomTooltip
-                    text="Åpne en inndeling for å aktivere"
+                    text={pmi.tooltipTextOverride ?? "Åpne en inndeling for å aktivere"}
                     aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
                     key={pmi.label}
                   >
@@ -306,7 +307,7 @@ const ToolbarMenus = () => {
               {grenseMenuItems.map((gmi) =>
                 gmi.isDisabled ? (
                   <CustomTooltip
-                    text="Åpne en inndeling for å aktivere"
+                    text={gmi.tooltipTextOverride ?? "Åpne en inndeling for å aktivere"}
                     aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
                     key={gmi.label}
                   >
@@ -324,7 +325,7 @@ const ToolbarMenus = () => {
               {flateMenuItems.map((fmi) =>
                 fmi.isDisabled ? (
                   <CustomTooltip
-                    text="Åpne en inndeling for å aktivere"
+                    text={fmi.tooltipTextOverride ?? "Åpne en inndeling for å aktivere"}
                     aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
                     key={fmi.label}
                   >
