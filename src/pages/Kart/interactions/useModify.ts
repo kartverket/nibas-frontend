@@ -18,7 +18,10 @@ import { FeatureProperties, Metadata } from "types/api";
 import { isFeatureEditable, isFeatureToBeArchived, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { isAdministrativGrense } from "utils/grenser";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
-import { isTeiggrenseMetadata } from "../OverlayPanels/GrenseinformasjonPanel/Matrikkelgrenseinformasjon";
+import {
+  isTeiggrenseMetadataWFS,
+  isTeiggrenseMetadata,
+} from "../OverlayPanels/GrenseinformasjonPanel/Matrikkelgrenseinformasjon";
 import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
@@ -228,34 +231,33 @@ const useModify = () => {
       if (targetFeatures.length === 1) {
         const featureProperties = targetFeatures[0].getProperties();
         let targetLineStringPosisjonskvalitet: ContextualPosisjonskvalitet | undefined;
-
-        if (!isTeiggrenseMetadata(featureProperties)) {
+        if (isTeiggrenseMetadata(featureProperties)) {
+          targetLineStringPosisjonskvalitet = {
+            grensetype: "teig",
+            maalemetode: featureProperties.malemetodeId?.toString(),
+            noeyaktighet: featureProperties.noyaktighet ?? undefined,
+          };
+        } else if (isTeiggrenseMetadataWFS(featureProperties)) {
+          targetLineStringPosisjonskvalitet = {
+            grensetype: "teig",
+            maalemetode: featureProperties.MALEMETODE?.toString(),
+            noeyaktighet: featureProperties.NOYAKTIGHET ?? undefined,
+          };
+        } else {
           const posisjonskvalitet = ((featureProperties as FeatureProperties).metadata as Metadata).commonGrense
             ?.posisjonskvalitet;
-
           targetLineStringPosisjonskvalitet = {
             grensetype: "nibas",
             maalemetode: posisjonskvalitet?.maalemetode.id,
             noeyaktighet: posisjonskvalitet?.noeyaktighet,
           };
-        } else {
-          if (typeof featureProperties.malemetodeId === "number" && typeof featureProperties.noyaktighet === "number") {
-            targetLineStringPosisjonskvalitet = {
-              grensetype: "teig",
-              maalemetode: featureProperties.malemetodeId.toString(),
-              noeyaktighet: featureProperties.noyaktighet,
-            };
-          }
         }
-
-        if (targetLineStringPosisjonskvalitet) {
-          const snappedPosisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> =
-            actingLineString.get("snapData") ?? new Map();
-          actingLineString.set(
-            "snapData",
-            snappedPosisjonskvaliteter.set(pointCoords.toString(), targetLineStringPosisjonskvalitet),
-          );
-        }
+        const snappedPosisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> =
+          actingLineString.get("snapData") ?? new Map();
+        actingLineString.set(
+          "snapData",
+          snappedPosisjonskvaliteter.set(pointCoords.toString(), targetLineStringPosisjonskvalitet),
+        );
       }
     };
 

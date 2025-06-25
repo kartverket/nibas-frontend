@@ -219,7 +219,11 @@ export const useAvvikPanel = () => {
   useEffect(() => {
     handleInndelingForAvvik();
   }, [handleInndelingForAvvik]);
-
+  useEffect(() => {
+    return () => {
+      setShouldZoom(true); // Resetter shouldZoom når avvikspanelet unmountes så ved f.eks nytt inndelingsvalg zoomer vi som vanlig
+    };
+  }, [setShouldZoom]);
   // ========== Hvis inndeling allerede valgt henter vi automatisk avvik for den kommunen ==========
   useEffect(() => {
     if (activeOverlayModal === "inndelinger") {
