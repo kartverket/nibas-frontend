@@ -12,6 +12,8 @@ import { map } from "pages/Kart/constants";
 import { getFeaturesFromGeoJson } from "./geoJson";
 import { mapProjectionEPSGCode } from "./projections";
 import { addFeaturesToSource } from "./source";
+import { LineString } from "ol/geom";
+import { roundToNearestHalf } from "pages/Kart/OverlayPanels/NavigasjonPanel/koordinater-utils";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
 
@@ -77,6 +79,15 @@ export const getMatrikkelFeatures = async () => {
     const fetchedFeatures = getFeaturesFromGeoJson(json);
     if (fetchedFeatures.length > 0) {
       clearMatrikkelLayer();
+      // avrund alle koordinater til 3 desimaler via roundToNearestHalf
+      fetchedFeatures.forEach((feature) => {
+        const geometry = feature.getGeometry();
+        if (geometry != null && geometry instanceof LineString) {
+          const coords = geometry.getCoordinates();
+          const rounded = coords.map((coord) => [roundToNearestHalf(coord[0]), roundToNearestHalf(coord[1])]);
+          geometry.setCoordinates(rounded);
+        }
+      });
       addFeaturesToSource("matrikkel", fetchedFeatures);
       return fetchedFeatures;
     } else {
