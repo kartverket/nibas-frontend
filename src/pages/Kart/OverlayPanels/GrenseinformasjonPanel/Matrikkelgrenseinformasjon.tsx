@@ -27,36 +27,31 @@ const TeiggrenseProperty = styled.div`
   row-gap: 8px;
 `;
 
-type OldTeiggrenseMetadata = {
-  BUE?: number | string | null;
+type TeiggrenseMetadataWFS = {
+  BUE?: number | null;
   KOMMUNENR?: string | null;
-  MALEMETODE?: number | string | null;
-  NOYAKTIGHET?: number | string | null;
-  NOYAKTIGHETSKLASSE?: number | string | null;
-  OMTVISTET?: string | number | null;
-  TEIGGRENSEID?: number | string | null;
-  TEIGGRENSETYPE?: string | null;
-  geometry?: unknown;
+  MALEMETODE?: number | null;
+  NOYAKTIGHET?: number | null;
+  NOYAKTIGHETSKLASSE?: number | null;
+  OMTVISTET?: number | null;
+  TEIGGRENSEID: number;
+  TEIGGRENSETYPE?: number | null;
+  geometry?: LineString | null;
 };
-
-const teiggrenseMetadataValues = [
-  "id",
-  "kommunenr1",
-  "kommunenr2",
-  "hjelpelinjetypeId",
-  "administrativgrensekodeId",
-  "malemetodeId",
-  "noyaktighet",
-  "lagretNoyaktighetsklasse",
-  "omtvistet",
-] as const;
-
 type TeiggrenseMetadata = {
-  [K in (typeof teiggrenseMetadataValues)[number]]: number | string | null;
+  id: number;
+  kommunenr1: string | null;
+  kommunenr2: string | null;
+  hjelpelinjetypeId: number | null;
+  administrativgrensekodeId: number | null;
+  malemetodeId: number | null;
+  noyaktighet: number | null;
+  lagretNoyaktighetsklasse: number | null;
+  omtvistet: boolean | null;
 };
-// 27.05.2025 Kan vel fjerne oldTeiggrensemetadata når vi en gang skroter innhenting via matrikkelWFS og kun bruker arbeidslisteAPI'et
+// 27.05.2025 Kan vel fjerne TeiggrenseMetadataWFS når vi en gang skroter innhenting via matrikkelWFS og kun bruker arbeidslisteAPI'et
 // Sjekk om grensa er på gammelt format
-const isOldTeiggrenseMetadata = (value: object): boolean => {
+export const isTeiggrenseMetadataWFS = (value: object): value is TeiggrenseMetadataWFS => {
   const oldKeys = [
     "BUE",
     "KOMMUNENR",
@@ -72,7 +67,7 @@ const isOldTeiggrenseMetadata = (value: object): boolean => {
 };
 
 // Mapper fra gammelt til nytt format
-const mapOldToNewTeiggrenseMetadata = (oldObj: OldTeiggrenseMetadata): TeiggrenseMetadata => {
+const mapWFSToNewTeiggrenseMetadata = (oldObj: TeiggrenseMetadataWFS): TeiggrenseMetadata => {
   let kommunenr1: string | null = null;
   let kommunenr2: string | null = null;
   if (typeof oldObj.KOMMUNENR === "string") {
@@ -84,20 +79,28 @@ const mapOldToNewTeiggrenseMetadata = (oldObj: OldTeiggrenseMetadata): Teiggrens
   }
 
   return {
-    id: typeof oldObj.TEIGGRENSEID === "number" ? oldObj.TEIGGRENSEID : null,
+    id: oldObj.TEIGGRENSEID,
     kommunenr1,
     kommunenr2,
-    hjelpelinjetypeId: oldObj.TEIGGRENSETYPE != null ? parseInt(oldObj.TEIGGRENSETYPE, 10) : null,
+    hjelpelinjetypeId: oldObj.TEIGGRENSETYPE ?? null,
     administrativgrensekodeId: null,
     malemetodeId: oldObj.MALEMETODE ?? null,
     noyaktighet: oldObj.NOYAKTIGHET ?? null,
     lagretNoyaktighetsklasse: oldObj.NOYAKTIGHETSKLASSE ?? null,
-    omtvistet: oldObj.OMTVISTET === "1" ? 1 : 0,
+    omtvistet: oldObj.OMTVISTET == null ? null : oldObj.OMTVISTET === 1 ? true : false,
   };
 };
-
+const requiredKeys = [
+  "id",
+  "kommunenr1",
+  "kommunenr2",
+  "hjelpelinjetypeId",
+  "administrativgrensekodeId",
+  "malemetodeId",
+  "noyaktighet",
+  "lagretNoyaktighetsklasse",
+] as const;
 // Type guard for nytt format
-const requiredKeys = teiggrenseMetadataValues.filter((k) => k !== "omtvistet");
 export const isTeiggrenseMetadata = (value: object): value is TeiggrenseMetadata => {
   return requiredKeys.every((key) => key in value);
 };
@@ -136,12 +139,9 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
   const featureProperties = feature.getProperties();
   let teiggrenseProperties: TeiggrenseMetadata | null = null;
   if (isTeiggrenseMetadata(featureProperties)) {
-    teiggrenseProperties = {
-      ...featureProperties,
-      omtvistet: featureProperties.omtvistet ?? null,
-    };
-  } else if (isOldTeiggrenseMetadata(featureProperties)) {
-    teiggrenseProperties = mapOldToNewTeiggrenseMetadata(featureProperties);
+    teiggrenseProperties = featureProperties as TeiggrenseMetadata;
+  } else if (isTeiggrenseMetadataWFS(featureProperties)) {
+    teiggrenseProperties = mapWFSToNewTeiggrenseMetadata(featureProperties);
   }
   const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
   const maalemetode = matrikkelkodeliste?.maalemetodeKodeliste.find(
@@ -199,7 +199,7 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
             )}
           </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label="Omtvistet">
-            {teiggrenseProperties.omtvistet == null || teiggrenseProperties.omtvistet === 0 ? "Nei" : "Ja"}
+            {teiggrenseProperties.omtvistet === true ? "Ja" : "Nei"}
           </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label={"Hjelpelinjetype"}>
             {hjelpelinjetype != null ? `${hjelpelinjetype.navn}` : <ItalicText>Ikke oppgitt </ItalicText>}
