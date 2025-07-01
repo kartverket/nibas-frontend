@@ -20,7 +20,7 @@ const HeaderHistoryOperations = () => {
   const { toggleOverlayPanel } = useOverlayPanel();
   const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
-  const [showAvvikBtn, setShowAvvikBtn] = useState(false);
+  const [showAvvikBtn, setShowAvvikBtn] = useState(true);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (window as any).toggleAvvik = () => setShowAvvikBtn(!showAvvikBtn);
   const handleSave = async () => {
