@@ -281,6 +281,8 @@ const useModify = () => {
             noeyaktighet: posisjonskvalitet?.noeyaktighet,
           };
         }
+        // Vi må runde av koordinatene til 3 desimaler (nærmeste halve cm)
+        pointCoords = [roundToNearestHalf(pointCoords[0]), roundToNearestHalf(pointCoords[1])];
         const snappedPosisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> =
           actingLineString.get("snapData") ?? new Map();
         actingLineString.set(
