@@ -120,7 +120,13 @@ export const getPropertiesForDuplicateOfFeature = (
 ): FeatureProperties | undefined => {
   const newDefaultFeatureProperties = getDefaultFeatureProperties(asGrenseType);
   if (newDefaultFeatureProperties != null) {
-    if (!isTeigFeature(originalFeature)) {
+    if (isTeigFeature(originalFeature) === true) {
+      return {
+        ...newDefaultFeatureProperties,
+        type: asGrenseType,
+        kontekstEgenskaper: [],
+      };
+    } else {
       const copiedFeatureProperties = originalFeature.getProperties() as FeatureProperties;
       const newDefaultMetadata = newDefaultFeatureProperties.metadata as Metadata;
       const copiedMetadata = copiedFeatureProperties.metadata as Metadata;
@@ -147,6 +153,40 @@ export const getPropertiesForDuplicateOfFeature = (
   }
 };
 
+export const createDuplicateOfTeigFeature = (
+  feature: Feature<Geometry>,
+  asGrenseType: GrenseType,
+  maalemetodeId?: string,
+  noeyaktighet?: number,
+): Feature<Geometry> => {
+  const duplicateFeature = feature.clone();
+  duplicateFeature.setId(getTempFeatureId());
+
+  const defaultProps = getDefaultFeatureProperties(asGrenseType);
+  if (defaultProps == null) {
+    return duplicateFeature;
+  }
+
+  const posisjonskvalitet: Posisjonskvalitet = {
+    maalemetode: { id: maalemetodeId, href: "" },
+    noeyaktighet: noeyaktighet,
+  };
+
+  duplicateFeature.setProperties({
+    ...defaultProps,
+    type: asGrenseType,
+    kontekstEgenskaper: [],
+    metadata: {
+      ...(defaultProps.metadata as Metadata),
+      commonGrense: {
+        ...((defaultProps.metadata as Metadata)?.commonGrense ?? {}),
+        posisjonskvalitet,
+      },
+    },
+  });
+
+  return duplicateFeature;
+};
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) {
     return;
