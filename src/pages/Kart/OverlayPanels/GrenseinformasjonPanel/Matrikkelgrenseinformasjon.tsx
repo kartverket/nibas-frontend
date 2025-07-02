@@ -38,7 +38,7 @@ type TeiggrenseMetadataWFS = {
   TEIGGRENSETYPE?: number | null;
   geometry?: LineString | null;
 };
-type TeiggrenseMetadata = {
+export type TeiggrenseMetadata = {
   id: number;
   kommunenr1: string | null;
   kommunenr2: string | null;
@@ -67,7 +67,7 @@ export const isTeiggrenseMetadataWFS = (value: object): value is TeiggrenseMetad
 };
 
 // Mapper fra gammelt til nytt format
-const mapWFSToNewTeiggrenseMetadata = (oldObj: TeiggrenseMetadataWFS): TeiggrenseMetadata => {
+export const mapWFSToNewTeiggrenseMetadata = (oldObj: TeiggrenseMetadataWFS): TeiggrenseMetadata => {
   let kommunenr1: string | null = null;
   let kommunenr2: string | null = null;
   if (typeof oldObj.KOMMUNENR === "string") {
@@ -90,6 +90,7 @@ const mapWFSToNewTeiggrenseMetadata = (oldObj: TeiggrenseMetadataWFS): Teiggrens
     omtvistet: oldObj.OMTVISTET == null ? null : oldObj.OMTVISTET === 1 ? true : false,
   };
 };
+
 const requiredKeys = [
   "id",
   "kommunenr1",
@@ -110,8 +111,8 @@ type Props = {
 const TeiggrensePropertyRow = ({ label, children }: Props) => {
   return (
     <TeiggrenseProperty>
-      <Text as="b">{label}</Text>
-      <Text>{children}</Text>
+      <TextWrapperLabel as="b">{label}</TextWrapperLabel>
+      <TextWrapper>{children}</TextWrapper>
     </TeiggrenseProperty>
   );
 };
@@ -171,7 +172,7 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
             )}
           </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label={teiggrenseProperties.kommunenr2 != null ? "Kommuner" : "Kommune"}>
-            <Text>
+            <TextWrapper>
               {teiggrenseProperties.kommunenr1 != null && teiggrenseProperties.kommunenr2 != null ? (
                 `${teiggrenseProperties.kommunenr1}, ${teiggrenseProperties.kommunenr2}`
               ) : teiggrenseProperties.kommunenr1 != null ? (
@@ -179,7 +180,7 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
               ) : (
                 <ItalicText>Ikke oppgitt</ItalicText>
               )}
-            </Text>
+            </TextWrapper>
           </TeiggrensePropertyRow>
           <TeiggrensePropertyRow label={"Målemetode"}>
             {maalemetode != null ? `${maalemetode.navn}` : <ItalicText>Ikke oppgitt. Se nøyaktighetsklasse</ItalicText>}
@@ -214,3 +215,9 @@ export const TeiggrenseInformasjon = ({ feature, onClose }: TeiggrenseInformasjo
     </GrensePanelContent>
   );
 };
+const TextWrapperLabel = styled.div`
+  font-weight: 1000;
+`;
+const TextWrapper = styled.div`
+  font-weight: 600;
+`;
