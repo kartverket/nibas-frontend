@@ -70,7 +70,9 @@ export const EndringsloggAccordion = ({ utkast, isOpen }: EndringsloggAccordionP
                 endringer={endringer}
               />
             ))}
-            {kommunendringer?.map((endringer) => <EndringerForFylke key={endringer.nummer} endringer={endringer} />)}
+            {kommunendringer?.map((endringer) => (
+              <EndringerForFylke key={endringer.nummer} endringer={endringer} />
+            ))}
             {endringerutentilhorighet && <EndringerUtenTilhorighet endringer={endringerutentilhorighet} />}
           </ListWithNoDot>
         </AccordionPanel>
