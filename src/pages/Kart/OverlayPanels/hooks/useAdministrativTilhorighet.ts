@@ -58,16 +58,20 @@ export const useAdministrativTilhorighet = (feature: Feature, kontekstType: Kont
   } = useTilhorighetForm(feature, kontekstType);
   const { currentlyEditingInndelinger } = useInndelinger();
 
-  const kommunerId = useMemo(
-    () =>
+  // Sjekker både kontekstEgenskaper og currentlyEditingInndelinger for å få med alle kommunerId
+  const kommunerId = useMemo(() => {
+    const fromKontekst =
       getKommunerIdFromKontekstEgenskaper(
         (feature.getProperties() as FeatureProperties).kontekstEgenskaper.filter(
           (k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN,
         ),
         kontekstType,
-      ) ?? (currentlyEditingInndelinger?.length ? currentlyEditingInndelinger.map((i) => i.id) : []),
-    [feature, kontekstType, currentlyEditingInndelinger],
-  );
+      ) ?? [];
+    const fromInndelinger = currentlyEditingInndelinger?.map((i) => i.id) ?? [];
+    // Slå sammen kommuneid'er fra kontekstegenskaper og inndelinger og fjern duplikater
+    const allIds = Array.from(new Set([...fromKontekst, ...fromInndelinger]));
+    return allIds.length > 0 ? allIds : [""];
+  }, [feature, kontekstType, currentlyEditingInndelinger]);
 
   const { isLoading: isLoadingA, muligeKretser: muligeKretserA } = useGetMuligeKretserForAdministrativGrense(
     kontekstType,
