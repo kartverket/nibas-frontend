@@ -66,7 +66,9 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
                   kretstype={KontekstType.GRUNNKRETS}
                 />
               ))}
-              {kommunendringer?.map((endringer) => <EndringerForFylke key={endringer.nummer} endringer={endringer} />)}
+              {kommunendringer?.map((endringer) => (
+                <EndringerForFylke key={endringer.nummer} endringer={endringer} />
+              ))}
               {endringerutentilhorighet && <EndringerUtenTilhorighet endringer={endringerutentilhorighet} />}
             </EndringUnstyledList>
           </Stack>
