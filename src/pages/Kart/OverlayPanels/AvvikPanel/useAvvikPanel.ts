@@ -157,6 +157,11 @@ export const useAvvikPanel = () => {
       return;
     }
     setSecondKommuneId(secondKommuneFromRow.kommuneLokalID);
+    // Legg til fylkeid hvis det er kommune fra et annet fylke enn det som er valgt
+    const fylkeId = secondKommuneFromRow.fylkesLokalID;
+    if (fylkeId != null && !selectedFylkeIds.includes(fylkeId)) {
+      setSelectedFylkeIds([...selectedFylkeIds, fylkeId]);
+    }
   };
 
   const handleInndelingForAvvik = useCallback(() => {
