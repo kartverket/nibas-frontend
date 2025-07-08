@@ -6,7 +6,12 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useState } from "react";
-import { anyFeatureIsEditable, createDuplicateOfFeature, mergeFeaturesToNewFeature } from "utils/features";
+import {
+  anyFeatureIsEditable,
+  createDuplicateOfFeature,
+  createDuplicateOfTeigFeature,
+  mergeFeaturesToNewFeature,
+} from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
@@ -19,10 +24,17 @@ import ToolbarPopup from "./ToolbarPopup";
 
 import { HistoryChange } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
-import { LineString } from "ol/geom";
+import { Geometry, LineString } from "ol/geom";
 import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
 import { FeatureProperties } from "types/api";
 import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
+import useNibasApi from "hooks/useNibasApi";
+import {
+  isTeiggrenseMetadata,
+  isTeiggrenseMetadataWFS,
+  mapWFSToNewTeiggrenseMetadata,
+  TeiggrenseMetadata,
+} from "../OverlayPanels/GrenseinformasjonPanel/Matrikkelgrenseinformasjon";
 
 const ToolbarPopups = () => {
   const [matrikkelIsLoading, setMatrikkelIsLoading] = useState(false);
@@ -51,10 +63,48 @@ const ToolbarPopups = () => {
     });
   };
 
+  const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
+  const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
   const duplicateFeaturesToEditLayer = () => {
     const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
     if (grenseType != null) {
-      const duplicateFeatures = selectedFeatures.map((sf) => createDuplicateOfFeature(sf, grenseType));
+      const duplicateFeatures = selectedFeatures
+        .map((sf) => {
+          const properties = sf.getProperties();
+          if (isTeiggrenseMetadataWFS(properties) || isTeiggrenseMetadata(properties)) {
+            let teiggrense: TeiggrenseMetadata | null = null;
+            if (isTeiggrenseMetadataWFS(properties)) {
+              teiggrense = mapWFSToNewTeiggrenseMetadata(properties);
+            } else if (isTeiggrenseMetadata(properties)) {
+              teiggrense = properties;
+            }
+            if (!teiggrense || !matrikkelkodeliste || !kodeliste) {
+              return null;
+            }
+
+            const maalemetode = teiggrense.malemetodeId;
+            const noeyaktighet = teiggrense.noyaktighet ?? undefined;
+
+            let maalemetodeId: string | undefined = undefined;
+            if (maalemetode != null) {
+              const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find(
+                (item) => item.id?.toString() === maalemetode?.toString(),
+              );
+              if (matrikkelMaalemetode) {
+                const match = kodeliste.items.find((item) => item.kode === matrikkelMaalemetode.kodeverdi);
+                if (match) {
+                  maalemetodeId = match.id;
+                }
+              }
+            }
+            // Egen for teiggrenser for å kopiere målemetode og nøyaktighet
+            return createDuplicateOfTeigFeature(sf, grenseType, maalemetodeId, noeyaktighet);
+          }
+          // Vanlig duplisering for andre grenser
+          return createDuplicateOfFeature(sf, grenseType);
+        })
+        .filter((f): f is Feature<Geometry> => f != null);
+
       if (duplicateFeatures.length > 0) {
         addFeaturesToSource("edit", duplicateFeatures);
         addHistoryEntry({
