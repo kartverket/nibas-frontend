@@ -23,7 +23,6 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { format, isBefore, isSameDay } from "date-fns";
-import { on } from "events";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
