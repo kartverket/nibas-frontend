@@ -95,6 +95,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       try {
         const wrapper = (await response.json()) as ApiErrorResponse;
         setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
+        // TS-2248: Lukker modalen her da den ikke er tilgjengelig via context.
+        onClose();
       } catch {
         // Dette kan skje om feilmeldingen av en eller annen grunn ikke er gyldig JSON eller ikke har nødvendige felter
         // F.eks. fordi feilen ikke er håndtert riktig på backend eller kommer fra en proxy eller annet mellom klienten og backenden
