@@ -1,7 +1,7 @@
-import { styled } from "styled-components";
 import {
   Alert,
   AlertIcon,
+  AlertProps,
   Button,
   ButtonGroup,
   Modal,
@@ -9,11 +9,13 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalFooter,
-  ModalOverlay,
-  AlertProps,
   ModalHeader,
+  ModalOverlay,
 } from "@kvib/react";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { centerOnCoordinate, parseStringCoordinates } from "pages/Kart/OverlayPanels/NavigasjonPanel/koordinater-utils";
 import { useState } from "react";
+import { styled } from "styled-components";
 
 const AlertHeader = styled(Alert)`
   display: flex;
@@ -81,6 +83,7 @@ const AlertModal = ({
 }: Props) => {
   const [primaryLoading, setPrimaryLoading] = useState(false);
   const [secondaryLoading, setSecondaryLoading] = useState(false);
+  const { closeOverlayModal, closeOverlayPanel } = useOverlayPanel();
 
   const handlePrimaryAction = () => {
     setPrimaryLoading(true);
@@ -94,6 +97,58 @@ const AlertModal = ({
     setSecondaryLoading(false);
   };
 
+  const handleCoordinatesClick = (coordinates: string) => {
+    const coord = parseStringCoordinates(coordinates);
+    closeOverlayModal();
+    closeOverlayPanel();
+    onClose();
+
+    centerOnCoordinate(coord[0], coord[1]);
+  };
+
+  const parseCoordinatesInText = (text: string): React.ReactNode => {
+    const regex: RegExp = /(\d+(?:\.\d+)?)N\s*(-?\d+(?:\.\d+)?)Ø/g;
+
+    // liste for alle delene av teksten som resultat av å splitte opp mellom koordinatene
+    const parts: React.ReactNode[] = [];
+    // variabel for å holde styr på hvor vi er i teksten
+    let lastIndex = 0;
+    // alle resultater fra regex.exec blir lagt her
+    let match: RegExpExecArray | null = null;
+
+    // looper gjennom alle koordinater i teksten, og sørger for at teksten foran og bak blir lagt til i parts
+    while ((match = regex.exec(text)) !== null) {
+      const currMatch = match[0];
+      // Tekst før koordinat
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+
+      // Koordinat som lenke
+      parts.push(
+        <a
+          key={match.index}
+          href="#"
+          style={{ color: "var(--kvib-colors-blue-500)", textDecoration: "underline" }}
+          onClick={() => handleCoordinatesClick(currMatch)}
+        >
+          {currMatch}
+        </a>,
+      );
+
+      // oppdaterer lastIndex til å være index etter siste koordinat,
+      // slik at regex.exec kan fortsette å lete etter koordinater derfra
+      lastIndex = regex.lastIndex;
+    }
+
+    // Tekst etter siste koordinat
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+
+    return parts.length > 0 ? parts : text;
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered size="2xl">
       <ModalOverlay />
@@ -104,7 +159,7 @@ const AlertModal = ({
         </AlertHeader>
         <ModalCloseButton aria-label="Lukk" />
         <Body>
-          <BodyText>{description}</BodyText>
+          <BodyText>{parseCoordinatesInText(description)}</BodyText>
           {additionalInfo && <BodyTextExtra>{additionalInfo}</BodyTextExtra>}
           {errorCode && (
             <BodyTextExtra>Kontakt Kartverket og oppgi feilkoden {errorCode} dersom feilen vedvarer.</BodyTextExtra>
