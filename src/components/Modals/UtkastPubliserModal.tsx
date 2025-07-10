@@ -23,6 +23,7 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { format, isBefore, isSameDay } from "date-fns";
+import { on } from "events";
 import { EndringsloggAccordion } from "pages/Utkast/UtkastEndringslogg";
 import { useState } from "react";
 import { useMatch, useNavigate } from "react-router-dom";
@@ -95,6 +96,8 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       try {
         const wrapper = (await response.json()) as ApiErrorResponse;
         setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
+        // TS-2248: Lukker modalen her da den ikke er tilgjengelig via context.
+        onClose();
       } catch {
         // Dette kan skje om feilmeldingen av en eller annen grunn ikke er gyldig JSON eller ikke har nødvendige felter
         // F.eks. fordi feilen ikke er håndtert riktig på backend eller kommer fra en proxy eller annet mellom klienten og backenden
