@@ -100,3 +100,10 @@ export const centerOnCoordinate = (north: number, east: number, zoom?: number, d
     });
   }
 };
+
+export const parseStringCoordinates = (coordAsString: string): Coordinate => {
+  let coord = coordAsString.replace("N", "");
+  coord = coord.replace("Ø", "");
+  const coordArr = coord.split(" ");
+  return [parseFloat(coordArr[0]), parseFloat(coordArr[1])] as Coordinate;
+};
