@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
-import CheckboxWithShortcutDesc from "./CheckboxWithShortcutDesc";
+import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 
 type Props = {
   isOpen: boolean;
@@ -51,6 +51,15 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
       toast({ status: "info", title: "Snapping mot egne grenser er slått på." });
     }
   });
+  useKeyboardShortcut("snap_forced", () => {
+    toggleModeTool("snap_forced");
+    const isForcedToggled = activeModeTools.includes("snap_forced");
+    if (isForcedToggled) {
+      toast({ status: "warning", title: "Tvungen snapping er slått av." });
+    } else {
+      toast({ status: "info", title: "Tvungen snapping er slått på." });
+    }
+  });
   return (
     <Menu closeOnSelect={false} closeOnBlur={false} onClose={onClose} isOpen={isOpen}>
       <MenuButtonWithChevron
@@ -78,30 +87,42 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
           <CloseButton onClick={onClose} />
         </SnapMenuHeader>
         <MenuDivider />
-        <MenuItem>
+        <StyledMenuItem>
           <Box w={"100%"}>
-            <CheckboxWithShortcutDesc
+            <SwitchWithShortcutDesc
               value="egne"
               onChange={() => toggleModeTool("snap_nibas")}
               isChecked={activeModeTools.includes("snap_nibas")}
               shortcut={KeyboardShortcuts["snap_nibas"].displayString}
             >
               Snap til egne grenser
-            </CheckboxWithShortcutDesc>
+            </SwitchWithShortcutDesc>
           </Box>
-        </MenuItem>
-        <MenuItem>
+        </StyledMenuItem>
+        <StyledMenuItem>
           <Box w={"100%"}>
-            <CheckboxWithShortcutDesc
+            <SwitchWithShortcutDesc
               value="matrikkel"
               onChange={() => toggleModeTool("snap_matrikkel")}
               isChecked={activeModeTools.includes("snap_matrikkel")}
               shortcut={KeyboardShortcuts["snap_matrikkel"].displayString}
             >
               Snap til eiendomsgrenser
-            </CheckboxWithShortcutDesc>
+            </SwitchWithShortcutDesc>
           </Box>
-        </MenuItem>
+        </StyledMenuItem>
+        <StyledMenuItem>
+          <Box w={"100%"}>
+            <SwitchWithShortcutDesc
+              value="forced"
+              onChange={() => toggleModeTool("snap_forced")}
+              isChecked={activeModeTools.includes("snap_forced")}
+              shortcut={KeyboardShortcuts["snap_forced"].displayString}
+            >
+              Tvungen snapping
+            </SwitchWithShortcutDesc>
+          </Box>
+        </StyledMenuItem>
       </MenuList>
     </Menu>
   );
@@ -113,5 +134,7 @@ const SnapMenuHeader = styled.div`
   gap: 8px;
   padding: 0 12px;
 `;
-
+const StyledMenuItem = styled(MenuItem)`
+  padding: 12px;
+`;
 export default SnapMenu;

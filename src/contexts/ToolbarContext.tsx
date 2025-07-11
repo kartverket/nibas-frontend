@@ -33,7 +33,14 @@ export type Tool = (typeof toolValues)[number];
 
 const editTools: Tool[] = ["add", "remove", "draw", "split", "koordinater", "archive", "measure", "duplicate"];
 
-export const modeToolValues = ["move", "matrikkel", "snap_nibas", "snap_matrikkel", "historiskeGrenser"] as const;
+export const modeToolValues = [
+  "move",
+  "matrikkel",
+  "snap_nibas",
+  "snap_matrikkel",
+  "snap_forced",
+  "historiskeGrenser",
+] as const;
 export type ModeTool = (typeof modeToolValues)[number];
 
 export type ToolbarContextValue = {

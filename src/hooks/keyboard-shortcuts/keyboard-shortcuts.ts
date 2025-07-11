@@ -12,6 +12,7 @@ export type Shortcut =
   | "snap"
   | "snap_nibas"
   | "snap_matrikkel"
+  | "snap_forced"
   | "open"
   | "grenseinfo"
   | "tegnforklaring"
@@ -111,7 +112,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
 
   // Misc Toolbar
   snap: createShortcut("g", { control: true }),
-  snap_nibas: createShortcut("f", { control: true, shift: true }),
+  snap_nibas: createShortcut("n", { control: true, shift: true }),
   snap_matrikkel: createShortcut("g", { control: true, shift: true }),
   layers: createShortcut("k", { control: true }),
   goto: createShortcut("Enter", { control: true }),
@@ -125,4 +126,5 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   // Misc
   escape: createShortcut("Escape", {}),
   open: createShortcut("o", { control: true }),
+  snap_forced: createShortcut("f", { control: true, shift: true }),
 };
