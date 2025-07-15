@@ -27,6 +27,7 @@ import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
 import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
+import { LayerId } from "hooks/layers/types";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
@@ -312,12 +313,26 @@ const useModify = () => {
         const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
           "edit",
         ]);
-
+        // Liste med lag som må snappes mot gitt tvungen snapping og snapmode (matrikkel og/eller nibas)
+        const snappableLayers: LayerId[] = [
+          ...(activeModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
+          ...(activeModeTools.includes("snap_nibas")
+            ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived"] as LayerId[])
+            : []),
+        ];
+        const snappableFeatures = getLineStringFeaturesAtPixel(
+          event.mapBrowserEvent as MapBrowserEvent<PointerEvent>,
+          snappableLayers,
+        );
         const nonSelectedActiveFeatures = activeFeatures.filter(
           (feature) => selectedFeature.getId() !== feature.getId(),
         );
 
-        if (activeModeTools.includes("snap_forced") && nonSelectedActiveFeatures.length === 0) {
+        if (
+          activeModeTools.includes("snap_forced") &&
+          nonSelectedActiveFeatures.length === 0 &&
+          snappableFeatures.length === 0
+        ) {
           forcedSnapExit(selectedFeature);
           return;
         }

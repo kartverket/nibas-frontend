@@ -5,7 +5,7 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
 import { editSource } from "hooks/layers/constants";
-import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
+import { getGrensetypeFromInndelingtype, LayerId } from "hooks/layers/types";
 import useToastUnique from "hooks/toast/useToastUnique";
 import { Feature, MapBrowserEvent } from "ol";
 import { CollectionEvent } from "ol/Collection";
@@ -45,8 +45,6 @@ const useDraw = () => {
     status: "warning",
     description: "Merk valgt punkt ikke er et endepunkt. Grensen ble derfor splittet.",
   });
-
-  const pointsDrawnRef = useRef(0);
 
   const activeToolRef = useRef<Tool | null>(null);
   const activeModeToolsRef = useRef<ModeTool[]>([]);
@@ -91,6 +89,20 @@ const useDraw = () => {
     // Tvinger useMemo til å kjøre på nytt når abortDrawMemoHelper endres
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _ = abortDrawMemoHelper;
+
+    const getSnappableFeaturesAtEvent = (event: MapBrowserEvent<PointerEvent>) => {
+      const currentModeTools = activeModeToolsRef.current;
+      // Liste med lag som må snappes mot gitt tvungen snapping og snapmode (matrikkel og/eller nibas)
+      const snappableLayers: LayerId[] = [
+        ...(currentModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
+        ...(currentModeTools.includes("snap_nibas")
+          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived"] as LayerId[])
+          : []),
+      ];
+
+      return getLineStringFeaturesAtPixelRef.current(event, snappableLayers);
+    };
+
     return new Draw({
       type: "LineString",
       snapTolerance: pixelTolerance,
@@ -98,17 +110,14 @@ const useDraw = () => {
       freehandCondition: () => false,
       finishCondition: (event) => {
         if (activeModeToolsRef.current.includes("snap_forced")) {
-          const featuresAtPixel = getLineStringFeaturesAtPixelRef.current(event as MapBrowserEvent<PointerEvent>, [
-            "edit",
-          ]);
-          if (featuresAtPixel.length > 0) {
-            pointsDrawnRef.current = 0;
+          const snappableFeatures = getSnappableFeaturesAtEvent(event as MapBrowserEvent<PointerEvent>);
+          if (snappableFeatures.length > 0) {
             return true;
           }
+
           draw.removeLastPoint();
           return false;
         }
-        pointsDrawnRef.current = 0;
         return true;
       },
       condition: (event) => {
@@ -118,22 +127,25 @@ const useDraw = () => {
         if (!noModifierKeys(event) || currentTool !== "draw" || currentModeTools.includes("move")) {
           return false;
         }
-        const featuresAtPixel = getLineStringFeaturesAtPixelRef.current(event as MapBrowserEvent<PointerEvent>, [
+        const editFeaturesAtPixel = getLineStringFeaturesAtPixelRef.current(event as MapBrowserEvent<PointerEvent>, [
           "edit",
         ]);
-        // Legg til feature hvis vi ikke treffer noen andre features
-        if (featuresAtPixel.length === 0) {
-          if (currentModeTools.includes("snap_forced") && pointsDrawnRef.current === 0) {
+
+        const snappableFeatures = getSnappableFeaturesAtEvent(event as MapBrowserEvent<PointerEvent>);
+
+        // Legg til feature hvis vi ikke treffer noen andre features,
+        // men hvis tvungen snapping er på så må vi sjekke om vi treffer noen snappable features før vi kan legge til punkt.
+        if (editFeaturesAtPixel.length === 0) {
+          if (currentModeTools.includes("snap_forced") && snappableFeatures.length === 0) {
             return false;
           }
-          pointsDrawnRef.current++;
           draw.changed();
           return true;
         }
 
         // Tror egentlig ikke det er nødvendig å sjekke alle features her, da vi vet at om man treffer et punkt på én så treffer man det samme punktet på andre
         // samtidig så er dette en særdeles lav performance kost (treffer sjelden mange features), og det er kanskje safere å helgardere oss
-        for (const feature of featuresAtPixel) {
+        for (const feature of editFeaturesAtPixel) {
           const geometry = feature.getGeometry();
 
           if (geometry instanceof LineString) {
@@ -173,13 +185,11 @@ const useDraw = () => {
         // enn null (som den blir av første endring), vil vi avslutte tegningen
         if (draw.getRevision() > 0) {
           draw.appendCoordinates([event.coordinate]);
-          pointsDrawnRef.current = 0;
           draw.finishDrawing();
           setAbortDrawMemoHelper((a) => a + 1);
           return false;
         }
 
-        pointsDrawnRef.current++;
         draw.changed();
         return true;
       },
