@@ -5,6 +5,7 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import { styled } from "styled-components";
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
+import { CustomMagnetIcon } from "components/CustomIcons";
 
 type Props = {
   isOpen: boolean;
@@ -38,7 +39,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         aria-label="Snap til andre grenser i kartet"
         isOpen={isOpen}
         onClick={onToggle}
-        icon="close_fullscreen"
+        icon={<CustomMagnetIcon />}
         isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
         tooltip={{ text: "Snapping" }}
       >
