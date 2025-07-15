@@ -53,6 +53,8 @@ export type ToolbarContextValue = {
   enableModeTool: (modeTool: ModeTool) => void;
   disableModeTool: (modeTool: ModeTool) => void;
   resetModeTools: () => void;
+  toggleDefaultSnapModeTools: () => void;
+  toggleForcedSnapMode: () => void;
 };
 
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(undefined);
@@ -107,6 +109,23 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
     }
   };
 
+  const toggleDefaultSnapModeTools = () => {
+    const snapModes: ModeTool[] = ["snap_nibas", "snap_matrikkel"];
+    if (activeModeTools.some((mode) => snapModes.includes(mode))) {
+      setActiveModeTools(activeModeTools.filter((mode) => !snapModes.includes(mode)));
+    } else {
+      setActiveModeTools(activeModeTools.concat(snapModes));
+    }
+  };
+
+  const toggleForcedSnapMode = () => {
+    if (activeModeTools.includes("snap_forced")) {
+      setActiveModeTools(activeModeTools.filter((mode) => mode !== "snap_forced"));
+    } else {
+      setActiveModeTools(activeModeTools.concat("snap_forced", "snap_nibas"));
+    }
+  };
+
   const resetModeTools = () => {
     if (
       activeModeTools.length !== defaultModeTools.length ||
@@ -125,6 +144,8 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
     disableModeTool,
     resetTool: () => setActiveTool(defaultTool),
     resetModeTools,
+    toggleDefaultSnapModeTools,
+    toggleForcedSnapMode,
   };
 
   return <ToolbarContext.Provider value={value}>{children}</ToolbarContext.Provider>;

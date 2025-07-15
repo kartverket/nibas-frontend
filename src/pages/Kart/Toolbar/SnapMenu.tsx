@@ -1,9 +1,9 @@
-import { Menu, MenuList, Switch, Text, CloseButton, MenuDivider, MenuItem, Spacer, useToast, Box } from "@kvib/react";
+import { Box, CloseButton, Menu, MenuDivider, MenuItem, MenuList, Spacer, Switch, Text } from "@kvib/react";
 import { useToolbar } from "contexts/ToolbarContext";
-import { styled } from "styled-components";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { styled } from "styled-components";
+import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 
 type Props = {
@@ -13,21 +13,10 @@ type Props = {
 };
 
 const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
-  const { activeModeTools, toggleModeTool } = useToolbar();
-  const toast = useToast();
+  const { activeModeTools, toggleModeTool, toggleDefaultSnapModeTools, toggleForcedSnapMode } = useToolbar();
 
   const toggleSnapping = () => {
-    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
-    const isNibasToggled = activeModeTools.includes("snap_nibas");
-
-    if (isMatrikkelToggled === isNibasToggled) {
-      toggleModeTool("snap_matrikkel");
-      toggleModeTool("snap_nibas");
-    } else if (isMatrikkelToggled) {
-      toggleModeTool("snap_matrikkel");
-    } else {
-      toggleModeTool("snap_nibas");
-    }
+    toggleDefaultSnapModeTools();
   };
 
   useKeyboardShortcut("snap", () => {
@@ -35,30 +24,12 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
   });
   useKeyboardShortcut("snap_matrikkel", () => {
     toggleModeTool("snap_matrikkel");
-    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
-    if (isMatrikkelToggled) {
-      toast({ status: "warning", title: "Snapping mot teiggrenser er slått av." });
-    } else {
-      toast({ status: "info", title: "Snapping mot teiggrenser er slått på." });
-    }
   });
   useKeyboardShortcut("snap_nibas", () => {
     toggleModeTool("snap_nibas");
-    const isMatrikkelToggled = activeModeTools.includes("snap_nibas");
-    if (isMatrikkelToggled) {
-      toast({ status: "warning", title: "Snapping mot egne grenser er slått av." });
-    } else {
-      toast({ status: "info", title: "Snapping mot egne grenser er slått på." });
-    }
   });
   useKeyboardShortcut("snap_forced", () => {
-    toggleModeTool("snap_forced");
-    const isForcedToggled = activeModeTools.includes("snap_forced");
-    if (isForcedToggled) {
-      toast({ status: "warning", title: "Tvungen snapping er slått av." });
-    } else {
-      toast({ status: "info", title: "Tvungen snapping er slått på." });
-    }
+    toggleForcedSnapMode();
   });
   return (
     <Menu closeOnSelect={false} closeOnBlur={false} onClose={onClose} isOpen={isOpen}>
@@ -76,7 +47,11 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         <SnapMenuHeader>
           <Switch
             aria-label="Slå av/på snapping"
-            isChecked={activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")}
+            isChecked={
+              activeModeTools.includes("snap_matrikkel") ||
+              activeModeTools.includes("snap_nibas") ||
+              activeModeTools.includes("snap_forced")
+            }
             onChange={() => toggleSnapping()}
           />
           <span>Snapping</span>
@@ -115,7 +90,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
           <Box w={"100%"}>
             <SwitchWithShortcutDesc
               value="forced"
-              onChange={() => toggleModeTool("snap_forced")}
+              onChange={() => toggleForcedSnapMode()}
               isChecked={activeModeTools.includes("snap_forced")}
               shortcut={KeyboardShortcuts["snap_forced"].displayString}
             >
