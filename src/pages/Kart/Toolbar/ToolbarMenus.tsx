@@ -197,7 +197,7 @@ const ToolbarMenus = () => {
         <Flex gap="18px">
           <ToolbarMenu
             label="Punkt"
-            icon="adjust"
+            icon={<Icon icon="adjust" weight={400} />}
             isDisabled={false}
             isActive={punktMenuItems.some((pmi) => pmi.$isActive)}
             tooltip="Punkt"
@@ -222,7 +222,7 @@ const ToolbarMenus = () => {
           </ToolbarMenu>
           <ToolbarMenu
             label="Grense"
-            icon="timeline"
+            icon={<Icon icon="timeline" weight={400} />}
             isDisabled={false}
             isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
             tooltip="Grense"
@@ -247,7 +247,7 @@ const ToolbarMenus = () => {
           </ToolbarMenu>
           <ToolbarMenu
             label="Flate"
-            icon="border_all"
+            icon={<Icon icon="border_all" weight={400} />}
             isDisabled={false}
             isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
             tooltip="Flate"
@@ -275,7 +275,7 @@ const ToolbarMenus = () => {
       {!showBigMenu && (
         <ToolbarMenu
           label="Verktøy"
-          icon="handyman"
+          icon={<Icon icon="handyman" weight={400} />}
           isDisabled={false}
           isActive={
             grenseMenuItems.some((gmi) => gmi.$isActive) ||
