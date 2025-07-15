@@ -33,7 +33,14 @@ export type Tool = (typeof toolValues)[number];
 
 const editTools: Tool[] = ["add", "remove", "draw", "split", "koordinater", "archive", "measure", "duplicate"];
 
-export const modeToolValues = ["move", "matrikkel", "snap_nibas", "snap_matrikkel", "historiskeGrenser"] as const;
+export const modeToolValues = [
+  "move",
+  "matrikkel",
+  "snap_nibas",
+  "snap_matrikkel",
+  "snap_forced",
+  "historiskeGrenser",
+] as const;
 export type ModeTool = (typeof modeToolValues)[number];
 
 export type ToolbarContextValue = {
@@ -46,6 +53,8 @@ export type ToolbarContextValue = {
   enableModeTool: (modeTool: ModeTool) => void;
   disableModeTool: (modeTool: ModeTool) => void;
   resetModeTools: () => void;
+  toggleDefaultSnapModeTools: () => void;
+  toggleForcedSnapMode: () => void;
 };
 
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(undefined);
@@ -100,6 +109,23 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
     }
   };
 
+  const toggleDefaultSnapModeTools = () => {
+    const snapModes: ModeTool[] = ["snap_nibas", "snap_matrikkel"];
+    if (activeModeTools.some((mode) => snapModes.includes(mode))) {
+      setActiveModeTools(activeModeTools.filter((mode) => !snapModes.includes(mode)));
+    } else {
+      setActiveModeTools(activeModeTools.concat(snapModes));
+    }
+  };
+
+  const toggleForcedSnapMode = () => {
+    if (activeModeTools.includes("snap_forced")) {
+      setActiveModeTools(activeModeTools.filter((mode) => mode !== "snap_forced"));
+    } else {
+      setActiveModeTools(activeModeTools.concat("snap_forced", "snap_nibas"));
+    }
+  };
+
   const resetModeTools = () => {
     if (
       activeModeTools.length !== defaultModeTools.length ||
@@ -118,6 +144,8 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
     disableModeTool,
     resetTool: () => setActiveTool(defaultTool),
     resetModeTools,
+    toggleDefaultSnapModeTools,
+    toggleForcedSnapMode,
   };
 
   return <ToolbarContext.Provider value={value}>{children}</ToolbarContext.Provider>;

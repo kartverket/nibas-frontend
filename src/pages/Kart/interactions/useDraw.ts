@@ -1,33 +1,34 @@
-import { useEffect, useMemo, useState, useRef } from "react";
-import Draw, { DrawEvent } from "ol/interaction/Draw";
-import { pixelTolerance } from "./constants";
-import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
-import { noModifierKeys } from "ol/events/condition";
-import { grenseStyles } from "utils/map/layerStyles";
-import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useToast } from "@kvib/react";
-import { Feature, MapBrowserEvent } from "ol";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
+import { editSource } from "hooks/layers/constants";
+import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
+import useToastUnique from "hooks/toast/useToastUnique";
+import { Feature, MapBrowserEvent } from "ol";
+import { CollectionEvent } from "ol/Collection";
+import { equals } from "ol/coordinate";
+import { noModifierKeys } from "ol/events/condition";
+import { Geometry } from "ol/geom";
+import LineString from "ol/geom/LineString";
+import { Interaction } from "ol/interaction";
+import Draw, { DrawEvent } from "ol/interaction/Draw";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { getFeatureFremtidigEndringDato, setDefaultFeatureProperties } from "utils/features";
+import { grenseStyles } from "utils/map/layerStyles";
+import { findNearbyVertexOnFeature } from "utils/map/map-utils";
+import { addFeaturesToSource } from "utils/map/source";
+import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
+import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
+import { map } from "../constants";
+import { pixelTolerance } from "./constants";
 import { getTempFeatureId } from "./feature-id-utils";
 import { createNyGrenseHistoryChange } from "./grense-history-utils";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import LineString from "ol/geom/LineString";
 import { useGetFeatures } from "./interaction-utils";
-import { equals } from "ol/coordinate";
-import { getFeatureFremtidigEndringDato, setDefaultFeatureProperties } from "utils/features";
 import useSplit, { SplittedFeature } from "./useSplit";
-import { useConfirmationModal } from "contexts/ConfirmationModalContext";
-import { Geometry } from "ol/geom";
-import { findNearbyVertexOnFeature } from "utils/map/map-utils";
-import useToastUnique from "hooks/toast/useToastUnique";
-import { addFeaturesToSource } from "utils/map/source";
-import { editSource } from "hooks/layers/constants";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { datestringToFormattedDatestring } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
-import { map } from "../constants";
-import { CollectionEvent } from "ol/Collection";
-import { Interaction } from "ol/interaction";
-import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
+
 const useDraw = () => {
   const { activeTool, activeModeTools, toggleTool } = useToolbar();
   const { currentlyEditingInndelinger } = useInndelinger();
@@ -44,6 +45,8 @@ const useDraw = () => {
     status: "warning",
     description: "Merk valgt punkt ikke er et endepunkt. Grensen ble derfor splittet.",
   });
+
+  const pointsDrawnRef = useRef(0);
 
   const activeToolRef = useRef<Tool | null>(null);
   const activeModeToolsRef = useRef<ModeTool[]>([]);
@@ -93,6 +96,21 @@ const useDraw = () => {
       snapTolerance: pixelTolerance,
       style: grenseStyles.select,
       freehandCondition: () => false,
+      finishCondition: (event) => {
+        if (activeModeToolsRef.current.includes("snap_forced")) {
+          const featuresAtPixel = getLineStringFeaturesAtPixelRef.current(event as MapBrowserEvent<PointerEvent>, [
+            "edit",
+          ]);
+          if (featuresAtPixel.length > 0) {
+            pointsDrawnRef.current = 0;
+            return true;
+          }
+          draw.removeLastPoint();
+          return false;
+        }
+        pointsDrawnRef.current = 0;
+        return true;
+      },
       condition: (event) => {
         // Hent nåværende verdi fra ref
         const currentTool = activeToolRef.current;
@@ -105,6 +123,10 @@ const useDraw = () => {
         ]);
         // Legg til feature hvis vi ikke treffer noen andre features
         if (featuresAtPixel.length === 0) {
+          if (currentModeTools.includes("snap_forced") && pointsDrawnRef.current === 0) {
+            return false;
+          }
+          pointsDrawnRef.current++;
           draw.changed();
           return true;
         }
@@ -151,11 +173,13 @@ const useDraw = () => {
         // enn null (som den blir av første endring), vil vi avslutte tegningen
         if (draw.getRevision() > 0) {
           draw.appendCoordinates([event.coordinate]);
+          pointsDrawnRef.current = 0;
           draw.finishDrawing();
           setAbortDrawMemoHelper((a) => a + 1);
           return false;
         }
 
+        pointsDrawnRef.current++;
         draw.changed();
         return true;
       },
