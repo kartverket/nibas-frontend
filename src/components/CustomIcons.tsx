@@ -1,6 +1,5 @@
 import { SVGProps } from "react";
 
-// Method 5: Icon factory function for creating multiple icons
 interface CustomIconProps extends SVGProps<SVGSVGElement> {
   size?: number;
   color?: string;
