@@ -1,10 +1,11 @@
-import { Menu, MenuList, Switch, Text, CloseButton, MenuDivider, MenuItem, Spacer, useToast, Box } from "@kvib/react";
+import { Box, CloseButton, Menu, MenuDivider, MenuItem, MenuList, Spacer, Switch, Text } from "@kvib/react";
 import { useToolbar } from "contexts/ToolbarContext";
-import { styled } from "styled-components";
-import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
-import CheckboxWithShortcutDesc from "./CheckboxWithShortcutDesc";
+import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { styled } from "styled-components";
+import MenuButtonWithChevron from "./MenuButtonWithChevron";
+import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
+import { CustomMagnetIcon } from "components/CustomIcons";
 
 type Props = {
   isOpen: boolean;
@@ -13,21 +14,11 @@ type Props = {
 };
 
 const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
-  const { activeModeTools, toggleModeTool } = useToolbar();
-  const toast = useToast();
+  const { activeModeTools, toggleModeTool, toggleDefaultSnapModeTools, toggleForcedSnapMode, toggleNibasSnapMode } =
+    useToolbar();
 
   const toggleSnapping = () => {
-    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
-    const isNibasToggled = activeModeTools.includes("snap_nibas");
-
-    if (isMatrikkelToggled === isNibasToggled) {
-      toggleModeTool("snap_matrikkel");
-      toggleModeTool("snap_nibas");
-    } else if (isMatrikkelToggled) {
-      toggleModeTool("snap_matrikkel");
-    } else {
-      toggleModeTool("snap_nibas");
-    }
+    toggleDefaultSnapModeTools();
   };
 
   useKeyboardShortcut("snap", () => {
@@ -35,21 +26,12 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
   });
   useKeyboardShortcut("snap_matrikkel", () => {
     toggleModeTool("snap_matrikkel");
-    const isMatrikkelToggled = activeModeTools.includes("snap_matrikkel");
-    if (isMatrikkelToggled) {
-      toast({ status: "warning", title: "Snapping mot teiggrenser er slått av." });
-    } else {
-      toast({ status: "info", title: "Snapping mot teiggrenser er slått på." });
-    }
   });
   useKeyboardShortcut("snap_nibas", () => {
-    toggleModeTool("snap_nibas");
-    const isMatrikkelToggled = activeModeTools.includes("snap_nibas");
-    if (isMatrikkelToggled) {
-      toast({ status: "warning", title: "Snapping mot egne grenser er slått av." });
-    } else {
-      toast({ status: "info", title: "Snapping mot egne grenser er slått på." });
-    }
+    toggleNibasSnapMode();
+  });
+  useKeyboardShortcut("snap_forced", () => {
+    toggleForcedSnapMode();
   });
   return (
     <Menu closeOnSelect={false} closeOnBlur={false} onClose={onClose} isOpen={isOpen}>
@@ -57,7 +39,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         aria-label="Snap til andre grenser i kartet"
         isOpen={isOpen}
         onClick={onToggle}
-        icon="close_fullscreen"
+        icon={<CustomMagnetIcon />}
         isActive={activeModeTools.includes("snap_nibas") || activeModeTools.includes("snap_matrikkel")}
         tooltip={{ text: "Snapping" }}
       >
@@ -67,7 +49,11 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
         <SnapMenuHeader>
           <Switch
             aria-label="Slå av/på snapping"
-            isChecked={activeModeTools.includes("snap_matrikkel") || activeModeTools.includes("snap_nibas")}
+            isChecked={
+              activeModeTools.includes("snap_matrikkel") ||
+              activeModeTools.includes("snap_nibas") ||
+              activeModeTools.includes("snap_forced")
+            }
             onChange={() => toggleSnapping()}
           />
           <span>Snapping</span>
@@ -78,30 +64,42 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
           <CloseButton onClick={onClose} />
         </SnapMenuHeader>
         <MenuDivider />
-        <MenuItem>
+        <StyledMenuItem>
           <Box w={"100%"}>
-            <CheckboxWithShortcutDesc
+            <SwitchWithShortcutDesc
               value="egne"
-              onChange={() => toggleModeTool("snap_nibas")}
+              onChange={() => toggleNibasSnapMode()}
               isChecked={activeModeTools.includes("snap_nibas")}
               shortcut={KeyboardShortcuts["snap_nibas"].displayString}
             >
               Snap til egne grenser
-            </CheckboxWithShortcutDesc>
+            </SwitchWithShortcutDesc>
           </Box>
-        </MenuItem>
-        <MenuItem>
+        </StyledMenuItem>
+        <StyledMenuItem>
           <Box w={"100%"}>
-            <CheckboxWithShortcutDesc
+            <SwitchWithShortcutDesc
               value="matrikkel"
               onChange={() => toggleModeTool("snap_matrikkel")}
               isChecked={activeModeTools.includes("snap_matrikkel")}
               shortcut={KeyboardShortcuts["snap_matrikkel"].displayString}
             >
               Snap til eiendomsgrenser
-            </CheckboxWithShortcutDesc>
+            </SwitchWithShortcutDesc>
           </Box>
-        </MenuItem>
+        </StyledMenuItem>
+        <StyledMenuItem>
+          <Box w={"100%"}>
+            <SwitchWithShortcutDesc
+              value="forced"
+              onChange={() => toggleForcedSnapMode()}
+              isChecked={activeModeTools.includes("snap_forced")}
+              shortcut={KeyboardShortcuts["snap_forced"].displayString}
+            >
+              Tvungen snapping
+            </SwitchWithShortcutDesc>
+          </Box>
+        </StyledMenuItem>
       </MenuList>
     </Menu>
   );
@@ -113,5 +111,7 @@ const SnapMenuHeader = styled.div`
   gap: 8px;
   padding: 0 12px;
 `;
-
+const StyledMenuItem = styled(MenuItem)`
+  padding: 12px;
+`;
 export default SnapMenu;

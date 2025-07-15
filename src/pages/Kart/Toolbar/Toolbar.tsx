@@ -314,7 +314,7 @@ const Toolbar = () => {
             tooltip={{ text: "Finn i kartet", shortcut: "goto" }}
           ></ToolbarButton>
           <ToolbarMenu
-            icon="info"
+            icon={<Icon icon="info" weight={400} />}
             isActive={informasjonMenuItems.some((imi) => imi.$isActive)}
             aria-label="Vis informasjonsverktøy"
             tooltip="Informasjon"
@@ -330,7 +330,7 @@ const Toolbar = () => {
             </MenuList>
           </ToolbarMenu>
           <ToolbarMenu
-            icon="stacks"
+            icon={<Icon icon="stacks" weight={400} />}
             isActive={kartlagMenuItems.some((kmi) => kmi.$isActive)}
             aria-label="Kartlag"
             tooltip="Kartlag"
