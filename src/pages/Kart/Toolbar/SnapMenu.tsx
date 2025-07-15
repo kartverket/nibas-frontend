@@ -13,7 +13,8 @@ type Props = {
 };
 
 const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
-  const { activeModeTools, toggleModeTool, toggleDefaultSnapModeTools, toggleForcedSnapMode } = useToolbar();
+  const { activeModeTools, toggleModeTool, toggleDefaultSnapModeTools, toggleForcedSnapMode, toggleNibasSnapMode } =
+    useToolbar();
 
   const toggleSnapping = () => {
     toggleDefaultSnapModeTools();
@@ -26,7 +27,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
     toggleModeTool("snap_matrikkel");
   });
   useKeyboardShortcut("snap_nibas", () => {
-    toggleModeTool("snap_nibas");
+    toggleNibasSnapMode();
   });
   useKeyboardShortcut("snap_forced", () => {
     toggleForcedSnapMode();
@@ -66,7 +67,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
           <Box w={"100%"}>
             <SwitchWithShortcutDesc
               value="egne"
-              onChange={() => toggleModeTool("snap_nibas")}
+              onChange={() => toggleNibasSnapMode()}
               isChecked={activeModeTools.includes("snap_nibas")}
               shortcut={KeyboardShortcuts["snap_nibas"].displayString}
             >
