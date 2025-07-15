@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 import MenuButtonWithChevron from "./MenuButtonWithChevron";
 import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 import { CustomMagnetIcon } from "components/CustomIcons";
+import { TitleWithIconTooltip } from "../OverlayPanels/GrenseinformasjonPanel/TitleWithIconTooltip";
 
 type Props = {
   isOpen: boolean;
@@ -96,7 +97,12 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
               isChecked={activeModeTools.includes("snap_forced")}
               shortcut={KeyboardShortcuts["snap_forced"].displayString}
             >
-              Tvungen snapping
+              <TitleWithIconTooltip
+                placement="bottom"
+                tooltipLabel="Tvungen snapping gjør det obligatorisk å snappe mot andre punkter"
+              >
+                Tvungen snapping
+              </TitleWithIconTooltip>
             </SwitchWithShortcutDesc>
           </Box>
         </StyledMenuItem>

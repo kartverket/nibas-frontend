@@ -11,7 +11,7 @@ type SwitchWithShortcurDescProps = {
 const SwitchWithShortcutDesc = ({ value, onChange, isChecked, shortcut, children }: SwitchWithShortcurDescProps) => {
   return (
     <Flex align="center" justifyContent={"space-between"}>
-      <Switch value={value} onChange={onChange} isChecked={isChecked} size="sm">
+      <Switch value={value} onChange={onChange} isChecked={isChecked} size="sm" display="flex" alignItems="center">
         {children}
       </Switch>
       <Text fontSize="sm" color="gray.500" ml="auto" marginLeft={2}>
