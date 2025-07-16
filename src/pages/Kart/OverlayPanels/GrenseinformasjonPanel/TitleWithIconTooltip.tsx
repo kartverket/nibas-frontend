@@ -4,13 +4,14 @@ import { styled } from "styled-components";
 
 type Props = {
   tooltipLabel: string;
+  placement?: "top" | "bottom" | "left" | "right";
 } & PropsWithChildren;
 
-export const TitleWithIconTooltip = ({ children, tooltipLabel }: Props) => {
+export const TitleWithIconTooltip = ({ children, tooltipLabel, placement = "bottom" }: Props) => {
   const [iconHovered, setIconHovered] = useState(false);
 
   return (
-    <Tooltip label={tooltipLabel} hasArrow placement="bottom">
+    <Tooltip label={tooltipLabel} hasArrow placement={placement}>
       <TextWithIcon onMouseOver={() => setIconHovered(true)} onMouseOut={() => setIconHovered(false)}>
         {children}
         <InfoIcon>

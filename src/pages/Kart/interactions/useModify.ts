@@ -27,6 +27,7 @@ import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
 import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
+import { LayerId } from "hooks/layers/types";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
@@ -266,7 +267,7 @@ const useModify = () => {
             maalemetode: featureProperties.malemetodeId?.toString(),
             noeyaktighet: featureProperties.noyaktighet ?? undefined,
           };
-        } else if (isTeiggrenseMetadataWFS(featureProperties)) {
+        } else if (isTeiggrenseMetadataWFS(featureProperties) === true) {
           targetLineStringPosisjonskvalitet = {
             grensetype: "teig",
             maalemetode: featureProperties.MALEMETODE?.toString(),
@@ -292,6 +293,15 @@ const useModify = () => {
       }
     };
 
+    const forcedSnapExit = (selectedFeature: Feature<LineString>) => {
+      setPreviousCoordinatesForFeature(selectedFeature);
+      toast({
+        title: "Tvungen snapping er påskrudd",
+        description: "Du kan kun slippe grensen på eksisterende punkter.",
+        status: "warning",
+      });
+    };
+
     const updateFeatureOnModification = async (event: ModifyEvent) => {
       // Hvis man har valgt én feature kan det føre til løsriving
       if (selectedFeatures.length === 1) {
@@ -303,10 +313,29 @@ const useModify = () => {
         const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
           "edit",
         ]);
-
+        // Liste med lag som må snappes mot gitt tvungen snapping og snapmode (matrikkel og/eller nibas)
+        const snappableLayers: LayerId[] = [
+          ...(activeModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
+          ...(activeModeTools.includes("snap_nibas")
+            ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived"] as LayerId[])
+            : []),
+        ];
+        const snappableFeatures = getLineStringFeaturesAtPixel(
+          event.mapBrowserEvent as MapBrowserEvent<PointerEvent>,
+          snappableLayers,
+        );
         const nonSelectedActiveFeatures = activeFeatures.filter(
           (feature) => selectedFeature.getId() !== feature.getId(),
         );
+
+        if (
+          activeModeTools.includes("snap_forced") &&
+          nonSelectedActiveFeatures.length === 0 &&
+          snappableFeatures.length === 0
+        ) {
+          forcedSnapExit(selectedFeature);
+          return;
+        }
 
         if (nonSelectedActiveFeatures.some((feature) => !isFeatureEditable(feature))) {
           toast({
@@ -341,6 +370,7 @@ const useModify = () => {
                 equals(coordinates, nearbyVertex) &&
                 (index === 0 || index === nonSelectedActiveFeatureCoordinates.length - 1),
             );
+
             if (!nearbyVertexIsEndpoint) {
               if (
                 (!nearbyVertexIsEndpoint && equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0])) ||
@@ -387,6 +417,7 @@ const useModify = () => {
       modify.un("modifyend", updateFeatureOnModification);
     };
   }, [
+    activeModeTools,
     activeTool,
     addHistoryEntry,
     confirmationModal,
