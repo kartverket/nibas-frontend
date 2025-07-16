@@ -15,25 +15,18 @@ type Props = {
 };
 
 const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
-  const { activeModeTools, toggleModeTool, toggleDefaultSnapModeTools, toggleForcedSnapMode, toggleNibasSnapMode } =
-    useToolbar();
+  const {
+    activeModeTools,
+    toggleDefaultSnapModeTools,
+    toggleForcedSnapMode,
+    toggleNibasSnapMode,
+    toggleMatrikkelSnapMode,
+  } = useToolbar();
 
-  const toggleSnapping = () => {
-    toggleDefaultSnapModeTools();
-  };
-
-  useKeyboardShortcut("snap", () => {
-    toggleSnapping();
-  });
-  useKeyboardShortcut("snap_matrikkel", () => {
-    toggleModeTool("snap_matrikkel");
-  });
-  useKeyboardShortcut("snap_nibas", () => {
-    toggleNibasSnapMode();
-  });
-  useKeyboardShortcut("snap_forced", () => {
-    toggleForcedSnapMode();
-  });
+  useKeyboardShortcut("snap", toggleDefaultSnapModeTools);
+  useKeyboardShortcut("snap_matrikkel", toggleMatrikkelSnapMode);
+  useKeyboardShortcut("snap_nibas", toggleNibasSnapMode);
+  useKeyboardShortcut("snap_forced", toggleForcedSnapMode);
   return (
     <Menu closeOnSelect={false} closeOnBlur={false} onClose={onClose} isOpen={isOpen}>
       <MenuButtonWithChevron
@@ -55,7 +48,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
               activeModeTools.includes("snap_nibas") ||
               activeModeTools.includes("snap_forced")
             }
-            onChange={() => toggleSnapping()}
+            onChange={toggleDefaultSnapModeTools}
           />
           <span>Snapping</span>
           <Text fontSize="sm" sx={{ color: "gray.600" }}>
@@ -69,7 +62,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
           <Box w={"100%"}>
             <SwitchWithShortcutDesc
               value="egne"
-              onChange={() => toggleNibasSnapMode()}
+              onChange={toggleNibasSnapMode}
               isChecked={activeModeTools.includes("snap_nibas")}
               shortcut={KeyboardShortcuts["snap_nibas"].displayString}
             >
@@ -81,7 +74,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
           <Box w={"100%"}>
             <SwitchWithShortcutDesc
               value="matrikkel"
-              onChange={() => toggleModeTool("snap_matrikkel")}
+              onChange={toggleMatrikkelSnapMode}
               isChecked={activeModeTools.includes("snap_matrikkel")}
               shortcut={KeyboardShortcuts["snap_matrikkel"].displayString}
             >
@@ -93,7 +86,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
           <Box w={"100%"}>
             <SwitchWithShortcutDesc
               value="forced"
-              onChange={() => toggleForcedSnapMode()}
+              onChange={toggleForcedSnapMode}
               isChecked={activeModeTools.includes("snap_forced")}
               shortcut={KeyboardShortcuts["snap_forced"].displayString}
             >

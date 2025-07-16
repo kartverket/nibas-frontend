@@ -56,6 +56,7 @@ export type ToolbarContextValue = {
   toggleDefaultSnapModeTools: () => void;
   toggleForcedSnapMode: () => void;
   toggleNibasSnapMode: () => void;
+  toggleMatrikkelSnapMode: () => void;
 };
 
 export const ToolbarContext = createContext<ToolbarContextValue | undefined>(undefined);
@@ -123,15 +124,45 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
     if (activeModeTools.includes("snap_forced")) {
       setActiveModeTools(activeModeTools.filter((mode) => mode !== "snap_forced"));
     } else {
-      setActiveModeTools(activeModeTools.concat("snap_forced", "snap_nibas"));
+      setActiveModeTools(activeModeTools.concat("snap_forced", "snap_nibas", "snap_matrikkel"));
     }
   };
 
   const toggleNibasSnapMode = () => {
     if (activeModeTools.includes("snap_nibas")) {
-      setActiveModeTools(activeModeTools.filter((mode) => mode !== "snap_nibas" && mode !== "snap_forced"));
+      const matrikkelSnapEnabled = activeModeTools.includes("snap_matrikkel");
+      setActiveModeTools(
+        activeModeTools.filter((mode) => {
+          if (mode === "snap_nibas") {
+            return false;
+          }
+          if (mode === "snap_forced" && !matrikkelSnapEnabled) {
+            return false;
+          }
+          return true;
+        }),
+      );
     } else {
       setActiveModeTools(activeModeTools.concat("snap_nibas"));
+    }
+  };
+
+  const toggleMatrikkelSnapMode = () => {
+    if (activeModeTools.includes("snap_matrikkel")) {
+      const nibasSnapEnabled = activeModeTools.includes("snap_nibas");
+      setActiveModeTools(
+        activeModeTools.filter((mode) => {
+          if (mode === "snap_matrikkel") {
+            return false;
+          }
+          if (mode === "snap_forced" && !nibasSnapEnabled) {
+            return false;
+          }
+          return true;
+        }),
+      );
+    } else {
+      setActiveModeTools(activeModeTools.concat("snap_matrikkel"));
     }
   };
 
@@ -156,6 +187,7 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
     toggleDefaultSnapModeTools,
     toggleForcedSnapMode,
     toggleNibasSnapMode,
+    toggleMatrikkelSnapMode,
   };
 
   return <ToolbarContext.Provider value={value}>{children}</ToolbarContext.Provider>;
