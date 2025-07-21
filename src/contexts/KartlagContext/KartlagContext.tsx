@@ -13,8 +13,6 @@ import {
   setWMTSLayerVisibility,
   toggleLayerVisibility,
 } from "./kartlag-utils";
-import { removeFeaturesFromSourceByIds } from "utils/map/source";
-import { removeNil } from "utils/list-utils";
 
 export type MappedLayer = {
   type: "wms" | "wmts" | "vector";
@@ -161,18 +159,6 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
           : layer,
       ),
     );
-    const sosiSource = getLayerById("sosiFiler").getSource();
-    if (sosiSource != null) {
-      const features = sosiSource.getFeatures();
-      removeFeaturesFromSourceByIds(
-        "sosiFiler",
-        removeNil(
-          features
-            .filter((feature) => feature.get("sosiFileOrigin") === sublayer.title)
-            .map((feature) => feature.getId()?.toString()),
-        ),
-      );
-    }
   };
 
   const value = {

@@ -5,6 +5,9 @@ import KartlagInner from "./KartlagInner";
 import { KartlagAccordionItem, KartlagAccordionIcon, KartlagControls, KartlagAccordionButton } from "./components";
 import KartlagOpacity from "./KartlagOpacity";
 import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { getLayerById } from "utils/map/layers";
+import { removeFeaturesFromSourceByIds } from "utils/map/source";
+import { removeNil } from "utils/list-utils";
 
 type Props = {
   indexPath: number[];
@@ -17,6 +20,22 @@ const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     toggleKartlag(mappedLayer, indexPath);
+  };
+
+  const handleDeleteSosiSublayer = (sublayer: MappedLayer) => {
+    deleteSOSIFileSublayer(sublayer);
+    const sosiSource = getLayerById("sosiFiler").getSource();
+    if (sosiSource != null) {
+      const features = sosiSource.getFeatures();
+      removeFeaturesFromSourceByIds(
+        "sosiFiler",
+        removeNil(
+          features
+            .filter((feature) => feature.get("sosiFileOrigin") === sublayer.title)
+            .map((feature) => feature.getId()?.toString()),
+        ),
+      );
+    }
   };
 
   return (
@@ -53,7 +72,9 @@ const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
                     key={sublayer.id}
                     indexPath={[...indexPath, i]}
                     mappedLayer={sublayer}
-                    onDelete={mappedLayer.sourceId === "sosiFiler" ? () => deleteSOSIFileSublayer(sublayer) : undefined}
+                    onDelete={
+                      mappedLayer.sourceId === "sosiFiler" ? () => handleDeleteSosiSublayer(sublayer) : undefined
+                    }
                   />
                 ),
               )}
