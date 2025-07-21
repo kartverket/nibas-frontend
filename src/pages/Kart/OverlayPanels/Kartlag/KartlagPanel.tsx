@@ -57,6 +57,9 @@ const KartlagPanel = () => {
         zoomToFeatures(zoomFeatures, padding);
       }
     }
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (

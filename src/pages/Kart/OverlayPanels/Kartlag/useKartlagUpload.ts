@@ -7,8 +7,9 @@ export const useKartlagUpload = () => {
   const auth = useAuthentication();
   const { toastUnique: uploadErrorToast } = useToastUnique({
     status: "error",
-    title: "Opplasting av kartlag feilet",
-    description: "Hvis feilen vedvarer, vennligst kontakt Kartverket",
+    title: "Opplasting av kartlag feilet. ",
+    description:
+      "Husk at sosi-filene må være på versjon 4.5 eller nyere. Hvis feilen vedvarer, vennligst kontakt Kartverket",
   });
 
   const uploadKartlag = async (file: File): Promise<FeatureCollection | null> => {
