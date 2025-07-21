@@ -1,8 +1,11 @@
-import React, { createContext, useContext, useEffect, useRef, useState } from "react";
-import { kartlagLayers } from "hooks/layers/constants";
-import { KartlagId } from "hooks/layers/types";
 import { getLayersFromSource } from "contexts/KartlagContext/getLayersFromSource";
+import { kartlagLayers } from "hooks/layers/constants";
+import { KartlagId, LayerId } from "hooks/layers/types";
+import { useKartlagUpload } from "pages/Kart/OverlayPanels/Kartlag/useKartlagUpload";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
+import { FeatureCollection } from "types/api";
 import { getLayerById, isWMSLayer, isWMTSLayer } from "utils/map/layers";
+import { isNotNil } from "utils/type-utils";
 import {
   findAndToggleLayer,
   resetWMSLayer,
@@ -10,11 +13,10 @@ import {
   setWMTSLayerVisibility,
   toggleLayerVisibility,
 } from "./kartlag-utils";
-import { isNotNil } from "utils/type-utils";
 
 export type MappedLayer = {
-  type: "wms" | "wmts";
-  sourceId: KartlagId;
+  type: "wms" | "wmts" | "vector";
+  sourceId: LayerId;
   id: string;
   title: string;
   sublayers: MappedLayer[];
@@ -23,21 +25,34 @@ export type MappedLayer = {
 
 export type KartlagContextValue = {
   mappedLayers: MappedLayer[];
+  defaultSosiLayer: MappedLayer;
   toggleKartlag: (mappedLayer: MappedLayer, indexPath: number[]) => void;
-  moveLayer: (direction: "up" | "down", layerId: KartlagId) => void;
+  moveLayer: (direction: "up" | "down", layerId: LayerId) => void;
   resetKartlag: () => void;
+  uploadKartlag: (file: File) => Promise<FeatureCollection | null>;
+  addSOSIFileSublayer: (sublayer: MappedLayer) => void;
 };
 
 // Obs! Vi hardkoder et lag som er skrudd på når man åpner applikasjonen
 // men den vil ikke fungere dersom tjenesten endrer navn på kartlaget
-const defaultKartlag: { sourceId: KartlagId; layer: string } = {
+const defaultKartlag: { sourceId: LayerId; layer: string } = {
   sourceId: "topograatone",
   layer: "topograatone",
+};
+
+const defaultSosiLayer: MappedLayer = {
+  type: "vector",
+  sourceId: "sosiFiler",
+  id: "sosiFiler",
+  title: "SOSI-filer",
+  isVisible: false,
+  sublayers: [],
 };
 
 export const KartlagContext = createContext<KartlagContextValue | undefined>(undefined);
 
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {
+  const uploadKartlag = useKartlagUpload();
   const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
 
   // Litt støttestate for å gjøre det lettere å tilbakestille senere
@@ -56,8 +71,8 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
 
       Promise.all(mappedLayerPromises).then((layers) => {
         const nonNullLayers = layers.filter(isNotNil);
-        const initialLayers = findAndToggleLayer(defaultKartlag.layer, nonNullLayers);
-        setMappedLayers(initialLayers);
+        const initialLayers = [defaultSosiLayer].concat(findAndToggleLayer(defaultKartlag.layer, nonNullLayers));
+        setMappedLayers([...initialLayers]);
         setDefaultLayers(initialLayers);
         areLayersInitialized.current = true;
       });
@@ -87,7 +102,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     setMappedLayers(toggledLayers);
   };
 
-  const moveLayer = (direction: "up" | "down", layerId: KartlagId) => {
+  const moveLayer = (direction: "up" | "down", layerId: LayerId) => {
     const mappedLayer = mappedLayers.find((ml) => ml.sourceId === layerId);
 
     if (mappedLayer) {
@@ -118,14 +133,31 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     });
 
     // Obs! Hardkodet toggling av defaultlaget vårt
-    setWMTSLayerVisibility(getLayerById(defaultKartlag.sourceId), true, defaultKartlag.layer);
+    if (defaultKartlag.sourceId === "sosiFiler") {
+      setMappedLayers([defaultSosiLayer]);
+    } else {
+      setWMTSLayerVisibility(getLayerById(defaultKartlag.sourceId as KartlagId), true, defaultKartlag.layer);
+    }
+  };
+
+  const addSOSIFileSublayer = (sublayer: MappedLayer) => {
+    setMappedLayers(
+      mappedLayers.map((layer) =>
+        layer.sourceId === "sosiFiler"
+          ? { ...layer, sublayers: [...layer.sublayers, sublayer], isVisible: true }
+          : layer,
+      ),
+    );
   };
 
   const value = {
     mappedLayers,
+    defaultSosiLayer,
     toggleKartlag,
     moveLayer,
     resetKartlag,
+    uploadKartlag,
+    addSOSIFileSublayer,
   };
 
   return <KartlagContext.Provider value={value}>{children}</KartlagContext.Provider>;

@@ -38,7 +38,8 @@ const calculateFeaturesExtent = (features: Feature<Geometry>[]) => {
   return extent;
 };
 
-export const zoomToFeatures = (features: Feature<Geometry>[]) => {
+export const defaultZoomToFeaturesPadding = [100, 100, 200, 100];
+export const zoomToFeatures = (features: Feature<Geometry>[], padding: number[] = defaultZoomToFeaturesPadding) => {
   if (features.length === 0) {
     resetMapView();
   }
@@ -50,7 +51,7 @@ export const zoomToFeatures = (features: Feature<Geometry>[]) => {
 
   const view = map.getView();
   view.fit(extent, {
-    padding: [100, 100, 200, 100],
+    padding: padding,
     duration: 750,
   });
 };

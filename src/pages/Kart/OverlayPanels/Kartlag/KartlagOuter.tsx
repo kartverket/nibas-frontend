@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { Accordion, AccordionPanel, Checkbox, Spacer } from "@kvib/react";
+import { Accordion, AccordionPanel, Alert, AlertIcon, Checkbox, Spacer } from "@kvib/react";
 import KartlagMiddle from "./KartlagMiddle";
 import KartlagInner from "./KartlagInner";
 import { KartlagAccordionItem, KartlagAccordionIcon, KartlagControls, KartlagAccordionButton } from "./components";
@@ -25,16 +25,26 @@ const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
         {({ isExpanded }) => (
           <>
             <KartlagOuterControls $isVisible={mappedLayer.isVisible} $isExpanded={isExpanded}>
-              <Checkbox isChecked={mappedLayer.isVisible} onChange={handleToggle}>
+              <Checkbox
+                isChecked={mappedLayer.isVisible}
+                onChange={handleToggle}
+                disabled={mappedLayer.sublayers.length === 0}
+              >
                 {mappedLayer.title}
               </Checkbox>
               <Spacer />
-              <KartlagOpacity layerId={mappedLayer.sourceId} />
+              <KartlagOpacity layerId={mappedLayer.sourceId} isDisabled={mappedLayer.sublayers.length === 0} />
               <KartlagAccordionButton $isVisible={mappedLayer.isVisible}>
                 <KartlagAccordionIcon />
               </KartlagAccordionButton>
             </KartlagOuterControls>
             <KartlagAccordionPanel $isVisible={mappedLayer.isVisible}>
+              {mappedLayer.sublayers.length === 0 && (
+                <NoSublayersAlert status="info">
+                  <AlertIcon />
+                  {`${mappedLayer.sourceId === "sosiFiler" ? "Du må laste opp en sosi-fil for å aktivere dette kartlaget" : "Dette kartlaget har ingen underlag"}`}
+                </NoSublayersAlert>
+              )}
               {mappedLayer.sublayers.map((sublayer, i) =>
                 sublayer.sublayers.length > 0 ? (
                   <KartlagMiddle key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
@@ -67,6 +77,12 @@ const KartlagAccordionPanel = styled(AccordionPanel)<{ $isVisible: boolean }>`
   background: ${(props) => (props.$isVisible ? "var(--kvib-colors-blue-50)" : "var(--kvib-colors-gray-50)")};
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
+`;
+
+// Brukes kun for sosi-filer atm, men den vil også vises hvis noen har brukt komponenten for et lag uten sublag
+const NoSublayersAlert = styled(Alert)`
+  margin-top: 12px;
+  border-radius: 8px;
 `;
 
 export default KartlagOuter;
