@@ -12,7 +12,7 @@ type Props = {
 };
 
 const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
-  const { toggleKartlag } = useKartlag();
+  const { toggleKartlag, deleteSOSIFileSublayer } = useKartlag();
 
   const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
@@ -49,7 +49,12 @@ const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
                 sublayer.sublayers.length > 0 ? (
                   <KartlagMiddle key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
                 ) : (
-                  <KartlagInner key={sublayer.id} indexPath={[...indexPath, i]} mappedLayer={sublayer} />
+                  <KartlagInner
+                    key={sublayer.id}
+                    indexPath={[...indexPath, i]}
+                    mappedLayer={sublayer}
+                    onDelete={mappedLayer.sourceId === "sosiFiler" ? () => deleteSOSIFileSublayer(sublayer) : undefined}
+                  />
                 ),
               )}
             </KartlagAccordionPanel>

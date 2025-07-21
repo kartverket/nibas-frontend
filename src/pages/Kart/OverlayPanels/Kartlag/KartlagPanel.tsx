@@ -32,6 +32,9 @@ const KartlagPanel = () => {
           const response = await uploadKartlag(file);
           if (response !== null) {
             const features = geoJsonToSource(response).getFeatures();
+            for (const feature of features) {
+              feature.set("sosiFileOrigin", file.name);
+            }
             addFeaturesToSource("sosiFiler", features);
             addSOSIFileSublayer({
               type: "vector",
@@ -47,7 +50,6 @@ const KartlagPanel = () => {
           innlastingFeiletToast();
         }
       }
-
       if (zoomFeatures.length > 0) {
         const paddingRightIndex = 1;
         const padding = [...defaultZoomToFeaturesPadding];

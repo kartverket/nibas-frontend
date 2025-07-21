@@ -33,7 +33,8 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
           isDisabled={index === maxIndex}
         />
       </ArrowButtons>
-      {mappedLayer.sublayers.length >= 0 ? (
+      {mappedLayer.sublayers.length > 0 ||
+      (mappedLayer.sourceId === "sosiFiler" && mappedLayer.sublayers.length === 0) ? (
         <KartlagOuter indexPath={[index]} mappedLayer={mappedLayer} />
       ) : (
         <KartlagInner indexPath={[index]} mappedLayer={mappedLayer} />

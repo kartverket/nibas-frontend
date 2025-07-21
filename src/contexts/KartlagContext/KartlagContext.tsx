@@ -13,6 +13,8 @@ import {
   setWMTSLayerVisibility,
   toggleLayerVisibility,
 } from "./kartlag-utils";
+import { removeFeaturesFromSourceByIds } from "utils/map/source";
+import { removeNil } from "utils/list-utils";
 
 export type MappedLayer = {
   type: "wms" | "wmts" | "vector";
@@ -31,6 +33,7 @@ export type KartlagContextValue = {
   resetKartlag: () => void;
   uploadKartlag: (file: File) => Promise<FeatureCollection | null>;
   addSOSIFileSublayer: (sublayer: MappedLayer) => void;
+  deleteSOSIFileSublayer: (sublayer: MappedLayer) => void;
 };
 
 // Obs! Vi hardkoder et lag som er skrudd på når man åpner applikasjonen
@@ -150,6 +153,28 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     );
   };
 
+  const deleteSOSIFileSublayer = (sublayer: MappedLayer) => {
+    setMappedLayers(
+      mappedLayers.map((layer) =>
+        layer.sourceId === "sosiFiler"
+          ? { ...layer, isVisible: false, sublayers: layer.sublayers.filter((s) => s.id !== sublayer.id) }
+          : layer,
+      ),
+    );
+    const sosiSource = getLayerById("sosiFiler").getSource();
+    if (sosiSource != null) {
+      const features = sosiSource.getFeatures();
+      removeFeaturesFromSourceByIds(
+        "sosiFiler",
+        removeNil(
+          features
+            .filter((feature) => feature.get("sosiFileOrigin") === sublayer.title)
+            .map((feature) => feature.getId()?.toString()),
+        ),
+      );
+    }
+  };
+
   const value = {
     mappedLayers,
     defaultSosiLayer,
@@ -158,6 +183,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     resetKartlag,
     uploadKartlag,
     addSOSIFileSublayer,
+    deleteSOSIFileSublayer,
   };
 
   return <KartlagContext.Provider value={value}>{children}</KartlagContext.Provider>;
