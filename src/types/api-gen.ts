@@ -22,6 +22,10 @@ export interface paths {
     /** Publiserer utkastet med gitt id. */
     post: operations["publiserUtkast"];
   };
+  "/v1/kartlag/upload": {
+    /** Konverterer en SOSI-fil til en GeoJSON-fil */
+    post: operations["convertSOSIToGeoJSON"];
+  };
   "/v1/frontendlogger": {
     post: operations["logMelding"];
   };
@@ -865,6 +869,12 @@ export interface components {
        */
       gyldigFra: string;
     };
+    FeatureCollection: {
+      /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
+      type: string;
+      /** @description Liste av features som holder på dataene */
+      features: components["schemas"]["Feature"][];
+    };
     FrontendLogRequest: {
       /** @enum {string} */
       logLevel: "INFO" | "WARN" | "ERROR";
@@ -924,12 +934,6 @@ export interface components {
       version: number;
       /** @description Informasjon om stemmekretsen */
       informasjon?: string;
-    };
-    FeatureCollection: {
-      /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
-      type: string;
-      /** @description Liste av features som holder på dataene */
-      features: components["schemas"]["Feature"][];
     };
     /** @description Representasjon av nasjon */
     NasjonResponse: {
@@ -1573,6 +1577,31 @@ export interface operations {
       409: {
         content: {
           "application/json": components["schemas"]["OptimistiskLaasWrapper"];
+        };
+      };
+    };
+  };
+  /** Konverterer en SOSI-fil til en GeoJSON-fil */
+  convertSOSIToGeoJSON: {
+    responses: {
+      /** SOSI-fil ble konvertert til en GeoJSON-fil */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "multipart/form-data": {
+          /** Format: binary */
+          file: string;
         };
       };
     };
@@ -2872,5 +2901,3 @@ export interface operations {
     };
   };
 }
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface external {}

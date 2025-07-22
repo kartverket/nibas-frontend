@@ -1,10 +1,12 @@
+import { generateWMTSConfig } from "hooks/layers/kartlagSources";
+import { KartlagId } from "hooks/layers/types";
 import TileLayer from "ol/layer/Tile";
 import TileSource from "ol/source/Tile";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
-import { getLayerById } from "utils/map/layers";
+import { getLayerById, isVectorLayer } from "utils/map/layers";
 import { MappedLayer } from "./KartlagContext";
-import { generateWMTSConfig } from "hooks/layers/kartlagSources";
+import { grenseStyles } from "utils/map/layerStyles";
 
 /**
  * Navigerer rekursivt gjennom kartlagene for å finne laget som skal endres
@@ -36,6 +38,8 @@ export const toggleLayerVisibility = (
   if (depth === indexPath.length - 1) {
     if (nextLayer.type === "wmts") {
       modifiedLayer = toggleWMTSLayer(nextLayer, willBeVisible);
+    } else if (nextLayer.type === "vector") {
+      modifiedLayer = toggleVectorLayer(nextLayer, willBeVisible);
     } else {
       modifiedLayer = toggleAllSublayers(nextLayer, willBeVisible);
     }
@@ -61,7 +65,7 @@ const toggleAllSublayers = (layer: MappedLayer, willBeVisible: boolean): MappedL
   // Dersom laget ikke har underlag kan vi avslutte rekursjon og skru av eller på kartlaget
   if (layer.sublayers.length === 0) {
     if (layer.type === "wms") {
-      setWMSLayerVisibility(getLayerById(layer.sourceId), willBeVisible, layer.id);
+      setWMSLayerVisibility(getLayerById(layer.sourceId as KartlagId), willBeVisible, layer.id);
     }
     return { ...layer, isVisible: willBeVisible };
   }
@@ -74,13 +78,35 @@ const toggleAllSublayers = (layer: MappedLayer, willBeVisible: boolean): MappedL
   };
 };
 
+const toggleVectorLayer = (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
+  const sourceLayer = getLayerById(layer.sourceId);
+  if (layer.title === "SOSI-filer") {
+    sourceLayer.setVisible(willBeVisible);
+  } else {
+    if (isVectorLayer(sourceLayer) === true) {
+      const features = sourceLayer.getSource()?.getFeatures();
+      if (features != null) {
+        features
+          .filter((feature) => feature.get("sosiFileOrigin") === layer.title)
+          .forEach((feature) => feature.setStyle(willBeVisible === true ? grenseStyles.sosiFiler : []));
+      }
+    }
+  }
+  // Trenger ikke rekursjon da vi ikke har mer enn ett underlag for sosi-filer (som per nå er de eneste vector-lagene)
+  return {
+    ...layer,
+    isVisible: willBeVisible,
+    sublayers: layer.sublayers.map((sublayer) => ({ ...sublayer, isVisible: willBeVisible })),
+  };
+};
+
 // Kun ett lag kan være skrudd på om gangen for WMTS-lag, så de må håndteres på en spesiell måte
 const toggleWMTSLayer = (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
   const sourceLayer = getLayerById(layer.sourceId);
 
   // Dersom laget som skal toggles ikke har underlag setter vi det bare til riktig verdi
   if (layer.sublayers.length === 0) {
-    setWMTSLayerVisibility(sourceLayer, willBeVisible, layer.id);
+    setWMTSLayerVisibility(sourceLayer as TileLayer<TileSource>, willBeVisible, layer.id);
     return {
       ...layer,
       isVisible: willBeVisible,
@@ -88,7 +114,7 @@ const toggleWMTSLayer = (layer: MappedLayer, willBeVisible: boolean): MappedLaye
   }
 
   // Dersom laget har underlag må vi sjekke hvilket underlag som skal bli markert som synlig
-  const toggledLayerId = setWMTSLayerVisibility(sourceLayer, willBeVisible);
+  const toggledLayerId = setWMTSLayerVisibility(sourceLayer as TileLayer<TileSource>, willBeVisible);
 
   return {
     ...layer,

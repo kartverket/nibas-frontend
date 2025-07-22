@@ -12,15 +12,16 @@ import {
   SliderFilledTrack,
   SliderThumb,
 } from "@kvib/react";
-import { KartlagId } from "hooks/layers/types";
+import { LayerId } from "hooks/layers/types";
 import { useEffect, useState } from "react";
 import { getLayerById } from "utils/map/layers";
 
 type Props = {
-  layerId: KartlagId;
+  layerId: LayerId;
+  isDisabled: boolean;
 };
 
-const KartlagOpacity = ({ layerId }: Props) => {
+const KartlagOpacity = ({ layerId, isDisabled }: Props) => {
   const layer = getLayerById(layerId);
   const [opacity, setOpacity] = useState(layer.getOpacity() * 100);
 
@@ -36,6 +37,7 @@ const KartlagOpacity = ({ layerId }: Props) => {
           variant="tertiary"
           icon="tonality"
           onClick={(e) => e.stopPropagation()}
+          isDisabled={isDisabled}
         />
       </PopoverTrigger>
       <PopoverContent onClick={(e) => e.stopPropagation()}>
