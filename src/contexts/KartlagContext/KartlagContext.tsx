@@ -142,8 +142,8 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   const addSOSIFileSublayer = (sublayer: MappedLayer) => {
-    setMappedLayers(
-      mappedLayers.map((layer) =>
+    setMappedLayers((prevMappedLayers) =>
+      prevMappedLayers.map((layer) =>
         layer.sourceId === "sosiFiler"
           ? { ...layer, sublayers: [...layer.sublayers, sublayer], isVisible: true }
           : layer,
@@ -152,8 +152,8 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   const deleteSOSIFileSublayer = (sublayer: MappedLayer) => {
-    setMappedLayers(
-      mappedLayers.map((layer) =>
+    setMappedLayers((prevMappedLayers) =>
+      prevMappedLayers.map((layer) =>
         layer.sourceId === "sosiFiler"
           ? { ...layer, isVisible: false, sublayers: layer.sublayers.filter((s) => s.id !== sublayer.id) }
           : layer,
