@@ -1,8 +1,8 @@
+import { IconButton } from "@kvib/react";
 import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { styled } from "styled-components";
 import KartlagInner from "./KartlagInner";
 import KartlagOuter from "./KartlagOuter";
-import { styled } from "styled-components";
-import { IconButton } from "@kvib/react";
 
 type Props = {
   index: number;
@@ -33,7 +33,8 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
           isDisabled={index === maxIndex}
         />
       </ArrowButtons>
-      {mappedLayer.sublayers.length > 0 ? (
+      {mappedLayer.sublayers.length > 0 ||
+      (mappedLayer.sourceId === "sosiFiler" && mappedLayer.sublayers.length === 0) ? (
         <KartlagOuter indexPath={[index]} mappedLayer={mappedLayer} />
       ) : (
         <KartlagInner indexPath={[index]} mappedLayer={mappedLayer} />

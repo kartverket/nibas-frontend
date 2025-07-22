@@ -120,6 +120,7 @@ export const inndelingColors = {
   fremtidigEndring: "#B92659",
   edit: "#000000",
   measure: "#000000",
+  sosiFiler: "#1A532A",
 };
 
 export const grenseStyles = {
@@ -150,6 +151,7 @@ export const grenseStyles = {
   archivedGrunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"], dashed: true }),
   archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"], dashed: true }),
   archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true }),
+  sosiFiler: lineAndPointStyles({ color: inndelingColors["sosiFiler"] }),
 };
 
 const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
@@ -202,6 +204,9 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
   }
   if (grenseId === "historical") {
     return grenseStyles.historical;
+  }
+  if (grenseId === "sosiFiler") {
+    return grenseStyles.sosiFiler;
   }
 
   return [];
