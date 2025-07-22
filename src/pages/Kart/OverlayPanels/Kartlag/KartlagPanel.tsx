@@ -1,5 +1,5 @@
 import { Button, Center, Input, Spinner } from "@kvib/react";
-import { useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import useToastUnique from "hooks/toast/useToastUnique";
 import { Feature } from "ol";
@@ -24,7 +24,8 @@ const KartlagPanel = () => {
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    const zoomFeatures: Feature<Geometry>[] = [];
+    const allFeatures: Feature<Geometry>[] = [];
+    const allSublayers: MappedLayer[] = [];
     if (files && files.length > 0) {
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
@@ -32,11 +33,12 @@ const KartlagPanel = () => {
           const response = await uploadKartlag(file);
           if (response !== null) {
             const features = geoJsonToSource(response).getFeatures();
-            for (const feature of features) {
+            for (let j = 0; j < features.length; j++) {
+              const feature = features[j];
+              feature.setId(file.name + "_" + j);
               feature.set("sosiFileOrigin", file.name);
             }
-            addFeaturesToSource("sosiFiler", features);
-            addSOSIFileSublayer({
+            allSublayers.push({
               type: "vector",
               sourceId: "sosiFiler",
               id: Math.random().toString(36).substring(2, 15),
@@ -44,17 +46,19 @@ const KartlagPanel = () => {
               isVisible: true,
               sublayers: [],
             });
-            zoomFeatures.push(...features);
+            allFeatures.push(...features);
           }
         } catch {
           innlastingFeiletToast();
         }
       }
-      if (zoomFeatures.length > 0) {
+      if (allFeatures.length > 0) {
         const paddingRightIndex = 1;
         const padding = [...defaultZoomToFeaturesPadding];
         padding[paddingRightIndex] = padding[paddingRightIndex] + SidePanelWidth;
-        zoomToFeatures(zoomFeatures, padding);
+        allSublayers.forEach((sublayer) => addSOSIFileSublayer(sublayer));
+        addFeaturesToSource("sosiFiler", allFeatures);
+        zoomToFeatures(allFeatures, padding);
       }
     }
     if (fileInputRef.current) {
