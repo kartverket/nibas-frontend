@@ -1,5 +1,6 @@
 import { register } from "ol/proj/proj4";
 import proj4 from "proj4";
+import * as proj4Module from "proj4";
 
 export type EPSGCode = `EPSG:${string}`;
 
@@ -58,6 +59,6 @@ export const projectionDefinitions: EpsgDefinition[] = [
 export const registerAllUsedProjections = () => {
   for (const projection of projectionDefinitions) {
     proj4.defs(projection.epsgCode, projection.def);
-    register(proj4);
+    register(proj4Module);
   }
 };
