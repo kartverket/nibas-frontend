@@ -8,13 +8,14 @@ import { isNonEditableFeatureId } from "pages/Kart/interactions/feature-id-utils
 import { useCallback, useEffect } from "react";
 import { styled } from "styled-components";
 import { FeatureProperties } from "types/api";
-import { getFeatureFremtidigEndringDato, isTeigFeature } from "utils/features";
+import { getFeatureFremtidigEndringDato, isSosiFeature, isTeigFeature } from "utils/features";
 import { PanelHeader, SidePanel } from "../Panel";
 import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { TeiggrenseInformasjon } from "./Matrikkelgrenseinformasjon";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { SosiGrenseInformasjon } from "./SosiGrenseInformasjon";
 
 const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
@@ -72,6 +73,8 @@ const GrenseinformasjonPanel = () => {
         </GrensePanelContent>
       ) : selectedFeature && isTeigFeature(selectedFeature) === true ? (
         <TeiggrenseInformasjon onClose={handleClose} feature={selectedFeature} />
+      ) : selectedFeature && isSosiFeature(selectedFeature) === true ? (
+        <SosiGrenseInformasjon onClose={handleClose} />
       ) : selectedFeature && selectedProperties ? (
         <GrensePanelContent>
           <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
