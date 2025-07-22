@@ -6,6 +6,7 @@ import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { getLayerById, isVectorLayer } from "utils/map/layers";
 import { MappedLayer } from "./KartlagContext";
+import { grenseStyles } from "utils/map/layerStyles";
 
 /**
  * Navigerer rekursivt gjennom kartlagene for å finne laget som skal endres
@@ -25,8 +26,8 @@ export const toggleLayerVisibility = (
   let modifiedLayer: MappedLayer;
   let nextLayer: MappedLayer = layers[indexPath[depth]];
 
-  // WMTS-lag og vector-lag kan kun ha ett underlag på om gangen, så alle lagene tilbakestilles i starten
-  if (depth === 0 && (nextLayer.type === "wmts" || nextLayer.type === "vector")) {
+  // WMTS-lag kan kun ha ett underlag på om gangen, så alle lagene tilbakestilles i starten
+  if (depth === 0 && nextLayer.type === "wmts") {
     nextLayer = {
       ...nextLayer,
       sublayers: nextLayer.sublayers.map((ml) => toggleAllSublayers(ml, false)),
@@ -79,8 +80,17 @@ const toggleAllSublayers = (layer: MappedLayer, willBeVisible: boolean): MappedL
 
 const toggleVectorLayer = (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
   const sourceLayer = getLayerById(layer.sourceId);
-  if (isVectorLayer(sourceLayer) === true) {
+  if (layer.title === "SOSI-filer") {
     sourceLayer.setVisible(willBeVisible);
+  } else {
+    if (isVectorLayer(sourceLayer) === true) {
+      const features = sourceLayer.getSource()?.getFeatures();
+      if (features != null) {
+        features
+          .filter((feature) => feature.get("sosiFileOrigin") === layer.title)
+          .forEach((feature) => feature.setStyle(willBeVisible === true ? grenseStyles.sosiFiler : []));
+      }
+    }
   }
   // Trenger ikke rekursjon da vi ikke har mer enn ett underlag for sosi-filer (som per nå er de eneste vector-lagene)
   return {
