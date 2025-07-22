@@ -30,6 +30,7 @@ export type KartlagContextValue = {
   moveLayer: (direction: "up" | "down", layerId: LayerId) => void;
   resetKartlag: () => void;
   uploadKartlag: (file: File) => Promise<FeatureCollection | null>;
+  isKartlagUploadLoading: boolean;
   addSOSIFileSublayer: (sublayer: MappedLayer) => void;
   deleteSOSIFileSublayer: (sublayer: MappedLayer) => void;
 };
@@ -53,7 +54,7 @@ const defaultSosiLayer: MappedLayer = {
 export const KartlagContext = createContext<KartlagContextValue | undefined>(undefined);
 
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {
-  const uploadKartlag = useKartlagUpload();
+  const { uploadKartlag, isLoading } = useKartlagUpload();
   const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
 
   // Litt støttestate for å gjøre det lettere å tilbakestille senere
@@ -168,6 +169,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     moveLayer,
     resetKartlag,
     uploadKartlag,
+    isKartlagUploadLoading: isLoading,
     addSOSIFileSublayer,
     deleteSOSIFileSublayer,
   };
