@@ -156,7 +156,11 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     setMappedLayers((prevMappedLayers) =>
       prevMappedLayers.map((layer) =>
         layer.sourceId === "sosiFiler"
-          ? { ...layer, isVisible: false, sublayers: layer.sublayers.filter((s) => s.id !== sublayer.id) }
+          ? {
+              ...layer,
+              isVisible: layer.sublayers.length > 1 ? true : false,
+              sublayers: layer.sublayers.filter((s) => s.id !== sublayer.id),
+            }
           : layer,
       ),
     );
