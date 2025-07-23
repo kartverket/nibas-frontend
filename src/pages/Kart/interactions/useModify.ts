@@ -27,6 +27,7 @@ import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
 import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
+import { LayerId } from "hooks/layers/types";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
@@ -266,7 +267,7 @@ const useModify = () => {
             maalemetode: featureProperties.malemetodeId?.toString(),
             noeyaktighet: featureProperties.noyaktighet ?? undefined,
           };
-        } else if (isTeiggrenseMetadataWFS(featureProperties)) {
+        } else if (isTeiggrenseMetadataWFS(featureProperties) === true) {
           targetLineStringPosisjonskvalitet = {
             grensetype: "teig",
             maalemetode: featureProperties.MALEMETODE?.toString(),
@@ -292,21 +293,50 @@ const useModify = () => {
       }
     };
 
+    const forcedSnapExit = () => {
+      selectedFeatures.forEach((feature) => setPreviousCoordinatesForFeature(feature));
+    };
+
     const updateFeatureOnModification = async (event: ModifyEvent) => {
-      // Hvis man har valgt én feature kan det føre til løsriving
-      if (selectedFeatures.length === 1) {
+      // Liste med lag som må snappes mot gitt tvungen snapping og snapmode (matrikkel og/eller nibas)
+      const snappableLayers: LayerId[] = [
+        ...(activeModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
+        ...(activeModeTools.includes("snap_nibas")
+          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived"] as LayerId[])
+          : []),
+      ];
+      const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
+        "edit",
+      ]);
+      const nonSelectedActiveFeatures = activeFeatures.filter(
+        (feature) => !selectedFeatures.map((f) => f.getId()).includes(feature.getId()),
+      );
+      const snappableFeatures = getLineStringFeaturesAtPixel(
+        event.mapBrowserEvent as MapBrowserEvent<PointerEvent>,
+        snappableLayers,
+      );
+      if (selectedFeatures.length > 1 && activeModeTools.includes("snap_forced")) {
+        // Vi bryr oss kun om tilfeller der mer enn én feature blir modifisert hvis tvungen snapping er påskrudd.
+        if (nonSelectedActiveFeatures.length === 0 && snappableFeatures.length === 0) {
+          forcedSnapExit();
+          return;
+        }
+        addModificationToHistory(event.features.getArray());
+      } else if (selectedFeatures.length === 1) {
+        // Hvis man har valgt én feature kan det føre til løsriving
         const selectedFeature = selectedFeatures[0];
         if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) {
           return;
         }
 
-        const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
-          "edit",
-        ]);
-
-        const nonSelectedActiveFeatures = activeFeatures.filter(
-          (feature) => selectedFeature.getId() !== feature.getId(),
-        );
+        if (
+          activeModeTools.includes("snap_forced") &&
+          nonSelectedActiveFeatures.length === 0 &&
+          snappableFeatures.length === 0
+        ) {
+          forcedSnapExit();
+          return;
+        }
 
         if (nonSelectedActiveFeatures.some((feature) => !isFeatureEditable(feature))) {
           toast({
@@ -341,6 +371,7 @@ const useModify = () => {
                 equals(coordinates, nearbyVertex) &&
                 (index === 0 || index === nonSelectedActiveFeatureCoordinates.length - 1),
             );
+
             if (!nearbyVertexIsEndpoint) {
               if (
                 (!nearbyVertexIsEndpoint && equals(nearbyVertex, nonSelectedActiveFeatureCoordinates[0])) ||
@@ -376,9 +407,8 @@ const useModify = () => {
           }
         }
         onSnap(event, selectedFeature, event.mapBrowserEvent.coordinate);
+        addModificationToHistory(event.features.getArray());
       }
-
-      addModificationToHistory(event.features.getArray());
     };
 
     modify.on("modifyend", updateFeatureOnModification);
@@ -387,6 +417,7 @@ const useModify = () => {
       modify.un("modifyend", updateFeatureOnModification);
     };
   }, [
+    activeModeTools,
     activeTool,
     addHistoryEntry,
     confirmationModal,
