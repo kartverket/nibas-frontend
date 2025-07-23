@@ -14,6 +14,7 @@ import OverlayPanels from "./OverlayPanels/OverlayPanels";
 import PointOverlayPopup from "./PointOverlayPopup";
 import { OverlayPopup } from "./OverlayPopups/OverlayPopup";
 import Toolbar from "./Toolbar/Toolbar";
+import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 
 const Kart = () => {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -22,6 +23,7 @@ const Kart = () => {
   const { gyldigFra } = useParams();
 
   const { isLoadingInndeling } = useInndelinger();
+  const { isKartlagUploadLoading } = useKartlag();
 
   // Legger til interactions (modify, select, osv) på kartet
   useInteractions();
@@ -57,7 +59,7 @@ const Kart = () => {
       <KartTarget ref={mapRef}>
         <Suspense fallback="Laster inn...">
           <KartOverlay>
-            {isLoadingInndeling && <Loading />}
+            {(isLoadingInndeling || isKartlagUploadLoading) && <Loading />}
             <OverlayPanels />
             <Toolbar />
             <Kartinformasjon />
