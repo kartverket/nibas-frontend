@@ -5,7 +5,7 @@ import TileSource from "ol/source/Tile";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { getLayerById, isVectorLayer } from "utils/map/layers";
-import { MappedLayer, outerSosiLayerTitle } from "./KartlagContext";
+import { MappedLayer } from "./KartlagContext";
 
 export const FEATURE_VISIBLE_PROPERTY = "isVisible";
 export const SOSI_FILE_ORIGIN_PROPERTY = "sosiFileOrigin";
@@ -85,20 +85,17 @@ const toggleVectorLayer = (layer: MappedLayer, willBeVisible: boolean): MappedLa
     const features = sourceLayer.getSource()?.getFeatures();
     if (features != null) {
       features
-        .filter(
-          (feature) => feature.get(SOSI_FILE_ORIGIN_PROPERTY) === layer.title || layer.title === outerSosiLayerTitle,
-        )
+        .filter((feature) => feature.get(SOSI_FILE_ORIGIN_PROPERTY) === layer.title)
         .forEach((feature) => feature.set(FEATURE_VISIBLE_PROPERTY, willBeVisible));
       // Trigger rerender av laget, som vil trigge rerender av feature-stiler, som sjekker FEATURE_VISIBLE_PROPERTY
       sourceLayer.changed();
     }
   }
 
-  // Trenger ikke rekursjon da vi ikke har mer enn ett underlag for sosi-filer (som per nå er de eneste vector-lagene)
   return {
     ...layer,
     isVisible: willBeVisible,
-    sublayers: layer.sublayers.map((sublayer) => ({ ...sublayer, isVisible: willBeVisible })),
+    sublayers: layer.sublayers.map((sublayer) => toggleVectorLayer(sublayer, willBeVisible)),
   };
 };
 
