@@ -80,9 +80,10 @@ export const ModalPanel = styled(Panel).withConfig({
   animation: ${fadeIn} 0.2s ease-out;
 `;
 
+export const SidePanelWidth = 520;
 export const SidePanel = styled(Panel)`
   grid-area: sidepanel;
-  width: 520px;
+  width: ${SidePanelWidth}px;
   border-radius: unset;
   border-top: none;
   margin: unset;
