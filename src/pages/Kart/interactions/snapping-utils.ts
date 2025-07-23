@@ -161,4 +161,5 @@ export const createKartlagSnapsData = (
   edit: createSnapDataForSource("edit", activeModeTools, activeTool),
   measure: createSnapDataForSource("measure", activeModeTools, activeTool),
   historical: createSnapDataForSource("historical", activeModeTools, activeTool),
+  sosiFiler: createSnapDataForSource("sosiFiler", activeModeTools, activeTool),
 });

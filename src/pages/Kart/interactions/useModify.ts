@@ -302,7 +302,7 @@ const useModify = () => {
       const snappableLayers: LayerId[] = [
         ...(activeModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
         ...(activeModeTools.includes("snap_nibas")
-          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived"] as LayerId[])
+          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived", "sosiFiler"] as LayerId[])
           : []),
       ];
       const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
