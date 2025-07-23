@@ -96,7 +96,7 @@ const useDraw = () => {
       const snappableLayers: LayerId[] = [
         ...(currentModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
         ...(currentModeTools.includes("snap_nibas")
-          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived"] as LayerId[])
+          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived", "sosiFiler"] as LayerId[])
           : []),
       ];
 
