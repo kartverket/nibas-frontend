@@ -42,11 +42,12 @@ const defaultKartlag: { sourceId: LayerId; layer: string } = {
   layer: "topograatone",
 };
 
+export const outerSosiLayerTitle = "SOSI-filer";
 const defaultSosiLayer: MappedLayer = {
   type: "vector",
   sourceId: "sosiFiler",
   id: "sosiFiler",
-  title: "SOSI-filer",
+  title: outerSosiLayerTitle,
   isVisible: false,
   sublayers: [],
 };

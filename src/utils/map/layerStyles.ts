@@ -14,6 +14,7 @@ import { getFeatureFremtidigEndringDato, isFeatureEditable, isTeigFeature } from
 import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
 import { getRepresentasjonspunktId } from "./source";
+import { FEATURE_VISIBLE_PROPERTY } from "contexts/KartlagContext/kartlag-utils";
 
 export const endpointStyleZIndex = 9999;
 
@@ -206,6 +207,10 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
     return grenseStyles.historical;
   }
   if (grenseId === "sosiFiler") {
+    const isLayerVisible = feature.get(FEATURE_VISIBLE_PROPERTY);
+    if (isLayerVisible === false) {
+      return [];
+    }
     return grenseStyles.sosiFiler;
   }
 

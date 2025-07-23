@@ -5,9 +5,10 @@ import TileSource from "ol/source/Tile";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { getLayerById, isVectorLayer } from "utils/map/layers";
-import { MappedLayer } from "./KartlagContext";
-import { grenseStyles } from "utils/map/layerStyles";
+import { MappedLayer, outerSosiLayerTitle } from "./KartlagContext";
 
+export const FEATURE_VISIBLE_PROPERTY = "isVisible";
+export const SOSI_FILE_ORIGIN_PROPERTY = "sosiFileOrigin";
 /**
  * Navigerer rekursivt gjennom kartlagene for å finne laget som skal endres
  *
@@ -80,18 +81,19 @@ const toggleAllSublayers = (layer: MappedLayer, willBeVisible: boolean): MappedL
 
 const toggleVectorLayer = (layer: MappedLayer, willBeVisible: boolean): MappedLayer => {
   const sourceLayer = getLayerById(layer.sourceId);
-  if (layer.title === "SOSI-filer") {
-    sourceLayer.setVisible(willBeVisible);
-  } else {
-    if (isVectorLayer(sourceLayer) === true) {
-      const features = sourceLayer.getSource()?.getFeatures();
-      if (features != null) {
-        features
-          .filter((feature) => feature.get("sosiFileOrigin") === layer.title)
-          .forEach((feature) => feature.setStyle(willBeVisible === true ? grenseStyles.sosiFiler : []));
-      }
+  if (isVectorLayer(sourceLayer)) {
+    const features = sourceLayer.getSource()?.getFeatures();
+    if (features != null) {
+      features
+        .filter(
+          (feature) => feature.get(SOSI_FILE_ORIGIN_PROPERTY) === layer.title || layer.title === outerSosiLayerTitle,
+        )
+        .forEach((feature) => feature.set(FEATURE_VISIBLE_PROPERTY, willBeVisible));
+      // Trigger rerender av laget, som vil trigge rerender av feature-stiler, som sjekker FEATURE_VISIBLE_PROPERTY
+      sourceLayer.changed();
     }
   }
+
   // Trenger ikke rekursjon da vi ikke har mer enn ett underlag for sosi-filer (som per nå er de eneste vector-lagene)
   return {
     ...layer,

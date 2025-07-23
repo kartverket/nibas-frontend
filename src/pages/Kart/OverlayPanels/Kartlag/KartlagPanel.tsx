@@ -11,6 +11,7 @@ import { defaultZoomToFeaturesPadding, zoomToFeatures } from "utils/map/map-util
 import { addFeaturesToSource } from "utils/map/source";
 import { PanelHeader, SidePanel, SidePanelWidth } from "../Panel";
 import Kartlag from "./Kartlag";
+import { FEATURE_VISIBLE_PROPERTY, SOSI_FILE_ORIGIN_PROPERTY } from "contexts/KartlagContext/kartlag-utils";
 
 const KartlagPanel = () => {
   const { toastUnique: innlastingFeiletToast } = useToastUnique({
@@ -36,7 +37,8 @@ const KartlagPanel = () => {
             for (let j = 0; j < features.length; j++) {
               const feature = features[j];
               feature.setId(file.name + "_" + j);
-              feature.set("sosiFileOrigin", file.name);
+              feature.set(SOSI_FILE_ORIGIN_PROPERTY, file.name);
+              feature.set(FEATURE_VISIBLE_PROPERTY, true);
             }
             allSublayers.push({
               type: "vector",
