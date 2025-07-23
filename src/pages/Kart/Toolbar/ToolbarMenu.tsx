@@ -1,10 +1,10 @@
-import { MaterialSymbol, Menu } from "@kvib/react";
+import { Menu } from "@kvib/react";
 import MenuButtonWithChevron from "pages/Kart/Toolbar/MenuButtonWithChevron";
 import { ReactNode } from "react";
 
 type ToolbarMenuProps = {
   label: string;
-  icon: MaterialSymbol;
+  icon: JSX.Element;
   isDisabled: boolean;
   isActive: boolean;
   tooltip: string;
