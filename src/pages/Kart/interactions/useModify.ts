@@ -293,47 +293,53 @@ const useModify = () => {
       }
     };
 
-    const forcedSnapExit = (selectedFeature: Feature<LineString>) => {
-      setPreviousCoordinatesForFeature(selectedFeature);
+    const forcedSnapExit = () => {
+      selectedFeatures.forEach((feature) => setPreviousCoordinatesForFeature(feature));
       toast({
         title: "Tvungen snapping er påskrudd",
-        description: "Du kan kun slippe grensen på eksisterende punkter.",
+        description: "Du kan kun slippe grenser på eksisterende linjer eller punkter.",
         status: "warning",
       });
     };
 
     const updateFeatureOnModification = async (event: ModifyEvent) => {
-      // Hvis man har valgt én feature kan det føre til løsriving
-      if (selectedFeatures.length === 1) {
+      // Liste med lag som må snappes mot gitt tvungen snapping og snapmode (matrikkel og/eller nibas)
+      const snappableLayers: LayerId[] = [
+        ...(activeModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
+        ...(activeModeTools.includes("snap_nibas")
+          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived"] as LayerId[])
+          : []),
+      ];
+      const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
+        "edit",
+      ]);
+      const nonSelectedActiveFeatures = activeFeatures.filter(
+        (feature) => !selectedFeatures.map((f) => f.getId()).includes(feature.getId()),
+      );
+      const snappableFeatures = getLineStringFeaturesAtPixel(
+        event.mapBrowserEvent as MapBrowserEvent<PointerEvent>,
+        snappableLayers,
+      );
+      if (selectedFeatures.length > 1 && activeModeTools.includes("snap_forced")) {
+        // Vi bryr oss kun om tilfeller der mer enn én feature blir modifisert hvis tvungen snapping er påskrudd.
+        if (nonSelectedActiveFeatures.length === 0 && snappableFeatures.length === 0) {
+          forcedSnapExit();
+          return;
+        }
+        addModificationToHistory(event.features.getArray());
+      } else if (selectedFeatures.length === 1) {
+        // Hvis man har valgt én feature kan det føre til løsriving
         const selectedFeature = selectedFeatures[0];
         if (isPreviousAndCurrentCoordinatesEqual(selectedFeature)) {
           return;
         }
-
-        const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
-          "edit",
-        ]);
-        // Liste med lag som må snappes mot gitt tvungen snapping og snapmode (matrikkel og/eller nibas)
-        const snappableLayers: LayerId[] = [
-          ...(activeModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
-          ...(activeModeTools.includes("snap_nibas")
-            ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived"] as LayerId[])
-            : []),
-        ];
-        const snappableFeatures = getLineStringFeaturesAtPixel(
-          event.mapBrowserEvent as MapBrowserEvent<PointerEvent>,
-          snappableLayers,
-        );
-        const nonSelectedActiveFeatures = activeFeatures.filter(
-          (feature) => selectedFeature.getId() !== feature.getId(),
-        );
 
         if (
           activeModeTools.includes("snap_forced") &&
           nonSelectedActiveFeatures.length === 0 &&
           snappableFeatures.length === 0
         ) {
-          forcedSnapExit(selectedFeature);
+          forcedSnapExit();
           return;
         }
 
@@ -406,9 +412,8 @@ const useModify = () => {
           }
         }
         onSnap(event, selectedFeature, event.mapBrowserEvent.coordinate);
+        addModificationToHistory(event.features.getArray());
       }
-
-      addModificationToHistory(event.features.getArray());
     };
 
     modify.on("modifyend", updateFeatureOnModification);
