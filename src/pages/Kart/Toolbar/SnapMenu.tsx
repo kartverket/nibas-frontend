@@ -92,7 +92,7 @@ const SnapMenu = ({ isOpen, onClose, onToggle }: Props) => {
             >
               <TitleWithIconTooltip
                 placement="bottom"
-                tooltipLabel="Tvungen snapping gjør det obligatorisk å snappe mot andre punkter"
+                tooltipLabel="Tvungen snapping gjør det obligatorisk å snappe mot andre punkter eller linjer."
               >
                 Tvungen snapping
               </TitleWithIconTooltip>

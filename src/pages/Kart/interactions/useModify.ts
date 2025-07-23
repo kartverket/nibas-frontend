@@ -295,11 +295,6 @@ const useModify = () => {
 
     const forcedSnapExit = () => {
       selectedFeatures.forEach((feature) => setPreviousCoordinatesForFeature(feature));
-      toast({
-        title: "Tvungen snapping er påskrudd",
-        description: "Du kan kun slippe grenser på eksisterende linjer eller punkter.",
-        status: "warning",
-      });
     };
 
     const updateFeatureOnModification = async (event: ModifyEvent) => {
