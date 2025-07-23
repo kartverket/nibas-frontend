@@ -22,7 +22,7 @@ export type MenuItems = (MenuItemProps & {
   $isActive: boolean;
   isDisabled: boolean;
   label: string;
-  tooltipTextOverride?: string;
+  $tooltipTextOverride?: string;
 })[];
 
 const Toolbar = () => {

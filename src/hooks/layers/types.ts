@@ -26,7 +26,8 @@ export type GrenseId =
   | "archived"
   | "edit"
   | "measure"
-  | "historical";
+  | "historical"
+  | "sosiFiler";
 
 export const GRENSETYPER = [
   "Kommunegrense",
