@@ -4,7 +4,6 @@ import useSWRMutation from "swr/mutation";
 import { FeatureCollection } from "types/api";
 import { getUrlForPath, statusCode } from "utils/api";
 
-// Fetcher function for the mutation
 const uploadFetcher = async (url: string, { arg }: { arg: { file: File; token: string } }) => {
   const formData = new FormData();
   formData.append("file", arg.file);
@@ -59,6 +58,6 @@ export const useKartlagUpload = () => {
     isLoading,
     error,
     data,
-    reset, // Call this to reset the mutation state
+    reset,
   };
 };
