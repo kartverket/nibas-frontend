@@ -108,23 +108,15 @@ const AlertModal = ({
 
   const parseCoordinatesInText = (text: string): React.ReactNode => {
     const regex: RegExp = /(\d+(?:\.\d+)?)N\s*(-?\d+(?:\.\d+)?)Ø/g;
-
-    // liste for alle delene av teksten som resultat av å splitte opp mellom koordinatene
     const parts: React.ReactNode[] = [];
-    // variabel for å holde styr på hvor vi er i teksten
     let lastIndex = 0;
-    // alle resultater fra regex.exec blir lagt her
     let match: RegExpExecArray | null = null;
 
-    // looper gjennom alle koordinater i teksten, og sørger for at teksten foran og bak blir lagt til i parts
     while ((match = regex.exec(text)) !== null) {
       const currMatch = match[0];
-      // Tekst før koordinat
       if (match.index > lastIndex) {
         parts.push(text.slice(lastIndex, match.index));
       }
-
-      // Koordinat som lenke
       parts.push(
         <a
           key={match.index}
@@ -135,13 +127,8 @@ const AlertModal = ({
           {currMatch}
         </a>,
       );
-
-      // oppdaterer lastIndex til å være index etter siste koordinat,
-      // slik at regex.exec kan fortsette å lete etter koordinater derfra
       lastIndex = regex.lastIndex;
     }
-
-    // Tekst etter siste koordinat
     if (lastIndex < text.length) {
       parts.push(text.slice(lastIndex));
     }

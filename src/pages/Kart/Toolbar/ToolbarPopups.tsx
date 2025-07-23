@@ -71,14 +71,14 @@ const ToolbarPopups = () => {
       const duplicateFeatures = selectedFeatures
         .map((sf) => {
           const properties = sf.getProperties();
-          if (isTeiggrenseMetadataWFS(properties) || isTeiggrenseMetadata(properties)) {
+          if (isTeiggrenseMetadataWFS(properties) === true || isTeiggrenseMetadata(properties) === true) {
             let teiggrense: TeiggrenseMetadata | null = null;
-            if (isTeiggrenseMetadataWFS(properties)) {
+            if (isTeiggrenseMetadataWFS(properties) === true) {
               teiggrense = mapWFSToNewTeiggrenseMetadata(properties);
             } else if (isTeiggrenseMetadata(properties)) {
               teiggrense = properties;
             }
-            if (!teiggrense || !matrikkelkodeliste || !kodeliste) {
+            if (teiggrense == null || matrikkelkodeliste == null || kodeliste == null) {
               return null;
             }
 
