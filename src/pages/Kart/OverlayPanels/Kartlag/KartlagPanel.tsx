@@ -29,19 +29,8 @@ const KartlagPanel = () => {
       return;
     }
 
-    const existingFiles = mappedLayers.find((l) => l.title === "SOSI-filer")?.sublayers ?? [];
-    const maxFiles = 5;
-    if (existingFiles.length + files.length > maxFiles) {
-      toast({
-        status: "error",
-        title: "For mange SOSI-filer",
-        description: `Du har allerede lastet opp ${existingFiles.length} filer. Du kan maksimalt laste opp ${maxFiles} filer om gangen.`,
-      });
-      return;
-    }
-
     const newFileNames = Array.from(files).map((f) => f.name);
-    const existingFileNames = existingFiles.map((sl) => sl.title);
+    const existingFileNames = mappedLayers.find((l) => l.title === "SOSI-filer")?.sublayers.map((sl) => sl.title) ?? [];
 
     if (new Set(newFileNames).size !== files.length) {
       toast({
