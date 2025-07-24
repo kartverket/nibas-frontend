@@ -474,6 +474,10 @@ export const isTeigFeature = (feature: FeatureLike) => {
   return false;
 };
 
+export const isSosiFeature = (feature: FeatureLike) => {
+  return feature.get("type").toString().startsWith("SOSI");
+};
+
 export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;
 
 export const getFeatureFremtidigEndringDato = (feature: FeatureLike | undefined) => {
