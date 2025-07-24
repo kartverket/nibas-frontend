@@ -8,6 +8,7 @@ import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext"
 import { getLayerById } from "utils/map/layers";
 import { removeFeaturesFromSourceByIds } from "utils/map/source";
 import { removeNil } from "utils/list-utils";
+import { SOSI_FILE_ORIGIN_PROPERTY } from "contexts/KartlagContext/kartlag-utils";
 
 type Props = {
   indexPath: number[];
@@ -31,7 +32,7 @@ const KartlagOuter = ({ indexPath, mappedLayer }: Props) => {
         "sosiFiler",
         removeNil(
           features
-            .filter((feature) => feature.get("sosiFileOrigin") === sublayer.title)
+            .filter((feature) => feature.get(SOSI_FILE_ORIGIN_PROPERTY) === sublayer.id)
             .map((feature) => feature.getId()?.toString()),
         ),
       );

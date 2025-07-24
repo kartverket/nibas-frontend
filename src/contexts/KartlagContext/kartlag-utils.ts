@@ -85,7 +85,7 @@ const toggleVectorLayer = (layer: MappedLayer, willBeVisible: boolean): MappedLa
     const features = sourceLayer.getSource()?.getFeatures();
     if (features != null) {
       features
-        .filter((feature) => feature.get(SOSI_FILE_ORIGIN_PROPERTY) === layer.title)
+        .filter((feature) => feature.get(SOSI_FILE_ORIGIN_PROPERTY) === layer.id)
         .forEach((feature) => feature.set(FEATURE_VISIBLE_PROPERTY, willBeVisible));
       // Trigger rerender av laget, som vil trigge rerender av feature-stiler, som sjekker FEATURE_VISIBLE_PROPERTY
       sourceLayer.changed();

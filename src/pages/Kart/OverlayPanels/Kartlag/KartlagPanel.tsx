@@ -1,4 +1,4 @@
-import { Button, Center, Input, Spinner } from "@kvib/react";
+import { Button, Center, Input, Spinner, useToast } from "@kvib/react";
 import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import useToastUnique from "hooks/toast/useToastUnique";
@@ -19,6 +19,7 @@ const KartlagPanel = () => {
     title: "Innlasting av grenser feilet",
     description: "Prøv å laste opp filen på nytt, og hvis feilen vedvarer, vennligst kontakt Kartverket",
   });
+  const toast = useToast();
   const { mappedLayers, addSOSIFileSublayer, uploadKartlag } = useKartlag();
   const { closeOverlayPanel } = useOverlayPanel();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -28,22 +29,42 @@ const KartlagPanel = () => {
     const allFeatures: Feature<Geometry>[] = [];
     const allSublayers: MappedLayer[] = [];
     if (files && files.length > 0) {
+      const newFileNames = Array.from(files).map((f) => f.name);
+      const existingFileNames =
+        mappedLayers.find((l) => l.title === "SOSI-filer")?.sublayers.map((sl) => sl.title) ?? [];
+      if (new Set(newFileNames).size > files.length) {
+        toast({
+          status: "error",
+          title: "Duplikat filer",
+          description: "Du kan ikke laste opp filer med samme navn",
+        });
+        return;
+      } else if (newFileNames.some((fileName) => existingFileNames.includes(fileName))) {
+        toast({
+          status: "error",
+          title: "Duplikat filer",
+          description: `Du har allerede lastet opp ${files.length > 1 ? "filer med disse navnene" : "en fil med dette navnet"}`,
+        });
+        return;
+      }
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         try {
           const response = await uploadKartlag(file);
           if (response !== null) {
+            const fileId = Math.random().toString(36).substring(2, 15);
             const features = geoJsonToSource(response).getFeatures();
             for (let j = 0; j < features.length; j++) {
               const feature = features[j];
-              feature.setId(file.name + "_" + j);
-              feature.set(SOSI_FILE_ORIGIN_PROPERTY, file.name);
+
+              feature.setId(fileId + "_" + j);
+              feature.set(SOSI_FILE_ORIGIN_PROPERTY, fileId);
               feature.set(FEATURE_VISIBLE_PROPERTY, true);
             }
             allSublayers.push({
               type: "vector",
               sourceId: "sosiFiler",
-              id: Math.random().toString(36).substring(2, 15),
+              id: fileId,
               title: file.name,
               isVisible: true,
               sublayers: [],
