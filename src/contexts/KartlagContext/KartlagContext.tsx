@@ -31,7 +31,7 @@ export type KartlagContextValue = {
   resetKartlag: () => void;
   uploadKartlag: (file: File) => Promise<FeatureCollection | null>;
   isKartlagUploadLoading: boolean;
-  addSOSIFileSublayer: (sublayer: MappedLayer) => void;
+  addSOSIFileSublayers: (sublayers: MappedLayer[]) => void;
   deleteSOSIFileSublayer: (sublayer: MappedLayer) => void;
 };
 
@@ -142,11 +142,11 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     }
   };
 
-  const addSOSIFileSublayer = (sublayer: MappedLayer) => {
+  const addSOSIFileSublayers = (sublayers: MappedLayer[]) => {
     setMappedLayers((prevMappedLayers) =>
       prevMappedLayers.map((layer) =>
         layer.sourceId === "sosiFiler"
-          ? { ...layer, sublayers: [...layer.sublayers, sublayer], isVisible: true }
+          ? { ...layer, sublayers: [...layer.sublayers, ...sublayers], isVisible: true }
           : layer,
       ),
     );
@@ -174,7 +174,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     resetKartlag,
     uploadKartlag,
     isKartlagUploadLoading: isLoading,
-    addSOSIFileSublayer,
+    addSOSIFileSublayers,
     deleteSOSIFileSublayer,
   };
 
