@@ -14,6 +14,7 @@ import { getFeatureFremtidigEndringDato, isFeatureEditable, isTeigFeature } from
 import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
 import { getRepresentasjonspunktId } from "./source";
+import { FEATURE_VISIBLE_PROPERTY } from "contexts/KartlagContext/kartlag-utils";
 
 export const endpointStyleZIndex = 9999;
 
@@ -120,6 +121,7 @@ export const inndelingColors = {
   fremtidigEndring: "#B92659",
   edit: "#000000",
   measure: "#000000",
+  sosiFiler: "#1A532A",
 };
 
 export const grenseStyles = {
@@ -150,6 +152,7 @@ export const grenseStyles = {
   archivedGrunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"], dashed: true }),
   archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"], dashed: true }),
   archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true }),
+  sosiFiler: lineAndPointStyles({ color: inndelingColors["sosiFiler"] }),
 };
 
 const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
@@ -202,6 +205,13 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived
   }
   if (grenseId === "historical") {
     return grenseStyles.historical;
+  }
+  if (grenseId === "sosiFiler") {
+    const isLayerVisible = feature.get(FEATURE_VISIBLE_PROPERTY);
+    if (isLayerVisible === false) {
+      return [];
+    }
+    return grenseStyles.sosiFiler;
   }
 
   return [];

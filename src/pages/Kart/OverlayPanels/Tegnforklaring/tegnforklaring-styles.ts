@@ -135,5 +135,10 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
       dotted: isDottedStyle(grenseStyles.historical),
       color: getColorFromStyle(grenseStyles.historical),
     },
+    {
+      text: "SOSI grense",
+      dotted: isDottedStyle(grenseStyles.sosiFiler),
+      color: getColorFromStyle(grenseStyles.sosiFiler),
+    },
   ],
 ];
