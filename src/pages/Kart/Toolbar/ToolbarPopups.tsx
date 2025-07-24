@@ -10,6 +10,7 @@ import {
   anyFeatureIsEditable,
   createDuplicateOfFeature,
   createDuplicateOfTeigFeature,
+  isSosiFeature,
   mergeFeaturesToNewFeature,
 } from "utils/features";
 import { removeNil } from "utils/list-utils";
@@ -65,8 +66,17 @@ const ToolbarPopups = () => {
 
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
+
   const duplicateFeaturesToEditLayer = () => {
     const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
+    const anySosiFeatures = selectedFeatures.some((feature) => isSosiFeature(feature) === true);
+    if (anySosiFeatures === true) {
+      toast({
+        status: "info",
+        title: "Det er ikke enda mulig å duplisere grenser fra sosi-filer",
+      });
+      return;
+    }
     if (grenseType != null) {
       const duplicateFeatures = selectedFeatures
         .map((sf) => {
