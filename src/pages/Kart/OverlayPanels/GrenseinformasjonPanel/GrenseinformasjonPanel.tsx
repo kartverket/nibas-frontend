@@ -74,7 +74,7 @@ const GrenseinformasjonPanel = () => {
       ) : selectedFeature && isTeigFeature(selectedFeature) === true ? (
         <TeiggrenseInformasjon onClose={handleClose} feature={selectedFeature} />
       ) : selectedFeature && isSosiFeature(selectedFeature) === true ? (
-        <SosiGrenseInformasjon onClose={handleClose} />
+        <SosiGrenseInformasjon onClose={handleClose} feature={selectedFeature} />
       ) : selectedFeature && selectedProperties ? (
         <GrensePanelContent>
           <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
