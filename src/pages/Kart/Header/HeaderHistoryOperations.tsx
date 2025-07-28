@@ -2,21 +2,19 @@ import { Badge, useDisclosure } from "@kvib/react";
 import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
-import UtkastSlettModal from "components/Modals/UtkastSlettModal";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
+import { useState } from "react";
 import { styled } from "styled-components";
 import { statusCode } from "utils/api";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useState } from "react";
 
 const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { canSave, undo, redo } = useHistory();
   const { isOpen: isEndringsloggOpen, onClose: onEndringsloggClose, onOpen: onEndringsloggOpen } = useDisclosure();
-  const { isOpen: isSlettOpen, onClose: onSlettClose, onOpen: onSlettOpen } = useDisclosure();
   const { toggleOverlayPanel } = useOverlayPanel();
   const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
@@ -46,6 +44,7 @@ const HeaderHistoryOperations = () => {
   return (
     <HeaderSection>
       <HeaderButton
+        isLabelHidden={true}
         label="Angre"
         icon="undo"
         onClick={undo}
@@ -56,6 +55,7 @@ const HeaderHistoryOperations = () => {
         }}
       />
       <HeaderButton
+        isLabelHidden={true}
         label="Gjør om"
         icon="redo"
         onClick={redo}
@@ -77,6 +77,7 @@ const HeaderHistoryOperations = () => {
       />
       {showAvvikBtn && (
         <HeaderButton
+          isLabelHidden={true}
           label="Avvik fra matrikkelen"
           icon="warning"
           onClick={handleAvvik}
@@ -94,18 +95,10 @@ const HeaderHistoryOperations = () => {
         }}
         alert={antallEndringer > 0 && <AlertIcon count={antallEndringer} />}
       />
-      <HeaderButton
-        label="Slett utkast"
-        icon="delete"
-        onClick={onSlettOpen}
-        tooltip={{
-          text: "Slett utkastet og endringene som er gjort",
-        }}
-      />
+
       {isEndringsloggOpen && (
         <EndringsloggModal isOpen={isEndringsloggOpen} onClose={onEndringsloggClose} utkast={utkast} />
       )}
-      <UtkastSlettModal isOpen={isSlettOpen} onClose={onSlettClose} utkast={utkast} />
     </HeaderSection>
   );
 };
