@@ -1,5 +1,5 @@
 import Style, { StyleFunction } from "ol/style/Style";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { setFeatureStyle } from "utils/map/layerStyles";
 import { getUniqueItems } from "utils/list-utils";
 
@@ -8,22 +8,38 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
   const [customFeatureIds, setCustomFeatureIds] = useState<string[]>([]);
   const [savedCustomFeatureIds, setSavedCustomFeatureIds] = useState<string[]>([]);
 
-  const renderCustomStyles = (featureIds: string[]) => {
-    for (const featureId of getUniqueItems(featureIds)) {
-      setFeatureStyle(featureId, customStyle);
+  const renderCustomStyles = useCallback(
+    (featureIds: string[]) => {
+      for (const featureId of getUniqueItems(featureIds)) {
+        setFeatureStyle(featureId, customStyle);
+      }
+    },
+    [customStyle],
+  );
+
+  // Oppdaterer custom stiler når customFeatureIds endres
+  useEffect(() => {
+    if (customFeatureIds.length > 0) {
+      renderCustomStyles(customFeatureIds);
     }
-  };
+  }, [customFeatureIds, renderCustomStyles]);
+
+  // Oppdaterer lagrede stiler når savedCustomFeatureIds endres
+  useEffect(() => {
+    if (savedCustomFeatureIds.length > 0) {
+      renderCustomStyles(savedCustomFeatureIds);
+    }
+  }, [savedCustomFeatureIds, renderCustomStyles]);
+
   const renderSavedCustomStyles = () => renderCustomStyles(savedCustomFeatureIds);
 
   // Setter en custom stil på gitte features, samt lagrede features som skal ha samme stil
   const setCustomStyles = (featureIds: string[]) => {
-    renderCustomStyles(featureIds);
     setCustomFeatureIds(featureIds);
   };
 
   // Legger til custom stil på features gitt at de ikke allerede har den
   const addCustomStyles = (featureIds: string[]) => {
-    renderCustomStyles(featureIds);
     setCustomFeatureIds(customFeatureIds.concat(featureIds.filter((fid) => !customFeatureIds.includes(fid))));
   };
 
@@ -41,7 +57,6 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
   // Sender features med lagrede stiler fra utkastet direkte til listen av lagrede features
   const setAndSaveCustomStyles = (featureIds: string[]) => {
     if (featureIds.length > 0) {
-      renderCustomStyles(featureIds);
       setSavedCustomFeatureIds([...savedCustomFeatureIds, ...featureIds]);
     }
   };
