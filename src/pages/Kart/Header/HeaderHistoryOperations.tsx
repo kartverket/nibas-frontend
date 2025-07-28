@@ -46,6 +46,7 @@ const HeaderHistoryOperations = () => {
   return (
     <HeaderSection>
       <HeaderButton
+        isLabelHidden={true}
         label="Angre"
         icon="undo"
         onClick={undo}
@@ -56,6 +57,7 @@ const HeaderHistoryOperations = () => {
         }}
       />
       <HeaderButton
+        isLabelHidden={true}
         label="Gjør om"
         icon="redo"
         onClick={redo}
@@ -77,6 +79,7 @@ const HeaderHistoryOperations = () => {
       />
       {showAvvikBtn && (
         <HeaderButton
+          isLabelHidden={true}
           label="Avvik fra matrikkelen"
           icon="warning"
           onClick={handleAvvik}
@@ -94,14 +97,7 @@ const HeaderHistoryOperations = () => {
         }}
         alert={antallEndringer > 0 && <AlertIcon count={antallEndringer} />}
       />
-      <HeaderButton
-        label="Slett utkast"
-        icon="delete"
-        onClick={onSlettOpen}
-        tooltip={{
-          text: "Slett utkastet og endringene som er gjort",
-        }}
-      />
+
       {isEndringsloggOpen && (
         <EndringsloggModal isOpen={isEndringsloggOpen} onClose={onEndringsloggClose} utkast={utkast} />
       )}
