@@ -49,7 +49,7 @@ export const SosiGrenseInformasjon = ({ onClose, feature }: SosiGrenseInformasjo
         <>
           <SosiGrensePropertyRow label={"Grensetype"}>
             {featureProperties.type != null ? (
-              `${featureProperties.type.split("-")[1] ?? featureProperties.type}`
+              `${featureProperties.type.split(" ")[0] ?? featureProperties.type}`
             ) : (
               <ItalicText>Ikke oppgitt </ItalicText>
             )}
