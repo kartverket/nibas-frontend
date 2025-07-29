@@ -6,8 +6,10 @@ export type ConfirmationModalProps = {
   description: string;
   acceptText?: string;
   declineText?: string;
+  neutralText?: string;
   onAccept: () => void;
   onDecline: () => void;
+  onNeutral: () => void;
 };
 
 type ConfirmationModalOptions = {
@@ -15,8 +17,10 @@ type ConfirmationModalOptions = {
   description: string;
   acceptText?: string;
   declineText?: string;
+  neutralText?: string;
   onAccept?: () => void;
   onDecline?: () => void;
+  onNeutral?: () => void;
 };
 
 export type ConfirmationModalContextValue = {
@@ -44,6 +48,12 @@ export const ConfirmationModalProvider = ({ children }: { children: React.ReactN
           modalOptions.onDecline();
         }
 
+        setModal(null);
+      },
+      onNeutral: () => {
+        if (modalOptions.onNeutral) {
+          modalOptions.onNeutral();
+        }
         setModal(null);
       },
     };
@@ -76,7 +86,13 @@ export const ConfirmationModalProvider = ({ children }: { children: React.ReactN
 
         resolve(false);
       };
-
+      props.onNeutral = () => {
+        if (modalOptions.onNeutral) {
+          modalOptions.onNeutral();
+        }
+        setModal(null);
+        resolve(false);
+      };
       setModal(props);
     });
   };
