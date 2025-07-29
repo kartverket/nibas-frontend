@@ -9,6 +9,7 @@ import { useState } from "react";
 import {
   anyFeatureIsEditable,
   createDuplicateOfFeature,
+  createDuplicateOfSosiFeature,
   createDuplicateOfTeigFeature,
   isSosiFeature,
   mergeFeaturesToNewFeature,
@@ -69,18 +70,13 @@ const ToolbarPopups = () => {
 
   const duplicateFeaturesToEditLayer = () => {
     const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
-    const anySosiFeatures = selectedFeatures.some((feature) => isSosiFeature(feature) === true);
-    if (anySosiFeatures === true) {
-      toast({
-        status: "info",
-        title: "Det er ikke enda mulig å duplisere grenser fra sosi-filer",
-      });
-      return;
-    }
     if (grenseType != null) {
       const duplicateFeatures = selectedFeatures
         .map((sf) => {
           const properties = sf.getProperties();
+          if (isSosiFeature(sf) === true) {
+            return createDuplicateOfSosiFeature(sf, grenseType);
+          }
           if (isTeiggrenseMetadataWFS(properties) === true || isTeiggrenseMetadata(properties) === true) {
             let teiggrense: TeiggrenseMetadata | null = null;
             if (isTeiggrenseMetadataWFS(properties) === true) {
