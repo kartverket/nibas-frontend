@@ -390,7 +390,7 @@ const useModify = () => {
                   "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
                 acceptText: "Del grense",
                 declineText: undefined,
-                neutralText: "Ikke splitt grense",
+                neutralText: "Ikke del grense",
                 onAccept: () => performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]),
                 onDecline: () => setPreviousCoordinatesForFeature(selectedFeature),
                 onNeutral: () => {},
