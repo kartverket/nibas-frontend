@@ -47,10 +47,6 @@ const useSelectPoint = () => {
       if (activeTool === "split" && selectedPoint) {
         const selectedCoord = selectedPoint.getGeometry()?.getCoordinates();
         if (selectedCoord && pixelDistance(event.coordinate, selectedCoord) < pixelTolerance) {
-          toast({
-            status: "info",
-            title: "Dette punktet er allerede valgt for deling. Trykk 'Del grense' i panelet for å dele grensen.",
-          });
           return;
         }
       }
