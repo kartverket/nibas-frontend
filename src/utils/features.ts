@@ -188,20 +188,6 @@ export const createDuplicateOfTeigFeature = (
   return duplicateFeature;
 };
 
-export const createDuplicateOfSosiFeature = (
-  feature: Feature<Geometry>,
-  asGrenseType: GrenseType,
-): Feature<Geometry> => {
-  const duplicateFeature = feature.clone();
-  duplicateFeature.setId(getTempFeatureId());
-
-  duplicateFeature.setProperties({
-    ...getDefaultFeatureProperties(asGrenseType),
-  });
-
-  return duplicateFeature;
-};
-
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) {
     return;

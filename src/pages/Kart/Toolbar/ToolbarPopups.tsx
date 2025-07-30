@@ -9,9 +9,7 @@ import { useState } from "react";
 import {
   anyFeatureIsEditable,
   createDuplicateOfFeature,
-  createDuplicateOfSosiFeature,
   createDuplicateOfTeigFeature,
-  isSosiFeature,
   mergeFeaturesToNewFeature,
 } from "utils/features";
 import { removeNil } from "utils/list-utils";
@@ -25,12 +23,12 @@ import { addGrenseDeleteEntryFromFeatureList } from "../OverlayPanels/Grenseinfo
 import ToolbarPopup from "./ToolbarPopup";
 
 import { HistoryChange } from "contexts/HistoryContext/types";
+import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
 import { FeatureProperties } from "types/api";
 import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
-import useNibasApi from "hooks/useNibasApi";
 import {
   isTeiggrenseMetadata,
   isTeiggrenseMetadataWFS,
@@ -74,9 +72,6 @@ const ToolbarPopups = () => {
       const duplicateFeatures = selectedFeatures
         .map((sf) => {
           const properties = sf.getProperties();
-          if (isSosiFeature(sf) === true) {
-            return createDuplicateOfSosiFeature(sf, grenseType);
-          }
           if (isTeiggrenseMetadataWFS(properties) === true || isTeiggrenseMetadata(properties) === true) {
             let teiggrense: TeiggrenseMetadata | null = null;
             if (isTeiggrenseMetadataWFS(properties) === true) {

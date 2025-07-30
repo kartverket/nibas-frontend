@@ -160,6 +160,66 @@ export const SosiGrenseInformasjon = ({ onClose, feature }: SosiGrenseInformasjo
               <ItalicText>Ikke oppgitt </ItalicText>
             )}
           </SosiGrensePropertyRow>
+          <SosiGrensePropertyRow
+            label={"Gyldig fra"}
+            tooltipLabel={
+              "Dato når grensen skal være gyldig fra. Fra-dato settes automatisk til publiseringsdato for utkastet ditt."
+            }
+          >
+            {metadata.common?.gyldigFra != null ? (
+              `${datestringToFormattedDatestring(metadata.common?.gyldigFra)}`
+            ) : (
+              <ItalicText>Ikke oppgitt </ItalicText>
+            )}
+          </SosiGrensePropertyRow>
+          <SosiGrensePropertyRow
+            label={"Datafangstdato"}
+            tooltipLabel={"Dato når grensen siste gang ble registert, observert eller målt."}
+          >
+            {metadata.common?.datafangstdato != null ? (
+              `${datestringToFormattedDatestring(metadata.common?.datafangstdato)}`
+            ) : (
+              <ItalicText>Ikke oppgitt </ItalicText>
+            )}
+          </SosiGrensePropertyRow>
+          <SosiGrensePropertyRow
+            label={"Målemetode"}
+            tooltipLabel={"Metode som ligger til grunn for registrering av posisjon."}
+          >
+            {metadata.commonGrense?.posisjonskvalitet?.maalemetode?.id != null ? (
+              `${getMaalemetodeText(metadata.commonGrense?.posisjonskvalitet?.maalemetode?.id)}`
+            ) : (
+              <ItalicText>Ikke oppgitt </ItalicText>
+            )}
+          </SosiGrensePropertyRow>
+          <SosiGrensePropertyRow
+            label={"Nøyaktighet (cm)"}
+            tooltipLabel={
+              "Antatt posisjonsnøyaktighet i grunnriss (x, y) oppgitt i cm. Den nøyaktigheten som angis bør være så nær det virkelige objektet som mulig."
+            }
+          >
+            {metadata.commonGrense?.posisjonskvalitet?.noeyaktighet != null ? (
+              `${metadata.commonGrense?.posisjonskvalitet?.noeyaktighet}`
+            ) : (
+              <ItalicText>Ikke oppgitt </ItalicText>
+            )}
+          </SosiGrensePropertyRow>
+          <SosiGrensePropertyRow
+            label={"Opphav"}
+            tooltipLabel={"Ansvarlig organisasjon som er opphav til grensedataene."}
+          >
+            {metadata.common?.opphav != null ? `${metadata.common?.opphav}` : <ItalicText>Ikke oppgitt </ItalicText>}
+          </SosiGrensePropertyRow>
+          <SosiGrensePropertyRow
+            label={"Ekstra informasjon"}
+            tooltipLabel={"Åpent felt med ekstra informasjon om grensen"}
+          >
+            {metadata.common?.informasjon != null ? (
+              `${metadata.common?.informasjon}`
+            ) : (
+              <ItalicText>Ikke oppgitt </ItalicText>
+            )}
+          </SosiGrensePropertyRow>
         </>
       ) : (
         <Alert status="info">
