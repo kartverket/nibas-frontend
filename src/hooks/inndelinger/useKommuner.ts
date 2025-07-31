@@ -20,9 +20,11 @@ const useKommuner = (
 
   const { data: kommuner, ...rest } = useNibasApi(shouldFetch ? url : null, params);
 
-  const sortedKommuner = kommuner?.sort((a, b) => {
-    return Number(a.nummer) - Number(b.nummer);
-  });
+  const sortedKommuner = Array.isArray(kommuner)
+    ? [...kommuner].sort((a, b) => {
+        return Number(a.nummer) - Number(b.nummer);
+      })
+    : undefined;
 
   return {
     kommuner: sortedKommuner,
