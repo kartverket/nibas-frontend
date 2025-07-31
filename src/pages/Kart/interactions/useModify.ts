@@ -338,16 +338,6 @@ const useModify = () => {
           return;
         }
 
-        if (nonSelectedActiveFeatures.some((feature) => !isFeatureEditable(feature))) {
-          toast({
-            status: "error",
-            title: "Grensen er ikke redigerbar",
-            description: "Du kan ikke sette en løsrevet grense på en ikke-redigerbar grense",
-          });
-          setPreviousCoordinatesForFeature(selectedFeature);
-          return;
-        }
-
         // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
         if (nonSelectedActiveFeatures.length === 1) {
           const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
