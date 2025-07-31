@@ -384,20 +384,17 @@ const useModify = () => {
               }
 
               // spør om bruker ønsker å dele hvis nearbyVertex ikke er endepunkt
-              const isAccepted = await confirmationModal.openAsync({
+              await confirmationModal.openAsync({
                 title: "Deling av grense",
                 description:
                   "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
                 acceptText: "Del grense",
-                declineText: "Avbryt",
+                declineText: undefined,
+                neutralText: "Ikke del grense",
+                onAccept: () => performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]),
+                onDecline: () => setPreviousCoordinatesForFeature(selectedFeature),
+                onNeutral: () => {},
               });
-
-              if (isAccepted) {
-                performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
-              } else {
-                setPreviousCoordinatesForFeature(selectedFeature);
-                return;
-              }
             }
             // Vi trenger ikke gjøre noe hvis man ender opp på samme punkt som man løsrev fra
           } else {
