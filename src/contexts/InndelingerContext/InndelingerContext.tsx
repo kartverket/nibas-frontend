@@ -25,6 +25,7 @@ import { clearEditLayer, clearViewingLayers, getLayerById } from "utils/map/laye
 import { zoomToFeatures } from "utils/map/map-utils";
 import { addFeaturesToSource } from "utils/map/source";
 import useInndelingFeatures from "./useInndelingFeatures";
+import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 export type Inndelingtyper = typeof INNDELINGTYPER;
@@ -202,6 +203,15 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
    * og så beregner vi hvordan disse skal legges inn i kartet gjennom denne useEffecten
    */
   useEffect(() => {
+    const handleMetadataEndringer = (endringer: { [key: string]: { navn?: string; nummer?: string } }) => {
+      if (Object.keys(endringer).length > 0) {
+        for (const [lokalid, data] of Object.entries(endringer)) {
+          if (data.navn != null || data.nummer != null) {
+            updateRepresentasjonspunkt(lokalid, data.nummer, data.navn);
+          }
+        }
+      }
+    };
     const addInndelingToLayer = (
       layer: GrenseId,
       features: Feature<Geometry>[],
@@ -235,6 +245,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
             );
 
             setAndSaveFremtidigEndringStyles(fremtidigEndringFeatureIds);
+
+            if (layer === "edit" && utkast?.operasjoner?.metadataendringer != null) {
+              const { stemmekretsendringer, grunnkretsendringer } = utkast.operasjoner.metadataendringer;
+              handleMetadataEndringer(stemmekretsendringer);
+              handleMetadataEndringer(grunnkretsendringer);
+            }
           });
         }
       }
@@ -378,6 +394,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     inndelingerToFetch,
     setFeatureStylesForUtkast,
     utkast?.operasjoner.stemmekretsSammenslaaingsendring,
+    utkast?.operasjoner.metadataendringer,
     utkastFeaturesInInndeling,
     reapplyCurrentEntries,
     restoreApplicationState,
