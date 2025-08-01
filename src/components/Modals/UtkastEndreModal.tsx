@@ -16,7 +16,7 @@ import {
   Select,
 } from "@kvib/react";
 import { endringstyper } from "pages/Kart/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
@@ -51,6 +51,10 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
   const { updateUtkast } = useUtkast();
 
   const { mutate } = useUtkasts();
+
+  useEffect(() => {
+    reset({ navn: utkast.navn, endringstype: utkast.endringstype });
+  }, [utkast.navn, utkast.endringstype, reset]);
 
   const handleCloseModal = () => {
     reset();
