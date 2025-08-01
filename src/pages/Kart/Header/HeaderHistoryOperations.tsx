@@ -93,7 +93,7 @@ const HeaderHistoryOperations = () => {
         icon="published_with_changes"
         onClick={onEndringsloggOpen}
         tooltip={{
-          text: "Se en liste over alle lagrede og ulagrede endringer som er gjort i dette utkastet",
+          text: "Vis alle endringer i utkastet",
         }}
         alert={antallEndringer > 0 && <AlertIcon count={antallEndringer} />}
       />
