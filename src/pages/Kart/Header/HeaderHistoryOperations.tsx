@@ -66,6 +66,7 @@ const HeaderHistoryOperations = () => {
         }}
       />
       <HeaderButton
+        isLabelHidden={true}
         label="Lagre"
         icon="save"
         onClick={handleSave}
@@ -87,6 +88,7 @@ const HeaderHistoryOperations = () => {
         />
       )}
       <HeaderButton
+        isLabelHidden={true}
         label="Endringslogg"
         icon="published_with_changes"
         onClick={onEndringsloggOpen}
