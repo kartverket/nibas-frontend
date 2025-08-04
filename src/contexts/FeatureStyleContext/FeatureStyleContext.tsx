@@ -71,12 +71,13 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
       // Utsetter stilsetting til etter at React state er oppdatert
       setTimeout(() => {
         // Dersom featuren har en aktiv stil faller vi tilbake til den
-        const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
+        const matchingCustomStyle = customStyles.find((customStyle) =>
+          customStyle.customFeatureIds.includes(featureId),
+        );
         // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
         const matchingSavedCustomStyle = customStyles.find((customStyle) =>
           customStyle.savedCustomFeatureIds.includes(featureId),
         );
-
 
         if (matchingCustomStyle) {
           feature.setStyle(matchingCustomStyle.customStyle);
