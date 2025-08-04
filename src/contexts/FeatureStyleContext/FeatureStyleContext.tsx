@@ -11,7 +11,6 @@ import {
   getAllFeatureEndPointCoordinates,
   getFeaturesConnectedToFeatureAtEndpoints,
   isFeatureDeadEnd,
-  isFeatureToBeArchived,
 } from "utils/features";
 import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
 import { filterOnlyDeadEnds, mapAffectedFeaturesForErrorEntries } from "./feature-style-utils";
