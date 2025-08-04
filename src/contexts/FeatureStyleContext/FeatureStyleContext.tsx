@@ -11,7 +11,6 @@ import {
   getAllFeatureEndPointCoordinates,
   getFeaturesConnectedToFeatureAtEndpoints,
   isFeatureDeadEnd,
-  isFeatureToBeArchived,
 } from "utils/features";
 import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
 import { filterOnlyDeadEnds, mapAffectedFeaturesForErrorEntries } from "./feature-style-utils";
@@ -69,27 +68,25 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const setDeselectedStyle = (feature: Feature<LineString>) => {
     const featureId = feature.getId()?.toString();
     if (featureId !== undefined) {
-      // Dersom featuren har en aktiv stil faller vi tilbake til den
-      const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
-      // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
-      const matchingSavedCustomStyle = customStyles.find((customStyle) =>
-        customStyle.savedCustomFeatureIds.includes(featureId),
-      );
+      // Utsetter stilsetting til etter at React state er oppdatert
+      setTimeout(() => {
+        // Dersom featuren har en aktiv stil faller vi tilbake til den
+        const matchingCustomStyle = customStyles.find((customStyle) =>
+          customStyle.customFeatureIds.includes(featureId),
+        );
+        // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
+        const matchingSavedCustomStyle = customStyles.find((customStyle) =>
+          customStyle.savedCustomFeatureIds.includes(featureId),
+        );
 
-      // TS-2288: updateFeatureStyles blir kalt når en history entry legges til i history som en del av arkiveringen.
-      // Det aktuelle objektet finnes i listen archivedFeatures i updateFeatureStyles, og setCustomStyles for archivedStyleFunctions blir kalt med dette objektet.
-      // Senere i arkiveringsprosessen, når handlingen ryddes opp, blir objektet deselected ved å bruke clearSelection, som igjen utløser setDeselectStyle.
-      // I denne setDeselectStyle finnes ikke featureId i customStyles for archivedStyleFunctions, noe som fører til at feil stil blir satt på objektet til slutt.
-      // Vet ikke hvorfor dette skjer, så her er en eksplisitt sjekk på featuren for å sikre at den får riktig stil.
-      if (isFeatureToBeArchived(feature)) {
-        feature.setStyle(archivedStyleFunctions.customStyle);
-      } else if (matchingCustomStyle) {
-        feature.setStyle(matchingCustomStyle.customStyle);
-      } else if (matchingSavedCustomStyle) {
-        feature.setStyle(matchingSavedCustomStyle.customStyle);
-      } else {
-        feature.setStyle();
-      }
+        if (matchingCustomStyle) {
+          feature.setStyle(matchingCustomStyle.customStyle);
+        } else if (matchingSavedCustomStyle) {
+          feature.setStyle(matchingSavedCustomStyle.customStyle);
+        } else {
+          feature.setStyle();
+        }
+      }, 0);
     }
   };
 
