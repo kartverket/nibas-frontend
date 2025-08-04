@@ -47,7 +47,8 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
       // For å unngå concurrency-feil hvis man kaller addHistoryEntry flere ganger etter hverandre. (f.eks når man tegner ny grense og splitter automatisk)
       setHistory((prevHistory) => {
         const newEntries = [...prevHistory.entries.slice(0, prevHistory.index), entry];
-        updateFeatureStyles(newEntries);
+        // Utsetter stiloppdatering til etter at state-oppdatering er fullført
+        queueMicrotask(() => updateFeatureStyles(newEntries));
         return {
           index: prevHistory.index + 1,
           entries: newEntries,
