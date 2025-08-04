@@ -187,6 +187,7 @@ export const createDuplicateOfTeigFeature = (
 
   return duplicateFeature;
 };
+
 export const setDefaultFeatureProperties = (feature: Feature<Geometry>, grenseType: GrenseType | undefined) => {
   if (!grenseType) {
     return;
@@ -475,7 +476,7 @@ export const isTeigFeature = (feature: FeatureLike) => {
 };
 
 export const isSosiFeature = (feature: FeatureLike) => {
-  return feature.get("type").toString().startsWith("SOSI");
+  return feature.get("type").toString().endsWith("(SOSI)");
 };
 
 export const isFeatureToBeArchived = (feature: FeatureLike): boolean => feature.get("shouldArchive") ?? false;

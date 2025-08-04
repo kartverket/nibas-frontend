@@ -62,6 +62,7 @@ const KartlagPanel = () => {
 
             features.forEach((feature, j) => {
               feature.setId(`${fileId}_${j}`);
+              feature.set("type", feature.get("type") + " (SOSI)");
               feature.set(SOSI_FILE_ORIGIN_PROPERTY, fileId);
               feature.set(FEATURE_VISIBLE_PROPERTY, true);
             });
