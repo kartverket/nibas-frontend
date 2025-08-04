@@ -262,7 +262,12 @@ const useSelect = () => {
       if (exclusiveSelectTools.includes(activeTool)) {
         selectFeatures([clickedFeature]);
       } else {
-        addToSelection(clickedFeature);
+        // Hvis vi bytter til en annen feature, clear først for å unngå styling race conditions
+        if (selectedFeatures.length > 0 && !selectedFeatures.some(sf => sf.getId() === clickedFeature.getId())) {
+          selectFeatures([clickedFeature]);
+        } else {
+          addToSelection(clickedFeature);
+        }
       }
     }
   };
