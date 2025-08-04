@@ -68,20 +68,24 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const setDeselectedStyle = (feature: Feature<LineString>) => {
     const featureId = feature.getId()?.toString();
     if (featureId !== undefined) {
-      // Dersom featuren har en aktiv stil faller vi tilbake til den
-      const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
-      // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
-      const matchingSavedCustomStyle = customStyles.find((customStyle) =>
-        customStyle.savedCustomFeatureIds.includes(featureId),
-      );
+      // Utsetter stilsetting til etter at React state er oppdatert
+      setTimeout(() => {
+        // Dersom featuren har en aktiv stil faller vi tilbake til den
+        const matchingCustomStyle = customStyles.find((customStyle) => customStyle.customFeatureIds.includes(featureId));
+        // Dersom featuren ikke har en aktiv stil faller vi tilbake til den lagrede stilen
+        const matchingSavedCustomStyle = customStyles.find((customStyle) =>
+          customStyle.savedCustomFeatureIds.includes(featureId),
+        );
 
-      if (matchingCustomStyle) {
-        feature.setStyle(matchingCustomStyle.customStyle);
-      } else if (matchingSavedCustomStyle) {
-        feature.setStyle(matchingSavedCustomStyle.customStyle);
-      } else {
-        feature.setStyle();
-      }
+
+        if (matchingCustomStyle) {
+          feature.setStyle(matchingCustomStyle.customStyle);
+        } else if (matchingSavedCustomStyle) {
+          feature.setStyle(matchingSavedCustomStyle.customStyle);
+        } else {
+          feature.setStyle();
+        }
+      }, 0);
     }
   };
 

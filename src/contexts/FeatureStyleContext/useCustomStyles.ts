@@ -40,24 +40,26 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
 
   // Legger til custom stil på features gitt at de ikke allerede har den
   const addCustomStyles = (featureIds: string[]) => {
-    setCustomFeatureIds(customFeatureIds.concat(featureIds.filter((fid) => !customFeatureIds.includes(fid))));
+    setCustomFeatureIds(prevIds => prevIds.concat(featureIds.filter((fid) => !prevIds.includes(fid))));
   };
 
   // Fjerner custom stil fra gitte features, tilbakestiller til edit-stil
   const removeCustomStyles = (featureIds: string[]) => {
-    setCustomFeatureIds(customFeatureIds.filter((cfi) => !featureIds.includes(cfi)));
+    setCustomFeatureIds(prevIds => prevIds.filter((cfi) => !featureIds.includes(cfi)));
   };
 
   // Mellomlagrer lagrede features med den gitte stilen slik at de ikke blir tilbakestilt til edit-stil
   const saveCustomStyles = () => {
-    setSavedCustomFeatureIds([...savedCustomFeatureIds, ...customFeatureIds]);
-    setCustomFeatureIds([]);
+    setCustomFeatureIds(prevCustomIds => {
+      setSavedCustomFeatureIds(prevSavedIds => [...prevSavedIds, ...prevCustomIds]);
+      return [];
+    });
   };
 
   // Sender features med lagrede stiler fra utkastet direkte til listen av lagrede features
   const setAndSaveCustomStyles = (featureIds: string[]) => {
     if (featureIds.length > 0) {
-      setSavedCustomFeatureIds([...savedCustomFeatureIds, ...featureIds]);
+      setSavedCustomFeatureIds(prevIds => [...prevIds, ...featureIds]);
     }
   };
 
