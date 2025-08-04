@@ -10,7 +10,6 @@ import {
   anyFeatureIsEditable,
   createDuplicateOfFeature,
   createDuplicateOfTeigFeature,
-  isSosiFeature,
   mergeFeaturesToNewFeature,
 } from "utils/features";
 import { removeNil } from "utils/list-utils";
@@ -24,12 +23,12 @@ import { addGrenseDeleteEntryFromFeatureList } from "../OverlayPanels/Grenseinfo
 import ToolbarPopup from "./ToolbarPopup";
 
 import { HistoryChange } from "contexts/HistoryContext/types";
+import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
 import { FeatureProperties } from "types/api";
 import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
-import useNibasApi from "hooks/useNibasApi";
 import {
   isTeiggrenseMetadata,
   isTeiggrenseMetadataWFS,
@@ -69,14 +68,6 @@ const ToolbarPopups = () => {
 
   const duplicateFeaturesToEditLayer = () => {
     const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
-    const anySosiFeatures = selectedFeatures.some((feature) => isSosiFeature(feature) === true);
-    if (anySosiFeatures === true) {
-      toast({
-        status: "info",
-        title: "Det er ikke enda mulig å duplisere grenser fra sosi-filer",
-      });
-      return;
-    }
     if (grenseType != null) {
       const duplicateFeatures = selectedFeatures
         .map((sf) => {

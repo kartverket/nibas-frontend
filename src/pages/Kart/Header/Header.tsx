@@ -105,6 +105,7 @@ const Header = () => {
         <HeaderBreadcrumb />
         <Flex gap={1}>
           <HeaderHistoryOperations />
+          <Divider marginRight="8px" marginLeft="8px" orientation="vertical" />
           {utkast && <HeaderUtkastOperations utkast={utkast} />}
           {!utkast && <HeaderVelgGyldighetsdato />}
         </Flex>

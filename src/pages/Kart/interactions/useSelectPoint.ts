@@ -6,7 +6,8 @@ import { Feature, MapBrowserEvent } from "ol";
 import LineString from "ol/geom/LineString";
 import { useEffect, useMemo } from "react";
 import { isFeatureEditable } from "utils/features";
-import { findNearbyVertexOnFeature } from "utils/map/map-utils";
+import { findNearbyVertexOnFeature, pixelDistance } from "utils/map/map-utils";
+import { pixelTolerance } from "./constants";
 import { useGetFeatures } from "./interaction-utils";
 import { isSplittingEditableGrense } from "./useSplit";
 
@@ -41,6 +42,13 @@ const useSelectPoint = () => {
         clearSelection();
         closeOverlayPanel();
         return;
+      }
+
+      if (activeTool === "split" && selectedPoint) {
+        const selectedCoord = selectedPoint.getGeometry()?.getCoordinates();
+        if (selectedCoord && pixelDistance(event.coordinate, selectedCoord) < pixelTolerance) {
+          return;
+        }
       }
 
       // Valgt punkt kan ikke være en del av en ikke-redigerbar grense

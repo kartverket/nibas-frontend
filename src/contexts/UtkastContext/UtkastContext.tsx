@@ -56,8 +56,8 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     },
     {
       shouldRetryOnError: false,
-      revalidateIfStale: false,
-      revalidateOnFocus: false,
+      revalidateIfStale: true,
+      revalidateOnFocus: true,
       revalidateOnReconnect: false,
     },
   );
@@ -70,20 +70,24 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   }, [clearFeatureStyles, clearHistory]);
 
   useEffect(() => {
+    if (fetchedUtkast) {
+      if (fetchedUtkast.version !== utkast?.version) {
+        setUtkast(addTempFeatureIdToNewFeaturesInUtkast(fetchedUtkast));
+      }
+      return;
+    }
     if (sessionUtkast && !utkast) {
       setUtkast(sessionUtkast);
-    } else if (fetchedUtkast && !utkast) {
-      setUtkast(addTempFeatureIdToNewFeaturesInUtkast(fetchedUtkast));
     }
+  }, [fetchedUtkast, sessionUtkast, utkast]);
 
-    // fjern utkast hvis utkastid ikke er i url
+  useEffect(() => {
     if (utkastId == null && utkast) {
       sessionStorage.removeItem(sessionStorageKeys.utkast);
-      setUtkast(undefined);
       closeUtkast();
       mutate();
     }
-  }, [fetchedUtkast, utkast, utkastId, closeUtkast, mutate, sessionUtkast]);
+  }, [utkastId, utkast, closeUtkast, mutate]);
 
   const getUpdateUtkastRequestFromHistory = (): OppdaterUtkastRequest | null => {
     if (!utkast) {

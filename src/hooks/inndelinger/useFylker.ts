@@ -7,9 +7,11 @@ import { fetcherWithToken } from "utils/api";
 const useFylker = (gyldighetsdato: string | undefined, shouldFetch = true) => {
   const { data: fylker, ...rest } = useNibasApi(shouldFetch ? "/v1/fylker" : null, { gyldighetsdato });
 
-  const sortedFylker = fylker?.sort((a, b) => {
-    return Number(a.nummer) - Number(b.nummer);
-  });
+  const sortedFylker = Array.isArray(fylker)
+    ? [...fylker].sort((a, b) => {
+        return Number(a.nummer) - Number(b.nummer);
+      })
+    : undefined;
 
   return {
     fylker: sortedFylker,

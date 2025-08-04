@@ -338,16 +338,6 @@ const useModify = () => {
           return;
         }
 
-        if (nonSelectedActiveFeatures.some((feature) => !isFeatureEditable(feature))) {
-          toast({
-            status: "error",
-            title: "Grensen er ikke redigerbar",
-            description: "Du kan ikke sette en løsrevet grense på en ikke-redigerbar grense",
-          });
-          setPreviousCoordinatesForFeature(selectedFeature);
-          return;
-        }
-
         // Hvis vi ender opp på én grense, må vi sjekke om det er et endepunkt vi har landet på, for ikke-endepunkter oppfører seg annerledes
         if (nonSelectedActiveFeatures.length === 1) {
           const nonSelectedActiveFeature = nonSelectedActiveFeatures[0] as Feature<LineString>;
@@ -384,20 +374,17 @@ const useModify = () => {
               }
 
               // spør om bruker ønsker å dele hvis nearbyVertex ikke er endepunkt
-              const isAccepted = await confirmationModal.openAsync({
+              await confirmationModal.openAsync({
                 title: "Deling av grense",
                 description:
                   "Plasserer man et punkt på noe annet enn et endepunkt vil grensen deles i to deler. Er du sikker på at du vil dele grensen?",
                 acceptText: "Del grense",
-                declineText: "Avbryt",
+                declineText: undefined,
+                neutralText: "Ikke del grense",
+                onAccept: () => performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]),
+                onDecline: () => setPreviousCoordinatesForFeature(selectedFeature),
+                onNeutral: () => {},
               });
-
-              if (isAccepted) {
-                performFeatureSplit(nonSelectedActiveFeature, [nearbyVertex]);
-              } else {
-                setPreviousCoordinatesForFeature(selectedFeature);
-                return;
-              }
             }
             // Vi trenger ikke gjøre noe hvis man ender opp på samme punkt som man løsrev fra
           } else {

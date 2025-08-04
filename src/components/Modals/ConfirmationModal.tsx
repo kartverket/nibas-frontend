@@ -18,6 +18,8 @@ const ConfirmationModal = ({
   onAccept,
   declineText,
   onDecline,
+  neutralText,
+  onNeutral,
 }: ConfirmationModalProps) => {
   return (
     <Modal isOpen onClose={onDecline} size="2xl">
@@ -27,9 +29,16 @@ const ConfirmationModal = ({
         <ModalCloseButton />
         <ModalBody>{description}</ModalBody>
         <ModalFooterWithSpacing>
-          <Button variant="ghost" onClick={onDecline}>
-            {declineText ?? "Nei"}
-          </Button>
+          {Boolean(declineText) && (
+            <Button variant="ghost" onClick={onDecline}>
+              {declineText ?? "Nei"}
+            </Button>
+          )}
+          {Boolean(neutralText) && (
+            <Button variant="secondary" onClick={onNeutral}>
+              {neutralText}
+            </Button>
+          )}
           <Button onClick={onAccept}>{acceptText ?? "Ja"}</Button>
         </ModalFooterWithSpacing>
       </ModalContent>
