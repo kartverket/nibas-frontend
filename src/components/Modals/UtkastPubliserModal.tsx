@@ -16,7 +16,7 @@ import {
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
 import { useAuthRenewError } from "components/Authentication/AuthRenewError";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { UnsavedEndringerCollapse } from "components/Endringslogg/UlagredeEndringer/UnsavedEndringerCollapse";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";

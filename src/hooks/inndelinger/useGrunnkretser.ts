@@ -2,7 +2,7 @@ import { GrunnkretsResponse } from "../../types/api";
 import { fetcherWithToken } from "utils/api";
 import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 
 const grunnkretsFetcher = async ([grunnkretsIds, gyldighetsdato, token]: [
   string[],

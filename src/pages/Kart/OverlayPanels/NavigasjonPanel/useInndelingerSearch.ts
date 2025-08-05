@@ -1,4 +1,4 @@
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import useToastUnique from "hooks/toast/useToastUnique";
 import { InndelingSearchResponse, InndelingSearchType } from "types/api";
 import { getUrlForPath, statusCode } from "utils/api";

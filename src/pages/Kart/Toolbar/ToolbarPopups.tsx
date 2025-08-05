@@ -67,7 +67,10 @@ const ToolbarPopups = () => {
   const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
 
   const duplicateFeaturesToEditLayer = () => {
-    const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
+    const grenseType =
+      currentlyEditingInndelinger.length > 0
+        ? getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype)
+        : null;
     if (grenseType != null) {
       const duplicateFeatures = selectedFeatures
         .map((sf) => {
@@ -169,7 +172,10 @@ const ToolbarPopups = () => {
   };
 
   const mergeSelectedFeatures = () => {
-    const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
+    const grenseType =
+      currentlyEditingInndelinger.length > 0
+        ? getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype)
+        : null;
     if (grenseType == null) {
       return;
     }

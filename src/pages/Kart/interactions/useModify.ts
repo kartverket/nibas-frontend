@@ -3,6 +3,7 @@ import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { LayerId } from "hooks/layers/types";
 import useToastCounter from "hooks/toast/useToastCounter";
 import { Collection, MapBrowserEvent } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
@@ -19,15 +20,14 @@ import { isFeatureEditable, isFeatureToBeArchived, isPreviousAndCurrentCoordinat
 import { isAdministrativGrense } from "utils/grenser";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import {
-  isTeiggrenseMetadataWFS,
   isTeiggrenseMetadata,
+  isTeiggrenseMetadataWFS,
 } from "../OverlayPanels/GrenseinformasjonPanel/Matrikkelgrenseinformasjon";
+import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
-import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
-import { LayerId } from "hooks/layers/types";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
@@ -55,16 +55,13 @@ const useModify = () => {
   const confirmationModal = useConfirmationModal();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
-  const disallowedPointModes: Tool[] = useMemo(
-    () => ["draw", "split", "grenseinfo", "archive", "koordinater", "duplicate"],
-    [],
-  );
 
   const modify = useMemo(() => {
     return new Modify({
       features: new Collection(selectedFeatures),
       pixelTolerance: pixelTolerance,
       condition: (event) => {
+        const disallowedPointModes: Tool[] = ["draw", "split", "grenseinfo", "archive", "koordinater", "duplicate"];
         if (activeModeTools.includes("move")) {
           return false;
         }
@@ -148,15 +145,7 @@ const useModify = () => {
         return false;
       },
     });
-  }, [
-    activeModeTools,
-    activeTool,
-    selectedFeatures,
-    disallowedPointModes,
-    getLineStringFeaturesAtPixel,
-    toast,
-    removeToast,
-  ]);
+  }, [activeModeTools, activeTool, selectedFeatures, getLineStringFeaturesAtPixel, toast, removeToast]);
 
   useEffect(() => {
     const createAddPointGrenseEntry = (ev: BaseEvent) => {

@@ -1,7 +1,7 @@
 import { Spinner, Icon, IconButton } from "@kvib/react";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import Select, { DropdownIndicatorProps, components, StylesConfig } from "react-select";
 import { styled } from "styled-components";
 import useSWR from "swr";
@@ -127,18 +127,18 @@ export const EnvironmentSelect = () => {
 
   const isLoading = isFrontendPRsLoading || isBackendPRsLoading || isArbeidslistePRsLoading || isEventsPRsLoading;
 
-  const allEnvironmentOptions = useMemo(() => {
-    // Dependabot oppretter brancher med ugylidig hostname label.
-    // Dette kan fikses ved å eksplisitt håndtere dette i wokflows som oppretter feature-namespaces, men det er ikke gjort per nå.
-    const allPRs = [
+  // Dependabot oppretter brancher med ugylidig hostname label.
+  // Dette kan fikses ved å eksplisitt håndtere dette i wokflows som oppretter feature-namespaces, men det er ikke gjort per nå.
+  const allEnvironmentOptions = currentEnvironments.concat(
+    [
       ...(nibasFrontendPRs || []),
       ...(nibasBackendPRs || []),
       ...(nibasEventsPRs || []),
       ...(nibasArbeidslistePRs || []),
-    ];
-
-    return currentEnvironments.concat(allPRs.map(mapPRtoOptionObject).filter((pr) => pr !== null));
-  }, [nibasArbeidslistePRs, nibasBackendPRs, nibasEventsPRs, nibasFrontendPRs]);
+    ]
+      .map(mapPRtoOptionObject)
+      .filter((pr) => pr !== null),
+  );
 
   const onSelectEnvironment = (url: string) => {
     // bruker samme database for alle dev-miljøer, så dermed skal vi kunne gå til samme paths på tvers av miljøer i dev.

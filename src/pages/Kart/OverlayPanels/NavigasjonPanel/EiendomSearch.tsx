@@ -193,12 +193,12 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
       {suggestedKommunerInndelingOptions != null && suggestedKommunerInndelingOptions.length > 1 && (
         <SuggestionsContainer>
           <Text>Forslag:</Text>
-          {suggestedKommunerInndelingOptions.map((kommuneSuggestion, i) => (
+          {suggestedKommunerInndelingOptions.map((kommuneSuggestion) => (
             <Link
               onClick={() => {
                 setValue("kommune", kommuneSuggestion);
               }}
-              key={i}
+              key={kommuneSuggestion.id}
             >
               {kommuneSuggestion.label}
             </Link>

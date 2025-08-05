@@ -155,13 +155,12 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
   const { currentlyEditingInndelinger } = useInndelinger();
 
   // Her aner jeg ikke hvordan vi skal håndtere flere potensielle aktivt redigerte inndelinger
-  const kommunerId = useMemo(
-    () =>
-      getKommunerIdFromKontekstEgenskaper(kontekstEgenskaper, kontekstType) ?? [
-        currentlyEditingInndelinger?.[0] != null ? currentlyEditingInndelinger[0].id : "",
-      ],
-    [kontekstType, currentlyEditingInndelinger, kontekstEgenskaper],
-  );
+  const kommunerIds = useMemo(() => {
+    const fromKontekst = getKommunerIdFromKontekstEgenskaper(kontekstEgenskaper, kontekstType) ?? [];
+    const fromInndelinger = currentlyEditingInndelinger?.map((i) => i.id) ?? [];
+    const allIds = Array.from(new Set([...fromKontekst, ...fromInndelinger]));
+    return allIds.length > 0 ? allIds : [""];
+  }, [kontekstEgenskaper, kontekstType, currentlyEditingInndelinger]);
 
   const kommunerIdOgNummer: { id: string; nummer: string }[] = useMemo(() => {
     if (kommuneResponses == null) {
@@ -169,9 +168,9 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     }
 
     return kommuneResponses
-      .filter((kommune) => kommunerId.some((id) => id === kommune.id.lokalid.value))
+      .filter((kommune) => kommunerIds.some((id) => id === kommune.id.lokalid.value))
       .map((kommune) => ({ id: kommune.id.lokalid.value, nummer: kommune.nummer }));
-  }, [kommuneResponses, kommunerId]);
+  }, [kommuneResponses, kommunerIds]);
   const [tilhorighetOptions, setTilhorighetValg] = useState<TilhorighetOptions>();
 
   // wrapper for setter av tilhørighetoptions. Spreader inn nye kretser i hver dropdown.
@@ -216,7 +215,7 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     setFormState(newState);
   };
 
-  const isDirty = useMemo(() => {
+  const isDirty = () => {
     const initialData = getTilhorighetData(kontekstEgenskaper);
 
     const grunnkretsIsDirty =
@@ -227,7 +226,7 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
       initialData[KontekstType.STEMMEKRETS][Tilhorighet.B] !== formState[KontekstType.STEMMEKRETS][Tilhorighet.B];
 
     return stemmekretsIsDirty || grunnkretsIsDirty;
-  }, [formState, kontekstEgenskaper]);
+  };
 
   const resetTilhorighet = useCallback(() => {
     const tilhorighetchangesForKrets = getGrenseTilhorighetEntries(getHistoryEntries())
@@ -258,9 +257,9 @@ export const useTilhorighetForm = (feature: Feature, kontekstTypeOverride?: Kont
     tilhorighetOptions,
     formState,
     setValue,
-    isDirty,
+    isDirty: isDirty(),
     resetTilhorighet,
-    kommunerId,
+    kommunerIds,
     kontekstType,
     getCurrentOppdaterteKontekstEgenskaper,
     isLoading,

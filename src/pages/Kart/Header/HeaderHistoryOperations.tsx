@@ -6,7 +6,6 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
-import { useState } from "react";
 import { styled } from "styled-components";
 import { statusCode } from "utils/api";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
@@ -18,9 +17,6 @@ const HeaderHistoryOperations = () => {
   const { toggleOverlayPanel } = useOverlayPanel();
   const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
-  const [showAvvikBtn, setShowAvvikBtn] = useState(true);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).toggleAvvik = () => setShowAvvikBtn(!showAvvikBtn);
   const handleSave = async () => {
     if (utkast && canSave) {
       const responseCode = await updateUtkastWithHistory();
@@ -76,17 +72,15 @@ const HeaderHistoryOperations = () => {
           shortcut: "save",
         }}
       />
-      {showAvvikBtn && (
-        <HeaderButton
-          isLabelHidden={true}
-          label="Avvik fra matrikkelen"
-          icon="warning"
-          onClick={handleAvvik}
-          tooltip={{
-            text: "Se en liste over alle avvik",
-          }}
-        />
-      )}
+      <HeaderButton
+        isLabelHidden={true}
+        label="Avvik fra matrikkelen"
+        icon="warning"
+        onClick={handleAvvik}
+        tooltip={{
+          text: "Se en liste over alle avvik",
+        }}
+      />
       <HeaderButton
         isLabelHidden={true}
         label="Endringslogg"
