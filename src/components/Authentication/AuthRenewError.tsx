@@ -9,8 +9,8 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@kvib/react";
-import { useAuthentication } from "./AuthenticationHook";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useAuthentication } from "./useAuthentication";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { ApplicationState, saveApplicationStateToSessionStorage } from "contexts/application-state-utils";
@@ -30,9 +30,10 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayModal, activeOverlayPanel } = useOverlayPanel();
 
-  const auth = useAuthRenewError();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).forceAutomatiskUtlogging = () => auth.setAuthRenewError(true);
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).forceAutomatiskUtlogging = () => setAuthRenewError(true);
+  }, [setAuthRenewError]);
 
   useEffect(() => {
     const silentRenewCleanupFn = events.addSilentRenewError(() => {
@@ -123,10 +124,13 @@ export const AuthRenewContext = createContext<AuthRenewContextValue | undefined>
 export const AuthRenewProvider = ({ children }: { children: React.ReactNode }) => {
   const [authRenewError, setAuthRenewError] = useState(false);
 
-  const value = {
-    authRenewError,
-    setAuthRenewError,
-  };
+  const value = useMemo(
+    () => ({
+      authRenewError,
+      setAuthRenewError,
+    }),
+    [authRenewError],
+  );
 
   return <AuthRenewContext.Provider value={value}>{children}</AuthRenewContext.Provider>;
 };

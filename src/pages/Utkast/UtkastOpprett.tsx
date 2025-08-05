@@ -27,7 +27,7 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { ApiErrorResponse } from "types/api";
 import { statusCode } from "utils/api";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { format } from "date-fns";
 
 type UtkastFormData = {

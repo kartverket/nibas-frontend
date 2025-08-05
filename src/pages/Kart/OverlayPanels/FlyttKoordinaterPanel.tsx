@@ -12,7 +12,7 @@ import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import LineString from "ol/geom/LineString";
 import Point from "ol/geom/Point";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ChangeHandler, useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { EPSGCode, mapProjectionEPSGCode, projectionDefinitions } from "utils/map/projections";
@@ -106,8 +106,9 @@ const FlyttKoordinaterPanel = () => {
     }
   };
 
-  const setFormValues = useCallback(
-    (e: CustomEvent, direction: HistoryDirection) => {
+  // Når man bruker undo og redo må koordinatpanelet oppdateres
+  useEffect(() => {
+    const setFormValues = (e: CustomEvent, direction: HistoryDirection) => {
       // Dette skal bare kjøres dersom et punkt er valgt, ikke ved alle grensendringer
       if (selectedPoint) {
         const entry = e.detail.entry as GrenseEntry;
@@ -129,12 +130,8 @@ const FlyttKoordinaterPanel = () => {
           }
         }
       }
-    },
-    [selectPointOnFeature, selectedFeatures, selectedPoint],
-  );
+    };
 
-  // Når man bruker undo og redo må koordinatpanelet oppdateres
-  useEffect(() => {
     const undo = ((e: CustomEvent) => {
       setFormValues(e, "from");
     }) as EventListener;
@@ -151,7 +148,7 @@ const FlyttKoordinaterPanel = () => {
       document.removeEventListener("grenseUndo", undo);
       document.removeEventListener("grenseRedo", redo);
     };
-  }, [setFormValues]);
+  }, [selectedPoint, selectedFeatures, selectPointOnFeature]);
 
   // Tilbakestill defaultverdier når man endrer eller oppdaterer valgt punkt
   // TODO: Dette burde ikke være en useEffect. Burde bruke events eller callbacks

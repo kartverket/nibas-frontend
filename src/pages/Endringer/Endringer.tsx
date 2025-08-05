@@ -20,7 +20,7 @@ import {
   useToast,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { format, subDays, addDays } from "date-fns";

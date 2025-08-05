@@ -6,7 +6,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
 import { useEffect } from "react";
 import { User } from "oidc-client-ts";
-import { useAuthentication } from "./AuthenticationHook";
+import { useAuthentication } from "./useAuthentication";
 
 const getUtkastIdFromUser = (user?: User | null): string | null => {
   if (user?.state == null) {

@@ -1,21 +1,21 @@
-import { MetadataEntry, HistoryDirection } from "contexts/HistoryContext/types";
+import { Icon, Tooltip } from "@kvib/react";
+import { ValidationError } from "components/Input";
+import { HistoryDirection, MetadataEntry } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
-import { FieldError, UseFormReturn } from "react-hook-form";
+import { Control, FieldError, UseFormReturn, useFormState } from "react-hook-form";
+import { css, styled } from "styled-components";
 import { MetadataResponse } from "types/api";
+import { getIdFromEntity } from "utils/api";
+import { getInndelingFremtidigEndringDato } from "utils/features";
+import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
-import InputCell, { TableCell, MerknadCell } from "./FlatedataTableCells";
-import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
-import { getIdFromEntity } from "utils/api";
-import { css, styled } from "styled-components";
-import { FlatedataInputs } from "./flatedata-utils";
-import { ValidationError } from "components/Input";
-import { getInndelingFremtidigEndringDato } from "utils/features";
-import { Icon, Tooltip } from "@kvib/react";
-import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { isIntegerString } from "utils/type-utils";
+import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
+import { FlatedataInputs } from "./flatedata-utils";
+import InputCell, { MerknadCell, TableCell } from "./FlatedataTableCells";
+import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
@@ -53,9 +53,10 @@ type Props = {
   isSearchMatch: boolean;
   isEditing: boolean;
   formMethods: UseFormReturn<FlatedataInputs>;
-  previousValues: React.MutableRefObject<FlatedataInputs | undefined>;
+  setPreviousValues: (flatedata: FlatedataInputs | undefined) => void;
   allInndelinger: MetadataResponse[];
   sammenslaaingInformasjon: string | undefined;
+  control: Control<FlatedataInputs>;
 };
 
 export const FlatedataTableRow = ({
@@ -64,9 +65,10 @@ export const FlatedataTableRow = ({
   isSearchMatch,
   isEditing,
   formMethods,
-  previousValues,
+  setPreviousValues,
   allInndelinger,
   sammenslaaingInformasjon,
+  control,
 }: Props) => {
   const {
     setValue,
@@ -74,10 +76,11 @@ export const FlatedataTableRow = ({
     register,
     trigger,
     watch,
-    formState: { errors, isSubmitted },
+    formState: { isSubmitted },
   } = formMethods;
   const inndelingId = getIdFromEntity(inndeling);
-  const inndelingErrors = errors[inndelingId];
+  const { errors } = useFormState({ control });
+  const inndelingErrors = errors?.[inndelingId];
 
   const getExistingIndelingtypeNumbers = () => {
     const watchValues = watch();
@@ -154,7 +157,7 @@ export const FlatedataTableRow = ({
       setValue(`${inndelingChange.identifikasjon.lokalid}.nummer`, inndelingChange.nummer ?? "");
       setValue(`${inndelingChange.identifikasjon.lokalid}.navn`, inndelingChange.navn ?? "");
     }
-    previousValues.current = structuredClone(getValues());
+    setPreviousValues(structuredClone(getValues()));
   };
 
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
@@ -183,7 +186,7 @@ export const FlatedataTableRow = ({
             isDisabled={disabledDate != null}
             data={getValues(`${inndelingId}.samiskforvaltningsomraade`) ?? inndeling.samiskforvaltningsomraade}
             validationError={
-              inndelingErrors && "samiskforvaltningsomraade" in inndelingErrors
+              inndelingErrors != null && "samiskforvaltningsomraade" in inndelingErrors
                 ? validationError(inndelingErrors.samiskforvaltningsomraade)
                 : undefined
             }

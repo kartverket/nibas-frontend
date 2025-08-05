@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useAuthentication } from "../../../../components/Authentication/AuthenticationHook";
+import { useAuthentication } from "../../../../components/Authentication/useAuthentication";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { clearMatrikkelLayer } from "utils/map/layers";
