@@ -1,5 +1,5 @@
 import { useToast } from "@kvib/react";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import useSWRMutation from "swr/mutation";
 import { FeatureCollection } from "types/api";
 import { getUrlForPath, statusCode } from "utils/api";

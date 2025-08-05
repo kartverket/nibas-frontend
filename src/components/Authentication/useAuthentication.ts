@@ -1,9 +1,8 @@
-import { useAuth } from "react-oidc-context";
-import { User, SigninRedirectArgs, UserManagerEvents } from "oidc-client-ts";
-import { fetcherWithToken } from "utils/api";
-import { useCallback } from "react";
 import { isAuthDisabled, isAuthEnabled, isMockAuthEnabled } from "components/Authentication/AuthenticationConfig";
+import { SigninRedirectArgs, User, UserManagerEvents } from "oidc-client-ts";
 import { ResponseError } from "ol/net";
+import { useAuth } from "react-oidc-context";
+import { fetcherWithToken } from "utils/api";
 
 type AuthorizationState = "OK" | "NOT_AUTHORIZED" | "ERROR";
 
@@ -28,7 +27,7 @@ const isResponseError = (e: unknown): e is ResponseError => {
 export const useAuthentication = (): UseAuthenticationReturnType => {
   const auth = useAuth();
 
-  const checkAuthorization = useCallback(async (): Promise<AuthorizationState> => {
+  const checkAuthorization = async (): Promise<AuthorizationState> => {
     if (isAuthDisabled()) {
       return "OK";
     }
@@ -46,7 +45,7 @@ export const useAuthentication = (): UseAuthenticationReturnType => {
       }
       return "ERROR";
     }
-  }, [auth.isAuthenticated, auth.user?.access_token]);
+  };
 
   const { protocol, host } = window.location;
   const signOutRedirectUrl = `${protocol}//${host}/logout`;
@@ -69,10 +68,10 @@ export const useAuthentication = (): UseAuthenticationReturnType => {
     userId: userId as string | undefined,
     signIn: isAuthEnabled()
       ? (args?: SigninRedirectArgs) => auth.signinRedirect(args)
-      : () => (window.location.href = window.location.origin + "/authenticated"),
+      : () => window.location.replace("/authenticated"),
     signOut: isAuthEnabled()
       ? () => auth.signoutRedirect({ post_logout_redirect_uri: signOutRedirectUrl })
-      : () => (window.location.href = window.location.origin + "/auth"),
+      : () => window.location.replace("/auth"),
     checkAuthorization: checkAuthorization,
   };
 };

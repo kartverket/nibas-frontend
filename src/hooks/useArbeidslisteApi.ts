@@ -1,6 +1,6 @@
 import useSWR, { BareFetcher, SWRConfiguration } from "swr";
 import { fetcherWithToken } from "utils/api";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { paths as arbeidslistePaths } from "types/api-gen-arbeidsliste";
 
 // Define types for path and query parameters

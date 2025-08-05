@@ -5,7 +5,7 @@ import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { isNonEditableFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { styled } from "styled-components";
 import { FeatureProperties } from "types/api";
 import { getFeatureFremtidigEndringDato, isSosiFeature, isTeigFeature } from "utils/features";
@@ -31,23 +31,19 @@ const GrenseinformasjonPanel = () => {
     toggleTool("grenseinfo");
   };
 
-  const closeGrenseinfoIfFeatureRemoved = useCallback(() => {
-    if (selectedFeature?.getId() === undefined || selectedFeature.getId() === null) {
-      return;
-    }
-
-    const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature.getId()!.toString(), history);
-    if (isFeatureGone) {
-      closeOverlayPanel(false);
-      toggleTool("grenseinfo");
-    }
-  }, [closeOverlayPanel, history, selectedFeature, toggleTool]);
-
   useEffect(() => {
     if (history.index < history.entries.length) {
-      closeGrenseinfoIfFeatureRemoved();
+      if (selectedFeature?.getId() === undefined || selectedFeature.getId() === null) {
+        return;
+      }
+
+      const isFeatureGone = newFeatureOnlyExistsAfterIndex(selectedFeature.getId()!.toString(), history);
+      if (isFeatureGone) {
+        closeOverlayPanel(false);
+        toggleTool("grenseinfo");
+      }
     }
-  }, [closeGrenseinfoIfFeatureRemoved, history.entries.length, history.index]);
+  }, [closeOverlayPanel, history, selectedFeature, toggleTool]);
 
   const gyldigTilDato = getFeatureFremtidigEndringDato(selectedFeature);
   const isDisabled =

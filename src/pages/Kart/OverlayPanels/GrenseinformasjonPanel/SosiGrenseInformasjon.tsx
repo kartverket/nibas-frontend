@@ -3,7 +3,7 @@ import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
-import { PropsWithChildren, useCallback, useMemo } from "react";
+import { PropsWithChildren } from "react";
 import { styled } from "styled-components";
 import { FeatureProperties, Metadata } from "types/api";
 import { PanelHeader } from "../Panel";
@@ -54,30 +54,25 @@ const isSosiGrenseProperties = (obj: object): obj is SosiGrenseProperties => {
 
 export const SosiGrenseInformasjon = ({ onClose, feature }: SosiGrenseInformasjonProps) => {
   const { mappedLayers } = useKartlag();
-  const sosiSublayers = useMemo(
-    () => mappedLayers.find((layer) => layer.id === "sosiFiler")?.sublayers,
-    [mappedLayers],
-  );
+  const sosiSublayers = mappedLayers.find((layer) => layer.id === "sosiFiler")?.sublayers;
+
   const featureProperties = feature.getProperties();
   const metadata = featureProperties.metadata as Metadata;
 
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
 
-  const getMaalemetodeText = useCallback(
-    (id: string | undefined) => {
-      if (id === undefined || id.length === 0 || kodeliste === undefined) {
-        return "Ikke spesifisert";
-      }
+  const getMaalemetodeText = (id: string | undefined) => {
+    if (id === undefined || id.length === 0 || kodeliste === undefined) {
+      return "Ikke spesifisert";
+    }
 
-      const maalemetode = kodeliste.items.find((item) => item.id === id);
-      if (maalemetode) {
-        return maalemetode?.kode + " " + maalemetode?.label;
-      }
+    const maalemetode = kodeliste.items.find((item) => item.id === id);
+    if (maalemetode) {
+      return maalemetode?.kode + " " + maalemetode?.label;
+    }
 
-      return "Ukjent målemetode er registrert på grensen";
-    },
-    [kodeliste],
-  );
+    return "Ukjent målemetode er registrert på grensen";
+  };
 
   return (
     <GrensePanelContent>

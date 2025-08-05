@@ -10,7 +10,6 @@ import {
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
-import { useCallback } from "react";
 import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
@@ -178,9 +177,9 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     }
   };
 
-  const resetSplitting = useCallback(() => {
+  const resetSplitting = () => {
     reset(getDefaultSplittingValue());
-  }, [reset]);
+  };
 
   return {
     inndelingtype,

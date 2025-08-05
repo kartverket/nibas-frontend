@@ -8,7 +8,6 @@ import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
-import { useMemo } from "react";
 import { UtkastResponse } from "types/api";
 
 type useUtkastKretsEndringerReturnType = {
@@ -24,9 +23,7 @@ export const useUtkastStemmekretsEndringer = (
   const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
-  const stemmekretserMedEndringer = useMemo(() => {
-    return getKretserAvTypeMedEndringer(operasjoner, KontekstType.STEMMEKRETS);
-  }, [operasjoner]);
+  const stemmekretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KontekstType.STEMMEKRETS);
 
   const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(
     stemmekretserMedEndringer,
@@ -36,12 +33,12 @@ export const useUtkastStemmekretsEndringer = (
 
   const lasterData = lasterStemmekretser || lasterKommuner;
 
-  const endringer = useMemo(() => {
+  const endringer = (() => {
     if (!lasterData && stemmekretser && kommuner) {
       return getStemmekretsEndringer(stemmekretserMedEndringer, operasjoner, stemmekretser, kommuner);
     }
     return null;
-  }, [lasterData, stemmekretserMedEndringer, stemmekretser, kommuner, operasjoner]);
+  })();
 
   return {
     harEndringer: stemmekretserMedEndringer.length > 0,
@@ -57,9 +54,7 @@ export const useUtkastGrunnkretsEndringer = (
   const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
-  const grunnkretserMedEndringer = useMemo(() => {
-    return getKretserAvTypeMedEndringer(operasjoner, KontekstType.GRUNNKRETS);
-  }, [operasjoner]);
+  const grunnkretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KontekstType.GRUNNKRETS);
 
   const { data: grunnkretser, isValidating: lasterGrunnkretser } = useGrunnkretser(
     grunnkretserMedEndringer,
@@ -69,12 +64,12 @@ export const useUtkastGrunnkretsEndringer = (
 
   const lasterData = lasterGrunnkretser || lasterKommuner;
 
-  const endringer = useMemo(() => {
+  const endringer = (() => {
     if (!lasterData && grunnkretser && kommuner) {
       return getGrunnkretsEndringer(grunnkretserMedEndringer, operasjoner, grunnkretser, kommuner);
     }
     return null;
-  }, [lasterData, grunnkretserMedEndringer, grunnkretser, kommuner, operasjoner]);
+  })();
 
   return {
     harEndringer: grunnkretserMedEndringer.length > 0,

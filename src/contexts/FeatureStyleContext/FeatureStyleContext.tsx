@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useMemo } from "react";
-import { FeatureStyleContextValue } from "./types";
-import { useSelectStyles } from "./useSelectStyles";
-import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
-import Feature from "ol/Feature";
-import useCustomStyles from "./useCustomStyles";
-import { Coordinate } from "ol/coordinate";
+import { getChangeIds } from "contexts/HistoryContext/history-utils";
+import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
 import { archivedSource } from "hooks/layers/constants";
+import { Coordinate } from "ol/coordinate";
+import Feature from "ol/Feature";
+import { Geometry, LineString } from "ol/geom";
+import React, { createContext, useContext } from "react";
+import { FeatureProperties } from "types/api";
 import {
   FeatureIdWithEndpoints,
   getAllFeatureEndPointCoordinates,
@@ -13,12 +13,12 @@ import {
   isFeatureDeadEnd,
   isFeatureToBeArchived,
 } from "utils/features";
-import { HistoryEntry, HistoryTypeValues } from "contexts/HistoryContext/types";
-import { filterOnlyDeadEnds, mapAffectedFeaturesForErrorEntries } from "./feature-style-utils";
-import { getChangeIds } from "contexts/HistoryContext/history-utils";
-import { Geometry, LineString } from "ol/geom";
-import { FeatureProperties } from "types/api";
 import { getDuplicateItems, getUniqueItems, removeNil } from "utils/list-utils";
+import { getArchiveLayerStyle, grenseStyles, setFeatureStyle } from "utils/map/layerStyles";
+import { filterOnlyDeadEnds, mapAffectedFeaturesForErrorEntries } from "./feature-style-utils";
+import { FeatureStyleContextValue } from "./types";
+import useCustomStyles from "./useCustomStyles";
+import { useSelectStyles } from "./useSelectStyles";
 
 export const FeatureStyleContext = createContext<FeatureStyleContextValue | undefined>(undefined);
 
@@ -43,27 +43,17 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
   const errorStyleFunctions = useCustomStyles(grenseStyles.error);
   const fremtidigEndringStyleFunctions = useCustomStyles(grenseStyles.fremtidigEndring);
   const historiskeGrenserStyleFunctions = useCustomStyles(grenseStyles.historical);
+
   // OBS! Rekkefølgen avgjør prioriteten til stilene, høyest i listen er høyest prioritet.
-  const customStyles = useMemo(
-    () => [
-      historiskeGrenserStyleFunctions,
-      sammenslaaingOverlappingStyleFunctions,
-      sammenslaaingStyleFunctions,
-      archivedStyleFunctions,
-      dirtyStyleFunctions,
-      errorStyleFunctions,
-      fremtidigEndringStyleFunctions,
-    ],
-    [
-      archivedStyleFunctions,
-      dirtyStyleFunctions,
-      errorStyleFunctions,
-      fremtidigEndringStyleFunctions,
-      sammenslaaingOverlappingStyleFunctions,
-      sammenslaaingStyleFunctions,
-      historiskeGrenserStyleFunctions,
-    ],
-  );
+  const customStyles = [
+    historiskeGrenserStyleFunctions,
+    sammenslaaingOverlappingStyleFunctions,
+    sammenslaaingStyleFunctions,
+    archivedStyleFunctions,
+    dirtyStyleFunctions,
+    errorStyleFunctions,
+    fremtidigEndringStyleFunctions,
+  ];
 
   // Når en feature ikke er valgt lengre må vi avgjøre hvilken stil den skal ha
   const setDeselectedStyle = (feature: Feature<LineString>) => {

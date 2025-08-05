@@ -59,7 +59,7 @@ export const useAdministrativTilhorighet = (feature: Feature, kontekstType: Kont
   const { currentlyEditingInndelinger } = useInndelinger();
 
   // Sjekker både kontekstEgenskaper og currentlyEditingInndelinger for å få med alle kommunerId
-  const kommunerId = useMemo(() => {
+  const kommunerId = () => {
     const fromKontekst =
       getKommunerIdFromKontekstEgenskaper(
         (feature.getProperties() as FeatureProperties).kontekstEgenskaper.filter(
@@ -71,25 +71,26 @@ export const useAdministrativTilhorighet = (feature: Feature, kontekstType: Kont
     // Slå sammen kommuneid'er fra kontekstegenskaper og inndelinger og fjern duplikater
     const allIds = Array.from(new Set([...fromKontekst, ...fromInndelinger]));
     return allIds.length > 0 ? allIds : [""];
-  }, [feature, kontekstType, currentlyEditingInndelinger]);
+  };
+
+  const kommunerIds = kommunerId();
 
   const { isLoading: isLoadingA, muligeKretser: muligeKretserA } = useGetMuligeKretserForAdministrativGrense(
     kontekstType,
-    kommunerId[0],
+    kommunerIds[0],
   );
   const { isLoading: isLoadingB, muligeKretser: muligeKretserB } = useGetMuligeKretserForAdministrativGrense(
     kontekstType,
-    kommunerId[1],
+    kommunerIds[1],
   );
 
-  const muligeKretser = useMemo(() => muligeKretserA.concat(muligeKretserB), [muligeKretserA, muligeKretserB]);
-
   useEffect(() => {
+    const muligeKretser = muligeKretserA.concat(muligeKretserB);
     setTilhorighetOptions({
       [Tilhorighet.A]: muligeKretser,
       [Tilhorighet.B]: muligeKretser,
     });
-  }, [muligeKretser, setTilhorighetOptions]);
+  }, [muligeKretserA, muligeKretserB, setTilhorighetOptions]);
 
   return {
     kontekstType,

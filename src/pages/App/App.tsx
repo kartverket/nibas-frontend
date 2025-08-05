@@ -23,7 +23,7 @@ import {
   AuthLogIn,
   AuthNotAuthorized,
 } from "components/Authentication/Authentication";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { AuthRenewError } from "components/Authentication/AuthRenewError";
 import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
 import "cypress-globals";

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { HistoryState, HistoryEntry } from "./types";
 import { getChangeIds } from "./history-utils";
 import { removeFeatureFromAllLayers } from "utils/features";
@@ -21,7 +21,7 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
 
   // Dersom applikasjonen er i tilstanden endring -> angre -> endring, kan man ende opp med features i en source
   // som ikke er representert i hverken history eller database. Dette vil lage "usynlig" geometri som skaper bugs i beregninger.
-  const clearFeaturesAfterIndex = useCallback(() => {
+  const clearFeaturesAfterIndex = () => {
     if (history.entries.length === 0) {
       return;
     }
@@ -38,24 +38,21 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     );
 
     featureIdsToRemove.forEach(removeFeatureFromAllLayers);
-  }, [history]);
+  };
 
-  const addHistoryEntry = useCallback(
-    (entry: HistoryEntry) => {
-      clearFeaturesAfterIndex();
-      // Bruker funksjonell oppdatering, der vi mottar `prevHistory` i en callback, i stedet for å bruke `history` direkte.
-      // For å unngå concurrency-feil hvis man kaller addHistoryEntry flere ganger etter hverandre. (f.eks når man tegner ny grense og splitter automatisk)
-      setHistory((prevHistory) => {
-        const newEntries = [...prevHistory.entries.slice(0, prevHistory.index), entry];
-        updateFeatureStyles(newEntries);
-        return {
-          index: prevHistory.index + 1,
-          entries: newEntries,
-        };
-      });
-    },
-    [clearFeaturesAfterIndex, updateFeatureStyles],
-  );
+  const addHistoryEntry = (entry: HistoryEntry) => {
+    clearFeaturesAfterIndex();
+    // Bruker funksjonell oppdatering, der vi mottar `prevHistory` i en callback, i stedet for å bruke `history` direkte.
+    // For å unngå concurrency-feil hvis man kaller addHistoryEntry flere ganger etter hverandre. (f.eks når man tegner ny grense og splitter automatisk)
+    setHistory((prevHistory) => {
+      const newEntries = [...prevHistory.entries.slice(0, prevHistory.index), entry];
+      updateFeatureStyles(newEntries);
+      return {
+        index: prevHistory.index + 1,
+        entries: newEntries,
+      };
+    });
+  };
 
   const clearHistory = (historySaved: boolean = false) => {
     if (historySaved) {
@@ -65,16 +62,13 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     updateFeatureStyles([]);
   };
 
-  const restoreHistoryState = useCallback(
-    (historyState: HistoryState) => {
-      for (let i = 0; i < historyState.index; i++) {
-        onRedo(historyState.entries[i]);
-      }
-      setHistory(historyState);
-      updateFeatureStyles(historyState.entries);
-    },
-    [onRedo, updateFeatureStyles],
-  );
+  const restoreHistoryState = (historyState: HistoryState) => {
+    for (let i = 0; i < historyState.index; i++) {
+      onRedo(historyState.entries[i]);
+    }
+    setHistory(historyState);
+    updateFeatureStyles(historyState.entries);
+  };
 
   const revert = (amount: number) => {
     const { index, entries } = history;
