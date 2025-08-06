@@ -91,7 +91,7 @@
     "postcss-styled-syntax": "^0.7.1",
     "prettier": "^3.6.2",
     "stylelint": "^16.23.0",
-    "stylelint-config-standard": "^38.0.0",
+    "stylelint-config-standard": "^39.0.0",
     "typescript": "~5.9.2",
     "vite": "^7.0.6",
     "vite-plugin-checker": "^0.10.2",
@@ -126,7 +126,9 @@
           ]
         }
       ],
-      "color-function-notation": null
+      "color-function-notation": null,
+      "no-invalid-position-declaration": null,
+      "nesting-selector-no-missing-scoping-root": null
     }
   }
 }
