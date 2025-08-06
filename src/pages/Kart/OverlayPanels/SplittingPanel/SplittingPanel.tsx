@@ -108,13 +108,11 @@ export const SplittingPanel = () => {
     inndelingtype &&
     getNumberValidatorFunctionForInndelingType<SplittingForm, `nyeKretser.${number}.kretsNummer`>(inndelingtype);
 
-  const nummerRegisterOptions =
-    getInndelingNummerRegisterOptions &&
-    getInndelingNummerRegisterOptions({
-      shouldNotBeEqualWith: existingInndelingNummere ?? [],
-      prefixNumber: kommunenummer,
-      additionalValidation: validateNotDuplicateNewKretsnummere,
-    });
+  const nummerRegisterOptions = getInndelingNummerRegisterOptions?.({
+    shouldNotBeEqualWith: existingInndelingNummere ?? [],
+    prefixNumber: kommunenummer,
+    additionalValidation: validateNotDuplicateNewKretsnummere,
+  });
 
   return (
     <SidePanel>
