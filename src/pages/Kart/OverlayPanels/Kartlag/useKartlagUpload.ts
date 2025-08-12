@@ -9,8 +9,8 @@ export const useKartlagUpload = () => {
   const toast = useToast();
   const uploadFetcher = async (url: string, { arg }: { arg: { file: File; token: string } }) => {
     const sizeInMB = arg.file.size / 1024 ** 2;
-    if (sizeInMB > 1) {
-      throw new Error("Filstørrelsen kan ikke overstige 1MB per fil");
+    if (sizeInMB > 50) {
+      throw new Error("Filstørrelsen kan ikke overstige 50MB per fil");
     }
 
     const formData = new FormData();
