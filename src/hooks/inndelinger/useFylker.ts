@@ -1,6 +1,6 @@
 import useNibasApi, { getUrlWithParameters } from "../useNibasApi";
 import { FylkeResponse } from "../../types/api";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import useSWRImmutable from "swr/immutable";
 import { fetcherWithToken } from "utils/api";
 

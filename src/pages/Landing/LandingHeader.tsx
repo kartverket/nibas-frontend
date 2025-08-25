@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Button, Flex, Icon, Logo, Text } from "@kvib/react";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { isAuthEnabled } from "components/Authentication/AuthenticationConfig";
 
 const LandingHeader = () => {
