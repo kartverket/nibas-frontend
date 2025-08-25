@@ -1,5 +1,5 @@
 import { Feature } from "ol";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useInndelinger } from "../../../../contexts/InndelingerContext/InndelingerContext";
 import { FeatureProperties } from "../../../../types/api";
 import {
@@ -26,7 +26,7 @@ const useGetMuligeKretserForAdministrativGrense = (
 
   const { data, isLoading } = useNibasApi(url, { id: kommuneId!, gyldighetsdato });
 
-  const kretserForFylket = useMemo(() => {
+  const kretserForFylket = (() => {
     if (data == null) {
       return [];
     }
@@ -37,7 +37,7 @@ const useGetMuligeKretserForAdministrativGrense = (
       case KontekstType.GRUNNKRETS:
         return mapGrunnkretsResponseToKrets(data);
     }
-  }, [kontekstType, data]);
+  })();
 
   return {
     muligeKretser: kretserForFylket,

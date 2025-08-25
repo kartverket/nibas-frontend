@@ -3,7 +3,7 @@ import Input from "components/Input";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
-import { BaseSyntheticEvent, useEffect, useMemo, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { KommuneResponse } from "types/api";
@@ -62,8 +62,8 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
     gyldighetsdato,
   );
 
-  // Må bruke memo her da vi kaller map på kommuner, map skaper en ny referanse for den resulterende lista og dermed evig rerender selv om kommunen er den samme.
-  const suggestedKommunerInndelingOptions = useMemo(() => {
+  // Direkte beregning av forslag basert på kommuner
+  const suggestedKommunerInndelingOptions = (() => {
     const getKommuneOptionForKommuneResponse = ({ id, navn, nummer }: KommuneResponse): KommuneOption => {
       const adminNavn = navn.sort((n) => n.rekkefoelge ?? -1)[0].navn;
       return {
@@ -75,7 +75,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
       };
     };
     return kommuner?.map(getKommuneOptionForKommuneResponse) ?? [];
-  }, [kommuner]);
+  })();
 
   const {
     register,

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthentication } from "../../../../components/Authentication/useAuthentication";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -164,7 +164,7 @@ export const useAvvikPanel = () => {
     }
   };
 
-  const handleInndelingForAvvik = useCallback(() => {
+  const handleInndelingForAvvik = () => {
     if (selectedKommune && !isLoadingKommune) {
       const inndelingtype = "kommune";
       const newInndeling: Inndeling = {
@@ -210,6 +210,10 @@ export const useAvvikPanel = () => {
         }
       }
     }
+  };
+
+  useEffect(() => {
+    handleInndelingForAvvik();
   }, [
     selectedKommune,
     secondKommune,
@@ -219,11 +223,8 @@ export const useAvvikPanel = () => {
     selectedKommuneId,
     setShouldZoom,
     selectInndelinger,
+    handleInndelingForAvvik,
   ]);
-
-  useEffect(() => {
-    handleInndelingForAvvik();
-  }, [handleInndelingForAvvik]);
   useEffect(() => {
     return () => {
       setShouldZoom(true); // Resetter shouldZoom når avvikspanelet unmountes så ved f.eks nytt inndelingsvalg zoomer vi som vanlig
