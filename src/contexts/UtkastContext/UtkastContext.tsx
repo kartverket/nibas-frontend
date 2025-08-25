@@ -1,6 +1,6 @@
 import { useToast } from "@kvib/react";
 import { updateUtkastApi } from "api/utkast";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -8,7 +8,7 @@ import { HistoryChange } from "contexts/HistoryContext/types";
 import { fetchUtkastFromSessionStorage, sessionStorageKeys } from "contexts/application-state-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useMatch } from "react-router-dom";
 import { useSWRConfig } from "swr";
 import { ApiErrorResponse, OppdaterUtkastRequest, UtkastResponse } from "types/api";
@@ -63,11 +63,11 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   // Når utkast lukkes ønsker vi å tilbakestille store deler av applikasjonen
-  const closeUtkast = useCallback(() => {
+  const closeUtkast = () => {
     setUtkast(undefined);
     clearHistory();
     clearFeatureStyles();
-  }, [clearFeatureStyles, clearHistory]);
+  };
 
   useEffect(() => {
     if (fetchedUtkast) {
@@ -87,7 +87,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       closeUtkast();
       mutate();
     }
-  }, [utkastId, utkast, closeUtkast, mutate]);
+  }, [utkastId, utkast, mutate, closeUtkast]);
 
   const getUpdateUtkastRequestFromHistory = (): OppdaterUtkastRequest | null => {
     if (!utkast) {
@@ -283,11 +283,9 @@ export const useUtkast = () => {
 export const useUtkastEntity = <T extends UtkastEntity>(entity: T, type: EntityUtkastType) => {
   const { utkast } = useUtkast();
 
-  return useMemo(() => {
-    if (!entity || !utkast) {
-      return entity;
-    }
+  if (!entity || !utkast) {
+    return entity;
+  }
 
-    return applyNonFeatureUtkast(entity, utkast, type);
-  }, [entity, utkast, type]);
+  return applyNonFeatureUtkast(entity, utkast, type);
 };

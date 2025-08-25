@@ -9,7 +9,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@kvib/react";
-import { useAuthentication } from "./AuthenticationHook";
+import { useAuthentication } from "./useAuthentication";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
@@ -30,9 +30,10 @@ export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayModal, activeOverlayPanel } = useOverlayPanel();
 
-  const auth = useAuthRenewError();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).forceAutomatiskUtlogging = () => auth.setAuthRenewError(true);
+  useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).forceAutomatiskUtlogging = () => setAuthRenewError(true);
+  }, [setAuthRenewError]);
 
   useEffect(() => {
     const silentRenewCleanupFn = events.addSilentRenewError(() => {

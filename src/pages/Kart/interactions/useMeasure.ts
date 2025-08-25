@@ -1,4 +1,4 @@
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import Draw, { DrawEvent } from "ol/interaction/Draw";
 import { Overlay, MapBrowserEvent } from "ol";
 import { unByKey } from "ol/Observable";
@@ -81,29 +81,24 @@ const useMeasure = () => {
   }, [activeTool, activeModeTools]);
 
   // measureLayer (den oppmålte linjen etter drawend)
-  const measureLayer = useMemo(() => {
-    const layer = grenserLayers.measure;
-    layer.setStyle(grenseStyles.measure);
-    return layer;
-  }, []);
+  const measureLayer = grenserLayers.measure;
+  measureLayer.setStyle(grenseStyles.measure);
 
-  const measureInteraction = useMemo(() => {
-    return new Draw({
-      source: measureLayer.getSource()!,
-      type: "LineString",
-      snapTolerance: pixelTolerance,
-      style: grenseStyles.measure,
-      stopClick: true,
-      condition: (event) => {
-        const currentTool = activeToolRef.current;
-        const currentModeTools = activeModeToolsRef.current;
-        if (!noModifierKeys(event) || currentTool !== "measure" || currentModeTools.includes("move")) {
-          return false;
-        }
-        return true;
-      },
-    });
-  }, [measureLayer]);
+  const measureInteraction = new Draw({
+    source: measureLayer.getSource()!,
+    type: "LineString",
+    snapTolerance: pixelTolerance,
+    style: grenseStyles.measure,
+    stopClick: true,
+    condition: (event) => {
+      const currentTool = activeToolRef.current;
+      const currentModeTools = activeModeToolsRef.current;
+      if (!noModifierKeys(event) || currentTool !== "measure" || currentModeTools.includes("move")) {
+        return false;
+      }
+      return true;
+    },
+  });
 
   // Overlays for tooltips (refs for å unngå re-renders)
   const helpTooltipElement = useRef<HTMLDivElement | null>(null);

@@ -6,7 +6,6 @@ import { StemmekretsResponse, StemmekretsSammenslaaingsendringRequest } from "ty
 import { FormProvider, useForm } from "react-hook-form";
 import { MergeFormData } from "./MergeForm";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { useCallback } from "react";
 import Input from "components/Input";
 import { stemmekretsgrenserFetcher } from "api/stemmekrets";
 import { getDuplicateItems, getUniqueItemsBy, removeNil } from "utils/list-utils";
@@ -15,7 +14,7 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, Heading, Select } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
@@ -83,12 +82,9 @@ const MergePanel = () => {
     required: "Stemmekretsnavn er obligatorisk",
   };
 
-  const getStemmekretsByNummer = useCallback(
-    (nummer: string): StemmekretsResponse | null => {
-      return utkastStemmekretser?.find((krets) => krets.nummer === nummer) ?? null;
-    },
-    [utkastStemmekretser],
-  );
+  const getStemmekretsByNummer = (nummer: string): StemmekretsResponse | null => {
+    return utkastStemmekretser?.find((krets) => krets.nummer === nummer) ?? null;
+  };
 
   const fromFormToRequest = (
     stemmekretsRespons: StemmekretsResponse,

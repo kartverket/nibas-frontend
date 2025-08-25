@@ -42,7 +42,7 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     setValue,
     isDirty,
     resetTilhorighet,
-    kommunerId,
+    kommunerIds,
     kontekstType,
     getCurrentOppdaterteKontekstEgenskaper,
     isLoading,
@@ -50,11 +50,11 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const { data: grunnkretser, isLoading: grunnkretserIsLoading } = useKommuneGrunnkretser(
-    kommunerId[0] ?? null,
+    kommunerIds[0] ?? null,
     gyldighetsdato,
   );
   const { data: stemmekretser, isLoading: stemmekretserIsLoading } = useKommuneStemmekretser(
-    kommunerId[0] ?? null,
+    kommunerIds[0] ?? null,
     gyldighetsdato,
   );
 
