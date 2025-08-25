@@ -156,7 +156,7 @@ const FlatedataTabList = styled(TabList)`
   box-shadow: inset 0 -2px var(--kvib-colors-chakra-border-color);
   padding-left: 16px;
 
-  &::after {
+  ::after {
     content: "";
     position: sticky;
     top: 0;

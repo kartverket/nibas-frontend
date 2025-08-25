@@ -130,9 +130,7 @@
           ]
         }
       ],
-      "color-function-notation": null,
-      "no-invalid-position-declaration": null,
-      "nesting-selector-no-missing-scoping-root": null
+      "color-function-notation": null
     }
   }
 }
