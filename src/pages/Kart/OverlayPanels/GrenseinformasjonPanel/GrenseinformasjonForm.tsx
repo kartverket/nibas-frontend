@@ -30,7 +30,7 @@ import {
 } from "pages/Kart/interactions/feature-id-utils";
 import { ContextualPosisjonskvalitet } from "pages/Kart/interactions/useModify";
 import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { styled } from "styled-components";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
@@ -144,7 +144,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     reset(getDefaultValues(feature));
   }, [feature, getDefaultValues, reset, history]);
 
-  const relevantPosisjonskvaliteter = useMemo(() => {
+  const relevantPosisjonskvaliteter = (() => {
     const eksisterendePosisjonskvalitet = metadata.commonGrense?.posisjonskvalitet;
     const posisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> | undefined = feature.get("snapData");
     if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0 && isLineStringFeature(feature)) {
@@ -184,7 +184,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       return relevant;
     }
     return [];
-  }, [feature, metadata.commonGrense?.posisjonskvalitet, matrikkelkodeliste, kodeliste]);
+  })();
 
   const [autofillLoading, setAutofillLoading] = useState(false);
   const mockAutofillLoading = () => {

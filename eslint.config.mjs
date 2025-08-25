@@ -106,6 +106,11 @@ export default [
         },
       ],
       eqeqeq: ["error", "smart"],
+      // TS-2431: Vi bruker react compiler.
+      // Dermed vil denne klage på funksjoner som ikke er memoisert hvis de er brukt i en useEffect.
+      // Dette er ikke et problem, så vi slår den av.
+      // Vi må fremdeles legge avhengigheter i dependency-arrayet for å unngå feil.
+      "react-hooks/exhaustive-deps": "off",
     },
   },
   {

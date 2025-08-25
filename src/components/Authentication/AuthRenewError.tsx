@@ -10,7 +10,7 @@ import {
   ModalOverlay,
 } from "@kvib/react";
 import { useAuthentication } from "./useAuthentication";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { ApplicationState, saveApplicationStateToSessionStorage } from "contexts/application-state-utils";
@@ -124,13 +124,10 @@ export const AuthRenewContext = createContext<AuthRenewContextValue | undefined>
 export const AuthRenewProvider = ({ children }: { children: React.ReactNode }) => {
   const [authRenewError, setAuthRenewError] = useState(false);
 
-  const value = useMemo(
-    () => ({
-      authRenewError,
-      setAuthRenewError,
-    }),
-    [authRenewError],
-  );
+  const value = {
+    authRenewError,
+    setAuthRenewError,
+  };
 
   return <AuthRenewContext.Provider value={value}>{children}</AuthRenewContext.Provider>;
 };
