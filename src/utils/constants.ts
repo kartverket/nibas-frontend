@@ -4,5 +4,6 @@ export const zindex = {
   mapOverlay: 1,
   mapHeader: 10,
   environmentOverlay: 2000,
+  environmentSelectTooltip: 3000,
   toast: 3000,
 };
