@@ -99,9 +99,7 @@ const Toolbar = () => {
     return true;
   };
 
-  useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
-  useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
-  useKeyboardShortcut("move", () => {
+  const togglePanorer = () => {
     if (activeModeTools.includes("move") && isEditing && anyFeatureIsEditable()) {
       if (!utkast) {
         return;
@@ -109,7 +107,11 @@ const Toolbar = () => {
     } else {
       enableModeTool("move");
     }
-  });
+  };
+
+  useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
+  useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
+  useKeyboardShortcut("move", togglePanorer);
   useKeyboardShortcut("preview", () => toggleOverlayModal("inndelinger-view"));
   useKeyboardShortcut("matrikkel", () => toggleModeTool("matrikkel"));
   useKeyboardShortcut("grenseinfo", toggleGrenseinfo);
@@ -172,6 +174,8 @@ const Toolbar = () => {
       clearSelection();
       return;
     }
+
+    togglePanorer();
 
     resetTool();
   });
