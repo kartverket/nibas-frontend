@@ -1,4 +1,4 @@
-import { Spinner, Icon, IconButton } from "@kvib/react";
+import { Spinner, Icon, IconButton, Tooltip } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/AuthenticationHook";
 import { getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
 import { useState, useMemo } from "react";
@@ -92,7 +92,9 @@ const mapToEnvironmentSelectOption = (option: EnvironmentOption) => {
 
       {option.author != null && (
         <AuthorContainer>
-          {option.author} <AuthorImage src={option.profile_pic_url} />
+          <Tooltip label={option.author} placement="right" hasArrow offset={[0, 30]}>
+            <AuthorImage src={option.profile_pic_url} />
+          </Tooltip>
         </AuthorContainer>
       )}
     </SelectContainer>
@@ -106,7 +108,7 @@ export const EnvironmentSelect = () => {
   const { isAuthenticated } = useAuthentication();
 
   const envSwitchEnabled = isAuthenticated && env !== "dev-e2e" && env !== "prod";
-  const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(true);
+  const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
 
   const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
     envSwitchEnabled ? "nibas-frontend" : null,
@@ -265,7 +267,7 @@ const TruncatedLabel = styled.div`
 
 const TitlesContainer = styled.div`
   white-space: nowrap;
-  max-width: 50%;
+  max-width: 80%;
   display: flex;
   flex-direction: column;
 `;
