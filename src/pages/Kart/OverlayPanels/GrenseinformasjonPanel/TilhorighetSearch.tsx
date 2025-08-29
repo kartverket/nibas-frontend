@@ -1,6 +1,6 @@
 import { Icon, InputProps, SearchAsync, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
-import { ReactNode, useMemo } from "react";
+import { ReactNode } from "react";
 import { styled } from "styled-components";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
@@ -59,9 +59,7 @@ export const TilhorighetSearch = ({ options, value, onChange, kretsType }: Props
     }
   };
 
-  const selectedValue = useMemo(() => {
-    return options.find((option) => option.value === value);
-  }, [options, value]);
+  const selectedValue = options.find((option) => option.value === value);
 
   return (
     <SearchContainer>

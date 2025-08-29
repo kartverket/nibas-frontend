@@ -8,6 +8,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
+import reactCompiler from "eslint-plugin-react-compiler";
+import eslintReact from "@eslint-react/eslint-plugin";
 
 const { configs } = js;
 const __filename = fileURLToPath(import.meta.url);
@@ -36,6 +38,7 @@ export default [
       react: fixupPluginRules(react),
       "@typescript-eslint": fixupPluginRules(typescriptEslint),
       import: fixupPluginRules(_import),
+      "react-compiler": reactCompiler,
     },
 
     languageOptions: {
@@ -69,7 +72,6 @@ export default [
 
     rules: {
       "react/prop-types": "off",
-      "react-hooks/exhaustive-deps": "error",
       "react/function-component-definition": [
         2,
         {
@@ -77,6 +79,7 @@ export default [
           unnamedComponents: "arrow-function",
         },
       ],
+      "react-compiler/react-compiler": "error",
       "@typescript-eslint/array-type": "warn",
       "@typescript-eslint/no-shadow": "error",
       "@typescript-eslint/no-unused-vars": "warn",
@@ -103,6 +106,11 @@ export default [
         },
       ],
       eqeqeq: ["error", "smart"],
+      // TS-2431: Vi bruker react compiler.
+      // Dermed vil denne klage på funksjoner som ikke er memoisert hvis de er brukt i en useEffect.
+      // Dette er ikke et problem, så vi slår den av.
+      // Vi må fremdeles legge avhengigheter i dependency-arrayet for å unngå feil.
+      "react-hooks/exhaustive-deps": "off",
     },
   },
   {

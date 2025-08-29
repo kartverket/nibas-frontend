@@ -9,12 +9,18 @@ import { editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import { isFeatureMetadataEditable, isFeatureToBeArchived } from "utils/features";
 import { removeNil } from "utils/list-utils";
 
 export const isGrenseinformasjonPanelDisabled = (feature: Feature | undefined) => {
   if (feature) {
+    // Nye grenser skal alltid kunne redigeres
+    if (isTempFeatureId(feature.getId()?.toString())) {
+      return false;
+    }
+
     const isMetadataEditable = isFeatureMetadataEditable(feature, isFeatureToBeArchived(feature));
 
     if (!isMetadataEditable) {

@@ -1,7 +1,6 @@
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { getUrlWithParameters } from "hooks/useNibasApi";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
-import { useMemo } from "react";
 import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
 import { Inndeling, Inndelingtype } from "./InndelingerContext";
 import { Feature } from "ol";
@@ -16,7 +15,7 @@ import {
 import { removeNil } from "utils/list-utils";
 import { paths } from "types/api-gen";
 import { fetcherWithToken } from "utils/api";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import useSWR from "swr";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { inndelingResponseNavnToString } from "utils/language/language";
@@ -128,13 +127,13 @@ const useInndelingFeatures = (inndelinger: Inndeling[]) => {
     gyldighetsdato,
   );
 
-  const inndelingFeatures: InndelingWithFeatures[] = useMemo(() => {
-    return featuresResponses != null ? mapToInndelingerWithFeatures(featuresResponses) : [];
-  }, [featuresResponses]);
+  const inndelingFeatures: InndelingWithFeatures[] =
+    featuresResponses != null ? mapToInndelingerWithFeatures(featuresResponses) : [];
 
-  const utkastFeaturesInSelectedInndelinger: Feature<Geometry>[] = useMemo(
-    () => getEditedFeaturesOnUtkastInSelectedInndelinger(utkast, inndelingFeatures, inndelinger),
-    [inndelingFeatures, inndelinger, utkast],
+  const utkastFeaturesInSelectedInndelinger: Feature<Geometry>[] = getEditedFeaturesOnUtkastInSelectedInndelinger(
+    utkast,
+    inndelingFeatures,
+    inndelinger,
   );
 
   return {

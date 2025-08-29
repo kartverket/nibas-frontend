@@ -30,7 +30,7 @@ import {
 } from "pages/Kart/interactions/feature-id-utils";
 import { ContextualPosisjonskvalitet } from "pages/Kart/interactions/useModify";
 import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
 import { styled } from "styled-components";
 import { FeatureProperties, KodelisteRespons, Metadata } from "types/api";
@@ -97,7 +97,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { data: kodeliste } = useNibasApi("/v1/kodeliste/maalemetode-koder");
   const { data: matrikkelkodeliste } = useNibasApi("/v1/matrikkelkodelister");
   const { currentlyEditingInndelinger } = useInndelinger();
-  const { utkast } = useUtkast();
+  const { utkast, utkastHarSammenslaainger } = useUtkast();
   const { inndelingFeatures } = useInndelingFeatures(currentlyEditingInndelinger);
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
@@ -105,7 +105,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty } =
     useGrenseinformasjonForm(feature);
   const toast = useToast();
-  const { utkastHarSammenslaainger } = useUtkast();
   const featureId = feature.getId()?.toString();
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
@@ -145,7 +144,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     reset(getDefaultValues(feature));
   }, [feature, getDefaultValues, reset, history]);
 
-  const relevantPosisjonskvaliteter = useMemo(() => {
+  const relevantPosisjonskvaliteter = (() => {
     const eksisterendePosisjonskvalitet = metadata.commonGrense?.posisjonskvalitet;
     const posisjonskvaliteter: Map<string, ContextualPosisjonskvalitet> | undefined = feature.get("snapData");
     if (posisjonskvaliteter != null && posisjonskvaliteter.size > 0 && isLineStringFeature(feature)) {
@@ -185,7 +184,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
       return relevant;
     }
     return [];
-  }, [feature, metadata.commonGrense?.posisjonskvalitet, matrikkelkodeliste, kodeliste]);
+  })();
 
   const [autofillLoading, setAutofillLoading] = useState(false);
   const mockAutofillLoading = () => {
@@ -299,23 +298,24 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         subHeading={`${isTempFeatureId(featureId) ? "" : `Sist oppdatert: ${getSistOppdatert()}`}`}
         noMargin
         button={
-          !isCommonFieldDisabled
-            ? EditGrenseInfoButton({
-                isEditing: isEditing,
-                handleSubmit: handleSubmit(onSubmit),
-                isDisabled: utkastHarSammenslaainger(),
-                tooltip:
-                  utkastHarSammenslaainger() === true
-                    ? "Utkastet har sammenslåinger og grenseinformasjon kan derfor ikke redigeres"
-                    : null,
-                toggleEdit: () => {
-                  if (isEditing) {
-                    reset(getDefaultValues(feature));
-                  }
-                  setIsEditing(!isEditing);
-                },
-              })
-            : null
+          !isCommonFieldDisabled ? (
+            <EditGrenseInfoButton
+              isEditing={isEditing}
+              handleSubmit={handleSubmit(onSubmit)}
+              isDisabled={utkastHarSammenslaainger()}
+              tooltip={
+                utkastHarSammenslaainger() === true
+                  ? "Utkastet har sammenslåinger og grenseinformasjon kan derfor ikke redigeres"
+                  : null
+              }
+              toggleEdit={() => {
+                if (isEditing) {
+                  reset(getDefaultValues(feature));
+                }
+                setIsEditing(!isEditing);
+              }}
+            />
+          ) : null
         }
       >
         Informasjon
