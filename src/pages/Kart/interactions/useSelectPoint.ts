@@ -4,21 +4,20 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { Feature, MapBrowserEvent } from "ol";
 import LineString from "ol/geom/LineString";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { isFeatureEditable } from "utils/features";
 import { findNearbyVertexOnFeature, pixelDistance } from "utils/map/map-utils";
 import { pixelTolerance } from "./constants";
 import { useGetFeatures } from "./interaction-utils";
 import { isSplittingEditableGrense } from "./useSplit";
 
+const allowedPointModes: Tool[] = ["koordinater", "split"];
 const useSelectPoint = () => {
   const toast = useToast();
   const { activeTool, activeModeTools } = useToolbar();
   const { activeOverlayPanel, openOverlayPanel, closeOverlayPanel } = useOverlayPanel();
   const { selectPointOnFeature, selectedFeatures, selectedPoint, clearSelection } = useFeatureStyle();
   const { getFeaturesAtPixel } = useGetFeatures();
-
-  const allowedPointModes: Tool[] = useMemo(() => ["koordinater", "split"], []);
 
   // Dersom man har byttet verktøy ønsker vi å tilbakestille punktet
   useEffect(() => {
@@ -29,7 +28,7 @@ const useSelectPoint = () => {
         closeOverlayPanel();
       }
     }
-  }, [activeOverlayPanel, activeTool, allowedPointModes, clearSelection, closeOverlayPanel, selectedPoint]);
+  }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, selectedPoint]);
 
   const selectPoint = (event: MapBrowserEvent<PointerEvent>) => {
     if (!activeModeTools.includes("move") && allowedPointModes.includes(activeTool) && !event.dragging) {

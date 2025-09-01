@@ -19,7 +19,11 @@ export default defineConfig(({ mode }) => {
       sourcemap: true,
     },
     plugins: [
-      react(),
+      react({
+        babel: {
+          plugins: [["babel-plugin-react-compiler", { target: "18" }]],
+        },
+      }),
       viteTsconfigPaths(),
       eslint(),
       checker({

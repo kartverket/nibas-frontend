@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
 import { Tooltip, Icon, FormErrorMessage, FormLabel } from "@kvib/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FieldError } from "react-hook-form";
 
 type Props = {
@@ -14,9 +14,7 @@ type Props = {
 export const VedtakinfoRow = ({ children, tooltipLabel, name, error }: Props) => {
   const [iconHovered, setIconHovered] = useState(false);
 
-  const errorMessage = useMemo(() => {
-    return error?.message;
-  }, [error]);
+  const errorMessage = error?.message;
 
   return (
     <>

@@ -49,12 +49,16 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const allInndelingerHasFremtidigEndring = flatedata.every(
     (inndeling) => getInndelingFremtidigEndringDato(inndeling?.id.lokalid.value) != null,
   );
-  const formMethods = useForm<FlatedataInputs>({ mode: "onSubmit", reValidateMode: "onChange" });
+  const formMethods = useForm<FlatedataInputs>({
+    mode: "onSubmit",
+    reValidateMode: "onChange",
+  });
   const {
     reset,
     getValues,
     handleSubmit,
     formState: { isDirty },
+    control,
   } = formMethods;
 
   // Hold styr på forrige tilstand i formet slik at vi har sammenlikningsgrunnlag for history
@@ -106,6 +110,8 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     }
   };
 
+  const setPreviousValues = (fd: FlatedataInputs | undefined) => (previousValues.current = fd);
+
   return (
     <Container>
       <Table>
@@ -148,7 +154,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             const isSearchMatch =
               inndeling.nummer.includes(searchValue) ||
               getNavnInSpraak(inndeling.navn, "nor").toLowerCase().includes(searchValue);
-
             return (
               <FlatedataTableRow
                 key={inndelingId}
@@ -157,7 +162,8 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 isSearchMatch={isSearchMatch}
                 isEditing={isEditing}
                 formMethods={formMethods}
-                previousValues={previousValues}
+                control={control}
+                setPreviousValues={setPreviousValues}
                 allInndelinger={flatedata}
                 sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
               />

@@ -23,7 +23,7 @@ import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
-import { useAuthentication } from "components/Authentication/AuthenticationHook";
+import { useAuthentication } from "components/Authentication/useAuthentication";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";

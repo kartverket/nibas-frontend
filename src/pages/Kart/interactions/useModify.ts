@@ -3,6 +3,7 @@ import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { LayerId } from "hooks/layers/types";
 import useToastCounter from "hooks/toast/useToastCounter";
 import { Collection, MapBrowserEvent } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
@@ -13,21 +14,20 @@ import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import Modify, { ModifyEvent } from "ol/interaction/Modify";
 import { Style } from "ol/style";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { FeatureProperties, Metadata } from "types/api";
 import { isFeatureEditable, isFeatureToBeArchived, isPreviousAndCurrentCoordinatesEqual } from "utils/features";
 import { isAdministrativGrense } from "utils/grenser";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
 import {
-  isTeiggrenseMetadataWFS,
   isTeiggrenseMetadata,
+  isTeiggrenseMetadataWFS,
 } from "../OverlayPanels/GrenseinformasjonPanel/Matrikkelgrenseinformasjon";
+import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 import { pixelTolerance, previousCoordinateKey } from "./constants";
 import { createGrenseHistoryChange } from "./grense-history-utils";
 import { useGetFeatures } from "./interaction-utils";
 import useSplit from "./useSplit";
-import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
-import { LayerId } from "hooks/layers/types";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
@@ -55,108 +55,95 @@ const useModify = () => {
   const confirmationModal = useConfirmationModal();
 
   // Ønsker helst at redigering ikke skal være aktiv under enkelte verktøy
-  const disallowedPointModes: Tool[] = useMemo(
-    () => ["draw", "split", "grenseinfo", "archive", "koordinater", "duplicate"],
-    [],
-  );
 
-  const modify = useMemo(() => {
-    return new Modify({
-      features: new Collection(selectedFeatures),
-      pixelTolerance: pixelTolerance,
-      condition: (event) => {
-        if (activeModeTools.includes("move")) {
-          return false;
-        }
-        if (disallowedPointModes.includes(activeTool)) {
-          return false;
-        }
+  const modify = new Modify({
+    features: new Collection(selectedFeatures),
+    pixelTolerance: pixelTolerance,
+    condition: (event) => {
+      const disallowedPointModes: Tool[] = ["draw", "split", "grenseinfo", "archive", "koordinater", "duplicate"];
+      if (activeModeTools.includes("move")) {
+        return false;
+      }
+      if (disallowedPointModes.includes(activeTool)) {
+        return false;
+      }
 
+      const activeFeatures = getLineStringFeaturesAtPixel(event as MapBrowserEvent<PointerEvent>, ["edit"]);
+
+      // Unngå interaksjon med inaktive features (representasjonspunkter f.eks.)
+      if (activeFeatures.length === 0) {
+        return false;
+      }
+
+      // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
+      if (selectedFeatures.some((feature) => !isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
+        toast({
+          status: "error",
+          title: "Denne grensen er ikke redigerbar",
+          description: selectedFeatures.some((feature) => isAdministrativGrense(feature.get("type")))
+            ? "Ved endring av administrative grenser må du skru på visning for alle kretser som er knyttet til grensen"
+            : undefined,
+        });
+        return false;
+      }
+
+      // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
+      return primaryAction(event);
+    },
+    style: new Style(),
+    insertVertexCondition: (event) => {
+      if (activeTool === "add" && primaryAction(event)) {
+        return true;
+      }
+      return false;
+    },
+    deleteCondition: (event) => {
+      if (activeModeTools.includes("move")) {
+        return false;
+      }
+
+      if (activeTool === "remove" && click(event)) {
         const activeFeatures = getLineStringFeaturesAtPixel(event as MapBrowserEvent<PointerEvent>, ["edit"]);
 
-        // Unngå interaksjon med inaktive features (representasjonspunkter f.eks.)
-        if (activeFeatures.length === 0) {
+        if (!activeFeatures.every((feature) => isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
           return false;
         }
 
-        // Sjekk alle featurene i punktet, hvis en av dem ikke skal kunne endres ønsker vi ikke å endre noe
-        if (selectedFeatures.some((feature) => !isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
+        // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
+        for (const feature of activeFeatures) {
+          const coordinates = feature.getGeometry()?.getCoordinates() ?? [];
+          if (coordinates.length <= 2) {
+            return false;
+          }
+        }
+
+        // Vi ønsker ikke å slette punkter i knutepunkter
+        if (activeFeatures.length > 1) {
           toast({
+            description: "Kan ikke slette punkter i knutepunkter, løsriv grensen først",
             status: "error",
-            title: "Denne grensen er ikke redigerbar",
-            description: selectedFeatures.some((feature) => isAdministrativGrense(feature.get("type")))
-              ? "Ved endring av administrative grenser må du skru på visning for alle kretser som er knyttet til grensen"
-              : undefined,
           });
           return false;
         }
 
-        // Hvis vi ikke har en spesiell regel bruker vi default condition, som er primaryAction her
-        return primaryAction(event);
-      },
-      style: new Style(),
-      insertVertexCondition: (event) => {
-        if (activeTool === "add" && primaryAction(event)) {
-          return true;
-        }
-        return false;
-      },
-      deleteCondition: (event) => {
-        if (activeModeTools.includes("move")) {
+        const nearbyVertexCoordinate = findNearbyVertexOnFeature(
+          activeFeatures[0].getGeometry() as LineString,
+          event.coordinate,
+        );
+
+        // Vi trykket bare på en linje, ikke et punkt
+        if (!nearbyVertexCoordinate) {
           return false;
         }
 
-        if (activeTool === "remove" && click(event)) {
-          const activeFeatures = getLineStringFeaturesAtPixel(event as MapBrowserEvent<PointerEvent>, ["edit"]);
+        removeToast();
 
-          if (!activeFeatures.every((feature) => isFeatureEditable(feature, isFeatureToBeArchived(feature)))) {
-            return false;
-          }
-
-          // Dersom noen av featurene vi trykker på har for få punkter skal vi ikke fjerne punktet
-          for (const feature of activeFeatures) {
-            const coordinates = feature.getGeometry()?.getCoordinates() ?? [];
-            if (coordinates.length <= 2) {
-              return false;
-            }
-          }
-
-          // Vi ønsker ikke å slette punkter i knutepunkter
-          if (activeFeatures.length > 1) {
-            toast({
-              description: "Kan ikke slette punkter i knutepunkter, løsriv grensen først",
-              status: "error",
-            });
-            return false;
-          }
-
-          const nearbyVertexCoordinate = findNearbyVertexOnFeature(
-            activeFeatures[0].getGeometry() as LineString,
-            event.coordinate,
-          );
-
-          // Vi trykket bare på en linje, ikke et punkt
-          if (!nearbyVertexCoordinate) {
-            return false;
-          }
-
-          removeToast();
-
-          // Hvis alt ellers ser greit ut så fjernes punktet på klikk
-          return true;
-        }
-        return false;
-      },
-    });
-  }, [
-    activeModeTools,
-    activeTool,
-    selectedFeatures,
-    disallowedPointModes,
-    getLineStringFeaturesAtPixel,
-    toast,
-    removeToast,
-  ]);
+        // Hvis alt ellers ser greit ut så fjernes punktet på klikk
+        return true;
+      }
+      return false;
+    },
+  });
 
   useEffect(() => {
     const createAddPointGrenseEntry = (ev: BaseEvent) => {
