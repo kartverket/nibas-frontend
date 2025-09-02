@@ -15,7 +15,7 @@ import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import { Interaction } from "ol/interaction";
 import Draw, { DrawEvent } from "ol/interaction/Draw";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getFeatureFremtidigEndringDato, setDefaultFeatureProperties } from "utils/features";
 import { grenseStyles } from "utils/map/layerStyles";
 import { findNearbyVertexOnFeature } from "utils/map/map-utils";
@@ -85,7 +85,7 @@ const useDraw = () => {
   }, [activeTool, activeModeTools, getLineStringFeaturesAtPixel, endpointToast, toast]);
 
   // TODO: fungerer ikke uten snap, vet ikke hvorfor
-  const draw = (() => {
+  const draw = useMemo(() => {
     // Tvinger useMemo til å kjøre på nytt når abortDrawMemoHelper endres
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _ = abortDrawMemoHelper;
@@ -194,7 +194,7 @@ const useDraw = () => {
         return true;
       },
     });
-  })();
+  }, [abortDrawMemoHelper]);
 
   useEffect(() => {
     const addDrawToHistory = (drawnFeature: Feature<LineString>, splittedFeatures: SplittedFeature[]) => {
