@@ -175,7 +175,9 @@ const Toolbar = () => {
       return;
     }
 
-    togglePanorer();
+    if (!activeModeTools.includes("move") && activeTool === null) {
+      enableModeTool("move");
+    }
 
     resetTool();
   });
