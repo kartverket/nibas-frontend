@@ -136,6 +136,9 @@ jobs:
       id-token: write
       contents: read
     uses: kartverket/smia-apps/.github/workflows/release-feature-branch-v2.yml@TS-2477
+    secrets:
+      TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+      TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }}
     with:
       branch-name: ${{ needs.determine-branch-name-pr.outputs.BRANCH_NAME }}
       application: nibas-frontend
@@ -151,6 +154,9 @@ jobs:
       id-token: write
       contents: read
     uses: kartverket/smia-apps/.github/workflows/release-feature-branch-v2.yml@TS-2477
+    secrets:
+      TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+      TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }}
     with:
       branch-name: ${{ needs.determine-branch-name-manual.outputs.BRANCH_NAME }}
       application: nibas-frontend
