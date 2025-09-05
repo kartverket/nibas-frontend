@@ -134,7 +134,7 @@ jobs:
     name: Deploy Pull Request (PR)
     permissions:
       id-token: write
-    uses: kartverket/smia-apps/.github/workflows/release-feature-branch-v2.yml@main
+    uses: kartverket/smia-apps/.github/workflows/release-feature-branch-v2.yml@TS-2477
     with:
       branch-name: ${{ needs.determine-branch-name-pr.outputs.BRANCH_NAME }}
       application: nibas-frontend
@@ -148,7 +148,7 @@ jobs:
     name: Deploy Pull Request (Manual)
     permissions:
       id-token: write
-    uses: kartverket/smia-apps/.github/workflows/release-feature-branch-v2.yml@main
+    uses: kartverket/smia-apps/.github/workflows/release-feature-branch-v2.yml@TS-2477
     with:
       branch-name: ${{ needs.determine-branch-name-manual.outputs.BRANCH_NAME }}
       application: nibas-frontend
