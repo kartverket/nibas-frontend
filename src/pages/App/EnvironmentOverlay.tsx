@@ -20,7 +20,7 @@ export const styles: Record<Environment, EnvironmentStyle> = {
   },
   "dev-e2e": {
     label: "E2E-testmiljø",
-    color: "var(--kvib-colors-blue-200)",
+    color: "var(--kvib-colors-blue-300)",
   },
   localhost: {
     label: "Lokalt utviklingsmiljø",
