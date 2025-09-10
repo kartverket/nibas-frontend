@@ -135,7 +135,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: kartverket/smia-apps/.github/workflows/release-feature-branch-v2.yml@TS-2477
+    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
     secrets:
       TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
       TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }}
@@ -153,7 +153,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-    uses: kartverket/smia-apps/.github/workflows/release-feature-branch-v2.yml@TS-2477
+    uses: kartverket/smia-apps/.github/workflows/release-feature-branch.yml@main
     secrets:
       TS_OAUTH_CLIENT_ID: ${{ secrets.TS_OAUTH_CLIENT_ID }}
       TS_OAUTH_SECRET: ${{ secrets.TS_OAUTH_SECRET }}
