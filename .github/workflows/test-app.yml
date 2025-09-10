@@ -11,9 +11,15 @@ env:
   registry_path: kartverket
 
 jobs:
+  should-test:
+    uses: kartverket/nibas-frontend/.github/workflows/check-changes.yml@main
+    with:
+      ignore-paths: "README.md,.github/,.vscode/,.security/"
   test-vitest:
+    needs: should-test
     name: Test Vitest and build
     runs-on: ubuntu-latest
+    if: needs.should-test.outputs.has-relevant-changes == 'true'
     steps:
       - uses: actions/checkout@v5
 
