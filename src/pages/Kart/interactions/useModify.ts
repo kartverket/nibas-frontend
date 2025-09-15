@@ -381,8 +381,8 @@ const useModify = () => {
           }
         }
         onSnap(event, selectedFeature, event.mapBrowserEvent.coordinate);
-        addModificationToHistory(event.features.getArray());
       }
+      addModificationToHistory(event.features.getArray());
     };
 
     modify.on("modifyend", updateFeatureOnModification);
