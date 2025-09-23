@@ -48,14 +48,10 @@ export const TilhorighetSearch = ({ options, value, onChange, kretsType }: Props
   };
 
   const loadResults = async (term: string, resultsCallback: (options: OptionType[]) => void) => {
-    // Vi begrenser antall treff vi viser fordi enkelte grenser kan få VELDIG mange alternativer, spesielt
-    // kommunegrenser. Om ikke alternativet dukker opp må man prøve å søke.
     if (term == null || term === "") {
-      resultsCallback(options.slice(0, 40));
+      resultsCallback(options);
     } else {
-      resultsCallback(
-        options.filter((option) => option.label.toLocaleLowerCase().includes(term.toLocaleLowerCase())).slice(0, 40),
-      );
+      resultsCallback(options.filter((option) => option.label.toLocaleLowerCase().includes(term.toLocaleLowerCase())));
     }
   };
 
