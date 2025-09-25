@@ -23,7 +23,7 @@ const Landing = () => {
       <Page>
         <Greeting />
         <ActionCard
-          title="Gjør en eller flere endringer"
+          title="Her skjer det endringer"
           description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."
           icon="draw"
           onClick={() => navigate(routes.utkast)}
