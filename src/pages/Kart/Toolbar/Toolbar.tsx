@@ -109,6 +109,7 @@ const Toolbar = () => {
     }
   };
 
+  useKeyboardShortcut("avvik", () => toggleOverlayPanel("avvik"));
   useKeyboardShortcut("layers", () => toggleOverlayPanel("kartlag"));
   useKeyboardShortcut("edit", () => disableModeTool("move"), isEditing);
   useKeyboardShortcut("move", togglePanorer);
@@ -221,6 +222,15 @@ const Toolbar = () => {
     },
   ];
   const kartlagMenuItems: MenuItems = [
+    {
+      label: "Avvik",
+      icon: <Icon icon="warning" />,
+      command: KeyboardShortcuts["avvik"].displayString,
+      $isActive: activeOverlayPanel === "avvik",
+      isDisabled: false,
+      onClick: () => toggleOverlayPanel("avvik"),
+      "aria-label": "Åpne avvikpanelet",
+    },
     {
       label: "Bakgrunnskart",
       icon: <Icon icon="map" />,
