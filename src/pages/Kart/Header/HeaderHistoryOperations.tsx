@@ -3,7 +3,6 @@ import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { styled } from "styled-components";
@@ -14,7 +13,6 @@ const HeaderHistoryOperations = () => {
   const { utkast, updateUtkastWithHistory } = useUtkast();
   const { canSave, undo, redo } = useHistory();
   const { isOpen: isEndringsloggOpen, onClose: onEndringsloggClose, onOpen: onEndringsloggOpen } = useDisclosure();
-  const { toggleOverlayPanel } = useOverlayPanel();
   const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
   const handleSave = async () => {
@@ -24,9 +22,6 @@ const HeaderHistoryOperations = () => {
         setAuthRenewError(true);
       }
     }
-  };
-  const handleAvvik = () => {
-    toggleOverlayPanel("avvik");
   };
 
   useKeyboardShortcut("save", handleSave, canSave);
@@ -70,15 +65,6 @@ const HeaderHistoryOperations = () => {
         tooltip={{
           text: "Lagre endringene til utkastet",
           shortcut: "save",
-        }}
-      />
-      <HeaderButton
-        isLabelHidden={true}
-        label="Avvik fra matrikkelen"
-        icon="warning"
-        onClick={handleAvvik}
-        tooltip={{
-          text: "Se en liste over alle avvik",
         }}
       />
       <HeaderButton

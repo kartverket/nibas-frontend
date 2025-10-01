@@ -30,7 +30,8 @@ export type Shortcut =
   | "preview"
   | "goto"
   | "duplicate"
-  | "merge_grenser";
+  | "merge_grenser"
+  | "avvik";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -87,6 +88,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   move: createShortcut("p", {}),
   matrikkel: createShortcut("e", { control: true }),
   preview: createShortcut("p", { control: true }),
+  avvik: createShortcut("v", { control: true }),
 
   // Grense Tools
   archive: createShortcut("a", { control: true }),
