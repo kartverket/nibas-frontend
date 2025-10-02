@@ -106,7 +106,7 @@ export const EnvironmentSelect = () => {
   const { isAuthenticated } = useAuthentication();
 
   const envSwitchEnabled = isAuthenticated && env !== "dev-e2e" && env !== "prod";
-  const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(true);
+  const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
 
   const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
     envSwitchEnabled ? "nibas-frontend" : null,
