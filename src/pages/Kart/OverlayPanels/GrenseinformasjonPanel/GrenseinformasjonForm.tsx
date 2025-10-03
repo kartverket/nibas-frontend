@@ -28,7 +28,6 @@ import {
   isNonEditableFeatureId,
   isTempFeatureId,
 } from "pages/Kart/interactions/feature-id-utils";
-import { ContextualPosisjonskvalitet } from "pages/Kart/interactions/useModify";
 import { TooltipBody } from "pages/Kart/Toolbar/CustomTooltip";
 import { useEffect, useMemo, useState } from "react";
 import { Controller } from "react-hook-form";
@@ -46,6 +45,12 @@ import {
 } from "./grenseinformasjon-utils";
 import GrenseinformasjonRow from "./GrenseinformasjonRow";
 import { TitleWithIconTooltip } from "./TitleWithIconTooltip";
+
+type ContextualPosisjonskvalitet = {
+  grensetype: "teig" | "nibas";
+  maalemetode: string | undefined;
+  noeyaktighet: number | undefined;
+};
 
 type Props = {
   feature: Feature<Geometry>;
