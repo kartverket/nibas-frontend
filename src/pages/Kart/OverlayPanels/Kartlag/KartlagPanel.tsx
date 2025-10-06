@@ -6,10 +6,10 @@ import useToastUnique from "hooks/toast/useToastUnique";
 import { useRef, useState } from "react";
 import { styled } from "styled-components";
 import { geoJsonToSource } from "utils/map/geoJson";
-import { defaultZoomToFeaturesPadding, zoomToFeatures } from "utils/map/map-utils";
 import { addFeaturesToSource } from "utils/map/source";
-import { PanelHeader, SidePanel, SidePanelWidth } from "../Panel";
+import { PanelHeader, SidePanel } from "../Panel";
 import Kartlag from "./Kartlag";
+import { useMap } from "utils/map/useMap";
 
 const KartlagPanel = () => {
   const { toastUnique: innlastingFeiletToast } = useToastUnique({
@@ -22,6 +22,7 @@ const KartlagPanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingFiles, setIsUploadingFiles] = useState(false);
+  const { zoomToFeatures } = useMap();
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -94,11 +95,7 @@ const KartlagPanel = () => {
 
         addSOSIFileSublayers(allSublayers);
         addFeaturesToSource("sosiFiler", allFeatures);
-
-        const paddingRightIndex = 1;
-        const padding = [...defaultZoomToFeaturesPadding];
-        padding[paddingRightIndex] = padding[paddingRightIndex] + SidePanelWidth;
-        zoomToFeatures(allFeatures, padding);
+        zoomToFeatures(allFeatures, true);
       }
     } finally {
       setIsUploadingFiles(false);
