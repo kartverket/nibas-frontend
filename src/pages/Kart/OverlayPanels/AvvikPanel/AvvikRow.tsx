@@ -47,35 +47,35 @@ const AvvikRow = ({ avvikItem, setSelectedAvvikId, updateStatus, findSecondKommu
   const featureHighlightStyle = [
     new Style({
       stroke: new Stroke({
-        color: "rgba(186, 215, 248, 0.75)",
+        color: "rgba(235, 190, 118, 0.75)",
         width: 20,
         lineCap: "round",
         lineJoin: "round",
       }),
     }),
-    new Style({
-      image: new Circle({
-        radius: 3.5,
-        fill: new Fill({
-          color: "rgba(26, 88, 159, 1)",
-        }),
-      }),
-      geometry: getNonAvvikEndpointsOnFeature,
-    }),
-    new Style({
-      zIndex: endpointStyleZIndex,
-      image: new Circle({
-        radius: 3.5,
-        fill: new Fill({
-          color: "#FFFFFF",
-        }),
-        stroke: new Stroke({
-          color: "rgba(26, 88, 159, 1)",
-          width: 2.5,
-        }),
-      }),
-      geometry: getAvvikEndpointsOnFeature,
-    }),
+    // new Style({
+    //   image: new Circle({
+    //     radius: 3.5,
+    //     fill: new Fill({
+    //       color: "rgba(26, 88, 159, 1)",
+    //     }),
+    //   }),
+    //   geometry: getNonAvvikEndpointsOnFeature,
+    // }),
+    // new Style({
+    //   zIndex: endpointStyleZIndex,
+    //   image: new Circle({
+    //     radius: 3.5,
+    //     fill: new Fill({
+    //       color: "#FFFFFF",
+    //     }),
+    //     stroke: new Stroke({
+    //       color: "rgba(26, 88, 159, 1)",
+    //       width: 2.5,
+    //     }),
+    //   }),
+    //   geometry: getAvvikEndpointsOnFeature,
+    // }),
   ];
 
   const addFeatureHighlightToHighlightSource = () => {
@@ -246,7 +246,7 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
       : "translateX(0)"};
 
   &:hover {
-    border-left: 4px solid var(--kvib-colors-blue-500);
+    border-left: 4px solid var(--kvib-colors-orange-300);
     background-color: rgb(186, 215, 248, 33%);
     cursor: pointer;
   }
