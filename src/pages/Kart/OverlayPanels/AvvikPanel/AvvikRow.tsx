@@ -1,14 +1,14 @@
 import { Box, Button, Stack, Text, useToast } from "@kvib/react";
 import { highlightSource } from "hooks/layers/constants";
-import { equals } from "ol/coordinate";
-import Feature, { FeatureLike } from "ol/Feature";
-import { LineString, MultiPoint } from "ol/geom";
-import { Fill, Stroke, Style, Circle } from "ol/style";
+//import { equals } from "ol/coordinate";
+import Feature /*{ FeatureLike }*/ from "ol/Feature";
+import { LineString /*MultiPoint*/ } from "ol/geom";
+import { /*Fill*/ Stroke, Style /*Circle*/ } from "ol/style";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import { styled } from "styled-components";
-import { endpointStyleZIndex, getEndPointsOnFeature, getNonEndpointsOnFeature } from "utils/map/layerStyles";
+//import { endpointStyleZIndex, getEndPointsOnFeature, getNonEndpointsOnFeature } from "utils/map/layerStyles";
 import { useMap } from "utils/map/useMap";
 import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
 
@@ -21,28 +21,28 @@ const AvvikRow = ({ avvikItem, setSelectedAvvikId, updateStatus, findSecondKommu
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
-  const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
+  //const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
   const { zoomToFeatures } = useMap();
 
-  const isAvvikPoint = (coordinate: number[]) => {
-    return koordinaterAvvikNibas.some((c) => equals(c, coordinate));
-  };
+  // const isAvvikPoint = (coordinate: number[]) => {
+  //   return koordinaterAvvikNibas.some((c) => equals(c, coordinate));
+  // };
 
-  const getNonAvvikEndpointsOnFeature = (feature: FeatureLike) => {
-    return new MultiPoint(
-      getNonEndpointsOnFeature(feature)
-        ?.getCoordinates()
-        .filter((c) => isAvvikPoint(c)) ?? [],
-    );
-  };
+  // const getNonAvvikEndpointsOnFeature = (feature: FeatureLike) => {
+  //   return new MultiPoint(
+  //     getNonEndpointsOnFeature(feature)
+  //       ?.getCoordinates()
+  //       .filter((c) => isAvvikPoint(c)) ?? [],
+  //   );
+  // };
 
-  const getAvvikEndpointsOnFeature = (feature: FeatureLike) => {
-    return new MultiPoint(
-      getEndPointsOnFeature(feature)
-        ?.getCoordinates()
-        .filter((c) => isAvvikPoint(c)) ?? [],
-    );
-  };
+  // const getAvvikEndpointsOnFeature = (feature: FeatureLike) => {
+  //   return new MultiPoint(
+  //     getEndPointsOnFeature(feature)
+  //       ?.getCoordinates()
+  //       .filter((c) => isAvvikPoint(c)) ?? [],
+  //   );
+  // };
 
   const featureHighlightStyle = [
     new Style({
