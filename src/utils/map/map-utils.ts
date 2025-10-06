@@ -1,8 +1,6 @@
-import { initialMapCenter, initialMapZoom, map } from "pages/Kart/constants";
-import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
-import { LineString } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
+import { LineString } from "ol/geom";
+import { map } from "pages/Kart/constants";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
 
 /** Euklidisk avstand mellom to koordinater i piksler */

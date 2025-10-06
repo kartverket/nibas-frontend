@@ -3,16 +3,14 @@ import { highlightSource } from "hooks/layers/constants";
 import { equals } from "ol/coordinate";
 import Feature, { FeatureLike } from "ol/Feature";
 import { LineString, MultiPoint } from "ol/geom";
-import { Fill, Stroke, Style } from "ol/style";
-import Circle from "ol/style/Circle";
+import { Fill, Stroke, Style, Circle } from "ol/style";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import { styled } from "styled-components";
-import { endpointStyleZIndex, getEndPointsOnFeature } from "utils/map/layerStyles";
-import { getNonEndpointsOnFeature } from "utils/map/layerStyles";
-import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
+import { endpointStyleZIndex, getEndPointsOnFeature, getNonEndpointsOnFeature } from "utils/map/layerStyles";
 import { useMap } from "utils/map/useMap";
+import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
 
 interface StyledRowProps {
   $removing: boolean;

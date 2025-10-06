@@ -5,8 +5,8 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useKommune } from "hooks/inndelinger/useKommuner";
 import { useEffect, useState } from "react";
 import { clearMatrikkelLayer } from "utils/map/layers";
-import { resetMapView } from "utils/map/useMap";
 import { addFeaturesToSource } from "utils/map/source";
+import { resetMapView } from "utils/map/useMap";
 import { useAuthentication } from "../../../../components/Authentication/useAuthentication";
 import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
 import {
@@ -49,7 +49,6 @@ export const useAvvikPanel = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
 
-  const [previousCoordinates, setPreviousCoordinates] = useState<number[]>([]);
   // ========== Henter kommuner med avvik ==========
   const { data: kommunerMedAvvikResponse, isLoading: isLoadingKommunerMedAvvik } = useKommunerMedAvvik(
     !selectedKommune,
