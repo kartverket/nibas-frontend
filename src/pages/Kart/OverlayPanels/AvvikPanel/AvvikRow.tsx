@@ -1,73 +1,99 @@
 import { Box, Button, Stack, Text, useToast } from "@kvib/react";
-import { styled } from "styled-components";
-import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
+import { highlightSource } from "hooks/layers/constants";
+import { equals } from "ol/coordinate";
+import Feature, { FeatureLike } from "ol/Feature";
+import { LineString, MultiPoint } from "ol/geom";
+import { Fill, Stroke, Style, Circle } from "ol/style";
+import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
-import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
-import Feature from "ol/Feature";
-import { Circle as CircleGeom } from "ol/geom";
-import { Style, Stroke, Fill } from "ol/style";
-import { highlightSource } from "hooks/layers/constants";
-import { map } from "pages/Kart/constants";
+import { styled } from "styled-components";
+import { endpointStyleZIndex, getEndPointsOnFeature, getNonEndpointsOnFeature } from "utils/map/layerStyles";
+import { useMap } from "utils/map/useMap";
+import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
+
 interface StyledRowProps {
-  $active: boolean;
   $removing: boolean;
   $status: AvvikStatus;
 }
 
-const AvvikRow = ({
-  avvikItem,
-  selectedAvvikId,
-  setSelectedAvvikId,
-  updateStatus,
-  findSecondKommune,
-  panAndZoom,
-}: AvvikRowPropsExtended) => {
-  const showHighlightCircle = (coordinate: number[]) => {
-    const currentZoom = map.getView().getZoom();
-    const zoomRef = 12;
-    const standardRadius = 1200;
-    const strokeColor = "rgba(247, 192, 72, 0.9)";
-    const fillColor = "rgba(247, 192, 72, 0.2)";
-    let radius = standardRadius;
-    if (currentZoom != null) {
-      radius = standardRadius * Math.pow(2, zoomRef - currentZoom);
-      if (radius > 1200) {
-        radius = 1200;
-      }
-    }
-    highlightSource.clear();
-    const circleFeature = new Feature(new CircleGeom(coordinate, radius));
-    circleFeature.setStyle(
-      new Style({
-        stroke: new Stroke({ color: strokeColor, width: 5 }),
-        fill: new Fill({ color: fillColor }),
-      }),
-    );
-    highlightSource.addFeature(circleFeature);
-  };
-
-  const clearHighlightCircle = () => {
-    highlightSource.clear();
-  };
+const AvvikRow = ({ avvikItem, setSelectedAvvikId, updateStatus, findSecondKommune }: AvvikRowPropsExtended) => {
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
   const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
+  const { zoomToFeatures } = useMap();
+
+  const isAvvikPoint = (coordinate: number[]) => {
+    return koordinaterAvvikNibas.some((c) => equals(c, coordinate));
+  };
+
+  const getNonAvvikEndpointsOnFeature = (feature: FeatureLike) => {
+    return new MultiPoint(
+      getNonEndpointsOnFeature(feature)
+        ?.getCoordinates()
+        .filter((c) => isAvvikPoint(c)) ?? [],
+    );
+  };
+
+  const getAvvikEndpointsOnFeature = (feature: FeatureLike) => {
+    return new MultiPoint(
+      getEndPointsOnFeature(feature)
+        ?.getCoordinates()
+        .filter((c) => isAvvikPoint(c)) ?? [],
+    );
+  };
+
+  const featureHighlightStyle = [
+    new Style({
+      stroke: new Stroke({
+        color: "rgba(235, 190, 118, 0.75)",
+        width: 20,
+        lineCap: "round",
+        lineJoin: "round",
+      }),
+    }),
+    // new Style({
+    //   image: new Circle({
+    //     radius: 3.5,
+    //     fill: new Fill({
+    //       color: "rgba(26, 88, 159, 1)",
+    //     }),
+    //   }),
+    //   geometry: getNonAvvikEndpointsOnFeature,
+    // }),
+    // new Style({
+    //   zIndex: endpointStyleZIndex,
+    //   image: new Circle({
+    //     radius: 3.5,
+    //     fill: new Fill({
+    //       color: "#FFFFFF",
+    //     }),
+    //     stroke: new Stroke({
+    //       color: "rgba(26, 88, 159, 1)",
+    //       width: 2.5,
+    //     }),
+    //   }),
+    //   geometry: getAvvikEndpointsOnFeature,
+    // }),
+  ];
+
+  const addFeatureHighlightToHighlightSource = () => {
+    const featureHighlight = new Feature(new LineString(avvikItem.geometri.coordinates));
+    featureHighlight.setStyle(featureHighlightStyle);
+    highlightSource.addFeature(featureHighlight);
+  };
+
+  const removeFeatureHighlightFromHighlightSource = () => {
+    highlightSource.clear();
+  };
 
   const handlePanAndSelect = async () => {
     findSecondKommune(avvikItem.kommuner);
-    panAndZoom(koordinaterAvvikNibas[0]); // Per nå bruker vi kun første koordinat for panoreringsfunksjonen selv om det er evt flere koordinater med avvik
+    zoomToFeatures([new Feature(new LineString(avvikItem.geometri.coordinates))]);
     setSelectedAvvikId(avvikItem.id);
   };
-  const highlightAvvik = async () => {
-    const coordinates = avvikItem.koordinaterMedAvvik[0]?.nibasKoordinat.coordinates;
-    showHighlightCircle(coordinates);
-  };
 
-  const removeHighlight = () => {
-    clearHighlightCircle();
-  };
   const handleStatusEndring = async (status: AvvikStatus) => {
     setIsRemoving(true);
     setRowStatus(status);
@@ -83,20 +109,19 @@ const AvvikRow = ({
       setIsRemoving(false);
     }, 500);
   };
-  const isActive = selectedAvvikId === avvikItem?.id;
+
   const status = avvikItem.status;
 
   return (
     <Container>
       <Row
-        $active={isActive}
         $removing={isRemoving}
         $status={rowStatus}
         onMouseOver={() => {
-          highlightAvvik();
+          addFeatureHighlightToHighlightSource();
         }}
         onMouseLeave={() => {
-          removeHighlight();
+          removeFeatureHighlightFromHighlightSource();
         }}
         onClick={() => {
           handlePanAndSelect();
@@ -202,16 +227,14 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
   width: 100%;
   padding: var(--kvib-space-2) var(--kvib-space-2);
   border-left: 4px solid transparent;
-  background-color: ${({ $active, $removing, $status }) =>
+  background-color: ${({ $removing, $status }) =>
     $removing
       ? $status === AvvikStatus.VENT
         ? "var(--kvib-colors-yellow-100)"
         : $status === AvvikStatus.NY
           ? "var(--kvib-colors-red-100)"
           : "var(--kvib-colors-green-100)"
-      : $active
-        ? "var(--kvib-colors-gray-100)"
-        : "transparent"};
+      : "transparent"};
   transition:
     background-color 0.3s ease,
     transform 0.5s ease;
@@ -223,8 +246,8 @@ const Row = styled.div<StyledRowProps & { $removing: boolean }>`
       : "translateX(0)"};
 
   &:hover {
-    border-left: 4px solid var(--kvib-colors-orange-200);
-    background-color: var(--kvib-colors-gray-100);
+    border-left: 4px solid var(--kvib-colors-orange-300);
+    background-color: rgb(186, 215, 248, 33%);
     cursor: pointer;
   }
 `;
