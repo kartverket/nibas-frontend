@@ -1,8 +1,14 @@
-import { useEffect, useState } from "react";
-import { useAuthentication } from "../../../../components/Authentication/useAuthentication";
+import { useToast } from "@kvib/react";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { useKommune } from "hooks/inndelinger/useKommuner";
+import { useEffect, useState } from "react";
 import { clearMatrikkelLayer } from "utils/map/layers";
+import { resetMapView } from "utils/map/useMap";
+import { addFeaturesToSource } from "utils/map/source";
+import { useAuthentication } from "../../../../components/Authentication/useAuthentication";
+import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
 import {
   AvvikPanelProps,
   AvvikRowKommunerProps,
@@ -11,15 +17,7 @@ import {
   KommuneIAvvik,
   KommuneMedAvvik,
 } from "./avvik-utils";
-import { useToast } from "@kvib/react";
-import { useKommune } from "hooks/inndelinger/useKommuner";
-import { pixelDistance, resetMapView } from "utils/map/map-utils";
 import { avvikUpdateStatus, useAvvikForKommune, useKommunerMedAvvik } from "./useAvvik";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { addFeaturesToSource } from "utils/map/source";
-import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
-import { centerOnCoordinate } from "../NavigasjonPanel/koordinater-utils";
-import { map } from "pages/Kart/constants";
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const toast = useToast();
@@ -275,45 +273,11 @@ export const useAvvikPanel = () => {
     setSelectedKommuneId(kommuneLokalID);
   };
 
-  const calculateZoomLevel = (coordinates: number[]) => {
-    const zoomLevels = [
-      { threshold: 100000, zoom: 14 },
-      { threshold: 50000, zoom: 18 },
-      { threshold: 30000, zoom: 20 },
-      { threshold: 10000, zoom: 22 },
-    ];
-    if (previousCoordinates.length === 0) {
-      return 12;
-    }
-    const distance = pixelDistance(previousCoordinates, coordinates);
-    for (const { threshold, zoom } of zoomLevels) {
-      if (distance > threshold) {
-        return zoom;
-      }
-    }
-    return 24;
-  };
-  const panAndZoom = async (coordinates: number[]) => {
-    let zoomLevel = 12;
-    const currentZoom = map.getView().getZoom();
-    if (currentZoom != null && currentZoom > 12) {
-      zoomLevel = calculateZoomLevel(coordinates);
-    }
-    centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 2000);
-    if (zoomLevel < 24) {
-      setTimeout(() => {
-        zoomLevel = 24;
-        centerOnCoordinate(coordinates[1], coordinates[0], zoomLevel, 2000);
-      }, 2500);
-    }
-    setPreviousCoordinates(coordinates);
-  };
   const avvikRowProps: AvvikRowProps = {
     findSecondKommune,
     selectedAvvikId,
     setSelectedAvvikId,
     updateStatus,
-    panAndZoom,
   };
   const avvikPanelProps: AvvikPanelProps = {
     isLoadingKommunerMedAvvik,
