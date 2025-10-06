@@ -73,7 +73,7 @@ export const highlightSource = new VectorSource();
 const createHighlightVectorLayer = (id: string, source: VectorSource) => {
   const newLayer = new VectorLayer({
     source,
-    zIndex: 1000,
+    zIndex: -1,
     declutter: false,
   });
   newLayer.set("id", id);

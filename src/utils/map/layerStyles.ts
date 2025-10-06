@@ -18,7 +18,7 @@ import { FEATURE_VISIBLE_PROPERTY } from "contexts/KartlagContext/kartlag-utils"
 
 export const endpointStyleZIndex = 9999;
 
-const getNonEndpointsOnFeature = (feature: FeatureLike) => {
+export const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
   if (geometry instanceof LineString) {
     const coordinates = geometry.getCoordinates();
@@ -26,7 +26,7 @@ const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   }
 };
 
-const getEndPointsOnFeature = (feature: FeatureLike) => {
+export const getEndPointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
   if (geometry instanceof LineString) {
     const endCoordinates = [geometry.getFirstCoordinate(), geometry.getLastCoordinate()];

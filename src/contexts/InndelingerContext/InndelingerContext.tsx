@@ -22,10 +22,10 @@ import { AdministrativEnhetNavn, FeatureProperties } from "types/api";
 import { getFeatureFremtidigEndringDato } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearEditLayer, clearViewingLayers, getLayerById } from "utils/map/layers";
-import { zoomToFeatures } from "utils/map/map-utils";
-import { addFeaturesToSource } from "utils/map/source";
-import useInndelingFeatures from "./useInndelingFeatures";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
+import { addFeaturesToSource } from "utils/map/source";
+import { useMap } from "utils/map/useMap";
+import useInndelingFeatures from "./useInndelingFeatures";
 
 export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
 export type Inndelingtyper = typeof INNDELINGTYPER;
@@ -106,6 +106,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const [inndelinger, setInndelinger] = useState<Inndelinger>(getEmptyInndelinger());
   const [shouldZoom, setShouldZoom] = useState(true);
   const { setFeatureStylesForUtkast, setAndSaveFremtidigEndringStyles, addDirtyStyles } = useFeatureStyle();
+  const { zoomToFeatures } = useMap();
 
   const [selectedFylkeIds, setSelectedFylkeIds] = useState<string[]>([]);
   const [inndelingerToFetch, setInndelingerToFetch] = useState<Inndeling[]>([]);
