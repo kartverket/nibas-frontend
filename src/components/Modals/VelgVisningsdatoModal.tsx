@@ -17,7 +17,7 @@ import { useForm } from "react-hook-form";
 import { format, parseISO } from "date-fns";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { resetMapView } from "utils/map/map-utils";
+import { resetMapView } from "utils/map/useMap";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
