@@ -68,12 +68,13 @@ export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource<Feature>>>
   historical: createVectorLayer("historical"),
 };
 
-export const highlightSource = new VectorSource();
+export const highlightStrokeSource = new VectorSource();
+export const highlightPointSource = new VectorSource();
 
-const createHighlightVectorLayer = (id: string, source: VectorSource) => {
+const createHighlightVectorLayer = (id: string, source: VectorSource, zIndex: number) => {
   const newLayer = new VectorLayer({
     source,
-    zIndex: 1000,
+    zIndex,
     declutter: false,
   });
   newLayer.set("id", id);
@@ -81,4 +82,7 @@ const createHighlightVectorLayer = (id: string, source: VectorSource) => {
   return newLayer;
 };
 
-export const highlightLayer = createHighlightVectorLayer("highlight", highlightSource);
+// Stroke should render under edit layer (default 0), so give it a lower zIndex
+export const highlightStrokeLayer = createHighlightVectorLayer("highlight-stroke", highlightStrokeSource, -1);
+// Points should render above everything else in the editing context
+export const highlightPointLayer = createHighlightVectorLayer("highlight-points", highlightPointSource, 1000);

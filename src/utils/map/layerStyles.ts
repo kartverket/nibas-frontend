@@ -18,7 +18,7 @@ import { FEATURE_VISIBLE_PROPERTY } from "contexts/KartlagContext/kartlag-utils"
 
 export const endpointStyleZIndex = 9999;
 
-const getNonEndpointsOnFeature = (feature: FeatureLike) => {
+export const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
   if (geometry instanceof LineString) {
     const coordinates = geometry.getCoordinates();
@@ -26,7 +26,7 @@ const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   }
 };
 
-const getEndPointsOnFeature = (feature: FeatureLike) => {
+export const getEndPointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
   if (geometry instanceof LineString) {
     const endCoordinates = [geometry.getFirstCoordinate(), geometry.getLastCoordinate()];
@@ -137,7 +137,7 @@ export const grenseStyles = {
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
   error: lineAndPointStyles({ color: "#FF0000FF" }),
   fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"] }),
-  matrikkel: lineAndPointStyles({ color: "#C0AFFBFF", pointRadius: 1.5, endpointRadius: 2 }),
+  matrikkel: lineAndPointStyles({ color: "#C0AFFBFF" }),
   historical: lineAndPointStyles({ color: "#FF00FF", pointRadius: 1.5, dashed: true, lineStrokeWidth: 2 }),
   sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
   flate: flateStyles,
