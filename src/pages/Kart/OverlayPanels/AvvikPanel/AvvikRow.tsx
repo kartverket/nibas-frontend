@@ -1,14 +1,14 @@
 import { Box, Button, Stack, Text, useToast } from "@kvib/react";
-import { highlightSource } from "hooks/layers/constants";
-//import { equals } from "ol/coordinate";
-import Feature /*{ FeatureLike }*/ from "ol/Feature";
-import { LineString /*MultiPoint*/ } from "ol/geom";
-import { /*Fill*/ Stroke, Style /*Circle*/ } from "ol/style";
+import { highlightPointSource, highlightStrokeSource } from "hooks/layers/constants";
+import { equals } from "ol/coordinate";
+import Feature, { FeatureLike } from "ol/Feature";
+import { LineString, MultiPoint } from "ol/geom";
+import { Fill, Stroke, Style, Circle } from "ol/style";
 import CustomTooltip from "pages/Kart/Toolbar/CustomTooltip";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { useState } from "react";
 import { styled } from "styled-components";
-//import { endpointStyleZIndex, getEndPointsOnFeature, getNonEndpointsOnFeature } from "utils/map/layerStyles";
+import { endpointStyleZIndex, getEndPointsOnFeature, getNonEndpointsOnFeature } from "utils/map/layerStyles";
 import { useMap } from "utils/map/useMap";
 import { AvvikRowPropsExtended, AvvikStatus } from "./avvik-utils";
 
@@ -21,71 +21,79 @@ const AvvikRow = ({ avvikItem, setSelectedAvvikId, updateStatus, findSecondKommu
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
-  //const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
+  const koordinaterAvvikNibas = avvikItem.koordinaterMedAvvik.map((k) => k.nibasKoordinat.coordinates);
   const { zoomToFeatures } = useMap();
 
-  // const isAvvikPoint = (coordinate: number[]) => {
-  //   return koordinaterAvvikNibas.some((c) => equals(c, coordinate));
-  // };
+  const isAvvikPoint = (coordinate: number[]) => {
+    return koordinaterAvvikNibas.some((c) => equals(c, coordinate));
+  };
 
-  // const getNonAvvikEndpointsOnFeature = (feature: FeatureLike) => {
-  //   return new MultiPoint(
-  //     getNonEndpointsOnFeature(feature)
-  //       ?.getCoordinates()
-  //       .filter((c) => isAvvikPoint(c)) ?? [],
-  //   );
-  // };
+  const getNonAvvikEndpointsOnFeature = (feature: FeatureLike) => {
+    return new MultiPoint(
+      getNonEndpointsOnFeature(feature)
+        ?.getCoordinates()
+        .filter((c) => isAvvikPoint(c)) ?? [],
+    );
+  };
 
-  // const getAvvikEndpointsOnFeature = (feature: FeatureLike) => {
-  //   return new MultiPoint(
-  //     getEndPointsOnFeature(feature)
-  //       ?.getCoordinates()
-  //       .filter((c) => isAvvikPoint(c)) ?? [],
-  //   );
-  // };
+  const getAvvikEndpointsOnFeature = (feature: FeatureLike) => {
+    return new MultiPoint(
+      getEndPointsOnFeature(feature)
+        ?.getCoordinates()
+        .filter((c) => isAvvikPoint(c)) ?? [],
+    );
+  };
 
-  const featureHighlightStyle = [
+  const featureHighlightStrokeStyle = [
     new Style({
       stroke: new Stroke({
-        color: "rgba(235, 190, 118, 0.75)",
+        color: "rgba(255, 221, 157, 0.75)",
         width: 20,
         lineCap: "round",
         lineJoin: "round",
       }),
     }),
-    // new Style({
-    //   image: new Circle({
-    //     radius: 3.5,
-    //     fill: new Fill({
-    //       color: "rgba(26, 88, 159, 1)",
-    //     }),
-    //   }),
-    //   geometry: getNonAvvikEndpointsOnFeature,
-    // }),
-    // new Style({
-    //   zIndex: endpointStyleZIndex,
-    //   image: new Circle({
-    //     radius: 3.5,
-    //     fill: new Fill({
-    //       color: "#FFFFFF",
-    //     }),
-    //     stroke: new Stroke({
-    //       color: "rgba(26, 88, 159, 1)",
-    //       width: 2.5,
-    //     }),
-    //   }),
-    //   geometry: getAvvikEndpointsOnFeature,
-    // }),
+  ];
+
+  const featureHighlightPointStyles = [
+    new Style({
+      image: new Circle({
+        radius: 3.5,
+        fill: new Fill({
+          color: "rgba(207, 145, 74, 1)",
+        }),
+      }),
+      geometry: getNonAvvikEndpointsOnFeature,
+    }),
+    new Style({
+      zIndex: endpointStyleZIndex,
+      image: new Circle({
+        radius: 3.5,
+        fill: new Fill({
+          color: "#FFFFFF",
+        }),
+        stroke: new Stroke({
+          color: "rgba(207, 145, 74, 1)",
+          width: 2.5,
+        }),
+      }),
+      geometry: getAvvikEndpointsOnFeature,
+    }),
   ];
 
   const addFeatureHighlightToHighlightSource = () => {
-    const featureHighlight = new Feature(new LineString(avvikItem.geometri.coordinates));
-    featureHighlight.setStyle(featureHighlightStyle);
-    highlightSource.addFeature(featureHighlight);
+    const strokeFeature = new Feature(new LineString(avvikItem.geometri.coordinates));
+    strokeFeature.setStyle(featureHighlightStrokeStyle);
+    highlightStrokeSource.addFeature(strokeFeature);
+
+    const pointsFeature = new Feature(new LineString(avvikItem.geometri.coordinates));
+    pointsFeature.setStyle(featureHighlightPointStyles);
+    highlightPointSource.addFeature(pointsFeature);
   };
 
   const removeFeatureHighlightFromHighlightSource = () => {
-    highlightSource.clear();
+    highlightStrokeSource.clear();
+    highlightPointSource.clear();
   };
 
   const handlePanAndSelect = async () => {

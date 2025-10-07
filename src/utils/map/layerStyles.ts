@@ -137,7 +137,7 @@ export const grenseStyles = {
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
   error: lineAndPointStyles({ color: "#FF0000FF" }),
   fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"] }),
-  matrikkel: lineAndPointStyles({ color: "#C0AFFBFF", pointRadius: 1.5, endpointRadius: 2 }),
+  matrikkel: lineAndPointStyles({ color: "#C0AFFBFF" }),
   historical: lineAndPointStyles({ color: "#FF00FF", pointRadius: 1.5, dashed: true, lineStrokeWidth: 2 }),
   sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
   flate: flateStyles,
