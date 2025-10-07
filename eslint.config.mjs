@@ -9,7 +9,7 @@ import { fileURLToPath } from "node:url";
 import { FlatCompat } from "@eslint/eslintrc";
 import js from "@eslint/js";
 import reactCompiler from "eslint-plugin-react-compiler";
-import eslintReact from "@eslint-react/eslint-plugin";
+import reactHooks from "eslint-plugin-react-hooks";
 
 const { configs } = js;
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +27,6 @@ export default [
       "plugin:react/recommended",
       "plugin:react/jsx-runtime",
       "plugin:@typescript-eslint/recommended",
-      "plugin:react-hooks/recommended",
       "plugin:import/recommended",
       "plugin:import/typescript",
       "plugin:prettier/recommended",
@@ -39,6 +38,7 @@ export default [
       "@typescript-eslint": fixupPluginRules(typescriptEslint),
       import: fixupPluginRules(_import),
       "react-compiler": reactCompiler,
+      "react-hooks": reactHooks,
     },
 
     languageOptions: {
@@ -71,6 +71,7 @@ export default [
     },
 
     rules: {
+      "react-hooks/rules-of-hooks": "error",
       "react/prop-types": "off",
       "react/function-component-definition": [
         2,
