@@ -4,7 +4,6 @@ FROM caddy:2.10.2-alpine
 COPY /build /srv
 
 ENV PORT=8080
-ENV AUT_IDPORTEN=aut-idporten.aut:8080
 RUN apk --no-cache add curl tzdata
 RUN addgroup -g 1242 nibas; \
   adduser -u 1242 -D -G nibas nibas
