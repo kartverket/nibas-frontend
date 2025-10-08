@@ -2,7 +2,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
-import { resetMapView } from "utils/map/map-utils";
+import { resetMapView } from "utils/map/useMap";
 
 const useMapReset = () => {
   const { resetKartlag } = useKartlag();

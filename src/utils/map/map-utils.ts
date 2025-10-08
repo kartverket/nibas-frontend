@@ -1,60 +1,7 @@
-import { initialMapCenter, initialMapZoom, map } from "pages/Kart/constants";
-import { Feature } from "ol";
-import Geometry from "ol/geom/Geometry";
-import { LineString } from "ol/geom";
 import { Coordinate } from "ol/coordinate";
+import { LineString } from "ol/geom";
+import { map } from "pages/Kart/constants";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
-
-export const resetMapView = () => {
-  const view = map.getView();
-
-  view.animate({
-    zoom: initialMapZoom,
-    center: initialMapCenter,
-    duration: 500,
-  });
-};
-
-const calculateFeaturesExtent = (features: Feature<Geometry>[]) => {
-  const extent = features.reduce<number[] | null>((acc, feature) => {
-    const featureExtent = feature.getGeometry()?.getExtent();
-
-    if (!featureExtent) {
-      return acc;
-    }
-
-    if (!acc) {
-      return [featureExtent[0], featureExtent[1], featureExtent[2], featureExtent[3]];
-    }
-
-    return [
-      Math.min(acc[0], featureExtent[0]),
-      Math.min(acc[1], featureExtent[1]),
-      Math.max(acc[2], featureExtent[2]),
-      Math.max(acc[3], featureExtent[3]),
-    ];
-  }, null);
-
-  return extent;
-};
-
-export const defaultZoomToFeaturesPadding = [100, 100, 200, 100];
-export const zoomToFeatures = (features: Feature<Geometry>[], padding: number[] = defaultZoomToFeaturesPadding) => {
-  if (features.length === 0) {
-    resetMapView();
-  }
-  const extent = calculateFeaturesExtent(features);
-
-  if (!extent) {
-    return;
-  }
-
-  const view = map.getView();
-  view.fit(extent, {
-    padding: padding,
-    duration: 750,
-  });
-};
 
 /** Euklidisk avstand mellom to koordinater i piksler */
 export const pixelDistance = (coord1: Coordinate, coord2: Coordinate) => {
