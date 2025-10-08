@@ -66,7 +66,7 @@ export default defineConfig(({ mode }) => {
         "/skbaatts/req": {
           target: "https://baat.geonorge.no",
           changeOrigin: true,
-          pathRewrite: (path) => {
+          rewrite: (path) => {
             let tjenesteId = "";
 
             if (path.indexOf("tjenesteid=wms.ecc_enc") !== -1) {

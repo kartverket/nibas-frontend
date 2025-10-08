@@ -16,10 +16,10 @@ handle @backendUrls {
     }
 }
 
-handle /skbaatts/req {
+handle /skbaatts/req* {
     # Legg på brukernavn og passord når klient skal hente ticket 
     # til de låste kartlagene
-    rewrite * ?{query}&brukerid={$BAAT_USERNAME}&passord={$BAAT_PASSWORD}&retformat=s
+    rewrite * {path}?{query}&brukerid={$BAAT_USERNAME}&passord={$BAAT_PASSWORD}&retformat=s
     reverse_proxy https://baat.geonorge.no
 }
 
