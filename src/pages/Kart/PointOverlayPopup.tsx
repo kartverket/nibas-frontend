@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { styled } from "styled-components";
 import { map } from "./constants";
 import useHoveredLineString from "./interactions/useHoveredLineString";
@@ -7,6 +7,7 @@ import { useSelectStyles } from "contexts/FeatureStyleContext/useSelectStyles";
 import { hoveredPointStyle } from "utils/map/layerStyles";
 import { formatCoordinatesNor } from "./Kartinformasjon";
 import Overlay from "ol/Overlay";
+import { IconButton, Text } from "@kvib/react";
 
 export const overlayPopup = new Overlay({
   autoPan: {
@@ -21,7 +22,11 @@ export const overlayPopup = new Overlay({
 const PointOverlayPopup = () => {
   const overlayRef = useRef<HTMLDivElement>(null);
   const { activeTool } = useToolbar();
-  const { hoveredVertex } = useHoveredLineString(activeTool === "grensecoordinates");
+  const [isHoveringPopup, setIsHoveringPopup] = useState(false);
+  const { hoveredVertex } = useHoveredLineString(
+    activeTool === "grensecoordinates" && !isHoveringPopup,
+    !isHoveringPopup,
+  );
   const { selectPointOnFeature, clearSelectedPoint } = useSelectStyles();
 
   useEffect(() => {
@@ -29,6 +34,7 @@ const PointOverlayPopup = () => {
       selectPointOnFeature(hoveredVertex, hoveredPointStyle);
       overlayPopup.setElement(overlayRef.current);
       overlayPopup.setPosition(hoveredVertex);
+      overlayPopup.setOffset([0, -40]);
       map.addOverlay(overlayPopup);
     }
     return () => {
@@ -38,8 +44,24 @@ const PointOverlayPopup = () => {
   }, [activeTool, clearSelectedPoint, hoveredVertex, selectPointOnFeature]);
 
   return (
-    <Popup $visible={hoveredVertex != null} ref={overlayRef}>
-      {formatCoordinatesNor(hoveredVertex)}
+    <Popup
+      $visible={hoveredVertex != null}
+      ref={overlayRef}
+      onMouseEnter={() => setIsHoveringPopup(true)}
+      onMouseLeave={() => setIsHoveringPopup(false)}
+    >
+      <Text fontSize={14} fontWeight={600}>
+        {formatCoordinatesNor(hoveredVertex)}
+      </Text>
+      <IconButton
+        size="sm"
+        variant="ghost"
+        icon={"content_copy"}
+        aria-label="Kopier koordinater"
+        onClick={() => {
+          navigator.clipboard.writeText(formatCoordinatesNor(hoveredVertex));
+        }}
+      />
     </Popup>
   );
 };
@@ -49,9 +71,11 @@ export default PointOverlayPopup;
 const Popup = styled.div<{
   $visible: boolean;
 }>`
-  color: white;
-  background-color: var(--kvib-colors-gray-700);
-  padding: 8px;
+  background-color: var(--kvib-colors-white);
+  box-shadow: var(--kvib-shadows-md);
+  padding: 8px 12px;
   border-radius: 4px;
-  display: ${({ $visible }) => ($visible ? "block" : "none")};
+  display: ${({ $visible }) => ($visible ? "flex" : "none")};
+  align-items: center;
+  gap: 8px;
 `;
