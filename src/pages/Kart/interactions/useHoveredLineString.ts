@@ -8,7 +8,7 @@ import { LineString } from "ol/geom";
 import { useGetFeatures } from "./interaction-utils";
 import { ListenerFunction } from "ol/events";
 
-const useHoveredLineString = (enabled: boolean) => {
+const useHoveredLineString = (enabled: boolean, shouldClearHover?: boolean) => {
   const { getFeaturesAtPixel } = useGetFeatures();
 
   const [hoveredVertex, setHoveredVertex] = useState<Coordinate | undefined>();
@@ -48,14 +48,18 @@ const useHoveredLineString = (enabled: boolean) => {
             }
           }
         } else {
-          setHoverState(null);
+          if (shouldClearHover === true) {
+            setHoverState(null);
+          }
         }
       }, 150);
     };
     if (enabled) {
       map.on("pointermove", hover as ListenerFunction);
     } else {
-      setHoverState(null);
+      if (shouldClearHover === true) {
+        setHoverState(null);
+      }
     }
     return () => {
       clearTimeout(timeout);
