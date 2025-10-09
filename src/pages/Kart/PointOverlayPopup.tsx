@@ -50,8 +50,11 @@ const PointOverlayPopup = () => {
       onMouseEnter={() => setIsHoveringPopup(true)}
       onMouseLeave={() => setIsHoveringPopup(false)}
     >
-      <Text>{formatCoordinatesNor(hoveredVertex)}</Text>
+      <Text fontSize={14} fontWeight={600}>
+        {formatCoordinatesNor(hoveredVertex)}
+      </Text>
       <IconButton
+        size="sm"
         variant="ghost"
         icon={"content_copy"}
         aria-label="Kopier koordinater"
@@ -70,7 +73,7 @@ const Popup = styled.div<{
 }>`
   background-color: var(--kvib-colors-white);
   box-shadow: var(--kvib-shadows-md);
-  padding: 8px;
+  padding: 8px 12px;
   border-radius: 4px;
   display: ${({ $visible }) => ($visible ? "flex" : "none")};
   align-items: center;
