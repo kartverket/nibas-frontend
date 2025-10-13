@@ -18,7 +18,7 @@ import {
   FormErrorMessage,
   Datepicker,
 } from "@kvib/react";
-import { createUtkast } from "api/utkast";
+import { createUtkast, genererRettetUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
@@ -36,9 +36,14 @@ type UtkastFormData = {
   gyldigFra: string;
 };
 
-const UtkastOpprett = () => {
+type UtkastOpprettProps = {
+  onUtkastCreated?: () => void;
+};
+
+const UtkastOpprett = ({ onUtkastCreated }: UtkastOpprettProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const { token } = useAuthentication();
   const toast = useToast();
   const navigate = useNavigate();
@@ -88,10 +93,31 @@ const UtkastOpprett = () => {
     }
   };
 
+  const handleGenererUtkast = async () => {
+    setIsGenerating(true);
+    const response = await genererRettetUtkast(5, token);
+    setIsGenerating(false);
+
+    if (statusCode.isSuccessful(response.status)) {
+      const message = await response.text();
+      toast({ title: message, status: "success", duration: 5000 });
+      onUtkastCreated?.();
+    } else if (statusCode.isError(response.status)) {
+      const wrapper = (await response.json()) as ApiErrorResponse;
+      setError({
+        ...wrapper.errorDescription,
+        errorCode: wrapper.errorCode,
+      });
+    }
+  };
+
   return (
     <>
       <Button onClick={onOpen} leftIcon="add">
         Opprett et nytt utkast
+      </Button>
+      <Button leftIcon="add" colorScheme="green" onClick={handleGenererUtkast} isLoading={isGenerating}>
+        Generer ferdig rettet utkast
       </Button>
 
       <Modal isOpen={isOpen} onClose={handleCloseModal} size="4xl" isCentered>
