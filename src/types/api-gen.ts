@@ -18,6 +18,10 @@ export interface paths {
     /** Oppretter et utkast og returnerer id. */
     post: operations["opprettUtkast"];
   };
+  "/v1/utkast/{id}/valider": {
+    /** Validerer angitt utkast, inkludert evt ulagrede endringer i OppdaterUtkastRequest */
+    post: operations["validerUtkast"];
+  };
   "/v1/utkast/{id}/publiser": {
     /** Publiserer utkastet med gitt id. */
     post: operations["publiserUtkast"];
@@ -28,6 +32,14 @@ export interface paths {
   };
   "/v1/frontendlogger": {
     post: operations["logMelding"];
+  };
+  "/v1/create-rettet-utkast/publiser-alle": {
+    /** Publiserer alle utkast med status OPPRETTET. */
+    post: operations["publiserAlleUtkast"];
+  };
+  "/v1/create-rettet-utkast/generer": {
+    /** Genererer utkast automatisk for kommunepar med avvik. Stopper når ønsket antall utkast er opprettet. */
+    post: operations["genererRettetUtkast"];
   };
   "/v1/stemmekretser/{lokalid}/framtidigeversjoner": {
     /** Returnerer en liste av nåværende Stemmekrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
@@ -493,7 +505,13 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -1013,7 +1031,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1083,9 +1107,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
+      valid?: boolean;
       coordinate?: unknown;
     };
     InndelingSearchResponse: {
@@ -1095,7 +1119,13 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1281,7 +1311,9 @@ export interface components {
         | "Lovvirkeomraadegrense"
         | "Grunnkretsgrense"
         | "Delomraadegrense"
-        | "Stemmekretsgrense";
+        | "Stemmekretsgrense"
+        | "Soknegrense"
+        | "Skolekretsgrense";
       /** @description Geometri for grensen (GeoJSON format) */
       geometri:
         | components["schemas"]["LineString"]
@@ -1550,6 +1582,42 @@ export interface operations {
       };
     };
   };
+  /** Validerer angitt utkast, inkludert evt ulagrede endringer i OppdaterUtkastRequest */
+  validerUtkast: {
+    parameters: {
+      path: {
+        /** ID til utkastet man vil validere */
+        id: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: unknown;
+      /** Bad request. Check the request body and path */
+      400: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["ApiErrorResponse"];
+        };
+      };
+      /** Conflict */
+      409: {
+        content: {
+          "application/json": components["schemas"]["OptimistiskLaasWrapper"];
+        };
+      };
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["OppdaterUtkastRequest"];
+      };
+    };
+  };
   /** Publiserer utkastet med gitt id. */
   publiserUtkast: {
     parameters: {
@@ -1620,6 +1688,46 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["FrontendLogRequest"];
+      };
+    };
+  };
+  /** Publiserer alle utkast med status OPPRETTET. */
+  publiserAlleUtkast: {
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": string;
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
+  /** Genererer utkast automatisk for kommunepar med avvik. Stopper når ønsket antall utkast er opprettet. */
+  genererRettetUtkast: {
+    parameters: {
+      query: {
+        /** Antall utkast som skal genereres */
+        antall?: number;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": string;
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
       };
     };
   };
@@ -2150,7 +2258,14 @@ export interface operations {
         /** Maksgrense for antall treff man ønsker seg */
         limit?: number;
         /** Hvilke typer inndelinger man ønsker å søke etter */
-        filter?: ("FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS")[];
+        filter?: (
+          | "FYLKE"
+          | "KOMMUNE"
+          | "NASJON"
+          | "GRUNNKRETS"
+          | "STEMMEKRETS"
+          | "SKOLEKRETS"
+        )[];
       };
     };
     responses: {
@@ -2901,3 +3016,5 @@ export interface operations {
     };
   };
 }
+
+export interface external {}
