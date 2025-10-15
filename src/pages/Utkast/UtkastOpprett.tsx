@@ -113,12 +113,14 @@ const UtkastOpprett = ({ onUtkastCreated }: UtkastOpprettProps) => {
 
   return (
     <>
-      <Button onClick={onOpen} leftIcon="add">
-        Opprett et nytt utkast
-      </Button>
-      <Button leftIcon="add" colorScheme="green" onClick={handleGenererUtkast} isLoading={isGenerating}>
-        Generer ferdig rettet utkast
-      </Button>
+      <ButtonGroup>
+        <Button onClick={onOpen} leftIcon="add">
+          Opprett et nytt utkast
+        </Button>
+        <Button leftIcon="refresh" variant="secondary" onClick={handleGenererUtkast} isLoading={isGenerating}>
+          Hent ferdig rettet utkast
+        </Button>
+      </ButtonGroup>
 
       <Modal isOpen={isOpen} onClose={handleCloseModal} size="4xl" isCentered>
         <ModalOverlay />
