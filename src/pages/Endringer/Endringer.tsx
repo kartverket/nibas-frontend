@@ -1,4 +1,5 @@
 import {
+  Badge,
   Card,
   Heading,
   Icon,
@@ -9,21 +10,15 @@ import {
   MenuItem,
   MenuList,
   Stack,
-  Table,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
   Tooltip,
-  Tr,
   useToast,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useAuthentication } from "components/Authentication/useAuthentication";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { format, subDays, addDays } from "date-fns";
+import { addDays, format, subDays } from "date-fns";
 import { useFylkerByIds } from "hooks/inndelinger/useFylker";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
@@ -32,6 +27,7 @@ import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import Loading from "pages/App/Loading";
 import { endringstyper } from "pages/Kart/constants";
 import LandingHeader from "pages/Landing/LandingHeader";
+import { Column, HeadlessUtkastTable } from "pages/Utkast/HeadlessUtkastTable";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
@@ -41,15 +37,19 @@ import { getNavnInSpraak } from "utils/language/language";
 import { inndelingColors } from "utils/map/layerStyles";
 import { routes } from "utils/routes";
 
-const utkastColumns = {
-  Beskrivelse: "navn",
-  "Type endring": "endringstype",
-  "Gyldig fra": "gyldigFra",
-  "Berørte inndelinger": "endredeInndelinger",
-};
-
 export const Endringer = () => {
   const { data: utkasts, isLoading } = useUtkasts(["PUBLISERT"], format(addDays(new Date(), 1), "yyyy-MM-dd"));
+
+  const columns: Column<UtkastResponse>[] = [
+    { header: "Navn", renderCell: (utkast) => utkast.navn },
+    { header: "Type endring", renderCell: (utkast) => <Badge colorScheme="blue">{utkast.endringstype}</Badge> },
+    { header: "Gyldig fra", renderCell: (utkast) => format(utkast.gyldigFra, "dd.MM.yyyy") },
+    {
+      header: "Berørte inndelinger",
+      renderCell: (utkast) => <EndredeInndelingerList utkast={utkast} />,
+    },
+    { header: "", renderCell: (utkast) => <OptionsMenu utkast={utkast} /> },
+  ];
 
   return (
     <PageContainer>
@@ -80,22 +80,7 @@ export const Endringer = () => {
           <Loading />
         ) : utkasts != null && utkasts.length > 0 ? (
           <TableContainer>
-            <Table colorScheme="gray">
-              <Thead>
-                <Tr>
-                  {Object.keys(utkastColumns).map((column) => (
-                    <TitleCell key={column}>{column}</TitleCell>
-                  ))}
-                  <TitleCell />
-                </Tr>
-              </Thead>
-
-              <Tbody>
-                {utkasts.map((utkast) => (
-                  <UtkastRow key={utkast.id} utkast={utkast} />
-                ))}
-              </Tbody>
-            </Table>
+            <HeadlessUtkastTable columns={columns} utkasts={utkasts} isLoading={isLoading} />
           </TableContainer>
         ) : (
           <NoUtkastsMessageContainer>
@@ -107,16 +92,7 @@ export const Endringer = () => {
   );
 };
 
-interface UtkastRowProps {
-  utkast: UtkastResponse;
-}
-
-const UtkastRow = ({ utkast }: UtkastRowProps) => {
-  const { token } = useAuthentication();
-  const toast = useToast();
-  const navigate = useNavigate();
-  const { setError } = useErrorHandling();
-
+const EndredeInndelingerList = ({ utkast }: { utkast: UtkastResponse }) => {
   // Vi ønsker å vise opprinnelige navn og nummere for inndelingene, og må derfor bruke dagen før utkastet sine endringer trer i kraft.
   const beforePublisering = format(subDays(new Date(utkast.gyldigFra), 1), "yyyy-MM-dd");
 
@@ -131,6 +107,42 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const { data: endredeKommuner } = useKommunerByIds(utkast.endredeInndelinger.endredeKommuner, beforePublisering);
 
   const { data: endredeFylker } = useFylkerByIds(utkast.endredeInndelinger.endredeFylker, beforePublisering);
+  return (
+    <>
+      <InndelingerList $bulletcolor={inndelingColors.grunnkrets}>
+        {endredeGrunnkretser?.map((inndeling) => (
+          <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${inndeling.navn}`}</li>
+        ))}
+      </InndelingerList>
+      <InndelingerList $bulletcolor={inndelingColors.stemmekrets}>
+        {endredeStemmekretser?.map((inndeling) => (
+          <li
+            key={inndeling.id.lokalid.value}
+          >{`(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer} ${inndeling.navn}`}</li>
+        ))}
+      </InndelingerList>
+      <InndelingerList $bulletcolor={inndelingColors.kommune}>
+        {endredeKommuner?.map((inndeling) => (
+          <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
+        ))}
+      </InndelingerList>
+      <InndelingerList $bulletcolor={inndelingColors.fylke}>
+        {endredeFylker?.map((inndeling) => (
+          <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
+        ))}
+      </InndelingerList>
+      <InndelingerList $bulletcolor={inndelingColors.nasjon}>
+        {utkast.endredeInndelinger.endredeNasjoner.length > 0 && <li key={`nasjon-${utkast.id}`}>Norge</li>}
+      </InndelingerList>
+    </>
+  );
+};
+
+const OptionsMenu = ({ utkast }: { utkast: UtkastResponse }) => {
+  const { token } = useAuthentication();
+  const toast = useToast();
+  const navigate = useNavigate();
+  const { setError } = useErrorHandling();
 
   const opprettFeilrettingUtkast = async () => {
     const response = await createUtkast(
@@ -156,65 +168,27 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     }
   };
 
-  const openVisningsmodusPaaUtkastGyldigFra = (gyldigFra: string) => {
-    navigate(`../kart/${format(new Date(gyldigFra), "yyyy-MM-dd")}`);
+  const openVisningsmodusPaaUtkastGyldigFra = () => {
+    navigate(`../kart/${format(new Date(utkast.gyldigFra), "yyyy-MM-dd")}`);
   };
-
   return (
-    <Tr>
-      <StyledCell>{utkast.navn}</StyledCell>
-      <StyledCell>{utkast.endringstype}</StyledCell>
-      <StyledCell>{format(utkast.gyldigFra, "dd.MM.yyyy")}</StyledCell>
-      <StyledCell>
-        <InndelingerList bulletcolor={inndelingColors.grunnkrets}>
-          {endredeGrunnkretser?.map((inndeling) => (
-            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${inndeling.navn}`}</li>
-          ))}
-        </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.stemmekrets}>
-          {endredeStemmekretser?.map((inndeling) => (
-            <li
-              key={inndeling.id.lokalid.value}
-            >{`(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer} ${inndeling.navn}`}</li>
-          ))}
-        </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.kommune}>
-          {endredeKommuner?.map((inndeling) => (
-            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
-          ))}
-        </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.fylke}>
-          {endredeFylker?.map((inndeling) => (
-            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
-          ))}
-        </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.nasjon}>
-          {utkast.endredeInndelinger.endredeNasjoner.length > 0 && <li key={`nasjon-${utkast.id}`}>Norge</li>}
-        </InndelingerList>
-      </StyledCell>
-      <OptionsCell>
-        <Menu>
-          <MenuButton
-            onClick={(e) => e.stopPropagation()}
-            as={IconButton}
-            aria-label="Utkast alternativer"
-            icon="more_horiz"
-            variant="ghost"
-          />
-          <MenuList onClick={(e) => e.stopPropagation()}>
-            <MenuItem icon={<Icon icon={"draw"} />} onClick={opprettFeilrettingUtkast}>
-              Gjør en feilretting i et nytt utkast
-            </MenuItem>
-            <MenuItem
-              icon={<Icon icon={"travel_explore"} />}
-              onClick={() => openVisningsmodusPaaUtkastGyldigFra(utkast.gyldigFra)}
-            >
-              Åpne visningsmodus på gjeldende dato
-            </MenuItem>
-          </MenuList>
-        </Menu>
-      </OptionsCell>
-    </Tr>
+    <Menu>
+      <MenuButton
+        onClick={(e) => e.stopPropagation()}
+        as={IconButton}
+        aria-label="Utkast alternativer"
+        icon="more_horiz"
+        variant="ghost"
+      />
+      <MenuList onClick={(e) => e.stopPropagation()}>
+        <MenuItem icon={<Icon icon={"draw"} />} onClick={opprettFeilrettingUtkast}>
+          Gjør en feilretting i et nytt utkast
+        </MenuItem>
+        <MenuItem icon={<Icon icon={"travel_explore"} />} onClick={() => openVisningsmodusPaaUtkastGyldigFra()}>
+          Åpne visningsmodus på gjeldende dato
+        </MenuItem>
+      </MenuList>{" "}
+    </Menu>
   );
 };
 
@@ -314,27 +288,12 @@ const TableContainer = styled(Card)`
   box-shadow: none;
 `;
 
-const StyledCell = styled(Td)`
-  padding: 16px 28px;
-`;
-
-const OptionsCell = styled(StyledCell)`
-  text-align: right;
-`;
-
-const TitleCell = styled(Th)`
-  padding: 16px 28px;
-  text-transform: unset;
-  color: unset;
-  font-size: small;
-`;
-
-const InndelingerList = styled.ul<{ bulletcolor: string }>`
+const InndelingerList = styled.ul<{ $bulletcolor: string }>`
   list-style-type: disc;
   margin-left: 20px;
 
   li::marker {
-    color: ${(props) => props.bulletcolor};
+    color: ${(props) => props.$bulletcolor};
     font-size: 20px;
   }
 `;

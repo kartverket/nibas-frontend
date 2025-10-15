@@ -1,56 +1,44 @@
-import { Heading, Icon, Link, SkeletonText } from "@kvib/react";
+import { Badge, Card, Heading, Icon, IconButton, Link, Menu, MenuButton, MenuDivider, MenuList } from "@kvib/react";
 import AlertModal from "components/Modals/AlertModal";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
+import { format } from "date-fns";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import useMapReset from "hooks/useMapReset";
 import LandingHeader from "pages/Landing/LandingHeader";
 import PrivacyFooter from "pages/Landing/PrivacyFooter";
 import { useEffect } from "react";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { routes } from "utils/routes";
-import UtkastCard from "./UtkastCard";
+import { Column, HeadlessUtkastTable } from "./HeadlessUtkastTable";
+import UtkastEndre from "./UtkastEndre";
+import UtkastEndringslogg from "./UtkastEndringslogg";
 import UtkastOpprett from "./UtkastOpprett";
-
-type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
-
-const sortUtkastByCreatedDesc = (a: UtkastResponse, b: UtkastResponse): number =>
-  b.opprettetDato.localeCompare(a.opprettetDato);
+import UtkastPubliser from "./UtkastPubliser";
+import UtkastSlett from "./UtkastSlett";
 
 const Utkast = () => {
   const { error, setError } = useErrorHandling();
-  const { data: utkasts, isLoading, mutate } = useUtkasts();
+  const { data: utkasts, mutate, isLoading } = useUtkasts();
   const resetMap = useMapReset();
+  const navigate = useNavigate();
 
   useEffect(() => {
     resetMap();
   }, [resetMap]);
 
-  // Vi deler opp utkast i to kolonner manuelt i et forsøk på å holde lengden jevn
-  const rightColumn: UtkastGroup = {
-    Fastsetting: [],
-    Kvalitetsheving: [],
-    Navneendring: [],
-    Nummerendring: [],
-    Retting: [],
-  };
-
-  const leftColumn: UtkastGroup = {
-    "Vedtatt grensejustering": [],
-    "Vedtatt sammenslåing": [],
-    "Vedtatt deling": [],
-  };
-
-  // Grupperer utkast etter endringstype
-  for (const utkast of utkasts ?? []) {
-    if (utkast.endringstype in leftColumn) {
-      leftColumn[utkast.endringstype] = [...leftColumn[utkast.endringstype], utkast];
-    } else if (utkast.endringstype in rightColumn) {
-      rightColumn[utkast.endringstype] = [...rightColumn[utkast.endringstype], utkast];
-    }
-  }
+  const columns: Column<UtkastResponse>[] = [
+    { header: "Navn", renderCell: (utkast) => utkast.navn },
+    { header: "Endringstype", renderCell: (utkast) => <Badge colorScheme="blue">{utkast.endringstype}</Badge> },
+    {
+      header: "Oppdatert",
+      renderCell: (utkast) => format(utkast.auditInfoResponse?.oppdateringsdato, "dd.MM.yyyy HH:mm"),
+    },
+    { header: "Gyldig fra", renderCell: (utkast) => format(utkast.gyldigFra, "dd.MM.yyyy") },
+    { header: "", renderCell: (utkast) => <OptionsMenu utkast={utkast} /> },
+  ];
 
   return (
     <PageContainer>
@@ -66,29 +54,16 @@ const Utkast = () => {
           </Heading>
           <UtkastOpprett onUtkastCreated={mutate} />
         </TitleContainer>
-        {[leftColumn, rightColumn].map((column, i) => (
-          <EndringstypeList key={i}>
-            {isLoading && (
-              <EndringstypeGroup>
-                <Heading size="md">Henter utkast...</Heading>
-                <LoadingSkeleton />
-                <LoadingSkeleton />
-              </EndringstypeGroup>
-            )}
-            {Object.entries(column)
-              .sort()
-              .map(([endringstype, utkastsInGroup]) => (
-                <EndringstypeGroup key={endringstype}>
-                  <Heading size="md">{endringstype}</Heading>
-                  {utkastsInGroup.length > 0 ? (
-                    utkastsInGroup.sort(sortUtkastByCreatedDesc).map((u) => <UtkastCard key={u.id} utkast={u} />)
-                  ) : (
-                    <IngenUtkastText>Det finnes ingen utkast av denne utkasttypen.</IngenUtkastText>
-                  )}
-                </EndringstypeGroup>
-              ))}
-          </EndringstypeList>
-        ))}
+        <TableContainer>
+          <HeadlessUtkastTable
+            columns={columns}
+            utkasts={utkasts}
+            isLoading={isLoading}
+            onRowClick={(utkast) => {
+              navigate(`${routes.utkast}/${utkast.id}`);
+            }}
+          />
+        </TableContainer>
       </UtkastPage>
       {error && (
         <AlertModal
@@ -110,15 +85,41 @@ const Utkast = () => {
   );
 };
 
+const OptionsMenu = ({ utkast }: { utkast: UtkastResponse }) => {
+  return (
+    <Menu>
+      <MenuButton
+        onClick={(e) => e.stopPropagation()}
+        as={IconButton}
+        aria-label="Utkast alternativer"
+        icon="more_horiz"
+        variant="secondary"
+      />
+      <MenuList onClick={(event) => event.stopPropagation()}>
+        <UtkastEndre utkast={utkast} />
+        <UtkastEndringslogg utkast={utkast} />
+        <MenuDivider />
+        <UtkastPubliser utkast={utkast} />
+        <UtkastSlett utkast={utkast} />
+      </MenuList>
+    </Menu>
+  );
+};
+
+const TableContainer = styled(Card)`
+  box-shadow: unset;
+  overflow-y: scroll;
+`;
+
 const UtkastPage = styled(Page)`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;
   grid-template-areas:
     "title title"
-    "left right";
+    "table table";
   justify-items: unset;
-  gap: 48px;
+  row-gap: 48px;
   padding: 64px 120px;
 `;
 
@@ -129,32 +130,6 @@ const TitleContainer = styled.div`
   gap: 12px 24px;
   grid-area: title;
   width: fit-content;
-`;
-
-const LoadingSkeleton = styled(SkeletonText)`
-  padding: 24px;
-  border-radius: 8px;
-  background: var(--kvib-colors-chakra-body-bg);
-  box-shadow: var(--kvib-shadows-sm);
-  cursor: not-allowed;
-`;
-
-const EndringstypeList = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  gap: 48px;
-`;
-
-const EndringstypeGroup = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
-
-const IngenUtkastText = styled.p`
-  color: var(--kvib-colors-gray-500);
-  font-size: var(--kvib-fontSizes-sm);
 `;
 
 const ReturnButton = styled(Link).attrs({ as: RouterLink })`
