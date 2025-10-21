@@ -101,7 +101,7 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
   // Bruker useForm sin reset til å sette form-verdier når kommuner har blitt fetchet
   useEffect(() => {
     const getDefaultSuggestedKommune = () => {
-      if (suggestedKommunerInndelingOptions != null && suggestedKommunerInndelingOptions.length === 1) {
+      if (suggestedKommunerInndelingOptions?.length === 1) {
         return suggestedKommunerInndelingOptions[0];
       } else {
         return null;
