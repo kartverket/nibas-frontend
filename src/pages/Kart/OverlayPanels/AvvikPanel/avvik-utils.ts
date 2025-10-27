@@ -2,7 +2,7 @@ import { Point } from "ol/geom";
 import { KommuneResponse } from "types/api";
 import { components } from "types/api-gen-arbeidsliste";
 
-export type KommuneMedAvvik = components["schemas"]["KommuneAvvikDTO"];
+export type KommuneParMedAvvik = components["schemas"]["KommuneParAvvikDTO"];
 export type PaginationInfo = components["schemas"]["Page"];
 export type PageableObject = components["schemas"]["PageableObject"];
 export type SortObject = components["schemas"]["SortObject"];
@@ -40,7 +40,7 @@ export interface AvvikForKommune {
 }
 
 export interface AvvikKommunerResponse extends PaginationInfo {
-  content: KommuneMedAvvik[];
+  content: KommuneParMedAvvik[];
   empty: boolean;
 }
 export type AvvikForKommuneResponse = AvvikForKommune[];
@@ -52,25 +52,24 @@ export enum AvvikStatus {
 }
 
 export type AvvikPanelProps = {
-  isLoadingKommunerMedAvvik: boolean;
+  isLoadingKommuneParMedAvvik: boolean;
   isLoadingAvvik: boolean;
-  selectedKommune: KommuneResponse | undefined;
+  selectedKommuner: KommuneResponse[] | undefined;
   avvikData: AvvikForKommuneResponse;
-  kommunerMedAvvikData: KommuneMedAvvik[];
+  kommuneParMedAvvikData: KommuneParMedAvvik[];
   pagination: PaginationInfo | null;
   currentPage: number;
   setCurrentPage: (page: number) => void;
   resetAvvikPanel: () => void;
-  handleGoToKommuneClick: (kommuneLokalID: string) => Promise<void>;
+  handleGotoKommunePar: (kommuneLokalIDs: string[]) => Promise<void>;
 };
 
 export interface AvvikRowKommunerProps {
-  kommuneMedAvvikItem: KommuneMedAvvik;
-  handleGoToKommuneClick: (kommuneLokalID: string) => void;
+  kommuneParMedAvvikItem: KommuneParMedAvvik;
+  handleGotoKommunePar: (kommuneLokalIDs: string[]) => void;
 }
 
 export type AvvikRowProps = {
-  findSecondKommune: (kommunerFromRow: KommuneIAvvik[]) => void;
   selectedAvvikId: number | null;
   setSelectedAvvikId: (id: number | null) => void;
   updateStatus: (avvikId: number, status: AvvikStatus) => Promise<boolean>;
