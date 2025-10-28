@@ -111,7 +111,7 @@ export const AvvikPanel = () => {
               <AvvikSpinnerContainer>
                 <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
               </AvvikSpinnerContainer>
-            ) : (
+            ) : kommuneParMedAvvikData.length > 0 ? (
               kommuneParMedAvvikData.map((row, i) => (
                 <Fragment key={(row.kommune1.kommunenummer ?? "") + (row.kommune2.kommunenummer ?? "")}>
                   <AvvikRowKommuner
@@ -121,6 +121,12 @@ export const AvvikPanel = () => {
                   {i !== kommuneParMedAvvikData.length - 1 && <Divider />}
                 </Fragment>
               ))
+            ) : (
+              <NoAvvikAlert
+                status="info"
+                title="Ingen avvik funnet"
+                body="Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen. Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket."
+              />
             )}
           </AvvikContentContainer>
           {pagination !== undefined && pagination !== null && kommuneParMedAvvikData.length > 0 ? (
@@ -135,13 +141,7 @@ export const AvvikPanel = () => {
                 Neste
               </PaginationButton>
             </PaginationContainer>
-          ) : (
-            <NoAvvikAlert
-              status="info"
-              title="Ingen avvik funnet"
-              body="Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen. Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket."
-            />
-          )}
+          ) : null}
         </AvvikMainContainer>
       )}
     </SidePanel>
