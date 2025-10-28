@@ -55,7 +55,7 @@ export type AvvikPanelProps = {
   isLoadingKommuneParMedAvvik: boolean;
   isLoadingAvvik: boolean;
   selectedKommuner: KommuneResponse[] | undefined;
-  avvikData: AvvikForKommuneResponse | null;
+  avvikData: AvvikForKommuneResponse | undefined;
   kommuneParMedAvvikData: KommuneParMedAvvik[];
   pagination: PaginationInfo | null;
   currentPage: number;

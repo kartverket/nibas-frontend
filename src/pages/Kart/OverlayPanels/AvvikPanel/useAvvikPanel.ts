@@ -9,7 +9,15 @@ import { addFeaturesToSource } from "utils/map/source";
 import { resetMapView } from "utils/map/useMap";
 import { useAuthentication } from "../../../../components/Authentication/useAuthentication";
 import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
-import { AvvikPanelProps, AvvikRowKommunerProps, AvvikRowProps, AvvikStatus, KommuneParMedAvvik } from "./avvik-utils";
+import {
+  AvvikForKommune,
+  AvvikForKommuneResponse,
+  AvvikPanelProps,
+  AvvikRowKommunerProps,
+  AvvikRowProps,
+  AvvikStatus,
+  KommuneParMedAvvik,
+} from "./avvik-utils";
 import { avvikUpdateStatus, useAvvikForKommunePar, useKommuneParMedAvvik } from "./useAvvik";
 
 // Akkurat nå skjer alt i denne hooken som useEffect.
@@ -36,14 +44,14 @@ export const useAvvikPanel = () => {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
 
-  const { data: kommuneParMedAvvikResponse, isLoading: isLoadingKommuneParMedAvvik } = useKommuneParMedAvvik(
+  const { data: kommuneParMedAvvikRaw, isLoading: isLoadingKommuneParMedAvvik } = useKommuneParMedAvvik(
     selectedKommuner == null || selectedKommuner.length === 0,
     currentPage,
     token,
   );
 
   const {
-    data: avvikData,
+    data: avvikDataRaw,
     isLoading: isLoadingAvvik,
     mutate: mutateAvvikData,
   } = useAvvikForKommunePar(selectedKommuneIds, token);
@@ -60,51 +68,20 @@ export const useAvvikPanel = () => {
     selectedKommuner?.[0]?.nummer ?? "",
   );
 
-  const kommuneParMedAvvikData = kommuneParMedAvvikResponse?.content ?? [];
+  const kommuneParMedAvvikData = kommuneParMedAvvikRaw?.content ?? [];
   const pagination =
-    kommuneParMedAvvikResponse != null
+    kommuneParMedAvvikRaw != null
       ? {
-          totalPages: kommuneParMedAvvikResponse.totalPages,
-          totalElements: kommuneParMedAvvikResponse.totalElements,
-          size: kommuneParMedAvvikResponse.size,
-          number: kommuneParMedAvvikResponse.number,
-          first: kommuneParMedAvvikResponse.first,
-          last: kommuneParMedAvvikResponse.last,
+          totalPages: kommuneParMedAvvikRaw.totalPages,
+          totalElements: kommuneParMedAvvikRaw.totalElements,
+          size: kommuneParMedAvvikRaw.size,
+          number: kommuneParMedAvvikRaw.number,
+          first: kommuneParMedAvvikRaw.first,
+          last: kommuneParMedAvvikRaw.last,
         }
       : null;
 
-  // // Sorterer på kommunenummer som ikke er selectedKommune
-  // const avvikData = [...avvikDataRaw]
-  //   .map((avvik) => {
-  //     const selected = avvik.kommuner.filter(
-  //       (k: { kommunenummer: string | undefined }) => k.kommunenummer === selectedKommune?.nummer,
-  //     );
-  //     const others = avvik.kommuner
-  //       .filter((k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer)
-  //       .sort((a: KommuneIAvvik, b: KommuneIAvvik) => a.kommunenummer.localeCompare(b.kommunenummer, "nb"));
-  //     return {
-  //       ...avvik,
-  //       kommuner: [...selected, ...others],
-  //     };
-  //   })
-  //   .sort((a, b) => {
-  //     const aOther = a.kommuner.find(
-  //       (k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer,
-  //     );
-  //     const bOther = b.kommuner.find(
-  //       (k: { kommunenummer: string | undefined }) => k.kommunenummer !== selectedKommune?.nummer,
-  //     );
-  //     const kommuneCompare = (aOther?.kommunenummer ?? "").localeCompare(bOther?.kommunenummer ?? "", "nb");
-  //     if (kommuneCompare !== 0) {
-  //       return kommuneCompare;
-  //     }
-  //     const aCoord = a.koordinaterMedAvvik?.[0]?.nibasKoordinat?.coordinates ?? [0, 0];
-  //     const bCoord = b.koordinaterMedAvvik?.[0]?.nibasKoordinat?.coordinates ?? [0, 0];
-  //     if (aCoord[0] !== bCoord[0]) {
-  //       return aCoord[0] - bCoord[0];
-  //     }
-  //     return aCoord[1] - bCoord[1];
-  //   });
+  const avvikData = avvikDataRaw?.sort((a, b) => b.antallKoordinaterMedAvvik - a.antallKoordinaterMedAvvik);
 
   useEffect(() => {
     if (selectedKommuneIds == null || selectedKommuneIds.length !== 2) {
@@ -125,7 +102,7 @@ export const useAvvikPanel = () => {
   const updateStatus = async (avvikId: number, status: AvvikStatus): Promise<boolean> => {
     const id = avvikId;
     const updates = [{ id, status }];
-    const optimistiskeData = avvikData.map((item: { id: number }) =>
+    const optimistiskeData: AvvikForKommune[] | undefined = avvikData?.map((item) =>
       item.id === avvikId ? { ...item, status } : item,
     );
 

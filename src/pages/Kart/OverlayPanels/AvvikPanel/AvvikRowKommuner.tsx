@@ -5,7 +5,7 @@ import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { AvvikRowKommunerProps } from "./avvik-utils";
 
 const AvvikRowKommuner = ({
-  kommuneParMedAvvikItem: { kommune1, kommune2, antallPunkterMedAvvik },
+  kommuneParMedAvvikItem: { kommune1, kommune2, antallGrenserMedAvvik },
   handleGotoKommunePar,
 }: AvvikRowKommunerProps) => {
   return (
@@ -20,7 +20,7 @@ const AvvikRowKommuner = ({
         <ButtonGroup>
           <Box>
             <Text width={"100%"} fontSize={"xs"} padding={"10px"}>
-              Grenser med avvik: {antallPunkterMedAvvik}
+              Grenser med avvik: {antallGrenserMedAvvik}
             </Text>
           </Box>
           <ToolbarButton

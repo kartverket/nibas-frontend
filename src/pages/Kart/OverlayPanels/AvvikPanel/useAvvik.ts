@@ -1,6 +1,7 @@
 import { getArbeidslisteUrlForPath, getArbeidslisteUrlWithParameters } from "hooks/useArbeidslisteApi";
-import useSWR from "swr";
+import useSWR, { SWRResponse } from "swr";
 import { fetcherWithToken } from "utils/api";
+import { AvvikForKommuneResponse } from "./avvik-utils";
 
 const avvikKommuneParFetcher = async (token: string | undefined, page: number, size: number) => {
   const urlPath = "/internal-api/api/v1/avvik/kommunepar";
@@ -24,7 +25,11 @@ export const useKommuneParMedAvvik = (shouldFetch: boolean, page: number, token:
   return { data, isLoading, error };
 };
 
-const avvikFetcher = async (token: string | undefined, kommuneLokalID1: string, kommuneLokalID2: string) => {
+const avvikFetcher = async (
+  token: string | undefined,
+  kommuneLokalID1: string,
+  kommuneLokalID2: string,
+): Promise<AvvikForKommuneResponse> => {
   const urlPath = "/internal-api/api/v1/avvik/kommunepar/{lokalId1}/{lokalId2}";
   const url = getArbeidslisteUrlWithParameters(urlPath, {
     lokalId1: kommuneLokalID1,
