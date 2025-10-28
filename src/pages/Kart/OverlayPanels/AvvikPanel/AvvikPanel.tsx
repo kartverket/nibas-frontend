@@ -1,10 +1,11 @@
-import { Fragment, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import { PanelHeader, SidePanel } from "../Panel";
 import { useOverlayPanel } from "../../../../contexts/OverlayPanelContext";
 import {
   Alert,
   AlertDescription,
   AlertIcon,
+  AlertProps,
   AlertTitle,
   Divider,
   IconButton,
@@ -50,6 +51,8 @@ export const AvvikPanel = () => {
   const currentPage = avvikPanelProps.currentPage;
   const setCurrentPage = avvikPanelProps.setCurrentPage;
   const resetAvvikPanel = avvikPanelProps.resetAvvikPanel;
+  const avvikByCurrentTab =
+    avvikData?.filter((row) => row.status.toLowerCase() === tabList[tabIndex].value.toLowerCase()) ?? [];
 
   return (
     <SidePanel>
@@ -76,18 +79,28 @@ export const AvvikPanel = () => {
                 ))}
               </AvvikTabList>
               <AvvikTabPanels>
-                {avvikData
-                  ?.filter((row) => row.status.toLowerCase() === tabList[tabIndex].value.toLowerCase())
-                  .map((row) => (
+                {avvikByCurrentTab.length > 0 ? (
+                  avvikByCurrentTab.map((row) => (
                     <Fragment key={row.id}>
                       <AvvikRow avvikItem={row} {...avvikRowProps} />
                       <Divider />
                     </Fragment>
-                  ))}
+                  ))
+                ) : tabList[tabIndex].value === AvvikStatus.NY ? (
+                  <NoUlostAvvikAlert />
+                ) : tabList[tabIndex].value === AvvikStatus.VENT ? (
+                  <NoUtsattAvvikAlert />
+                ) : (
+                  <NoLostAvvikAlert />
+                )}
               </AvvikTabPanels>
             </AvvikTabs>
           ) : (
-            <NoAvvikAlert />
+            <NoAvvikAlert
+              status="info"
+              title="Ingen avvik funnet"
+              body="Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen. Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket."
+            />
           )}
         </>
       ) : (
@@ -123,7 +136,11 @@ export const AvvikPanel = () => {
               </PaginationButton>
             </PaginationContainer>
           ) : (
-            <NoAvvikAlert />
+            <NoAvvikAlert
+              status="info"
+              title="Ingen avvik funnet"
+              body="Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen. Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket."
+            />
           )}
         </AvvikMainContainer>
       )}
@@ -131,18 +148,41 @@ export const AvvikPanel = () => {
   );
 };
 
-const NoAvvikAlert = () => {
+const NoAvvikAlert = ({ status, title, body }: { status: AlertProps["status"]; title: string; body: ReactNode }) => {
   return (
-    <StyledAlert status="info">
+    <StyledAlert status={status}>
       <AlertIcon />
       <AlertDescription>
-        <AlertTitle>Ingen avvik funnet</AlertTitle>
-        Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen.
-        <br /> Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket.
+        <AlertTitle>{title}</AlertTitle>
+        {body}
       </AlertDescription>
     </StyledAlert>
   );
 };
+
+const NoUlostAvvikAlert = () => (
+  <NoAvvikAlert
+    status="success"
+    title="Ingen uløste avvik"
+    body="Du har håndtert alle avvike mellom disse kommunene."
+  />
+);
+
+const NoUtsattAvvikAlert = () => (
+  <NoAvvikAlert
+    status="info"
+    title="Ingen utsatt avvik"
+    body="Du kan utsette uløste avvik hvis du vil håndtere de senere."
+  />
+);
+
+const NoLostAvvikAlert = () => (
+  <NoAvvikAlert
+    status="info"
+    title="Ingen løste avvik"
+    body="Du har ikke løst noen av avvikene mellom disse kommunene. Når du markerer avvik som løst vil du kunne se de her."
+  />
+);
 
 const AvvikPanelHeader = styled(PanelHeader)`
   border: none;
