@@ -36,7 +36,7 @@ export const AvvikPanel = () => {
     setTabIndex(index);
   };
   const getAvvikCountByStatus = (status: AvvikStatus): number => {
-    return avvikData != null ? avvikData.filter((row) => row.status === status).length : 0;
+    return avvikData?.filter((row) => row.status === status).length ?? 0;
   };
   const handleBackButton = () => {
     setTabIndex(0);
@@ -56,7 +56,7 @@ export const AvvikPanel = () => {
 
   return (
     <SidePanel>
-      {selectedKommuner != null && selectedKommuner.length === 2 ? (
+      {selectedKommuner?.length === 2 ? (
         <>
           <AvvikPanelHeader onClose={closeOverlayPanel}>
             <IconButton aria-label="Tilbake" icon="arrow_back" onClick={() => handleBackButton()}></IconButton>

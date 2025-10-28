@@ -84,7 +84,7 @@ export default [
       "@typescript-eslint/array-type": "warn",
       "@typescript-eslint/no-shadow": "error",
       "@typescript-eslint/no-unused-vars": "warn",
-      "@typescript-eslint/prefer-optional-chain": "warn",
+      "@typescript-eslint/prefer-optional-chain": "off",
       "@typescript-eslint/strict-boolean-expressions": "error",
       "@typescript-eslint/switch-exhaustiveness-check": "error",
       "@typescript-eslint/no-unused-expressions": "error",
