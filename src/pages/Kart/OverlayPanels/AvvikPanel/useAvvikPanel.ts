@@ -11,7 +11,6 @@ import { useAuthentication } from "../../../../components/Authentication/useAuth
 import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
 import {
   AvvikForKommune,
-  AvvikForKommuneResponse,
   AvvikPanelProps,
   AvvikRowKommunerProps,
   AvvikRowProps,

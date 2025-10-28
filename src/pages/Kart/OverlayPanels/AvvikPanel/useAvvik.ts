@@ -1,5 +1,5 @@
 import { getArbeidslisteUrlForPath, getArbeidslisteUrlWithParameters } from "hooks/useArbeidslisteApi";
-import useSWR, { SWRResponse } from "swr";
+import useSWR from "swr";
 import { fetcherWithToken } from "utils/api";
 import { AvvikForKommuneResponse } from "./avvik-utils";
 
