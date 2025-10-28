@@ -35,7 +35,7 @@ export const AvvikPanel = () => {
     setTabIndex(index);
   };
   const getAvvikCountByStatus = (status: AvvikStatus): number => {
-    return avvikData.filter((row) => row.status === status).length;
+    return avvikData != null ? avvikData.filter((row) => row.status === status).length : 0;
   };
   const handleBackButton = () => {
     setTabIndex(0);
@@ -62,31 +62,33 @@ export const AvvikPanel = () => {
               {selectedKommuner[1].nummer + " " + selectedKommuner[1].navn[0].navn}
             </Text>
           </AvvikPanelHeader>
-          <AvvikTabs size="md" index={tabIndex} onChange={handleTabsChange}>
-            <AvvikTabList>
-              {tabList.map((tab) => (
-                <AvvikTab key={tab.value}>
-                  {tab.label} ({getAvvikCountByStatus(tab.value)})
-                </AvvikTab>
-              ))}
-            </AvvikTabList>
-            <AvvikTabPanels>
-              {isLoadingAvvik === true ? (
-                <AvvikSpinnerContainer>
-                  <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
-                </AvvikSpinnerContainer>
-              ) : (
-                avvikData
+          {isLoadingAvvik === true ? (
+            <AvvikSpinnerContainer>
+              <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+            </AvvikSpinnerContainer>
+          ) : avvikData != null && avvikData.length > 0 ? (
+            <AvvikTabs size="md" index={tabIndex} onChange={handleTabsChange}>
+              <AvvikTabList>
+                {tabList.map((tab) => (
+                  <AvvikTab key={tab.value}>
+                    {tab.label} ({getAvvikCountByStatus(tab.value)})
+                  </AvvikTab>
+                ))}
+              </AvvikTabList>
+              <AvvikTabPanels>
+                {avvikData
                   ?.filter((row) => row.status.toLowerCase() === tabList[tabIndex].value.toLowerCase())
                   .map((row) => (
                     <Fragment key={row.id}>
                       <AvvikRow avvikItem={row} {...avvikRowProps} />
                       <Divider />
                     </Fragment>
-                  ))
-              )}
-            </AvvikTabPanels>
-          </AvvikTabs>
+                  ))}
+              </AvvikTabPanels>
+            </AvvikTabs>
+          ) : (
+            <NoAvvikAlert />
+          )}
         </>
       ) : (
         <AvvikMainContainer>
@@ -121,18 +123,24 @@ export const AvvikPanel = () => {
               </PaginationButton>
             </PaginationContainer>
           ) : (
-            <StyledAlert status="info">
-              <AlertIcon />
-              <AlertDescription>
-                <AlertTitle>Ingen avvik funnet</AlertTitle>
-                Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen.
-                <br /> Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket.
-              </AlertDescription>
-            </StyledAlert>
+            <NoAvvikAlert />
           )}
         </AvvikMainContainer>
       )}
     </SidePanel>
+  );
+};
+
+const NoAvvikAlert = () => {
+  return (
+    <StyledAlert status="info">
+      <AlertIcon />
+      <AlertDescription>
+        <AlertTitle>Ingen avvik funnet</AlertTitle>
+        Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen.
+        <br /> Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket.
+      </AlertDescription>
+    </StyledAlert>
   );
 };
 

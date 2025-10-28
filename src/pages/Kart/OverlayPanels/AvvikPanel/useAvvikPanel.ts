@@ -2,7 +2,7 @@ import { useToast } from "@kvib/react";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import useKommuner from "hooks/inndelinger/useKommuner";
+import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
 import { useEffect, useState } from "react";
 import { clearMatrikkelLayer } from "utils/map/layers";
 import { addFeaturesToSource } from "utils/map/source";
@@ -11,6 +11,9 @@ import { useAuthentication } from "../../../../components/Authentication/useAuth
 import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
 import { AvvikPanelProps, AvvikRowKommunerProps, AvvikRowProps, AvvikStatus, KommuneParMedAvvik } from "./avvik-utils";
 import { avvikUpdateStatus, useAvvikForKommunePar, useKommuneParMedAvvik } from "./useAvvik";
+
+// Akkurat nå skjer alt i denne hooken som useEffect.
+// Ikke helt optimalt da hele oppførselen bare er en rekke dependency-triggers som er litt vrient å håndtere.
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const toast = useToast();
@@ -28,11 +31,7 @@ export const useAvvikPanel = () => {
   const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>(getAllInndelinger());
   const [selectedKommuneIds, setSelectedKommuneIds] = useState<string[]>([]);
 
-  const { kommuner: selectedKommuner, isLoading: isLoadingKommuner } = useKommuner(
-    selectedKommuneIds,
-    gyldighetsdato,
-    selectedKommuneIds.length === 2,
-  );
+  const { data: selectedKommuner } = useKommunerByIds(selectedKommuneIds, gyldighetsdato);
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
@@ -56,9 +55,9 @@ export const useAvvikPanel = () => {
     isLoading: isLoadingMatrikkelGrenser,
     isError,
   } = useMatrikkelGrenser(
-    selectedKommuneIds != null && selectedKommuneIds.length === 2,
+    selectedKommuner != null && selectedKommuner.length === 2,
     token,
-    selectedKommuneIds[0] ?? "",
+    selectedKommuner?.[0]?.nummer ?? "",
   );
 
   const kommuneParMedAvvikData = kommuneParMedAvvikResponse?.content ?? [];
@@ -108,7 +107,7 @@ export const useAvvikPanel = () => {
   //   });
 
   useEffect(() => {
-    if (selectedKommuneIds == null) {
+    if (selectedKommuneIds == null || selectedKommuneIds.length !== 2) {
       return;
     }
     if (features.length > 0) {
@@ -136,59 +135,40 @@ export const useAvvikPanel = () => {
     return success?.ok ? true : false;
   };
 
-  const handleInndelingForAvvik = () => {
-    // if (selectedKommune && !isLoadingKommune) {
-    //   const inndelingtype = "kommune";
-    //   const newInndeling: Inndeling = {
-    //     navn: selectedKommune.navn,
-    //     nummer: selectedKommune.nummer,
-    //     id: selectedKommune.id.lokalid.value,
-    //     inndelingtype: inndelingtype,
-    //     isEditing: true,
-    //     isViewing: false,
-    //   };
-    //   const isAlreadySelected = currentlyEditingInndelinger.some(
-    //     (inndeling) => inndeling.id === selectedKommune.id.lokalid.value,
-    //   );
-    //   if (!isAlreadySelected) {
-    //     setShouldZoom(true);
-    //     selectInndelinger([newInndeling]);
-    //   }
-    // }
-    // if (secondKommune && !isLoadingSecondKommune) {
-    //   const currentMainInndeling = currentlyEditingInndelinger.find((inndeling) => inndeling.id === selectedKommuneId);
-    //   if (currentMainInndeling) {
-    //     const isAlreadySelected = currentlyEditingInndelinger.some(
-    //       (inndeling) => inndeling.id === secondKommune.id.lokalid.value,
-    //     );
-    //     if (!isAlreadySelected) {
-    //       const inndelingtype = "kommune";
-    //       const newInndeling: Inndeling = {
-    //         navn: secondKommune.navn,
-    //         nummer: secondKommune.nummer,
-    //         id: secondKommune.id.lokalid.value,
-    //         inndelingtype: inndelingtype,
-    //         isEditing: true,
-    //         isViewing: false,
-    //       };
-    //       setShouldZoom(false);
-    //       selectInndelinger([currentMainInndeling, newInndeling]);
-    //     }
-    //   }
-    // }
-  };
-
   useEffect(() => {
-    handleInndelingForAvvik();
-  }, [
-    selectedKommuner,
-    isLoadingKommuner,
-    currentlyEditingInndelinger,
-    selectedKommuneIds,
-    setShouldZoom,
-    selectInndelinger,
-    handleInndelingForAvvik,
-  ]);
+    if (selectedKommuner == null || selectedKommuner.length !== 2) {
+      return;
+    }
+
+    const desiredInndelinger: Inndeling[] = selectedKommuner.map((kommune) => ({
+      navn: kommune.navn,
+      nummer: kommune.nummer,
+      id: kommune.id.lokalid.value,
+      inndelingtype: "kommune",
+      isEditing: true,
+      isViewing: false,
+    }));
+
+    const currentEditingKommuner = currentlyEditingInndelinger.filter((i) => i.inndelingtype === "kommune");
+
+    const isSameSelection =
+      currentEditingKommuner.length === desiredInndelinger.length &&
+      desiredInndelinger.every((d) =>
+        currentEditingKommuner.some(
+          (c) =>
+            c.id === d.id &&
+            c.inndelingtype === d.inndelingtype &&
+            c.isEditing === d.isEditing &&
+            c.isViewing === d.isViewing,
+        ),
+      );
+
+    if (isSameSelection) {
+      return;
+    }
+
+    selectInndelinger(desiredInndelinger);
+  }, [selectedKommuner, currentlyEditingInndelinger, selectInndelinger]);
 
   useEffect(() => {
     return () => {
@@ -202,8 +182,11 @@ export const useAvvikPanel = () => {
       closeOverlayPanel(); // Gjør det enkelt og lukker avvikPanel hvis inndelinger-modal er åpen
     }
     if (currentlyEditingInndelinger.length > 0 && selectedFylkeIds.length > 0) {
-      const inndeling = currentlyEditingInndelinger[0];
-      setSelectedKommuneIds([inndeling.id]);
+      setSelectedKommuneIds(
+        currentlyEditingInndelinger
+          .filter((inndeling) => inndeling.inndelingtype === "kommune")
+          .map((inndeling) => inndeling.id),
+      );
     }
   }, [
     currentlyEditingInndelinger,
@@ -227,16 +210,6 @@ export const useAvvikPanel = () => {
   };
 
   const handleGotoKommunePar = async (kommuneLokalIDs: string[]) => {
-    // const kommune = kommunerMedAvvikData.find((k: { kommuneLokalID: string }) => k.kommuneLokalID === kommuneLokalID);
-    // if (kommune == null) {
-    //   return;
-    // }
-
-    // const fylkeId = kommune.fylkesLokalID;
-    // if (fylkeId != null && !selectedFylkeIds.includes(fylkeId)) {
-    //   setSelectedFylkeIds([...selectedFylkeIds, fylkeId]);
-    // }
-
     setSelectedKommuneIds(kommuneLokalIDs);
   };
 
