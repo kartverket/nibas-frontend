@@ -4,10 +4,8 @@ import { styled } from "styled-components";
 import ToolbarButton from "pages/Kart/Toolbar/ToolbarButton";
 import { AvvikRowKommunerProps } from "./avvik-utils";
 
-const AvvikRowKommuner = ({
-  kommuneParMedAvvikItem: { kommune1, kommune2, antallGrenserMedAvvik },
-  handleGotoKommunePar,
-}: AvvikRowKommunerProps) => {
+const AvvikRowKommuner = ({ kommuneParMedAvvikItem, handleGotoKommunePar }: AvvikRowKommunerProps) => {
+  const { kommune1, kommune2, antallGrenserMedAvvik } = kommuneParMedAvvikItem;
   return (
     <Container>
       <Row>
@@ -25,7 +23,7 @@ const AvvikRowKommuner = ({
           </Box>
           <ToolbarButton
             icon={"arrow_forward"}
-            onClick={() => handleGotoKommunePar([kommune1.kommuneLokalID ?? "", kommune2.kommuneLokalID ?? ""])}
+            onClick={() => handleGotoKommunePar(kommuneParMedAvvikItem)}
             aria-label={"Åpne inndeling med avvik"}
             tooltip={{
               text: "Åpne inndeling med avvik",

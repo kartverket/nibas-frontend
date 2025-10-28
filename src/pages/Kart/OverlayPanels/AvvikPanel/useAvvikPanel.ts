@@ -185,8 +185,10 @@ export const useAvvikPanel = () => {
     resetMapView();
   };
 
-  const handleGotoKommunePar = async (kommuneLokalIDs: string[]) => {
-    setSelectedKommuneIds(kommuneLokalIDs);
+  const handleGotoKommunePar = async (kommuneParMedAvvikItem: KommuneParMedAvvik) => {
+    const { kommune1, kommune2 } = kommuneParMedAvvikItem;
+    setSelectedFylkeIds(Array.from(new Set([kommune1.fylkesLokalID ?? "", kommune2.fylkesLokalID ?? ""])));
+    setSelectedKommuneIds([kommune1.kommuneLokalID ?? "", kommune2.kommuneLokalID ?? ""]);
   };
 
   const avvikRowProps: AvvikRowProps = {

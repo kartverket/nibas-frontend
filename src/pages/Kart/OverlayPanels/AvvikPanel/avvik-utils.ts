@@ -51,6 +51,8 @@ export enum AvvikStatus {
   VENT = "VENT",
 }
 
+type handleGotoKommuneParType = (kommuneParMedAvvikItem: KommuneParMedAvvik) => void;
+
 export type AvvikPanelProps = {
   isLoadingKommuneParMedAvvik: boolean;
   isLoadingAvvik: boolean;
@@ -61,12 +63,12 @@ export type AvvikPanelProps = {
   currentPage: number;
   setCurrentPage: (page: number) => void;
   resetAvvikPanel: () => void;
-  handleGotoKommunePar: (kommuneLokalIDs: string[]) => Promise<void>;
+  handleGotoKommunePar: handleGotoKommuneParType;
 };
 
 export interface AvvikRowKommunerProps {
   kommuneParMedAvvikItem: KommuneParMedAvvik;
-  handleGotoKommunePar: (kommuneLokalIDs: string[]) => void;
+  handleGotoKommunePar: handleGotoKommuneParType;
 }
 
 export type AvvikRowProps = {
