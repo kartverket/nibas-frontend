@@ -1,7 +1,21 @@
-import { Fragment, useState } from "react";
+import { Fragment, ReactNode, useState } from "react";
 import { PanelHeader, SidePanel } from "../Panel";
 import { useOverlayPanel } from "../../../../contexts/OverlayPanelContext";
-import { Divider, IconButton, Spinner, Tab, TabList, TabPanels, Tabs, Text } from "@kvib/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertProps,
+  AlertTitle,
+  Divider,
+  IconButton,
+  Spinner,
+  Tab,
+  TabList,
+  TabPanels,
+  Tabs,
+  Text,
+} from "@kvib/react";
 import AvvikRow from "./AvvikRow";
 import AvvikRowKommuner from "./AvvikRowKommuner";
 import { AvvikStatus } from "./avvik-utils";
@@ -22,80 +36,94 @@ export const AvvikPanel = () => {
     setTabIndex(index);
   };
   const getAvvikCountByStatus = (status: AvvikStatus): number => {
-    return avvikData.filter((row) => row.status === status).length;
+    return avvikData?.filter((row) => row.status === status).length ?? 0;
   };
   const handleBackButton = () => {
     setTabIndex(0);
     resetAvvikPanel();
   };
-  const selectedKommune = avvikPanelProps.selectedKommune;
+  const selectedKommuner = avvikPanelProps.selectedKommuner;
   const isLoadingAvvik = avvikPanelProps.isLoadingAvvik;
   const avvikData = avvikPanelProps.avvikData;
-  const isLoadingKommunerMedAvvik = avvikPanelProps.isLoadingKommunerMedAvvik;
-  const kommunerMedAvvikData = avvikPanelProps.kommunerMedAvvikData;
+  const isLoadingKommuneParMedAvvik = avvikPanelProps.isLoadingKommuneParMedAvvik;
+  const kommuneParMedAvvikData = avvikPanelProps.kommuneParMedAvvikData;
   const pagination = avvikPanelProps.pagination;
   const currentPage = avvikPanelProps.currentPage;
   const setCurrentPage = avvikPanelProps.setCurrentPage;
   const resetAvvikPanel = avvikPanelProps.resetAvvikPanel;
+  const avvikByCurrentTab =
+    avvikData?.filter((row) => row.status.toLowerCase() === tabList[tabIndex].value.toLowerCase()) ?? [];
 
   return (
     <SidePanel>
-      {/* ========== VISER ENTEN Avvik-liste for valgt kommune ELLER Kommuneliste ========== */}
-      {selectedKommune ? (
-        // ========== VIS AVVIK for den valgte kommunen ==========
+      {selectedKommuner?.length === 2 ? (
         <>
           <AvvikPanelHeader onClose={closeOverlayPanel}>
             <IconButton aria-label="Tilbake" icon="arrow_back" onClick={() => handleBackButton()}></IconButton>
             <Text width={"100%"} fontSize={"lg"} padding={"12px"} gap={"var(--kvib-spacing-12)"}>
-              Avvik for {selectedKommune?.nummer + " " + selectedKommune?.navn[0].navn}
+              Avvik mellom {selectedKommuner[0].nummer + " " + selectedKommuner[0].navn[0].navn} og{" "}
+              {selectedKommuner[1].nummer + " " + selectedKommuner[1].navn[0].navn}
             </Text>
           </AvvikPanelHeader>
-          <AvvikTabs size="md" index={tabIndex} onChange={handleTabsChange}>
-            <AvvikTabList>
-              {tabList.map((tab) => (
-                <AvvikTab key={tab.value}>
-                  {tab.label} ({getAvvikCountByStatus(tab.value)})
-                </AvvikTab>
-              ))}
-            </AvvikTabList>
-            <AvvikTabPanels>
-              {isLoadingAvvik ? (
-                <AvvikSpinnerContainer>
-                  <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
-                </AvvikSpinnerContainer>
-              ) : (
-                avvikData
-                  ?.filter((row) => row.status.toLowerCase() === tabList[tabIndex].value.toLowerCase())
-                  .map((row) => (
+          {isLoadingAvvik === true ? (
+            <AvvikSpinnerContainer>
+              <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+            </AvvikSpinnerContainer>
+          ) : avvikData != null && avvikData.length > 0 ? (
+            <AvvikTabs size="md" index={tabIndex} onChange={handleTabsChange}>
+              <AvvikTabList>
+                {tabList.map((tab) => (
+                  <AvvikTab key={tab.value}>
+                    {tab.label} ({getAvvikCountByStatus(tab.value)})
+                  </AvvikTab>
+                ))}
+              </AvvikTabList>
+              <AvvikTabPanels>
+                {avvikByCurrentTab.length > 0 ? (
+                  avvikByCurrentTab.map((row) => (
                     <Fragment key={row.id}>
                       <AvvikRow avvikItem={row} {...avvikRowProps} />
                       <Divider />
                     </Fragment>
                   ))
-              )}
-            </AvvikTabPanels>
-          </AvvikTabs>
+                ) : tabList[tabIndex].value === AvvikStatus.NY ? (
+                  <NoUlostAvvikAlert />
+                ) : tabList[tabIndex].value === AvvikStatus.VENT ? (
+                  <NoUtsattAvvikAlert />
+                ) : (
+                  <NoLostAvvikAlert />
+                )}
+              </AvvikTabPanels>
+            </AvvikTabs>
+          ) : (
+            <NoAvvikAlert
+              status="info"
+              title="Ingen avvik funnet"
+              body="Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen. Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket."
+            />
+          )}
         </>
       ) : (
-        // ========== VIS KOMMUNER med avvik, første steg ==========
-        <>
+        <AvvikMainContainer>
           <AvvikPanelHeader onClose={closeOverlayPanel}>Avvik fra matrikkelen</AvvikPanelHeader>
-          {isLoadingKommunerMedAvvik === true ? (
-            <AvvikSpinnerContainer>
-              <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
-            </AvvikSpinnerContainer>
-          ) : (
-            kommunerMedAvvikData.map((row) => (
-              <Fragment key={row.kommuneLokalID}>
-                <AvvikRowKommuner
-                  kommuneMedAvvikItem={row}
-                  handleGoToKommuneClick={avvikRowKommunerProps.handleGoToKommuneClick}
-                />
-                <Divider />
-              </Fragment>
-            ))
-          )}
-          {pagination !== undefined && pagination !== null && (
+          <AvvikContentContainer>
+            {isLoadingKommuneParMedAvvik === true ? (
+              <AvvikSpinnerContainer>
+                <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+              </AvvikSpinnerContainer>
+            ) : (
+              kommuneParMedAvvikData.map((row, i) => (
+                <Fragment key={(row.kommune1.kommunenummer ?? "") + (row.kommune2.kommunenummer ?? "")}>
+                  <AvvikRowKommuner
+                    kommuneParMedAvvikItem={row}
+                    handleGotoKommunePar={avvikRowKommunerProps.handleGotoKommunePar}
+                  />
+                  {i !== kommuneParMedAvvikData.length - 1 && <Divider />}
+                </Fragment>
+              ))
+            )}
+          </AvvikContentContainer>
+          {pagination !== undefined && pagination !== null && kommuneParMedAvvikData.length > 0 ? (
             <PaginationContainer>
               <PaginationButton disabled={pagination.first} onClick={() => setCurrentPage(currentPage - 1)}>
                 Forrige
@@ -107,12 +135,54 @@ export const AvvikPanel = () => {
                 Neste
               </PaginationButton>
             </PaginationContainer>
+          ) : (
+            <NoAvvikAlert
+              status="info"
+              title="Ingen avvik funnet"
+              body="Det ble ikke funnet noen avvik på kommune- eller fylkesgrenser mellom NIBAS og Matrikkelen. Hvis du mener det skulle vært avvik, vennligst kontakt Kartverket."
+            />
           )}
-        </>
+        </AvvikMainContainer>
       )}
     </SidePanel>
   );
 };
+
+const NoAvvikAlert = ({ status, title, body }: { status: AlertProps["status"]; title: string; body: ReactNode }) => {
+  return (
+    <StyledAlert status={status}>
+      <AlertIcon />
+      <AlertDescription>
+        <AlertTitle>{title}</AlertTitle>
+        {body}
+      </AlertDescription>
+    </StyledAlert>
+  );
+};
+
+const NoUlostAvvikAlert = () => (
+  <NoAvvikAlert
+    status="success"
+    title="Ingen uløste avvik"
+    body="Du har håndtert alle avvike mellom disse kommunene."
+  />
+);
+
+const NoUtsattAvvikAlert = () => (
+  <NoAvvikAlert
+    status="info"
+    title="Ingen utsatt avvik"
+    body="Du kan utsette uløste avvik hvis du vil håndtere de senere."
+  />
+);
+
+const NoLostAvvikAlert = () => (
+  <NoAvvikAlert
+    status="info"
+    title="Ingen løste avvik"
+    body="Du har ikke løst noen av avvikene mellom disse kommunene. Når du markerer avvik som løst vil du kunne se de her."
+  />
+);
 
 const AvvikPanelHeader = styled(PanelHeader)`
   border: none;
@@ -139,12 +209,26 @@ const PaginationSpan = styled.span`
   font-size: var(--kvib-fontSizes-sm);
   padding: var(--kvib-space-1);
 `;
+const AvvikMainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const AvvikContentContainer = styled.div`
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--kvib-space-4);
+`;
+
 const PaginationContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: var(--kvib-space-4);
   padding: var(--kvib-space-4);
   gap: var(--kvib-spacing-12);
+  border-top: 1px solid var(--kvib-colors-gray-100);
+  background: white;
+  flex-shrink: 0;
 `;
 
 const AvvikSpinnerContainer = styled.div`
@@ -190,4 +274,9 @@ const AvvikTab = styled(Tab)`
   align-items: center;
   gap: 6px;
   width: 100%;
+`;
+
+const StyledAlert = styled(Alert)`
+  margin-top: 12px;
+  border-radius: 8px;
 `;

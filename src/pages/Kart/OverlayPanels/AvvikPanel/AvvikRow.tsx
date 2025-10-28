@@ -17,7 +17,7 @@ interface StyledRowProps {
   $status: AvvikStatus;
 }
 
-const AvvikRow = ({ avvikItem, setSelectedAvvikId, updateStatus, findSecondKommune }: AvvikRowPropsExtended) => {
+const AvvikRow = ({ avvikItem, setSelectedAvvikId, updateStatus }: AvvikRowPropsExtended) => {
   const toast = useToast();
   const [isRemoving, setIsRemoving] = useState(false);
   const [rowStatus, setRowStatus] = useState<AvvikStatus>(avvikItem.status as AvvikStatus);
@@ -97,7 +97,6 @@ const AvvikRow = ({ avvikItem, setSelectedAvvikId, updateStatus, findSecondKommu
   };
 
   const handlePanAndSelect = async () => {
-    findSecondKommune(avvikItem.kommuner);
     zoomToFeatures([new Feature(new LineString(avvikItem.geometri.coordinates))]);
     setSelectedAvvikId(avvikItem.id);
   };
