@@ -113,7 +113,7 @@ const isSelectedInndelinger = (
 ): selectedInndelinger is SelectedInndelinger => {
   if (
     selectedInndelinger instanceof Object &&
-    "selectedFylkeId" in selectedInndelinger &&
+    "selectedFylkeIds" in selectedInndelinger &&
     "inndelinger" in selectedInndelinger &&
     selectedInndelinger.inndelinger instanceof Array &&
     selectedInndelinger.inndelinger.every(isInndeling)

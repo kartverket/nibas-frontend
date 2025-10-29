@@ -25,7 +25,7 @@ import {
 } from "components/Authentication/Authentication";
 import { useAuthentication } from "components/Authentication/useAuthentication";
 import { AuthRenewError } from "components/Authentication/AuthRenewError";
-import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
+import { UtkastRestore } from "pages/Utkast/UtkastRestore";
 import "cypress-globals";
 import { FullPageErrorWithFaroErrorBoundry } from "components/FullPageError";
 import { Endringer } from "pages/Endringer/Endringer";
@@ -44,7 +44,7 @@ const App = () => {
           <Route path={routes.logout} element={<Navigate to={routes.index} replace={true} />} />
           <Route element={<ProtectedPage />}>
             <Route index element={<Landing />} />
-            <Route path={routes.utkast} element={<UtkastRestoreAfterReauth />}>
+            <Route path={routes.utkast} element={<UtkastRestore />}>
               <Route index element={<Utkast />} />
               <Route path={routes.utkastId} element={<PageLayout />} />
             </Route>
