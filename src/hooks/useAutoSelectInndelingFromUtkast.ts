@@ -12,18 +12,20 @@ export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
   const { utkast } = useUtkast();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const [hasAutoSelected, setHasAutoSelected] = useState(false);
-  const [inndelingTypesPerKommune, setInndelingTypesPerKommune] = useState<Map<string, Set<Inndelingtype>>>(new Map());
+  const [kommuneLokalidWithContext, setKommuneLokalidWithContext] = useState<Map<string, Set<Inndelingtype>>>(
+    new Map(),
+  );
 
   useEffect(() => {
     if (!utkast) {
-      setInndelingTypesPerKommune(new Map());
+      setKommuneLokalidWithContext(new Map());
       setHasAutoSelected(false);
       return;
     }
 
     const features = utkast.operasjoner?.grenseendringer?.endredeFeatures ?? [];
     if (features.length === 0) {
-      setInndelingTypesPerKommune(new Map());
+      setKommuneLokalidWithContext(new Map());
       return;
     }
 
@@ -44,10 +46,10 @@ export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
       }
     }
 
-    setInndelingTypesPerKommune(inndelingTypeForKommune);
+    setKommuneLokalidWithContext(inndelingTypeForKommune);
   }, [utkast]);
 
-  const { data: kommuner } = useKommunerByIds(Array.from(inndelingTypesPerKommune.keys()), gyldighetsdato);
+  const { data: kommuner } = useKommunerByIds(Array.from(kommuneLokalidWithContext.keys()), gyldighetsdato);
 
   useEffect(() => {
     if (kommuner && kommuner.length > 0 && !hasAutoSelected && currentlyEditingInndelinger.length === 0) {
@@ -59,10 +61,10 @@ export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
       // men det er ingen måte å vite om det ble gjort i kommuneredigeringsmodus eller stemmekrets- eller grunnkretsmodus.
       // Derfor velger vi kommune som default da det er mest sannsynlig.
       const resolveInndelingtypeForKommune = (kommuneId: string): Inndelingtype => {
-        const set = inndelingTypesPerKommune.get(kommuneId) ?? new Set<Inndelingtype>();
-        const hasKommune = set.has("kommune");
-        const hasStemmekrets = set.has("stemmekrets");
-        const hasGrunnkrets = set.has("grunnkrets");
+        const context = kommuneLokalidWithContext.get(kommuneId) ?? new Set<Inndelingtype>();
+        const hasKommune = context.has("kommune");
+        const hasStemmekrets = context.has("stemmekrets");
+        const hasGrunnkrets = context.has("grunnkrets");
 
         if (hasKommune || (hasStemmekrets && hasGrunnkrets)) {
           return "kommune";
@@ -98,6 +100,6 @@ export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
     currentlyEditingInndelinger,
     selectInndelinger,
     setSelectedFylkeIds,
-    inndelingTypesPerKommune,
+    kommuneLokalidWithContext,
   ]);
 };
