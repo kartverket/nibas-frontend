@@ -8,6 +8,7 @@ import { useAuthentication } from "components/Authentication/useAuthentication";
 import { useOutlet } from "react-router-dom";
 import Providers from "pages/App/Providers";
 
+// TODO: Skal fjernes når vi bruker ztoperator
 export const AuthenticationWrapper = () => {
   const outlet = useOutlet();
   return (
