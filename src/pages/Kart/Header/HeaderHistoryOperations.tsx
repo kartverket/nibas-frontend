@@ -1,5 +1,4 @@
 import { Badge, useDisclosure } from "@kvib/react";
-import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -7,7 +6,6 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { styled } from "styled-components";
-import { statusCode } from "utils/api";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 
 const HeaderHistoryOperations = () => {
@@ -15,14 +13,10 @@ const HeaderHistoryOperations = () => {
   const { canSave, undo, redo } = useHistory();
   const { isOpen: isEndringsloggOpen, onClose: onEndringsloggClose, onOpen: onEndringsloggOpen } = useDisclosure();
   const { toggleOverlayPanel } = useOverlayPanel();
-  const { setAuthRenewError } = useAuthRenewError();
   const { antallEndringer } = useUnsavedEndringer();
   const handleSave = async () => {
     if (utkast && canSave) {
       const responseCode = await updateUtkastWithHistory();
-      if (statusCode.isForbidden(responseCode)) {
-        setAuthRenewError(true);
-      }
     }
   };
   const handleAvvik = () => {

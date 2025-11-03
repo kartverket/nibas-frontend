@@ -113,11 +113,9 @@ const useArbeidslisteApi = <Path extends keyof arbeidslistePaths>(
       >
     | undefined,
 ) => {
-  const auth = useAuthentication();
-
   const urlWithOptionalParams = params ? getArbeidslisteUrlWithParameters(url, params) : url;
 
-  return useSWR<ResponseType<Path>>([urlWithOptionalParams, auth.token], fetcherWithToken, swrOptions);
+  return useSWR<ResponseType<Path>>([urlWithOptionalParams], fetcherWithToken, swrOptions);
 };
 
 export default useArbeidslisteApi;

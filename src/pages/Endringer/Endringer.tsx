@@ -20,7 +20,6 @@ import {
   useToast,
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { format, subDays, addDays } from "date-fns";
@@ -112,7 +111,6 @@ interface UtkastRowProps {
 }
 
 const UtkastRow = ({ utkast }: UtkastRowProps) => {
-  const { token } = useAuthentication();
   const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
@@ -133,14 +131,11 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const { data: endredeFylker } = useFylkerByIds(utkast.endredeInndelinger.endredeFylker, beforePublisering);
 
   const opprettFeilrettingUtkast = async () => {
-    const response = await createUtkast(
-      {
+    const response = await createUtkast({
         navn: "Feilretting: ".concat(utkast.navn),
         endringstype: endringstyper[7],
         gyldigFra: utkast.gyldigFra,
-      },
-      token,
-    );
+    });
 
     if (statusCode.isSuccessful(response.status)) {
       const json = await response.json();

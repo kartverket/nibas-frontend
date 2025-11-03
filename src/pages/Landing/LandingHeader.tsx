@@ -1,11 +1,9 @@
 import { styled } from "styled-components";
-import { Button, Flex, Icon, Logo, Text } from "@kvib/react";
+import { Flex, Icon, Logo, Text } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/useAuthentication";
-import { isAuthEnabled } from "components/Authentication/AuthenticationConfig";
 
 const LandingHeader = () => {
-  const { isAuthenticated, signOut, userId } = useAuthentication();
-  const maskedUserId = isAuthEnabled() ? userId?.substring(0, 6) : userId;
+  const { isAuthenticated } = useAuthentication();
 
   return (
     <Container>
@@ -16,11 +14,8 @@ const LandingHeader = () => {
         <Flex gap={4} alignItems="center">
           <Flex gap="6px" alignItems="center">
             <LoginIcon icon="person" isFilled />
-            <Text fontSize={16}>{maskedUserId}</Text>
+            <Text fontSize={16}>Innlogget</Text>
           </Flex>
-          <Button variant="tertiary" aria-label="Logg ut" leftIcon="logout" onClick={signOut}>
-            Logg ut
-          </Button>
         </Flex>
       )}
     </Container>

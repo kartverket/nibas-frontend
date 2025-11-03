@@ -1,5 +1,4 @@
 import { Spinner, Icon, IconButton } from "@kvib/react";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
 import { useState } from "react";
 import Select, { DropdownIndicatorProps, components, StylesConfig } from "react-select";
@@ -103,9 +102,7 @@ const selectWidth = 400;
 export const EnvironmentSelect = () => {
   const env = getCurrentEnvironment();
   const style = styles[env];
-  const { isAuthenticated } = useAuthentication();
-
-  const envSwitchEnabled = isAuthenticated && env !== "dev-e2e" && env !== "prod";
+  const envSwitchEnabled = env !== "dev-e2e" && env !== "prod";
   const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
 
   const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
