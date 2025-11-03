@@ -3,33 +3,25 @@ import useSWR from "swr";
 import { fetcherWithToken } from "utils/api";
 import { AvvikForKommuneResponse } from "./avvik-utils";
 
-const avvikKommuneParFetcher = async (token: string | undefined, page: number, size: number) => {
+const avvikKommuneParFetcher = async (page: number, size: number) => {
   const urlPath = "/internal-api/api/v1/avvik/kommunepar";
 
   const url = getArbeidslisteUrlWithParameters(urlPath, {
     side: page,
     antall: size,
   });
-  const response = await fetcherWithToken([url, token]);
+  const response = await fetcherWithToken([url]);
   return response;
 };
 
-export const useKommuneParMedAvvik = (shouldFetch: boolean, page: number, token: string | undefined) => {
-  const { data, isLoading, error } = useSWR(
-    shouldFetch ? [page, token] : null,
-    () => avvikKommuneParFetcher(token, page, 15),
-    {
-      keepPreviousData: true,
-    },
-  );
+export const useKommuneParMedAvvik = (shouldFetch: boolean, page: number) => {
+  const { data, isLoading, error } = useSWR(shouldFetch ? [page] : null, () => avvikKommuneParFetcher(page, 15), {
+    keepPreviousData: true,
+  });
   return { data, isLoading, error };
 };
 
-const avvikFetcher = async (
-  token: string | undefined,
-  kommuneLokalID1: string,
-  kommuneLokalID2: string,
-): Promise<AvvikForKommuneResponse> => {
+const avvikFetcher = async (kommuneLokalID1: string, kommuneLokalID2: string): Promise<AvvikForKommuneResponse> => {
   const urlPath = "/internal-api/api/v1/avvik/kommunepar/{lokalId1}/{lokalId2}";
   const url = getArbeidslisteUrlWithParameters(urlPath, {
     lokalId1: kommuneLokalID1,
@@ -37,19 +29,19 @@ const avvikFetcher = async (
     grensetyper: ["Fylkesgrense", "Kommunegrense"],
   });
 
-  const response = await fetcherWithToken([url, token]);
+  const response = await fetcherWithToken([url]);
   return response;
 };
 
-export const useAvvikForKommunePar = (kommuneLokalIDs: string[], token: string | undefined) => {
+export const useAvvikForKommunePar = (kommuneLokalIDs: string[]) => {
   const { data, isLoading, error, mutate } = useSWR(
-    kommuneLokalIDs != null && kommuneLokalIDs.length === 2 ? [kommuneLokalIDs, token] : null,
-    () => avvikFetcher(token, kommuneLokalIDs[0], kommuneLokalIDs[1]),
+    kommuneLokalIDs != null && kommuneLokalIDs.length === 2 ? [kommuneLokalIDs] : null,
+    () => avvikFetcher(kommuneLokalIDs[0], kommuneLokalIDs[1]),
   );
   return { data, isLoading, error, mutate };
 };
 
-export const avvikUpdateStatus = (updates: { id: number; status: string }[], token?: string) => {
+export const avvikUpdateStatus = (updates: { id: number; status: string }[]) => {
   const url = getArbeidslisteUrlForPath("/internal-api/api/v1/avvik");
   const requestBody = {
     avvikUpdates: updates,
@@ -58,7 +50,6 @@ export const avvikUpdateStatus = (updates: { id: number; status: string }[], tok
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(requestBody),
   });

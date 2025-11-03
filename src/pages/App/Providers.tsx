@@ -8,7 +8,6 @@ import { FeatureStyleProvider } from "contexts/FeatureStyleContext/FeatureStyleC
 import { ToolbarProvider } from "contexts/ToolbarContext";
 import { ConfirmationModalProvider } from "contexts/ConfirmationModalContext";
 import { InndelingerProvider } from "contexts/InndelingerContext/InndelingerContext";
-import { AuthRenewProvider } from "components/Authentication/AuthRenewError";
 import { GyldighetsdatoProvider } from "contexts/GyldighetsdatoContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
@@ -20,15 +19,13 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             <HistoryProvider>
               <OverlayPopupProvider>
                 <OverlayPanelProvider>
-                  <AuthRenewProvider>
-                    <ToolbarProvider>
-                      <KartlagProvider>
-                        <UtkastProvider>
-                          <InndelingerProvider>{children}</InndelingerProvider>
-                        </UtkastProvider>
-                      </KartlagProvider>
-                    </ToolbarProvider>
-                  </AuthRenewProvider>
+                  <ToolbarProvider>
+                    <KartlagProvider>
+                      <UtkastProvider>
+                        <InndelingerProvider>{children}</InndelingerProvider>
+                      </UtkastProvider>
+                    </KartlagProvider>
+                  </ToolbarProvider>
                 </OverlayPanelProvider>
               </OverlayPopupProvider>
             </HistoryProvider>

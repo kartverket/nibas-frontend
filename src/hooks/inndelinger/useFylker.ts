@@ -1,6 +1,5 @@
 import useNibasApi, { getUrlWithParameters } from "../useNibasApi";
 import { FylkeResponse } from "../../types/api";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import useSWRImmutable from "swr/immutable";
 import { fetcherWithToken } from "utils/api";
 
@@ -19,18 +18,16 @@ const useFylker = (gyldighetsdato: string | undefined, shouldFetch = true) => {
   };
 };
 
-const fylkerFetcher = async ([fylkeIds, gyldighetsdato, token]: [string[], string | undefined, string | undefined]) => {
+const fylkerFetcher = async ([fylkeIds, gyldighetsdato]: [string[], string | undefined]) => {
   const promises: Promise<FylkeResponse>[] = fylkeIds.map(async (id) =>
-    fetcherWithToken([getUrlWithParameters("/v1/fylker/{id}", { id, gyldighetsdato }), token]),
+    fetcherWithToken([getUrlWithParameters("/v1/fylker/{id}", { id, gyldighetsdato })]),
   );
 
   return await Promise.all(promises);
 };
 
 export const useFylkerByIds = (fylkeIds: string[], gyldighetsdato: string | undefined) => {
-  const { token } = useAuthentication();
-
-  return useSWRImmutable(fylkeIds.length > 0 ? [fylkeIds, gyldighetsdato, token] : null, fylkerFetcher);
+  return useSWRImmutable(fylkeIds.length > 0 ? [fylkeIds, gyldighetsdato] : null, fylkerFetcher);
 };
 
 export default useFylker;

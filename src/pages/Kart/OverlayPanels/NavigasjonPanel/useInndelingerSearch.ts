@@ -1,11 +1,9 @@
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import useToastUnique from "hooks/toast/useToastUnique";
 import { InndelingSearchResponse, InndelingSearchType } from "types/api";
 import { getUrlForPath, statusCode } from "utils/api";
 import { getUrlWithParameters } from "hooks/useNibasApi";
 
 export const useInndelingerSearch = () => {
-  const auth = useAuthentication();
   const { toastUnique: searchErrorToast } = useToastUnique({
     status: "error",
     title: "Søket feilet",
@@ -31,7 +29,6 @@ export const useInndelingerSearch = () => {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          Authorization: "Bearer " + auth.token,
         },
       },
     );
