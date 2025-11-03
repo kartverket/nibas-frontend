@@ -1,14 +1,13 @@
-import { useOutlet } from "react-router-dom";
-import { useEffect } from "react";
-import { fetchInndelingFromSessionStorage } from "contexts/application-state-utils";
+import { fetchInndelingFromSessionStorage, sessionStorageKeys } from "contexts/application-state-utils";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { useAutoSelectKommuneFromUtkast } from "../../hooks/useAutoSelectKommuneFromUtkast";
+import { useAutoSelectInndelingFromUtkast } from "hooks/useAutoSelectInndelingFromUtkast";
+import { useEffect } from "react";
+import { useOutlet } from "react-router-dom";
 
-export const UtkastRestoreAfterReauth = () => {
+export const UtkastRestore = () => {
   const outlet = useOutlet();
   const { selectInndelinger, setSelectedFylkeIds } = useInndelinger();
-
-  useAutoSelectKommuneFromUtkast();
+  useAutoSelectInndelingFromUtkast(sessionStorage.getItem(sessionStorageKeys.inndeling) == null);
 
   useEffect(() => {
     const selectedInndelingerFromSessionStorage = fetchInndelingFromSessionStorage();

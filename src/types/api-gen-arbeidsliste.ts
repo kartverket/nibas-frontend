@@ -4,27 +4,39 @@
  */
 
 export interface paths {
-  "/api/v1/avvik": {
+  "/internal-api/api/v1/avvik": {
     /** Henter alle registrerte avvik mellom administrative grenser i NIBAS og Matrikkelen */
     get: operations["hentAlleAvvik"];
     /** Oppdaterer flere avvik samtidig med ny status og informasjon */
     post: operations["oppdaterFlereAvvik"];
   };
-  "/api/v1/matrikkel/grenselinjer": {
+  "/internal-api/api/v1/matrikkel/grenselinjer": {
     /** Henter alle grenselinjer for en kommuner fra Matrikkelen. */
     get: operations["hentGrenselinjer"];
   };
-  "/api/v1/matrikkel/grenselinjer/kommuner": {
+  "/internal-api/api/v1/matrikkel/grenselinjer/kommuner": {
     /** Henter en liste over alle kommuner som har tilgjengelige grenselinjer */
     get: operations["hentTilgjengeligeKommuner"];
   };
-  "/api/v1/avvik/kommuner": {
+  "/internal-api/api/v1/avvik/kommuner": {
     /** Henter liste over kommuner med avvik og antall avvik per kommune */
     get: operations["hentKommunerMedAvvikSummary"];
   };
-  "/api/v1/avvik/kommune/{lokalId}": {
+  "/internal-api/api/v1/avvik/kommunepar": {
+    /** Henter liste over kommune-par med avvik og antall avvik per par */
+    get: operations["hentKommuneParMedAvvikSummary"];
+  };
+  "/internal-api/api/v1/avvik/kommunepar/{lokalId1}/{lokalId2}": {
+    /** Henter alle avvik på grensen mellom to spesifikke kommuner */
+    get: operations["hentAvvikForKommunePar"];
+  };
+  "/internal-api/api/v1/avvik/kommune/{lokalId}": {
     /** Henter alle registrerte avvik mellom administrative grenser i NIBAS og Matrikkelen for en gitt kommune */
     get: operations["hentAvvik"];
+  };
+  "/api/v1/statistikk": {
+    /** Henter oversikt over avvik i systemet med totale tall, status-fordeling og grensetype-statistikk */
+    get: operations["hentAvvikStatistikk"];
   };
 }
 
@@ -44,6 +56,7 @@ export interface components {
       coordinates: number[][];
     };
     MatrikkelGrenselinjeDto: {
+      id: string;
       type: string;
       geometry: components["schemas"]["GeometryDto"];
       properties: components["schemas"]["PropertiesDto"];
@@ -73,14 +86,14 @@ export interface components {
       totalElements?: number;
       /** Format: int32 */
       totalPages?: number;
+      first?: boolean;
+      last?: boolean;
       /** Format: int32 */
       size?: number;
       content?: unknown[];
       /** Format: int32 */
       number?: number;
       sort?: components["schemas"]["SortObject"];
-      first?: boolean;
-      last?: boolean;
       /** Format: int32 */
       numberOfElements?: number;
       pageable?: components["schemas"]["PageableObject"];
@@ -99,8 +112,8 @@ export interface components {
     };
     SortObject: {
       empty?: boolean;
-      sorted?: boolean;
       unsorted?: boolean;
+      sorted?: boolean;
     };
     KommuneAvvikDTO: {
       fylkesLokalID?: string;
@@ -109,6 +122,90 @@ export interface components {
       kommuneNavn: string;
       /** Format: int32 */
       antallAvvik: number;
+    };
+    KommuneDTO: {
+      fylkesLokalID?: string;
+      kommuneLokalID?: string;
+      kommunenummer?: string;
+      kommunenavn?: string;
+    };
+    KommuneParAvvikDTO: {
+      kommune1: components["schemas"]["KommuneDTO"];
+      kommune2: components["schemas"]["KommuneDTO"];
+      /** Format: int32 */
+      antallGrenserMedAvvik: number;
+      /** Format: int32 */
+      antallPunkterMedAvvik: number;
+    };
+    AvvikDTO: {
+      /** Format: int64 */
+      id?: number;
+      /** Format: date-time */
+      registrertDato?: string;
+      /** @enum {string} */
+      status: "NY" | "UNDER_BEHANDLING" | "FIKSET" | "VENT" | "AVVIST";
+      harGeometri: boolean;
+      grenseId?: string;
+      lokalId?: string;
+      grensetype?: string;
+      geometri?: components["schemas"]["GeoJsonLineString"];
+      /** Format: date */
+      gyldigFra?: string;
+      /** Format: date */
+      gyldigTil?: string;
+      datafangstdato?: string;
+      foerstedigitaliseringsdato?: string;
+      opphav?: string;
+      informasjon?: string;
+      endretAv?: string;
+      endretDato?: string;
+      typeEndring?: string;
+      maalemetode?: string;
+      /** Format: int32 */
+      noeyaktighet?: number;
+      /** Format: int32 */
+      antallKoordinater?: number;
+      /** Format: int32 */
+      antallKoordinaterMedAvvik?: number;
+      koordinaterMedAvvik?: components["schemas"]["KoordinaterMedAvvikDTO"][];
+      /** Format: double */
+      tolerance?: number;
+      kommuner?: components["schemas"]["KommuneDTO"][];
+    };
+    GeoJsonLineString: {
+      type: string;
+      coordinates: number[][];
+    };
+    GeoJsonPoint: {
+      type: string;
+      coordinates: number[];
+    };
+    KoordinaterMedAvvikDTO: {
+      nibasKoordinat: components["schemas"]["GeoJsonPoint"];
+      matrikkelKoordinat: components["schemas"]["GeoJsonPoint"];
+      /** Format: double */
+      distanseMellomKoordinater?: number;
+    };
+    AvvikStatisticsDTO: {
+      /** Format: int64 */
+      totalAvvik: number;
+      statusCounts: { [key: string]: number };
+      /** Format: int64 */
+      arbeidsGrenser: number;
+      /** Format: int64 */
+      arbeidsAvvikPunkter: number;
+      arbeidsStatusCounts: { [key: string]: number };
+      grensetypeDetails: {
+        [key: string]: components["schemas"]["GrensetypeStatisticsDTO"];
+      };
+      /** Format: int64 */
+      kommunerMedAvvik: number;
+    };
+    GrensetypeStatisticsDTO: {
+      /** Format: int64 */
+      antallGrenserMedAvvik: number;
+      /** Format: int64 */
+      antallAvvikPunkter: number;
     };
   };
 }
@@ -207,6 +304,48 @@ export interface operations {
       500: unknown;
     };
   };
+  /** Henter liste over kommune-par med avvik og antall avvik per par */
+  hentKommuneParMedAvvikSummary: {
+    parameters: {
+      query: {
+        grensetyper?: string[];
+        side?: number;
+        antall?: number;
+      };
+    };
+    responses: {
+      /** Vellykket operasjon */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KommuneParAvvikDTO"];
+        };
+      };
+      /** Serverfeil */
+      500: unknown;
+    };
+  };
+  /** Henter alle avvik på grensen mellom to spesifikke kommuner */
+  hentAvvikForKommunePar: {
+    parameters: {
+      path: {
+        lokalId1: string;
+        lokalId2: string;
+      };
+      query: {
+        grensetyper?: string[];
+      };
+    };
+    responses: {
+      /** Vellykket operasjon */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AvvikDTO"];
+        };
+      };
+      /** Serverfeil */
+      500: unknown;
+    };
+  };
   /** Henter alle registrerte avvik mellom administrative grenser i NIBAS og Matrikkelen for en gitt kommune */
   hentAvvik: {
     parameters: {
@@ -228,6 +367,17 @@ export interface operations {
       500: unknown;
     };
   };
+  /** Henter oversikt over avvik i systemet med totale tall, status-fordeling og grensetype-statistikk */
+  hentAvvikStatistikk: {
+    responses: {
+      /** Vellykket operasjon */
+      200: {
+        content: {
+          "application/json": components["schemas"]["AvvikStatisticsDTO"];
+        };
+      };
+      /** Serverfeil */
+      500: unknown;
+    };
+  };
 }
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface external {}

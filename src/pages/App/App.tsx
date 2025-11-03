@@ -1,18 +1,17 @@
-import { Route, Outlet, createRoutesFromElements, createBrowserRouter, RouterProvider } from "react-router-dom";
 import { withFaroRouterInstrumentation } from "@grafana/faro-react";
-import Providers from "./Providers";
-import PageLayout from "../Kart/PageLayout";
-import { Suspense } from "react";
-import Loading from "./Loading";
 import Landing from "pages/Landing/Landing";
-import { routes } from "utils/routes";
 import Utkast from "pages/Utkast/Utkast";
+import { Suspense } from "react";
+import { createBrowserRouter, createRoutesFromElements, Outlet, Route, RouterProvider } from "react-router-dom";
+import { routes } from "utils/routes";
+import PageLayout from "../Kart/PageLayout";
 import EnvironmentOverlay from "./EnvironmentOverlay";
-
-import { UtkastRestoreAfterReauth } from "pages/Utkast/UtkastRestoreAfterReauth";
-import "cypress-globals";
+import Loading from "./Loading";
+import Providers from "./Providers";
 import { FullPageErrorWithFaroErrorBoundry } from "components/FullPageError";
+import "cypress-globals";
 import { Endringer } from "pages/Endringer/Endringer";
+import { UtkastRestore } from "pages/Utkast/UtkastRestore";
 
 const App = () => {
   const router = withFaroRouterInstrumentation(
@@ -21,7 +20,7 @@ const App = () => {
         <Route element={<FullPageErrorWithFaroErrorBoundry />}>
           <Route element={<ProvidersRoute />}>
             <Route index element={<Landing />} />
-            <Route path={routes.utkast} element={<UtkastRestoreAfterReauth />}>
+            <Route path={routes.utkast} element={<UtkastRestore />}>
               <Route index element={<Utkast />} />
               <Route path={routes.utkastId} element={<PageLayout />} />
             </Route>

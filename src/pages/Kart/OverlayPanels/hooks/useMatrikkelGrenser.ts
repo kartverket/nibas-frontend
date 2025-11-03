@@ -4,15 +4,14 @@ import useSWR from "swr";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
 
 const hentGrenselinjer = async (kommunenummer: string) => {
-  const urlPath = "/api/v1/matrikkel/grenselinjer";
+  const urlPath = "/internal-api/api/v1/matrikkel/grenselinjer";
   const url = getArbeidslisteUrlWithParameters(urlPath, { kommunenummer });
   return fetcherWithToken([url]);
 };
 
-export const useMatrikkelGrenser = (kommuneNummer: string) => {
-  const { data, error, isLoading } = useSWR(
-    kommuneNummer != null ? ["matrikkelGrenser", kommuneNummer] : null,
-    () => hentGrenselinjer(kommuneNummer).then(getFeaturesFromGeoJson),
+export const useMatrikkelGrenser = (shouldFetch: boolean, kommuneNummer: string) => {
+  const { data, error, isLoading } = useSWR(shouldFetch ? ["matrikkelGrenser", kommuneNummer] : null, () =>
+    hentGrenselinjer(kommuneNummer).then(getFeaturesFromGeoJson),
   );
 
   return {
@@ -23,7 +22,7 @@ export const useMatrikkelGrenser = (kommuneNummer: string) => {
 };
 
 export const hentTilgjengeligeKommuner = async () => {
-  const urlPath = "/api/v1/matrikkel/grenselinjer/kommuner";
+  const urlPath = "/internal-api/api/v1/matrikkel/grenselinjer/kommuner";
   const url = getArbeidslisteUrlForPath(urlPath);
   return fetcherWithToken([url]);
 };
