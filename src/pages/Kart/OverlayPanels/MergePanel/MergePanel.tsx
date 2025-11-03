@@ -130,10 +130,7 @@ const MergePanel = () => {
       };
       updateUtkast(utkast.id, updateUtkastRequest);
       const sammenslaaingsStemmekretsIds = getStemmekretsIdList(selectedStemmekrets, stemmekretsTilSammenslaaingListe);
-      const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(
-        sammenslaaingsStemmekretsIds,
-        gyldighetsdato,
-      );
+      const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(sammenslaaingsStemmekretsIds, gyldighetsdato);
       const overlappingFeatureIds = getDuplicateItems(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(
         (sfi) => !overlappingFeatureIds.some((ofi) => sfi === ofi),

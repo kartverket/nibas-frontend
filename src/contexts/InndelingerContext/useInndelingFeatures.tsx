@@ -72,10 +72,7 @@ type InndelingWithFeatureCollection = {
   inndelinger: PotentialInndelingResponse;
 };
 
-const inndelingWithGrenseFetcher = async ([inndelinger, gyldighetsdato]: [
-  Inndeling[],
-  string | undefined,
-]) => {
+const inndelingWithGrenseFetcher = async ([inndelinger, gyldighetsdato]: [Inndeling[], string | undefined]) => {
   const promises: Promise<InndelingWithFeatureCollection>[] = inndelinger.map(async (inndeling) => {
     const grenserUrl = getGrenserRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
     const geoJSONFeatures = await fetcherWithToken([

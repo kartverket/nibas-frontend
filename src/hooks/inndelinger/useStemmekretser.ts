@@ -1,12 +1,9 @@
-import { StemmekretsResponse } from "../../types/api";
-import { fetcherWithToken } from "utils/api";
-import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
+import useSWRImmutable from "swr/immutable";
+import { fetcherWithToken } from "utils/api";
+import { StemmekretsResponse } from "../../types/api";
 
-const stemmekretserFetcher = async ([stemmekretsIds, gyldighetsdato]: [
-  string[],
-  string | undefined,
-]) => {
+const stemmekretserFetcher = async ([stemmekretsIds, gyldighetsdato]: [string[], string | undefined]) => {
   const promises: Promise<StemmekretsResponse>[] = stemmekretsIds.map(async (id) =>
     fetcherWithToken([getUrlWithParameters("/v1/stemmekretser/{id}", { id, gyldighetsdato })]),
   );

@@ -17,5 +17,3 @@ export const useAuthentication = (): UseAuthenticationResult => {
     checkAuthorization: async () => "AUTHORIZED",
   };
 };
-
-

@@ -132,9 +132,9 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
 
   const opprettFeilrettingUtkast = async () => {
     const response = await createUtkast({
-        navn: "Feilretting: ".concat(utkast.navn),
-        endringstype: endringstyper[7],
-        gyldigFra: utkast.gyldigFra,
+      navn: "Feilretting: ".concat(utkast.navn),
+      endringstype: endringstyper[7],
+      gyldigFra: utkast.gyldigFra,
     });
 
     if (statusCode.isSuccessful(response.status)) {

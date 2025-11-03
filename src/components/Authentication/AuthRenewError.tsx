@@ -9,7 +9,9 @@ const AuthRenewContext = createContext<AuthRenewContextValue | undefined>(undefi
 
 export const AuthRenewProvider = ({ children }: { children: React.ReactNode }) => {
   const [authRenewError, setAuthRenewError] = useState(false);
-  return <AuthRenewContext.Provider value={{ authRenewError, setAuthRenewError }}>{children}</AuthRenewContext.Provider>;
+  return (
+    <AuthRenewContext.Provider value={{ authRenewError, setAuthRenewError }}>{children}</AuthRenewContext.Provider>
+  );
 };
 
 export const useAuthRenewError = () => {
@@ -23,5 +25,3 @@ export const useAuthRenewError = () => {
 export const AuthRenewError = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
-
-

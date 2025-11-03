@@ -16,7 +16,7 @@ const HeaderHistoryOperations = () => {
   const { antallEndringer } = useUnsavedEndringer();
   const handleSave = async () => {
     if (utkast && canSave) {
-      const responseCode = await updateUtkastWithHistory();
+      await updateUtkastWithHistory();
     }
   };
   const handleAvvik = () => {
