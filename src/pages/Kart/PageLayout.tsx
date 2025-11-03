@@ -7,11 +7,9 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { isApiError, statusCode } from "utils/api";
 import { ApiErrorResponse } from "../../types/api";
 import Header from "./Header/Header";
-import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 
 const PageLayout = () => {
   const { error, setError } = useErrorHandling();
-  const { setAuthRenewError } = useAuthRenewError();
 
   return (
     <Grid>
@@ -19,9 +17,7 @@ const PageLayout = () => {
         value={{
           fetcher: (url) => fetch(url).then((res) => res.json()),
           onError: (err) => {
-            if (statusCode.isForbidden(err.response?.status) || statusCode.isUnauhtorized(err.response?.status)) {
-              setAuthRenewError(true);
-            } else if (statusCode.isError(err.response?.status) && isApiError(err)) {
+            if (statusCode.isError(err.response?.status) && isApiError(err)) {
               const wrapper = err as ApiErrorResponse;
               setError({
                 ...wrapper.errorDescription,

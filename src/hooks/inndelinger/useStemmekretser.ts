@@ -2,15 +2,13 @@ import { StemmekretsResponse } from "../../types/api";
 import { fetcherWithToken } from "utils/api";
 import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 
-const stemmekretserFetcher = async ([stemmekretsIds, gyldighetsdato, token]: [
+const stemmekretserFetcher = async ([stemmekretsIds, gyldighetsdato]: [
   string[],
-  string | undefined,
   string | undefined,
 ]) => {
   const promises: Promise<StemmekretsResponse>[] = stemmekretsIds.map(async (id) =>
-    fetcherWithToken([getUrlWithParameters("/v1/stemmekretser/{id}", { id, gyldighetsdato }), token]),
+    fetcherWithToken([getUrlWithParameters("/v1/stemmekretser/{id}", { id, gyldighetsdato })]),
   );
 
   return await Promise.all(promises);
@@ -21,10 +19,8 @@ export const useStemmekretser = (
   gyldighetsdato: string | undefined,
   shouldFetch: boolean = true,
 ) => {
-  const { token } = useAuthentication();
-
   return useSWRImmutable(
-    stemmekretsIds.length > 0 && shouldFetch ? [stemmekretsIds, gyldighetsdato, token] : null,
+    stemmekretsIds.length > 0 && shouldFetch ? [stemmekretsIds, gyldighetsdato] : null,
     stemmekretserFetcher,
   );
 };

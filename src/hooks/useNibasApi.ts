@@ -101,11 +101,9 @@ const useNibasApi = <Path extends ApiPath>(
       >
     | undefined,
 ) => {
-  const auth = useAuthentication();
-
   const urlWithOptionalParams = params ? getUrlWithParameters(url, params) : url;
 
-  return useSWR<ResponseType<Path>>([urlWithOptionalParams, auth.token], fetcherWithToken, swrOptions);
+  return useSWR<ResponseType<Path>>([urlWithOptionalParams], fetcherWithToken, swrOptions);
 };
 
 export default useNibasApi;

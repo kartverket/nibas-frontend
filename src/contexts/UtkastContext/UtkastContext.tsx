@@ -1,6 +1,5 @@
 import { useToast } from "@kvib/react";
 import { updateUtkastApi } from "api/utkast";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -30,7 +29,6 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(undef
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
-  const { token } = useAuthentication();
   const sessionUtkast = fetchUtkastFromSessionStorage();
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
@@ -126,11 +124,11 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     newUtkast: OppdaterUtkastRequest,
     shouldClearHistory: boolean = true,
   ): Promise<number> => {
-    const response = await updateUtkastApi(id, toCleanUtkast(newUtkast), token);
+    const response = await updateUtkastApi(id, toCleanUtkast(newUtkast));
     if (statusCode.isSuccessful(response.status)) {
       const updatedUtkast = (await response.json()) as UtkastResponse;
       await mutate(updatedUtkast);
-      await globalMutate(["/v1/utkast", token]);
+      await globalMutate(["/v1/utkast"]);
       if (shouldClearHistory) {
         clearHistory(true);
       }

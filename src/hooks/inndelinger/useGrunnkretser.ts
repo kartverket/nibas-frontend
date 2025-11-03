@@ -2,15 +2,10 @@ import { GrunnkretsResponse } from "../../types/api";
 import { fetcherWithToken } from "utils/api";
 import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 
-const grunnkretsFetcher = async ([grunnkretsIds, gyldighetsdato, token]: [
-  string[],
-  string | undefined,
-  string | undefined,
-]) => {
+const grunnkretsFetcher = async ([grunnkretsIds, gyldighetsdato]: [string[], string | undefined]) => {
   const promises: Promise<GrunnkretsResponse>[] = grunnkretsIds.map(async (id) =>
-    fetcherWithToken([getUrlWithParameters("/v1/grunnkretser/{id}", { id, gyldighetsdato }), token]),
+    fetcherWithToken([getUrlWithParameters("/v1/grunnkretser/{id}", { id, gyldighetsdato })]),
   );
 
   return await Promise.all(promises);
@@ -21,9 +16,8 @@ export const useGrunnkretser = (
   gyldighetsdato: string | undefined,
   shouldFetch: boolean = true,
 ) => {
-  const auth = useAuthentication();
   return useSWRImmutable(
-    grunnkretsId.length > 0 && shouldFetch ? [grunnkretsId, gyldighetsdato, auth.token] : null,
+    grunnkretsId.length > 0 && shouldFetch ? [grunnkretsId, gyldighetsdato] : null,
     grunnkretsFetcher,
   );
 };

@@ -14,7 +14,6 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { Alert, AlertIcon, AlertTitle, Button, Divider, FormControl, FormLabel, Heading, Select } from "@kvib/react";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
@@ -43,7 +42,6 @@ const MergePanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
   const { setError } = useErrorHandling();
   const { utkast, updateUtkast, utkastHarEndringer, utkastHarSammenslaainger } = useUtkast();
-  const auth = useAuthentication();
   const { setAndSaveSammenslaaingStyles, setAndSaveSammenslaaingOverlappingStyles } = useFeatureStyle();
   const { history } = useHistory();
   const { currentlyEditingInndelinger } = useInndelinger();
@@ -135,7 +133,6 @@ const MergePanel = () => {
       const stemmekretsFeatureIds = await stemmekretsgrenserFetcher(
         sammenslaaingsStemmekretsIds,
         gyldighetsdato,
-        auth.token,
       );
       const overlappingFeatureIds = getDuplicateItems(stemmekretsFeatureIds);
       const uniqueStemmekretsFeatureIds = stemmekretsFeatureIds.filter(

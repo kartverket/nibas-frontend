@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { clearMatrikkelLayer } from "utils/map/layers";
 import { addFeaturesToSource } from "utils/map/source";
 import { resetMapView } from "utils/map/useMap";
-import { useAuthentication } from "../../../../components/Authentication/useAuthentication";
 import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
 import {
   AvvikPanelProps,
@@ -21,7 +20,6 @@ import { avvikUpdateStatus, useAvvikForKommune, useKommunerMedAvvik } from "./us
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const toast = useToast();
-  const { token } = useAuthentication();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const {
     selectInndelinger,
@@ -53,7 +51,6 @@ export const useAvvikPanel = () => {
   const { data: kommunerMedAvvikResponse, isLoading: isLoadingKommunerMedAvvik } = useKommunerMedAvvik(
     !selectedKommune,
     currentPage,
-    token,
   );
 
   const kommunerMedAvvikData = kommunerMedAvvikResponse?.content ?? [];
@@ -74,7 +71,7 @@ export const useAvvikPanel = () => {
     data: avvikDataRaw = [],
     isLoading: isLoadingAvvik,
     mutate: mutateAvvikData,
-  } = useAvvikForKommune(selectedKommuneId, token);
+  } = useAvvikForKommune(selectedKommuneId);
 
   // Sorterer på kommunenummer som ikke er selectedKommune
   const avvikData = [...avvikDataRaw]
@@ -114,7 +111,7 @@ export const useAvvikPanel = () => {
     features,
     isLoading: isLoadingMatrikkelGrenser,
     isError,
-  } = useMatrikkelGrenser(token, selectedKommune?.nummer != null ? selectedKommune.nummer : "");
+  } = useMatrikkelGrenser(selectedKommune?.nummer != null ? selectedKommune.nummer : "");
 
   useEffect(() => {
     if (selectedKommuneId == null) {
@@ -140,7 +137,7 @@ export const useAvvikPanel = () => {
     );
 
     mutateAvvikData(optimistiskeData, false);
-    const success = await avvikUpdateStatus(updates, token);
+    const success = await avvikUpdateStatus(updates);
     mutateAvvikData();
     return success?.ok ? true : false;
   };
