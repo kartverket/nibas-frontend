@@ -41,7 +41,7 @@ export const useAvvikForKommunePar = (kommuneLokalIDs: string[]) => {
   return { data, isLoading, error, mutate };
 };
 
-export const avvikUpdateStatus = (updates: { id: number; status: string }[], token?: string) => {
+export const avvikUpdateStatus = (updates: { id: number; status: string }[]) => {
   const url = getArbeidslisteUrlForPath("/internal-api/api/v1/avvik");
   const requestBody = {
     avvikUpdates: updates,
