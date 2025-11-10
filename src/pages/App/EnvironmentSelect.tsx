@@ -178,23 +178,23 @@ export const EnvironmentSelect = () => {
   return (
     envSwitchEnabled === true && (
       <EnvironmentSelectContainer $color={style.color} $isOpen={environmentContainerOpen}>
-        {isLoading ? (
-          <Spinner size={"lg"} color="white" />
-        ) : (
-          <>
-            <StyledSelect
-              components={{ DropdownIndicator: CustomDropdownIndicator, IndicatorSeparator: null }}
-              styles={customStyles}
-              onChange={(option) => {
-                if (option) {
-                  onSelectEnvironment(option.value);
-                }
-              }}
-              value={selectedOption}
-              options={allEnvironmentOptions}
-              menuPlacement="top"
-              formatOptionLabel={mapToEnvironmentSelectOption}
-            />
+        <>
+          <StyledSelect
+            components={{ DropdownIndicator: CustomDropdownIndicator, IndicatorSeparator: null }}
+            styles={customStyles}
+            onChange={(option) => {
+              if (option) {
+                onSelectEnvironment(option.value);
+              }
+            }}
+            value={selectedOption}
+            options={allEnvironmentOptions}
+            menuPlacement="top"
+            formatOptionLabel={mapToEnvironmentSelectOption}
+          />
+          {isLoading ? (
+            <Spinner size={"lg"} color="white" />
+          ) : (
             <StyledIconButton
               $isOpen={environmentContainerOpen}
               aria-label={"lukk miljøvelger"}
@@ -203,8 +203,8 @@ export const EnvironmentSelect = () => {
               size={"sm"}
               onClick={onToggleEnvironmentSelectContainer}
             />
-          </>
-        )}
+          )}
+        </>
       </EnvironmentSelectContainer>
     )
   );

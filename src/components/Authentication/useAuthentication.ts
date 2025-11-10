@@ -1,19 +1,13 @@
-export type AuthorizationCheckResult = "AUTHORIZED" | "NOT_AUTHORIZED" | "ERROR";
+import useNibasApi from "hooks/useNibasApi";
 
-type UseAuthenticationResult = {
-  token: string | undefined;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-  user: unknown;
-  checkAuthorization: () => Promise<AuthorizationCheckResult>;
+type UseAuthenticationReturnType = {
+  name: string | undefined;
 };
 
-export const useAuthentication = (): UseAuthenticationResult => {
+export const useAuthentication = (): UseAuthenticationReturnType => {
+  const { data: userInfo } = useNibasApi("/v1/auth/user");
+
   return {
-    token: undefined,
-    isAuthenticated: true,
-    isLoading: false,
-    user: null,
-    checkAuthorization: async () => "AUTHORIZED",
+    name: userInfo?.username ?? "localhost",
   };
 };

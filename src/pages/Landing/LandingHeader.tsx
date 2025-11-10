@@ -3,18 +3,18 @@ import { Flex, Icon, Logo, Text } from "@kvib/react";
 import { useAuthentication } from "components/Authentication/useAuthentication";
 
 const LandingHeader = () => {
-  const { isAuthenticated } = useAuthentication();
+  const { name } = useAuthentication();
 
   return (
     <Container>
       <Section>
         <Logo variant="horizontal" size={148} />
       </Section>
-      {isAuthenticated && (
+      {name != null && (
         <Flex gap={4} alignItems="center">
           <Flex gap="6px" alignItems="center">
             <LoginIcon icon="person" isFilled />
-            <Text fontSize={16}>Innlogget</Text>
+            <Text fontSize={16}>{name}</Text>
           </Flex>
         </Flex>
       )}

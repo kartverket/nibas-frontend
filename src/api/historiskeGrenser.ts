@@ -1,5 +1,5 @@
 import { FeatureCollection } from "types/api";
-import { fetcherWithToken } from "utils/api";
+import { fetchUrl } from "utils/api";
 import { removeNil } from "utils/list-utils";
 import { getUrlWithParameters } from "hooks/useNibasApi";
 
@@ -13,7 +13,7 @@ export const historiskeGrenserFetcher = async (
       ? "/v1/kommuner/{id}/stemmekretsgrenserHistoriske"
       : "/v1/kommuner/{id}/grunnkretsgrenserHistoriske";
   const promises: Promise<FeatureCollection>[] = kretsIds.map(async (kretsId) =>
-    fetcherWithToken([getUrlWithParameters(urlPath, { id: kretsId, gyldigTilDate })]),
+    fetchUrl([getUrlWithParameters(urlPath, { id: kretsId, gyldigTilDate })]),
   );
 
   const kretsFeatures = await Promise.all(promises);

@@ -1,7 +1,7 @@
 import useNibasApi, { getUrlWithParameters } from "../useNibasApi";
 import { KommuneResponse } from "../../types/api";
 import useSWRImmutable from "swr/immutable";
-import { fetcherWithToken } from "utils/api";
+import { fetchUrl } from "utils/api";
 
 const useKommuner = (
   fylkeIds: string[] | string | null = null,
@@ -33,7 +33,7 @@ const useKommuner = (
 
 const kommunerFetcher = async ([kommuneIds, gyldighetsdato]: [string[], string | undefined]) => {
   const promises: Promise<KommuneResponse>[] = kommuneIds.map(async (id) =>
-    fetcherWithToken([getUrlWithParameters("/v1/kommuner/{id}", { id, gyldighetsdato })]),
+    fetchUrl([getUrlWithParameters("/v1/kommuner/{id}", { id, gyldighetsdato })]),
   );
 
   return await Promise.all(promises);

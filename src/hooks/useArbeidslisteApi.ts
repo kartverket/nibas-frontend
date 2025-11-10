@@ -1,6 +1,6 @@
 import useSWR, { BareFetcher, SWRConfiguration } from "swr";
 import { paths as arbeidslistePaths } from "types/api-gen-arbeidsliste";
-import { fetcherWithToken } from "utils/api";
+import { fetchUrl } from "utils/api";
 
 // Define types for path and query parameters
 type GetPathParameters<T extends keyof arbeidslistePaths> = arbeidslistePaths[T] extends {
@@ -114,7 +114,7 @@ const useArbeidslisteApi = <Path extends keyof arbeidslistePaths>(
 ) => {
   const urlWithOptionalParams = params ? getArbeidslisteUrlWithParameters(url, params) : url;
 
-  return useSWR<ResponseType<Path>>([urlWithOptionalParams], fetcherWithToken, swrOptions);
+  return useSWR<ResponseType<Path>>([urlWithOptionalParams], fetchUrl, swrOptions);
 };
 
 export default useArbeidslisteApi;

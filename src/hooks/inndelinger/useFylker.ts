@@ -1,7 +1,7 @@
 import useNibasApi, { getUrlWithParameters } from "../useNibasApi";
 import { FylkeResponse } from "../../types/api";
 import useSWRImmutable from "swr/immutable";
-import { fetcherWithToken } from "utils/api";
+import { fetchUrl } from "utils/api";
 
 const useFylker = (gyldighetsdato: string | undefined, shouldFetch = true) => {
   const { data: fylker, ...rest } = useNibasApi(shouldFetch ? "/v1/fylker" : null, { gyldighetsdato });
@@ -20,7 +20,7 @@ const useFylker = (gyldighetsdato: string | undefined, shouldFetch = true) => {
 
 const fylkerFetcher = async ([fylkeIds, gyldighetsdato]: [string[], string | undefined]) => {
   const promises: Promise<FylkeResponse>[] = fylkeIds.map(async (id) =>
-    fetcherWithToken([getUrlWithParameters("/v1/fylker/{id}", { id, gyldighetsdato })]),
+    fetchUrl([getUrlWithParameters("/v1/fylker/{id}", { id, gyldighetsdato })]),
   );
 
   return await Promise.all(promises);

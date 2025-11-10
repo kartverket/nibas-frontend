@@ -1,6 +1,6 @@
 import { getArbeidslisteUrlForPath, getArbeidslisteUrlWithParameters } from "hooks/useArbeidslisteApi";
 import useSWR from "swr";
-import { fetcherWithToken } from "utils/api";
+import { fetchUrl } from "utils/api";
 import { AvvikForKommuneResponse } from "./avvik-utils";
 
 const avvikKommuneParFetcher = async (page: number, size: number) => {
@@ -10,7 +10,7 @@ const avvikKommuneParFetcher = async (page: number, size: number) => {
     side: page,
     antall: size,
   });
-  const response = await fetcherWithToken([url]);
+  const response = await fetchUrl([url]);
   return response;
 };
 
@@ -29,7 +29,7 @@ const avvikFetcher = async (kommuneLokalID1: string, kommuneLokalID2: string): P
     grensetyper: ["Fylkesgrense", "Kommunegrense"],
   });
 
-  const response = await fetcherWithToken([url]);
+  const response = await fetchUrl([url]);
   return response;
 };
 

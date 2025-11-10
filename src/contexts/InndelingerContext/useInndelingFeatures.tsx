@@ -14,7 +14,7 @@ import {
 } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { paths } from "types/api-gen";
-import { fetcherWithToken } from "utils/api";
+import { fetchUrl } from "utils/api";
 import useSWR from "swr";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { inndelingResponseNavnToString } from "utils/language/language";
@@ -75,12 +75,12 @@ type InndelingWithFeatureCollection = {
 const inndelingWithGrenseFetcher = async ([inndelinger, gyldighetsdato]: [Inndeling[], string | undefined]) => {
   const promises: Promise<InndelingWithFeatureCollection>[] = inndelinger.map(async (inndeling) => {
     const grenserUrl = getGrenserRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
-    const geoJSONFeatures = await fetcherWithToken([
+    const geoJSONFeatures = await fetchUrl([
       getUrlWithParameters<typeof grenserUrl>(grenserUrl, { id: inndeling.id, gyldighetsdato }),
     ]);
 
     const inndelingUrl = getInndelingRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
-    const inndelingerResponses = await fetcherWithToken([
+    const inndelingerResponses = await fetchUrl([
       getUrlWithParameters<typeof inndelingUrl>(inndelingUrl, { id: inndeling.id, gyldighetsdato }),
     ]);
 

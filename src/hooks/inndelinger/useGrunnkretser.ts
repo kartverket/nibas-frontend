@@ -1,11 +1,11 @@
 import { GrunnkretsResponse } from "../../types/api";
-import { fetcherWithToken } from "utils/api";
+import { fetchUrl } from "utils/api";
 import useSWRImmutable from "swr/immutable";
 import useNibasApi, { getUrlWithParameters } from "hooks/useNibasApi";
 
 const grunnkretsFetcher = async ([grunnkretsIds, gyldighetsdato]: [string[], string | undefined]) => {
   const promises: Promise<GrunnkretsResponse>[] = grunnkretsIds.map(async (id) =>
-    fetcherWithToken([getUrlWithParameters("/v1/grunnkretser/{id}", { id, gyldighetsdato })]),
+    fetchUrl([getUrlWithParameters("/v1/grunnkretser/{id}", { id, gyldighetsdato })]),
   );
 
   return await Promise.all(promises);

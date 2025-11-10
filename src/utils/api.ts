@@ -52,7 +52,7 @@ export const getUrlForPath = (path: string): string => {
   return `${baseUrl}/${path}`;
 };
 
-export const fetcherWithToken = async ([url]: [string | null] | [string | null, string?]) => {
+export const fetchUrl = async ([url]: [string | null]) => {
   if (url == null) {
     return;
   }
