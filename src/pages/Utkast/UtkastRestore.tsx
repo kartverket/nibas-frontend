@@ -1,4 +1,3 @@
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { fetchInndelingFromSessionStorage, sessionStorageKeys } from "contexts/application-state-utils";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useAutoSelectInndelingFromUtkast } from "hooks/useAutoSelectInndelingFromUtkast";
@@ -8,7 +7,6 @@ import { useOutlet } from "react-router-dom";
 export const UtkastRestore = () => {
   const outlet = useOutlet();
   const { selectInndelinger, setSelectedFylkeIds } = useInndelinger();
-  const { user } = useAuthentication();
   useAutoSelectInndelingFromUtkast(sessionStorage.getItem(sessionStorageKeys.inndeling) == null);
 
   useEffect(() => {
@@ -17,7 +15,7 @@ export const UtkastRestore = () => {
       selectInndelinger(selectedInndelingerFromSessionStorage.inndelinger);
       setSelectedFylkeIds(selectedInndelingerFromSessionStorage.selectedFylkeIds);
     }
-  }, [selectInndelinger, setSelectedFylkeIds, user]);
+  }, [selectInndelinger, setSelectedFylkeIds]);
 
   return outlet;
 };

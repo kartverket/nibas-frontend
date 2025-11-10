@@ -15,8 +15,6 @@ import {
   useToast,
 } from "@kvib/react";
 import { publishUtkast } from "api/utkast";
-import { useAuthRenewError } from "components/Authentication/AuthRenewError";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { UnsavedEndringerCollapse } from "components/Endringslogg/UlagredeEndringer/UnsavedEndringerCollapse";
 import { useUnsavedEndringer } from "components/Endringslogg/hooks/useUnsavedEndringer";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -42,18 +40,16 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const toast = useToast();
   const { closeUtkast } = useUtkast();
   const [isLoading, setIsLoading] = useState(false);
-  const { token } = useAuthentication();
   const { setError } = useErrorHandling();
   const { mutate } = useSWRConfig();
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
   const { antallEndringer } = useUnsavedEndringer();
-  const { setAuthRenewError } = useAuthRenewError();
 
   const { clearInndelingerAndSources } = useInndelinger();
 
   const cleanUpUtkast = () => {
-    mutate(["/v1/utkast", token]);
+    mutate(["/v1/utkast"]);
 
     // Mutate alle ressurser som kan ha vært endret
     // revalidate: false gjør at grensedata er satt til undefined når man forsøker å hente grensene på nytt igjen
@@ -65,7 +61,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
   const publiserUtkast = async () => {
     setIsLoading(true);
 
-    const response = await publishUtkast(utkast.id, token);
+    const response = await publishUtkast(utkast.id);
     setIsLoading(false);
 
     if (statusCode.isSuccessful(response.status)) {
@@ -88,9 +84,6 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
         description:
           "Det oppstod en konflikt ved publisering av utkastet. Dette kan oppstå om to eller flere personer har jobbet samtidig på det samme utkastet, eller om utkastet allerede er publisert.\n\n Vennligst oppdater siden og forsøk publiseringen på nytt.",
       });
-    } else if (statusCode.isForbidden(response.status)) {
-      // antakelse om utløpt token
-      setAuthRenewError(true);
     } else {
       try {
         const wrapper = (await response.json()) as ApiErrorResponse;

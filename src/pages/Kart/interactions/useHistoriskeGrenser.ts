@@ -15,7 +15,6 @@ import { getTempFeatureId } from "./feature-id-utils";
 import { getGrensetypeFromInndelingtype } from "../../../hooks/layers/types";
 import { useInndelinger } from "../../../contexts/InndelingerContext/InndelingerContext";
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
-import { useAuthentication } from "../../../components/Authentication/useAuthentication";
 import { grenseStyles } from "../../../utils/map/layerStyles";
 import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
 const useHistoriskeGrenser = () => {
@@ -27,12 +26,10 @@ const useHistoriskeGrenser = () => {
   const { addHistoryEntry } = useHistory();
   const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoriskeGrenserStyles } = useFeatureStyle();
-  const auth = useAuthentication();
   const getHistoriskeGrenser = async (gyldigTilDate: string) => {
     clearHistoriskeGrenser();
     setHistoriskeGrenserIsLoading(true);
     setAllFeatures([]);
-    const token = auth.token;
     const inndelingstype = currentlyEditingInndelinger[0].inndelingtype;
     const inndelingsIds = currentlyEditingInndelinger
       .filter((i) => i.inndelingtype === inndelingstype)
@@ -45,7 +42,6 @@ const useHistoriskeGrenser = () => {
     const grenserFeatures = await historiskeGrenserFetcher(
       inndelingsIds,
       gyldigTilDate,
-      token,
       inndelingstype === "stemmekrets" ? "stemmekrets" : "grunnkrets",
     );
     const featureCollection: FeatureCollection = {

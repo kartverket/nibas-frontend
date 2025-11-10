@@ -23,9 +23,7 @@ import { statusCode } from "utils/api";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useMatch, useNavigate } from "react-router-dom";
 import { routes } from "utils/routes";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { useAuthRenewError } from "components/Authentication/AuthRenewError";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 
 type Props = {
@@ -38,9 +36,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
   const { closeUtkast } = useUtkast();
   const { mutate } = useUtkasts();
   const [isLoading, setIsLoading] = useState(false);
-  const { token } = useAuthentication();
   const { setError } = useErrorHandling();
-  const { setAuthRenewError } = useAuthRenewError();
   const navigate = useNavigate();
   const utkastPathMatch = useMatch(`${routes.utkast}/${routes.utkastId}`);
 
@@ -48,7 +44,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
 
   const slettUtkast = async () => {
     setIsLoading(true);
-    const response = await deleteUtkast(utkast.id, token);
+    const response = await deleteUtkast(utkast.id);
     setIsLoading(false);
 
     if (statusCode.isSuccessful(response.status)) {
@@ -59,9 +55,6 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
       if (utkastPathMatch) {
         navigate(routes.utkast);
       }
-    } else if (statusCode.isForbidden(response.status)) {
-      // antakelse om utløpt token
-      setAuthRenewError(true);
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });

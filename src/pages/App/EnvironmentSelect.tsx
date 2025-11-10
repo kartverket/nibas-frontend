@@ -1,5 +1,4 @@
 import { Spinner, Icon, IconButton } from "@kvib/react";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { getCurrentEnvironment, NibasOrigin } from "components/FeatureToggle";
 import { useState } from "react";
 import Select, { DropdownIndicatorProps, components, StylesConfig } from "react-select";
@@ -103,9 +102,7 @@ const selectWidth = 400;
 export const EnvironmentSelect = () => {
   const env = getCurrentEnvironment();
   const style = styles[env];
-  const { isAuthenticated } = useAuthentication();
-
-  const envSwitchEnabled = isAuthenticated && env !== "dev-e2e" && env !== "prod";
+  const envSwitchEnabled = env !== "dev-e2e" && env !== "prod";
   const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
 
   const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
@@ -181,23 +178,23 @@ export const EnvironmentSelect = () => {
   return (
     envSwitchEnabled === true && (
       <EnvironmentSelectContainer $color={style.color} $isOpen={environmentContainerOpen}>
-        {isLoading ? (
-          <Spinner size={"lg"} color="white" />
-        ) : (
-          <>
-            <StyledSelect
-              components={{ DropdownIndicator: CustomDropdownIndicator, IndicatorSeparator: null }}
-              styles={customStyles}
-              onChange={(option) => {
-                if (option) {
-                  onSelectEnvironment(option.value);
-                }
-              }}
-              value={selectedOption}
-              options={allEnvironmentOptions}
-              menuPlacement="top"
-              formatOptionLabel={mapToEnvironmentSelectOption}
-            />
+        <>
+          <StyledSelect
+            components={{ DropdownIndicator: CustomDropdownIndicator, IndicatorSeparator: null }}
+            styles={customStyles}
+            onChange={(option) => {
+              if (option) {
+                onSelectEnvironment(option.value);
+              }
+            }}
+            value={selectedOption}
+            options={allEnvironmentOptions}
+            menuPlacement="top"
+            formatOptionLabel={mapToEnvironmentSelectOption}
+          />
+          {isLoading ? (
+            <Spinner size={"lg"} color="white" />
+          ) : (
             <StyledIconButton
               $isOpen={environmentContainerOpen}
               aria-label={"lukk miljøvelger"}
@@ -206,8 +203,8 @@ export const EnvironmentSelect = () => {
               size={"sm"}
               onClick={onToggleEnvironmentSelectContainer}
             />
-          </>
-        )}
+          )}
+        </>
       </EnvironmentSelectContainer>
     )
   );

@@ -1,13 +1,11 @@
 import { useToast } from "@kvib/react";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import useSWRMutation from "swr/mutation";
 import { FeatureCollection } from "types/api";
 import { getUrlForPath, statusCode } from "utils/api";
 
 export const useKartlagUpload = () => {
-  const auth = useAuthentication();
   const toast = useToast();
-  const uploadFetcher = async (url: string, { arg }: { arg: { file: File; token: string } }) => {
+  const uploadFetcher = async (url: string, { arg }: { arg: { file: File } }) => {
     const sizeInMB = arg.file.size / 1024 ** 2;
     if (sizeInMB > 50) {
       throw new Error("Filstørrelsen kan ikke overstige 50MB per fil");
@@ -18,9 +16,6 @@ export const useKartlagUpload = () => {
 
     const response = await fetch(url, {
       method: "POST",
-      headers: {
-        Authorization: "Bearer " + arg.token,
-      },
       body: formData,
     });
 
@@ -54,7 +49,7 @@ export const useKartlagUpload = () => {
 
   const handleUpload = async (file: File): Promise<FeatureCollection | null> => {
     try {
-      const result = await uploadKartlag({ file, token: auth.token ?? "" });
+      const result = await uploadKartlag({ file });
       return result;
     } catch {
       return null;

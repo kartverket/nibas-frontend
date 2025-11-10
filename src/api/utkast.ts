@@ -1,54 +1,49 @@
 import { OppdaterUtkastRequest, OpprettUtkastRequest } from "types/api";
 import { getUrlForPath } from "utils/api";
 
-export const createUtkast = (utkast: OpprettUtkastRequest, token: string | undefined) => {
+export const createUtkast = (utkast: OpprettUtkastRequest) => {
   return fetch(getUrlForPath(`v1/utkast`), {
     method: "POST",
     body: JSON.stringify(utkast),
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
   });
 };
 
-export const updateUtkastApi = (id: string, utkast: OppdaterUtkastRequest, token?: string) => {
+export const updateUtkastApi = (id: string, utkast: OppdaterUtkastRequest) => {
   return fetch(getUrlForPath(`v1/utkast/${id}`), {
     method: "PUT",
     body: JSON.stringify(utkast),
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
   });
 };
 
-export const publishUtkast = (id: string, token: string | undefined) => {
+export const publishUtkast = (id: string) => {
   return fetch(getUrlForPath(`v1/utkast/${id}/publiser`), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
   });
 };
 
-export const deleteUtkast = (utkastId: string, token: string | undefined) => {
+export const deleteUtkast = (utkastId: string) => {
   return fetch(getUrlForPath(`v1/utkast/${utkastId}`), {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
   });
 };
 
-export const genererRettetUtkast = (antall: number, token: string | undefined) => {
+export const genererRettetUtkast = (antall: number) => {
   return fetch(getUrlForPath(`v1/create-rettet-utkast/generer?antall=${antall}`), {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer " + token,
     },
   });
 };
