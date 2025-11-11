@@ -1,8 +1,7 @@
 import useSWR, { BareFetcher, SWRConfiguration } from "swr";
 import { ApiPath } from "types/api";
 import { paths } from "types/api-gen";
-import { fetcherWithToken } from "utils/api";
-import { useAuthentication } from "components/Authentication/useAuthentication";
+import { fetchUrl } from "utils/api";
 
 // hvis pathen eksponererer et get-kall med path-parametere, returner typen til disse
 type GetPathParameters<T extends ApiPath> = paths[T] extends {
@@ -101,11 +100,9 @@ const useNibasApi = <Path extends ApiPath>(
       >
     | undefined,
 ) => {
-  const auth = useAuthentication();
-
   const urlWithOptionalParams = params ? getUrlWithParameters(url, params) : url;
 
-  return useSWR<ResponseType<Path>>([urlWithOptionalParams, auth.token], fetcherWithToken, swrOptions);
+  return useSWR<ResponseType<Path>>([urlWithOptionalParams], fetchUrl, swrOptions);
 };
 
 export default useNibasApi;
