@@ -47,6 +47,14 @@ handle {
     root * /srv
     try_files {path} /index.html
 
+    # En tag som targeter alle HTML-sider (uten filending). 
+    # Brukes for å unngå at siden blir cachet som skaper stale UI etter logout.
+    @htmlRoutes {
+        path_regexp htmlNoExt ^/(?:$|[^.].*)
+    }
+    header @htmlRoutes Cache-Control "no-cache, no-store, must-revalidate"
+    header @htmlRoutes Expires "0"
+
     # Start filserveren
     file_server
 
