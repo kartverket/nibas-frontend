@@ -3,20 +3,20 @@ import { useAuthentication } from "components/Authentication/useAuthentication";
 import { styled } from "styled-components";
 
 const LandingHeader = () => {
-  const { username, signOut } = useAuthentication();
+  const auth = useAuthentication();
 
   return (
     <Container>
       <Section>
         <Logo variant="horizontal" size={148} />
       </Section>
-      {username != null && username !== "localhost" && (
+      {auth != null && (
         <Flex gap={4} alignItems="center">
           <Flex gap="6px" alignItems="center">
             <LoginIcon icon="person" isFilled />
-            <Text fontSize={16}>{username}</Text>
+            <Text fontSize={16}>{auth.username}</Text>
           </Flex>
-          <Button variant="tertiary" aria-label="Logg ut" leftIcon="logout" onClick={signOut}>
+          <Button variant="tertiary" aria-label="Logg ut" leftIcon="logout" onClick={auth.signOut}>
             Logg ut
           </Button>
         </Flex>
