@@ -27,7 +27,6 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { ApiErrorResponse } from "types/api";
 import { statusCode } from "utils/api";
-import { useAuthentication } from "components/Authentication/useAuthentication";
 import { format } from "date-fns";
 
 type UtkastFormData = {
@@ -44,7 +43,6 @@ const UtkastOpprett = ({ onUtkastCreated }: UtkastOpprettProps) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const { token } = useAuthentication();
   const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
@@ -69,14 +67,11 @@ const UtkastOpprett = ({ onUtkastCreated }: UtkastOpprettProps) => {
 
   const opprettUtkast = async () => {
     setIsLoading(true);
-    const response = await createUtkast(
-      {
-        navn: getValues("navn"),
-        endringstype: getValues("endringstype"),
-        gyldigFra: getValues("gyldigFra"),
-      },
-      token,
-    );
+    const response = await createUtkast({
+      navn: getValues("navn"),
+      endringstype: getValues("endringstype"),
+      gyldigFra: getValues("gyldigFra"),
+    });
     setIsLoading(false);
 
     if (statusCode.isSuccessful(response.status)) {
@@ -95,7 +90,7 @@ const UtkastOpprett = ({ onUtkastCreated }: UtkastOpprettProps) => {
 
   const handleGenererUtkast = async () => {
     setIsGenerating(true);
-    const response = await genererRettetUtkast(5, token);
+    const response = await genererRettetUtkast(5);
     setIsGenerating(false);
 
     if (statusCode.isSuccessful(response.status)) {

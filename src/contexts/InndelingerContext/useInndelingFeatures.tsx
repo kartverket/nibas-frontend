@@ -14,8 +14,7 @@ import {
 } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { paths } from "types/api-gen";
-import { fetcherWithToken } from "utils/api";
-import { useAuthentication } from "components/Authentication/useAuthentication";
+import { fetchUrl } from "utils/api";
 import useSWR from "swr";
 import { getRepresentasjonspunktId } from "utils/map/source";
 import { inndelingResponseNavnToString } from "utils/language/language";
@@ -73,22 +72,16 @@ type InndelingWithFeatureCollection = {
   inndelinger: PotentialInndelingResponse;
 };
 
-const inndelingWithGrenseFetcher = async ([inndelinger, gyldighetsdato, token]: [
-  Inndeling[],
-  string | undefined,
-  string | undefined,
-]) => {
+const inndelingWithGrenseFetcher = async ([inndelinger, gyldighetsdato]: [Inndeling[], string | undefined]) => {
   const promises: Promise<InndelingWithFeatureCollection>[] = inndelinger.map(async (inndeling) => {
     const grenserUrl = getGrenserRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
-    const geoJSONFeatures = await fetcherWithToken([
+    const geoJSONFeatures = await fetchUrl([
       getUrlWithParameters<typeof grenserUrl>(grenserUrl, { id: inndeling.id, gyldighetsdato }),
-      token,
     ]);
 
     const inndelingUrl = getInndelingRequestUrl(inndeling.inndelingtype, inndeling.isEditing);
-    const inndelingerResponses = await fetcherWithToken([
+    const inndelingerResponses = await fetchUrl([
       getUrlWithParameters<typeof inndelingUrl>(inndelingUrl, { id: inndeling.id, gyldighetsdato }),
-      token,
     ]);
 
     return {
@@ -103,13 +96,11 @@ const inndelingWithGrenseFetcher = async ([inndelinger, gyldighetsdato, token]: 
 };
 
 const useInndelingerFeatures = (inndelinger: Inndeling[], gyldighetsdato?: string) => {
-  const auth = useAuthentication();
-
   // Ikke blodfan av å bruke hele inndelinger som key. Kommer essensielt aldri til å cache noe
   // Det er nok ikke superofte man trenger å hente inn inndelinger så lastetid er ikke kriiise, men det er ikke nice heller
   // En utfordring her er at inndelinger blir keyen - det vil si at cachen er bare inndeling-id. Om 2 endepunkter bruke inndeling-ID
   // som en del av URL så kan man risikere bugs ved at de har samme cache-key
-  return useSWR(inndelinger.length > 0 ? [inndelinger, gyldighetsdato, auth.token] : null, inndelingWithGrenseFetcher);
+  return useSWR(inndelinger.length > 0 ? [inndelinger, gyldighetsdato] : null, inndelingWithGrenseFetcher);
 };
 
 type InndelingWithFeatures = {

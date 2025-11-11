@@ -199,9 +199,9 @@ export interface paths {
     /** Henter fylke med gitt id */
     get: operations["hentFylke_1"];
   };
-  "/v1/authz/status": {
-    /** Henter status for autorisering */
-    get: operations["getStatus"];
+  "/v1/auth/user": {
+    /** Henter informasjon om innlogget bruker. Dette hentes fra headere satt av ztoperator */
+    get: operations["getUser"];
   };
 }
 
@@ -1095,9 +1095,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
+      valid?: boolean;
       /** Format: double */
       m?: number;
-      valid?: boolean;
       coordinate?: unknown;
     };
     InndelingSearchResponse: {
@@ -1417,9 +1417,9 @@ export interface components {
        */
       version: number;
     };
-    AuthZStatusResponse: {
-      /** @description Status for autorisering */
-      authorized: boolean;
+    User: {
+      /** @description Fullt navn til innlogget bruker. */
+      username?: string;
     };
   };
 }
@@ -2967,25 +2967,19 @@ export interface operations {
       };
     };
   };
-  /** Henter status for autorisering */
-  getStatus: {
+  /** Henter informasjon om innlogget bruker. Dette hentes fra headere satt av ztoperator */
+  getUser: {
     responses: {
-      /** Bruker er autorisert */
+      /** Successful operation */
       200: {
         content: {
-          "application/json": components["schemas"]["AuthZStatusResponse"];
+          "application/json": components["schemas"]["User"];
         };
       };
       /** Bad Request */
       400: {
         content: {
           "*/*": { [key: string]: unknown };
-        };
-      };
-      /** Bruker er ikke autorisert */
-      403: {
-        content: {
-          "application/json": components["schemas"]["AuthZStatusResponse"];
         };
       };
     };
