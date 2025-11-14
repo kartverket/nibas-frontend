@@ -52,14 +52,12 @@ export const getUrlForPath = (path: string): string => {
   return `${baseUrl}/${path}`;
 };
 
-export const fetcherWithToken = async ([url, token]: [string | null, string | undefined]) => {
+export const fetchUrl = async ([url]: [string | null]) => {
   if (url == null) {
     return;
   }
 
-  const res = await fetch(getUrlForPath(url), {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+  const res = await fetch(getUrlForPath(url));
 
   if (!res.ok) {
     throw new ResponseError("Fikk ikke hentet data.", res);

@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { clearMatrikkelLayer } from "utils/map/layers";
 import { addFeaturesToSource } from "utils/map/source";
 import { resetMapView } from "utils/map/useMap";
-import { useAuthentication } from "../../../../components/Authentication/useAuthentication";
 import { useMatrikkelGrenser } from "../hooks/useMatrikkelGrenser";
 import {
   AvvikForKommune,
@@ -24,7 +23,6 @@ import { avvikUpdateStatus, useAvvikForKommunePar, useKommuneParMedAvvik } from 
 export const useAvvikPanel = () => {
   const { closeOverlayPanel, activeOverlayModal } = useOverlayPanel();
   const toast = useToast();
-  const { token } = useAuthentication();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const {
     selectInndelinger,
@@ -46,14 +44,13 @@ export const useAvvikPanel = () => {
   const { data: kommuneParMedAvvikRaw, isLoading: isLoadingKommuneParMedAvvik } = useKommuneParMedAvvik(
     selectedKommuner == null || selectedKommuner.length === 0,
     currentPage,
-    token,
   );
 
   const {
     data: avvikDataRaw,
     isLoading: isLoadingAvvik,
     mutate: mutateAvvikData,
-  } = useAvvikForKommunePar(selectedKommuneIds, token);
+  } = useAvvikForKommunePar(selectedKommuneIds);
 
   // Her henter vi kun grenser for den ene kommunen.
   // Det holder i denne konteksten (det er gitt at de er naboer) siden settet med den ene kommunen sine grenser alltid vil inneholde de grensene den deler med den andre kommunen.
@@ -63,7 +60,6 @@ export const useAvvikPanel = () => {
     isError,
   } = useMatrikkelGrenser(
     selectedKommuner != null && selectedKommuner.length === 2,
-    token,
     selectedKommuner?.[0]?.nummer ?? "",
   );
 
@@ -106,7 +102,7 @@ export const useAvvikPanel = () => {
     );
 
     mutateAvvikData(optimistiskeData, false);
-    const success = await avvikUpdateStatus(updates, token);
+    const success = await avvikUpdateStatus(updates);
     mutateAvvikData();
     return success?.ok ? true : false;
   };
