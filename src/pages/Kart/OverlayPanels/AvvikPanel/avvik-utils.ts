@@ -3,6 +3,7 @@ import { KommuneResponse } from "types/api";
 import { components } from "types/api-gen-arbeidsliste";
 
 export type KommuneParMedAvvik = components["schemas"]["KommuneParAvvikDTO"];
+export type KommuneMedAvvik = components["schemas"]["KommuneAvvikDTO"];
 export type PaginationInfo = components["schemas"]["Page"];
 export type PageableObject = components["schemas"]["PageableObject"];
 export type SortObject = components["schemas"]["SortObject"];
@@ -52,6 +53,7 @@ export enum AvvikStatus {
 }
 
 type handleGotoKommuneParType = (kommuneParMedAvvikItem: KommuneParMedAvvik) => void;
+type handleGotoKommuneType = (kommuneLokalID: string, fylkesLokalID: string) => void;
 
 export type AvvikPanelProps = {
   isLoadingKommuneParMedAvvik: boolean;
@@ -59,11 +61,15 @@ export type AvvikPanelProps = {
   selectedKommuner: KommuneResponse[] | undefined;
   avvikData: AvvikForKommuneResponse | undefined;
   kommuneParMedAvvikData: KommuneParMedAvvik[];
+  kommunerMedAvvikData: KommuneMedAvvik[];
   pagination: PaginationInfo | null;
   currentPage: number;
   setCurrentPage: (page: number) => void;
   resetAvvikPanel: () => void;
   handleGotoKommunePar: handleGotoKommuneParType;
+  handleGotoKommune: handleGotoKommuneType;
+  grensetypeFilter: "kommuneFylke" | "riksgrense";
+  setGrensetypeFilter: (filter: "kommuneFylke" | "riksgrense") => void;
 };
 
 export interface AvvikRowKommunerProps {
