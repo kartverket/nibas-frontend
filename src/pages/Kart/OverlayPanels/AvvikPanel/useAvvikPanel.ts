@@ -16,7 +16,13 @@ import {
   AvvikStatus,
   KommuneParMedAvvik,
 } from "./avvik-utils";
-import { avvikUpdateStatus, useAvvikForKommunePar, useKommuneParMedAvvik } from "./useAvvik";
+import {
+  avvikUpdateStatus,
+  useAvvikForKommune,
+  useAvvikForKommunePar,
+  useKommuneParMedAvvik,
+  useKommunerMedAvvik,
+} from "./useAvvik";
 
 // Akkurat nå skjer alt i denne hooken som useEffect.
 // Ikke helt optimalt da hele oppførselen bare er en rekke dependency-triggers som er litt vrient å håndtere.
@@ -35,22 +41,54 @@ export const useAvvikPanel = () => {
   } = useInndelinger();
   const [selectedInndelinger, setSelectedInndelinger] = useState<Inndeling[]>(getAllInndelinger());
   const [selectedKommuneIds, setSelectedKommuneIds] = useState<string[]>([]);
+  const [grensetypeFilter, setGrensetypeFilter] = useState<"kommuneFylke" | "riksgrense">("kommuneFylke");
 
   const { data: selectedKommuner } = useKommunerByIds(selectedKommuneIds, gyldighetsdato);
 
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [selectedAvvikId, setSelectedAvvikId] = useState<number | null>(null);
 
+  // Convert filter to grensetyper array for API
+  const getGrensetypor = (): string[] | undefined => {
+    if (grensetypeFilter === "kommuneFylke") {
+      return ["Fylkesgrense", "Kommunegrense"];
+    }
+    if (grensetypeFilter === "riksgrense") {
+      return ["Riksgrense"];
+    }
+    return ["Fylkesgrense", "Kommunegrense"]; // default
+  };
+
+  const shouldFetchList = selectedKommuner == null || selectedKommuner.length === 0;
+  const isRiksgrenseFilter = grensetypeFilter === "riksgrense";
+
   const { data: kommuneParMedAvvikRaw, isLoading: isLoadingKommuneParMedAvvik } = useKommuneParMedAvvik(
-    selectedKommuner == null || selectedKommuner.length === 0,
+    shouldFetchList && !isRiksgrenseFilter,
     currentPage,
+    getGrensetypor(),
+  );
+
+  const { data: kommunerMedAvvikRaw, isLoading: isLoadingKommunerMedAvvik } = useKommunerMedAvvik(
+    shouldFetchList && isRiksgrenseFilter,
+    currentPage,
+    getGrensetypor(),
   );
 
   const {
-    data: avvikDataRaw,
-    isLoading: isLoadingAvvik,
-    mutate: mutateAvvikData,
-  } = useAvvikForKommunePar(selectedKommuneIds);
+    data: avvikDataRawPar,
+    isLoading: isLoadingAvvikPar,
+    mutate: mutateAvvikDataPar,
+  } = useAvvikForKommunePar(selectedKommuneIds, getGrensetypor());
+
+  const {
+    data: avvikDataRawSingle,
+    isLoading: isLoadingAvvikSingle,
+    mutate: mutateAvvikDataSingle,
+  } = useAvvikForKommune(selectedKommuneIds, getGrensetypor());
+
+  const avvikDataRaw = selectedKommuneIds.length === 1 ? avvikDataRawSingle : avvikDataRawPar;
+  const isLoadingAvvik = selectedKommuneIds.length === 1 ? isLoadingAvvikSingle : isLoadingAvvikPar;
+  const mutateAvvikData = selectedKommuneIds.length === 1 ? mutateAvvikDataSingle : mutateAvvikDataPar;
 
   // Her henter vi kun grenser for den ene kommunen.
   // Det holder i denne konteksten (det er gitt at de er naboer) siden settet med den ene kommunen sine grenser alltid vil inneholde de grensene den deler med den andre kommunen.
@@ -58,14 +96,23 @@ export const useAvvikPanel = () => {
     features,
     isLoading: isLoadingMatrikkelGrenser,
     isError,
-  } = useMatrikkelGrenser(
-    selectedKommuner != null && selectedKommuner.length === 2,
-    selectedKommuner?.[0]?.nummer ?? "",
-  );
+  } = useMatrikkelGrenser(selectedKommuner != null && selectedKommuner.length > 0, selectedKommuner?.[0]?.nummer ?? "");
 
   const kommuneParMedAvvikData = kommuneParMedAvvikRaw?.content ?? [];
-  const pagination =
-    kommuneParMedAvvikRaw != null
+  const kommunerMedAvvikData = kommunerMedAvvikRaw?.content ?? [];
+
+  const pagination = isRiksgrenseFilter
+    ? kommunerMedAvvikRaw != null
+      ? {
+          totalPages: kommunerMedAvvikRaw.totalPages,
+          totalElements: kommunerMedAvvikRaw.totalElements,
+          size: kommunerMedAvvikRaw.size,
+          number: kommunerMedAvvikRaw.number,
+          first: kommunerMedAvvikRaw.first,
+          last: kommunerMedAvvikRaw.last,
+        }
+      : null
+    : kommuneParMedAvvikRaw != null
       ? {
           totalPages: kommuneParMedAvvikRaw.totalPages,
           totalElements: kommuneParMedAvvikRaw.totalElements,
@@ -76,10 +123,12 @@ export const useAvvikPanel = () => {
         }
       : null;
 
+  const isLoadingList = isRiksgrenseFilter ? isLoadingKommunerMedAvvik : isLoadingKommuneParMedAvvik;
+
   const avvikData = avvikDataRaw?.sort((a, b) => b.antallKoordinaterMedAvvik - a.antallKoordinaterMedAvvik);
 
   useEffect(() => {
-    if (selectedKommuneIds == null || selectedKommuneIds.length !== 2) {
+    if (selectedKommuneIds == null || selectedKommuneIds.length === 0) {
       return;
     }
     if (features.length > 0) {
@@ -88,7 +137,7 @@ export const useAvvikPanel = () => {
     } else if (!isLoadingMatrikkelGrenser && isError) {
       toast({
         status: "error",
-        title: "Klarte ikke å hente inn teiggrenser for kommunene",
+        title: "Klarte ikke å hente inn teiggrenser for kommunen(e)",
       });
     }
   }, [features, isLoadingMatrikkelGrenser, isError, toast, selectedKommuneIds]);
@@ -108,7 +157,7 @@ export const useAvvikPanel = () => {
   };
 
   useEffect(() => {
-    if (selectedKommuner == null || selectedKommuner.length !== 2) {
+    if (selectedKommuner == null || selectedKommuner.length === 0) {
       return;
     }
 
@@ -187,22 +236,31 @@ export const useAvvikPanel = () => {
     setSelectedKommuneIds([kommune1.kommuneLokalID ?? "", kommune2.kommuneLokalID ?? ""]);
   };
 
+  const handleGotoKommune = async (kommuneLokalID: string, fylkesLokalID: string) => {
+    setSelectedFylkeIds([fylkesLokalID]);
+    setSelectedKommuneIds([kommuneLokalID]);
+  };
+
   const avvikRowProps: AvvikRowProps = {
     selectedAvvikId,
     setSelectedAvvikId,
     updateStatus,
   };
   const avvikPanelProps: AvvikPanelProps = {
-    isLoadingKommuneParMedAvvik,
+    isLoadingKommuneParMedAvvik: isLoadingList,
     isLoadingAvvik,
     selectedKommuner,
     avvikData,
     kommuneParMedAvvikData,
+    kommunerMedAvvikData,
     pagination,
     currentPage,
     setCurrentPage,
     resetAvvikPanel,
     handleGotoKommunePar,
+    handleGotoKommune,
+    grensetypeFilter,
+    setGrensetypeFilter,
   };
   const avvikRowKommunerProps: AvvikRowKommunerProps = {
     kommuneParMedAvvikItem: {} as KommuneParMedAvvik,
