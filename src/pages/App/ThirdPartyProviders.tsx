@@ -12,12 +12,12 @@ const swrGlobalConfig = {
   revalidateOnFocus: false,
 };
 
-const customTheme = extendTheme(withDefaultColorScheme({ colorScheme: "green" }), defaultKvibTheme);
+const customTheme = extendTheme(withDefaultColorScheme({ colorScheme: "blue" }), defaultKvibTheme);
 
 const defaultToastOptions: UseToastOptions = {
   position: "top",
   isClosable: true,
-  duration: 4000,
+  duration: 5000,
   containerStyle: {
     marginTop: "24px",
   },
