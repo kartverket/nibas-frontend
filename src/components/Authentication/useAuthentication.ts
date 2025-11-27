@@ -9,6 +9,7 @@ type UseAuthenticationReturnType = {
 export const useAuthentication = (): UseAuthenticationReturnType => {
   const isAuthEnabled = import.meta.env.VITE_ENVIRONMENT_LOCALHOST !== "localhost";
   const { data: userInfo } = useNibasApi("/v1/auth/user");
+  console.log("hei");
 
   return isAuthEnabled
     ? {
