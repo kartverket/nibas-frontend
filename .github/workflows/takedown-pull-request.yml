@@ -67,9 +67,8 @@ jobs:
               return;
             }
 
-            await github.rest.repos.createDeploymentStatus({
+            await github.rest.repos.deleteDeployment({
               owner,
               repo,
               deployment_id: data[0].id,
-              state: "inactive"
             });
