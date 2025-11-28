@@ -52,7 +52,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const ref = ${{ needs.determine-branch-name.outputs.BRANCH_NAME }};
+            const ref = '${{ needs.determine-branch-name.outputs.BRANCH_NAME }}';
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
