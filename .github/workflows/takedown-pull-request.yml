@@ -72,9 +72,3 @@ jobs:
               repo,
               deployment_id: data[0].id,
             });
-
-            await github.rest.repos.deleteAnEnvironment({
-              owner,
-              repo,
-              environment_name: `nibas-${{ needs.determine-branch-name.outputs.BRANCH_NAME }}`
-            });
