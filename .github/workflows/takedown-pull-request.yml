@@ -41,6 +41,7 @@ jobs:
       identity: nibas
 
   deactivate-deployment:
+    needs: [takedown-pull-request]
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     permissions:
@@ -51,7 +52,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const ref = context.payload.pull_request.head.sha;
+            const ref = ${{ needs.determine-branch-name.outputs.BRANCH_NAME }};
             const owner = context.repo.owner;
             const repo = context.repo.repo;
 
