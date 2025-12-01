@@ -14,13 +14,13 @@
     "react": "~18.3.1",
     "react-compiler-runtime": "^19.1.0-rc.3",
     "react-dom": "~18.3.1",
-    "react-hook-form": "~7.66.1",
+    "react-hook-form": "~7.67.0",
     "react-oidc-context": "^3.3.0",
     "react-router": "^7.9.6",
     "react-router-dom": "^7.9.6",
     "react-select": "^5.10.2",
     "styled-components": "^6.1.19",
-    "swr": "~2.3.6"
+    "swr": "~2.3.7"
   },
   "overrides": {
     "@grafana/faro-react": {
@@ -63,8 +63,8 @@
   },
   "devDependencies": {
     "@eslint/compat": "^2.0.0",
-    "@eslint-react/eslint-plugin": "^2.3.7",
-    "@eslint/eslintrc": "^3.3.1",
+    "@eslint-react/eslint-plugin": "^2.3.9",
+    "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.1",
     "@grafana/faro-react": "^1.19.0",
     "@testing-library/jest-dom": "~6.9.1",
@@ -76,8 +76,8 @@
     "@types/react": "~18.3.3",
     "@types/react-dom": "~18.3.0",
     "@types/styled-components": "^5.1.36",
-    "@typescript-eslint/eslint-plugin": "8.47.0",
-    "@typescript-eslint/parser": "8.47.0",
+    "@typescript-eslint/eslint-plugin": "8.48.0",
+    "@typescript-eslint/parser": "8.48.0",
     "@vitejs/plugin-react": "^5.1.1",
     "cross-env": "^10.1.0",
     "eslint": "~9.39.1",
@@ -93,15 +93,15 @@
     "jsdom": "^27.2.0",
     "msw": "~2.12.3",
     "postcss-styled-syntax": "^0.7.1",
-    "prettier": "^3.6.2",
-    "stylelint": "^16.26.0",
+    "prettier": "^3.7.3",
+    "stylelint": "^16.26.1",
     "stylelint-config-standard": "^39.0.1",
     "typescript": "~5.9.2",
     "vite": "^7.2.4",
     "vite-plugin-checker": "^0.11.0",
     "vite-plugin-eslint": "^1.8.1",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^4.0.13"
+    "vitest": "^4.0.14"
   },
   "prettier": {
     "printWidth": 120
