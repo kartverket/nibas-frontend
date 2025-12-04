@@ -18,6 +18,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { useCallback } from "react";
 
 const Form = styled.form`
   display: flex;
@@ -171,18 +172,18 @@ const MergePanel = () => {
     setValue("nummer", selectedStemmekrets?.nummer ?? "");
   };
 
-  const getExistingStemmekretsnummere: () => string[] = () => {
+  const stemmekretsValue = watch("stemmekrets");
+  const nummerTilSammenslaaingValue = watch("nummerTilSammenslaaing");
+  const getExistingStemmekretsnummere = useCallback(() => {
     return utkastStemmekretser
       ? utkastStemmekretser
           .filter(
             (stemmekrets) =>
-              ![watch("stemmekrets"), ...watch("nummerTilSammenslaaing").map((n) => n.value)].includes(
-                stemmekrets.nummer,
-              ),
+              ![stemmekretsValue, ...nummerTilSammenslaaingValue.map((n) => n.value)].includes(stemmekrets.nummer),
           )
           .map((inndeling) => inndeling.nummer)
       : [];
-  };
+  }, [stemmekretsValue, nummerTilSammenslaaingValue]);
 
   return (
     <SidePanel>
