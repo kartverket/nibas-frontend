@@ -18,6 +18,7 @@ import {
   KommuneEntry,
   NyGrenseDeleteEntry,
   MergeGrenseEntry,
+  BopliktomraadeEntry,
 } from "./types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
@@ -368,6 +369,10 @@ export const getStemmekretsMetadataEntries = (entries: HistoryEntry[]): Stemmekr
 
 export const getGrunnkretsMetadataEntries = (entries: HistoryEntry[]): GrunnkretsEntry[] => {
   return entries.filter((entry) => entry.type === "grunnkrets") as GrunnkretsEntry[];
+};
+
+export const getBopliktomraadeMetadataEntries = (entries: HistoryEntry[]): BopliktomraadeEntry[] => {
+  return entries.filter((entry) => entry.type === "bopliktomraade") as BopliktomraadeEntry[];
 };
 
 export const getKommuneMetadataEntries = (entries: HistoryEntry[]): KommuneEntry[] => {

@@ -66,6 +66,7 @@ export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource<Feature>>>
   edit: createVectorLayer("edit", editSource),
   measure: createVectorLayer("measure", measureSource),
   historical: createVectorLayer("historical"),
+  bopliktomraade: createVectorLayer("bopliktomraade"),
 };
 
 export const highlightStrokeSource = new VectorSource();
