@@ -1,6 +1,6 @@
 import { Button, ButtonGroup, Divider, Link, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
-import { BaseInndeling, INNDELINGTYPER } from "contexts/InndelingerContext/InndelingerContext";
+import { BaseInndeling, Inndelingtype, INNDELINGTYPER } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
@@ -37,6 +37,11 @@ const InndelingerPanel = () => {
     activePanelFylkeId != null,
   );
 
+  const isInndelingtypeDisabledForEditing = (inndelingtype: Inndelingtype) => {
+    const DISABLED_FOR_EDITING_INNDELINGTYPER = ["bopliktomraade"];
+    return DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype) && isEditingPanel;
+  };
+
   return (
     <Modal isOpen={true} onClose={resetInndelingerPanel} scrollBehavior="inside">
       <ModalOverlay />
@@ -56,6 +61,7 @@ const InndelingerPanel = () => {
             <InndelingerList>
               {INNDELINGTYPER.map((inndelingtype) => (
                 <InndelingOption
+                  isDisabled={isInndelingtypeDisabledForEditing(inndelingtype)}
                   key={inndelingtype}
                   isActive={selectedInndelingtype === inndelingtype}
                   onClick={() => selectInndelingtype(inndelingtype)}
