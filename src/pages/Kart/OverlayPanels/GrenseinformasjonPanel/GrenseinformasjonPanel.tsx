@@ -16,6 +16,8 @@ import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { SosiGrenseInformasjon } from "./SosiGrenseInformasjon";
+import { isBopliktGrense } from "utils/grenser";
+import { GrenseType } from "hooks/layers/types";
 
 const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
@@ -74,18 +76,23 @@ const GrenseinformasjonPanel = () => {
       ) : selectedFeature && selectedProperties ? (
         <GrensePanelContent>
           <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
-          <Divider />
-          <Card variant="filled">
-            <GrenseInfoExtraCardHeader>
-              <Heading size="md">Ytterligere informasjon</Heading>
-            </GrenseInfoExtraCardHeader>
-            <GrenseInfoExtraCardBody>
+
+          {isBopliktGrense(selectedProperties.type as GrenseType) ? null : (
+            <>
               <Divider />
-              <TilhorighetField feature={selectedFeature} isDisabled={isDisabled} />
-              <Divider />
-              <Vedtaksinformasjon feature={selectedFeature} />
-            </GrenseInfoExtraCardBody>
-          </Card>
+              <Card variant="filled">
+                <GrenseInfoExtraCardHeader>
+                  <Heading size="md">Ytterligere informasjon</Heading>
+                </GrenseInfoExtraCardHeader>
+                <GrenseInfoExtraCardBody>
+                  <Divider />
+                  <TilhorighetField feature={selectedFeature} isDisabled={isDisabled} />
+                  <Divider />
+                  <Vedtaksinformasjon feature={selectedFeature} />
+                </GrenseInfoExtraCardBody>
+              </Card>
+            </>
+          )}
         </GrensePanelContent>
       ) : (
         <GrensePanelContent>

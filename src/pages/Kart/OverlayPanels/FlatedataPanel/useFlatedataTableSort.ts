@@ -1,15 +1,26 @@
 import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { useState } from "react";
-import { GrunnkretsResponse, KommuneResponse, MetadataResponse, StemmekretsResponse } from "types/api";
+import {
+  BopliktomraadeResponse,
+  GrunnkretsResponse,
+  KommuneResponse,
+  MetadataResponse,
+  StemmekretsResponse,
+} from "types/api";
 import get from "lodash.get";
 
-type ResponseProperty = keyof KommuneResponse | keyof StemmekretsResponse | keyof GrunnkretsResponse;
+type ResponseProperty =
+  | keyof KommuneResponse
+  | keyof StemmekretsResponse
+  | keyof GrunnkretsResponse
+  | keyof BopliktomraadeResponse;
 
 interface PropertiesByInndelingtype extends Record<Inndelingtype, ResponseProperty[]> {
   fylke: (keyof KommuneResponse)[];
   kommune: (keyof KommuneResponse)[];
   stemmekrets: (keyof StemmekretsResponse)[];
   grunnkrets: (keyof GrunnkretsResponse)[];
+  bopliktomraade: (keyof BopliktomraadeResponse)[];
 }
 
 const propertiesByInndelingtype: PropertiesByInndelingtype = {
@@ -17,6 +28,7 @@ const propertiesByInndelingtype: PropertiesByInndelingtype = {
   kommune: ["nummer", "navn", "samiskforvaltningsomraade"],
   stemmekrets: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"],
   grunnkrets: ["nummer", "navn"],
+  bopliktomraade: ["delvisBoplikt", "forskriftsreferanse", "url", "informasjon"],
 };
 
 export const useFlatedataTableSort = (inndelingtype: Inndelingtype) => {
