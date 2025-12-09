@@ -39,36 +39,3 @@ jobs:
     with:
       branch-name: ${{ needs.determine-branch-name.outputs.BRANCH_NAME }}
       identity: nibas
-
-  deactivate-deployment:
-    needs: [takedown-pull-request]
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    permissions:
-      deployments: write
-      contents: read
-    steps:
-      - uses: actions/github-script@v8
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const ref = '${{ needs.determine-branch-name.outputs.BRANCH_NAME }}';
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-
-            const { data } = await github.rest.repos.listDeployments({
-              owner,
-              repo,
-              ref
-            });
-
-            if (data.length === 0) {
-              console.log("No deployments found for this PR.");
-              return;
-            }
-
-            await github.rest.repos.deleteDeployment({
-              owner,
-              repo,
-              deployment_id: data[0].id,
-            });
