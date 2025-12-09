@@ -46,7 +46,16 @@ const createSnapDataForSource = (
 };
 
 const isNibasgrense = (grense: GrenseId) => {
-  const nibasGrenser: GrenseId[] = ["archived", "edit", "fylke", "grunnkrets", "kommune", "nasjon", "stemmekrets"];
+  const nibasGrenser: GrenseId[] = [
+    "archived",
+    "edit",
+    "fylke",
+    "grunnkrets",
+    "kommune",
+    "nasjon",
+    "stemmekrets",
+    "bopliktomraade",
+  ];
   return nibasGrenser.includes(grense);
 };
 
@@ -157,6 +166,7 @@ export const createKartlagSnapsData = (
   kommune: createSnapDataForSource("kommune", activeModeTools, activeTool),
   grunnkrets: createSnapDataForSource("grunnkrets", activeModeTools, activeTool),
   stemmekrets: createSnapDataForSource("stemmekrets", activeModeTools, activeTool),
+  bopliktomraade: createSnapDataForSource("bopliktomraade", activeModeTools, activeTool),
   archived: createSnapDataForSource("archived", activeModeTools, activeTool),
   edit: createSnapDataForSource("edit", activeModeTools, activeTool),
   measure: createSnapDataForSource("measure", activeModeTools, activeTool),

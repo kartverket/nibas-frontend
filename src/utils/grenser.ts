@@ -12,6 +12,8 @@ export const isAdministrativGrense = (grenseType: GrenseType): boolean => {
   return administrativeGrenser.includes(grenseType);
 };
 
+export const isBopliktGrense = (grenseType: GrenseType): boolean => grenseType === "Bopliktgrense";
+
 export const isKommuneGrense = (grenseType: GrenseType): boolean => grenseType === "Kommunegrense";
 
 export const isFylkesGrense = (grenseType: GrenseType): boolean => grenseType === "Fylkesgrense";

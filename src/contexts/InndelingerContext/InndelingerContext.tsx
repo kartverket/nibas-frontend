@@ -27,7 +27,7 @@ import { addFeaturesToSource } from "utils/map/source";
 import { useMap } from "utils/map/useMap";
 import useInndelingFeatures from "./useInndelingFeatures";
 
-export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets"] as const;
+export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets", "bopliktomraade"] as const;
 export type Inndelingtyper = typeof INNDELINGTYPER;
 export type Inndelingtype = Inndelingtyper[number];
 
@@ -39,6 +39,8 @@ export const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
     case "stemmekrets":
     case "grunnkrets":
       return inndelingtype + "er";
+    case "bopliktomraade":
+      return inndelingtype + "r";
   }
 };
 

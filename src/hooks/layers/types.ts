@@ -27,7 +27,8 @@ export type GrenseId =
   | "edit"
   | "measure"
   | "historical"
-  | "sosiFiler";
+  | "sosiFiler"
+  | "bopliktomraade";
 
 export const GRENSETYPER = [
   "Kommunegrense",
@@ -39,8 +40,10 @@ export const GRENSETYPER = [
   "Delområdegrense",
   "Posisjon",
   "Stemmekretsgrense",
+  "Bopliktgrense",
   "GRUNNKRETS",
   "STEMMEKRETS",
+  "BOPLIKTOMRAADE",
 ] as const;
 
 export type GrenseType = (typeof GRENSETYPER)[number];
@@ -70,6 +73,9 @@ export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): Gr
     case "grunnkrets":
       return "Grunnkretsgrense";
 
+    case "bopliktomraade":
+      return "Bopliktgrense";
+
     default:
       break;
   }
@@ -89,6 +95,10 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
 
     case "Grunnkretsgrense":
       return "grunnkrets";
+
+    case "Bopliktgrense":
+      return "bopliktomraade";
+
     default:
       return undefined;
   }
