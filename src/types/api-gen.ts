@@ -98,6 +98,13 @@ export interface paths {
     /** Henter grensene til en kommune med gitt id */
     get: operations["hentGrenserForKommune"];
   };
+  "/v1/kommuner/{id}/bopliktomraader": {
+    /** Henter bopliktområdet som tilhører en kommune. */
+    get: operations["hentKommunesBopliktomraade"];
+  };
+  "/v1/kommuner/{id}/bopliktomraadegrenser": {
+    get: operations["hentKommunesBopliktomraadegrenser"];
+  };
   "/v1/kommuner/forFylker": {
     /** Henter alle kommuner i gitte fylker. */
     get: operations["hentKommunerForFylker"];
@@ -199,6 +206,27 @@ export interface paths {
     /** Henter fylke med gitt id */
     get: operations["hentFylke_1"];
   };
+  "/v1/ekstern/bopliktomraader": {
+    get: operations["hentAlleBopliktomraader"];
+  };
+  "/v1/ekstern/bopliktomraader/{id}": {
+    get: operations["hentBopliktomraade"];
+  };
+  "/v1/ekstern/bopliktomraader/{id}/grenser": {
+    /** Henter grensene til et bopliktområde med gitt id */
+    get: operations["hentGrenserForBopliktomraade"];
+  };
+  "/v1/bopliktomraader": {
+    get: operations["hentAlleBopliktomraader_1"];
+  };
+  "/v1/bopliktomraader/{id}": {
+    /** Henter bopliktomraade med gitt id */
+    get: operations["hentBopliktomraade_1"];
+  };
+  "/v1/bopliktomraader/{id}/grenser": {
+    /** Henter grensene til et bopliktområde med gitt id */
+    get: operations["hentGrenserForBopliktomraade_1"];
+  };
   "/v1/auth/user": {
     /** Henter informasjon om innlogget bruker. Dette hentes fra headere satt av ztoperator */
     get: operations["getUser"];
@@ -249,6 +277,30 @@ export interface components {
       common: unknown;
       commonGrense: unknown;
       dokumentasjonsreferanser: unknown;
+    };
+    /** @description Representasjon av et bopliktomraade */
+    BopliktomraadeRequest: {
+      /** @description Identifikasjon av bopliktomraade */
+      identifikasjon: components["schemas"]["Identifikasjon"];
+      /** @description Navnet til bopliktomraadet */
+      navn: string;
+      /** @description Nummeret til bopliktomraadet */
+      nummer: string;
+      /** @description Kommunenummeret bopliktomraadet tilhører til */
+      kommunenummer?: components["schemas"]["Kommunenummer"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+      /** @description informasjon om bopliktomraade */
+      informasjon?: string;
+      /** @description Indikrerer om bopliktomraadet dekker deler av kommunen eller ikke */
+      delvisBoplikt: boolean;
+      /** @description Referanse til forskriften for bopliktomraadet */
+      forskriftsreferanse?: string;
+      /** @description URL til kommunen sin informasjonside */
+      url?: string;
     };
     CommonGrenseMetadata: {
       /** @description Beskrivelse av kvaliteten på stedfestingen */
@@ -488,7 +540,7 @@ export interface components {
        * @description Hvilken kontekst geometrien skal sees i
        * @enum {string}
        */
-      type: "GRUNNKRETS" | "STEMMEKRETS";
+      type: "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE";
       /**
        * Format: int32
        * @description Teknisk versjon til referert objekt for å støtte samhandling og redigering
@@ -505,7 +557,14 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS"
+        | "BOPLIKTOMRAADE";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -552,6 +611,10 @@ export interface components {
       /** @description Endringer på stemmekrets. */
       stemmekretsendringer: {
         [key: string]: components["schemas"]["StemmekretsRequest"];
+      };
+      /** @description Endringer på bopliktomraade. */
+      bopliktomraadeendringer: {
+        [key: string]: components["schemas"]["BopliktomraadeRequest"];
       };
     };
     /** @description Wrapper-objekt rundt et JTS MultiPolygon. */
@@ -1025,7 +1088,14 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS"
+        | "BOPLIKTOMRAADE";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1071,6 +1141,50 @@ export interface components {
       /** @description Informasjon om grunnkretsen */
       informasjon?: string;
     };
+    /** @description Representasjon av et bopliktområde */
+    BopliktomraadeResponse: {
+      /** @description ID-en til bopliktområdet */
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Navnet til bopliktområdet */
+      navn: string;
+      /** @description Nummeret til bopliktområdet */
+      nummer: string;
+      /** @description Gyldighetsintervall for objektet */
+      gyldighet: components["schemas"]["GyldighetResponse"];
+      /**
+       * Format: date-time
+       * @description Siste oppdateringstidspunkt for objektet
+       */
+      oppdateringsdato: string;
+      /**
+       * Format: date-time
+       * @description Datafangstdato for objektet
+       */
+      datafangstdato?: string;
+      /** @description Kommunenummeret til bopliktområdet */
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      /** @description ID-en til kommunen bopliktområdet tilhører */
+      kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
+      /** @description Typen endring som ble gjort på objektet */
+      endringstype?: string;
+      /** @description Representasjonspunktet for bopliktområdet */
+      representasjonspunkt: components["schemas"]["Feature"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+      /** @description Tilleggsinformasjon om bopliktområdet */
+      informasjon?: string;
+      /** @description Om boplikten gjelder delvis innenfor området */
+      delvisBoplikt: boolean;
+      /** @description Forskriftsreferansen for bopliktområdet */
+      forskriftsreferanse?: string;
+      /** @description Lenke til mer informasjon */
+      url?: string;
+      /** @description Geometrien til bopliktområdet, dvs representasjonspunkt og flaten */
+      features: components["schemas"]["FeatureCollection"];
+    };
     KodelisteItem: {
       /** @description Id til kodeliste-innslaget. */
       id: string;
@@ -1107,7 +1221,14 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS"
+        | "BOPLIKTOMRAADE";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1294,6 +1415,7 @@ export interface components {
         | "Grunnkretsgrense"
         | "Delomraadegrense"
         | "Stemmekretsgrense"
+        | "Bopliktgrense"
         | "Soknegrense"
         | "Skolekretsgrense";
       /** @description Geometri for grensen (GeoJSON format) */
@@ -1410,6 +1532,42 @@ export interface components {
        */
       oppdateringsdato: string;
       /** @description Geometrien til fylket. Ikke grenser */
+      features: components["schemas"]["FeatureCollection"];
+      /**
+       * Format: int32
+       * @description Teknisk versjon for å støtte samhandling og redigering
+       */
+      version: number;
+    };
+    /** @description Representasjon av et bopliktområde */
+    EksternBopliktomraadeRespons: {
+      /** @description ID-en til bopliktområdet */
+      id: components["schemas"]["ObjektIdentifikator"];
+      /** @description Gyldighetsintervall for objektet */
+      gyldighet: components["schemas"]["GyldighetResponse"];
+      /** @description Typen endring som ble gjort på objektet */
+      endringstype?: string;
+      /**
+       * Format: date-time
+       * @description Siste oppdateringstidspunkt for objektet
+       */
+      oppdateringsdato: string;
+      /**
+       * Format: date-time
+       * @description Datafangstdato for objektet
+       */
+      datafangstdato?: string;
+      /** @description Kommunenummeret til bopliktområdet */
+      kommunenummer: components["schemas"]["Kommunenummer"];
+      /** @description Om boplikten gjelder delvis for området */
+      delvisBoplikt: boolean;
+      /** @description Tilleggsinformasjon om bopliktområdet */
+      informasjon?: string;
+      /** @description Forskriftsreferanse til boplikten */
+      forskriftsreferanse?: string;
+      /** @description URL til informasjon om boplikten */
+      url?: string;
+      /** @description Geometrien til bopliktområdet, dvs representasjonspunkt og flaten */
       features: components["schemas"]["FeatureCollection"];
       /**
        * Format: int32
@@ -2188,6 +2346,65 @@ export interface operations {
       };
     };
   };
+  /** Henter bopliktområdet som tilhører en kommune. */
+  hentKommunesBopliktomraade: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente bopliktområdet til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["BopliktomraadeResponse"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
+  hentKommunesBopliktomraadegrenser: {
+    parameters: {
+      path: {
+        /** ID til kommunen man vil hente bopliktomraadegrensene til */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for kommune (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
   /** Henter alle kommuner i gitte fylker. */
   hentKommunerForFylker: {
     parameters: {
@@ -2240,7 +2457,15 @@ export interface operations {
         /** Maksgrense for antall treff man ønsker seg */
         limit?: number;
         /** Hvilke typer inndelinger man ønsker å søke etter */
-        filter?: ("FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS")[];
+        filter?: (
+          | "FYLKE"
+          | "KOMMUNE"
+          | "NASJON"
+          | "GRUNNKRETS"
+          | "STEMMEKRETS"
+          | "SKOLEKRETS"
+          | "BOPLIKTOMRAADE"
+        )[];
       };
     };
     responses: {
@@ -2967,6 +3192,173 @@ export interface operations {
       };
     };
   };
+  hentAlleBopliktomraader: {
+    parameters: {
+      query: {
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["EksternBopliktomraadeRespons"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
+  hentBopliktomraade: {
+    parameters: {
+      path: {
+        id: string;
+      };
+      query: {
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["EksternBopliktomraadeRespons"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["EksternBopliktomraadeRespons"];
+        };
+      };
+    };
+  };
+  /** Henter grensene til et bopliktområde med gitt id */
+  hentGrenserForBopliktomraade: {
+    parameters: {
+      path: {
+        id: string;
+      };
+      query: {
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
+  hentAlleBopliktomraader_1: {
+    parameters: {
+      query: {
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** OK */
+      200: {
+        content: {
+          "application/json": components["schemas"]["EksternBopliktomraadeRespons"][];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+    };
+  };
+  /** Henter bopliktomraade med gitt id */
+  hentBopliktomraade_1: {
+    parameters: {
+      path: {
+        /** ID-en til bopliktomraadet man vil hente */
+        id: string;
+      };
+      query: {
+        /** Eventuell gyldighetsdato for bopliktomraadet (default = dagens dato */
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["BopliktomraadeResponse"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["BopliktomraadeResponse"];
+        };
+      };
+    };
+  };
+  /** Henter grensene til et bopliktområde med gitt id */
+  hentGrenserForBopliktomraade_1: {
+    parameters: {
+      path: {
+        id: string;
+      };
+      query: {
+        gyldighetsdato?: string;
+      };
+    };
+    responses: {
+      /** Successful operation */
+      200: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+      /** Bad Request */
+      400: {
+        content: {
+          "*/*": { [key: string]: unknown };
+        };
+      };
+      /** Not Found */
+      404: {
+        content: {
+          "application/json": components["schemas"]["FeatureCollection"];
+        };
+      };
+    };
+  };
   /** Henter informasjon om innlogget bruker. Dette hentes fra headere satt av ztoperator */
   getUser: {
     responses: {
@@ -2985,3 +3377,5 @@ export interface operations {
     };
   };
 }
+
+export interface external {}

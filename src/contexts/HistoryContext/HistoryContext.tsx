@@ -44,6 +44,9 @@ const onUndo = (entry: HistoryEntry) => {
         }),
       );
     }
+    case "bopliktomraade": {
+      throw new Error('Not implemented yet: "bopliktomraade" case');
+    }
     case "kommune": {
       return document.dispatchEvent(
         new CustomEvent("kommuneUndo", {
@@ -118,6 +121,9 @@ const onRedo = (entry: HistoryEntry) => {
           detail: { entry },
         }),
       );
+    }
+    case "bopliktomraade": {
+      throw new Error('Not implemented yet: "bopliktomraade" case');
     }
     case "kommune": {
       return document.dispatchEvent(

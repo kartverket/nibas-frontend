@@ -15,7 +15,7 @@ import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { FlatedataInputs } from "./flatedata-utils";
 import InputCell, { MerknadCell, TableCell } from "./FlatedataTableCells";
-import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
+import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
@@ -184,6 +184,7 @@ export const FlatedataTableRow = ({
           <MerknadCell
             isEditing={isEditing}
             isDisabled={disabledDate != null}
+            label="Samisk forvaltningsområde"
             data={getValues(`${inndelingId}.samiskforvaltningsomraade`) ?? inndeling.samiskforvaltningsomraade}
             validationError={
               inndelingErrors != null && "samiskforvaltningsomraade" in inndelingErrors
@@ -263,19 +264,44 @@ export const FlatedataTableRow = ({
             />
           )}
           {isStemmekretsInndeling(inndeling) && <TableCell>{inndeling.valgdistriktsnummer}</TableCell>}
+          {isBopliktomraadeInndeling(inndeling) && (
+            <>
+              <MerknadCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                label="Delvis boplikt"
+                data={getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt}
+                {...register(`${inndelingId}.delvisBoplikt`)}
+              />
+              <InputCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                data={getValues(`${inndelingId}.forskriftsreferanse`) ?? inndeling.forskriftsreferanse}
+                {...register(`${inndelingId}.forskriftsreferanse`)}
+              />
+              <InputCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                data={getValues(`${inndelingId}.url`) ?? inndeling.url}
+                {...register(`${inndelingId}.url`)}
+              />
+            </>
+          )}
           <InputCell
             isEditing={isEditing}
             isDisabled={disabledDate != null}
             data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
-          {!isKommuneInndeling(inndeling) && !isStemmekretsInndeling(inndeling) && (
-            <>
-              <td></td>
-              <td></td>
-              <td></td>
-            </>
-          )}
+          {!isKommuneInndeling(inndeling) &&
+            !isStemmekretsInndeling(inndeling) &&
+            !isBopliktomraadeInndeling(inndeling) && (
+              <>
+                <td></td>
+                <td></td>
+                <td></td>
+              </>
+            )}
           <td></td>
           <TableCell>
             <FremtidigEndringIcon

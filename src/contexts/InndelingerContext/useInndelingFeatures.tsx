@@ -28,6 +28,7 @@ type InndelingGrenserRequestPath = Pick<
   | "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser"
   | "/v1/kommuner/{id}/stemmekretsgrenser"
   | "/v1/kommuner/{id}/grunnkretsgrenser"
+  | "/v1/kommuner/{id}/bopliktomraadegrenser"
 >;
 
 const getGrenserRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean): keyof InndelingGrenserRequestPath => {
@@ -49,6 +50,7 @@ type InndelingRequestPath = Pick<
   | "/v1/kommuner/{id}/inndelingerdeltgeometri"
   | "/v1/kommuner/{id}/stemmekretser"
   | "/v1/kommuner/{id}/grunnkretser"
+  | "/v1/kommuner/{id}/bopliktomraader"
 >;
 
 const getInndelingRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean): keyof InndelingRequestPath => {
@@ -58,6 +60,10 @@ const getInndelingRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean
 
   if (inndelingtype === "kommune") {
     return isEditing ? "/v1/kommuner/{id}/inndelingerdeltgeometri" : "/v1/kommuner/{id}";
+  }
+
+  if (inndelingtype === "bopliktomraade") {
+    return "/v1/kommuner/{id}/bopliktomraader";
   }
 
   return `/v1/kommuner/{id}/${inndelingtype}er`;
@@ -235,14 +241,14 @@ const featureHasInndelingAsTilhorighet = (feature: Feature, inndelinger: Inndeli
 };
 
 const getRelevanteInndelingerForTilhorighetstype = (
-  konteksttype: "GRUNNKRETS" | "STEMMEKRETS",
+  konteksttype: "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE",
   inndelinger: Inndeling[],
 ): Inndeling[] => {
   return inndelinger.filter((inndeling) => erRelevantInndelingForTilhorighetstype(konteksttype, inndeling));
 };
 
 const erRelevantInndelingForTilhorighetstype = (
-  konteksttype: "GRUNNKRETS" | "STEMMEKRETS",
+  konteksttype: "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE",
   inndeling: Inndeling,
 ): boolean => {
   switch (inndeling.inndelingtype) {
@@ -253,6 +259,8 @@ const erRelevantInndelingForTilhorighetstype = (
       return konteksttype === "STEMMEKRETS";
     case "grunnkrets":
       return konteksttype === "GRUNNKRETS";
+    case "bopliktomraade":
+      return konteksttype === "BOPLIKTOMRAADE";
   }
 };
 
