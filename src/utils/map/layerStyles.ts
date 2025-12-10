@@ -122,6 +122,7 @@ export const inndelingColors = {
   edit: "#000000",
   measure: "#000000",
   sosiFiler: "#1A532A",
+  bopliktomraade: "#FF6600",
 };
 
 export const grenseStyles = {
@@ -131,6 +132,7 @@ export const grenseStyles = {
   grunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"] }),
   stemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"] }),
   delomraade: lineAndPointStyles({ color: inndelingColors["delomraade"] }),
+  bopliktomraade: lineAndPointStyles({ color: inndelingColors["bopliktomraade"] }),
   edit: lineAndPointStyles({ color: inndelingColors["edit"] }),
   measure: lineAndPointStyles({ color: inndelingColors["measure"], dashed: true }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
@@ -152,6 +154,7 @@ export const grenseStyles = {
   archivedGrunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"], dashed: true }),
   archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"], dashed: true }),
   archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true }),
+  archivedBopliktomraade: lineAndPointStyles({ color: inndelingColors["bopliktomraade"], dashed: true }),
   sosiFiler: lineAndPointStyles({ color: inndelingColors["sosiFiler"] }),
 };
 
@@ -178,6 +181,10 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
     case "Stemmekretsgrense": {
       return archived ? grenseStyles.archivedStemmekrets : grenseStyles.stemmekrets;
     }
+    case "Bopliktgrense": {
+      return archived ? grenseStyles.archivedBopliktomraade : grenseStyles.bopliktomraade;
+    }
+    case "BOPLIKTOMRAADE":
     case "GRUNNKRETS":
     case "STEMMEKRETS": {
       return grenseStyles.flate;

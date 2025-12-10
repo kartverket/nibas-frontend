@@ -68,7 +68,10 @@ const Header = () => {
 
   useKeyboardShortcut("open", () => toggleOverlayModal(utkast ? "inndelinger" : "inndelinger-view"));
 
-  function getInndelingsTypeString(inndelingtype: "fylke" | "kommune" | "stemmekrets" | "grunnkrets", antall: number) {
+  function getInndelingsTypeString(
+    inndelingtype: "fylke" | "kommune" | "stemmekrets" | "grunnkrets" | "bopliktomraade",
+    antall: number,
+  ) {
     switch (inndelingtype) {
       case "fylke":
         return antall > 1 ? "fylkene" : "fylket";
@@ -78,6 +81,8 @@ const Header = () => {
         return "stemmekretser";
       case "grunnkrets":
         return "grunnkretser";
+      case "bopliktomraade":
+        return "bopliktomraader";
       default:
         return "";
     }

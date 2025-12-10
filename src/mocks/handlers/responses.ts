@@ -493,6 +493,7 @@ export const mockUtkast1: UtkastResponse = {
       kommuneendringer: {},
       grunnkretsendringer: {},
       stemmekretsendringer: {},
+      bopliktomraadeendringer: {},
     },
     grenseendringer: {
       endredeFeatures: [],
@@ -528,6 +529,7 @@ export const mockUtkast2: UtkastResponse = {
       kommuneendringer: {},
       grunnkretsendringer: {},
       stemmekretsendringer: {},
+      bopliktomraadeendringer: {},
     },
     grenseendringer: {
       endredeFeatures: [],

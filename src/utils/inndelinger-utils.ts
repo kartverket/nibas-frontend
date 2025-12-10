@@ -52,6 +52,13 @@ export function getStemmekretsNumberValidator<TForm extends Record<string, unkno
 }: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
   return getCommonInndelingNumberValidator("stemmekrets", 1, 4, shouldNotBeEqualWith, additionalValidation);
 }
+
+export function getBopliktomraadeNumberValidator<
+  TForm extends Record<string, unknown>,
+  TFieldName extends Path<TForm>,
+>({ shouldNotBeEqualWith, additionalValidation }: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
+  return getCommonInndelingNumberValidator("bopliktomraade", 1, 4, shouldNotBeEqualWith, additionalValidation);
+}
 export function getGrunnkretsNumberValidator<TForm extends Record<string, unknown>, TFieldName extends Path<TForm>>({
   shouldNotBeEqualWith,
   additionalValidation,
@@ -141,5 +148,8 @@ export const getNumberValidatorFunctionForInndelingType = <
       return getStemmekretsNumberValidator;
     case "grunnkrets":
       return getGrunnkretsNumberValidator;
+    case "bopliktomraade": {
+      return getBopliktomraadeNumberValidator;
+    }
   }
 };

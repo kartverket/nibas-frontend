@@ -5,6 +5,8 @@ declare global {
     testingGlobals: {
       map: Map;
     };
+    enableBopliktViewing?: () => void;
+    enableBopliktEditing?: () => void;
   }
 }
 

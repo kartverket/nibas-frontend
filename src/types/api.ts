@@ -23,13 +23,15 @@ export type GrunnkretsRequest = components["schemas"]["GrunnkretsRequest"];
 export type GrunnkretsResponse = components["schemas"]["GrunnkretsResponse"];
 export type StemmekretsResponse = components["schemas"]["StemmekretsResponse"];
 export type StemmekretsRequest = components["schemas"]["StemmekretsRequest"];
+export type BopliktomraadeRequest = components["schemas"]["BopliktomraadeRequest"];
 export type KommuneRequest = components["schemas"]["KommuneRequest"];
 export type KommuneResponse = components["schemas"]["KommuneResponse"];
 export type FylkeRequest = components["schemas"]["FylkeRequest"];
 export type FylkeResponse = components["schemas"]["FylkeResponse"];
 export type NasjonRequest = components["schemas"]["NasjonRequest"];
+export type BopliktomraadeResponse = components["schemas"]["BopliktomraadeResponse"];
 
-type KretsResponse = GrunnkretsResponse | StemmekretsResponse;
+type KretsResponse = GrunnkretsResponse | StemmekretsResponse | BopliktomraadeResponse;
 type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;
 export type FullInndelingResponse = KretsResponse | AdministrativEnhetResponse;
 export type SimpleInndelingResponse = components["schemas"]["InndelingResponse"];
@@ -58,8 +60,8 @@ export type ApiPath = keyof paths;
  * Metadata
  */
 
-export type MetadataRequest = KommuneRequest | StemmekretsRequest | GrunnkretsRequest;
-export type MetadataResponse = KommuneResponse | StemmekretsResponse | GrunnkretsResponse;
+export type MetadataRequest = KommuneRequest | StemmekretsRequest | GrunnkretsRequest | BopliktomraadeRequest;
+export type MetadataResponse = KommuneResponse | StemmekretsResponse | GrunnkretsResponse | BopliktomraadeResponse;
 export type AdministrativGrenseMetadata = components["schemas"]["AdministrativGrenseMetadata"];
 type AvtaltAvgrensningslinjeMetadata = components["schemas"]["AvtaltAvgrensningslinjeMetadata"];
 type GrunnlinjeMetadata = components["schemas"]["GrunnlinjeMetadata"];
