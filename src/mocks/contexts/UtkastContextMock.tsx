@@ -22,6 +22,7 @@ const utkast: UtkastResponse = {
       kommuneendringer: {},
       nasjonsendringer: {},
       stemmekretsendringer: {},
+      bopliktomraadeendringer: {},
     },
   },
   opprettetDato: "123",

@@ -31,10 +31,11 @@ type Props = {
   children: React.ReactNode;
   isActive: boolean;
   type: InndelingButtonType;
+  isDisabled?: boolean;
 };
 
-const InndelingOption = ({ onClick, rightIcon, children, isActive, type }: Props) => (
-  <InndelingButton isActive={isActive} variant="ghost" rightIcon={rightIcon} onClick={onClick}>
+const InndelingOption = ({ onClick, rightIcon, children, isActive, type, isDisabled }: Props) => (
+  <InndelingButton isActive={isActive} variant="ghost" rightIcon={rightIcon} onClick={onClick} isDisabled={isDisabled}>
     <CheckOrRadio type={type} isActive={isActive} />
     {children}
   </InndelingButton>

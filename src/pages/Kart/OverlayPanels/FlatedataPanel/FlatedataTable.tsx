@@ -1,22 +1,22 @@
 import { TabPanel } from "@kvib/react";
-import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
-import { styled } from "styled-components";
-import { useFlatedata } from "./useFlatedata";
-import { getIdFromEntity } from "utils/api";
-import { getNavnInSpraak } from "utils/language/language";
-import { capitalize } from "utils/string-utils";
-import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
-import FlatedataTableHeader from "./FlatedataTableHeader";
-import { useForm } from "react-hook-form";
-import { useEffect, useRef } from "react";
+import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
+import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { styled } from "styled-components";
+import { getIdFromEntity } from "utils/api";
+import { getInndelingFremtidigEndringDato } from "utils/features";
+import { getNavnInSpraak } from "utils/language/language";
+import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
+import { capitalize } from "utils/string-utils";
+import FlatedataTableHeader from "./FlatedataTableHeader";
 import { FlatedataTableRow } from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
-import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
-import EditAndSaveButton from "components/EditAndSaveButton";
-import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
-import { getInndelingFremtidigEndringDato } from "utils/features";
+import { useFlatedata } from "./useFlatedata";
+import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
 
 type Props = {
   mainInndeling: Inndeling;
@@ -140,6 +140,13 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <th></th>
                 <th></th>
               </>
+            ) : mainInndeling.inndelingtype === "bopliktomraade" ? (
+              <>
+                <FlatedataTableHeader text="Merknad" {...sortHeaderProps("delvisBoplikt")} />
+                <FlatedataTableHeader text="Forskriftsreferanse" {...sortHeaderProps("forskriftsreferanse")} />
+                <FlatedataTableHeader text="URL" {...sortHeaderProps("url")} />
+                <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
+              </>
             ) : (
               <></>
             )}
@@ -152,8 +159,8 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             const inndelingId = getIdFromEntity(inndeling);
 
             const isSearchMatch =
-              inndeling.nummer.includes(searchValue) ||
-              getNavnInSpraak(inndeling.navn, "nor").toLowerCase().includes(searchValue);
+              inndeling.nummer.includes(searchValue) === true ||
+              getNavnInSpraak(inndeling.navn, "nor").toLowerCase().includes(searchValue) === true;
             return (
               <FlatedataTableRow
                 key={inndelingId}
@@ -174,7 +181,12 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       <FlatedataFooter
         isEditing={isEditing}
         isDisabled={
-          allInndelingerHasFremtidigEndring || !utkast || !mainInndeling.isEditing || utkastHarSammenslaainger()
+          allInndelingerHasFremtidigEndring ||
+          !utkast ||
+          !mainInndeling.isEditing ||
+          utkastHarSammenslaainger() ||
+          // TODO: Fjernes når det er klart for å redigere bopliktområder
+          mainInndeling.inndelingtype === "bopliktomraade"
         }
         toggleEditing={toggleEditing}
         canSave={isDirty}
