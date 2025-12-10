@@ -4,6 +4,7 @@ import { BaseInndeling, Inndelingtype, INNDELINGTYPER } from "contexts/Inndeling
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
+import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
@@ -15,6 +16,8 @@ import useInndelingerPanel from "./useInndelingerPanel";
 const InndelingerPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
   const { gyldighetsdato } = useValgtGyldighetsdato();
+  const [bopliktomraadeViewingEnabled, setBopliktomraadeViewingEnabled] = useState(false);
+  const [bopliktomraadeEditingEnabled, setBopliktomraadeEditingEnabled] = useState(false);
 
   const {
     activePanelFylkeId,
@@ -37,9 +40,33 @@ const InndelingerPanel = () => {
     activePanelFylkeId != null,
   );
 
+  useEffect(() => {
+    window.enableBopliktViewing = () => {
+      setBopliktomraadeViewingEnabled(true);
+    };
+    window.enableBopliktEditing = () => {
+      setBopliktomraadeEditingEnabled(true);
+    };
+    return () => {
+      delete window.enableBopliktViewing;
+      delete window.enableBopliktEditing;
+    };
+  }, []);
+
   const isInndelingtypeDisabledForEditing = (inndelingtype: Inndelingtype) => {
-    const DISABLED_FOR_EDITING_INNDELINGTYPER = ["bopliktomraade"];
-    return DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype) && isEditingPanel;
+    if (inndelingtype === "bopliktomraade" && bopliktomraadeEditingEnabled) {
+      return false;
+    }
+    const DISABLED_FOR_EDITING_INNDELINGTYPER: string[] = ["bopliktomraade"];
+    return DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype);
+  };
+
+  const isInndelingtypeDisabledForViewing = (inndelingtype: Inndelingtype) => {
+    if (inndelingtype === "bopliktomraade" && bopliktomraadeViewingEnabled) {
+      return false;
+    }
+    const DISABLED_FOR_VIEWING_INNDELINGTYPER: string[] = ["bopliktomraade"];
+    return DISABLED_FOR_VIEWING_INNDELINGTYPER.includes(inndelingtype);
   };
 
   return (
@@ -61,7 +88,11 @@ const InndelingerPanel = () => {
             <InndelingerList>
               {INNDELINGTYPER.map((inndelingtype) => (
                 <InndelingOption
-                  isDisabled={isInndelingtypeDisabledForEditing(inndelingtype)}
+                  isDisabled={
+                    isEditingPanel
+                      ? isInndelingtypeDisabledForEditing(inndelingtype)
+                      : isInndelingtypeDisabledForViewing(inndelingtype)
+                  }
                   key={inndelingtype}
                   isActive={selectedInndelingtype === inndelingtype}
                   onClick={() => selectInndelingtype(inndelingtype)}
