@@ -6,6 +6,7 @@ import {
   KommuneRequest,
   KontekstEgenskaper,
   KretsDelingEndringRequest,
+  BopliktomraadeRequest,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
@@ -29,6 +30,7 @@ export type HistoryTypeValues =
   | "property"
   | "grunnkrets"
   | "stemmekrets"
+  | "bopliktomraade"
   | "kommune"
   | "utkast"
   | "stemmekretssammenslaaingsendring"
@@ -62,13 +64,14 @@ export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> 
 export type StemmekretsEntry = BaseHistoryEntry<"stemmekrets", StemmekretsRequest> & {
   kommuneId: string;
 };
+export type BopliktomraadeEntry = BaseHistoryEntry<"bopliktomraade", BopliktomraadeRequest>;
 export type KommuneEntry = BaseHistoryEntry<"kommune", KommuneRequest> & {
   fylkeId: string;
 };
 
 export type MergeGrenseModel = Feature<LineString>[];
 
-export type MetadataEntry = KommuneEntry | StemmekretsEntry | GrunnkretsEntry;
+export type MetadataEntry = KommuneEntry | StemmekretsEntry | GrunnkretsEntry | BopliktomraadeEntry;
 
 type UtkastEntry = BaseHistoryEntry<"utkast", UtkastRequestWithoutOperations>;
 

@@ -79,6 +79,9 @@ const getRequestFromInputs = (
       }
       return null;
     }
+    case "bopliktomraade": {
+      throw new Error('Not implemented yet: "bopliktomraade" case');
+    }
   }
 };
 

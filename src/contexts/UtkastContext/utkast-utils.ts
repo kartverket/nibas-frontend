@@ -14,6 +14,7 @@ import {
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
+  BopliktomraadeRequest,
   FeatureProperties,
   FylkeRequest,
   GrunnkretsRequest,
@@ -81,7 +82,7 @@ const reduceStemmekretssammenslaingsOperations = (
 const addKretsChangeToOperations = (
   operations: UtkastOperasjoner,
   entry: MetadataEntry,
-  endringerKey: "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer",
+  endringerKey: "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer" | "bopliktomraadeendringer",
 ): UtkastOperasjoner => {
   for (const change of entry.changes) {
     if (change.to != null && operations.metadataendringer[endringerKey] != null) {
@@ -323,6 +324,7 @@ export const createUtkastOperations = ({
   kommuneendringer = {},
   nasjonsendringer = {},
   stemmekretsendringer = {},
+  bopliktomraadeendringer = {},
   stemmekretssammenslaaingsendringer,
   kretsDelingEndringer = [],
 }: {
@@ -332,6 +334,7 @@ export const createUtkastOperations = ({
   kommuneendringer?: Record<string, KommuneRequest>;
   nasjonsendringer?: Record<string, NasjonRequest>;
   stemmekretsendringer?: Record<string, StemmekretsRequest>;
+  bopliktomraadeendringer?: Record<string, BopliktomraadeRequest>;
   stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
   kretsDelingEndringer?: KretsDelingEndringRequest[];
 }): UtkastOperasjoner => ({
@@ -344,6 +347,7 @@ export const createUtkastOperations = ({
     kommuneendringer,
     nasjonsendringer,
     stemmekretsendringer,
+    bopliktomraadeendringer,
   },
   stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
   kretsDelingEndringer: kretsDelingEndringer,
