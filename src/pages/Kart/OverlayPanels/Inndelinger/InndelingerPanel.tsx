@@ -1,10 +1,10 @@
 import { Button, ButtonGroup, Divider, Link, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
+import { useFlag } from "components/FeatureToggle";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { BaseInndeling, Inndelingtype, INNDELINGTYPER } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
-import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
@@ -16,8 +16,6 @@ import useInndelingerPanel from "./useInndelingerPanel";
 const InndelingerPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  const [bopliktomraadeViewingEnabled, setBopliktomraadeViewingEnabled] = useState(false);
-  const [bopliktomraadeEditingEnabled, setBopliktomraadeEditingEnabled] = useState(false);
 
   const {
     activePanelFylkeId,
@@ -40,33 +38,17 @@ const InndelingerPanel = () => {
     activePanelFylkeId != null,
   );
 
-  useEffect(() => {
-    window.enableBopliktViewing = () => {
-      setBopliktomraadeViewingEnabled(true);
-    };
-    window.enableBopliktEditing = () => {
-      setBopliktomraadeEditingEnabled(true);
-    };
-    return () => {
-      delete window.enableBopliktViewing;
-      delete window.enableBopliktEditing;
-    };
-  }, []);
+  const bopliktomraadeEditingEnabled = useFlag("BOPLIKTOMRADE_EDITING");
+  const bopliktomraadeViewingEnabled = useFlag("BOPLIKTOMRADE_VIEWING");
 
   const isInndelingtypeDisabledForEditing = (inndelingtype: Inndelingtype) => {
-    if (inndelingtype === "bopliktomraade" && bopliktomraadeEditingEnabled) {
-      return false;
-    }
-    const DISABLED_FOR_EDITING_INNDELINGTYPER: string[] = ["bopliktomraade"];
-    return DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype);
+    const DISABLED_FOR_EDITING_INNDELINGTYPER: string[] = [bopliktomraadeEditingEnabled ? "bopliktomraade" : ""];
+    return isEditingPanel && DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype);
   };
 
   const isInndelingtypeDisabledForViewing = (inndelingtype: Inndelingtype) => {
-    if (inndelingtype === "bopliktomraade" && bopliktomraadeViewingEnabled) {
-      return false;
-    }
-    const DISABLED_FOR_VIEWING_INNDELINGTYPER: string[] = ["bopliktomraade"];
-    return DISABLED_FOR_VIEWING_INNDELINGTYPER.includes(inndelingtype);
+    const DISABLED_FOR_VIEWING_INNDELINGTYPER: string[] = [bopliktomraadeViewingEnabled ? "bopliktomraade" : ""];
+    return !isEditingPanel && DISABLED_FOR_VIEWING_INNDELINGTYPER.includes(inndelingtype);
   };
 
   return (
@@ -89,9 +71,7 @@ const InndelingerPanel = () => {
               {INNDELINGTYPER.map((inndelingtype) => (
                 <InndelingOption
                   isDisabled={
-                    isEditingPanel
-                      ? isInndelingtypeDisabledForEditing(inndelingtype)
-                      : isInndelingtypeDisabledForViewing(inndelingtype)
+                    isInndelingtypeDisabledForEditing(inndelingtype) || isInndelingtypeDisabledForViewing(inndelingtype)
                   }
                   key={inndelingtype}
                   isActive={selectedInndelingtype === inndelingtype}
