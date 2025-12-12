@@ -16,7 +16,6 @@ import useInndelingerPanel from "./useInndelingerPanel";
 const InndelingerPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  const [bopliktomraadeViewingEnabled, setBopliktomraadeViewingEnabled] = useState(false);
   const [bopliktomraadeEditingEnabled, setBopliktomraadeEditingEnabled] = useState(false);
 
   const {
@@ -41,14 +40,10 @@ const InndelingerPanel = () => {
   );
 
   useEffect(() => {
-    window.enableBopliktViewing = () => {
-      setBopliktomraadeViewingEnabled(true);
-    };
     window.enableBopliktEditing = () => {
       setBopliktomraadeEditingEnabled(true);
     };
     return () => {
-      delete window.enableBopliktViewing;
       delete window.enableBopliktEditing;
     };
   }, []);
@@ -58,15 +53,7 @@ const InndelingerPanel = () => {
       return false;
     }
     const DISABLED_FOR_EDITING_INNDELINGTYPER: string[] = ["bopliktomraade"];
-    return DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype);
-  };
-
-  const isInndelingtypeDisabledForViewing = (inndelingtype: Inndelingtype) => {
-    if (inndelingtype === "bopliktomraade" && bopliktomraadeViewingEnabled) {
-      return false;
-    }
-    const DISABLED_FOR_VIEWING_INNDELINGTYPER: string[] = ["bopliktomraade"];
-    return DISABLED_FOR_VIEWING_INNDELINGTYPER.includes(inndelingtype);
+    return DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype) && isEditingPanel;
   };
 
   return (
@@ -88,11 +75,7 @@ const InndelingerPanel = () => {
             <InndelingerList>
               {INNDELINGTYPER.map((inndelingtype) => (
                 <InndelingOption
-                  isDisabled={
-                    isEditingPanel
-                      ? isInndelingtypeDisabledForEditing(inndelingtype)
-                      : isInndelingtypeDisabledForViewing(inndelingtype)
-                  }
+                  isDisabled={isInndelingtypeDisabledForEditing(inndelingtype)}
                   key={inndelingtype}
                   isActive={selectedInndelingtype === inndelingtype}
                   onClick={() => selectInndelingtype(inndelingtype)}
