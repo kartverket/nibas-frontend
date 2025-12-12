@@ -1,10 +1,5 @@
 import React from "react";
 
-// du kan override lokal verdi ved å opprette key i .env.local
-const getLocalEnvironmentOverride = (envKey: string) => {
-  return import.meta.env[envKey] === "true";
-};
-
 export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e" | "feature-branch";
 
 export enum NibasOrigin {
@@ -25,32 +20,34 @@ const environmentByUrl: Record<string, Environment> = {
 // noe som `type Keys = "flagg1" | "flagg2" | ...`
 // features som skal fjernes kan slettes fra denne listen
 // hvis det ikke er noen keys skal Keys være av typen `never`
-type Keys = "EKSEMPEL_TOGGLE";
+type Keys = "BOPLIKTOMRADE_VIEWING" | "BOPLIKTOMRADE_EDITING";
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
-  EKSEMPEL_TOGGLE: {
+  BOPLIKTOMRADE_VIEWING: {
     prod: false,
-    "dev-main": getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
-    "dev-e2e": getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
-    localhost: getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
-    "feature-branch": getLocalEnvironmentOverride("VITE_FEATURE_TOGGLE_EKSEMPEL"),
+    "dev-main": true,
+    "dev-e2e": true,
+    localhost: true,
+    "feature-branch": true,
+  },
+  BOPLIKTOMRADE_EDITING: {
+    prod: false,
+    "dev-main": false,
+    "dev-e2e": false,
+    localhost: true,
+    "feature-branch": false,
   },
 };
 
-// Hvis vi ikke er på en kjent og definert url antar vi at det er en feature-branch.
 export const getCurrentEnvironment = (): Environment => {
   const { origin } = window.location;
+  // Hvis vi ikke er på en kjent og definert url antar vi at det er en feature-branch.
+  // TODO: Dette kan være skummelt da man potensielt kan eksponere eksperimentelle features til ikke-feature-branch-miljøer ved endringer av origins.
   return environmentByUrl[origin] ?? "feature-branch";
 };
 
 export const featureEnabled = (key: Keys): boolean => {
   const environment = getCurrentEnvironment();
-  const { NODE_ENV } = import.meta.env;
-
-  // skru på alle toggles i test, for å sikre at tester kjører
-  if (NODE_ENV === "test") {
-    return true;
-  }
 
   if (!environment) {
     return false;
