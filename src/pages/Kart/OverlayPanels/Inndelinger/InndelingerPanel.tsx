@@ -42,12 +42,16 @@ const InndelingerPanel = () => {
   const bopliktomraadeViewingEnabled = useFlag("BOPLIKTOMRADE_VIEWING");
 
   const isInndelingtypeDisabledForEditing = (inndelingtype: Inndelingtype) => {
-    const DISABLED_FOR_EDITING_INNDELINGTYPER: string[] = [bopliktomraadeEditingEnabled ? "bopliktomraade" : ""];
+    const DISABLED_FOR_EDITING_INNDELINGTYPER: string[] = [
+      bopliktomraadeEditingEnabled === false ? "bopliktomraade" : "",
+    ];
     return isEditingPanel && DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype);
   };
 
   const isInndelingtypeDisabledForViewing = (inndelingtype: Inndelingtype) => {
-    const DISABLED_FOR_VIEWING_INNDELINGTYPER: string[] = [bopliktomraadeViewingEnabled ? "bopliktomraade" : ""];
+    const DISABLED_FOR_VIEWING_INNDELINGTYPER: string[] = [
+      bopliktomraadeViewingEnabled === false ? "bopliktomraade" : "",
+    ];
     return !isEditingPanel && DISABLED_FOR_VIEWING_INNDELINGTYPER.includes(inndelingtype);
   };
 
