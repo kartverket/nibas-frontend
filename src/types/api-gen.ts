@@ -33,14 +33,6 @@ export interface paths {
   "/v1/frontendlogger": {
     post: operations["logMelding"];
   };
-  "/v1/create-rettet-utkast/publiser-alle": {
-    /** Publiserer alle utkast med status OPPRETTET. */
-    post: operations["publiserAlleUtkast"];
-  };
-  "/v1/create-rettet-utkast/generer": {
-    /** Genererer utkast automatisk for kommunepar med avvik. Stopper når ønsket antall utkast er opprettet. */
-    post: operations["genererRettetUtkast"];
-  };
   "/v1/stemmekretser/{lokalid}/framtidigeversjoner": {
     /** Returnerer en liste av nåværende Stemmekrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
     get: operations["hentFramtidigeVersjonerForStemmekrets"];
@@ -557,7 +549,14 @@ export interface components {
        * @description Flatetypen som skal deles
        * @enum {string}
        */
-      flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS" | "BOPLIKTOMRAADE";
+      flatetype:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS"
+        | "BOPLIKTOMRAADE";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
     };
@@ -1081,7 +1080,14 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS" | "BOPLIKTOMRAADE";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS"
+        | "BOPLIKTOMRAADE";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1195,9 +1201,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
+      valid?: boolean;
       coordinate?: unknown;
     };
     InndelingSearchResponse: {
@@ -1207,7 +1213,14 @@ export interface components {
        * @description Flatetypen til inndelingen
        * @enum {string}
        */
-      type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS" | "BOPLIKTOMRAADE";
+      type:
+        | "FYLKE"
+        | "KOMMUNE"
+        | "NASJON"
+        | "GRUNNKRETS"
+        | "STEMMEKRETS"
+        | "SKOLEKRETS"
+        | "BOPLIKTOMRAADE";
       /** @description Navnet til inndelingen */
       navn: string;
       /** @description Nummeret til inndelingen */
@@ -1810,46 +1823,6 @@ export interface operations {
       };
     };
   };
-  /** Publiserer alle utkast med status OPPRETTET. */
-  publiserAlleUtkast: {
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": string;
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-    };
-  };
-  /** Genererer utkast automatisk for kommunepar med avvik. Stopper når ønsket antall utkast er opprettet. */
-  genererRettetUtkast: {
-    parameters: {
-      query: {
-        /** Antall utkast som skal genereres */
-        antall?: number;
-      };
-    };
-    responses: {
-      /** Successful operation */
-      200: {
-        content: {
-          "application/json": string;
-        };
-      };
-      /** Bad Request */
-      400: {
-        content: {
-          "*/*": { [key: string]: unknown };
-        };
-      };
-    };
-  };
   /** Returnerer en liste av nåværende Stemmekrets og eventuelt publiserte framtidige versjoner som matcher lokalid. */
   hentFramtidigeVersjonerForStemmekrets: {
     parameters: {
@@ -2436,7 +2409,15 @@ export interface operations {
         /** Maksgrense for antall treff man ønsker seg */
         limit?: number;
         /** Hvilke typer inndelinger man ønsker å søke etter */
-        filter?: ("FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "SKOLEKRETS" | "BOPLIKTOMRAADE")[];
+        filter?: (
+          | "FYLKE"
+          | "KOMMUNE"
+          | "NASJON"
+          | "GRUNNKRETS"
+          | "STEMMEKRETS"
+          | "SKOLEKRETS"
+          | "BOPLIKTOMRAADE"
+        )[];
       };
     };
     responses: {
@@ -3348,3 +3329,5 @@ export interface operations {
     };
   };
 }
+
+export interface external {}

@@ -18,7 +18,7 @@ import {
   FormErrorMessage,
   Datepicker,
 } from "@kvib/react";
-import { createUtkast, genererRettetUtkast } from "api/utkast";
+import { createUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
@@ -35,14 +35,9 @@ type UtkastFormData = {
   gyldigFra: string;
 };
 
-type UtkastOpprettProps = {
-  onUtkastCreated?: () => void;
-};
-
-const UtkastOpprett = ({ onUtkastCreated }: UtkastOpprettProps) => {
+const UtkastOpprett = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const toast = useToast();
   const navigate = useNavigate();
   const { setError } = useErrorHandling();
@@ -88,34 +83,11 @@ const UtkastOpprett = ({ onUtkastCreated }: UtkastOpprettProps) => {
     }
   };
 
-  const handleGenererUtkast = async () => {
-    setIsGenerating(true);
-    const response = await genererRettetUtkast(5);
-    setIsGenerating(false);
-
-    if (statusCode.isSuccessful(response.status)) {
-      const message = await response.text();
-      toast({ title: message, status: "success", duration: 5000 });
-      onUtkastCreated?.();
-    } else if (statusCode.isError(response.status)) {
-      const wrapper = (await response.json()) as ApiErrorResponse;
-      setError({
-        ...wrapper.errorDescription,
-        errorCode: wrapper.errorCode,
-      });
-    }
-  };
-
   return (
     <>
-      <ButtonGroup>
-        <Button onClick={onOpen} leftIcon="add">
-          Opprett et nytt utkast
-        </Button>
-        <Button leftIcon="refresh" variant="secondary" onClick={handleGenererUtkast} isLoading={isGenerating}>
-          Hent ferdig rettede utkast
-        </Button>
-      </ButtonGroup>
+      <Button onClick={onOpen} leftIcon="add">
+        Opprett et nytt utkast
+      </Button>
 
       <Modal isOpen={isOpen} onClose={handleCloseModal} size="4xl" isCentered>
         <ModalOverlay />
