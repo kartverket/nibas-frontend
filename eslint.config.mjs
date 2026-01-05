@@ -21,6 +21,9 @@ const compat = new FlatCompat({
 });
 
 export default [
+  {
+    ignores: ["src/types/api-gen.ts", "src/types/api-gen-arbeidsliste.ts"],
+  },
   ...fixupConfigRules(
     compat.extends(
       "eslint:recommended",
