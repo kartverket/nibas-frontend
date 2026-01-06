@@ -21,7 +21,7 @@ const sortUtkastByCreatedDesc = (a: UtkastResponse, b: UtkastResponse): number =
 
 const Utkast = () => {
   const { error, setError } = useErrorHandling();
-  const { data: utkasts, isLoading, mutate } = useUtkasts();
+  const { data: utkasts, isLoading } = useUtkasts();
   const resetMap = useMapReset();
 
   useEffect(() => {
@@ -64,7 +64,7 @@ const Utkast = () => {
           <Heading as="h1" size="lg">
             Upubliserte utkast
           </Heading>
-          <UtkastOpprett onUtkastCreated={mutate} />
+          <UtkastOpprett />
         </TitleContainer>
         {[leftColumn, rightColumn].map((column, i) => (
           <EndringstypeList key={i}>

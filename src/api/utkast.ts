@@ -38,12 +38,3 @@ export const deleteUtkast = (utkastId: string) => {
     },
   });
 };
-
-export const genererRettetUtkast = (antall: number) => {
-  return fetch(getUrlForPath(`v1/create-rettet-utkast/generer?antall=${antall}`), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-};
