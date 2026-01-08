@@ -1,0 +1,2 @@
+# Ignorer HEALTHCHECK - Vi har healthcheck på SKIP via applikasjonen, altså ikke docker.
+DS026
