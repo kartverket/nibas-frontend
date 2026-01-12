@@ -7,14 +7,11 @@ type UseAuthenticationReturnType = {
 } | null;
 
 export const useAuthentication = (): UseAuthenticationReturnType => {
-  const isAuthEnabled = import.meta.env.VITE_ENVIRONMENT_LOCALHOST !== "localhost";
   const { data: userInfo } = useNibasApi("/v1/auth/user");
 
-  return isAuthEnabled
-    ? {
-        username: userInfo?.username,
-        // eslint-disable-next-line react-compiler/react-compiler
-        signOut: () => (window.location.href = routes.logout),
-      }
-    : null;
+  return {
+    username: userInfo?.username,
+    // eslint-disable-next-line react-compiler/react-compiler
+    signOut: () => (window.location.href = routes.logout),
+  };
 };

@@ -52,6 +52,9 @@ export default defineConfig(({ mode }) => {
         "/v1": {
           target: "http://localhost:8080",
           changeOrigin: true,
+          headers: {
+            "X-Auth-Name": "Utvikler",
+          },
         },
         "/geoservergeo/wfs/matrikkel": {
           target:
