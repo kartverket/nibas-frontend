@@ -16,7 +16,7 @@ const useHoveredLineString = (enabled: boolean, shouldClearHover?: boolean) => {
 
   useEffect(() => {
     // Definerer timeout her slik at vi kan referere til den før den blir satt i koden
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     const setHoverState = (linestring: Feature<LineString> | null, vertex?: Coordinate) => {
       setHoveredLineString(linestring);
