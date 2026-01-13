@@ -25,7 +25,7 @@ const OverlayPopupContext = createContext<OverlayPopupContextValue | undefined>(
 export const OverlayPopupProvider = ({ children }: { children: ReactNode }) => {
   const [overlayPopupPosition, setOverlayPopupPosition] = useState<Coordinate>();
   const [overlayPopupContent, setOverlayPopupContent] = useState<ReactNode>();
-  const [timeout, timoutSet] = useState<NodeJS.Timeout>();
+  const [timeout, timoutSet] = useState<ReturnType<typeof setTimeout>>();
 
   const openOverlayPopup = (popupContent: ReactNode, position: Coordinate) => {
     clearTimeout(timeout);

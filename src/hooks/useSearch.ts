@@ -6,7 +6,7 @@ const useSearch = () => {
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (timer.current) {
+    if (timer.current !== null) {
       clearTimeout(timer.current);
       timer.current = null;
     }
@@ -17,7 +17,7 @@ const useSearch = () => {
     }, 300);
 
     return () => {
-      if (timer.current) {
+      if (timer.current !== null) {
         clearTimeout(timer.current);
         timer.current = null;
       }
