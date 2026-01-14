@@ -115,7 +115,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
     onSubmit,
     isDirty,
     formState,
-    watch,
   } = useGrenseinformasjonForm(feature);
   const toast = useToast();
   const featureId = feature.getId()?.toString();
@@ -123,7 +122,6 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const metadata = properties.metadata as Metadata;
   const gyldigTil = metadata.common?.gyldigTil;
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled(feature) || metadata?.common?.gyldigTil != null;
-  const maalemetodeValue = watch("maalemetode");
 
   const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
     if (id === undefined || id.length === 0) {
@@ -471,7 +469,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isRequired
       >
         {kodeliste && (
-          <FormControl isInvalid={maalemetodeValue === undefined || maalemetodeValue === ""}>
+          <FormControl isInvalid={!!formState.errors.maalemetode}>
             <Select {...register("maalemetode", { required: true })}>
               <option value="">Velg målemetode</option>
               {kodeliste.items

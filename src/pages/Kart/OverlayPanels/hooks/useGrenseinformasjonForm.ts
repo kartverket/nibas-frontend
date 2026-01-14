@@ -33,9 +33,10 @@ const getDefaultValuesFromFeature = (feature: Feature): GrenseinformasjonFormPro
 };
 
 export const useGrenseinformasjonForm = (feature: Feature) => {
-  const { register, handleSubmit, reset, getValues, setValue, control, formState, watch } =
+  const { register, handleSubmit, reset, getValues, setValue, control, formState } =
     useForm<GrenseinformasjonFormProps>({
       defaultValues: getDefaultValuesFromFeature(feature),
+      mode: "onChange",
     });
 
   const { addHistoryEntry } = useHistory();
@@ -99,7 +100,6 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
     setValue,
     formState,
     control,
-    watch,
     getDefaultValues: getDefaultValuesFromFeature,
     onSubmit,
     isDirty,
