@@ -2,13 +2,13 @@ import { Icon, InputProps, SearchAsync, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
 import { ReactNode } from "react";
 import { styled } from "styled-components";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
+import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 type OptionType = { value: string; label: string };
 
 type Props = Omit<InputProps, "onChange"> & {
   options: OptionType[];
-  kretsType: KontekstType;
+  kretsType: KretsType;
   onChange: (newId: string | undefined) => void;
 };
 
@@ -42,8 +42,14 @@ const highlightFormatter = (option: OptionType, formatOptionLabelMeta: FormatOpt
 
 export const TilhorighetSearch = ({ options, value, onChange, kretsType }: Props) => {
   const noOptionMessage = (obj: { inputValue: string }): ReactNode => {
+    const kretsTypeString =
+      kretsType === KretsType.GRUNNKRETS
+        ? "grunnkretser"
+        : kretsType === KretsType.STEMMEKRETS
+          ? "stemmekretser"
+          : "bopliktområder";
     return obj.inputValue !== "" ? (
-      <ErrorMessage>{`Fant ingen ${kretsType === KontekstType.GRUNNKRETS ? "grunnkretser" : "stemmekretser"} som matchet "${obj.inputValue}"`}</ErrorMessage>
+      <ErrorMessage>{`Fant ingen ${kretsTypeString} som matchet "${obj.inputValue}"`}</ErrorMessage>
     ) : null;
   };
 

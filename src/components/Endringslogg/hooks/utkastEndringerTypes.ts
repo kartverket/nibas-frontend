@@ -5,20 +5,32 @@ import {
   StemmekretsResponse,
   UtkastOperasjoner,
 } from "../../../types/api";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 
-export type ResponseTypeFromKretstype<T extends KontekstType> = T extends KontekstType.STEMMEKRETS
+export enum KretsType {
+  GRUNNKRETS = "GRUNNKRETS",
+  STEMMEKRETS = "STEMMEKRETS",
+  BOPLIKTOMRAADE = "BOPLIKTOMRAADE",
+}
+export enum InndelingType {
+  FYLKE = "FYLKE",
+  KOMMUNE = "KOMMUNE",
+  NASJON = "NASJON",
+}
+
+export type KontekstType = KretsType | InndelingType;
+
+export type ResponseTypeFromKretstype<T extends KretsType> = T extends KretsType.STEMMEKRETS
   ? StemmekretsResponse
-  : T extends KontekstType.GRUNNKRETS
+  : T extends KretsType.GRUNNKRETS
     ? GrunnkretsResponse
-    : T extends KontekstType.BOPLIKTOMRAADE
+    : T extends KretsType.BOPLIKTOMRAADE
       ? BopliktomraadeResponse
       : never;
 
 export type Metadataendringer = {
-  kretsType: KontekstType;
+  kretsType: KretsType;
   opprinneligKrets: {
     navn: string;
     nummer: string;

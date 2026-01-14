@@ -2,7 +2,6 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse } from "types/api";
 import {
   CustomOption,
-  KontekstType,
   Krets,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
@@ -14,6 +13,7 @@ import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerCo
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -158,7 +158,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
             version: opprinneligKretsInfo.version,
           },
           kommuneId: kommuneIdentifikator,
-          flatetype: inndelingtype === "grunnkrets" ? KontekstType.GRUNNKRETS : KontekstType.STEMMEKRETS,
+          flatetype: inndelingtype === "grunnkrets" ? KretsType.GRUNNKRETS : KretsType.STEMMEKRETS,
           nyeKretser: exclusivelyNewKretser,
         };
 

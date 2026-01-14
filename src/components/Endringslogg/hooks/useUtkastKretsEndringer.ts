@@ -4,12 +4,11 @@ import {
   getKretserAvTypeMedEndringer,
   getStemmekretsEndringer,
 } from "components/Endringslogg/hooks/endringerUtils";
-import { KretsendringerForKommune } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { KretsendringerForKommune, KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { UtkastResponse } from "types/api";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { useBopliktomraader } from "hooks/inndelinger/useBopliktomraader";
 
 type useUtkastKretsEndringerReturnType = {
@@ -18,14 +17,14 @@ type useUtkastKretsEndringerReturnType = {
   endringer: KretsendringerForKommune[] | null;
 };
 
-export const useUtkastBopliktEndringer = (
+export const useUtkastBopliktomraadeEndringer = (
   utkast: UtkastResponse,
   shouldFetchEndringer: boolean = true,
 ): useUtkastKretsEndringerReturnType => {
   const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
-  const bopliktomraaderMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KontekstType.BOPLIKTOMRAADE);
+  const bopliktomraaderMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KretsType.BOPLIKTOMRAADE);
 
   const { data: bopliktomraader, isValidating: lasterBopliktomraader } = useBopliktomraader(
     bopliktomraaderMedEndringer,
@@ -56,7 +55,7 @@ export const useUtkastStemmekretsEndringer = (
   const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
-  const stemmekretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KontekstType.STEMMEKRETS);
+  const stemmekretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KretsType.STEMMEKRETS);
 
   const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(
     stemmekretserMedEndringer,
@@ -87,7 +86,7 @@ export const useUtkastGrunnkretsEndringer = (
   const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
-  const grunnkretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KontekstType.GRUNNKRETS);
+  const grunnkretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KretsType.GRUNNKRETS);
 
   const { data: grunnkretser, isValidating: lasterGrunnkretser } = useGrunnkretser(
     grunnkretserMedEndringer,

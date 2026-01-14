@@ -7,6 +7,7 @@ import {
 import {
   useUtkastGrunnkretsEndringer,
   useUtkastStemmekretsEndringer,
+  useUtkastBopliktomraadeEndringer,
 } from "components/Endringslogg/hooks/useUtkastKretsEndringer";
 import { useUtkastKommuneEndringer } from "components/Endringslogg/hooks/useUtkastKommuneEndringer";
 import { useUtkastUtenTilhorighetEndringer } from "components/Endringslogg/hooks/useUtkastUtenTilhorighetEndringer";
@@ -16,6 +17,7 @@ type UseUtkastEndringerReturnType = {
   harEndringer: boolean;
   stemmekretsendringer: KretsendringerForKommune[] | null;
   grunnkretsendringer: KretsendringerForKommune[] | null;
+  bopliktomraadeendringer: KretsendringerForKommune[] | null;
   endringerutentilhorighet: Kretsendringer | null;
   kommunendringer: KommuneendringerForFylke[] | null;
 };
@@ -37,6 +39,12 @@ export const useUtkastEndringer = (
   } = useUtkastGrunnkretsEndringer(utkast, shouldFetchEndringer);
 
   const {
+    endringer: bopliktomraadeEndringer,
+    harEndringer: harBopliktomraadeEndringer,
+    laster: lasterBopliktomraadeEndringer,
+  } = useUtkastBopliktomraadeEndringer(utkast, shouldFetchEndringer);
+
+  const {
     endringer: kommuneEndringer,
     harEndringer: harKommuneEndringer,
     laster: lasterKommuneEndringer,
@@ -47,10 +55,19 @@ export const useUtkastEndringer = (
 
   return {
     harEndringer:
-      harStemmekretsEndringer || harGrunnkretsEndringer || harKommuneEndringer || harEndringerUtenTilhorhget,
-    laster: lasterStemmekretsEndringer || lasterGrunnkretsEndringer || lasterKommuneEndringer,
+      harStemmekretsEndringer ||
+      harGrunnkretsEndringer ||
+      harBopliktomraadeEndringer ||
+      harKommuneEndringer ||
+      harEndringerUtenTilhorhget,
+    laster:
+      lasterStemmekretsEndringer ||
+      lasterGrunnkretsEndringer ||
+      lasterBopliktomraadeEndringer ||
+      lasterKommuneEndringer,
     stemmekretsendringer: stemmekretsEndringer,
     grunnkretsendringer: grunnkretsEndringer,
+    bopliktomraadeendringer: bopliktomraadeEndringer,
     endringerutentilhorighet: endringerUtenTilhorighet,
     kommunendringer: kommuneEndringer,
   };
