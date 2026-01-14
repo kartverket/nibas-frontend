@@ -1,5 +1,6 @@
 import { addToList, getUniqueItems, removeNil } from "utils/list-utils";
 import {
+  BopliktomraadeResponse,
   FeatureDTO,
   GrunnkretsRequest,
   GrunnkretsResponse,
@@ -208,6 +209,8 @@ const getKretsendringerForKretstype = (
       return operasjoner.metadataendringer.grunnkretsendringer;
     case KontekstType.STEMMEKRETS:
       return operasjoner.metadataendringer.stemmekretsendringer;
+    case KontekstType.BOPLIKTOMRAADE:
+      return operasjoner.metadataendringer.bopliktomraadeendringer;
     default:
       return undefined;
   }
@@ -356,6 +359,15 @@ export const getGrunnkretsEndringer = (
   alleKommuner: KommuneResponse[],
 ): KretsendringerForKommune[] | null => {
   return getKretsEndringer(endredeKretser, operasjoner, alleKretser, alleKommuner, KontekstType.GRUNNKRETS);
+};
+
+export const getBopliktomraadeEndringer = (
+  endredeKretser: string[],
+  operasjoner: OperasjonerOrNull,
+  alleKretser: BopliktomraadeResponse[],
+  alleKommuner: KommuneResponse[],
+): KretsendringerForKommune[] | null => {
+  return getKretsEndringer(endredeKretser, operasjoner, alleKretser, alleKommuner, KontekstType.BOPLIKTOMRAADE);
 };
 
 const getKretsEndringer = <T extends KontekstType>(

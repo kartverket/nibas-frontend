@@ -1,4 +1,5 @@
 import {
+  getBopliktomraadeEndringer,
   getGrunnkretsEndringer,
   getKretserAvTypeMedEndringer,
   getStemmekretsEndringer,
@@ -7,13 +8,45 @@ import { KretsendringerForKommune } from "components/Endringslogg/hooks/utkastEn
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { UtkastResponse } from "types/api";
+import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
+import { useBopliktomraader } from "hooks/inndelinger/useBopliktomraader";
 
 type useUtkastKretsEndringerReturnType = {
   harEndringer: boolean;
   laster: boolean;
   endringer: KretsendringerForKommune[] | null;
+};
+
+export const useUtkastBopliktEndringer = (
+  utkast: UtkastResponse,
+  shouldFetchEndringer: boolean = true,
+): useUtkastKretsEndringerReturnType => {
+  const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
+  const operasjoner = utkast.operasjoner;
+
+  const bopliktomraaderMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KontekstType.BOPLIKTOMRAADE);
+
+  const { data: bopliktomraader, isValidating: lasterBopliktomraader } = useBopliktomraader(
+    bopliktomraaderMedEndringer,
+    utkast.gyldigFra,
+    shouldFetchEndringer,
+  );
+
+  const lasterData = lasterBopliktomraader || lasterKommuner;
+
+  const endringer = (() => {
+    if (!lasterData && bopliktomraader && kommuner) {
+      return getBopliktomraadeEndringer(bopliktomraaderMedEndringer, operasjoner, bopliktomraader, kommuner);
+    }
+    return null;
+  })();
+
+  return {
+    harEndringer: bopliktomraaderMedEndringer.length > 0,
+    laster: lasterData,
+    endringer,
+  };
 };
 
 export const useUtkastStemmekretsEndringer = (

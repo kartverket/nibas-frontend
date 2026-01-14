@@ -1,4 +1,10 @@
-import { GrunnkretsResponse, KretsNavnOgNummer, StemmekretsResponse, UtkastOperasjoner } from "../../../types/api";
+import {
+  BopliktomraadeResponse,
+  GrunnkretsResponse,
+  KretsNavnOgNummer,
+  StemmekretsResponse,
+  UtkastOperasjoner,
+} from "../../../types/api";
 import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
@@ -7,7 +13,9 @@ export type ResponseTypeFromKretstype<T extends KontekstType> = T extends Kontek
   ? StemmekretsResponse
   : T extends KontekstType.GRUNNKRETS
     ? GrunnkretsResponse
-    : never;
+    : T extends KontekstType.BOPLIKTOMRAADE
+      ? BopliktomraadeResponse
+      : never;
 
 export type Metadataendringer = {
   kretsType: KontekstType;

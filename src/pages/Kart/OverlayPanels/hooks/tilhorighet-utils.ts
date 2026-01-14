@@ -16,6 +16,7 @@ export enum Tilhorighet {
 export enum KontekstType {
   GRUNNKRETS = "GRUNNKRETS",
   STEMMEKRETS = "STEMMEKRETS",
+  BOPLIKTOMRAADE = "BOPLIKTOMRAADE",
 }
 
 export type Krets = {
