@@ -102,7 +102,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const { openAsync } = useConfirmationModal();
-  const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty } =
+  const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty, formState } =
     useGrenseinformasjonForm(feature);
   const toast = useToast();
   const featureId = feature.getId()?.toString();
@@ -302,7 +302,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             <EditGrenseInfoButton
               isEditing={isEditing}
               handleSubmit={handleSubmit(onSubmit)}
-              isDisabled={utkastHarSammenslaainger()}
+              isDisabled={utkastHarSammenslaainger() || (isEditing && !formState.isValid)}
               tooltip={
                 utkastHarSammenslaainger() === true
                   ? "Utkastet har sammenslåinger og grenseinformasjon kan derfor ikke redigeres"
@@ -456,7 +456,7 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         isLoading={autofillLoading}
       >
         {kodeliste && (
-          <Select {...register("maalemetode")}>
+          <Select {...register("maalemetode", { required: true })}>
             <option value="">Velg målemetode</option>
             {kodeliste.items
               .sort((a, b) => Number(a.kode) - Number(b.kode))
