@@ -6,6 +6,8 @@ import {
   Button,
   ButtonGroup,
   Datepicker,
+  FormControl,
+  FormErrorMessage,
   IconButton,
   Input,
   Select,
@@ -75,8 +77,8 @@ export const EditGrenseInfoButton = ({
 }: EditGrenseInfoButtonProps) => {
   return isEditing ? (
     <Button
-      onClick={() => {
-        handleSubmit();
+      onClick={async () => {
+        await handleSubmit();
         toggleEdit();
       }}
       isDisabled={isDisabled}
@@ -102,14 +104,26 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const { history } = useHistory();
   const [isEditing, setIsEditing] = useState(false);
   const { openAsync } = useConfirmationModal();
-  const { register, handleSubmit, getValues, setValue, control, reset, getDefaultValues, onSubmit, isDirty, formState } =
-    useGrenseinformasjonForm(feature);
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    setValue,
+    control,
+    reset,
+    getDefaultValues,
+    onSubmit,
+    isDirty,
+    formState,
+    watch,
+  } = useGrenseinformasjonForm(feature);
   const toast = useToast();
   const featureId = feature.getId()?.toString();
   const properties = feature.getProperties() as FeatureProperties;
   const metadata = properties.metadata as Metadata;
   const gyldigTil = metadata.common?.gyldigTil;
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled(feature) || metadata?.common?.gyldigTil != null;
+  const maalemetodeValue = watch("maalemetode");
 
   const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
     if (id === undefined || id.length === 0) {
@@ -454,18 +468,22 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
         valueLabel={kodeliste ? getMaalemetodeText(kodeliste, getValues("maalemetode")) : getValues("maalemetode")}
         isEditing={isEditing}
         isLoading={autofillLoading}
+        isRequired
       >
         {kodeliste && (
-          <Select {...register("maalemetode", { required: true })}>
-            <option value="">Velg målemetode</option>
-            {kodeliste.items
-              .sort((a, b) => Number(a.kode) - Number(b.kode))
-              .map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.kode} {item.label}
-                </option>
-              ))}
-          </Select>
+          <FormControl isInvalid={maalemetodeValue === undefined || maalemetodeValue === ""}>
+            <Select {...register("maalemetode", { required: true })}>
+              <option value="">Velg målemetode</option>
+              {kodeliste.items
+                .sort((a, b) => Number(a.kode) - Number(b.kode))
+                .map((item) => (
+                  <option key={item.id} value={item.id}>
+                    {item.kode} {item.label}
+                  </option>
+                ))}
+            </Select>
+            <FormErrorMessage>Vennligst velg en målemetode</FormErrorMessage>
+          </FormControl>
         )}
       </GrenseinformasjonRow>
 
