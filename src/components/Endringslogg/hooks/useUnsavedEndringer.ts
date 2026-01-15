@@ -3,11 +3,11 @@ import {
   Kretsendringer,
   KretsSplittingEndring,
   Metadataendringer,
+  KretsType,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { GrunnkretsEntry, HistoryChange, HistoryEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
 import { getUniqueItems, removeNil } from "utils/list-utils";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import {
@@ -239,7 +239,7 @@ const mapMetadataEntryToMetadataendringerForStemmekretsOgGrunnkrets = (
   entry: StemmekretsEntry | GrunnkretsEntry,
 ): MetadataendringerWithId[] => {
   return entry.changes.map((change) => ({
-    kretsType: mapEntrytypeToKonteksttype(entry.type),
+    kretsType: mapEntrytypeToKretsType(entry.type),
     id: change.id,
     opprinneligKrets: {
       navn: change.from.navn ?? "",
@@ -269,11 +269,11 @@ const combineMetadataChangesForSameId = (metadataendringer: MetadataendringerWit
   });
 };
 
-const mapEntrytypeToKonteksttype = (entrytype: "grunnkrets" | "stemmekrets"): KontekstType => {
+const mapEntrytypeToKretsType = (entrytype: "grunnkrets" | "stemmekrets"): KretsType => {
   switch (entrytype) {
     case "grunnkrets":
-      return KontekstType.GRUNNKRETS;
+      return KretsType.GRUNNKRETS;
     case "stemmekrets":
-      return KontekstType.GRUNNKRETS;
+      return KretsType.STEMMEKRETS;
   }
 };
