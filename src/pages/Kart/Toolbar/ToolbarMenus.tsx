@@ -19,12 +19,17 @@ const ToolbarMenus = () => {
 
   const isEditing = currentlyEditingInndelinger.length > 0;
 
+  //TODO: Denne burde få et bedre navn da den kun brukes for noen verktøy.
   const validInndelingstype = currentlyEditingInndelinger.some((inndeling) => {
     return inndeling.inndelingtype === "stemmekrets" || inndeling.inndelingtype === "grunnkrets";
   });
 
   const mergeIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
     return inndeling.inndelingtype === "stemmekrets";
+  });
+
+  const isEditingBopliktomraader = currentlyEditingInndelinger.some((inndeling) => {
+    return inndeling.inndelingtype === "bopliktomraade";
   });
 
   const [isWide] = useMediaQuery("(min-width: " + theme.breakpoints["2xl"] + ")");
@@ -225,9 +230,9 @@ const ToolbarMenus = () => {
           <ToolbarMenu
             label="Grense"
             icon={<Icon icon="timeline" weight={400} />}
-            isDisabled={false}
+            isDisabled={isEditingBopliktomraader}
             isActive={grenseMenuItems.some((gmi) => gmi.$isActive)}
-            tooltip="Grense"
+            tooltip={isEditingBopliktomraader ? "Grenseverktøy er ikke tilgjengelig for bopliktområder." : "Grense"}
           >
             <MenuList>
               {grenseMenuItems.map((gmi) =>
