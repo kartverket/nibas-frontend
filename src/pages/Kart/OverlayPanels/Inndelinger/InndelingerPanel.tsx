@@ -1,11 +1,12 @@
 import { Button, ButtonGroup, Divider, Link, Modal, ModalBody, ModalContent, ModalOverlay, Spinner } from "@kvib/react";
 import { useFlag } from "components/FeatureToggle";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
-import { BaseInndeling, Inndelingtype, INNDELINGTYPER } from "contexts/InndelingerContext/InndelingerContext";
+import { BaseInndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { styled } from "styled-components";
+import { Inndelingtype, INNDELINGTYPE_VALUES } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
@@ -72,7 +73,7 @@ const InndelingerPanel = () => {
         <Content>
           <InndelingerLayout>
             <InndelingerList>
-              {INNDELINGTYPER.map((inndelingtype) => (
+              {INNDELINGTYPE_VALUES.map((inndelingtype) => (
                 <InndelingOption
                   isDisabled={
                     isInndelingtypeDisabledForEditing(inndelingtype) || isInndelingtypeDisabledForViewing(inndelingtype)
@@ -83,7 +84,7 @@ const InndelingerPanel = () => {
                   rightIcon="chevron_right"
                   type="button"
                 >
-                  {capitalize(inndelingtype)}
+                  {capitalize(inndelingtype.toLowerCase())}
                 </InndelingOption>
               ))}
             </InndelingerList>
@@ -97,20 +98,20 @@ const InndelingerPanel = () => {
                     id: fylkeId,
                     nummer: fylke.nummer,
                     navn: fylke.navn,
-                    inndelingtype: "fylke",
+                    inndelingtype: "FYLKE",
                   };
 
                   return (
                     <InndelingOption
                       isActive={
-                        selectedInndelingtype === "fylke"
+                        selectedInndelingtype === "FYLKE"
                           ? (isInndelingSelected(selectedInndelingtype, fylkeId) ?? false)
                           : activePanelFylkeId === fylkeId
                       }
                       key={fylkeId}
                       onClick={() => toggleFylke(fylkeInndeling)}
-                      rightIcon={selectedInndelingtype !== "fylke" ? "chevron_right" : undefined}
-                      type={selectedInndelingtype === "fylke" ? "checkbox" : "button"}
+                      rightIcon={selectedInndelingtype !== "FYLKE" ? "chevron_right" : undefined}
+                      type={selectedInndelingtype === "FYLKE" ? "checkbox" : "button"}
                     >
                       {`${fylke.nummer} ${getNavnInSpraak(fylke.navn, "nor")}`}
                     </InndelingOption>
@@ -136,7 +137,7 @@ const InndelingerPanel = () => {
                         key={kommuneId}
                         isActive={isInndelingSelected(selectedInndelingtype, kommuneId) ?? false}
                         onClick={() => toggleKommune(kommuneInndeling)}
-                        type={selectedInndelingtype === "kommune" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"}
+                        type={selectedInndelingtype === "KOMMUNE" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"}
                       >
                         {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
                       </InndelingOption>

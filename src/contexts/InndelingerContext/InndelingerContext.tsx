@@ -12,13 +12,13 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { editSource, grenserLayers } from "hooks/layers/constants";
-import { GrenseId } from "hooks/layers/types";
+import { getGrenseIdForInndelingtype, GrenseId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { map } from "pages/Kart/constants";
 import { exclusiveSelectTools } from "pages/Kart/interactions/useSelect";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { AdministrativEnhetNavn, FeatureProperties } from "types/api";
+import { AdministrativEnhetNavn, FeatureProperties, Inndelingtype, INNDELINGTYPE_VALUES } from "types/api";
 import { getFeatureFremtidigEndringDato } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { clearEditLayer, clearViewingLayers, getLayerById } from "utils/map/layers";
@@ -26,23 +26,6 @@ import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { addFeaturesToSource } from "utils/map/source";
 import { useMap } from "utils/map/useMap";
 import useInndelingFeatures from "./useInndelingFeatures";
-
-export const INNDELINGTYPER = ["fylke", "kommune", "stemmekrets", "grunnkrets", "bopliktomraade"] as const;
-export type Inndelingtyper = typeof INNDELINGTYPER;
-export type Inndelingtype = Inndelingtyper[number];
-
-export const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
-  switch (inndelingtype) {
-    case "fylke":
-    case "kommune":
-      return inndelingtype + "r";
-    case "stemmekrets":
-    case "grunnkrets":
-      return inndelingtype + "er";
-    case "bopliktomraade":
-      return inndelingtype + "r";
-  }
-};
 
 export type BaseInndeling = {
   id: string;
@@ -73,15 +56,13 @@ type Inndelinger = {
   [inndelingtype in Inndelingtype]: Map<string, Inndeling>;
 };
 
-const getEmptyInndelinger = (): Inndelinger => {
-  const inndelinger: Partial<Inndelinger> = {};
-
-  for (const type of INNDELINGTYPER) {
-    inndelinger[type] = new Map<string, Inndeling>();
-  }
-
-  return inndelinger as Inndelinger;
-};
+const getEmptyInndelinger = (): Inndelinger => ({
+  FYLKE: new Map<string, Inndeling>(),
+  KOMMUNE: new Map<string, Inndeling>(),
+  GRUNNKRETS: new Map<string, Inndeling>(),
+  STEMMEKRETS: new Map<string, Inndeling>(),
+  BOPLIKTOMRAADE: new Map<string, Inndeling>(),
+});
 
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
@@ -282,7 +263,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       featuresInInndeling: Feature<Geometry>[],
       inndelingType: Inndelingtype,
     ): Feature<Geometry>[] => {
-      if (inndelingType !== "stemmekrets") {
+      if (inndelingType !== "STEMMEKRETS") {
         return [];
       }
 
@@ -331,7 +312,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       editSource.clear(true);
     }
     for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isViewing)) {
-      const source = getLayerById(inndeling.inndelingtype).getSource();
+      const source = getLayerById(getGrenseIdForInndelingtype(inndeling.inndelingtype)).getSource();
       if (source) {
         source.clear(true);
       }
@@ -358,7 +339,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           clone.setId(feature.getId()?.toString().concat("_isViewing"));
           return clone;
         });
-        addInndelingToLayer(currentInndeling.inndelingtype, clonedFeatures);
+        addInndelingToLayer(getGrenseIdForInndelingtype(currentInndeling.inndelingtype), clonedFeatures);
       }
       /**
        * Når vi legger inn inndelinger som redigeres må vi i tillegg til å deale med de vanlige featurene i inndelingen, deale med featurene som kommer fra utkastet
@@ -411,7 +392,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setInndelingerToFetch((currentState) => currentState.filter((i) => i.isEditing));
     setInndelinger((currentState) => {
       const newState = structuredClone(currentState);
-      for (const type of INNDELINGTYPER) {
+      for (const type of INNDELINGTYPE_VALUES) {
         newState[type] = new Map(
           [...newState[type]].map(([key, i]) => {
             if (i.isViewing) {
@@ -430,7 +411,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setInndelingerToFetch((currentState) => currentState.filter((i) => i.isViewing));
     setInndelinger((currentState) => {
       const newState = structuredClone(currentState);
-      for (const type of INNDELINGTYPER) {
+      for (const type of INNDELINGTYPE_VALUES) {
         newState[type] = new Map(
           [...newState[type]].map(([key, i]) => {
             if (i.isEditing) {

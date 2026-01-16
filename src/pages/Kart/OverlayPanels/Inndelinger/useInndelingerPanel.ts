@@ -1,12 +1,8 @@
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import {
-  BaseInndeling,
-  Inndeling,
-  Inndelingtype,
-  useInndelinger,
-} from "contexts/InndelingerContext/InndelingerContext";
+import { BaseInndeling, Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useEffect, useState } from "react";
+import { Inndelingtype } from "types/api";
 
 const useInndelingerPanel = () => {
   const {
@@ -36,7 +32,7 @@ const useInndelingerPanel = () => {
     } else {
       const viewingInndelinger = getAllInndelinger().filter((i) => i.isViewing);
       setTempInndelinger(viewingInndelinger);
-      const fylkeIds = viewingInndelinger.filter((i) => i.inndelingtype === "fylke").map((i) => i.id);
+      const fylkeIds = viewingInndelinger.filter((i) => i.inndelingtype === "FYLKE").map((i) => i.id);
       setTempFylkeIds(fylkeIds);
     }
   }, [isEditingPanel, getAllInndelinger]);
@@ -98,7 +94,7 @@ const useInndelingerPanel = () => {
   };
 
   const toggleFylke = (fylke: BaseInndeling) => {
-    if (selectedInndelingtype === "fylke") {
+    if (selectedInndelingtype === "FYLKE") {
       const isAlreadySelected = tempInndelinger.findIndex(
         (inndeling) => inndeling.id === fylke.id && inndeling.inndelingtype === selectedInndelingtype,
       );
@@ -128,7 +124,7 @@ const useInndelingerPanel = () => {
   };
 
   const toggleKommune = (kommune: BaseInndeling) => {
-    if (selectedInndelingtype) {
+    if (selectedInndelingtype != null) {
       const newInndeling: Inndeling = {
         navn: kommune.navn,
         nummer: kommune.nummer,
@@ -139,7 +135,7 @@ const useInndelingerPanel = () => {
       };
 
       if (isEditingPanel) {
-        if (selectedInndelingtype === "grunnkrets" || selectedInndelingtype === "stemmekrets") {
+        if (selectedInndelingtype === "GRUNNKRETS" || selectedInndelingtype === "STEMMEKRETS") {
           const selectedInndelingerWithoutSelectedInndeling = tempInndelinger.filter(
             (inndeling) => inndeling.inndelingtype !== selectedInndelingtype,
           );

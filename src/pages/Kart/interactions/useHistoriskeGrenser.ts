@@ -42,7 +42,7 @@ const useHistoriskeGrenser = () => {
     const grenserFeatures = await historiskeGrenserFetcher(
       inndelingsIds,
       gyldigTilDate,
-      inndelingstype === "stemmekrets" ? "stemmekrets" : "grunnkrets",
+      inndelingstype === "STEMMEKRETS" ? "stemmekrets" : "grunnkrets",
     );
     const featureCollection: FeatureCollection = {
       type: "FeatureCollection",

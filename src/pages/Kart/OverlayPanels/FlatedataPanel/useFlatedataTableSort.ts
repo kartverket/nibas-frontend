@@ -1,6 +1,6 @@
-import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { useState } from "react";
 import {
+  Inndelingtype,
   BopliktomraadeResponse,
   GrunnkretsResponse,
   KommuneResponse,
@@ -16,19 +16,19 @@ type ResponseProperty =
   | keyof BopliktomraadeResponse;
 
 interface PropertiesByInndelingtype extends Record<Inndelingtype, ResponseProperty[]> {
-  fylke: (keyof KommuneResponse)[];
-  kommune: (keyof KommuneResponse)[];
-  stemmekrets: (keyof StemmekretsResponse)[];
-  grunnkrets: (keyof GrunnkretsResponse)[];
-  bopliktomraade: (keyof BopliktomraadeResponse)[];
+  FYLKE: (keyof KommuneResponse)[];
+  KOMMUNE: (keyof KommuneResponse)[];
+  STEMMEKRETS: (keyof StemmekretsResponse)[];
+  GRUNNKRETS: (keyof GrunnkretsResponse)[];
+  BOPLIKTOMRAADE: (keyof BopliktomraadeResponse)[];
 }
 
 const propertiesByInndelingtype: PropertiesByInndelingtype = {
-  fylke: ["nummer", "navn", "samiskforvaltningsomraade"],
-  kommune: ["nummer", "navn", "samiskforvaltningsomraade"],
-  stemmekrets: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"],
-  grunnkrets: ["nummer", "navn"],
-  bopliktomraade: ["delvisBoplikt", "forskriftsreferanse", "url", "informasjon"],
+  FYLKE: ["nummer", "navn", "samiskforvaltningsomraade"],
+  KOMMUNE: ["nummer", "navn", "samiskforvaltningsomraade"],
+  STEMMEKRETS: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"],
+  GRUNNKRETS: ["nummer", "navn"],
+  BOPLIKTOMRAADE: ["delvisBoplikt", "forskriftsreferanse", "url", "informasjon"],
 };
 
 export const useFlatedataTableSort = (inndelingtype: Inndelingtype) => {

@@ -1,6 +1,13 @@
 import { HistoryChange } from "contexts/HistoryContext/types";
-import { Inndeling, Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
-import { MetadataResponse, MetadataRequest, KommuneRequest, StemmekretsRequest, GrunnkretsRequest } from "types/api";
+import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
+import {
+  MetadataResponse,
+  MetadataRequest,
+  KommuneRequest,
+  StemmekretsRequest,
+  GrunnkretsRequest,
+  Inndelingtype,
+} from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
@@ -30,8 +37,8 @@ const getRequestFromInputs = (
   inndeling: MetadataResponse,
 ): MetadataRequest | null => {
   switch (inndelingtype) {
-    case "fylke":
-    case "kommune": {
+    case "FYLKE":
+    case "KOMMUNE": {
       if (isKommuneInndeling(inndeling) && isKommuneInput(data)) {
         const kommuneRequest: KommuneRequest = {
           lokalid: getIdFromEntity(inndeling),
@@ -43,7 +50,7 @@ const getRequestFromInputs = (
       }
       return null;
     }
-    case "stemmekrets": {
+    case "STEMMEKRETS": {
       if (isStemmekretsInput(data)) {
         const stemmekretsRequest: StemmekretsRequest = {
           identifikasjon: {
@@ -64,7 +71,7 @@ const getRequestFromInputs = (
       }
       return null;
     }
-    case "grunnkrets": {
+    case "GRUNNKRETS": {
       if (!isKommuneInput(data)) {
         const grunnkretsRequest: GrunnkretsRequest = {
           identifikasjon: {
@@ -79,7 +86,7 @@ const getRequestFromInputs = (
       }
       return null;
     }
-    case "bopliktomraade": {
+    case "BOPLIKTOMRAADE": {
       throw new Error('Not implemented yet: "bopliktomraade" case');
     }
   }

@@ -1,5 +1,5 @@
 import { useForm, useFieldArray } from "react-hook-form";
-import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse } from "types/api";
+import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse, Inndelingtype } from "types/api";
 import {
   CustomOption,
   Krets,
@@ -9,11 +9,10 @@ import {
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useToast } from "@kvib/react";
-import { Inndeling, Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
-import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 
@@ -33,7 +32,7 @@ const getKommuneIdentifikatorFromOptions = (
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
 ) => {
-  if (inndelingtype === "stemmekrets") {
+  if (inndelingtype === "STEMMEKRETS") {
     return stemmekretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
   } else {
     return grunnkretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
@@ -73,10 +72,10 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
 
   const getFlateOptionsFromInndelingType = () => {
     if (inndelingtype != null) {
-      if (inndelingtype === "grunnkrets" && grunnkretser) {
+      if (inndelingtype === "GRUNNKRETS" && grunnkretser) {
         return mapGrunnkretsResponseToKrets(grunnkretser);
       }
-      if (inndelingtype === "stemmekrets" && stemmekretser) {
+      if (inndelingtype === "STEMMEKRETS" && stemmekretser) {
         return mapStemmekretResponseToKrets(stemmekretser);
       }
     }
@@ -158,7 +157,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
             version: opprinneligKretsInfo.version,
           },
           kommuneId: kommuneIdentifikator,
-          flatetype: inndelingtype === "grunnkrets" ? KretsType.GRUNNKRETS : KretsType.STEMMEKRETS,
+          flatetype: inndelingtype,
           nyeKretser: exclusivelyNewKretser,
         };
 

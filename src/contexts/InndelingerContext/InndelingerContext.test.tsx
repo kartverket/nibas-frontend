@@ -37,7 +37,7 @@ vi.mock("./useInndelingFeatures.tsx", async (importOriginal) => {
 
 const isEditingStemmekrets1: Inndeling = {
   id: "e-1",
-  inndelingtype: "stemmekrets",
+  inndelingtype: "STEMMEKRETS",
   isEditing: true,
   isViewing: false,
   navn: [
@@ -52,7 +52,7 @@ const isEditingStemmekrets1: Inndeling = {
 
 const isEditingStemmekrets2: Inndeling = {
   id: "e-2",
-  inndelingtype: "stemmekrets",
+  inndelingtype: "STEMMEKRETS",
   isEditing: true,
   isViewing: false,
   navn: [
@@ -67,7 +67,7 @@ const isEditingStemmekrets2: Inndeling = {
 
 const isEditingStemmekrets3: Inndeling = {
   id: "e-3",
-  inndelingtype: "stemmekrets",
+  inndelingtype: "STEMMEKRETS",
   isEditing: true,
   isViewing: false,
   navn: [
@@ -82,7 +82,7 @@ const isEditingStemmekrets3: Inndeling = {
 
 const isVisibleKommune1: Inndeling = {
   id: "v-1",
-  inndelingtype: "kommune",
+  inndelingtype: "KOMMUNE",
   isEditing: false,
   isViewing: true,
   navn: [
@@ -211,7 +211,7 @@ describe("InndelingerContext", () => {
   it("should view both inndelingtypes if adding an inndeling with same id but different types (viewing only)", () => {
     const newIsVisibleKommune1: Inndeling = {
       ...isVisibleKommune1,
-      inndelingtype: "grunnkrets",
+      inndelingtype: "GRUNNKRETS",
     };
 
     act(() => {
@@ -221,7 +221,7 @@ describe("InndelingerContext", () => {
     const isVisibleInndelinger = result.current.getAllInndelinger().filter((inndeling) => inndeling.isViewing);
 
     expect(isVisibleInndelinger.length).toEqual(2);
-    expect(isVisibleInndelinger[0].inndelingtype).toEqual("kommune");
-    expect(isVisibleInndelinger[1].inndelingtype).toEqual("grunnkrets");
+    expect(isVisibleInndelinger[0].inndelingtype).toEqual("KOMMUNE");
+    expect(isVisibleInndelinger[1].inndelingtype).toEqual("GRUNNKRETS");
   });
 });

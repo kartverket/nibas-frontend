@@ -1,4 +1,3 @@
-import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { components, paths } from "./api-gen";
 
 /**
@@ -8,6 +7,17 @@ export type Spraak = {
   navn: string;
   spraak: string;
 };
+
+type FlateType = components["schemas"]["InndelingResponse"]["type"];
+type NotImplementedFlateType = Extract<FlateType, "SKOLEKRETS" | "NASJON">;
+export const INNDELINGTYPE_VALUES: Exclude<FlateType, NotImplementedFlateType>[] = [
+  "FYLKE",
+  "KOMMUNE",
+  "GRUNNKRETS",
+  "STEMMEKRETS",
+  "BOPLIKTOMRAADE",
+];
+export type Inndelingtype = (typeof INNDELINGTYPE_VALUES)[number];
 
 export type AdministrativEnhetNavn = components["schemas"]["AdministrativEnhetNavn"][];
 export type FeatureDTO = components["schemas"]["Feature"];

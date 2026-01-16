@@ -1,4 +1,4 @@
-import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndelingtype } from "types/api";
 
 export type KartlagId =
   | "topograatone"
@@ -62,19 +62,19 @@ export const editableGrenseTypes: GrenseType[] = [
 
 export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): GrenseType | undefined => {
   switch (inndelingtype) {
-    case "fylke":
+    case "FYLKE":
       return "Fylkesgrense";
 
-    case "kommune":
+    case "KOMMUNE":
       return "Kommunegrense";
 
-    case "stemmekrets":
+    case "STEMMEKRETS":
       return "Stemmekretsgrense";
 
-    case "grunnkrets":
+    case "GRUNNKRETS":
       return "Grunnkretsgrense";
 
-    case "bopliktomraade":
+    case "BOPLIKTOMRAADE":
       return "Bopliktgrense";
 
     default:
@@ -86,22 +86,43 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
   // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (grenseType) {
     case "Fylkesgrense":
-      return "fylke";
+      return "FYLKE";
 
     case "Kommunegrense":
-      return "kommune";
+      return "KOMMUNE";
 
     case "Stemmekretsgrense":
-      return "stemmekrets";
+      return "STEMMEKRETS";
 
     case "Grunnkretsgrense":
-      return "grunnkrets";
+      return "GRUNNKRETS";
 
     case "Bopliktgrense":
-      return "bopliktomraade";
+      return "BOPLIKTOMRAADE";
 
     default:
       return undefined;
+  }
+};
+
+// Hjelpefunksjon for å få grenseId literal for en inndelingtype.
+// Inneholder altså ikke alle grenseId-er, kun de som samsvarer med inndelingtype.
+export const getGrenseIdForInndelingtype = (
+  inndelingtype: Inndelingtype,
+): Exclude<GrenseId, "archived" | "edit" | "measure" | "historical" | "sosiFiler"> => {
+  switch (inndelingtype) {
+    case "FYLKE":
+      return "fylke";
+    case "KOMMUNE":
+      return "kommune";
+    case "STEMMEKRETS":
+      return "stemmekrets";
+    case "GRUNNKRETS":
+      return "grunnkrets";
+    case "BOPLIKTOMRAADE":
+      return "bopliktomraade";
+    default:
+      throw new Error(`Fant ikke grenseId for inndelingtype: ${inndelingtype}`);
   }
 };
 
