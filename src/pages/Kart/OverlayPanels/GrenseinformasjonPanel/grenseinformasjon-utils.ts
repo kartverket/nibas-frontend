@@ -116,7 +116,7 @@ export const addGrenseDeleteEntryFromFeatureList = (
 
 export const addKontekstEntryFromFeature = (
   feature: Feature<LineString>,
-  updatedKontekstEgenskaper: KontekstEgenskaper[],
+  newKontekstEgenskaper: KontekstEgenskaper[],
   addHistoryEntry: (entry: GrenseTilhorighetEntry) => void,
 ) => {
   const id = feature.getId()?.toString();
@@ -126,6 +126,17 @@ export const addKontekstEntryFromFeature = (
 
   const oldProperties = feature.getProperties() as FeatureProperties;
   const oldKontekstEgenskaper = oldProperties.kontekstEgenskaper;
+
+  const newKonteksterType = new Set(newKontekstEgenskaper.map((ke) => ke.type));
+
+  if (newKonteksterType.size !== 1) {
+    throw new Error("Kan kun endre én type krets når man setter kontekstegenskaper");
+  }
+
+  // Vi erstatter kun den kretstypen som settes i newKontekstEgenskaper.
+  const updatedKontekstEgenskaper = oldKontekstEgenskaper
+    .filter((ke) => !newKonteksterType.has(ke.type))
+    .concat(newKontekstEgenskaper);
 
   const newProperties: FeatureProperties = {
     ...oldProperties,
