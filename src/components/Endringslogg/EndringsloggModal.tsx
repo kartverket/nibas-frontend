@@ -17,9 +17,9 @@ import { UtkastResponse } from "types/api";
 import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCollapse";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
 import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenTilhorighet";
+import { KretsType } from "./hooks/utkastEndringerTypes";
 
 type Props = {
   isOpen: boolean;
@@ -28,8 +28,15 @@ type Props = {
 };
 
 const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
-  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer, endringerutentilhorighet } =
-    useUtkastEndringer(utkast, isOpen);
+  const {
+    harEndringer,
+    laster,
+    stemmekretsendringer,
+    grunnkretsendringer,
+    bopliktomraadeendringer,
+    kommunendringer,
+    endringerutentilhorighet,
+  } = useUtkastEndringer(utkast, isOpen);
   const { history } = useHistory();
   const harUlagredeEndringer = history.index > 0;
 
@@ -56,14 +63,21 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
                 <EndringerForKommune
                   key={endringer.kommune.id}
                   endringer={endringer}
-                  kretstype={KontekstType.STEMMEKRETS}
+                  kretstype={KretsType.STEMMEKRETS}
                 />
               ))}
               {grunnkretsendringer?.map((endringer) => (
                 <EndringerForKommune
                   key={endringer.kommune.id}
                   endringer={endringer}
-                  kretstype={KontekstType.GRUNNKRETS}
+                  kretstype={KretsType.GRUNNKRETS}
+                />
+              ))}
+              {bopliktomraadeendringer?.map((endringer) => (
+                <EndringerForKommune
+                  key={endringer.kommune.id}
+                  endringer={endringer}
+                  kretstype={KretsType.BOPLIKTOMRAADE}
                 />
               ))}
               {kommunendringer?.map((endringer) => (

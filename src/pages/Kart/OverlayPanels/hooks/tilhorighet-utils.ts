@@ -1,5 +1,7 @@
+import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { GrenseType } from "hooks/layers/types";
 import {
+  BopliktomraadeResponse,
   FeatureProperties,
   GrunnkretsResponse,
   KontekstEgenskaper,
@@ -13,11 +15,6 @@ export enum Tilhorighet {
   B = "b",
 }
 
-export enum KontekstType {
-  GRUNNKRETS = "GRUNNKRETS",
-  STEMMEKRETS = "STEMMEKRETS",
-}
-
 export type Krets = {
   id: ObjektIdentifikator;
   kommuneId: ObjektIdentifikator;
@@ -25,7 +22,7 @@ export type Krets = {
   version: number;
   nummer: string;
   navn: string;
-  type: KontekstType;
+  type: KretsType;
 };
 
 export type TilhorighetOptions = {
@@ -43,12 +40,13 @@ export type TilhorighetChoice = {
 };
 
 export type TilhorighetForm = {
-  [KontekstType.GRUNNKRETS]: TilhorighetChoice;
-  [KontekstType.STEMMEKRETS]: TilhorighetChoice;
+  [KretsType.GRUNNKRETS]: TilhorighetChoice;
+  [KretsType.STEMMEKRETS]: TilhorighetChoice;
+  [KretsType.BOPLIKTOMRAADE]: TilhorighetChoice;
 };
 
 export interface UseTilhorighet {
-  kontekstType: KontekstType;
+  kretsType: KretsType;
   tilhorighetOptions: TilhorighetOptions | undefined;
   isDirty: boolean;
   resetTilhorighet: () => void;
@@ -61,26 +59,33 @@ export interface UseTilhorighet {
 const getDefaultTilhorighetData = () => ({
   GRUNNKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
   STEMMEKRETS: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
+  BOPLIKTOMRAADE: { a: CustomOption.NOT_CHOSEN, b: CustomOption.NOT_CHOSEN },
 });
 
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
 export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm => {
   if (tilhorigheter && tilhorigheter.length > 0) {
-    const grunnkretser = tilhorigheter.filter(
-      (kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.GRUNNKRETS,
-    );
+    const grunnkretser = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === KretsType.GRUNNKRETS);
     const stemmekretser = tilhorigheter.filter(
-      (kontekstEgenskaper) => kontekstEgenskaper.type === KontekstType.STEMMEKRETS,
+      (kontekstEgenskaper) => kontekstEgenskaper.type === KretsType.STEMMEKRETS,
+    );
+    const bopliktomraader = tilhorigheter.filter(
+      (kontekstEgenskaper) => kontekstEgenskaper.type === KretsType.BOPLIKTOMRAADE,
     );
     if (grunnkretser.length > 0 || stemmekretser.length > 0) {
       return {
-        [KontekstType.GRUNNKRETS]: {
+        [KretsType.GRUNNKRETS]: {
           [Tilhorighet.A]: getKretsIdFromKontekstegenskaper(grunnkretser[0]),
           [Tilhorighet.B]: grunnkretser.length > 1 ? getKretsIdFromKontekstegenskaper(grunnkretser[1]) : "NOT_CHOSEN",
         },
-        [KontekstType.STEMMEKRETS]: {
+        [KretsType.STEMMEKRETS]: {
           [Tilhorighet.A]: getKretsIdFromKontekstegenskaper(stemmekretser[0]),
           [Tilhorighet.B]: stemmekretser.length > 1 ? getKretsIdFromKontekstegenskaper(stemmekretser[1]) : "NOT_CHOSEN",
+        },
+        [KretsType.BOPLIKTOMRAADE]: {
+          [Tilhorighet.A]: getKretsIdFromKontekstegenskaper(bopliktomraader[0]),
+          [Tilhorighet.B]:
+            bopliktomraader.length > 1 ? getKretsIdFromKontekstegenskaper(bopliktomraader[1]) : "NOT_CHOSEN",
         },
       };
     }
@@ -102,7 +107,7 @@ export const getKretsIdFromKontekstegenskaper = (
 };
 
 // Gir en krets med lokalid lik Default option slik at default verdien kan sendes som data slik som vanlige kretser.
-const getDefaultKrets = (kontekstType: KontekstType): Krets => {
+const getDefaultKrets = (kretsType: KretsType): Krets => {
   const defaultIdentifikator: ObjektIdentifikator = {
     lokalid: {
       value: CustomOption.NOT_CHOSEN,
@@ -116,19 +121,19 @@ const getDefaultKrets = (kontekstType: KontekstType): Krets => {
     kommunenummer: "",
     navn: "",
     nummer: "",
-    type: kontekstType,
+    type: kretsType,
   };
 };
 
 // Tar lokalider og mapper de til kretsValgene hvis det finnes en krets i kretsValg med tilsvarende id
 export const getUpdatedKontekstEgenskaper = (
-  kontekstType: KontekstType,
+  kretsType: KretsType,
   newKretsIds: TilhorighetChoice,
   kretsOptions: TilhorighetOptions,
 ): KontekstEgenskaper[] => {
   const allPossibleOptions = kretsOptions.a.concat(kretsOptions.b);
   const kretser = Object.values(newKretsIds).map(
-    (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kontekstType),
+    (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(kretsType),
   );
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
     id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
@@ -144,7 +149,7 @@ export const formatKretsNavn = (krets: Krets | null | undefined): string => {
   if (krets == null) {
     return "Ikke valgt";
   }
-  if (krets.type === KontekstType.STEMMEKRETS) {
+  if (krets.type === KretsType.STEMMEKRETS) {
     return `(${krets.kommunenummer}) ${krets.nummer} ${krets.navn}`;
   }
   return `${krets.nummer} ${krets.navn}`;
@@ -152,10 +157,10 @@ export const formatKretsNavn = (krets: Krets | null | undefined): string => {
 
 export const getKommunerIdFromKontekstEgenskaper = (
   kontekstEgenskaper: KontekstEgenskaper[],
-  kontekstType: KontekstType,
+  kretsType: KretsType,
 ): string[] | null => {
   const kommuner = kontekstEgenskaper
-    .filter((kontekst) => kontekst.type === kontekstType)
+    .filter((kontekst) => kontekst.type === kretsType)
     .filter((kontekst) => kontekst.kommuneId !== null)
     .map((kontekst) => kontekst.kommuneId!.lokalid.value);
   return kommuner.length > 0 ? kommuner : null;
@@ -172,6 +177,7 @@ const sortKretserOptionsByFormattedName = (kretser: Krets[] | undefined): Krets[
 export const getIdForTilhorhetNyKrets = (kretsnummer: string | undefined, kommuneId: string | undefined) =>
   `NY_KRETS_${kretsnummer}_${kommuneId}`;
 
+// TODO: Disse funksjonene kan kanskje samkjøres.
 export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[]): Krets[] => {
   return sortKretserOptionsByFormattedName(
     grunnkretser.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
@@ -181,7 +187,7 @@ export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[])
       version,
       nummer,
       navn,
-      type: KontekstType.GRUNNKRETS,
+      type: KretsType.GRUNNKRETS,
     })),
   );
 };
@@ -195,27 +201,43 @@ export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[
       version,
       nummer,
       navn,
-      type: KontekstType.STEMMEKRETS,
+      type: KretsType.STEMMEKRETS,
     })),
   );
 };
 
-export const getKontekstTypeForFeature = (
-  kontekstgenskaper: KontekstEgenskaper[],
-  featureProperties: FeatureProperties,
-): KontekstType => {
-  return (
-    kontekstgenskaper.map((k) => k.type as KontekstType)[0] ??
-    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKontekstType(featureProperties.type))
+export const mapBopliktomraadeResponseToKrets = (bopliktomraader: BopliktomraadeResponse[]): Krets[] => {
+  return sortKretserOptionsByFormattedName(
+    bopliktomraader.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
+      id,
+      kommuneId: kommuneIdentifikator,
+      kommunenummer: kommunenummer.kodeverdi,
+      version,
+      nummer,
+      navn,
+      type: KretsType.BOPLIKTOMRAADE,
+    })),
   );
 };
 
-const mapGrenseTypeTilKontekstType = (grenseType: GrenseType): KontekstType => {
+export const getKretsTypeForFeature = (
+  kontekstgenskaper: KontekstEgenskaper[],
+  featureProperties: FeatureProperties,
+): KretsType => {
+  return (
+    kontekstgenskaper.map((k) => k.type as KretsType)[0] ??
+    (isGrenseType(featureProperties.type) && mapGrenseTypeTilKretsType(featureProperties.type))
+  );
+};
+
+const mapGrenseTypeTilKretsType = (grenseType: GrenseType): KretsType => {
   // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (grenseType) {
     case "Stemmekretsgrense":
-      return KontekstType.STEMMEKRETS;
+      return KretsType.STEMMEKRETS;
+    case "Bopliktgrense":
+      return KretsType.BOPLIKTOMRAADE;
     default:
-      return KontekstType.GRUNNKRETS;
+      return KretsType.GRUNNKRETS;
   }
 };

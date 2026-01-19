@@ -33,9 +33,9 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   BOPLIKTOMRADE_EDITING: {
     prod: false,
     "dev-main": false,
-    "dev-e2e": false,
+    "dev-e2e": true,
     localhost: true,
-    "feature-branch": false,
+    "feature-branch": true,
   },
 };
 

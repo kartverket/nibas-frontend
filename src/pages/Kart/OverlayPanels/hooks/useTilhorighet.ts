@@ -3,34 +3,43 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { Feature } from "ol";
 import { useEffect } from "react";
 import {
-  KontekstType,
   TilhorighetOptions,
   UseTilhorighet,
+  mapBopliktomraadeResponseToKrets,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
-import { GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
+import { BopliktomraadeResponse, GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { useKommuneBopliktomraade } from "hooks/inndelinger/useBopliktomraader";
 
-// Tar api respons for grunnkretser og stemmekretser og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
+// Tar api respons for kretser av en gitt type og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
 const getMuligeKretserForCommonGrense = (
-  kontekstType: KontekstType,
+  kretsType: KretsType,
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
+  bopliktomraader: BopliktomraadeResponse[],
 ): TilhorighetOptions => {
-  if (kontekstType === KontekstType.STEMMEKRETS) {
-    const mappedStemmekretser = mapStemmekretResponseToKrets(stemmekretser);
-    return {
-      a: mappedStemmekretser,
-      b: mappedStemmekretser,
-    };
-  } else {
-    const mappedGrunnkretser = mapGrunnkretsResponseToKrets(grunnkretser);
-    return {
-      a: mappedGrunnkretser,
-      b: mappedGrunnkretser,
-    };
+  switch (kretsType) {
+    case KretsType.STEMMEKRETS:
+      return {
+        a: mapStemmekretResponseToKrets(stemmekretser),
+        b: mapStemmekretResponseToKrets(stemmekretser),
+      };
+    case KretsType.GRUNNKRETS:
+      return {
+        a: mapGrunnkretsResponseToKrets(grunnkretser),
+        b: mapGrunnkretsResponseToKrets(grunnkretser),
+      };
+    case KretsType.BOPLIKTOMRAADE:
+      return {
+        a: mapBopliktomraadeResponseToKrets(bopliktomraader),
+        b: mapBopliktomraadeResponseToKrets(bopliktomraader),
+      };
+    default:
+      throw new Error(`Ugyldig krets type: ${kretsType}`);
   }
 };
 
@@ -43,7 +52,7 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     isDirty,
     resetTilhorighet,
     kommunerIds,
-    kontekstType,
+    kretsType,
     getCurrentOppdaterteKontekstEgenskaper,
     isLoading,
   } = useTilhorighetForm(feature);
@@ -58,20 +67,30 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     gyldighetsdato,
   );
 
+  const { data: bopliktomraader, isLoading: bopliktomraaderIsLoading } = useKommuneBopliktomraade(
+    kommunerIds[0] ?? null,
+    gyldighetsdato,
+  );
+
   useEffect(() => {
-    if (grunnkretser && stemmekretser) {
-      setTilhorighetOptions(getMuligeKretserForCommonGrense(kontekstType, grunnkretser, stemmekretser));
+    if (grunnkretser && stemmekretser && bopliktomraader) {
+      setTilhorighetOptions(getMuligeKretserForCommonGrense(kretsType, grunnkretser, stemmekretser, bopliktomraader));
     }
-  }, [grunnkretser, stemmekretser, kontekstType, setTilhorighetOptions]);
+  }, [grunnkretser, stemmekretser, bopliktomraader, kretsType, setTilhorighetOptions]);
 
   return {
-    kontekstType,
+    kretsType,
     tilhorighetOptions,
     isDirty,
     resetTilhorighet,
     formState,
     setValue,
-    isLoading: kontekstType === KontekstType.GRUNNKRETS ? grunnkretserIsLoading : stemmekretserIsLoading || isLoading,
+    isLoading:
+      kretsType === KretsType.GRUNNKRETS
+        ? grunnkretserIsLoading
+        : kretsType === KretsType.STEMMEKRETS
+          ? stemmekretserIsLoading
+          : bopliktomraaderIsLoading || isLoading,
     getCurrentOppdaterteKontekstEgenskaper,
   };
 };
