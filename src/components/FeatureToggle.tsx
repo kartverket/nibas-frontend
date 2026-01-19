@@ -35,7 +35,7 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
     "dev-main": false,
     "dev-e2e": false,
     localhost: true,
-    "feature-branch": false,
+    "feature-branch": true,
   },
 };
 

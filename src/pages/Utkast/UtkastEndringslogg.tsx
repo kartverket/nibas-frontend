@@ -14,9 +14,9 @@ import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndri
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
 import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenTilhorighet";
+import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 type Props = {
   utkast: UtkastResponse;
@@ -39,8 +39,15 @@ const UtkastEndringslogg = ({ utkast }: Props) => {
 };
 
 export const EndringsloggAccordion = ({ utkast, isOpen }: EndringsloggAccordionProps) => {
-  const { harEndringer, laster, stemmekretsendringer, grunnkretsendringer, kommunendringer, endringerutentilhorighet } =
-    useUtkastEndringer(utkast, isOpen);
+  const {
+    harEndringer,
+    laster,
+    stemmekretsendringer,
+    grunnkretsendringer,
+    bopliktomraadeendringer,
+    kommunendringer,
+    endringerutentilhorighet,
+  } = useUtkastEndringer(utkast, isOpen);
   const harLastetData = !laster || !!stemmekretsendringer || !!grunnkretsendringer;
 
   return (
@@ -56,17 +63,16 @@ export const EndringsloggAccordion = ({ utkast, isOpen }: EndringsloggAccordionP
           {!harLastetData && <Spinner size="xl" color="blue.500" thickness="2px" emptyColor="gray.200" />}
           <ListWithNoDot>
             {stemmekretsendringer?.map((endringer) => (
-              <EndringerForKommune
-                key={endringer.kommune.id}
-                kretstype={KontekstType.STEMMEKRETS}
-                endringer={endringer}
-              />
+              <EndringerForKommune key={endringer.kommune.id} kretstype={KretsType.STEMMEKRETS} endringer={endringer} />
             ))}
 
             {grunnkretsendringer?.map((endringer) => (
+              <EndringerForKommune key={endringer.kommune.id} kretstype={KretsType.GRUNNKRETS} endringer={endringer} />
+            ))}
+            {bopliktomraadeendringer?.map((endringer) => (
               <EndringerForKommune
                 key={endringer.kommune.id}
-                kretstype={KontekstType.GRUNNKRETS}
+                kretstype={KretsType.BOPLIKTOMRAADE}
                 endringer={endringer}
               />
             ))}
