@@ -1,10 +1,13 @@
-import { Kretsendringer, KretsendringerForKommune } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import { KontekstType } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
+import {
+  Kretsendringer,
+  KretsendringerForKommune,
+  KretsType,
+} from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { EndringerKommuneCardList } from "components/Endringslogg/EndringerKommuneCardList";
 import { EndringListItem, ListHeading } from "components/Endringslogg/EndringerListComponents";
 
 type EndringerForKommuneProps = {
-  kretstype: KontekstType;
+  kretstype: KretsType;
   endringer: KretsendringerForKommune;
 };
 
@@ -17,7 +20,14 @@ export const harEndringer = (endringer: Kretsendringer) =>
   endringer.metadataendringer.length > 0;
 
 export const EndringerForKommune = ({ kretstype, endringer }: EndringerForKommuneProps) => {
-  const titlePrefix = kretstype === "STEMMEKRETS" ? "Stemmekretsendringer" : "Grunnkretsendringer";
+  const titlePrefix =
+    kretstype === KretsType.STEMMEKRETS
+      ? "Stemmekretsendringer"
+      : kretstype === KretsType.GRUNNKRETS
+        ? "Grunnkretsendringer"
+        : kretstype === KretsType.BOPLIKTOMRAADE
+          ? "Bopliktområdeendringer"
+          : kretstype + "endringer";
 
   if (!harEndringer(endringer)) {
     return null;
