@@ -96,7 +96,7 @@ const TilhorighetRowEnkel = ({
       isValid={isValid}
       isLoading={isLoading}
       tooltipLabel={`
-      Definerer hvilken ${kretsType.toLocaleLowerCase()} grensen hører til.
+      Definerer hvilket ${kretsType.toLocaleLowerCase()} grensen hører til.
       `}
     >
       <TilhorighetSearch
