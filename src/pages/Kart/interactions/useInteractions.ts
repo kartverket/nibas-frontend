@@ -1,5 +1,5 @@
 import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { GrenseId } from "hooks/layers/types";
+import { VectorLayerId } from "hooks/layers/types";
 import { MapBrowserEvent } from "ol";
 import { shiftKeyOnly } from "ol/events/condition";
 import { map } from "pages/Kart/constants";
@@ -21,7 +21,7 @@ const useInteractions = () => {
   const { measureInteraction } = useMeasure();
   const { selectPoint } = useSelectPoint();
   const { activeModeTools, activeTool } = useToolbar();
-  const kartlagSnapData = useRef<Record<GrenseId, SnapData | null>>();
+  const kartlagSnapData = useRef<Record<VectorLayerId, SnapData | null>>();
 
   const crosshairCursorTools: Tool[] = ["draw", "add", "remove", "measure", null];
   const pointerCursorTools: Tool[] = [

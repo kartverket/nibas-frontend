@@ -1,6 +1,6 @@
 import { Inndelingtype } from "types/api";
 
-export type KartlagId =
+export type KartlagLayerId =
   | "topograatone"
   | "matrikkelenWMS"
   | "administrativeGrenser"
@@ -16,19 +16,7 @@ export type KartlagId =
   | "norgesMaritimeGrenser"
   | "sjokartElektroniske";
 
-export type GrenseId =
-  | "matrikkel"
-  | "fylke"
-  | "kommune"
-  | "nasjon"
-  | "grunnkrets"
-  | "stemmekrets"
-  | "archived"
-  | "edit"
-  | "measure"
-  | "historical"
-  | "sosiFiler"
-  | "bopliktomraade";
+export type VectorLayerId = Inndelingtype | "matrikkel" | "archived" | "edit" | "measure" | "historical" | "sosiFiler";
 
 export const GRENSETYPER = [
   "Kommunegrense",
@@ -105,26 +93,5 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
   }
 };
 
-// Hjelpefunksjon for å få grenseId literal for en inndelingtype.
-// Inneholder altså ikke alle grenseId-er, kun de som samsvarer med inndelingtype.
-export const getGrenseIdForInndelingtype = (
-  inndelingtype: Inndelingtype,
-): Exclude<GrenseId, "archived" | "edit" | "measure" | "historical" | "sosiFiler"> => {
-  switch (inndelingtype) {
-    case "FYLKE":
-      return "fylke";
-    case "KOMMUNE":
-      return "kommune";
-    case "STEMMEKRETS":
-      return "stemmekrets";
-    case "GRUNNKRETS":
-      return "grunnkrets";
-    case "BOPLIKTOMRAADE":
-      return "bopliktomraade";
-    default:
-      throw new Error(`Fant ikke grenseId for inndelingtype: ${inndelingtype}`);
-  }
-};
-
 // denne iden brukes både til Sources og Layers
-export type LayerId = KartlagId | GrenseId;
+export type LayerId = KartlagLayerId | VectorLayerId;

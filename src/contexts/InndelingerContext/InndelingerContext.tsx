@@ -12,7 +12,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { editSource, grenserLayers } from "hooks/layers/constants";
-import { getGrenseIdForInndelingtype, GrenseId } from "hooks/layers/types";
+import { VectorLayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
 import { map } from "pages/Kart/constants";
@@ -197,7 +197,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       }
     };
     const addInndelingToLayer = (
-      layer: GrenseId,
+      layer: VectorLayerId,
       features: Feature<Geometry>[],
       changedFeaturesInUtkast: Feature<Geometry>[] = [],
       sammenslaaingFeaturesInUtkast: Feature<Geometry>[] = [],
@@ -312,7 +312,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
       editSource.clear(true);
     }
     for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isViewing)) {
-      const source = getLayerById(getGrenseIdForInndelingtype(inndeling.inndelingtype)).getSource();
+      const source = getLayerById(inndeling.inndelingtype).getSource();
       if (source) {
         source.clear(true);
       }
@@ -339,7 +339,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
           clone.setId(feature.getId()?.toString().concat("_isViewing"));
           return clone;
         });
-        addInndelingToLayer(getGrenseIdForInndelingtype(currentInndeling.inndelingtype), clonedFeatures);
+        addInndelingToLayer(currentInndeling.inndelingtype, clonedFeatures);
       }
       /**
        * Når vi legger inn inndelinger som redigeres må vi i tillegg til å deale med de vanlige featurene i inndelingen, deale med featurene som kommer fra utkastet
