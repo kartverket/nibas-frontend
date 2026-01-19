@@ -14,15 +14,18 @@ import {
   KretsendringerForKommune,
   KretsSammenslaaingEndring,
   KretsSplittingEndring,
-  KretsType,
   Metadataendringer,
   OperasjonerOrNull,
-  ResponseTypeFromKretstype,
+  ResponseTypeFromInndelingtype,
+  EndringsloggInndelingType,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { getNavnInSpraak, inndelingResponseNavnToString } from "utils/language/language";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 
-const getEndredeFeaturesForKretstype = (operasjoner: OperasjonerOrNull, kretstype: KretsType): FeatureDTO[] => {
+const getEndredeFeaturesForKretstype = (
+  operasjoner: OperasjonerOrNull,
+  inndelingType: EndringsloggInndelingType,
+): FeatureDTO[] => {
   const endredeFeaturesMap = operasjoner?.grenseendringer?.endredeFeatures;
 
   if (!endredeFeaturesMap) {
@@ -34,17 +37,20 @@ const getEndredeFeaturesForKretstype = (operasjoner: OperasjonerOrNull, kretstyp
   return removeNil(
     endredeFeatures
       .filter((feature) => feature.properties.kontekstEgenskaper !== null)
-      .filter((feature) => feature.properties.kontekstEgenskaper.some((kontekst) => kontekst.type === kretstype)),
+      .filter((feature) => feature.properties.kontekstEgenskaper.some((kontekst) => kontekst.type === inndelingType)),
   );
 };
 
-const getKretserMedGrensejusteringer = (operasjoner: OperasjonerOrNull, kretstype: KretsType): string[] => {
-  const endredeFeatures = getEndredeFeaturesForKretstype(operasjoner, kretstype);
+const getKretserMedGrensejusteringer = (
+  operasjoner: OperasjonerOrNull,
+  inndelingType: EndringsloggInndelingType,
+): string[] => {
+  const endredeFeatures = getEndredeFeaturesForKretstype(operasjoner, inndelingType);
   return removeNil(
     getUniqueItems(
       endredeFeatures
         .flatMap((feature) => feature.properties.kontekstEgenskaper)
-        .filter((kontekst) => kontekst.type === kretstype)
+        .filter((kontekst) => kontekst.type === inndelingType)
         .map((kontekst) => kontekst.id?.lokalid.value),
     ),
   );
@@ -83,19 +89,22 @@ function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(id: strin
   return resultat;
 }
 
-export const getKretserAvTypeMedEndringer = (operasjoner: OperasjonerOrNull, kretsType: KretsType): string[] => {
+export const getKretserAvTypeMedEndringer = (
+  operasjoner: OperasjonerOrNull,
+  inndelingType: EndringsloggInndelingType,
+): string[] => {
   if (operasjoner == null) {
     return [];
   }
 
-  const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, kretsType);
-  const kretserMedSammenslaaing = getKretserMedSammenslaaing(operasjoner, kretsType);
+  const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, inndelingType);
+  const kretserMedSammenslaaing = getKretserMedSammenslaaing(operasjoner, inndelingType);
 
   const kretserMedSplitting = operasjoner.kretsDelingEndringer
-    .filter((splitting) => splitting.flatetype === kretsType)
+    .filter((splitting) => splitting.flatetype === inndelingType)
     .map((splitting) => splitting.opprinneligKrets.lokalId);
 
-  const alleKretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, kretsType)
+  const alleKretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, inndelingType)
     .concat(kretserMedMetadataEndringer)
     .concat(kretserMedSammenslaaing)
     .concat(kretserMedSplitting);
@@ -103,8 +112,11 @@ export const getKretserAvTypeMedEndringer = (operasjoner: OperasjonerOrNull, kre
   return getUniqueItems(alleKretserMedEndringer);
 };
 
-const getKretserMedSammenslaaing = (operasjoner: UtkastOperasjoner, kretsType: KretsType): string[] => {
-  if (kretsType === KretsType.GRUNNKRETS) {
+const getKretserMedSammenslaaing = (
+  operasjoner: UtkastOperasjoner,
+  inndelingType: EndringsloggInndelingType,
+): string[] => {
+  if (inndelingType === "GRUNNKRETS") {
     // Vi har ikke støtte for sammenslåing av grunnkretser per dags dato
     return [];
   }
@@ -117,9 +129,12 @@ const getKretserMedSammenslaaing = (operasjoner: UtkastOperasjoner, kretsType: K
   return removeNil(gamleKretser.concat(videreFoertKretsVedSammenSlaaing ?? []));
 };
 
-const getKretserMedMetadataEndringer = (operasjoner: UtkastOperasjoner, kretsType: KretsType): string[] => {
+const getKretserMedMetadataEndringer = (
+  operasjoner: UtkastOperasjoner,
+  inndelingType: EndringsloggInndelingType,
+): string[] => {
   const metadataEndringer =
-    kretsType === KretsType.STEMMEKRETS
+    inndelingType === "STEMMEKRETS"
       ? operasjoner.metadataendringer?.stemmekretsendringer
       : operasjoner.metadataendringer?.grunnkretsendringer;
 
@@ -169,10 +184,10 @@ const getKretsdelinger = (
   kommuneId: string | undefined,
   operasjoner: UtkastOperasjoner,
   alleKretser: (StemmekretsResponse | GrunnkretsResponse)[],
-  kretsType: KretsType,
+  inndelingType: EndringsloggInndelingType,
 ): KretsSplittingEndring[] | null => {
   return operasjoner.kretsDelingEndringer
-    .filter((splitting) => splitting.flatetype === kretsType && splitting.kommuneId.lokalid.value === kommuneId)
+    .filter((splitting) => splitting.flatetype === inndelingType && splitting.kommuneId.lokalid.value === kommuneId)
     .map((splitting) => {
       const opprinneligKretsResponse = alleKretser.find(
         (krets) => krets.id.lokalid.value === splitting.opprinneligKrets.lokalId,
@@ -201,15 +216,15 @@ const erKretsIKommune = (
 };
 
 const getKretsendringerForKretstype = (
-  kretsType: KretsType,
+  inndelingType: EndringsloggInndelingType,
   operasjoner: UtkastOperasjoner,
 ): { [lokalid: string]: GrunnkretsRequest | StemmekretsRequest } | undefined => {
-  switch (kretsType) {
-    case KretsType.GRUNNKRETS:
+  switch (inndelingType) {
+    case "GRUNNKRETS":
       return operasjoner.metadataendringer.grunnkretsendringer;
-    case KretsType.STEMMEKRETS:
+    case "STEMMEKRETS":
       return operasjoner.metadataendringer.stemmekretsendringer;
-    case KretsType.BOPLIKTOMRAADE:
+    case "BOPLIKTOMRAADE":
       return operasjoner.metadataendringer.bopliktomraadeendringer;
     default:
       return undefined;
@@ -218,19 +233,19 @@ const getKretsendringerForKretstype = (
 
 const getMetadataEndringer = (
   kommuneId: string | undefined,
-  kretsType: KretsType,
+  inndelingType: EndringsloggInndelingType,
   operasjoner: UtkastOperasjoner,
   alleKretser: GrunnkretsResponse[],
 ): Metadataendringer[] => {
-  const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, kretsType).filter((kretsId) =>
+  const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, inndelingType).filter((kretsId) =>
     erKretsIKommune(kretsId, kommuneId, alleKretser),
   );
-  const kretsendringer = getKretsendringerForKretstype(kretsType, operasjoner);
+  const kretsendringer = getKretsendringerForKretstype(inndelingType, operasjoner);
 
   return kretserMedMetadataEndringer.map((krets) => {
     const oppinneligKrets = findKrets(krets, alleKretser);
     return {
-      kretsType: kretsType,
+      kretsType: inndelingType,
       opprinneligKrets: {
         navn: oppinneligKrets.navn,
         nummer: oppinneligKrets.nummer,
@@ -290,11 +305,11 @@ export const getNavnendringForKommune = (
   return newName;
 };
 
-const getEndringerForKommune = <T extends KretsType>(
+const getEndringerForKommune = <T extends EndringsloggInndelingType>(
   kommuneId: string,
   kretserMedEndringer: string[],
   operasjoner: UtkastOperasjoner,
-  alleKretser: ResponseTypeFromKretstype<T>[],
+  alleKretser: ResponseTypeFromInndelingtype<T>[],
   alleKommuner: KommuneResponse[],
   kretstype: T,
 ): KretsendringerForKommune => {
@@ -349,7 +364,7 @@ export const getStemmekretsEndringer = (
   alleKretser: StemmekretsResponse[],
   alleKommuner: KommuneResponse[],
 ): KretsendringerForKommune[] | null => {
-  return getKretsEndringer(endredeKretser, operasjoner, alleKretser, alleKommuner, KretsType.STEMMEKRETS);
+  return getKretsEndringer(endredeKretser, operasjoner, alleKretser, alleKommuner, "STEMMEKRETS");
 };
 
 export const getGrunnkretsEndringer = (
@@ -358,7 +373,7 @@ export const getGrunnkretsEndringer = (
   alleKretser: GrunnkretsResponse[],
   alleKommuner: KommuneResponse[],
 ): KretsendringerForKommune[] | null => {
-  return getKretsEndringer(endredeKretser, operasjoner, alleKretser, alleKommuner, KretsType.GRUNNKRETS);
+  return getKretsEndringer(endredeKretser, operasjoner, alleKretser, alleKommuner, "GRUNNKRETS");
 };
 
 export const getBopliktomraadeEndringer = (
@@ -367,13 +382,13 @@ export const getBopliktomraadeEndringer = (
   alleKretser: BopliktomraadeResponse[],
   alleKommuner: KommuneResponse[],
 ): KretsendringerForKommune[] | null => {
-  return getKretsEndringer(endredeKretser, operasjoner, alleKretser, alleKommuner, KretsType.BOPLIKTOMRAADE);
+  return getKretsEndringer(endredeKretser, operasjoner, alleKretser, alleKommuner, "BOPLIKTOMRAADE");
 };
 
-const getKretsEndringer = <T extends KretsType>(
+const getKretsEndringer = <T extends EndringsloggInndelingType>(
   endredeKretser: string[],
   operasjoner: OperasjonerOrNull,
-  alleKretser: ResponseTypeFromKretstype<T>[],
+  alleKretser: ResponseTypeFromInndelingtype<T>[],
   alleKommuner: KommuneResponse[],
   kretstype: T,
 ): KretsendringerForKommune[] | null => {

@@ -25,7 +25,6 @@ import { useAdministrativTilhorighet } from "../hooks/useAdministrativTilhorighe
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 import { addKontekstEntryFromFeature } from "./grenseinformasjon-utils";
-import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 type TilhorighetRowProps = {
   feature: Feature;
@@ -37,7 +36,7 @@ type TilhorighetRowProps = {
 
 const TilhorighetRow = ({
   feature,
-  useTilhorighet: { kretsType, tilhorighetOptions, formState, setValue, isLoading },
+  useTilhorighet: { inndelingType, tilhorighetOptions, formState, setValue, isLoading },
   isSubmitted,
   isValid,
   isEditing,
@@ -46,23 +45,23 @@ const TilhorighetRow = ({
     <GrenseinformasjonRowTilhorighet
       isEditing={isEditing}
       isSubmitted={isSubmitted}
-      name={capitalize(kretsType.toLocaleLowerCase()) + "er"}
+      name={capitalize(inndelingType.toLocaleLowerCase()) + "er"}
       valueLabel={
-        getTilhorighetValuesFormatted(formState[kretsType], tilhorighetOptions) ??
+        getTilhorighetValuesFormatted(formState[inndelingType], tilhorighetOptions) ??
         (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
       }
       isValid={isValid}
       isLoading={isLoading}
       tooltipLabel={`
-      Definerer hvilke ${kretsType.toLocaleLowerCase()}er grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer.
+      Definerer hvilke ${inndelingType.toLocaleLowerCase()}er grensen har på hver sin side. Obs! Endring av dette feltet kan forårsake geometriendringer.
       `}
     >
       <Stack>
         {Object.values(Tilhorighet).map((tilhorighet) => (
           <div key={tilhorighet}>
             <TilhorighetSearch
-              value={formState[kretsType][tilhorighet]}
-              kretsType={kretsType}
+              value={formState[inndelingType][tilhorighet]}
+              inndelingType={inndelingType}
               onChange={(newValue) => setValue(tilhorighet, newValue)}
               options={
                 tilhorighetOptions?.[tilhorighet]?.map((krets) => ({
@@ -80,7 +79,7 @@ const TilhorighetRow = ({
 
 const TilhorighetRowLandgrense = ({
   feature,
-  useTilhorighet: { kretsType, tilhorighetOptions, formState, setValue, isLoading },
+  useTilhorighet: { inndelingType, tilhorighetOptions, formState, setValue, isLoading },
   isSubmitted,
   isValid,
   isEditing,
@@ -89,20 +88,20 @@ const TilhorighetRowLandgrense = ({
     <GrenseinformasjonRowTilhorighet
       isEditing={isEditing}
       isSubmitted={isSubmitted}
-      name={capitalize(kretsType.toLocaleLowerCase())}
+      name={capitalize(inndelingType.toLocaleLowerCase())}
       valueLabel={
-        getLandgrenseTilhorighetValueFormatted(formState[kretsType], tilhorighetOptions) ??
+        getLandgrenseTilhorighetValueFormatted(formState[inndelingType], tilhorighetOptions) ??
         (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
       }
       isValid={isValid}
       isLoading={isLoading}
       tooltipLabel={`
-      Definerer hvilken ${kretsType.toLocaleLowerCase()} grensen har på sin norske side. Obs! Endring av dette feltet impliserer geometriendringer.
+      Definerer hvilken ${inndelingType.toLocaleLowerCase()} grensen har på sin norske side. Obs! Endring av dette feltet impliserer geometriendringer.
       `}
     >
       <TilhorighetSearch
-        value={formState[kretsType][Tilhorighet.A]}
-        kretsType={kretsType}
+        value={formState[inndelingType][Tilhorighet.A]}
+        inndelingType={inndelingType}
         onChange={(newValue) => setValue(Tilhorighet.A, newValue)}
         options={
           tilhorighetOptions?.[Tilhorighet.A]?.map((krets) => ({
@@ -141,11 +140,11 @@ const TilhorighetFieldController = ({
   const isLoading = (grunnkretsTilhorighetForm?.isLoading ?? false) || (stemmekretsTilhorighetForm?.isLoading ?? false);
 
   const isGrunnkretserValid =
-    grunnkretsTilhorighetForm?.formState[KretsType.GRUNNKRETS][Tilhorighet.A] != null &&
-    grunnkretsTilhorighetForm?.formState[KretsType.GRUNNKRETS][Tilhorighet.B] != null;
+    grunnkretsTilhorighetForm?.formState["GRUNNKRETS"][Tilhorighet.A] != null &&
+    grunnkretsTilhorighetForm?.formState["GRUNNKRETS"][Tilhorighet.B] != null;
   const isStemmekretserValid =
-    stemmekretsTilhorighetForm?.formState[KretsType.STEMMEKRETS][Tilhorighet.A] != null &&
-    stemmekretsTilhorighetForm?.formState[KretsType.STEMMEKRETS][Tilhorighet.B] != null;
+    stemmekretsTilhorighetForm?.formState["STEMMEKRETS"][Tilhorighet.A] != null &&
+    stemmekretsTilhorighetForm?.formState["STEMMEKRETS"][Tilhorighet.B] != null;
 
   const isAllValid =
     (stemmekretsTilhorighetForm != null ? isStemmekretserValid : true) &&
@@ -245,13 +244,13 @@ const CommonTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetPro
       feature={feature}
       isDisabled={isDisabled}
       tooltip={tooltip}
-      grunnkretsTilhorighetForm={kretsType === KretsType.GRUNNKRETS ? commonTilhorighet : null}
-      stemmekretsTilhorighetForm={kretsType === KretsType.STEMMEKRETS ? commonTilhorighet : null}
+      grunnkretsTilhorighetForm={kretsType === "GRUNNKRETS" ? commonTilhorighet : null}
+      stemmekretsTilhorighetForm={kretsType === "STEMMEKRETS" ? commonTilhorighet : null}
       renderChildren={({ isEditing, isSubmitted, isGrunnkretserValid, isStemmekretserValid }) => (
         <TilhorighetRow
           isEditing={isEditing}
           isSubmitted={isSubmitted}
-          isValid={kretsType === KretsType.GRUNNKRETS ? isGrunnkretserValid : isStemmekretserValid}
+          isValid={kretsType === "GRUNNKRETS" ? isGrunnkretserValid : isStemmekretserValid}
           feature={feature}
           useTilhorighet={commonTilhorighet}
         />
@@ -261,8 +260,8 @@ const CommonTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetPro
 };
 
 const AdministrativTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetProps) => {
-  const useTilhorighetGrunnkrets = useAdministrativTilhorighet(feature, KretsType.GRUNNKRETS);
-  const useTilhorighetStemmekrets = useAdministrativTilhorighet(feature, KretsType.STEMMEKRETS);
+  const useTilhorighetGrunnkrets = useAdministrativTilhorighet(feature, "GRUNNKRETS");
+  const useTilhorighetStemmekrets = useAdministrativTilhorighet(feature, "STEMMEKRETS");
 
   return (
     <TilhorighetFieldController
@@ -294,8 +293,8 @@ const AdministrativTilhorighetField = ({ feature, isDisabled, tooltip }: Tilhori
 };
 
 const LandgrenseTilhørighetField = ({ feature, isDisabled, tooltip }: TilhorighetProps) => {
-  const useTilhorighetGrunnkrets = useAdministrativTilhorighet(feature, KretsType.GRUNNKRETS);
-  const useTilhorighetStemmekrets = useAdministrativTilhorighet(feature, KretsType.STEMMEKRETS);
+  const useTilhorighetGrunnkrets = useAdministrativTilhorighet(feature, "GRUNNKRETS");
+  const useTilhorighetStemmekrets = useAdministrativTilhorighet(feature, "STEMMEKRETS");
   return (
     <TilhorighetFieldController
       feature={feature}
