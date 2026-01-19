@@ -1,6 +1,7 @@
 import {
   BopliktomraadeResponse,
   GrunnkretsResponse,
+  Inndelingtype,
   KretsNavnOgNummer,
   StemmekretsResponse,
   UtkastOperasjoner,
@@ -8,29 +9,18 @@ import {
 
 export type OperasjonerOrNull = UtkastOperasjoner | null | undefined;
 
-export enum KretsType {
-  GRUNNKRETS = "GRUNNKRETS",
-  STEMMEKRETS = "STEMMEKRETS",
-  BOPLIKTOMRAADE = "BOPLIKTOMRAADE",
-}
-export enum InndelingType {
-  FYLKE = "FYLKE",
-  KOMMUNE = "KOMMUNE",
-  NASJON = "NASJON",
-}
+export type EndringsloggInndelingType = Extract<Inndelingtype, "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE">;
 
-export type KontekstType = KretsType | InndelingType;
-
-export type ResponseTypeFromKretstype<T extends KretsType> = T extends KretsType.STEMMEKRETS
+export type ResponseTypeFromInndelingtype<T extends EndringsloggInndelingType> = T extends "STEMMEKRETS"
   ? StemmekretsResponse
-  : T extends KretsType.GRUNNKRETS
+  : T extends "GRUNNKRETS"
     ? GrunnkretsResponse
-    : T extends KretsType.BOPLIKTOMRAADE
+    : T extends "BOPLIKTOMRAADE"
       ? BopliktomraadeResponse
       : never;
 
 export type Metadataendringer = {
-  kretsType: KretsType;
+  kretsType: EndringsloggInndelingType;
   opprinneligKrets: {
     navn: string;
     nummer: string;

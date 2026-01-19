@@ -1,5 +1,5 @@
 import { archivedSource, editSource } from "hooks/layers/constants";
-import { GrenseId, GrenseType } from "hooks/layers/types";
+import { VectorLayerId, GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
@@ -112,27 +112,27 @@ const flateStyles = [
 ];
 
 export const inndelingColors = {
-  fylke: "#170CEB",
-  kommune: "#637DF3",
+  FYLKE: "#170CEB",
+  KOMMUNE: "#637DF3",
   nasjon: "#61538B",
-  grunnkrets: "#4D94AF",
-  stemmekrets: "#FFAE49FF",
+  GRUNNKRETS: "#4D94AF",
+  STEMMEKRETS: "#FFAE49FF",
   delomraade: "#5DB9DC",
   fremtidigEndring: "#B92659",
   edit: "#000000",
   measure: "#000000",
   sosiFiler: "#1A532A",
-  bopliktomraade: "#FF6600",
+  BOPLIKTOMRAADE: "#FF6600",
 };
 
 export const grenseStyles = {
-  fylke: lineAndPointStyles({ color: inndelingColors["fylke"] }),
-  kommune: lineAndPointStyles({ color: inndelingColors["kommune"] }),
+  FYLKE: lineAndPointStyles({ color: inndelingColors["FYLKE"] }),
+  KOMMUNE: lineAndPointStyles({ color: inndelingColors["KOMMUNE"] }),
   nasjon: lineAndPointStyles({ color: inndelingColors["nasjon"] }),
-  grunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"] }),
-  stemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"] }),
+  GRUNNKRETS: lineAndPointStyles({ color: inndelingColors["GRUNNKRETS"] }),
+  STEMMEKRETS: lineAndPointStyles({ color: inndelingColors["STEMMEKRETS"] }),
   delomraade: lineAndPointStyles({ color: inndelingColors["delomraade"] }),
-  bopliktomraade: lineAndPointStyles({ color: inndelingColors["bopliktomraade"] }),
+  BOPLIKTOMRAADE: lineAndPointStyles({ color: inndelingColors["BOPLIKTOMRAADE"] }),
   edit: lineAndPointStyles({ color: inndelingColors["edit"] }),
   measure: lineAndPointStyles({ color: inndelingColors["measure"], dashed: true }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
@@ -148,23 +148,23 @@ export const grenseStyles = {
     dashed: true,
     points: false,
   }),
-  archivedFylke: lineAndPointStyles({ color: inndelingColors["fylke"], dashed: true }),
-  archivedKommune: lineAndPointStyles({ color: inndelingColors["kommune"], dashed: true }),
+  archivedFylke: lineAndPointStyles({ color: inndelingColors["FYLKE"], dashed: true }),
+  archivedKommune: lineAndPointStyles({ color: inndelingColors["KOMMUNE"], dashed: true }),
   archivedNasjon: lineAndPointStyles({ color: inndelingColors["nasjon"], dashed: true }),
-  archivedGrunnkrets: lineAndPointStyles({ color: inndelingColors["grunnkrets"], dashed: true }),
-  archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["stemmekrets"], dashed: true }),
+  archivedGrunnkrets: lineAndPointStyles({ color: inndelingColors["GRUNNKRETS"], dashed: true }),
+  archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["STEMMEKRETS"], dashed: true }),
   archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true }),
-  archivedBopliktomraade: lineAndPointStyles({ color: inndelingColors["bopliktomraade"], dashed: true }),
+  archivedBopliktomraade: lineAndPointStyles({ color: inndelingColors["BOPLIKTOMRAADE"], dashed: true }),
   sosiFiler: lineAndPointStyles({ color: inndelingColors["sosiFiler"] }),
 };
 
 const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
   switch (grenseType) {
     case "Fylkesgrense": {
-      return archived ? grenseStyles.archivedFylke : grenseStyles.fylke;
+      return archived ? grenseStyles.archivedFylke : grenseStyles.FYLKE;
     }
     case "Kommunegrense": {
-      return archived ? grenseStyles.archivedKommune : grenseStyles.kommune;
+      return archived ? grenseStyles.archivedKommune : grenseStyles.KOMMUNE;
     }
     case "Posisjon":
     case "Territorialgrense":
@@ -176,13 +176,13 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
       return archived ? grenseStyles.archivedDelomraade : grenseStyles.delomraade;
     }
     case "Grunnkretsgrense": {
-      return archived ? grenseStyles.archivedGrunnkrets : grenseStyles.grunnkrets;
+      return archived ? grenseStyles.archivedGrunnkrets : grenseStyles.GRUNNKRETS;
     }
     case "Stemmekretsgrense": {
-      return archived ? grenseStyles.archivedStemmekrets : grenseStyles.stemmekrets;
+      return archived ? grenseStyles.archivedStemmekrets : grenseStyles.STEMMEKRETS;
     }
     case "Bopliktgrense": {
-      return archived ? grenseStyles.archivedBopliktomraade : grenseStyles.bopliktomraade;
+      return archived ? grenseStyles.archivedBopliktomraade : grenseStyles.BOPLIKTOMRAADE;
     }
     case "BOPLIKTOMRAADE":
     case "GRUNNKRETS":
@@ -192,7 +192,7 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
   }
 };
 
-export const getLayerStyle = (feature: FeatureLike, grenseId: GrenseId, archived: boolean): Style[] => {
+export const getLayerStyle = (feature: FeatureLike, grenseId: VectorLayerId, archived: boolean): Style[] => {
   const grenseType = feature.get("type");
 
   if (getFeatureFremtidigEndringDato(feature) != null) {
@@ -232,7 +232,7 @@ export const getArchiveLayerStyle = (feature: FeatureLike): Style[] => {
   return [];
 };
 
-export const getPointOverlayStyle = (feature: FeatureLike, grenseId: GrenseId) => {
+export const getPointOverlayStyle = (feature: FeatureLike, grenseId: VectorLayerId) => {
   const name = feature.get("name") as string | undefined;
   const number = feature.get("number") as string | undefined;
   const gyldigTil = feature.get("gyldigTil") as string | undefined;

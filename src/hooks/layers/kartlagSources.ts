@@ -5,7 +5,7 @@ import { createXYZ } from "ol/tilegrid";
 import WMTSTileGrid from "ol/tilegrid/WMTS";
 import { getSrcWithTicket } from "utils/geonorgeTicket";
 import { mapProjectionEPSGCode } from "utils/map/projections";
-import { KartlagId } from "./types";
+import { KartlagLayerId } from "./types";
 
 const tileGrid = createXYZ({
   extent: [-2465144.8, 4102893.55, 1176625.76, 9408555.22],
@@ -60,7 +60,7 @@ const norgeIBilderConfig: WMTSConfig = {
   format: "image/png",
 };
 
-const createWMTS = (id: KartlagId, config: WMTSConfig) => {
+const createWMTS = (id: KartlagLayerId, config: WMTSConfig) => {
   const wmts = new WMTS(config);
 
   // Setter id på alle sources for å kunne finne riktig mappedLayer senere
@@ -76,7 +76,7 @@ const defaultTileWMSParams = {
   TILED: true,
 };
 
-const createTileWMS = (id: KartlagId, url: string) => {
+const createTileWMS = (id: KartlagLayerId, url: string) => {
   const tileWMS = new TileWMS({
     url,
     params: defaultTileWMSParams,
@@ -88,7 +88,7 @@ const createTileWMS = (id: KartlagId, url: string) => {
   return tileWMS;
 };
 
-const createAuthedTileWMS = (id: KartlagId, url: string, tjenesteId: string) => {
+const createAuthedTileWMS = (id: KartlagLayerId, url: string, tjenesteId: string) => {
   const tileWMS = new TileWMS({
     url,
     tileLoadFunction: async (imageTile, src) => {
@@ -106,7 +106,7 @@ const createAuthedTileWMS = (id: KartlagId, url: string, tjenesteId: string) => 
   return tileWMS;
 };
 
-export const kartlagSources: Record<KartlagId, WMTS | TileWMS> = {
+export const kartlagSources: Record<KartlagLayerId, WMTS | TileWMS> = {
   topograatone: createWMTS("topograatone", generateWMTSConfig("topograatone")),
   norgeIBilder: createWMTS("norgeIBilder", norgeIBilderConfig),
   administrativeGrenser: createTileWMS("administrativeGrenser", "https://wms.geonorge.no/skwms1/wms.adm_enheter2"),

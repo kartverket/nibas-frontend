@@ -49,7 +49,7 @@ const MergePanel = () => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const currentlyEditingStemmekrets = currentlyEditingInndelinger.find(
-    (inndeling) => inndeling.inndelingtype === "stemmekrets",
+    (inndeling) => inndeling.inndelingtype === "STEMMEKRETS",
   );
 
   const { data: stemmekretserByKommune } = useKommuneStemmekretser(
@@ -243,7 +243,7 @@ const MergePanel = () => {
                   label="Stemmekretsnr."
                   {...register(
                     "nummer",
-                    getNumberValidatorFunctionForInndelingType<MergeFormData, "nummer">("stemmekrets")({
+                    getNumberValidatorFunctionForInndelingType<MergeFormData, "nummer">("STEMMEKRETS")({
                       shouldNotBeEqualWith: getExistingStemmekretsnummere(),
                     }),
                   )}

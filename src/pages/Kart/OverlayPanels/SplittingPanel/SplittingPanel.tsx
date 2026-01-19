@@ -15,7 +15,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { ChangeEvent, useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { getInndelingFremtidigEndringDato } from "utils/features";
-import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
+import { getInndelingtypeLabel, getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { PanelHeader, SidePanel } from "../Panel";
 import { CustomOption } from "../hooks/tilhorighet-utils";
 import { SplittingForm, useSplittingForm } from "./useSplittingForm";
@@ -97,7 +97,7 @@ export const SplittingPanel = () => {
     nyeKretsNummere.splice(indexOfCurrentNummer, 1); // fjerner value fra lista
     if (nyeKretsNummere.includes(value)) {
       // hvis et nummer lik value fremdeles er i lista har vi duplikat for value
-      return `Nytt ${inndelingtype}nummer er allerede i bruk i denne splittingen`;
+      return `Nytt ${getInndelingtypeLabel(inndelingtype)}nummer er allerede i bruk i denne splittingen`;
     }
 
     return true;
@@ -120,7 +120,7 @@ export const SplittingPanel = () => {
 
       <Stack spacing={8}>
         <FormControl>
-          <FormLabel>{`Hvilken ${inndelingtype} skal splittes?`}</FormLabel>
+          <FormLabel>{`Hvilken ${getInndelingtypeLabel(inndelingtype)} skal splittes?`}</FormLabel>
           <Select
             {...opprinneligKretsRegister}
             onChange={(e) => {
@@ -128,7 +128,7 @@ export const SplittingPanel = () => {
               handleOpprinneligKretsChange(e);
             }}
           >
-            <option value={CustomOption.NOT_CHOSEN}>{`Velg ${inndelingtype}`}</option>
+            <option value={CustomOption.NOT_CHOSEN}>{`Velg ${getInndelingtypeLabel(inndelingtype)}`}</option>
             {opprinneligFlateOptions
               ?.sort((a, b) => parseInt(a.nummer) - parseInt(b.nummer))
               .map((krets) => {
@@ -172,7 +172,7 @@ export const SplittingPanel = () => {
                       <Input
                         disabled={index === 0}
                         {...register(`nyeKretser.${index}.kretsNavn`, {
-                          required: `Ny ${inndelingtype} må ha et navn`,
+                          required: `Ny ${getInndelingtypeLabel(inndelingtype)} må ha et navn`,
                         })}
                       />
                     </FormControl>

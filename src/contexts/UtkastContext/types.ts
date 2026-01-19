@@ -1,4 +1,4 @@
-import { OppdaterUtkastRequest, UtkastResponse } from "types/api";
+import { Inndelingtype, OppdaterUtkastRequest, UtkastResponse } from "types/api";
 
 export type EntityUtkastType =
   | "stemmekretsendringer"
@@ -14,6 +14,21 @@ export type ResponseWithId = {
   };
 };
 
+export const getEntityUtkastTypeForInndelingtype = (inndelingtype: Inndelingtype): EntityUtkastType => {
+  switch (inndelingtype) {
+    case "STEMMEKRETS":
+      return "stemmekretsendringer";
+    case "GRUNNKRETS":
+      return "grunnkretsendringer";
+    case "KOMMUNE":
+      return "kommuneendringer";
+    case "FYLKE":
+      return "kommuneendringer";
+    case "BOPLIKTOMRAADE": {
+      return "bopliktomraadeendringer";
+    }
+  }
+};
 export type UtkastContextValue = {
   utkast: UtkastResponse | undefined;
   utkastHarEndringer: () => boolean;

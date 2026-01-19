@@ -34,8 +34,8 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
     },
     {
       text: "Fylkesgrense",
-      dotted: isDottedStyle(grenseStyles.fylke),
-      color: getColorFromStyle(grenseStyles.fylke),
+      dotted: isDottedStyle(grenseStyles.FYLKE),
+      color: getColorFromStyle(grenseStyles.FYLKE),
     },
     {
       text: "Arkivert fylkesgrense",
@@ -44,8 +44,8 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
     },
     {
       text: "Kommunegrense",
-      dotted: isDottedStyle(grenseStyles.kommune),
-      color: getColorFromStyle(grenseStyles.kommune),
+      dotted: isDottedStyle(grenseStyles.KOMMUNE),
+      color: getColorFromStyle(grenseStyles.KOMMUNE),
     },
     {
       text: "Arkivert kommunegrense",
@@ -56,8 +56,8 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
   [
     {
       text: "Stemmekretsgrense",
-      dotted: isDottedStyle(grenseStyles.stemmekrets),
-      color: getColorFromStyle(grenseStyles.stemmekrets),
+      dotted: isDottedStyle(grenseStyles.STEMMEKRETS),
+      color: getColorFromStyle(grenseStyles.STEMMEKRETS),
     },
     {
       text: "Arkivert stemmekretsgrense",
@@ -66,8 +66,8 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
     },
     {
       text: "Bopliktgrense",
-      dotted: isDottedStyle(grenseStyles.bopliktomraade),
-      color: getColorFromStyle(grenseStyles.bopliktomraade),
+      dotted: isDottedStyle(grenseStyles.BOPLIKTOMRAADE),
+      color: getColorFromStyle(grenseStyles.BOPLIKTOMRAADE),
     },
     {
       text: "Arkivert bopliktgrense",
@@ -76,8 +76,8 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
     },
     {
       text: "Grunnkretsgrense",
-      dotted: isDottedStyle(grenseStyles.grunnkrets),
-      color: getColorFromStyle(grenseStyles.grunnkrets),
+      dotted: isDottedStyle(grenseStyles.GRUNNKRETS),
+      color: getColorFromStyle(grenseStyles.GRUNNKRETS),
     },
     {
       text: "Arkivert grunnkretsgrense",

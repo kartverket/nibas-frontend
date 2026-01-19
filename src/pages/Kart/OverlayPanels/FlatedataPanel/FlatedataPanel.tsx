@@ -15,12 +15,27 @@ import {
 import { ModalPanel, PanelHeader } from "../Panel";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import FlatedataTable from "./FlatedataTable";
-import { Inndeling, pluralizeInndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { useState } from "react";
 import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import useSearch from "hooks/useSearch";
+import { Inndelingtype } from "types/api";
+
+const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
+  const lowerCaseInndelingtype = inndelingtype.toLowerCase();
+  switch (inndelingtype) {
+    case "FYLKE":
+    case "KOMMUNE":
+      return lowerCaseInndelingtype + "r";
+    case "STEMMEKRETS":
+    case "GRUNNKRETS":
+      return lowerCaseInndelingtype + "er";
+    case "BOPLIKTOMRAADE":
+      return lowerCaseInndelingtype + "r";
+  }
+};
 
 const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
   const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
