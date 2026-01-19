@@ -9,8 +9,9 @@ export type Spraak = {
 };
 
 type FlateType = components["schemas"]["InndelingResponse"]["type"];
-type NotImplementedFlateType = Extract<FlateType, "SKOLEKRETS" | "NASJON">;
-export const INNDELINGTYPE_VALUES: Exclude<FlateType, NotImplementedFlateType>[] = [
+type ImplementedFlateType = Extract<FlateType, "FYLKE" | "KOMMUNE" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE">;
+
+export const INNDELINGTYPE_VALUES: Extract<FlateType, ImplementedFlateType>[] = [
   "FYLKE",
   "KOMMUNE",
   "GRUNNKRETS",
