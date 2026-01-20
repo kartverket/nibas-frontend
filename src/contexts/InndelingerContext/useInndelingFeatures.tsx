@@ -2,7 +2,7 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { getUrlWithParameters } from "hooks/useNibasApi";
 import { GeoJSONFeature } from "ol/format/GeoJSON";
 import { geoJsonToSource, getFeatureFromGeoJson } from "utils/map/geoJson";
-import { Inndeling, Inndelingtype } from "./InndelingerContext";
+import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { Feature } from "ol";
 import { Geometry } from "ol/geom";
 import {
@@ -11,6 +11,7 @@ import {
   FullInndelingResponse,
   SimpleInndelingResponse,
   UtkastResponse,
+  Inndelingtype,
 } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { paths } from "types/api-gen";
@@ -32,15 +33,20 @@ type InndelingGrenserRequestPath = Pick<
 >;
 
 const getGrenserRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean): keyof InndelingGrenserRequestPath => {
-  if (inndelingtype === "fylke") {
-    return `/v1/fylker/{id}/grenser`;
+  switch (inndelingtype) {
+    case "FYLKE":
+      return "/v1/fylker/{id}/grenser";
+    case "KOMMUNE":
+      return isEditing ? "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser" : "/v1/kommuner/{id}/grenser";
+    case "BOPLIKTOMRAADE":
+      return "/v1/kommuner/{id}/bopliktomraadegrenser";
+    case "STEMMEKRETS":
+      return "/v1/kommuner/{id}/stemmekretsgrenser";
+    case "GRUNNKRETS":
+      return "/v1/kommuner/{id}/grunnkretsgrenser";
+    default:
+      throw new Error(`Ugyldig inndelingtype: ${inndelingtype}`);
   }
-
-  if (inndelingtype === "kommune") {
-    return isEditing ? "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser" : "/v1/kommuner/{id}/grenser";
-  }
-
-  return `/v1/kommuner/{id}/${inndelingtype}grenser`;
 };
 
 type InndelingRequestPath = Pick<
@@ -54,19 +60,20 @@ type InndelingRequestPath = Pick<
 >;
 
 const getInndelingRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean): keyof InndelingRequestPath => {
-  if (inndelingtype === "fylke") {
-    return `/v1/fylker/{id}`;
+  switch (inndelingtype) {
+    case "FYLKE":
+      return `/v1/fylker/{id}`;
+    case "KOMMUNE":
+      return isEditing ? "/v1/kommuner/{id}/inndelingerdeltgeometri" : "/v1/kommuner/{id}";
+    case "BOPLIKTOMRAADE":
+      return "/v1/kommuner/{id}/bopliktomraader";
+    case "STEMMEKRETS":
+      return "/v1/kommuner/{id}/stemmekretser";
+    case "GRUNNKRETS":
+      return "/v1/kommuner/{id}/grunnkretser";
+    default:
+      throw new Error(`Ugyldig inndelingtype: ${inndelingtype}`);
   }
-
-  if (inndelingtype === "kommune") {
-    return isEditing ? "/v1/kommuner/{id}/inndelingerdeltgeometri" : "/v1/kommuner/{id}";
-  }
-
-  if (inndelingtype === "bopliktomraade") {
-    return "/v1/kommuner/{id}/bopliktomraader";
-  }
-
-  return `/v1/kommuner/{id}/${inndelingtype}er`;
 };
 
 type PotentialInndelingResponse = FullInndelingResponse | FullInndelingResponse[] | SimpleInndelingResponse[];
@@ -252,14 +259,14 @@ const erRelevantInndelingForTilhorighetstype = (
   inndeling: Inndeling,
 ): boolean => {
   switch (inndeling.inndelingtype) {
-    case "kommune":
-    case "fylke":
+    case "KOMMUNE":
+    case "FYLKE":
       return true;
-    case "stemmekrets":
+    case "STEMMEKRETS":
       return konteksttype === "STEMMEKRETS";
-    case "grunnkrets":
+    case "GRUNNKRETS":
       return konteksttype === "GRUNNKRETS";
-    case "bopliktomraade":
+    case "BOPLIKTOMRAADE":
       return konteksttype === "BOPLIKTOMRAADE";
   }
 };

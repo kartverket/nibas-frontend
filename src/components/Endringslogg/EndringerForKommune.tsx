@@ -1,13 +1,13 @@
 import {
   Kretsendringer,
   KretsendringerForKommune,
-  KretsType,
+  EndringsloggInndelingType,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { EndringerKommuneCardList } from "components/Endringslogg/EndringerKommuneCardList";
 import { EndringListItem, ListHeading } from "components/Endringslogg/EndringerListComponents";
 
 type EndringerForKommuneProps = {
-  kretstype: KretsType;
+  inndelingType: EndringsloggInndelingType;
   endringer: KretsendringerForKommune;
 };
 
@@ -19,15 +19,15 @@ export const harEndringer = (endringer: Kretsendringer) =>
   endringer.sammenslaaing != null ||
   endringer.metadataendringer.length > 0;
 
-export const EndringerForKommune = ({ kretstype, endringer }: EndringerForKommuneProps) => {
+export const EndringerForKommune = ({ inndelingType, endringer }: EndringerForKommuneProps) => {
   const titlePrefix =
-    kretstype === KretsType.STEMMEKRETS
+    inndelingType === "STEMMEKRETS"
       ? "Stemmekretsendringer"
-      : kretstype === KretsType.GRUNNKRETS
+      : inndelingType === "GRUNNKRETS"
         ? "Grunnkretsendringer"
-        : kretstype === KretsType.BOPLIKTOMRAADE
+        : inndelingType === "BOPLIKTOMRAADE"
           ? "Bopliktområdeendringer"
-          : kretstype + "endringer";
+          : inndelingType + "endringer";
 
   if (!harEndringer(endringer)) {
     return null;

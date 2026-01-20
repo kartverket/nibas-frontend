@@ -3,7 +3,7 @@ import WMTSCapabilities from "ol/format/WMTSCapabilities";
 import TileWMS from "ol/source/TileWMS";
 import WMTS from "ol/source/WMTS";
 import { getTicketForTjeneste } from "../../utils/geonorgeTicket";
-import { KartlagId } from "hooks/layers/types";
+import { KartlagLayerId } from "hooks/layers/types";
 import { getUrlForPath } from "utils/api";
 import { MappedLayer } from "contexts/KartlagContext/KartlagContext";
 
@@ -23,8 +23,8 @@ type WMTSResponseLayer = {
 };
 
 // Funksjon som gir vårt egendefinerte navn på et kartlag hvis vi har definert det
-export const getKartlagCustomTitle = (layerId: KartlagId) => {
-  const kartlagTitles: Record<KartlagId, string | null> = {
+export const getKartlagCustomTitle = (layerId: KartlagLayerId) => {
+  const kartlagTitles: Record<KartlagLayerId, string | null> = {
     topograatone: null,
     matrikkelenWMS: null,
     administrativeGrenser: "Administrative enheter WMS",
@@ -44,7 +44,7 @@ export const getKartlagCustomTitle = (layerId: KartlagId) => {
   return kartlagTitles[layerId];
 };
 
-const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
+const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagLayerId) => {
   const sublayers =
     responseLayer.Layer?.map((nestedLayer: WMSResponseLayer) => mapWMSLayer(nestedLayer, sourceId)) ?? [];
   const mappedLayer: MappedLayer = {
@@ -59,7 +59,7 @@ const mapWMSLayer = (responseLayer: WMSResponseLayer, sourceId: KartlagId) => {
   return mappedLayer;
 };
 
-const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): MappedLayer => ({
+const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagLayerId): MappedLayer => ({
   type: "wmts",
   sourceId: sourceId,
   id: responseLayer.Identifier,
@@ -68,7 +68,7 @@ const mapWMTSLayer = (responseLayer: WMTSResponseLayer, sourceId: KartlagId): Ma
   isVisible: false,
 });
 
-export const getLayersFromSource = async (layerId: KartlagId, source: TileWMS | WMTS) => {
+export const getLayersFromSource = async (layerId: KartlagLayerId, source: TileWMS | WMTS) => {
   const urls = source.getUrls();
   if (!urls || urls.length === 0) {
     return null;

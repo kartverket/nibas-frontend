@@ -1,4 +1,3 @@
-import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
 import { components, paths } from "./api-gen";
 
 /**
@@ -8,6 +7,18 @@ export type Spraak = {
   navn: string;
   spraak: string;
 };
+
+type FlateType = components["schemas"]["InndelingResponse"]["type"];
+type ImplementedFlateType = Extract<FlateType, "FYLKE" | "KOMMUNE" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE">;
+
+export const INNDELINGTYPE_VALUES: Extract<FlateType, ImplementedFlateType>[] = [
+  "FYLKE",
+  "KOMMUNE",
+  "GRUNNKRETS",
+  "STEMMEKRETS",
+  "BOPLIKTOMRAADE",
+];
+export type Inndelingtype = (typeof INNDELINGTYPE_VALUES)[number];
 
 export type AdministrativEnhetNavn = components["schemas"]["AdministrativEnhetNavn"][];
 export type FeatureDTO = components["schemas"]["Feature"];

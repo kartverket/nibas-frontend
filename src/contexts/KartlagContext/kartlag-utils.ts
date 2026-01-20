@@ -1,5 +1,5 @@
 import { generateWMTSConfig } from "hooks/layers/kartlagSources";
-import { KartlagId } from "hooks/layers/types";
+import { KartlagLayerId } from "hooks/layers/types";
 import TileLayer from "ol/layer/Tile";
 import TileSource from "ol/source/Tile";
 import TileWMS from "ol/source/TileWMS";
@@ -66,7 +66,7 @@ const toggleAllSublayers = (layer: MappedLayer, willBeVisible: boolean): MappedL
   // Dersom laget ikke har underlag kan vi avslutte rekursjon og skru av eller på kartlaget
   if (layer.sublayers.length === 0) {
     if (layer.type === "wms") {
-      setWMSLayerVisibility(getLayerById(layer.sourceId as KartlagId), willBeVisible, layer.id);
+      setWMSLayerVisibility(getLayerById(layer.sourceId as KartlagLayerId), willBeVisible, layer.id);
     }
     return { ...layer, isVisible: willBeVisible };
   }

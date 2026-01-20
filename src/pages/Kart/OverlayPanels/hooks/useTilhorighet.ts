@@ -3,6 +3,7 @@ import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { Feature } from "ol";
 import { useEffect } from "react";
 import {
+  TilhorighetInndelingtype,
   TilhorighetOptions,
   UseTilhorighet,
   mapBopliktomraadeResponseToKrets,
@@ -12,34 +13,33 @@ import {
 import { useTilhorighetForm } from "./useTilhorighetForm";
 import { BopliktomraadeResponse, GrunnkretsResponse, StemmekretsResponse } from "../../../../types/api";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
-import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useKommuneBopliktomraade } from "hooks/inndelinger/useBopliktomraader";
 
 // Tar api respons for kretser av en gitt type og gir det tilbake på Krets typen pakket inn i TilhorighetOptions
 const getMuligeKretserForCommonGrense = (
-  kretsType: KretsType,
+  inndelingType: TilhorighetInndelingtype,
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
   bopliktomraader: BopliktomraadeResponse[],
 ): TilhorighetOptions => {
-  switch (kretsType) {
-    case KretsType.STEMMEKRETS:
+  switch (inndelingType) {
+    case "STEMMEKRETS":
       return {
         a: mapStemmekretResponseToKrets(stemmekretser),
         b: mapStemmekretResponseToKrets(stemmekretser),
       };
-    case KretsType.GRUNNKRETS:
+    case "GRUNNKRETS":
       return {
         a: mapGrunnkretsResponseToKrets(grunnkretser),
         b: mapGrunnkretsResponseToKrets(grunnkretser),
       };
-    case KretsType.BOPLIKTOMRAADE:
+    case "BOPLIKTOMRAADE":
       return {
         a: mapBopliktomraadeResponseToKrets(bopliktomraader),
         b: mapBopliktomraadeResponseToKrets(bopliktomraader),
       };
     default:
-      throw new Error(`Ugyldig krets type: ${kretsType}`);
+      throw new Error(`Ugyldig inndelingtype: ${inndelingType}`);
   }
 };
 
@@ -52,7 +52,7 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     isDirty,
     resetTilhorighet,
     kommunerIds,
-    kretsType,
+    inndelingType,
     getCurrentOppdaterteKontekstEgenskaper,
     isLoading,
   } = useTilhorighetForm(feature);
@@ -74,21 +74,23 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
 
   useEffect(() => {
     if (grunnkretser && stemmekretser && bopliktomraader) {
-      setTilhorighetOptions(getMuligeKretserForCommonGrense(kretsType, grunnkretser, stemmekretser, bopliktomraader));
+      setTilhorighetOptions(
+        getMuligeKretserForCommonGrense(inndelingType, grunnkretser, stemmekretser, bopliktomraader),
+      );
     }
-  }, [grunnkretser, stemmekretser, bopliktomraader, kretsType, setTilhorighetOptions]);
+  }, [grunnkretser, stemmekretser, bopliktomraader, inndelingType, setTilhorighetOptions]);
 
   return {
-    kretsType,
+    inndelingType,
     tilhorighetOptions,
     isDirty,
     resetTilhorighet,
     formState,
     setValue,
     isLoading:
-      kretsType === KretsType.GRUNNKRETS
+      inndelingType === "GRUNNKRETS"
         ? grunnkretserIsLoading
-        : kretsType === KretsType.STEMMEKRETS
+        : inndelingType === "STEMMEKRETS"
           ? stemmekretserIsLoading
           : bopliktomraaderIsLoading || isLoading,
     getCurrentOppdaterteKontekstEgenskaper,

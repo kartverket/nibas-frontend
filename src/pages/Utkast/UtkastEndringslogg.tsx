@@ -9,14 +9,13 @@ import {
   Spinner,
   useDisclosure,
 } from "@kvib/react";
+import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
+import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
+import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenTilhorighet";
 import EndringsloggModal from "components/Endringslogg/EndringsloggModal";
 import { useUtkastEndringer } from "components/Endringslogg/hooks/useUtkastEndringer";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
-import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
-import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
-import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenTilhorighet";
-import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 type Props = {
   utkast: UtkastResponse;
@@ -63,18 +62,14 @@ export const EndringsloggAccordion = ({ utkast, isOpen }: EndringsloggAccordionP
           {!harLastetData && <Spinner size="xl" color="blue.500" thickness="2px" emptyColor="gray.200" />}
           <ListWithNoDot>
             {stemmekretsendringer?.map((endringer) => (
-              <EndringerForKommune key={endringer.kommune.id} kretstype={KretsType.STEMMEKRETS} endringer={endringer} />
+              <EndringerForKommune key={endringer.kommune.id} inndelingType={"STEMMEKRETS"} endringer={endringer} />
             ))}
 
             {grunnkretsendringer?.map((endringer) => (
-              <EndringerForKommune key={endringer.kommune.id} kretstype={KretsType.GRUNNKRETS} endringer={endringer} />
+              <EndringerForKommune key={endringer.kommune.id} inndelingType={"GRUNNKRETS"} endringer={endringer} />
             ))}
             {bopliktomraadeendringer?.map((endringer) => (
-              <EndringerForKommune
-                key={endringer.kommune.id}
-                kretstype={KretsType.BOPLIKTOMRAADE}
-                endringer={endringer}
-              />
+              <EndringerForKommune key={endringer.kommune.id} inndelingType={"BOPLIKTOMRAADE"} endringer={endringer} />
             ))}
             {kommunendringer?.map((endringer) => (
               <EndringerForFylke key={endringer.nummer} endringer={endringer} />

@@ -2,13 +2,13 @@ import { Icon, InputProps, SearchAsync, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
 import { ReactNode } from "react";
 import { styled } from "styled-components";
-import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { TilhorighetInndelingtype } from "../hooks/tilhorighet-utils";
 
 type OptionType = { value: string; label: string };
 
 type Props = Omit<InputProps, "onChange"> & {
   options: OptionType[];
-  kretsType: KretsType;
+  inndelingType: TilhorighetInndelingtype;
   onChange: (newId: string | undefined) => void;
 };
 
@@ -40,12 +40,12 @@ const highlightFormatter = (option: OptionType, formatOptionLabelMeta: FormatOpt
   );
 };
 
-export const TilhorighetSearch = ({ options, value, onChange, kretsType }: Props) => {
+export const TilhorighetSearch = ({ options, value, onChange, inndelingType }: Props) => {
   const noOptionMessage = (obj: { inputValue: string }): ReactNode => {
     const kretsTypeString =
-      kretsType === KretsType.GRUNNKRETS
+      inndelingType === "GRUNNKRETS"
         ? "grunnkretser"
-        : kretsType === KretsType.STEMMEKRETS
+        : inndelingType === "STEMMEKRETS"
           ? "stemmekretser"
           : "bopliktområder";
     return obj.inputValue !== "" ? (
