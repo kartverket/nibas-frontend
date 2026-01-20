@@ -68,7 +68,7 @@ const Header = () => {
 
   useKeyboardShortcut("open", () => toggleOverlayModal(utkast ? "inndelinger" : "inndelinger-view"));
 
-  function getInndelingsTypeString(inndelingtype: Inndelingtype, antall: number) {
+  const getInndelingTypeHeaderLabel = (inndelingtype: Inndelingtype, antall: number) => {
     switch (inndelingtype) {
       case "FYLKE":
         return antall > 1 ? "fylkene" : "fylket";
@@ -80,10 +80,8 @@ const Header = () => {
         return "grunnkretser";
       case "BOPLIKTOMRAADE":
         return "bopliktomraader";
-      default:
-        return "";
     }
-  }
+  };
 
   return (
     <Container>
@@ -151,7 +149,11 @@ const Header = () => {
                       </Tooltip>
                     ) : (
                       <InndelingText>
-                        {`Redigerer ${getInndelingsTypeString(currentlyEditingInndelinger[0].inndelingtype, currentlyEditingInndelinger.length)} ${currentlyEditingInndelinger[0].inndelingtype === "KOMMUNE" || currentlyEditingInndelinger[0].inndelingtype === "FYLKE" ? "" : "i"} ${getReadableStringFromKommuner(activeKommuner)}`}
+                        {`Redigerer 
+                          ${getInndelingTypeHeaderLabel(currentlyEditingInndelinger[0].inndelingtype, currentlyEditingInndelinger.length)} 
+                          ${currentlyEditingInndelinger[0].inndelingtype === "KOMMUNE" || currentlyEditingInndelinger[0].inndelingtype === "FYLKE" ? "" : "i"} 
+                          ${getReadableStringFromKommuner(activeKommuner)}
+                        `}
                       </InndelingText>
                     )}
                   </TextWrapper>
@@ -172,7 +174,11 @@ const Header = () => {
                       </Tooltip>
                     ) : (
                       <InndelingText>
-                        {`Redigerer ${getInndelingsTypeString(currentlyEditingInndelinger[0].inndelingtype, currentlyEditingInndelinger.length)} ${currentlyEditingInndelinger[0].inndelingtype === "KOMMUNE" || currentlyEditingInndelinger[0].inndelingtype === "FYLKE" ? "" : "i"} ${activeFylker.map((f) => inndelingResponseNavnToString(f.navn)).join(", ")}`}
+                        {`Redigerer 
+                          ${getInndelingTypeHeaderLabel(currentlyEditingInndelinger[0].inndelingtype, currentlyEditingInndelinger.length)} 
+                          ${currentlyEditingInndelinger[0].inndelingtype === "KOMMUNE" || currentlyEditingInndelinger[0].inndelingtype === "FYLKE" ? "" : "i"} 
+                          ${activeFylker.map((f) => inndelingResponseNavnToString(f.navn)).join(", ")}
+                        `}
                       </InndelingText>
                     )}
                   </TextWrapper>
