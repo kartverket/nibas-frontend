@@ -4,6 +4,7 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { newFeatureOnlyExistsAfterIndex } from "contexts/HistoryContext/history-utils";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { isNonEditableFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { useEffect } from "react";
 import { styled } from "styled-components";
@@ -12,12 +13,9 @@ import { getFeatureFremtidigEndringDato, isSosiFeature, isTeigFeature } from "ut
 import { PanelHeader, SidePanel } from "../Panel";
 import GrenseinformasjonForm from "./GrenseinformasjonForm";
 import { TeiggrenseInformasjon } from "./Matrikkelgrenseinformasjon";
+import { SosiGrenseInformasjon } from "./SosiGrenseInformasjon";
 import { TilhorighetField } from "./TilhorighetField";
 import { Vedtaksinformasjon } from "./Vedtaksinformasjon/Vedtaksinformasjon";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { SosiGrenseInformasjon } from "./SosiGrenseInformasjon";
-import { isBopliktGrense } from "utils/grenser";
-import { GrenseType } from "hooks/layers/types";
 
 const GrenseinformasjonPanel = () => {
   const { selectedFeatures } = useFeatureStyle();
@@ -77,22 +75,18 @@ const GrenseinformasjonPanel = () => {
         <GrensePanelContent>
           <GrenseinformasjonForm onClose={handleClose} feature={selectedFeature} />
 
-          {isBopliktGrense(selectedProperties.type as GrenseType) ? null : (
-            <>
+          <Divider />
+          <Card variant="filled">
+            <GrenseInfoExtraCardHeader>
+              <Heading size="md">Ytterligere informasjon</Heading>
+            </GrenseInfoExtraCardHeader>
+            <GrenseInfoExtraCardBody>
               <Divider />
-              <Card variant="filled">
-                <GrenseInfoExtraCardHeader>
-                  <Heading size="md">Ytterligere informasjon</Heading>
-                </GrenseInfoExtraCardHeader>
-                <GrenseInfoExtraCardBody>
-                  <Divider />
-                  <TilhorighetField feature={selectedFeature} isDisabled={isDisabled} />
-                  <Divider />
-                  <Vedtaksinformasjon feature={selectedFeature} />
-                </GrenseInfoExtraCardBody>
-              </Card>
-            </>
-          )}
+              <TilhorighetField feature={selectedFeature} isDisabled={isDisabled} />
+              <Divider />
+              <Vedtaksinformasjon feature={selectedFeature} />
+            </GrenseInfoExtraCardBody>
+          </Card>
         </GrensePanelContent>
       ) : (
         <GrensePanelContent>
