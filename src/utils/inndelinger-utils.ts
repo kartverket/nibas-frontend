@@ -153,3 +153,26 @@ export const getNumberValidatorFunctionForInndelingType = <
     }
   }
 };
+
+/**
+ * Returnerer visningsstring for en inndelingstype til bruk i labels og tekster
+ * @param inndelingtype Inndelingstype å returnere label for
+ * @returns Visningsstring for inndelingstype (f.eks. "fylke", "kommune", "grunnkrets")
+ */
+export const getInndelingtypeLabel = (inndelingtype: Inndelingtype | null): string => {
+  if (inndelingtype == null) {
+    return "";
+  }
+  switch (inndelingtype) {
+    case "FYLKE":
+      return "fylke";
+    case "KOMMUNE":
+      return "kommune";
+    case "GRUNNKRETS":
+      return "grunnkrets";
+    case "STEMMEKRETS":
+      return "stemmekrets";
+    case "BOPLIKTOMRAADE":
+      return "bopliktområde";
+  }
+};

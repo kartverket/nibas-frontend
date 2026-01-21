@@ -20,7 +20,7 @@ export const InndelingerSearch = ({ onSearchSuccess }: SearchProps) => {
       placeholder="Skriv inn navnet eller nummeret til inndelingen"
       control={control}
       fieldName={"inndeling"}
-      inndelingstypeFilter={["FYLKE", "KOMMUNE", "GRUNNKRETS", "STEMMEKRETS"]}
+      inndelingstypeFilter={["FYLKE", "KOMMUNE", "GRUNNKRETS", "STEMMEKRETS", "BOPLIKTOMRAADE"]}
       onSelectInndeling={handleOnChange}
     />
   );
