@@ -15,21 +15,14 @@ const ToolbarMenus = () => {
     useOverlayPanel();
 
   const theme = useTheme();
-  const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
+  const { getCurrentlyEditingInndelingerOfType, currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
 
   const isEditing = currentlyEditingInndelinger.length > 0;
 
-  const isEditingStemmekretsOrGrunnkrets = currentlyEditingInndelinger.some((inndeling) => {
-    return inndeling.inndelingtype === "STEMMEKRETS" || inndeling.inndelingtype === "GRUNNKRETS";
-  });
-
-  const mergeIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
-    return inndeling.inndelingtype === "STEMMEKRETS";
-  });
-
-  const isEditingBopliktomraader = currentlyEditingInndelinger.some((inndeling) => {
-    return inndeling.inndelingtype === "BOPLIKTOMRAADE";
-  });
+  const isEditingGrunnkrets = getCurrentlyEditingInndelingerOfType("GRUNNKRETS").length > 0;
+  const isEditingStemmekrets = getCurrentlyEditingInndelingerOfType("STEMMEKRETS").length > 0;
+  const isEditingBopliktomraader = getCurrentlyEditingInndelingerOfType("BOPLIKTOMRAADE").length > 0;
+  const isEditingStemmekretsOrGrunnkrets = isEditingGrunnkrets || isEditingStemmekrets;
 
   const [isWide] = useMediaQuery("(min-width: " + theme.breakpoints["2xl"] + ")");
   const [isSmall] = useMediaQuery("(min-width: " + theme.breakpoints["lg"] + ")");
@@ -51,7 +44,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("add", () => toggleTool("add"), isEditing);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditing);
   useKeyboardShortcut("movepoint", toggleMovePoint, isEditing);
-  useKeyboardShortcut("merge", () => toggleOverlayPanel("sammenslåing"), mergeIsAvailable);
+  useKeyboardShortcut("merge", () => toggleOverlayPanel("sammenslåing"), isEditingStemmekrets);
   useKeyboardShortcut("archive", () => toggleTool("archive"), isEditing);
   useKeyboardShortcut("draw", () => toggleTool("draw"), isEditing);
   useKeyboardShortcut("grensesplit", () => toggleTool("split"), isEditing);
@@ -181,7 +174,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="cell_merge" />,
       command: KeyboardShortcuts["merge"].displayString,
       $isActive: activeOverlayPanel === "sammenslåing",
-      isDisabled: !mergeIsAvailable,
+      isDisabled: !isEditingStemmekrets,
       onClick: () => toggleOverlayPanel("sammenslåing"),
       "aria-label": "Slå sammen stemmekretser",
       $tooltipTextOverride: "Åpne stemmekretser i redigeringsmodus for å slå sammen",
