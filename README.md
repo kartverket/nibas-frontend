@@ -1,4 +1,4 @@
-# NIBAS klient (Nasjonal Inndelingsbase)
+# Klient for Nasjonal Inndelingsbase (NIBAS)
 
 En klient som er bygget med React og TypeScript, og som bruker Vite som utviklingsverktøy og bundler.
 
