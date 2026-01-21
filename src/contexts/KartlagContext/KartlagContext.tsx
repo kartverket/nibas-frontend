@@ -1,6 +1,6 @@
 import { getLayersFromSource } from "contexts/KartlagContext/getLayersFromSource";
 import { kartlagLayers } from "hooks/layers/constants";
-import { KartlagId, LayerId } from "hooks/layers/types";
+import { KartlagLayerId, LayerId } from "hooks/layers/types";
 import { useKartlagUpload } from "pages/Kart/OverlayPanels/Kartlag/useKartlagUpload";
 import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 import { FeatureCollection } from "types/api";
@@ -67,7 +67,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
       const mappedLayerPromises = Object.entries(kartlagLayers).map(([layerId, layer]) => {
         const source = layer.getSource();
         if (source) {
-          return getLayersFromSource(layerId as KartlagId, source);
+          return getLayersFromSource(layerId as KartlagLayerId, source);
         }
       });
 
@@ -138,7 +138,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
     if (defaultKartlag.sourceId === "sosiFiler") {
       setMappedLayers([defaultSosiLayer]);
     } else {
-      setWMTSLayerVisibility(getLayerById(defaultKartlag.sourceId as KartlagId), true, defaultKartlag.layer);
+      setWMTSLayerVisibility(getLayerById(defaultKartlag.sourceId as KartlagLayerId), true, defaultKartlag.layer);
     }
   };
 

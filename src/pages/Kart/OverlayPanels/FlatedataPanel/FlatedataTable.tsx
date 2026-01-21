@@ -1,7 +1,7 @@
 import { TabPanel } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
+import { BopliktomraadeEntry, GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useEffect, useRef } from "react";
@@ -17,6 +17,7 @@ import { FlatedataTableRow } from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
+import { getHistoryTypeValueForInndelingtype } from "contexts/HistoryContext/history-utils";
 
 type Props = {
   mainInndeling: Inndeling;
@@ -28,7 +29,7 @@ type Props = {
 
 const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch }: Props) => {
   const { utkast, utkastHarSammenslaainger } = useUtkast();
-  const isAdministrativEnhet = mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune";
+  const isAdministrativEnhet = mainInndeling.inndelingtype === "FYLKE" || mainInndeling.inndelingtype === "KOMMUNE";
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
 
@@ -79,14 +80,14 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     setIsEditing(!isEditing);
   };
 
-  const inndelingPrefix = isAdministrativEnhet ? "Kommune" : capitalize(mainInndeling.inndelingtype);
+  const inndelingPrefix = isAdministrativEnhet ? "Kommune" : capitalize(mainInndeling.inndelingtype.toLowerCase());
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
     const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
     if (changes.length > 0) {
       // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
-      if (mainInndeling.inndelingtype === "fylke" || mainInndeling.inndelingtype === "kommune") {
+      if (mainInndeling.inndelingtype === "FYLKE" || mainInndeling.inndelingtype === "KOMMUNE") {
         addHistoryEntry({
           type: "kommune",
           fylkeId: mainInndeling.id,
@@ -94,10 +95,10 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         } as KommuneEntry);
       } else {
         addHistoryEntry({
-          type: mainInndeling.inndelingtype,
+          type: getHistoryTypeValueForInndelingtype(mainInndeling.inndelingtype),
           kommuneId: mainInndeling.id,
           changes,
-        } as StemmekretsEntry | GrunnkretsEntry);
+        } as StemmekretsEntry | GrunnkretsEntry | BopliktomraadeEntry);
       }
 
       for (const change of changes) {
@@ -126,21 +127,21 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <th></th>
                 <th></th>
               </>
-            ) : mainInndeling.inndelingtype === "stemmekrets" ? (
+            ) : mainInndeling.inndelingtype === "STEMMEKRETS" ? (
               <>
                 <FlatedataTableHeader text="Tellekretsnummer" {...sortHeaderProps("tellekretsnummer")} />
                 <FlatedataTableHeader text="Tellekretsnavn" {...sortHeaderProps("tellekretsnavn")} />
                 <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
               </>
-            ) : mainInndeling.inndelingtype === "grunnkrets" ? (
+            ) : mainInndeling.inndelingtype === "GRUNNKRETS" ? (
               <>
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
                 <th></th>
                 <th></th>
                 <th></th>
               </>
-            ) : mainInndeling.inndelingtype === "bopliktomraade" ? (
+            ) : mainInndeling.inndelingtype === "BOPLIKTOMRAADE" ? (
               <>
                 <FlatedataTableHeader text="Merknad" {...sortHeaderProps("delvisBoplikt")} />
                 <FlatedataTableHeader text="Forskriftsreferanse" {...sortHeaderProps("forskriftsreferanse")} />
@@ -186,7 +187,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
           !mainInndeling.isEditing ||
           utkastHarSammenslaainger() ||
           // TODO: Fjernes når det er klart for å redigere bopliktområder
-          mainInndeling.inndelingtype === "bopliktomraade"
+          mainInndeling.inndelingtype === "BOPLIKTOMRAADE"
         }
         toggleEditing={toggleEditing}
         canSave={isDirty}

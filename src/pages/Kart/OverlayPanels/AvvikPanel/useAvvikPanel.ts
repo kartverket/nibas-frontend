@@ -116,12 +116,12 @@ export const useAvvikPanel = () => {
       navn: kommune.navn,
       nummer: kommune.nummer,
       id: kommune.id.lokalid.value,
-      inndelingtype: "kommune",
+      inndelingtype: "KOMMUNE",
       isEditing: true,
       isViewing: false,
     }));
 
-    const currentEditingKommuner = currentlyEditingInndelinger.filter((i) => i.inndelingtype === "kommune");
+    const currentEditingKommuner = currentlyEditingInndelinger.filter((i) => i.inndelingtype === "KOMMUNE");
 
     const isSameSelection =
       currentEditingKommuner.length === desiredInndelinger.length &&
@@ -156,7 +156,7 @@ export const useAvvikPanel = () => {
     if (currentlyEditingInndelinger.length > 0 && selectedFylkeIds.length > 0) {
       setSelectedKommuneIds(
         currentlyEditingInndelinger
-          .filter((inndeling) => inndeling.inndelingtype === "kommune")
+          .filter((inndeling) => inndeling.inndelingtype === "KOMMUNE")
           .map((inndeling) => inndeling.id),
       );
     }

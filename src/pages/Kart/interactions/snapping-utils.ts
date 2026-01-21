@@ -1,5 +1,5 @@
 import { ModeTool, Tool } from "contexts/ToolbarContext";
-import { GrenseId } from "hooks/layers/types";
+import { VectorLayerId } from "hooks/layers/types";
 import { selectedPointStyle } from "utils/map/layerStyles";
 import { pixelTolerance } from "./constants";
 import { Modify } from "ol/interaction";
@@ -17,10 +17,11 @@ type SnapDataOptions = {
   hoverEnabled: boolean;
 };
 
-const getSourceFromGrenselayer = (grenseId: GrenseId) => (grenseId in grenserLayers ? grenserLayers[grenseId] : null);
+const getSourceFromGrenselayer = (grenseId: VectorLayerId) =>
+  grenseId in grenserLayers ? grenserLayers[grenseId] : null;
 
 const createSnapDataForSource = (
-  grenseId: GrenseId,
+  grenseId: VectorLayerId,
   activeModeTools: ModeTool[],
   activeTool: Tool,
 ): SnapData | null => {
@@ -45,16 +46,15 @@ const createSnapDataForSource = (
   return { snap, hover: modify };
 };
 
-const isNibasgrense = (grense: GrenseId) => {
-  const nibasGrenser: GrenseId[] = [
+const isNibasgrense = (grense: VectorLayerId) => {
+  const nibasGrenser: VectorLayerId[] = [
     "archived",
     "edit",
-    "fylke",
-    "grunnkrets",
-    "kommune",
-    "nasjon",
-    "stemmekrets",
-    "bopliktomraade",
+    "FYLKE",
+    "GRUNNKRETS",
+    "KOMMUNE",
+    "STEMMEKRETS",
+    "BOPLIKTOMRAADE",
   ];
   return nibasGrenser.includes(grense);
 };
@@ -62,7 +62,7 @@ const isNibasgrense = (grense: GrenseId) => {
 /*
  * Definerer regler for når snapping og hover er aktivert
  */
-const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], activeTool: Tool): SnapDataOptions => {
+const getSnapDataConfig = (grense: VectorLayerId, activeModeTools: ModeTool[], activeTool: Tool): SnapDataOptions => {
   const snapTypes = {
     includesNibas: activeModeTools.includes("snap_nibas"),
     includesMatrikkel: activeModeTools.includes("snap_matrikkel"),
@@ -159,14 +159,13 @@ const getSnapDataConfig = (grense: GrenseId, activeModeTools: ModeTool[], active
 export const createKartlagSnapsData = (
   activeModeTools: ModeTool[],
   activeTool: Tool,
-): Record<GrenseId, SnapData | null> => ({
+): Record<VectorLayerId, SnapData | null> => ({
   matrikkel: createSnapDataForSource("matrikkel", activeModeTools, activeTool),
-  fylke: createSnapDataForSource("fylke", activeModeTools, activeTool),
-  nasjon: createSnapDataForSource("nasjon", activeModeTools, activeTool),
-  kommune: createSnapDataForSource("kommune", activeModeTools, activeTool),
-  grunnkrets: createSnapDataForSource("grunnkrets", activeModeTools, activeTool),
-  stemmekrets: createSnapDataForSource("stemmekrets", activeModeTools, activeTool),
-  bopliktomraade: createSnapDataForSource("bopliktomraade", activeModeTools, activeTool),
+  FYLKE: createSnapDataForSource("FYLKE", activeModeTools, activeTool),
+  KOMMUNE: createSnapDataForSource("KOMMUNE", activeModeTools, activeTool),
+  GRUNNKRETS: createSnapDataForSource("GRUNNKRETS", activeModeTools, activeTool),
+  STEMMEKRETS: createSnapDataForSource("STEMMEKRETS", activeModeTools, activeTool),
+  BOPLIKTOMRAADE: createSnapDataForSource("BOPLIKTOMRAADE", activeModeTools, activeTool),
   archived: createSnapDataForSource("archived", activeModeTools, activeTool),
   edit: createSnapDataForSource("edit", activeModeTools, activeTool),
   measure: createSnapDataForSource("measure", activeModeTools, activeTool),

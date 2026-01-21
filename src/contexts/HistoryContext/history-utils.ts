@@ -1,37 +1,38 @@
+import { getEntriesUpToIndex, removeDuplicateIds } from "contexts/FeatureStyleContext/feature-style-utils";
+import { archivedSource, editSource } from "hooks/layers/constants";
+import { getInndelingtypeFromGrensetype, GrenseType } from "hooks/layers/types";
+import { Feature } from "ol";
+import { Coordinate } from "ol/coordinate";
+import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
+import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
+import { FeatureProperties, Inndelingtype, KontekstEgenskaper } from "types/api";
+import { setDefaultFeatureProperties } from "utils/features";
+import { removeNil } from "utils/list-utils";
+import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
+import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import {
-  HistoryDirection,
+  BopliktomraadeEntry,
+  GrenseArkiveringsEntry,
+  GrenseDelingEntry,
   GrenseEntry,
   GrenseTilhorighetEntry,
+  GrunnkretsEntry,
   HistoryChange,
-  MinimalGrense,
-  NyGrenseEntry,
-  PropertyEntry,
-  GrenseArkiveringsEntry,
+  HistoryDirection,
   HistoryEntry,
   HistoryState,
-  GrenseDelingEntry,
-  NyGrense,
-  StemmekretsEntry,
-  GrunnkretsEntry,
-  KretsdelingEntry,
+  HistoryTypeValues,
   KommuneEntry,
-  NyGrenseDeleteEntry,
+  KretsdelingEntry,
   MergeGrenseEntry,
-  BopliktomraadeEntry,
+  MinimalGrense,
+  NyGrense,
+  NyGrenseDeleteEntry,
+  NyGrenseEntry,
+  PropertyEntry,
+  StemmekretsEntry,
 } from "./types";
-import { archivedSource, editSource } from "hooks/layers/constants";
-import { Feature } from "ol";
-import { setDefaultFeatureProperties } from "utils/features";
-import { FeatureProperties, KontekstEgenskaper } from "types/api";
-import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { removeNil } from "utils/list-utils";
-import { Geometry } from "ol/geom";
-import { Coordinate } from "ol/coordinate";
-import { getEntriesUpToIndex, removeDuplicateIds } from "contexts/FeatureStyleContext/feature-style-utils";
-import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
-import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { getInndelingtypeFromGrensetype, GrenseType } from "hooks/layers/types";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -397,4 +398,19 @@ export const getGrenseArkiveringEntries = (entries: HistoryEntry[]): GrenseArkiv
 
 export const getGrenseMergeEntries = (entries: HistoryEntry[]): MergeGrenseEntry[] => {
   return entries.filter((entry) => entry.type === "merge_grenser") as MergeGrenseEntry[];
+};
+
+export const getHistoryTypeValueForInndelingtype = (inndelingtype: Inndelingtype): HistoryTypeValues => {
+  switch (inndelingtype) {
+    case "FYLKE":
+      throw new Error("FYLKE is not a valid history type value");
+    case "KOMMUNE":
+      return "kommune";
+    case "STEMMEKRETS":
+      return "stemmekrets";
+    case "GRUNNKRETS":
+      return "grunnkrets";
+    case "BOPLIKTOMRAADE":
+      return "bopliktomraade";
+  }
 };

@@ -8,7 +8,7 @@ import { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import { getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
 import { kartlagSources } from "./kartlagSources";
-import { GrenseId, KartlagId } from "./types";
+import { VectorLayerId, KartlagLayerId } from "./types";
 import { Feature } from "ol";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, options?: Options<WMTS | TileWMS>) => {
@@ -18,7 +18,7 @@ const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, optio
   return newLayer;
 };
 
-export const kartlagLayers: Record<KartlagId, TileLayer<TileWMS | WMTS>> = {
+export const kartlagLayers: Record<KartlagLayerId, TileLayer<TileWMS | WMTS>> = {
   matrikkelenWMS: createTileLayerFromKartlagSource("matrikkelenWMS"),
   administrativeGrenser: createTileLayerFromKartlagSource("administrativeGrenser"),
   administrativeGrenserHistorisk: createTileLayerFromKartlagSource("administrativeGrenserHistorisk"),
@@ -40,10 +40,10 @@ export const archivedSource = new VectorSource();
 export const measureSource = new VectorSource();
 
 const grenseStyle =
-  (grenseId: GrenseId): StyleFunction =>
+  (grenseId: VectorLayerId): StyleFunction =>
   (feature) => [...getLayerStyle(feature, grenseId, false), getPointOverlayStyle(feature, grenseId)];
 
-const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
+const createVectorLayer = (id: VectorLayerId, source?: VectorSource) => {
   const newLayer = new VectorLayer({
     source: source ?? new VectorSource(),
     style: grenseStyle(id),
@@ -54,19 +54,18 @@ const createVectorLayer = (id: GrenseId, source?: VectorSource) => {
   return newLayer;
 };
 
-export const grenserLayers: Record<GrenseId, VectorLayer<VectorSource<Feature>>> = {
+export const grenserLayers: Record<VectorLayerId, VectorLayer<VectorSource<Feature>>> = {
   matrikkel: createVectorLayer("matrikkel"),
   sosiFiler: createVectorLayer("sosiFiler"),
-  fylke: createVectorLayer("fylke"),
-  kommune: createVectorLayer("kommune"),
-  nasjon: createVectorLayer("nasjon"),
-  grunnkrets: createVectorLayer("grunnkrets"),
-  stemmekrets: createVectorLayer("stemmekrets"),
+  FYLKE: createVectorLayer("FYLKE"),
+  KOMMUNE: createVectorLayer("KOMMUNE"),
+  GRUNNKRETS: createVectorLayer("GRUNNKRETS"),
+  STEMMEKRETS: createVectorLayer("STEMMEKRETS"),
   archived: createVectorLayer("archived", archivedSource),
   edit: createVectorLayer("edit", editSource),
   measure: createVectorLayer("measure", measureSource),
   historical: createVectorLayer("historical"),
-  bopliktomraade: createVectorLayer("bopliktomraade"),
+  BOPLIKTOMRAADE: createVectorLayer("BOPLIKTOMRAADE"),
 };
 
 export const highlightStrokeSource = new VectorSource();

@@ -21,15 +21,15 @@ const ToolbarMenus = () => {
 
   //TODO: Denne burde få et bedre navn da den kun brukes for noen verktøy.
   const validInndelingstype = currentlyEditingInndelinger.some((inndeling) => {
-    return inndeling.inndelingtype === "stemmekrets" || inndeling.inndelingtype === "grunnkrets";
+    return inndeling.inndelingtype === "STEMMEKRETS" || inndeling.inndelingtype === "GRUNNKRETS";
   });
 
   const mergeIsAvailable = currentlyEditingInndelinger.some((inndeling) => {
-    return inndeling.inndelingtype === "stemmekrets";
+    return inndeling.inndelingtype === "STEMMEKRETS";
   });
 
   const isEditingBopliktomraader = currentlyEditingInndelinger.some((inndeling) => {
-    return inndeling.inndelingtype === "bopliktomraade";
+    return inndeling.inndelingtype === "BOPLIKTOMRAADE";
   });
 
   const [isWide] = useMediaQuery("(min-width: " + theme.breakpoints["2xl"] + ")");

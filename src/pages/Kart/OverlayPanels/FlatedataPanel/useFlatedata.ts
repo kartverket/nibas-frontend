@@ -1,4 +1,4 @@
-import { Inndeling, Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import useKommuner, { useKommune } from "hooks/inndelinger/useKommuner";
 import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
@@ -8,6 +8,7 @@ import {
   KommuneResponse,
   MetadataResponse,
   BopliktomraadeResponse,
+  Inndelingtype,
 } from "types/api";
 import { useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -20,39 +21,40 @@ import {
 } from "contexts/HistoryContext/history-utils";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useKommuneBopliktomraade } from "hooks/inndelinger/useBopliktomraader";
+import { getEntityUtkastTypeForInndelingtype } from "contexts/UtkastContext/types";
 
 const useFlatedataFromBackend = (
   inndeling: Inndeling,
   gyldighetsdato: string | undefined,
 ): MetadataResponse[] | undefined => {
-  const { kommuner } = useKommuner(inndeling.id, gyldighetsdato, inndeling.inndelingtype === "fylke");
-  const { kommune } = useKommune(inndeling.id, gyldighetsdato, inndeling.inndelingtype === "kommune");
+  const { kommuner } = useKommuner(inndeling.id, gyldighetsdato, inndeling.inndelingtype === "FYLKE");
+  const { kommune } = useKommune(inndeling.id, gyldighetsdato, inndeling.inndelingtype === "KOMMUNE");
   const { data: grunnkretser } = useKommuneGrunnkretser(
-    inndeling.inndelingtype === "grunnkrets" ? inndeling.id : null,
+    inndeling.inndelingtype === "GRUNNKRETS" ? inndeling.id : null,
     gyldighetsdato,
   );
   const { data: stemmekretser } = useKommuneStemmekretser(
-    inndeling.inndelingtype === "stemmekrets" ? inndeling.id : null,
+    inndeling.inndelingtype === "STEMMEKRETS" ? inndeling.id : null,
     gyldighetsdato,
   );
   const { data: bopliktomraade } = useKommuneBopliktomraade(
-    inndeling.inndelingtype === "bopliktomraade" ? inndeling.id : null,
+    inndeling.inndelingtype === "BOPLIKTOMRAADE" ? inndeling.id : null,
     gyldighetsdato,
   );
 
   switch (inndeling.inndelingtype) {
-    case "fylke":
+    case "FYLKE":
       return kommuner;
-    case "kommune": {
+    case "KOMMUNE": {
       return kommune ? [kommune] : [];
     }
-    case "stemmekrets": {
+    case "STEMMEKRETS": {
       return stemmekretser;
     }
-    case "grunnkrets": {
+    case "GRUNNKRETS": {
       return grunnkretser;
     }
-    case "bopliktomraade": {
+    case "BOPLIKTOMRAADE": {
       return bopliktomraade;
     }
   }
@@ -64,7 +66,7 @@ const addHistoryChangesToMetadata = (
   inndelingstype: Inndelingtype,
 ): MetadataResponse[] => {
   switch (inndelingstype) {
-    case "grunnkrets": {
+    case "GRUNNKRETS": {
       const changes = getGrunnkretsMetadataEntries(historyEntries).flatMap((entry) => entry.changes);
       return metadataresponses.map((metadatareponse) => {
         const change = changes.findLast((c) => c.id === metadatareponse.id.lokalid.value);
@@ -74,7 +76,7 @@ const addHistoryChangesToMetadata = (
         return metadatareponse;
       });
     }
-    case "stemmekrets": {
+    case "STEMMEKRETS": {
       const changes = getStemmekretsMetadataEntries(historyEntries).flatMap((entry) => entry.changes);
       return metadataresponses.map((metadatareponse) => {
         const change = changes.findLast((c) => c.id === metadatareponse.id.lokalid.value);
@@ -90,7 +92,7 @@ const addHistoryChangesToMetadata = (
         return metadatareponse;
       });
     }
-    case "bopliktomraade": {
+    case "BOPLIKTOMRAADE": {
       const changes = getBopliktomraadeMetadataEntries(historyEntries).flatMap((entry) => entry.changes);
       return metadataresponses.map((metadatareponse) => {
         const change = changes.findLast((c) => c.id === metadatareponse.id.lokalid.value);
@@ -100,8 +102,8 @@ const addHistoryChangesToMetadata = (
         return metadatareponse;
       });
     }
-    case "fylke":
-    case "kommune": {
+    case "FYLKE":
+    case "KOMMUNE": {
       const changes = getKommuneMetadataEntries(historyEntries).flatMap((entry) => entry.changes);
       return metadataresponses.map((metadatareponse) => {
         const change = changes.findLast((c) => c.id === metadatareponse.id.lokalid.value);
@@ -124,7 +126,7 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
 
   const utkastFlatedata = (useUtkastEntity(
     flatedataFromBackend,
-    `${inndeling.inndelingtype === "fylke" ? "kommune" : inndeling.inndelingtype}endringer`,
+    getEntityUtkastTypeForInndelingtype(inndeling.inndelingtype),
   ) ?? []) as MetadataResponse[];
   return addHistoryChangesToMetadata(utkastFlatedata, getHistoryEntries(), inndeling.inndelingtype);
 };

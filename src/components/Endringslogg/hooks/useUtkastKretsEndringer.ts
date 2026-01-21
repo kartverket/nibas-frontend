@@ -4,7 +4,7 @@ import {
   getKretserAvTypeMedEndringer,
   getStemmekretsEndringer,
 } from "components/Endringslogg/hooks/endringerUtils";
-import { KretsendringerForKommune, KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { KretsendringerForKommune } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
@@ -24,7 +24,7 @@ export const useUtkastBopliktomraadeEndringer = (
   const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
-  const bopliktomraaderMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KretsType.BOPLIKTOMRAADE);
+  const bopliktomraaderMedEndringer = getKretserAvTypeMedEndringer(operasjoner, "BOPLIKTOMRAADE");
 
   const { data: bopliktomraader, isValidating: lasterBopliktomraader } = useBopliktomraader(
     bopliktomraaderMedEndringer,
@@ -55,7 +55,7 @@ export const useUtkastStemmekretsEndringer = (
   const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
-  const stemmekretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KretsType.STEMMEKRETS);
+  const stemmekretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, "STEMMEKRETS");
 
   const { data: stemmekretser, isValidating: lasterStemmekretser } = useStemmekretser(
     stemmekretserMedEndringer,
@@ -86,7 +86,7 @@ export const useUtkastGrunnkretsEndringer = (
   const { kommuner, isValidating: lasterKommuner } = useKommuner(null, utkast.gyldigFra, shouldFetchEndringer);
   const operasjoner = utkast.operasjoner;
 
-  const grunnkretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, KretsType.GRUNNKRETS);
+  const grunnkretserMedEndringer = getKretserAvTypeMedEndringer(operasjoner, "GRUNNKRETS");
 
   const { data: grunnkretser, isValidating: lasterGrunnkretser } = useGrunnkretser(
     grunnkretserMedEndringer,

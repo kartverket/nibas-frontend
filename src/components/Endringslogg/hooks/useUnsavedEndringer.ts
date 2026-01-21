@@ -3,7 +3,7 @@ import {
   Kretsendringer,
   KretsSplittingEndring,
   Metadataendringer,
-  KretsType,
+  EndringsloggInndelingType,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { GrunnkretsEntry, HistoryChange, HistoryEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
@@ -239,7 +239,7 @@ const mapMetadataEntryToMetadataendringerForStemmekretsOgGrunnkrets = (
   entry: StemmekretsEntry | GrunnkretsEntry,
 ): MetadataendringerWithId[] => {
   return entry.changes.map((change) => ({
-    kretsType: mapEntrytypeToKretsType(entry.type),
+    kretsType: mapEntrytypeToEndringsloggInndelingType(entry.type),
     id: change.id,
     opprinneligKrets: {
       navn: change.from.navn ?? "",
@@ -269,11 +269,15 @@ const combineMetadataChangesForSameId = (metadataendringer: MetadataendringerWit
   });
 };
 
-const mapEntrytypeToKretsType = (entrytype: "grunnkrets" | "stemmekrets"): KretsType => {
+const mapEntrytypeToEndringsloggInndelingType = (
+  entrytype: "grunnkrets" | "stemmekrets" | "bopliktomraade",
+): EndringsloggInndelingType => {
   switch (entrytype) {
     case "grunnkrets":
-      return KretsType.GRUNNKRETS;
+      return "GRUNNKRETS";
     case "stemmekrets":
-      return KretsType.STEMMEKRETS;
+      return "STEMMEKRETS";
+    case "bopliktomraade":
+      return "BOPLIKTOMRAADE";
   }
 };

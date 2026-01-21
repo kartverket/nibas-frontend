@@ -5,7 +5,7 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { ModeTool, Tool, useToolbar } from "contexts/ToolbarContext";
 import { editSource } from "hooks/layers/constants";
-import { getGrensetypeFromInndelingtype, LayerId } from "hooks/layers/types";
+import { getGrensetypeFromInndelingtype, VectorLayerId } from "hooks/layers/types";
 import useToastUnique from "hooks/toast/useToastUnique";
 import { Feature, MapBrowserEvent } from "ol";
 import { CollectionEvent } from "ol/Collection";
@@ -93,13 +93,19 @@ const useDraw = () => {
     const getSnappableFeaturesAtEvent = (event: MapBrowserEvent<PointerEvent>) => {
       const currentModeTools = activeModeToolsRef.current;
       // Liste med lag som må snappes mot gitt tvungen snapping og snapmode (matrikkel og/eller nibas)
-      const snappableLayers: LayerId[] = [
-        ...(currentModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
-        ...(currentModeTools.includes("snap_nibas")
-          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived", "sosiFiler"] as LayerId[])
-          : []),
+      const nibasVectorLayers: VectorLayerId[] = [
+        "FYLKE",
+        "KOMMUNE",
+        "GRUNNKRETS",
+        "STEMMEKRETS",
+        "archived",
+        "sosiFiler",
       ];
-
+      const matrikkelVectorLayers: VectorLayerId[] = ["matrikkel"];
+      const snappableLayers: VectorLayerId[] = [
+        ...(currentModeTools.includes("snap_matrikkel") ? matrikkelVectorLayers : []),
+        ...(currentModeTools.includes("snap_nibas") ? nibasVectorLayers : []),
+      ];
       return getLineStringFeaturesAtPixelRef.current(event, snappableLayers);
     };
 

@@ -8,23 +8,23 @@ import {
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
   Tilhorighet,
+  TilhorighetInndelingtype,
   UseTilhorighet,
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 import { useValgtGyldighetsdato } from "../../../../contexts/GyldighetsdatoContext";
 import useNibasApi from "../../../../hooks/useNibasApi";
-import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 // Bopliktgrenser er ikke med i administrativ tilhorighet da de ikke deltar i delt geometri.
-type KretserForAdministrativGrense = Exclude<KretsType, KretsType.BOPLIKTOMRAADE>;
+type InndelingForAdministrativGrense = Exclude<TilhorighetInndelingtype, "BOPLIKTOMRAADE">;
 
 const useGetMuligeKretserForAdministrativGrense = (
-  kretsType: KretserForAdministrativGrense,
+  inndelingType: InndelingForAdministrativGrense,
   kommuneId: string | null | undefined,
 ) => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const urlForKrets =
-    kretsType === KretsType.GRUNNKRETS ? "/v1/kommuner/{id}/grunnkretser" : "/v1/kommuner/{id}/stemmekretser";
+    inndelingType === "GRUNNKRETS" ? "/v1/kommuner/{id}/grunnkretser" : "/v1/kommuner/{id}/stemmekretser";
   const url = kommuneId != null ? urlForKrets : null;
 
   const { data, isLoading } = useNibasApi(url, { id: kommuneId!, gyldighetsdato });
@@ -34,10 +34,10 @@ const useGetMuligeKretserForAdministrativGrense = (
       return [];
     }
 
-    switch (kretsType) {
-      case KretsType.STEMMEKRETS:
+    switch (inndelingType) {
+      case "STEMMEKRETS":
         return mapStemmekretResponseToKrets(data);
-      case KretsType.GRUNNKRETS:
+      case "GRUNNKRETS":
         return mapGrunnkretsResponseToKrets(data);
     }
   })();
@@ -50,7 +50,7 @@ const useGetMuligeKretserForAdministrativGrense = (
 
 export const useAdministrativTilhorighet = (
   feature: Feature,
-  kretsType: KretserForAdministrativGrense,
+  inndelingType: InndelingForAdministrativGrense,
 ): UseTilhorighet => {
   const {
     setTilhorighetOptions,
@@ -61,7 +61,7 @@ export const useAdministrativTilhorighet = (
     resetTilhorighet,
     getCurrentOppdaterteKontekstEgenskaper,
     isLoading,
-  } = useTilhorighetForm(feature, kretsType);
+  } = useTilhorighetForm(feature, inndelingType);
   const { currentlyEditingInndelinger } = useInndelinger();
 
   // Sjekker både kontekstEgenskaper og currentlyEditingInndelinger for å få med alle kommunerId
@@ -71,7 +71,7 @@ export const useAdministrativTilhorighet = (
         (feature.getProperties() as FeatureProperties).kontekstEgenskaper.filter(
           (k) => k.id?.lokalid.value !== CustomOption.NOT_CHOSEN,
         ),
-        kretsType,
+        inndelingType,
       ) ?? [];
     const fromInndelinger = currentlyEditingInndelinger?.map((i) => i.id) ?? [];
     // Slå sammen kommuneid'er fra kontekstegenskaper og inndelinger og fjern duplikater
@@ -82,11 +82,11 @@ export const useAdministrativTilhorighet = (
   const kommunerIds = kommunerId();
 
   const { isLoading: isLoadingA, muligeKretser: muligeKretserA } = useGetMuligeKretserForAdministrativGrense(
-    kretsType,
+    inndelingType,
     kommunerIds[0],
   );
   const { isLoading: isLoadingB, muligeKretser: muligeKretserB } = useGetMuligeKretserForAdministrativGrense(
-    kretsType,
+    inndelingType,
     kommunerIds[1],
   );
 
@@ -99,7 +99,7 @@ export const useAdministrativTilhorighet = (
   }, [muligeKretserA, muligeKretserB, setTilhorighetOptions]);
 
   return {
-    kretsType,
+    inndelingType,
     tilhorighetOptions,
     isDirty,
     resetTilhorighet,

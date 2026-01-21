@@ -18,11 +18,11 @@ import {
   Tilhorighet,
   TilhorighetForm,
   TilhorighetOptions,
+  TilhorighetInndelingtype,
 } from "./tilhorighet-utils";
 import { getGrenseTilhorighetEntries, getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
 import { usePrevious } from "hooks/usePrevious";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
-import { KretsType } from "components/Endringslogg/hooks/utkastEndringerTypes";
 
 const getKretserFromKretsDelingEndringer = (
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -40,7 +40,7 @@ const getKretserFromKretsDelingEndringer = (
         kommunenummer:
           kommunerIdOgNummer.find((idOgNummer) => idOgNummer.id === kretsDeling.kommuneId.lokalid.value)?.nummer ?? "",
         version: kretsDeling.opprinneligKrets.version,
-        type: kretsDeling.flatetype === "STEMMEKRETS" ? KretsType.STEMMEKRETS : KretsType.GRUNNKRETS,
+        type: kretsDeling.flatetype as TilhorighetInndelingtype, // TODO: Backend burde redusere enum for flatetyper som er gyldig for kretsdeling.
         navn: nyKrets.kretsNavn,
         nummer: nyKrets.kretsNummer,
       })),
@@ -88,7 +88,7 @@ const getUpdatedMetadata = (
   kretser: Krets[],
   historyEntries: HistoryEntry[],
   utkastEntries: UtkastOperasjoner,
-  kretsType: KretsType,
+  inndelingType: TilhorighetInndelingtype,
 ): Krets[] => {
   const metadataFromHistory = historyEntries
     .flatMap((historyEntry) =>
@@ -107,9 +107,9 @@ const getUpdatedMetadata = (
 
   const metadataFromUtkast = Object.values(
     utkastEntries.metadataendringer[
-      kretsType === KretsType.GRUNNKRETS
+      inndelingType === "GRUNNKRETS"
         ? "grunnkretsendringer"
-        : kretsType === KretsType.STEMMEKRETS
+        : inndelingType === "STEMMEKRETS"
           ? "stemmekretsendringer"
           : "bopliktomraadeendringer"
     ],
@@ -135,17 +135,17 @@ const getUpdatedMetadata = (
 const getKretserFromHistory = (
   entries: HistoryEntry[],
   kommunerIdOgNummer: { id: string; nummer: string }[],
-  kretsType: KretsType,
+  inndelingType: TilhorighetInndelingtype,
 ): Krets[] => {
   const kretsdelingerEntries = getKretsDelingEntries(entries);
 
   const kretsdelingOperations = historyToKretsdelingOperations(kretsdelingerEntries).filter(
-    (kretsdeling) => kretsdeling.flatetype === kretsType,
+    (kretsdeling) => kretsdeling.flatetype === inndelingType,
   );
   return getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
 };
 
-export const useTilhorighetForm = (feature: Feature, kretsTypeOverride?: KretsType) => {
+export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: TilhorighetInndelingtype) => {
   const { getHistoryEntries } = useHistory();
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const { data: kommuneResponses, isLoading } = useNibasApi("/v1/kommuner", { gyldighetsdato });
@@ -157,16 +157,16 @@ export const useTilhorighetForm = (feature: Feature, kretsTypeOverride?: KretsTy
     () => featureProperties.kontekstEgenskaper.map((ke) => getIdForKontekstEgenskaper(ke, utkast?.operasjoner)), // kontekster som peker til nye kretser i utkastet har undefined som id. Vi må gi disse en unik id også som kan brukes i formet.
     [featureProperties.kontekstEgenskaper, utkast],
   );
-  const kretsType = kretsTypeOverride ?? getKretsTypeForFeature(kontekstEgenskaper, featureProperties);
+  const inndelingType = inndelingTypeOverride ?? getKretsTypeForFeature(kontekstEgenskaper, featureProperties);
   const { currentlyEditingInndelinger } = useInndelinger();
 
   // Her aner jeg ikke hvordan vi skal håndtere flere potensielle aktivt redigerte inndelinger
   const kommunerIds = useMemo(() => {
-    const fromKontekst = getKommunerIdFromKontekstEgenskaper(kontekstEgenskaper, kretsType) ?? [];
+    const fromKontekst = getKommunerIdFromKontekstEgenskaper(kontekstEgenskaper, inndelingType) ?? [];
     const fromInndelinger = currentlyEditingInndelinger?.map((i) => i.id) ?? [];
     const allIds = Array.from(new Set([...fromKontekst, ...fromInndelinger]));
     return allIds.length > 0 ? allIds : [""];
-  }, [kontekstEgenskaper, kretsType, currentlyEditingInndelinger]);
+  }, [kontekstEgenskaper, inndelingType, currentlyEditingInndelinger]);
 
   const kommunerIdOgNummer: { id: string; nummer: string }[] = useMemo(() => {
     if (kommuneResponses == null) {
@@ -185,9 +185,13 @@ export const useTilhorighetForm = (feature: Feature, kretsTypeOverride?: KretsTy
       if (utkast && commonOptions) {
         const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
           kommunerIdOgNummer,
-          utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === kretsType),
+          utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === inndelingType),
         );
-        const tilhorighetOptionsFromHistory = getKretserFromHistory(getHistoryEntries(), kommunerIdOgNummer, kretsType);
+        const tilhorighetOptionsFromHistory = getKretserFromHistory(
+          getHistoryEntries(),
+          kommunerIdOgNummer,
+          inndelingType,
+        );
         const listeA: Krets[] = [
           ...commonOptions[Tilhorighet.A],
           ...tilhorighetOptionsFromUtkast,
@@ -200,20 +204,20 @@ export const useTilhorighetForm = (feature: Feature, kretsTypeOverride?: KretsTy
         ];
 
         setTilhorighetValg({
-          [Tilhorighet.A]: getUpdatedMetadata(listeA, getHistoryEntries(), utkast.operasjoner, kretsType),
-          [Tilhorighet.B]: getUpdatedMetadata(listeB, getHistoryEntries(), utkast.operasjoner, kretsType),
+          [Tilhorighet.A]: getUpdatedMetadata(listeA, getHistoryEntries(), utkast.operasjoner, inndelingType),
+          [Tilhorighet.B]: getUpdatedMetadata(listeB, getHistoryEntries(), utkast.operasjoner, inndelingType),
         });
       } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);
       }
     },
-    [kommunerIdOgNummer, kretsType, utkast, getHistoryEntries],
+    [kommunerIdOgNummer, inndelingType, utkast, getHistoryEntries],
   );
 
   const [formState, setFormState] = useState<TilhorighetForm>(getTilhorighetData(kontekstEgenskaper));
   const setValue = (tilhorighet: Tilhorighet, value: string | undefined) => {
     const newState = { ...formState };
-    newState[kretsType][tilhorighet] = value;
+    newState[inndelingType][tilhorighet] = value;
     setFormState(newState);
   };
 
@@ -221,14 +225,14 @@ export const useTilhorighetForm = (feature: Feature, kretsTypeOverride?: KretsTy
     const initialData = getTilhorighetData(kontekstEgenskaper);
 
     const grunnkretsIsDirty =
-      initialData[KretsType.GRUNNKRETS][Tilhorighet.A] !== formState[KretsType.GRUNNKRETS][Tilhorighet.A] ||
-      initialData[KretsType.GRUNNKRETS][Tilhorighet.B] !== formState[KretsType.GRUNNKRETS][Tilhorighet.B];
+      initialData["GRUNNKRETS"][Tilhorighet.A] !== formState["GRUNNKRETS"][Tilhorighet.A] ||
+      initialData["GRUNNKRETS"][Tilhorighet.B] !== formState["GRUNNKRETS"][Tilhorighet.B];
     const stemmekretsIsDirty =
-      initialData[KretsType.STEMMEKRETS][Tilhorighet.A] !== formState[KretsType.STEMMEKRETS][Tilhorighet.A] ||
-      initialData[KretsType.STEMMEKRETS][Tilhorighet.B] !== formState[KretsType.STEMMEKRETS][Tilhorighet.B];
+      initialData["STEMMEKRETS"][Tilhorighet.A] !== formState["STEMMEKRETS"][Tilhorighet.A] ||
+      initialData["STEMMEKRETS"][Tilhorighet.B] !== formState["STEMMEKRETS"][Tilhorighet.B];
     const bopliktomraadeIsDirty =
-      initialData[KretsType.BOPLIKTOMRAADE][Tilhorighet.A] !== formState[KretsType.BOPLIKTOMRAADE][Tilhorighet.A] ||
-      initialData[KretsType.BOPLIKTOMRAADE][Tilhorighet.B] !== formState[KretsType.BOPLIKTOMRAADE][Tilhorighet.B];
+      initialData["BOPLIKTOMRAADE"][Tilhorighet.A] !== formState["BOPLIKTOMRAADE"][Tilhorighet.A] ||
+      initialData["BOPLIKTOMRAADE"][Tilhorighet.B] !== formState["BOPLIKTOMRAADE"][Tilhorighet.B];
 
     return stemmekretsIsDirty || grunnkretsIsDirty || bopliktomraadeIsDirty;
   };
@@ -253,7 +257,7 @@ export const useTilhorighetForm = (feature: Feature, kretsTypeOverride?: KretsTy
 
   const getCurrentOppdaterteKontekstEgenskaper = () => {
     if (tilhorighetOptions) {
-      return getUpdatedKontekstEgenskaper(kretsType, formState[kretsType], tilhorighetOptions);
+      return getUpdatedKontekstEgenskaper(inndelingType, formState[inndelingType], tilhorighetOptions);
     }
   };
 
@@ -265,7 +269,7 @@ export const useTilhorighetForm = (feature: Feature, kretsTypeOverride?: KretsTy
     isDirty: isDirty(),
     resetTilhorighet,
     kommunerIds,
-    kretsType,
+    inndelingType,
     getCurrentOppdaterteKontekstEgenskaper,
     isLoading,
   };
