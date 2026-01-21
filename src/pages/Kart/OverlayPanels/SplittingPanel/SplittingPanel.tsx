@@ -49,7 +49,13 @@ const StyledList = styled.ul`
 
 export const SplittingPanel = () => {
   const { closeOverlayPanel } = useOverlayPanel();
-  const { currentlyEditingInndelinger } = useInndelinger();
+  const { getCurrentlyEditingInndelingerOfType } = useInndelinger();
+  const currentlyEditingGrunnkretser = getCurrentlyEditingInndelingerOfType("GRUNNKRETS");
+  const currentlyEditingStemmekretser = getCurrentlyEditingInndelingerOfType("STEMMEKRETS");
+  const currentlyEditingStemmekretserOrGrunnkretser = [
+    ...currentlyEditingGrunnkretser,
+    ...currentlyEditingStemmekretser,
+  ];
   const {
     inndelingtype,
     opprinneligFlateOptions,
@@ -64,16 +70,17 @@ export const SplittingPanel = () => {
     errors,
     trigger,
     isSubmitted,
-  } = useSplittingForm(currentlyEditingInndelinger[0]);
+    // Det er kun mulig å redigere én grunnkrets eller én stemmekrets om gangen, så vi kan bruke det første elementet i listen
+  } = useSplittingForm(currentlyEditingStemmekretserOrGrunnkretser[0]);
 
   // Vi ønsker å lukke panelet hvis vi bytter inndeling
-  const currentInndeling = useState(currentlyEditingInndelinger[0]);
+  const currentInndeling = useState(currentlyEditingStemmekretserOrGrunnkretser[0]);
 
   useEffect(() => {
-    if (currentInndeling[0] !== currentlyEditingInndelinger[0]) {
+    if (currentInndeling[0] !== currentlyEditingStemmekretserOrGrunnkretser[0]) {
       closeOverlayPanel();
     }
-  }, [closeOverlayPanel, currentInndeling, currentlyEditingInndelinger]);
+  }, [closeOverlayPanel, currentInndeling, currentlyEditingStemmekretserOrGrunnkretser]);
 
   const triggerRevalidateOnChangeAfterSubmit = ({ onChange, ...restProps }: InputProps) => {
     return {
@@ -104,9 +111,10 @@ export const SplittingPanel = () => {
   };
   const kommunenummer = opprinneligFlateOptions?.[0].kommunenummer;
   const existingInndelingNummere = opprinneligFlateOptions?.map((inndeling) => inndeling.nummer);
-  const getInndelingNummerRegisterOptions =
-    inndelingtype &&
-    getNumberValidatorFunctionForInndelingType<SplittingForm, `nyeKretser.${number}.kretsNummer`>(inndelingtype);
+  const getInndelingNummerRegisterOptions = getNumberValidatorFunctionForInndelingType<
+    SplittingForm,
+    `nyeKretser.${number}.kretsNummer`
+  >(inndelingtype);
 
   const nummerRegisterOptions = getInndelingNummerRegisterOptions?.({
     shouldNotBeEqualWith: existingInndelingNummere ?? [],
