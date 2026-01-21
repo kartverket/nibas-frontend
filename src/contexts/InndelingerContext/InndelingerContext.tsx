@@ -204,7 +204,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     ) => {
       const inndelingSource = getLayerById(layer).getSource();
 
-      if (inndelingSource) {
+      if (inndelingSource != null) {
         const inndelingSourceFeatureIds = removeNil(
           inndelingSource.getFeatures().map((feature) => feature.getId()?.toString()),
         );
@@ -313,7 +313,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     }
     for (const inndeling of inndelingerToFetch.filter((selectedInndeling) => selectedInndeling.isViewing)) {
       const source = getLayerById(inndeling.inndelingtype).getSource();
-      if (source) {
+      if (source != null) {
         source.clear(true);
       }
     }
