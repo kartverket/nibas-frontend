@@ -1,22 +1,22 @@
-import { useForm, useFieldArray } from "react-hook-form";
-import { GrunnkretsResponse, KretsDelingEndringRequest, StemmekretsResponse, Inndelingtype } from "types/api";
+import { useToast } from "@kvib/react";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
+import { InndelingOfType } from "contexts/InndelingerContext/InndelingerContext";
+import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import { useFieldArray, useForm } from "react-hook-form";
+import { GrunnkretsResponse, Inndelingtype, KretsDelingEndringRequest, StemmekretsResponse } from "types/api";
 import {
   CustomOption,
   Krets,
   mapGrunnkretsResponseToKrets,
   mapStemmekretResponseToKrets,
 } from "../hooks/tilhorighet-utils";
-import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
-import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
-import { useToast } from "@kvib/react";
-import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
-import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
-type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
-
-export type { SplittingForm };
+export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
+type SplittingFormInndelingtype = Extract<Inndelingtype, "GRUNNKRETS" | "STEMMEKRETS">;
+export type SplittableInndelingType = InndelingOfType<SplittingFormInndelingtype>;
 
 const getDefaultSplittingValue = () => ({
   opprinneligKrets: {
@@ -27,19 +27,20 @@ const getDefaultSplittingValue = () => ({
 });
 
 const getKommuneIdentifikatorFromOptions = (
-  inndelingtype: Inndelingtype,
+  inndelingtype: SplittingFormInndelingtype,
   opprinneligKretsId: string,
   grunnkretser: GrunnkretsResponse[],
   stemmekretser: StemmekretsResponse[],
 ) => {
-  if (inndelingtype === "STEMMEKRETS") {
-    return stemmekretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
-  } else {
-    return grunnkretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
+  switch (inndelingtype) {
+    case "STEMMEKRETS":
+      return stemmekretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
+    case "GRUNNKRETS":
+      return grunnkretser?.find((opt) => opt.id.lokalid.value === opprinneligKretsId)?.kommuneIdentifikator;
   }
 };
 
-export const useSplittingForm = (inndeling: Inndeling | null) => {
+export const useSplittingForm = (inndeling: SplittableInndelingType) => {
   const toast = useToast();
 
   const {
@@ -61,23 +62,20 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
     name: "nyeKretser",
   });
 
-  const { currentlyEditingInndelinger } = useInndelinger();
   const { addHistoryEntry, getHistoryEntries } = useHistory();
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  const inndelingtype = currentlyEditingInndelinger.length > 0 ? currentlyEditingInndelinger[0].inndelingtype : null;
 
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
   const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null, gyldighetsdato);
   const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null, gyldighetsdato);
+  const inndelingtype = inndeling.inndelingtype;
 
   const getFlateOptionsFromInndelingType = () => {
-    if (inndelingtype != null) {
-      if (inndelingtype === "GRUNNKRETS" && grunnkretser) {
-        return mapGrunnkretsResponseToKrets(grunnkretser);
-      }
-      if (inndelingtype === "STEMMEKRETS" && stemmekretser) {
-        return mapStemmekretResponseToKrets(stemmekretser);
-      }
+    if (inndelingtype === "GRUNNKRETS" && grunnkretser) {
+      return mapGrunnkretsResponseToKrets(grunnkretser);
+    }
+    if (inndelingtype === "STEMMEKRETS" && stemmekretser) {
+      return mapStemmekretResponseToKrets(stemmekretser);
     }
 
     return undefined;
@@ -133,7 +131,7 @@ export const useSplittingForm = (inndeling: Inndeling | null) => {
   // en del if-tester her for å forsikre typescript om at variablene vi bruker ikke er null.
   // (hadde ikke vært mulig å komme seg hit hvis noe var null, men typescript er typescript)
   const addSplittingRequestToHistory = async () => {
-    if (inndelingtype != null && grunnkretser && stemmekretser) {
+    if (inndelingtype !== null && grunnkretser && stemmekretser) {
       const { opprinneligKrets, nyeKretser } = getValues();
       const opprinneligKretsInfo = opprinneligFlateOptions?.find(
         (krets) => krets.id.lokalid.value === opprinneligKrets.lokalId,
