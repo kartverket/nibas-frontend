@@ -55,7 +55,7 @@ export const createNyGrenseHistoryChange = (
     const grenseDiscriminator = getMetadataDiscriminatorFromType(grenseType);
 
     const featureId = feature.getId()?.toString();
-    if (featureId === undefined || !grenseDiscriminator) {
+    if (featureId == null || grenseDiscriminator == null) {
       return null;
     }
 
