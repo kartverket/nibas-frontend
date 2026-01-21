@@ -70,7 +70,7 @@ export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefin
     const grunnkretser = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "GRUNNKRETS");
     const stemmekretser = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "STEMMEKRETS");
     const bopliktomraader = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "BOPLIKTOMRAADE");
-    if (grunnkretser.length > 0 || stemmekretser.length > 0) {
+    if (grunnkretser.length > 0 || stemmekretser.length > 0 || bopliktomraader.length > 0) {
       return {
         ["GRUNNKRETS"]: {
           [Tilhorighet.A]: getKretsIdFromKontekstegenskaper(grunnkretser[0]),
