@@ -120,7 +120,7 @@ function renderHookWithHistoryAndUtkast(medUtkastEndringer: boolean, entries: Hi
           id: mockKommune.id.lokalid.value,
           nummer: mockKommune.nummer,
           navn: mockKommune.navn,
-          inndelingtype: "stemmekrets",
+          inndelingtype: "STEMMEKRETS",
           isEditing: true,
           isViewing: true,
         }),

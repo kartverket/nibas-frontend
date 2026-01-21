@@ -1,4 +1,4 @@
-import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndelingtype } from "types/api";
 import { Path, RegisterOptions, ValidateResult } from "react-hook-form";
 import { capitalize } from "./string-utils";
 import { isIntegerString } from "./type-utils";
@@ -27,7 +27,7 @@ const getCommonInndelingNumberValidator = <TForm extends Record<string, unknown>
         return `${formattedInndelingType}nummer må ha minst ${minLength} siffer og maks ${maxLength} siffer`;
       }
       if (shouldNotBeEqualWith.find((num) => num === number) != null) {
-        return `${formattedInndelingType}nummer brukes allerede av ${inndelingType === "fylke" ? "et annet" : "en annen"} ${inndelingType}`;
+        return `${formattedInndelingType}nummer brukes allerede av ${inndelingType === "FYLKE" ? "et annet" : "en annen"} ${inndelingType}`;
       }
       if (additionalValidation != null) {
         const additionalValidationResult = additionalValidation(number);
@@ -50,14 +50,14 @@ export function getStemmekretsNumberValidator<TForm extends Record<string, unkno
   shouldNotBeEqualWith,
   additionalValidation,
 }: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
-  return getCommonInndelingNumberValidator("stemmekrets", 1, 4, shouldNotBeEqualWith, additionalValidation);
+  return getCommonInndelingNumberValidator("STEMMEKRETS", 1, 4, shouldNotBeEqualWith, additionalValidation);
 }
 
 export function getBopliktomraadeNumberValidator<
   TForm extends Record<string, unknown>,
   TFieldName extends Path<TForm>,
 >({ shouldNotBeEqualWith, additionalValidation }: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
-  return getCommonInndelingNumberValidator("bopliktomraade", 1, 4, shouldNotBeEqualWith, additionalValidation);
+  return getCommonInndelingNumberValidator("BOPLIKTOMRAADE", 1, 4, shouldNotBeEqualWith, additionalValidation);
 }
 export function getGrunnkretsNumberValidator<TForm extends Record<string, unknown>, TFieldName extends Path<TForm>>({
   shouldNotBeEqualWith,
@@ -65,7 +65,7 @@ export function getGrunnkretsNumberValidator<TForm extends Record<string, unknow
   prefixNumber,
 }: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
   const { validate, ...rest } = getCommonInndelingNumberValidator<TForm, TFieldName>(
-    "grunnkrets",
+    "GRUNNKRETS",
     8,
     8,
     shouldNotBeEqualWith,
@@ -99,7 +99,7 @@ export function getKommuneNumberValidator<TForm extends Record<string, unknown>,
   prefixNumber,
 }: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
   const { validate, ...rest } = getCommonInndelingNumberValidator<TForm, TFieldName>(
-    "kommune",
+    "KOMMUNE",
     8,
     8,
     shouldNotBeEqualWith,
@@ -130,7 +130,7 @@ export function getFylkeNumberValidator<TForm extends Record<string, unknown>, T
   shouldNotBeEqualWith,
   additionalValidation,
 }: NumberValidatorConfig): RegisterOptions<TForm, TFieldName> {
-  return getCommonInndelingNumberValidator("fylke", 1, 2, shouldNotBeEqualWith, additionalValidation);
+  return getCommonInndelingNumberValidator("FYLKE", 1, 2, shouldNotBeEqualWith, additionalValidation);
 }
 
 export const getNumberValidatorFunctionForInndelingType = <
@@ -140,16 +140,39 @@ export const getNumberValidatorFunctionForInndelingType = <
   inndelingType: Inndelingtype,
 ): ((config: NumberValidatorConfig) => RegisterOptions<TForm, TFieldName>) => {
   switch (inndelingType) {
-    case "fylke":
+    case "FYLKE":
       return getFylkeNumberValidator;
-    case "kommune":
+    case "KOMMUNE":
       return getKommuneNumberValidator;
-    case "stemmekrets":
+    case "STEMMEKRETS":
       return getStemmekretsNumberValidator;
-    case "grunnkrets":
+    case "GRUNNKRETS":
       return getGrunnkretsNumberValidator;
-    case "bopliktomraade": {
+    case "BOPLIKTOMRAADE": {
       return getBopliktomraadeNumberValidator;
     }
+  }
+};
+
+/**
+ * Returnerer visningsstring for en inndelingstype til bruk i labels og tekster
+ * @param inndelingtype Inndelingstype å returnere label for
+ * @returns Visningsstring for inndelingstype (f.eks. "fylke", "kommune", "grunnkrets")
+ */
+export const getInndelingtypeLabel = (inndelingtype: Inndelingtype | null): string => {
+  if (inndelingtype == null) {
+    return "";
+  }
+  switch (inndelingtype) {
+    case "FYLKE":
+      return "fylke";
+    case "KOMMUNE":
+      return "kommune";
+    case "GRUNNKRETS":
+      return "grunnkrets";
+    case "STEMMEKRETS":
+      return "stemmekrets";
+    case "BOPLIKTOMRAADE":
+      return "bopliktområde";
   }
 };

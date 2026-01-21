@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Inndelingtype, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { GrenseType, getInndelingtypeFromGrensetype } from "hooks/layers/types";
+import { Inndelingtype } from "types/api";
 
 // Denne fungerer for vanlige brukstilfeller, men den kan ikke autoselekere alle tilfeller korrekt.
 // Dette er fordi vi mangler informasjon for å finne inndelingstypen vi skal bruke.
@@ -62,21 +63,21 @@ export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
       // Derfor velger vi kommune som default da det er mest sannsynlig.
       const resolveInndelingtypeForKommune = (kommuneId: string): Inndelingtype => {
         const context = kommuneLokalidWithContext.get(kommuneId) ?? new Set<Inndelingtype>();
-        const hasKommune = context.has("kommune");
-        const hasStemmekrets = context.has("stemmekrets");
-        const hasGrunnkrets = context.has("grunnkrets");
+        const hasKommune = context.has("KOMMUNE");
+        const hasStemmekrets = context.has("STEMMEKRETS");
+        const hasGrunnkrets = context.has("GRUNNKRETS");
 
         if (hasKommune || (hasStemmekrets && hasGrunnkrets)) {
-          return "kommune";
+          return "KOMMUNE";
         }
 
         if (hasStemmekrets) {
-          return "stemmekrets";
+          return "STEMMEKRETS";
         }
         if (hasGrunnkrets) {
-          return "grunnkrets";
+          return "GRUNNKRETS";
         }
-        return "kommune";
+        return "KOMMUNE";
       };
 
       const inndelinger = kommuner.map((kommune) => ({

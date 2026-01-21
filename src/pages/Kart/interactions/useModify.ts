@@ -3,7 +3,7 @@ import { useConfirmationModal } from "contexts/ConfirmationModalContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { LayerId } from "hooks/layers/types";
+import { VectorLayerId } from "hooks/layers/types";
 import useToastCounter from "hooks/toast/useToastCounter";
 import { Collection, MapBrowserEvent } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
@@ -236,11 +236,10 @@ const useModify = () => {
       // Vi ønsker ikke å arve posisjonskvalitet fra grenser i redigeringsmodus
       const targetFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
         "matrikkel",
-        "fylke",
-        "kommune",
-        "nasjon",
-        "grunnkrets",
-        "stemmekrets",
+        "FYLKE",
+        "KOMMUNE",
+        "GRUNNKRETS",
+        "STEMMEKRETS",
         "archived",
         "measure",
       ]).filter((f) => f.getId() !== actingLineString.getId());
@@ -285,12 +284,19 @@ const useModify = () => {
     };
 
     const updateFeatureOnModification = async (event: ModifyEvent) => {
+      const nibasVectorLayers: VectorLayerId[] = [
+        "FYLKE",
+        "KOMMUNE",
+        "GRUNNKRETS",
+        "STEMMEKRETS",
+        "archived",
+        "sosiFiler",
+      ];
+      const matrikkelVectorLayers: VectorLayerId[] = ["matrikkel"];
       // Liste med lag som må snappes mot gitt tvungen snapping og snapmode (matrikkel og/eller nibas)
-      const snappableLayers: LayerId[] = [
-        ...(activeModeTools.includes("snap_matrikkel") ? (["matrikkel"] as LayerId[]) : []),
-        ...(activeModeTools.includes("snap_nibas")
-          ? (["fylke", "kommune", "nasjon", "grunnkrets", "stemmekrets", "archived", "sosiFiler"] as LayerId[])
-          : []),
+      const snappableLayers: VectorLayerId[] = [
+        ...(activeModeTools.includes("snap_matrikkel") ? matrikkelVectorLayers : []),
+        ...(activeModeTools.includes("snap_nibas") ? nibasVectorLayers : []),
       ];
       const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
         "edit",

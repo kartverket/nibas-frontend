@@ -1,5 +1,5 @@
 import { grenserLayers, kartlagLayers } from "hooks/layers/constants";
-import { GrenseId, LayerId } from "hooks/layers/types";
+import { VectorLayerId, LayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { WFS } from "ol/format";
 import BaseLayer from "ol/layer/Base";
@@ -30,7 +30,7 @@ export const getLayerById = <T extends LayerId>(id: T) => {
 };
 
 export const getAllViewingLayers = (): VectorLayer<VectorSource<Feature>>[] => {
-  const viewingLayerIds: GrenseId[] = ["fylke", "grunnkrets", "stemmekrets", "kommune", "nasjon", "bopliktomraade"];
+  const viewingLayerIds: VectorLayerId[] = ["FYLKE", "GRUNNKRETS", "STEMMEKRETS", "KOMMUNE", "BOPLIKTOMRAADE"];
   return getLayersArray()
     .filter((l) => isVectorLayer(l))
     .filter((l) => viewingLayerIds.includes(l.get("id")));

@@ -6,7 +6,7 @@ import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "../../../uti
 import { grenserLayers } from "../../../hooks/layers/constants";
 import { useToolbar } from "../../../contexts/ToolbarContext";
 import { useToast } from "@kvib/react";
-import { FeatureCollection, FeatureProperties, Metadata } from "../../../types/api";
+import { FeatureCollection, FeatureProperties, Inndelingtype, Metadata } from "../../../types/api";
 import { LineString } from "ol/geom";
 import { useHistory } from "../../../contexts/HistoryContext/HistoryContext";
 import { createNyGrenseHistoryChange } from "./grense-history-utils";
@@ -17,6 +17,9 @@ import { useInndelinger } from "../../../contexts/InndelingerContext/Inndelinger
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
 import { grenseStyles } from "../../../utils/map/layerStyles";
 import { roundToNearestHalf } from "../OverlayPanels/NavigasjonPanel/koordinater-utils";
+
+export type HistoriskeGrenserInndelingtype = Extract<Inndelingtype, "STEMMEKRETS" | "GRUNNKRETS">;
+
 const useHistoriskeGrenser = () => {
   const [historiskeGrenserIsLoading, setHistoriskeGrenserIsLoading] = useState(false);
   const [historiskeGrenserFetched, setHistoriskeGrenserFetched] = useState(false);
@@ -42,7 +45,7 @@ const useHistoriskeGrenser = () => {
     const grenserFeatures = await historiskeGrenserFetcher(
       inndelingsIds,
       gyldigTilDate,
-      inndelingstype === "stemmekrets" ? "stemmekrets" : "grunnkrets",
+      inndelingstype === "STEMMEKRETS" ? "STEMMEKRETS" : "GRUNNKRETS",
     );
     const featureCollection: FeatureCollection = {
       type: "FeatureCollection",
@@ -121,7 +124,7 @@ const useHistoriskeGrenser = () => {
       // Fjerner grense fra historical-laget og legger tilbake i edit-laget
       removeFeaturesFromSourceByIds("historical", [featureToRestore.getId() as string]);
       addFeaturesToSource("edit", [featureToRestore]);
-      featureToRestore.setStyle(grenseType === "STEMMEKRETS" ? grenseStyles.stemmekrets : grenseStyles.grunnkrets);
+      featureToRestore.setStyle(grenseType === "STEMMEKRETS" ? grenseStyles.STEMMEKRETS : grenseStyles.GRUNNKRETS);
       if (currentlyEditingInndelinger.length === 0) {
         return;
       }

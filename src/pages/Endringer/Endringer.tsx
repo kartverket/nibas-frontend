@@ -161,24 +161,24 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
       <StyledCell>{utkast.endringstype}</StyledCell>
       <StyledCell>{format(utkast.gyldigFra, "dd.MM.yyyy")}</StyledCell>
       <StyledCell>
-        <InndelingerList bulletcolor={inndelingColors.grunnkrets}>
+        <InndelingerList bulletcolor={inndelingColors.GRUNNKRETS}>
           {endredeGrunnkretser?.map((inndeling) => (
             <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${inndeling.navn}`}</li>
           ))}
         </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.stemmekrets}>
+        <InndelingerList bulletcolor={inndelingColors.STEMMEKRETS}>
           {endredeStemmekretser?.map((inndeling) => (
             <li
               key={inndeling.id.lokalid.value}
             >{`(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer} ${inndeling.navn}`}</li>
           ))}
         </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.kommune}>
+        <InndelingerList bulletcolor={inndelingColors.KOMMUNE}>
           {endredeKommuner?.map((inndeling) => (
             <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
           ))}
         </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.fylke}>
+        <InndelingerList bulletcolor={inndelingColors.FYLKE}>
           {endredeFylker?.map((inndeling) => (
             <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
           ))}

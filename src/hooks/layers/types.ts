@@ -1,6 +1,6 @@
-import { Inndelingtype } from "contexts/InndelingerContext/InndelingerContext";
+import { Inndelingtype } from "types/api";
 
-export type KartlagId =
+export type KartlagLayerId =
   | "topograatone"
   | "matrikkelenWMS"
   | "administrativeGrenser"
@@ -16,19 +16,7 @@ export type KartlagId =
   | "norgesMaritimeGrenser"
   | "sjokartElektroniske";
 
-export type GrenseId =
-  | "matrikkel"
-  | "fylke"
-  | "kommune"
-  | "nasjon"
-  | "grunnkrets"
-  | "stemmekrets"
-  | "archived"
-  | "edit"
-  | "measure"
-  | "historical"
-  | "sosiFiler"
-  | "bopliktomraade";
+export type VectorLayerId = Inndelingtype | "matrikkel" | "archived" | "edit" | "measure" | "historical" | "sosiFiler";
 
 export const GRENSETYPER = [
   "Kommunegrense",
@@ -62,19 +50,19 @@ export const editableGrenseTypes: GrenseType[] = [
 
 export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): GrenseType | undefined => {
   switch (inndelingtype) {
-    case "fylke":
+    case "FYLKE":
       return "Fylkesgrense";
 
-    case "kommune":
+    case "KOMMUNE":
       return "Kommunegrense";
 
-    case "stemmekrets":
+    case "STEMMEKRETS":
       return "Stemmekretsgrense";
 
-    case "grunnkrets":
+    case "GRUNNKRETS":
       return "Grunnkretsgrense";
 
-    case "bopliktomraade":
+    case "BOPLIKTOMRAADE":
       return "Bopliktgrense";
 
     default:
@@ -86,19 +74,19 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
   // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (grenseType) {
     case "Fylkesgrense":
-      return "fylke";
+      return "FYLKE";
 
     case "Kommunegrense":
-      return "kommune";
+      return "KOMMUNE";
 
     case "Stemmekretsgrense":
-      return "stemmekrets";
+      return "STEMMEKRETS";
 
     case "Grunnkretsgrense":
-      return "grunnkrets";
+      return "GRUNNKRETS";
 
     case "Bopliktgrense":
-      return "bopliktomraade";
+      return "BOPLIKTOMRAADE";
 
     default:
       return undefined;
@@ -106,4 +94,4 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
 };
 
 // denne iden brukes både til Sources og Layers
-export type LayerId = KartlagId | GrenseId;
+export type LayerId = KartlagLayerId | VectorLayerId;

@@ -1,5 +1,6 @@
-import { styled } from "styled-components";
 import {
+  Center,
+  Flex,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -7,19 +8,17 @@ import {
   ModalHeader,
   ModalOverlay,
   Spinner,
-  Text,
-  Flex,
-  Center,
   Stack,
+  Text,
 } from "@kvib/react";
-import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
-import { UtkastResponse } from "types/api";
-import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCollapse";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
+import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenTilhorighet";
-import { KretsType } from "./hooks/utkastEndringerTypes";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { styled } from "styled-components";
+import { UtkastResponse } from "types/api";
+import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
+import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCollapse";
 
 type Props = {
   isOpen: boolean;
@@ -60,24 +59,16 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
             </Center>
             <EndringUnstyledList>
               {stemmekretsendringer?.map((endringer) => (
-                <EndringerForKommune
-                  key={endringer.kommune.id}
-                  endringer={endringer}
-                  kretstype={KretsType.STEMMEKRETS}
-                />
+                <EndringerForKommune key={endringer.kommune.id} endringer={endringer} inndelingType={"STEMMEKRETS"} />
               ))}
               {grunnkretsendringer?.map((endringer) => (
-                <EndringerForKommune
-                  key={endringer.kommune.id}
-                  endringer={endringer}
-                  kretstype={KretsType.GRUNNKRETS}
-                />
+                <EndringerForKommune key={endringer.kommune.id} endringer={endringer} inndelingType={"GRUNNKRETS"} />
               ))}
               {bopliktomraadeendringer?.map((endringer) => (
                 <EndringerForKommune
                   key={endringer.kommune.id}
                   endringer={endringer}
-                  kretstype={KretsType.BOPLIKTOMRAADE}
+                  inndelingType={"BOPLIKTOMRAADE"}
                 />
               ))}
               {kommunendringer?.map((endringer) => (
