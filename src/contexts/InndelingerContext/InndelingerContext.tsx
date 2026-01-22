@@ -39,6 +39,8 @@ export type Inndeling = BaseInndeling & {
   isEditing: boolean;
 };
 
+export type InndelingOfType<T extends Inndelingtype> = Inndeling & { inndelingtype: T };
+
 export const isInndeling = (inndeling: Inndeling): inndeling is Inndeling => {
   if (
     inndeling instanceof Object &&
@@ -68,7 +70,10 @@ export type InndelingerContextValue = {
   inndelinger: Inndelinger;
   selectInndelinger: (inndelinger: Inndeling[]) => void;
   setShouldZoom: (shouldZoom: boolean) => void;
+
   currentlyEditingInndelinger: Inndeling[];
+  getCurrentlyEditingInndelingerOfType: <T extends Inndelingtype>(inndelingtype: T) => InndelingOfType<T>[];
+
   isLoadingInndeling: boolean;
 
   getAllInndelinger: () => Inndeling[];
@@ -442,6 +447,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return getAllInndelinger().filter((inndeling) => inndeling.isEditing);
   };
 
+  const getCurrentlyEditingInndelingerOfType = <T extends Inndelingtype>(inndelingtype: T): InndelingOfType<T>[] => {
+    return getCurrentlyEditingInndelinger().filter(
+      (inndeling): inndeling is InndelingOfType<T> => inndeling.inndelingtype === inndelingtype,
+    );
+  };
+
   const getNewInndeling = (newInndeling: Inndeling, isEditing: boolean): Inndeling => {
     const inndelingIfAlreadySelected = inndelinger[newInndeling.inndelingtype].get(newInndeling.id);
 
@@ -521,6 +532,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setShouldZoom,
     getAllInndelinger,
     currentlyEditingInndelinger: getCurrentlyEditingInndelinger(),
+    getCurrentlyEditingInndelingerOfType,
 
     clearInndelingerAndSources,
     clearViewingLayersAndInndelinger,
