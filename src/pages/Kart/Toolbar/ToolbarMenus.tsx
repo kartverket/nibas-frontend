@@ -39,7 +39,9 @@ const ToolbarMenus = () => {
     }
   };
 
-  const defaultToolDisabledMessage = "Åpne en inndeling i redigeringsmodus for å aktivere";
+  const defaultToolDisabledMessage = isEditing
+    ? "Det er ikke mulig å bruke dette verktøyet for denne inndelingen"
+    : "Åpne en inndeling i redigeringsmodus for å aktivere";
 
   useKeyboardShortcut("add", () => toggleTool("add"), isEditing);
   useKeyboardShortcut("remove", () => toggleTool("remove"), isEditing);
