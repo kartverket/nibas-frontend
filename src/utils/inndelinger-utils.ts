@@ -10,24 +10,25 @@ const getCommonInndelingNumberValidator = <TForm extends Record<string, unknown>
   shouldNotBeEqualWith: string[],
   additionalValidation?: (number: string) => ValidateResult,
 ): RegisterOptions<TForm, TFieldName> => {
-  const formattedInndelingType = capitalize(inndelingType);
+  const formattedInndelingType = getInndelingtypeLabel(inndelingType);
+  const capitalizedInndelingType = capitalize(formattedInndelingType);
   return {
-    required: `${formattedInndelingType}nummer kan ikke være tomt`,
+    required: `${capitalizedInndelingType}nummer kan ikke være tomt`,
     validate: (number) => {
       if (typeof number !== "string") {
         return true;
       }
       if (!isIntegerString(number)) {
-        return `${formattedInndelingType}nummer kan kun inneholde siffer`;
+        return `${capitalizedInndelingType}nummer kan kun inneholde siffer`;
       }
       if (parseInt(number) <= 0) {
-        return `${formattedInndelingType}nummer kan ikke være 0 eller et negativt tall`;
+        return `${capitalizedInndelingType}nummer kan ikke være 0 eller et negativt tall`;
       }
       if (!(number.length >= minLength && number.length <= maxLength)) {
-        return `${formattedInndelingType}nummer må ha minst ${minLength} siffer og maks ${maxLength} siffer`;
+        return `${capitalizedInndelingType}nummer må ha minst ${minLength} siffer og maks ${maxLength} siffer`;
       }
       if (shouldNotBeEqualWith.find((num) => num === number) != null) {
-        return `${formattedInndelingType}nummer brukes allerede av ${inndelingType === "FYLKE" ? "et annet" : "en annen"} ${inndelingType}`;
+        return `${capitalizedInndelingType}nummer brukes allerede av ${inndelingType === "FYLKE" ? "et annet" : "en annen"} ${formattedInndelingType}`;
       }
       if (additionalValidation != null) {
         const additionalValidationResult = additionalValidation(number);
