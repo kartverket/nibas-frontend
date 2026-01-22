@@ -28,7 +28,7 @@ export type MetadataDiscriminator =
   | "StatistiskgrenseMetadata"
   | "KommunalKretsgrenseMetadata";
 
-export const getMetadataDiscriminatorFromType = (grenseType: GrenseType | string): MetadataDiscriminator | null => {
+export const getMetadataDiscriminatorFromType = (grenseType: GrenseType): MetadataDiscriminator => {
   switch (grenseType) {
     case "Fylkesgrense":
     case "Kommunegrense":
@@ -41,10 +41,21 @@ export const getMetadataDiscriminatorFromType = (grenseType: GrenseType | string
     case "Grunnkretsgrense":
       return "StatistiskgrenseMetadata";
     case "Stemmekretsgrense":
+    case "Bopliktgrense":
       return "KommunalKretsgrenseMetadata";
     case "Territorialgrense":
       return "TerritorialgrenseMetadata";
-    default:
-      return null;
+    case "Posisjon": {
+      throw new Error('Not implemented yet: "Posisjon" case');
+    }
+    case "GRUNNKRETS": {
+      throw new Error('Not implemented yet: "GRUNNKRETS" case');
+    }
+    case "STEMMEKRETS": {
+      throw new Error('Not implemented yet: "STEMMEKRETS" case');
+    }
+    case "BOPLIKTOMRAADE": {
+      throw new Error('Not implemented yet: "BOPLIKTOMRAADE" case');
+    }
   }
 };
