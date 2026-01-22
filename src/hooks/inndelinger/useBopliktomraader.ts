@@ -22,8 +22,12 @@ export const useBopliktomraader = (
   );
 };
 
-export const useKommuneBopliktomraade = (kommuneId: string | null, gyldighetsdato: string | undefined) => {
-  return useNibasApi(kommuneId != null ? "/v1/kommuner/{id}/bopliktomraader" : null, {
+export const useKommuneBopliktomraade = (
+  kommuneId: string | null,
+  gyldighetsdato: string | undefined,
+  shouldFetch: boolean = true,
+) => {
+  return useNibasApi(shouldFetch && kommuneId != null ? "/v1/kommuner/{id}/bopliktomraader" : null, {
     id: kommuneId!,
     gyldighetsdato,
   });

@@ -364,7 +364,7 @@ export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProp
   const metadataDiscriminator = getMetadataDiscriminatorFromType(grenseType);
   const inndelingtype = getInndelingtypeFromGrensetype(grenseType);
 
-  if (!metadataDiscriminator || !inndelingtype) {
+  if (metadataDiscriminator == null || inndelingtype == null) {
     return null;
   }
 
