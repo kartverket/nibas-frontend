@@ -40,7 +40,7 @@ const getKommuneIdentifikatorFromOptions = (
   }
 };
 
-export const useSplittingForm = (inndeling: SplittableInndelingType) => {
+export const useSplittingForm = (inndeling: SplittableInndelingType | null) => {
   const toast = useToast();
 
   const {
@@ -68,7 +68,7 @@ export const useSplittingForm = (inndeling: SplittableInndelingType) => {
   // TODO Vi trenger ikke hente begge, vi kan velge hva vi henter basert på inndelingstypen
   const { data: stemmekretser } = useKommuneStemmekretser(inndeling?.id ?? null, gyldighetsdato);
   const { data: grunnkretser } = useKommuneGrunnkretser(inndeling?.id ?? null, gyldighetsdato);
-  const inndelingtype = inndeling.inndelingtype;
+  const inndelingtype = inndeling?.inndelingtype ?? null;
 
   const getFlateOptionsFromInndelingType = () => {
     if (inndelingtype === "GRUNNKRETS" && grunnkretser) {
@@ -78,7 +78,7 @@ export const useSplittingForm = (inndeling: SplittableInndelingType) => {
       return mapStemmekretResponseToKrets(stemmekretser);
     }
 
-    return undefined;
+    return null;
   };
 
   const opprinneligFlateOptions = getFlateOptionsFromInndelingType();

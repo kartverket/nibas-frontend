@@ -111,10 +111,10 @@ export const SplittingPanel = () => {
   };
   const kommunenummer = opprinneligFlateOptions?.[0].kommunenummer;
   const existingInndelingNummere = opprinneligFlateOptions?.map((inndeling) => inndeling.nummer);
-  const getInndelingNummerRegisterOptions = getNumberValidatorFunctionForInndelingType<
-    SplittingForm,
-    `nyeKretser.${number}.kretsNummer`
-  >(inndelingtype);
+  const getInndelingNummerRegisterOptions =
+    inndelingtype != null
+      ? getNumberValidatorFunctionForInndelingType<SplittingForm, `nyeKretser.${number}.kretsNummer`>(inndelingtype)
+      : null;
 
   const nummerRegisterOptions = getInndelingNummerRegisterOptions?.({
     shouldNotBeEqualWith: existingInndelingNummere ?? [],
