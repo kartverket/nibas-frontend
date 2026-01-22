@@ -70,7 +70,11 @@ export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): Gr
   }
 };
 
-export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelingtype | undefined => {
+/**
+ * @param grenseType grensetype man ønsker inndelingtype for
+ * @returns Inndelingtype for en gitt grensetype, null hvis grensetypen ikke har en inndelingtype.
+ */
+export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelingtype | null => {
   // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (grenseType) {
     case "Fylkesgrense":
@@ -83,13 +87,14 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
       return "STEMMEKRETS";
 
     case "Grunnkretsgrense":
+    case "Delområdegrense":
       return "GRUNNKRETS";
 
     case "Bopliktgrense":
       return "BOPLIKTOMRAADE";
 
     default:
-      return undefined;
+      return null;
   }
 };
 
