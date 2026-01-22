@@ -211,9 +211,8 @@ const useDraw = () => {
       // Kan kun redigere én inndelingstype om gangen, så velger bare første
       const grenseType = getGrensetypeFromInndelingtype(currentlyEditingInndelinger[0].inndelingtype);
 
-      if (grenseType) {
+      if (grenseType != null) {
         const change = createNyGrenseHistoryChange(drawnFeature, grenseType, splittedFeatures);
-
         if (change == null) {
           return;
         }

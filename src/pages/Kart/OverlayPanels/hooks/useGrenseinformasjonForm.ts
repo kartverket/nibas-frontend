@@ -1,11 +1,12 @@
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { formatISO, startOfDay } from "date-fns";
 import { Feature } from "ol";
+import { LineString } from "ol/geom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FeatureProperties, Metadata } from "types/api";
-import { addFeaturePropertiesEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { getMetadataDiscriminatorFromType } from "utils/grenser";
-import { formatISO, startOfDay } from "date-fns";
-import { LineString } from "ol/geom";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { getGrensetypeFromString } from "utils/type-utils";
+import { addFeaturePropertiesEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 
 type GrenseinformasjonFormProps = {
   grenseType: string;
@@ -49,7 +50,11 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
 
   const onSubmit: SubmitHandler<GrenseinformasjonFormProps> = (data) => {
     if (Object.values(formState.dirtyFields).length > 0) {
-      const metadataDiscriminator = getMetadataDiscriminatorFromType(data.grenseType);
+      const grensetype = getGrensetypeFromString(data.grenseType);
+      if (grensetype == null) {
+        return;
+      }
+      const metadataDiscriminator = getMetadataDiscriminatorFromType(grensetype);
       const commonMetadata = metadata.common;
       if (!metadataDiscriminator || !commonMetadata) {
         return;
