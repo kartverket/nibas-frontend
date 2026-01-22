@@ -22,8 +22,12 @@ export const useStemmekretser = (
   );
 };
 
-export const useKommuneStemmekretser = (kommuneId: string | null, gyldighetsdato: string | undefined) => {
-  return useNibasApi(kommuneId != null ? "/v1/kommuner/{id}/stemmekretser" : null, {
+export const useKommuneStemmekretser = (
+  kommuneId: string | null,
+  gyldighetsdato: string | undefined,
+  shouldFetch: boolean = true,
+) => {
+  return useNibasApi(shouldFetch && kommuneId != null ? "/v1/kommuner/{id}/stemmekretser" : null, {
     id: kommuneId!,
     gyldighetsdato,
   });

@@ -21,7 +21,11 @@ const ToolbarMenus = () => {
 
   //TODO: Denne burde få et bedre navn da den kun brukes for noen verktøy.
   const validInndelingstype = currentlyEditingInndelinger.some((inndeling) => {
-    return inndeling.inndelingtype === "STEMMEKRETS" || inndeling.inndelingtype === "GRUNNKRETS";
+    return (
+      inndeling.inndelingtype === "STEMMEKRETS" ||
+      inndeling.inndelingtype === "GRUNNKRETS" ||
+      inndeling.inndelingtype === "BOPLIKTOMRAADE"
+    );
   });
 
   const mergeIsAvailable = currentlyEditingInndelinger.some((inndeling) => {

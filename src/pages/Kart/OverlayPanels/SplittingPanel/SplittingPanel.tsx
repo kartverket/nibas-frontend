@@ -52,9 +52,11 @@ export const SplittingPanel = () => {
   const { getCurrentlyEditingInndelingerOfType } = useInndelinger();
   const currentlyEditingGrunnkretser = getCurrentlyEditingInndelingerOfType("GRUNNKRETS");
   const currentlyEditingStemmekretser = getCurrentlyEditingInndelingerOfType("STEMMEKRETS");
-  const currentlyEditingStemmekretserOrGrunnkretser = [
+  const currentlyEditingBopliktomraader = getCurrentlyEditingInndelingerOfType("BOPLIKTOMRAADE");
+  const currentlyEditingSplittableInndelinger = [
     ...currentlyEditingGrunnkretser,
     ...currentlyEditingStemmekretser,
+    ...currentlyEditingBopliktomraader,
   ];
   const {
     inndelingtype,
@@ -70,17 +72,17 @@ export const SplittingPanel = () => {
     errors,
     trigger,
     isSubmitted,
-    // Det er kun mulig å redigere én grunnkrets eller én stemmekrets om gangen, så vi kan bruke det første elementet i listen
-  } = useSplittingForm(currentlyEditingStemmekretserOrGrunnkretser[0]);
+    // Det er kun mulig å redigere én splittable inndeling om gangen, så vi kan bruke det første elementet i listen
+  } = useSplittingForm(currentlyEditingSplittableInndelinger[0]);
 
   // Vi ønsker å lukke panelet hvis vi bytter inndeling
-  const currentInndeling = useState(currentlyEditingStemmekretserOrGrunnkretser[0]);
+  const currentInndeling = useState(currentlyEditingSplittableInndelinger[0]);
 
   useEffect(() => {
-    if (currentInndeling[0] !== currentlyEditingStemmekretserOrGrunnkretser[0]) {
+    if (currentInndeling[0] !== currentlyEditingSplittableInndelinger[0]) {
       closeOverlayPanel();
     }
-  }, [closeOverlayPanel, currentInndeling, currentlyEditingStemmekretserOrGrunnkretser]);
+  }, [closeOverlayPanel, currentInndeling, currentlyEditingSplittableInndelinger]);
 
   const triggerRevalidateOnChangeAfterSubmit = ({ onChange, ...restProps }: InputProps) => {
     return {
@@ -98,18 +100,22 @@ export const SplittingPanel = () => {
 
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
 
+  // Hvis vi av en eller annen grunn ikke har inndelingtype, så fallbacker vi til "krets" som label.
+  const inndelingtypeLabel = inndelingtype != null ? getInndelingtypeLabel(inndelingtype) : "krets";
+
   const validateNotDuplicateNewKretsnummere = (value: string) => {
     const nyeKretsNummere = getValues("nyeKretser").map((k) => k.kretsNummer);
     const indexOfCurrentNummer = nyeKretsNummere.findIndex((n) => n === value);
     nyeKretsNummere.splice(indexOfCurrentNummer, 1); // fjerner value fra lista
     if (nyeKretsNummere.includes(value)) {
       // hvis et nummer lik value fremdeles er i lista har vi duplikat for value
-      return `Nytt ${getInndelingtypeLabel(inndelingtype)}nummer er allerede i bruk i denne splittingen`;
+      return `Nytt ${inndelingtypeLabel}nummer er allerede i bruk i denne splittingen`;
     }
 
     return true;
   };
-  const kommunenummer = opprinneligFlateOptions?.[0].kommunenummer;
+
+  const kommunenummer = opprinneligFlateOptions != null ? opprinneligFlateOptions[0].kommunenummer : null;
   const existingInndelingNummere = opprinneligFlateOptions?.map((inndeling) => inndeling.nummer);
   const getInndelingNummerRegisterOptions =
     inndelingtype != null
@@ -118,7 +124,7 @@ export const SplittingPanel = () => {
 
   const nummerRegisterOptions = getInndelingNummerRegisterOptions?.({
     shouldNotBeEqualWith: existingInndelingNummere ?? [],
-    prefixNumber: kommunenummer,
+    prefixNumber: kommunenummer ?? undefined,
     additionalValidation: validateNotDuplicateNewKretsnummere,
   });
 
@@ -128,7 +134,7 @@ export const SplittingPanel = () => {
 
       <Stack spacing={8}>
         <FormControl>
-          <FormLabel>{`Hvilken ${getInndelingtypeLabel(inndelingtype)} skal splittes?`}</FormLabel>
+          <FormLabel>{`Hvilken ${inndelingtypeLabel} skal splittes?`}</FormLabel>
           <Select
             {...opprinneligKretsRegister}
             onChange={(e) => {
@@ -136,7 +142,7 @@ export const SplittingPanel = () => {
               handleOpprinneligKretsChange(e);
             }}
           >
-            <option value={CustomOption.NOT_CHOSEN}>{`Velg ${getInndelingtypeLabel(inndelingtype)}`}</option>
+            <option value={CustomOption.NOT_CHOSEN}>{`Velg ${inndelingtypeLabel}`}</option>
             {opprinneligFlateOptions
               ?.sort((a, b) => parseInt(a.nummer) - parseInt(b.nummer))
               .map((krets) => {
@@ -180,7 +186,7 @@ export const SplittingPanel = () => {
                       <Input
                         disabled={index === 0}
                         {...register(`nyeKretser.${index}.kretsNavn`, {
-                          required: `Ny ${getInndelingtypeLabel(inndelingtype)} må ha et navn`,
+                          required: `Ny ${inndelingtypeLabel} må ha et navn`,
                         })}
                       />
                     </FormControl>
