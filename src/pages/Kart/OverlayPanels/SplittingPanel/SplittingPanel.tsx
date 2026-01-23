@@ -52,12 +52,7 @@ export const SplittingPanel = () => {
   const { getCurrentlyEditingInndelingerOfType } = useInndelinger();
   const currentlyEditingGrunnkretser = getCurrentlyEditingInndelingerOfType("GRUNNKRETS");
   const currentlyEditingStemmekretser = getCurrentlyEditingInndelingerOfType("STEMMEKRETS");
-  const currentlyEditingBopliktomraader = getCurrentlyEditingInndelingerOfType("BOPLIKTOMRAADE");
-  const currentlyEditingSplittableInndelinger = [
-    ...currentlyEditingGrunnkretser,
-    ...currentlyEditingStemmekretser,
-    ...currentlyEditingBopliktomraader,
-  ];
+  const currentlyEditingSplittableInndelinger = [...currentlyEditingGrunnkretser, ...currentlyEditingStemmekretser];
   const {
     inndelingtype,
     opprinneligFlateOptions,

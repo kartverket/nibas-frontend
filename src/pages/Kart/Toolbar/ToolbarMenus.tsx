@@ -8,6 +8,11 @@ import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
 import { anyFeatureIsEditable } from "utils/features";
 import CustomTooltip from "./CustomTooltip";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
+import { INNDELINGTYPE_VALUES } from "types/api";
+
+export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
+  (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS",
+);
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool, disableModeTool, activeModeTools } = useToolbar();
@@ -22,7 +27,10 @@ const ToolbarMenus = () => {
   const isEditingGrunnkrets = getCurrentlyEditingInndelingerOfType("GRUNNKRETS").length > 0;
   const isEditingStemmekrets = getCurrentlyEditingInndelingerOfType("STEMMEKRETS").length > 0;
   const isEditingBopliktomraader = getCurrentlyEditingInndelingerOfType("BOPLIKTOMRAADE").length > 0;
-  const isEditingSplittableInndelinger = isEditingGrunnkrets || isEditingStemmekrets || isEditingBopliktomraader;
+
+  const isEditingSplittableInndelinger = SPLITTABLE_INNDELINGTYPE_VALUES.some(
+    (type) => getCurrentlyEditingInndelingerOfType(type).length > 0,
+  );
   const isEditingStemmekretsOrGrunnkrets = isEditingGrunnkrets || isEditingStemmekrets;
 
   const [isWide] = useMediaQuery("(min-width: " + theme.breakpoints["2xl"] + ")");
