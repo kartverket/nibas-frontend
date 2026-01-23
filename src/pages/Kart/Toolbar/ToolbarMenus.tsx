@@ -5,10 +5,10 @@ import { useToolbar } from "contexts/ToolbarContext";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
+import { INNDELINGTYPE_VALUES } from "types/api";
 import { anyFeatureIsEditable } from "utils/features";
 import CustomTooltip from "./CustomTooltip";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
-import { INNDELINGTYPE_VALUES } from "types/api";
 
 export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
   (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS",
@@ -26,7 +26,6 @@ const ToolbarMenus = () => {
 
   const isEditingGrunnkrets = getCurrentlyEditingInndelingerOfType("GRUNNKRETS").length > 0;
   const isEditingStemmekrets = getCurrentlyEditingInndelingerOfType("STEMMEKRETS").length > 0;
-  const isEditingBopliktomraader = getCurrentlyEditingInndelingerOfType("BOPLIKTOMRAADE").length > 0;
 
   const isEditingSplittableInndelinger = SPLITTABLE_INNDELINGTYPE_VALUES.some(
     (type) => getCurrentlyEditingInndelingerOfType(type).length > 0,
@@ -81,7 +80,7 @@ const ToolbarMenus = () => {
       label: "Del grense",
       icon: <Icon icon="cut" />,
       $isActive: activeTool === "split",
-      isDisabled: !isEditing || isEditingBopliktomraader,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("split"),
       "aria-label": "Del en grense i to fra et punkt",
       command: KeyboardShortcuts["grensesplit"].displayString,
@@ -91,7 +90,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="archive" />,
       command: KeyboardShortcuts["archive"].displayString,
       $isActive: activeTool === "archive",
-      isDisabled: !isEditing || isEditingBopliktomraader,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("archive"),
       "aria-label": "Arkiver grense",
     },
@@ -100,7 +99,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="delete_forever" />,
       command: KeyboardShortcuts["delete"].displayString,
       $isActive: activeTool === "delete",
-      isDisabled: !isEditing || isEditingBopliktomraader,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("delete"),
       "aria-label": "Slett grense",
     },
@@ -109,7 +108,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="copy_all" />,
       command: KeyboardShortcuts["duplicate"].displayString,
       $isActive: activeTool === "duplicate",
-      isDisabled: !isEditing || isEditingBopliktomraader,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("duplicate"),
       "aria-label": "Dupliser grense",
     },
@@ -127,7 +126,7 @@ const ToolbarMenus = () => {
       icon: <Icon icon="merge" />,
       command: KeyboardShortcuts["merge_grenser"].displayString,
       $isActive: activeTool === "merge_grenser",
-      isDisabled: !isEditingStemmekretsOrGrunnkrets,
+      isDisabled: !isEditing,
       onClick: () => toggleTool("merge_grenser"),
       "aria-label": "Slå sammen grenser",
     },
