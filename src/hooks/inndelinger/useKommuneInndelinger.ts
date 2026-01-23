@@ -6,8 +6,8 @@ import { useKommuneStemmekretser } from "./useStemmekretser";
 
 type KommunalInndelingtype = Extract<Inndelingtype, "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE">;
 
-// Abstraksjon for å hente kretser for en kommune i stedet for å måtte bruke hook for hver enkelt inndelingstype som er relevant for funksjonaliteten.
-const useKommuneKretser = (
+// Abstraksjon for å hente inndelinger for en kommune i stedet for å måtte bruke hook for hver enkelt inndelingstype som er relevant for funksjonaliteten.
+const useKommuneInndelinger = (
   kommuneId: string | null,
   gyldighetsdato: string | undefined,
   inndelingtype: KommunalInndelingtype | undefined,
@@ -49,4 +49,4 @@ export const mapKommunalKretserResponseToKrets = (
   }));
 };
 
-export default useKommuneKretser;
+export default useKommuneInndelinger;

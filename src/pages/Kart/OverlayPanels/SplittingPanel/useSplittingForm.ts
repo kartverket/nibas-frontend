@@ -3,7 +3,7 @@ import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
 import { InndelingOfType } from "contexts/InndelingerContext/InndelingerContext";
-import useKommuneKretser, { mapKommunalKretserResponseToKrets } from "hooks/inndelinger/useKommuneKretser";
+import useKommuneInndelinger, { mapKommunalKretserResponseToKrets } from "hooks/inndelinger/useKommuneInndelinger";
 import { useFieldArray, useForm } from "react-hook-form";
 import { KretsDelingEndringRequest } from "types/api";
 import { CustomOption, Krets } from "../hooks/tilhorighet-utils";
@@ -47,7 +47,7 @@ export const useSplittingForm = (inndeling: SplittableInndelingType | null) => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const inndelingtype = inndeling?.inndelingtype;
-  const kretser = useKommuneKretser(inndeling?.id ?? null, gyldighetsdato, inndelingtype);
+  const kretser = useKommuneInndelinger(inndeling?.id ?? null, gyldighetsdato, inndelingtype);
 
   const opprinneligFlateOptions =
     kretser != null && inndelingtype != null ? mapKommunalKretserResponseToKrets(kretser, inndelingtype) : null;
