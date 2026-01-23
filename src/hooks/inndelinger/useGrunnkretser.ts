@@ -22,8 +22,12 @@ export const useGrunnkretser = (
   );
 };
 
-export const useKommuneGrunnkretser = (kommuneId: string | null, gyldighetsdato: string | undefined) => {
-  return useNibasApi(kommuneId != null ? "/v1/kommuner/{id}/grunnkretser" : null, {
+export const useKommuneGrunnkretser = (
+  kommuneId: string | null,
+  gyldighetsdato: string | undefined,
+  shouldFetch: boolean = true,
+) => {
+  return useNibasApi(shouldFetch && kommuneId != null ? "/v1/kommuner/{id}/grunnkretser" : null, {
     id: kommuneId!,
     gyldighetsdato,
   });
