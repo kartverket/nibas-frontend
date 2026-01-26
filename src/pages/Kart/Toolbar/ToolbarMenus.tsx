@@ -188,7 +188,6 @@ const ToolbarMenus = () => {
       isDisabled: !isEditingStemmekrets,
       onClick: () => toggleOverlayPanel("sammenslåing"),
       "aria-label": "Slå sammen stemmekretser",
-      $tooltipTextOverride: "Åpne stemmekretser i redigeringsmodus for å slå sammen",
     },
     {
       label: "Splitt flate",
