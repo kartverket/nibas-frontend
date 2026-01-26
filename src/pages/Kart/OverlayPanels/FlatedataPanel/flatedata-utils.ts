@@ -1,35 +1,55 @@
 import { HistoryChange } from "contexts/HistoryContext/types";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import {
-  MetadataResponse,
-  MetadataRequest,
-  KommuneRequest,
-  StemmekretsRequest,
+  BopliktomraadeRequest,
   GrunnkretsRequest,
   Inndelingtype,
+  KommuneRequest,
+  MetadataRequest,
+  MetadataResponse,
+  StemmekretsRequest,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
+
 type StemmekretsInput = {
   navn: string;
   nummer: string;
   tellekretsnavn: string;
   tellekretsnummer: string;
+  valgdistriktsnummer: string;
   informasjon: string;
 };
 type StemmekretsInputs = { [inndelingId: string]: StemmekretsInput };
+
 type GrunnkretsInput = { navn: string; nummer: string; informasjon: string };
 type GrunnkretsInputs = { [inndelingId: string]: GrunnkretsInput };
-export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs;
+
+type BopliktomraadeInput = {
+  navn: string;
+  nummer: string;
+  delvisBoplikt: boolean;
+  forskriftsreferanse: string;
+  url: string;
+  informasjon: string;
+};
+type BopliktomraadeInputs = { [inndelingId: string]: BopliktomraadeInput };
+
+export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs | BopliktomraadeInputs;
 
 const isKommuneInput = (value: KommuneInput | StemmekretsInput | GrunnkretsInput): value is KommuneInput =>
   "samiskforvaltningsomraade" in value;
 
 const isStemmekretsInput = (value: KommuneInput | StemmekretsInput | GrunnkretsInput): value is StemmekretsInput =>
   "tellekretsnummer" in value && "tellekretsnavn" in value;
+
+const isBopliktomraadeInput = (
+  value: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
+): value is BopliktomraadeInput =>
+  "delvisBoplikt" in value && "forskriftsreferanse" in value && "url" in value && "informasjon" in value;
 
 const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
@@ -51,20 +71,18 @@ const getRequestFromInputs = (
       return null;
     }
     case "STEMMEKRETS": {
-      if (isStemmekretsInput(data)) {
+      if (isStemmekretsInput(data) && isStemmekretsInndeling(inndeling)) {
         const stemmekretsRequest: StemmekretsRequest = {
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
           },
-          tellekretsnummer:
-            isStemmekretsInndeling(inndeling) && data.tellekretsnummer !== "" ? data.tellekretsnummer : undefined,
-          tellekretsnavn:
-            isStemmekretsInndeling(inndeling) && data.tellekretsnavn !== "" ? data.tellekretsnavn : undefined,
-          valgdistriktsnummer: isStemmekretsInndeling(inndeling) ? inndeling.valgdistriktsnummer : undefined,
+          tellekretsnummer: data.tellekretsnummer !== "" ? data.tellekretsnummer : undefined,
+          tellekretsnavn: data.tellekretsnavn !== "" ? data.tellekretsnavn : undefined,
+          valgdistriktsnummer: inndeling.valgdistriktsnummer,
           version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
-          kommunenummer: isStemmekretsInndeling(inndeling) ? inndeling.kommunenummer : undefined,
+          kommunenummer: inndeling.kommunenummer,
           informasjon: data.informasjon !== "" ? data.informasjon : undefined,
         };
         return stemmekretsRequest;
@@ -87,7 +105,22 @@ const getRequestFromInputs = (
       return null;
     }
     case "BOPLIKTOMRAADE": {
-      throw new Error('Not implemented yet: "bopliktomraade" case');
+      if (isBopliktomraadeInput(data)) {
+        const bopliktomraadeRequest: BopliktomraadeRequest = {
+          identifikasjon: {
+            lokalid: getIdFromEntity(inndeling),
+          },
+          version: inndeling.version,
+          navn: data.navn,
+          nummer: data.nummer,
+          delvisBoplikt: data.delvisBoplikt,
+          forskriftsreferanse: data.forskriftsreferanse,
+          url: data.url,
+          informasjon: data.informasjon !== "" ? data.informasjon : undefined,
+        };
+        return bopliktomraadeRequest;
+      }
+      return null;
     }
   }
 };
@@ -118,6 +151,17 @@ export const reduceFlatedataChanges = (
         ) {
           return accumulator;
         }
+      } else if (isBopliktomraadeInput(oldValues)) {
+        if (
+          newValues.nummer === oldValues.nummer &&
+          newValues.navn === oldValues.navn &&
+          newValues.delvisBoplikt === oldValues.delvisBoplikt &&
+          newValues.forskriftsreferanse === oldValues.forskriftsreferanse &&
+          newValues.url === oldValues.url &&
+          newValues.informasjon === oldValues.informasjon
+        ) {
+          return accumulator;
+        }
       } else if (
         newValues.nummer === oldValues.nummer &&
         newValues.navn === oldValues.navn &&
@@ -127,11 +171,10 @@ export const reduceFlatedataChanges = (
       }
 
       const changedInndeling = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);
-      if (changedInndeling) {
+      if (changedInndeling != null) {
         const fromRequest = getRequestFromInputs(inndeling.inndelingtype, oldValues, changedInndeling);
         const toRequest = getRequestFromInputs(inndeling.inndelingtype, newValues, changedInndeling);
-
-        if (fromRequest && toRequest) {
+        if (fromRequest != null && toRequest != null) {
           return [
             ...accumulator,
             {

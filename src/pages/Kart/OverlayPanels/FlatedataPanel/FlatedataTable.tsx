@@ -11,13 +11,12 @@ import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNavnInSpraak } from "utils/language/language";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { capitalize } from "utils/string-utils";
+import { FlatedataTableInndeling } from "./FlatedataPanel";
 import FlatedataTableHeader from "./FlatedataTableHeader";
 import { FlatedataTableRow } from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
-import { getHistoryTypeValueForInndelingtype } from "contexts/HistoryContext/history-utils";
-import { FlatedataTableInndeling } from "./FlatedataPanel";
 
 type Props = {
   mainInndeling: FlatedataTableInndeling;
@@ -86,19 +85,36 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     clearSearch();
     const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
     if (changes.length > 0) {
-      // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
-      if (mainInndeling.inndelingtype === "FYLKE" || mainInndeling.inndelingtype === "KOMMUNE") {
-        addHistoryEntry({
-          type: "kommune",
-          fylkeId: mainInndeling.id,
-          changes,
-        } as KommuneEntry);
-      } else {
-        addHistoryEntry({
-          type: getHistoryTypeValueForInndelingtype(mainInndeling.inndelingtype),
-          kommuneId: mainInndeling.id,
-          changes,
-        } as StemmekretsEntry | GrunnkretsEntry | BopliktomraadeEntry);
+      switch (mainInndeling.inndelingtype) {
+        case "FYLKE":
+        case "KOMMUNE":
+          addHistoryEntry({
+            type: "kommune",
+            fylkeId: mainInndeling.id,
+            changes,
+          } as KommuneEntry);
+          break;
+        case "STEMMEKRETS":
+          addHistoryEntry({
+            type: "stemmekrets",
+            kommuneId: mainInndeling.id,
+            changes,
+          } as StemmekretsEntry);
+          break;
+        case "GRUNNKRETS":
+          addHistoryEntry({
+            type: "grunnkrets",
+            kommuneId: mainInndeling.id,
+            changes,
+          } as GrunnkretsEntry);
+          break;
+        case "BOPLIKTOMRAADE":
+          addHistoryEntry({
+            type: "bopliktomraade",
+            kommuneId: mainInndeling.id,
+            changes,
+          } as BopliktomraadeEntry);
+          break;
       }
 
       for (const change of changes) {
