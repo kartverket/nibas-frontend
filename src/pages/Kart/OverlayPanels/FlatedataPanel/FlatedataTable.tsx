@@ -2,7 +2,6 @@ import { TabPanel } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { BopliktomraadeEntry, GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
-import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -18,9 +17,10 @@ import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
 import { getHistoryTypeValueForInndelingtype } from "contexts/HistoryContext/history-utils";
+import { FlatedataTableInndeling } from "./FlatedataPanel";
 
 type Props = {
-  mainInndeling: Inndeling;
+  mainInndeling: FlatedataTableInndeling;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
   searchValue: string;
@@ -182,12 +182,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       <FlatedataFooter
         isEditing={isEditing}
         isDisabled={
-          allInndelingerHasFremtidigEndring ||
-          !utkast ||
-          !mainInndeling.isEditing ||
-          utkastHarSammenslaainger() ||
-          // TODO: Fjernes når det er klart for å redigere bopliktområder
-          mainInndeling.inndelingtype === "BOPLIKTOMRAADE"
+          allInndelingerHasFremtidigEndring || !utkast || !mainInndeling.isEditing || utkastHarSammenslaainger()
         }
         toggleEditing={toggleEditing}
         canSave={isDirty}

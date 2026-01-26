@@ -5,10 +5,12 @@ import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
 import { InndelingOfType } from "contexts/InndelingerContext/InndelingerContext";
 import useKommuneInndelinger, { mapKommunalKretserResponseToKrets } from "hooks/inndelinger/useKommuneInndelinger";
 import { useFieldArray, useForm } from "react-hook-form";
-import { KretsDelingEndringRequest } from "types/api";
+import { INNDELINGTYPE_VALUES, KretsDelingEndringRequest } from "types/api";
 import { CustomOption, Krets } from "../hooks/tilhorighet-utils";
-import { SPLITTABLE_INNDELINGTYPE_VALUES } from "pages/Kart/Toolbar/ToolbarMenus";
 
+export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
+  (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS",
+);
 export type SplittingForm = Pick<KretsDelingEndringRequest, "opprinneligKrets" | "nyeKretser">;
 type SplittingFormInndelingtype = (typeof SPLITTABLE_INNDELINGTYPE_VALUES)[number];
 export type SplittableInndelingType = InndelingOfType<SplittingFormInndelingtype>;

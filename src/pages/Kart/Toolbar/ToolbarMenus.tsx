@@ -6,13 +6,10 @@ import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
 import { anyFeatureIsEditable } from "utils/features";
+import { SPLITTABLE_INNDELINGTYPE_VALUES } from "../OverlayPanels/SplittingPanel/useSplittingForm";
+import { FLATEDATA_TABLE_INNDELINGTYPE_VALUES } from "../OverlayPanels/FlatedataPanel/FlatedataPanel";
 import CustomTooltip from "./CustomTooltip";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
-import { INNDELINGTYPE_VALUES } from "types/api";
-
-export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
-  (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS",
-);
 
 const ToolbarMenus = () => {
   const { activeTool, toggleTool, disableModeTool, activeModeTools } = useToolbar();
@@ -20,7 +17,7 @@ const ToolbarMenus = () => {
     useOverlayPanel();
 
   const theme = useTheme();
-  const { getCurrentlyEditingInndelingerOfType, currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
+  const { getCurrentlyEditingInndelingerOfType, currentlyEditingInndelinger, getInndelingerOfType } = useInndelinger();
 
   const isEditing = currentlyEditingInndelinger.length > 0;
 
@@ -36,9 +33,9 @@ const ToolbarMenus = () => {
   const [isWide] = useMediaQuery("(min-width: " + theme.breakpoints["2xl"] + ")");
   const [isSmall] = useMediaQuery("(min-width: " + theme.breakpoints["lg"] + ")");
 
-  // TODO Sjekk om vi kan fjerne ubrukte inndelinger
-  const flatedataIsAvailable =
-    getAllInndelinger().filter((inndeling) => inndeling.isViewing === true || inndeling.isEditing === true).length > 0;
+  const flatedataIsAvailable = FLATEDATA_TABLE_INNDELINGTYPE_VALUES.some((type) =>
+    getInndelingerOfType(type).some((inndeling) => inndeling.isViewing === true || inndeling.isEditing === true),
+  );
 
   const toggleMovePoint = () => {
     toggleTool("koordinater");

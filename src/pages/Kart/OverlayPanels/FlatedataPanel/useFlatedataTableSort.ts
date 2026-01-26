@@ -1,37 +1,31 @@
+import get from "lodash.get";
 import { useState } from "react";
 import {
-  Inndelingtype,
   BopliktomraadeResponse,
+  FylkeResponse,
   GrunnkretsResponse,
   KommuneResponse,
   MetadataResponse,
   StemmekretsResponse,
 } from "types/api";
-import get from "lodash.get";
+import { FlatedataTableInndelingtype } from "./FlatedataPanel";
 
 type ResponseProperty =
+  | keyof FylkeResponse
   | keyof KommuneResponse
   | keyof StemmekretsResponse
   | keyof GrunnkretsResponse
   | keyof BopliktomraadeResponse;
 
-interface PropertiesByInndelingtype extends Record<Inndelingtype, ResponseProperty[]> {
-  FYLKE: (keyof KommuneResponse)[];
-  KOMMUNE: (keyof KommuneResponse)[];
-  STEMMEKRETS: (keyof StemmekretsResponse)[];
-  GRUNNKRETS: (keyof GrunnkretsResponse)[];
-  BOPLIKTOMRAADE: (keyof BopliktomraadeResponse)[];
-}
-
-const propertiesByInndelingtype: PropertiesByInndelingtype = {
+const propertiesByInndelingtype: Record<FlatedataTableInndelingtype, ResponseProperty[]> = {
   FYLKE: ["nummer", "navn", "samiskforvaltningsomraade"],
   KOMMUNE: ["nummer", "navn", "samiskforvaltningsomraade"],
   STEMMEKRETS: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"],
   GRUNNKRETS: ["nummer", "navn"],
-  BOPLIKTOMRAADE: ["delvisBoplikt", "forskriftsreferanse", "url", "informasjon"],
+  BOPLIKTOMRAADE: ["nummer", "navn", "delvisBoplikt", "forskriftsreferanse", "url", "informasjon"],
 };
 
-export const useFlatedataTableSort = (inndelingtype: Inndelingtype) => {
+export const useFlatedataTableSort = (inndelingtype: FlatedataTableInndelingtype) => {
   const properties = propertiesByInndelingtype[inndelingtype];
   const [sortProperty, setSortProperty] = useState(properties[0]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
