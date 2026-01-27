@@ -25,13 +25,12 @@ export type HistoryChange<T> = {
   to: T;
 };
 
+export const METADATA_ENTRY_TYPE_VALUES = ["grunnkrets", "stemmekrets", "bopliktomraade", "kommune"] as const;
+export type MetadataTypeValues = (typeof METADATA_ENTRY_TYPE_VALUES)[number];
 export type HistoryTypeValues =
+  | MetadataTypeValues
   | "grense"
   | "property"
-  | "grunnkrets"
-  | "stemmekrets"
-  | "bopliktomraade"
-  | "kommune"
   | "utkast"
   | "stemmekretssammenslaaingsendring"
   | "kretsdelingendring"

@@ -6,7 +6,7 @@ import { Coordinate } from "ol/coordinate";
 import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { FeatureProperties, Inndelingtype, KontekstEgenskaper } from "types/api";
+import { FeatureProperties, KontekstEgenskaper } from "types/api";
 import { setDefaultFeatureProperties } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
@@ -22,10 +22,11 @@ import {
   HistoryDirection,
   HistoryEntry,
   HistoryState,
-  HistoryTypeValues,
   KommuneEntry,
   KretsdelingEntry,
   MergeGrenseEntry,
+  METADATA_ENTRY_TYPE_VALUES,
+  MetadataEntry,
   MinimalGrense,
   NyGrense,
   NyGrenseDeleteEntry,
@@ -380,6 +381,12 @@ export const getKommuneMetadataEntries = (entries: HistoryEntry[]): KommuneEntry
   return entries.filter((entry) => entry.type === "kommune") as KommuneEntry[];
 };
 
+export const getMetadataEntries = (entries: HistoryEntry[]): MetadataEntry[] => {
+  return entries.filter(
+    (entry): entry is MetadataEntry => METADATA_ENTRY_TYPE_VALUES.find((type) => type === entry.type) != null,
+  );
+};
+
 export const getKretsDelingEntries = (entries: HistoryEntry[]): KretsdelingEntry[] => {
   return entries.filter((entry) => entry.type === "kretsdelingendring") as KretsdelingEntry[];
 };
@@ -398,19 +405,4 @@ export const getGrenseArkiveringEntries = (entries: HistoryEntry[]): GrenseArkiv
 
 export const getGrenseMergeEntries = (entries: HistoryEntry[]): MergeGrenseEntry[] => {
   return entries.filter((entry) => entry.type === "merge_grenser") as MergeGrenseEntry[];
-};
-
-export const getHistoryTypeValueForInndelingtype = (inndelingtype: Inndelingtype): HistoryTypeValues => {
-  switch (inndelingtype) {
-    case "FYLKE":
-      throw new Error("FYLKE is not a valid history type value");
-    case "KOMMUNE":
-      return "kommune";
-    case "STEMMEKRETS":
-      return "stemmekrets";
-    case "GRUNNKRETS":
-      return "grunnkrets";
-    case "BOPLIKTOMRAADE":
-      return "bopliktomraade";
-  }
 };

@@ -10,7 +10,7 @@ import {
   StemmekretsRequest,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
-import { isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
+import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
@@ -53,7 +53,7 @@ const isBopliktomraadeInput = (
 
 const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
-  data: KommuneInput | StemmekretsInput | GrunnkretsInput,
+  data: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
   inndeling: MetadataResponse,
 ): MetadataRequest | null => {
   switch (inndelingtype) {
@@ -105,11 +105,12 @@ const getRequestFromInputs = (
       return null;
     }
     case "BOPLIKTOMRAADE": {
-      if (isBopliktomraadeInput(data)) {
+      if (isBopliktomraadeInput(data) && isBopliktomraadeInndeling(inndeling)) {
         const bopliktomraadeRequest: BopliktomraadeRequest = {
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
           },
+          kommunenummer: inndeling.kommunenummer,
           version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,

@@ -12,6 +12,7 @@ import {
   getGrenseMergeEntries,
   getKommuneMetadataEntries,
   getKretsDelingEntries,
+  getMetadataEntries,
   getNyGrenserEntriesEntries,
 } from "contexts/HistoryContext/history-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -20,7 +21,6 @@ import {
   GrunnkretsEntry,
   HistoryChange,
   HistoryEntry,
-  KommuneEntry,
   StemmekretsEntry,
 } from "contexts/HistoryContext/types";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
@@ -230,26 +230,21 @@ const getLastKretsdeling = (
 };
 
 const getMetadataChanges = (entries: HistoryEntry[]): Metadataendringer[] => {
-  const METADATA_ENTRY_TYPES = ["grunnkrets", "stemmekrets", "bopliktomraade", "kommune"];
-  const metadataendringer = entries
-    .filter((entry): entry is GrunnkretsEntry | StemmekretsEntry | BopliktomraadeEntry | KommuneEntry =>
-      METADATA_ENTRY_TYPES.includes(entry.type),
-    )
-    .flatMap((entry) => {
-      switch (entry.type) {
-        case "grunnkrets":
-          return mapMetadataEntryToMetadataendringerForInndeling(entry);
-        case "stemmekrets":
-          return mapMetadataEntryToMetadataendringerForInndeling(entry);
-        case "bopliktomraade":
-          return mapMetadataEntryToMetadataendringerForInndeling(entry);
-        case "kommune": {
-          throw new Error('Not implemented yet: "kommune" case');
-        }
-        default:
-          return null;
+  const metadataendringer = getMetadataEntries(entries).flatMap((entry) => {
+    switch (entry.type) {
+      case "grunnkrets":
+        return mapMetadataEntryToMetadataendringerForInndeling(entry);
+      case "stemmekrets":
+        return mapMetadataEntryToMetadataendringerForInndeling(entry);
+      case "bopliktomraade":
+        return mapMetadataEntryToMetadataendringerForInndeling(entry);
+      case "kommune": {
+        throw new Error('Not implemented yet: "kommune" case');
       }
-    });
+      default:
+        return null;
+    }
+  });
   return combineMetadataChangesForSameId(removeNil(metadataendringer));
 };
 

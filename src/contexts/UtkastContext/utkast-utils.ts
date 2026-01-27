@@ -11,6 +11,7 @@ import {
   NyGrense,
   NyGrenseDeleteEntry,
   MergeGrenseModel,
+  METADATA_ENTRY_TYPE_VALUES,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
@@ -125,25 +126,23 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
   const kretsdelingOperations = historyToKretsdelingOperations(allKretsdelingHistoryEntries);
 
-  const metadataEntries: HistoryTypeValues[] = ["kommune", "stemmekrets", "grunnkrets"];
-
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
-  const utkastOperations = (
-    historyToCurrentIndex.filter((entry) => metadataEntries.includes(entry.type)) as MetadataEntry[]
-  ).reduce<UtkastOperasjoner>(
-    reduceMetadataOperations,
-    createUtkastOperations({
-      ...{
-        ...previousUtkast?.operasjoner.grenseendringer,
-        ...previousUtkast?.operasjoner.metadataendringer,
-        stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
-        kretsDelingEndringer: mergeKretsdelingOperations(
-          previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
-          kretsdelingOperations,
-        ),
-      },
-    }),
-  );
+  const utkastOperations = historyToCurrentIndex
+    .filter((entry): entry is MetadataEntry => METADATA_ENTRY_TYPE_VALUES.find((type) => type === entry.type) != null)
+    .reduce<UtkastOperasjoner>(
+      reduceMetadataOperations,
+      createUtkastOperations({
+        ...{
+          ...previousUtkast?.operasjoner.grenseendringer,
+          ...previousUtkast?.operasjoner.metadataendringer,
+          stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+          kretsDelingEndringer: mergeKretsdelingOperations(
+            previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
+            kretsdelingOperations,
+          ),
+        },
+      }),
+    );
 
   const sammenslaaingsOperations = (
     historyToCurrentIndex.filter(
