@@ -9,6 +9,7 @@ import {
   BopliktomraadeRequest,
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
+  INNDELINGTYPE_VALUES,
 } from "types/api";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
@@ -25,7 +26,11 @@ export type HistoryChange<T> = {
   to: T;
 };
 
-export const METADATA_ENTRY_TYPE_VALUES = ["grunnkrets", "stemmekrets", "bopliktomraade", "kommune"] as const;
+// Metadataentries er direkte knyttet til inndelingtype,
+// ved å bruke enumen sikrer vi i sørre grad at de ikke divergerer og vi slipper konvertering mellom flere typer.
+export const METADATA_ENTRY_TYPE_VALUES = INNDELINGTYPE_VALUES.filter(
+  (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS" || type === "BOPLIKTOMRAADE" || type === "KOMMUNE",
+);
 export type MetadataTypeValues = (typeof METADATA_ENTRY_TYPE_VALUES)[number];
 export type HistoryTypeValues =
   | MetadataTypeValues
@@ -57,14 +62,14 @@ export type NyGrense = (MinimalGrense & FeatureProperties) & {
 
 export type GrenseEntry = BaseHistoryEntry<"grense", MinimalGrense>;
 export type PropertyEntry = BaseHistoryEntry<"property", FeatureProperties>;
-export type GrunnkretsEntry = BaseHistoryEntry<"grunnkrets", GrunnkretsRequest> & {
+export type GrunnkretsEntry = BaseHistoryEntry<"GRUNNKRETS", GrunnkretsRequest> & {
   kommuneId: string;
 };
-export type StemmekretsEntry = BaseHistoryEntry<"stemmekrets", StemmekretsRequest> & {
+export type StemmekretsEntry = BaseHistoryEntry<"STEMMEKRETS", StemmekretsRequest> & {
   kommuneId: string;
 };
-export type BopliktomraadeEntry = BaseHistoryEntry<"bopliktomraade", BopliktomraadeRequest>;
-export type KommuneEntry = BaseHistoryEntry<"kommune", KommuneRequest> & {
+export type BopliktomraadeEntry = BaseHistoryEntry<"BOPLIKTOMRAADE", BopliktomraadeRequest>;
+export type KommuneEntry = BaseHistoryEntry<"KOMMUNE", KommuneRequest> & {
   fylkeId: string;
 };
 

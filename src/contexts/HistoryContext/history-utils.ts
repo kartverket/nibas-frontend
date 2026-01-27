@@ -82,16 +82,21 @@ export const setFeatureCoordinatesForEntry = (entry: GrenseEntry, direction: His
   );
 };
 
-export const setRepresentasjonspunktForEntry = (
-  entry: StemmekretsEntry | GrunnkretsEntry,
-  direction: HistoryDirection,
-) => {
-  for (const change of entry.changes) {
-    updateRepresentasjonspunkt(
-      change[direction].identifikasjon.lokalid,
-      change[direction].nummer,
-      change[direction].navn,
-    );
+export const setRepresentasjonspunktForMetadataEntry = (entry: MetadataEntry, direction: HistoryDirection) => {
+  switch (entry.type) {
+    case "STEMMEKRETS":
+    case "GRUNNKRETS":
+    case "BOPLIKTOMRAADE":
+      for (const change of entry.changes) {
+        updateRepresentasjonspunkt(
+          change[direction].identifikasjon.lokalid,
+          change[direction].nummer,
+          change[direction].navn,
+        );
+      }
+      break;
+    case "KOMMUNE":
+      throw new Error("Man kan ikke sette representasjonspunkt for kommune");
   }
 };
 
@@ -366,19 +371,19 @@ export const getGrenseDelingEntries = (entries: HistoryEntry[]): GrenseDelingEnt
 };
 
 export const getStemmekretsMetadataEntries = (entries: HistoryEntry[]): StemmekretsEntry[] => {
-  return entries.filter((entry) => entry.type === "stemmekrets") as StemmekretsEntry[];
+  return entries.filter((entry) => entry.type === "STEMMEKRETS") as StemmekretsEntry[];
 };
 
 export const getGrunnkretsMetadataEntries = (entries: HistoryEntry[]): GrunnkretsEntry[] => {
-  return entries.filter((entry) => entry.type === "grunnkrets") as GrunnkretsEntry[];
+  return entries.filter((entry) => entry.type === "GRUNNKRETS") as GrunnkretsEntry[];
 };
 
 export const getBopliktomraadeMetadataEntries = (entries: HistoryEntry[]): BopliktomraadeEntry[] => {
-  return entries.filter((entry) => entry.type === "bopliktomraade") as BopliktomraadeEntry[];
+  return entries.filter((entry) => entry.type === "BOPLIKTOMRAADE") as BopliktomraadeEntry[];
 };
 
 export const getKommuneMetadataEntries = (entries: HistoryEntry[]): KommuneEntry[] => {
-  return entries.filter((entry) => entry.type === "kommune") as KommuneEntry[];
+  return entries.filter((entry) => entry.type === "KOMMUNE") as KommuneEntry[];
 };
 
 export const getMetadataEntries = (entries: HistoryEntry[]): MetadataEntry[] => {

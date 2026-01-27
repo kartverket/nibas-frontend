@@ -1,5 +1,4 @@
 import {
-  EndringsloggInndelingType,
   Kommuneendringer,
   Kretsendringer,
   KretsSplittingEndring,
@@ -232,13 +231,11 @@ const getLastKretsdeling = (
 const getMetadataChanges = (entries: HistoryEntry[]): Metadataendringer[] => {
   const metadataendringer = getMetadataEntries(entries).flatMap((entry) => {
     switch (entry.type) {
-      case "grunnkrets":
+      case "GRUNNKRETS":
+      case "STEMMEKRETS":
+      case "BOPLIKTOMRAADE":
         return mapMetadataEntryToMetadataendringerForInndeling(entry);
-      case "stemmekrets":
-        return mapMetadataEntryToMetadataendringerForInndeling(entry);
-      case "bopliktomraade":
-        return mapMetadataEntryToMetadataendringerForInndeling(entry);
-      case "kommune": {
+      case "KOMMUNE": {
         throw new Error('Not implemented yet: "kommune" case');
       }
       default:
@@ -253,7 +250,7 @@ const mapMetadataEntryToMetadataendringerForInndeling = (
   entry: StemmekretsEntry | GrunnkretsEntry | BopliktomraadeEntry,
 ): MetadataendringerWithId[] => {
   return entry.changes.map((change) => ({
-    kretsType: mapEntrytypeToEndringsloggInndelingType(entry.type),
+    kretsType: entry.type,
     id: change.id,
     opprinneligKrets: {
       navn: change.from.navn ?? "",
@@ -281,17 +278,4 @@ const combineMetadataChangesForSameId = (metadataendringer: MetadataendringerWit
 
     return { ...lastChangeForKrets, opprinneligKrets: firstChangeForKrets?.opprinneligKrets };
   });
-};
-
-const mapEntrytypeToEndringsloggInndelingType = (
-  entrytype: "grunnkrets" | "stemmekrets" | "bopliktomraade",
-): EndringsloggInndelingType => {
-  switch (entrytype) {
-    case "grunnkrets":
-      return "GRUNNKRETS";
-    case "stemmekrets":
-      return "STEMMEKRETS";
-    case "bopliktomraade":
-      return "BOPLIKTOMRAADE";
-  }
 };

@@ -19,6 +19,7 @@ import {
   FeatureProperties,
   FylkeRequest,
   GrunnkretsRequest,
+  Inndelingtype,
   KommuneRequest,
   KretsDelingEndringRequest,
   Metadata,
@@ -114,8 +115,26 @@ const mergeKretsdelingOperations = (
   return [...kretdelingerInUtkastNotOverwritten, ...kretsdelingerFromHistory];
 };
 
+const getMetadataEndringerKeyForInndelingtype = (
+  inndelingtype: Inndelingtype,
+): "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer" | "bopliktomraadeendringer" => {
+  switch (inndelingtype) {
+    case "GRUNNKRETS":
+      return "grunnkretsendringer";
+    case "STEMMEKRETS":
+      return "stemmekretsendringer";
+    case "KOMMUNE":
+      return "kommuneendringer";
+    case "BOPLIKTOMRAADE":
+      return "bopliktomraadeendringer";
+    case "FYLKE": {
+      throw new Error('Not implemented yet: "FYLKE" case');
+    }
+  }
+};
+
 const reduceMetadataOperations = (utkastOperations: UtkastOperasjoner, entry: MetadataEntry) =>
-  addKretsChangeToOperations(utkastOperations, entry, `${entry.type}endringer`);
+  addKretsChangeToOperations(utkastOperations, entry, getMetadataEndringerKeyForInndelingtype(entry.type));
 
 export const historyToUtkastOperations = (history: HistoryState, previousUtkast?: UtkastResponse) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);

@@ -1,7 +1,7 @@
 import { TabPanel } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { BopliktomraadeEntry, GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
+import { KommuneEntry, MetadataEntry } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -89,31 +89,19 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         case "FYLKE":
         case "KOMMUNE":
           addHistoryEntry({
-            type: "kommune",
+            type: "KOMMUNE",
             fylkeId: mainInndeling.id,
             changes,
           } as KommuneEntry);
           break;
         case "STEMMEKRETS":
-          addHistoryEntry({
-            type: "stemmekrets",
-            kommuneId: mainInndeling.id,
-            changes,
-          } as StemmekretsEntry);
-          break;
         case "GRUNNKRETS":
-          addHistoryEntry({
-            type: "grunnkrets",
-            kommuneId: mainInndeling.id,
-            changes,
-          } as GrunnkretsEntry);
-          break;
         case "BOPLIKTOMRAADE":
           addHistoryEntry({
-            type: "bopliktomraade",
-            kommuneId: mainInndeling.id,
+            type: mainInndeling.inndelingtype,
+            fylkeId: mainInndeling.id,
             changes,
-          } as BopliktomraadeEntry);
+          } as MetadataEntry);
           break;
       }
 
