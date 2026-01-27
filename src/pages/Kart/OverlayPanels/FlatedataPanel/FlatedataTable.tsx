@@ -1,8 +1,7 @@
 import { TabPanel } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { BopliktomraadeEntry, GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
-import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
+import { KommuneEntry, MetadataEntry } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -12,15 +11,15 @@ import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNavnInSpraak } from "utils/language/language";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { capitalize } from "utils/string-utils";
+import { FlatedataTableInndeling } from "./FlatedataPanel";
 import FlatedataTableHeader from "./FlatedataTableHeader";
 import { FlatedataTableRow } from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
-import { getHistoryTypeValueForInndelingtype } from "contexts/HistoryContext/history-utils";
 
 type Props = {
-  mainInndeling: Inndeling;
+  mainInndeling: FlatedataTableInndeling;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
   searchValue: string;
@@ -86,19 +85,24 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     clearSearch();
     const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
     if (changes.length > 0) {
-      // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
-      if (mainInndeling.inndelingtype === "FYLKE" || mainInndeling.inndelingtype === "KOMMUNE") {
-        addHistoryEntry({
-          type: "kommune",
-          fylkeId: mainInndeling.id,
-          changes,
-        } as KommuneEntry);
-      } else {
-        addHistoryEntry({
-          type: getHistoryTypeValueForInndelingtype(mainInndeling.inndelingtype),
-          kommuneId: mainInndeling.id,
-          changes,
-        } as StemmekretsEntry | GrunnkretsEntry | BopliktomraadeEntry);
+      switch (mainInndeling.inndelingtype) {
+        case "FYLKE":
+        case "KOMMUNE":
+          addHistoryEntry({
+            type: "KOMMUNE",
+            fylkeId: mainInndeling.id,
+            changes,
+          } as KommuneEntry);
+          break;
+        case "STEMMEKRETS":
+        case "GRUNNKRETS":
+        case "BOPLIKTOMRAADE":
+          addHistoryEntry({
+            type: mainInndeling.inndelingtype,
+            fylkeId: mainInndeling.id,
+            changes,
+          } as MetadataEntry);
+          break;
       }
 
       for (const change of changes) {
@@ -182,12 +186,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       <FlatedataFooter
         isEditing={isEditing}
         isDisabled={
-          allInndelingerHasFremtidigEndring ||
-          !utkast ||
-          !mainInndeling.isEditing ||
-          utkastHarSammenslaainger() ||
-          // TODO: Fjernes når det er klart for å redigere bopliktområder
-          mainInndeling.inndelingtype === "BOPLIKTOMRAADE"
+          allInndelingerHasFremtidigEndring || !utkast || !mainInndeling.isEditing || utkastHarSammenslaainger()
         }
         toggleEditing={toggleEditing}
         canSave={isDirty}

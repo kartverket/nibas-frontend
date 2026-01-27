@@ -8,7 +8,7 @@ import {
   undoArchving,
   handleGrensedeling,
   handleNyGrense,
-  setRepresentasjonspunktForEntry,
+  setRepresentasjonspunktForMetadataEntry,
   undoDelete,
   redoDelete,
   handleGrenseMerge,
@@ -28,26 +28,31 @@ const onUndo = (entry: HistoryEntry) => {
     case "nygrense": {
       return handleNyGrense(entry, "from");
     }
-    case "grunnkrets": {
-      setRepresentasjonspunktForEntry(entry, "from");
+    case "GRUNNKRETS": {
+      setRepresentasjonspunktForMetadataEntry(entry, "from");
       return document.dispatchEvent(
         new CustomEvent("grunnkretsUndo", {
           detail: { entry },
         }),
       );
     }
-    case "stemmekrets": {
-      setRepresentasjonspunktForEntry(entry, "from");
+    case "STEMMEKRETS": {
+      setRepresentasjonspunktForMetadataEntry(entry, "from");
       return document.dispatchEvent(
         new CustomEvent("stemmekretsUndo", {
           detail: { entry },
         }),
       );
     }
-    case "bopliktomraade": {
-      throw new Error('Not implemented yet: "bopliktomraade" case');
+    case "BOPLIKTOMRAADE": {
+      setRepresentasjonspunktForMetadataEntry(entry, "from");
+      return document.dispatchEvent(
+        new CustomEvent("bopliktomraadeUndo", {
+          detail: { entry },
+        }),
+      );
     }
-    case "kommune": {
+    case "KOMMUNE": {
       return document.dispatchEvent(
         new CustomEvent("kommuneUndo", {
           detail: { entry },
@@ -106,26 +111,31 @@ const onRedo = (entry: HistoryEntry) => {
     case "nygrense": {
       return handleNyGrense(entry, "to");
     }
-    case "grunnkrets": {
-      setRepresentasjonspunktForEntry(entry, "to");
+    case "GRUNNKRETS": {
+      setRepresentasjonspunktForMetadataEntry(entry, "to");
       return document.dispatchEvent(
         new CustomEvent("grunnkretsRedo", {
           detail: { entry },
         }),
       );
     }
-    case "stemmekrets": {
-      setRepresentasjonspunktForEntry(entry, "to");
+    case "STEMMEKRETS": {
+      setRepresentasjonspunktForMetadataEntry(entry, "to");
       return document.dispatchEvent(
         new CustomEvent("stemmekretsRedo", {
           detail: { entry },
         }),
       );
     }
-    case "bopliktomraade": {
-      throw new Error('Not implemented yet: "bopliktomraade" case');
+    case "BOPLIKTOMRAADE": {
+      setRepresentasjonspunktForMetadataEntry(entry, "to");
+      return document.dispatchEvent(
+        new CustomEvent("bopliktomraadeRedo", {
+          detail: { entry },
+        }),
+      );
     }
-    case "kommune": {
+    case "KOMMUNE": {
       return document.dispatchEvent(
         new CustomEvent("kommuneRedo", {
           detail: { entry },

@@ -68,6 +68,7 @@ const getEmptyInndelinger = (): Inndelinger => ({
 
 export type InndelingerContextValue = {
   inndelinger: Inndelinger;
+  getInndelingerOfType: <T extends Inndelingtype>(inndelingtype: T) => InndelingOfType<T>[];
   selectInndelinger: (inndelinger: Inndeling[]) => void;
   setShouldZoom: (shouldZoom: boolean) => void;
 
@@ -439,6 +440,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     setInndelinger(getEmptyInndelinger());
   };
 
+  const getInndelingerOfType = <T extends Inndelingtype>(inndelingtype: T): InndelingOfType<T>[] => {
+    return getAllInndelinger().filter(
+      (inndeling): inndeling is InndelingOfType<T> => inndeling.inndelingtype === inndelingtype,
+    );
+  };
+
   /**
    * Sjekker hvilke inndelinger som redigeres
    * @returns Inndelingene som redigeres dersom de finnes, tom liste ellers
@@ -528,6 +535,7 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const value = {
     inndelinger,
+    getInndelingerOfType,
     selectInndelinger,
     setShouldZoom,
     getAllInndelinger,

@@ -384,7 +384,7 @@ function createKommuneMetadataEntry(
   samiskforvaltning: { from: boolean; to: boolean },
 ): KommuneEntry {
   return {
-    type: "kommune",
+    type: "KOMMUNE",
     fylkeId: "11",
     changes: [
       {
@@ -503,7 +503,7 @@ type NavnOgNummer = {
 };
 function createMetadataendringHistoryEntry(id: string, from: NavnOgNummer, to: NavnOgNummer): StemmekretsEntry {
   return {
-    type: "stemmekrets",
+    type: "STEMMEKRETS",
     kommuneId: "123",
     changes: [
       {

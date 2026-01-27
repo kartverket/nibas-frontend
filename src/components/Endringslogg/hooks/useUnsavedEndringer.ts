@@ -3,32 +3,36 @@ import {
   Kretsendringer,
   KretsSplittingEndring,
   Metadataendringer,
-  EndringsloggInndelingType,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import {
+  getGrenseArkiveringEntries,
+  getGrenseDelingEntries,
+  getGrenseMergeEntries,
+  getKommuneMetadataEntries,
+  getKretsDelingEntries,
+  getMetadataEntries,
+  getNyGrenserEntriesEntries,
+} from "contexts/HistoryContext/history-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { GrunnkretsEntry, HistoryChange, HistoryEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
-import { getUniqueItems, removeNil } from "utils/list-utils";
-import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import {
+  BopliktomraadeEntry,
+  GrunnkretsEntry,
+  HistoryChange,
+  HistoryEntry,
+  StemmekretsEntry,
+} from "contexts/HistoryContext/types";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import useKommuner from "hooks/inndelinger/useKommuner";
+import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
+import { inndelingResponseNavnToString } from "utils/language/language";
+import { getUniqueItems, removeNil } from "utils/list-utils";
 import {
   GrunnkretsResponse,
   KommuneResponse,
   KretsDelingEndringRequest,
   StemmekretsResponse,
 } from "../../../types/api";
-import {
-  getGrenseArkiveringEntries,
-  getGrenseDelingEntries,
-  getGrenseMergeEntries,
-  getGrunnkretsMetadataEntries,
-  getKommuneMetadataEntries,
-  getKretsDelingEntries,
-  getNyGrenserEntriesEntries,
-  getStemmekretsMetadataEntries,
-} from "contexts/HistoryContext/history-utils";
-import { inndelingResponseNavnToString } from "utils/language/language";
-import useKommuner from "hooks/inndelinger/useKommuner";
-import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 
 type UseUnsavedEndringerReturnType = {
   harEndringer: boolean;
@@ -225,21 +229,28 @@ const getLastKretsdeling = (
 };
 
 const getMetadataChanges = (entries: HistoryEntry[]): Metadataendringer[] => {
-  const grunnkretschanges = getGrunnkretsMetadataEntries(entries).flatMap((entry) =>
-    mapMetadataEntryToMetadataendringerForStemmekretsOgGrunnkrets(entry),
-  );
-  const stemmekretschanges = getStemmekretsMetadataEntries(entries).flatMap((entry) =>
-    mapMetadataEntryToMetadataendringerForStemmekretsOgGrunnkrets(entry),
-  );
-  return combineMetadataChangesForSameId(grunnkretschanges.concat(stemmekretschanges));
+  const metadataendringer = getMetadataEntries(entries).flatMap((entry) => {
+    switch (entry.type) {
+      case "GRUNNKRETS":
+      case "STEMMEKRETS":
+      case "BOPLIKTOMRAADE":
+        return mapMetadataEntryToMetadataendringerForInndeling(entry);
+      case "KOMMUNE": {
+        throw new Error('Not implemented yet: "kommune" case');
+      }
+      default:
+        return null;
+    }
+  });
+  return combineMetadataChangesForSameId(removeNil(metadataendringer));
 };
 
 type MetadataendringerWithId = Metadataendringer & { id: string };
-const mapMetadataEntryToMetadataendringerForStemmekretsOgGrunnkrets = (
-  entry: StemmekretsEntry | GrunnkretsEntry,
+const mapMetadataEntryToMetadataendringerForInndeling = (
+  entry: StemmekretsEntry | GrunnkretsEntry | BopliktomraadeEntry,
 ): MetadataendringerWithId[] => {
   return entry.changes.map((change) => ({
-    kretsType: mapEntrytypeToEndringsloggInndelingType(entry.type),
+    kretsType: entry.type,
     id: change.id,
     opprinneligKrets: {
       navn: change.from.navn ?? "",
@@ -267,17 +278,4 @@ const combineMetadataChangesForSameId = (metadataendringer: MetadataendringerWit
 
     return { ...lastChangeForKrets, opprinneligKrets: firstChangeForKrets?.opprinneligKrets };
   });
-};
-
-const mapEntrytypeToEndringsloggInndelingType = (
-  entrytype: "grunnkrets" | "stemmekrets" | "bopliktomraade",
-): EndringsloggInndelingType => {
-  switch (entrytype) {
-    case "grunnkrets":
-      return "GRUNNKRETS";
-    case "stemmekrets":
-      return "STEMMEKRETS";
-    case "bopliktomraade":
-      return "BOPLIKTOMRAADE";
-  }
 };
