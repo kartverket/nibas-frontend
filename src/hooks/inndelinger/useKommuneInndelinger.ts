@@ -1,10 +1,19 @@
 import { Krets } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
-import { BopliktomraadeResponse, GrunnkretsResponse, Inndelingtype, StemmekretsResponse } from "types/api";
+import {
+  BopliktomraadeResponse,
+  GrunnkretsResponse,
+  INNDELINGTYPE_VALUES,
+  Inndelingtype,
+  StemmekretsResponse,
+} from "types/api";
 import { useKommuneBopliktomraade } from "./useBopliktomraader";
 import { useKommuneGrunnkretser } from "./useGrunnkretser";
 import { useKommuneStemmekretser } from "./useStemmekretser";
 
-type KommunalInndelingtype = Extract<Inndelingtype, "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE">;
+export const KOMMUNAL_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
+  (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS" || type === "BOPLIKTOMRAADE",
+);
+type KommunalInndelingtype = (typeof KOMMUNAL_INNDELINGTYPE_VALUES)[number];
 
 // Abstraksjon for å hente inndelinger for en kommune i stedet for å måtte bruke hook for hver enkelt inndelingstype som er relevant for funksjonaliteten.
 const useKommuneInndelinger = (
@@ -50,7 +59,7 @@ export const mapKommunalKretserResponseToKrets = (
 };
 
 export const isKommunalInndelingtype = (inndelingtype: Inndelingtype): boolean => {
-  return inndelingtype === "GRUNNKRETS" || inndelingtype === "STEMMEKRETS" || inndelingtype === "BOPLIKTOMRAADE";
+  return KOMMUNAL_INNDELINGTYPE_VALUES.find((type) => type === inndelingtype) != null;
 };
 
 export default useKommuneInndelinger;
