@@ -397,6 +397,7 @@ export const mockUtkast: UtkastResponse = {
   }),
   gyldigFra: "2022-01-01",
   endredeInndelinger: {
+    endredeBopliktomraader: [],
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
     endredeKommuner: [],
@@ -422,6 +423,7 @@ export const mockUtkastIngenEndringer: UtkastResponse = {
   }),
   gyldigFra: "2022-01-01",
   endredeInndelinger: {
+    endredeBopliktomraader: [],
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
     endredeKommuner: [],
@@ -505,6 +507,7 @@ export const mockUtkast1: UtkastResponse = {
   version: 0,
   gyldigFra: "",
   endredeInndelinger: {
+    endredeBopliktomraader: [],
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
     endredeKommuner: [],
@@ -541,6 +544,7 @@ export const mockUtkast2: UtkastResponse = {
   version: 0,
   gyldigFra: "",
   endredeInndelinger: {
+    endredeBopliktomraader: [],
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
     endredeKommuner: [],
