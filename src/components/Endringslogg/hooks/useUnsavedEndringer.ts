@@ -235,9 +235,8 @@ const getMetadataChanges = (entries: HistoryEntry[]): Metadataendringer[] => {
       case "STEMMEKRETS":
       case "BOPLIKTOMRAADE":
         return mapMetadataEntryToMetadataendringerForInndeling(entry);
-      case "KOMMUNE": {
-        throw new Error('Not implemented yet: "kommune" case');
-      }
+      case "KOMMUNE":
+        return [];
       default:
         return null;
     }
