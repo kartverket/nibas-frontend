@@ -1,6 +1,7 @@
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { BaseInndeling, Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
+import { isKommunalInndelingtype } from "hooks/inndelinger/useKommuneInndelinger";
 import { useEffect, useState } from "react";
 import { Inndelingtype } from "types/api";
 
@@ -135,7 +136,7 @@ const useInndelingerPanel = () => {
       };
 
       if (isEditingPanel) {
-        if (selectedInndelingtype === "GRUNNKRETS" || selectedInndelingtype === "STEMMEKRETS") {
+        if (isKommunalInndelingtype(selectedInndelingtype)) {
           const selectedInndelingerWithoutSelectedInndeling = tempInndelinger.filter(
             (inndeling) => inndeling.inndelingtype !== selectedInndelingtype,
           );

@@ -49,4 +49,8 @@ export const mapKommunalKretserResponseToKrets = (
   }));
 };
 
+export const isKommunalInndelingtype = (inndelingtype: Inndelingtype): boolean => {
+  return inndelingtype === "GRUNNKRETS" || inndelingtype === "STEMMEKRETS" || inndelingtype === "BOPLIKTOMRAADE";
+};
+
 export default useKommuneInndelinger;
