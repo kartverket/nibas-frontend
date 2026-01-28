@@ -555,7 +555,6 @@ export interface components {
         | "NASJON"
         | "GRUNNKRETS"
         | "STEMMEKRETS"
-        | "SKOLEKRETS"
         | "BOPLIKTOMRAADE";
       /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
       nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
@@ -888,6 +887,7 @@ export interface components {
     EndredeInndelinger: {
       endredeStemmekretser: string[];
       endredeGrunnkretser: string[];
+      endredeBopliktomraader: string[];
       endredeKommuner: string[];
       endredeFylker: string[];
       endredeNasjoner: string[];
@@ -1086,7 +1086,6 @@ export interface components {
         | "NASJON"
         | "GRUNNKRETS"
         | "STEMMEKRETS"
-        | "SKOLEKRETS"
         | "BOPLIKTOMRAADE";
       /** @description Navnet til inndelingen */
       navn: string;
@@ -1201,10 +1200,10 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
+      valid?: boolean;
       /** Format: double */
       m?: number;
-      valid?: boolean;
-      coordinate?: unknown;
+      coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {
       /** @description Lokalid til inndelingen */
@@ -1219,7 +1218,6 @@ export interface components {
         | "NASJON"
         | "GRUNNKRETS"
         | "STEMMEKRETS"
-        | "SKOLEKRETS"
         | "BOPLIKTOMRAADE";
       /** @description Navnet til inndelingen */
       navn: string;
@@ -1403,13 +1401,10 @@ export interface components {
         | "AvtaltAvgrensningslinje"
         | "Territorialgrense"
         | "Grunnlinje"
-        | "Lovvirkeomraadegrense"
         | "Grunnkretsgrense"
         | "Delomraadegrense"
         | "Stemmekretsgrense"
-        | "Bopliktgrense"
-        | "Soknegrense"
-        | "Skolekretsgrense";
+        | "Bopliktgrense";
       /** @description Geometri for grensen (GeoJSON format) */
       geometri:
         | components["schemas"]["LineString"]
@@ -2415,7 +2410,6 @@ export interface operations {
           | "NASJON"
           | "GRUNNKRETS"
           | "STEMMEKRETS"
-          | "SKOLEKRETS"
           | "BOPLIKTOMRAADE"
         )[];
       };
