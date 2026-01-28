@@ -1,48 +1,43 @@
+import get from "lodash.get";
 import { useState } from "react";
 import {
-  Inndelingtype,
   BopliktomraadeResponse,
+  FylkeResponse,
   GrunnkretsResponse,
   KommuneResponse,
   MetadataResponse,
   StemmekretsResponse,
 } from "types/api";
-import get from "lodash.get";
+import { FlatedataTableInndelingtype } from "./FlatedataPanel";
 
 type ResponseProperty =
+  | keyof FylkeResponse
   | keyof KommuneResponse
   | keyof StemmekretsResponse
   | keyof GrunnkretsResponse
   | keyof BopliktomraadeResponse;
 
-interface PropertiesByInndelingtype extends Record<Inndelingtype, ResponseProperty[]> {
-  FYLKE: (keyof KommuneResponse)[];
-  KOMMUNE: (keyof KommuneResponse)[];
-  STEMMEKRETS: (keyof StemmekretsResponse)[];
-  GRUNNKRETS: (keyof GrunnkretsResponse)[];
-  BOPLIKTOMRAADE: (keyof BopliktomraadeResponse)[];
-}
+const sortablePropertiesByInndelingtype = {
+  FYLKE: ["nummer", "navn", "samiskforvaltningsomraade"] as const,
+  KOMMUNE: ["nummer", "navn", "samiskforvaltningsomraade"] as const,
+  STEMMEKRETS: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"] as const,
+  GRUNNKRETS: ["nummer", "navn"] as const,
+  BOPLIKTOMRAADE: ["nummer", "navn", "delvisBoplikt", "forskriftsreferanse", "url", "informasjon"] as const,
+} satisfies Record<FlatedataTableInndelingtype, ResponseProperty[]>;
 
-const propertiesByInndelingtype: PropertiesByInndelingtype = {
-  FYLKE: ["nummer", "navn", "samiskforvaltningsomraade"],
-  KOMMUNE: ["nummer", "navn", "samiskforvaltningsomraade"],
-  STEMMEKRETS: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"],
-  GRUNNKRETS: ["nummer", "navn"],
-  BOPLIKTOMRAADE: ["delvisBoplikt", "forskriftsreferanse", "url", "informasjon"],
-};
-
-export const useFlatedataTableSort = (inndelingtype: Inndelingtype) => {
-  const properties = propertiesByInndelingtype[inndelingtype];
-  const [sortProperty, setSortProperty] = useState(properties[0]);
+export const useFlatedataTableSort = (inndelingtype: FlatedataTableInndelingtype) => {
+  const sortProperties = sortablePropertiesByInndelingtype[inndelingtype];
+  type SortProperty = (typeof sortProperties)[number];
+  const [sortProperty, setSortProperty] = useState<SortProperty>(sortProperties[0]);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const onSort = (property: ResponseProperty) => {
+  const onSort = (property: SortProperty) => {
     if (property === sortProperty) {
       if (sortOrder === "asc") {
         setSortOrder("desc");
       } else if (sortOrder === "desc") {
         // Hvis man har trykket på en knapp tre ganger går vi tilbake til start
-        setSortProperty(properties[0]);
+        setSortProperty(sortProperties[0]);
         setSortOrder("asc");
       }
     } else {
@@ -51,7 +46,7 @@ export const useFlatedataTableSort = (inndelingtype: Inndelingtype) => {
     }
   };
 
-  const sortHeaderProps = (property: ResponseProperty) => ({
+  const sortHeaderProps = (property: SortProperty) => ({
     onClick: () => onSort(property),
     isActivated: sortProperty === property,
     isReversed: sortProperty === property && sortOrder === "desc",

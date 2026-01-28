@@ -116,8 +116,7 @@ const getKretserMedSammenslaaing = (
   operasjoner: UtkastOperasjoner,
   inndelingType: EndringsloggInndelingType,
 ): string[] => {
-  if (inndelingType === "GRUNNKRETS") {
-    // Vi har ikke støtte for sammenslåing av grunnkretser per dags dato
+  if (inndelingType !== "STEMMEKRETS") {
     return [];
   }
 
@@ -133,12 +132,16 @@ const getKretserMedMetadataEndringer = (
   operasjoner: UtkastOperasjoner,
   inndelingType: EndringsloggInndelingType,
 ): string[] => {
-  const metadataEndringer =
-    inndelingType === "STEMMEKRETS"
-      ? operasjoner.metadataendringer?.stemmekretsendringer
-      : operasjoner.metadataendringer?.grunnkretsendringer;
-
-  return removeNil(Object.keys(metadataEndringer));
+  switch (inndelingType) {
+    case "STEMMEKRETS":
+      return removeNil(Object.keys(operasjoner.metadataendringer?.stemmekretsendringer ?? {}));
+    case "GRUNNKRETS":
+      return removeNil(Object.keys(operasjoner.metadataendringer?.grunnkretsendringer ?? {}));
+    case "BOPLIKTOMRAADE":
+      return removeNil(Object.keys(operasjoner.metadataendringer?.bopliktomraadeendringer ?? {}));
+    default:
+      return [];
+  }
 };
 
 const getSammenslaaingEndring = (

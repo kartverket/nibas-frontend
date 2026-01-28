@@ -7,6 +7,7 @@ import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts
 import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
 import { INNDELINGTYPE_VALUES } from "types/api";
 import { anyFeatureIsEditable } from "utils/features";
+import { FLATEDATA_TABLE_INNDELINGTYPE_VALUES } from "../OverlayPanels/FlatedataPanel/FlatedataPanel";
 import CustomTooltip from "./CustomTooltip";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
 
@@ -20,7 +21,7 @@ const ToolbarMenus = () => {
     useOverlayPanel();
 
   const theme = useTheme();
-  const { getCurrentlyEditingInndelingerOfType, currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
+  const { getCurrentlyEditingInndelingerOfType, currentlyEditingInndelinger, getInndelingerOfType } = useInndelinger();
 
   const isEditing = currentlyEditingInndelinger.length > 0;
 
@@ -35,9 +36,9 @@ const ToolbarMenus = () => {
   const [isWide] = useMediaQuery("(min-width: " + theme.breakpoints["2xl"] + ")");
   const [isSmall] = useMediaQuery("(min-width: " + theme.breakpoints["lg"] + ")");
 
-  // TODO Sjekk om vi kan fjerne ubrukte inndelinger
-  const flatedataIsAvailable =
-    getAllInndelinger().filter((inndeling) => inndeling.isViewing === true || inndeling.isEditing === true).length > 0;
+  const flatedataIsAvailable = FLATEDATA_TABLE_INNDELINGTYPE_VALUES.some((type) =>
+    getInndelingerOfType(type).some((inndeling) => inndeling.isViewing === true || inndeling.isEditing === true),
+  );
 
   const toggleMovePoint = () => {
     toggleTool("koordinater");

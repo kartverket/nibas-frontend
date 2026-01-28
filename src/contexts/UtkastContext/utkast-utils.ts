@@ -11,6 +11,7 @@ import {
   NyGrense,
   NyGrenseDeleteEntry,
   MergeGrenseModel,
+  METADATA_ENTRY_TYPE_VALUES,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import {
@@ -18,6 +19,7 @@ import {
   FeatureProperties,
   FylkeRequest,
   GrunnkretsRequest,
+  Inndelingtype,
   KommuneRequest,
   KretsDelingEndringRequest,
   Metadata,
@@ -113,8 +115,26 @@ const mergeKretsdelingOperations = (
   return [...kretdelingerInUtkastNotOverwritten, ...kretsdelingerFromHistory];
 };
 
+const getMetadataEndringerKeyForInndelingtype = (
+  inndelingtype: Inndelingtype,
+): "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer" | "bopliktomraadeendringer" => {
+  switch (inndelingtype) {
+    case "GRUNNKRETS":
+      return "grunnkretsendringer";
+    case "STEMMEKRETS":
+      return "stemmekretsendringer";
+    case "KOMMUNE":
+      return "kommuneendringer";
+    case "BOPLIKTOMRAADE":
+      return "bopliktomraadeendringer";
+    case "FYLKE": {
+      throw new Error('Not implemented yet: "FYLKE" case');
+    }
+  }
+};
+
 const reduceMetadataOperations = (utkastOperations: UtkastOperasjoner, entry: MetadataEntry) =>
-  addKretsChangeToOperations(utkastOperations, entry, `${entry.type}endringer`);
+  addKretsChangeToOperations(utkastOperations, entry, getMetadataEndringerKeyForInndelingtype(entry.type));
 
 export const historyToUtkastOperations = (history: HistoryState, previousUtkast?: UtkastResponse) => {
   const historyToCurrentIndex = history.entries.slice(0, history.index);
@@ -125,25 +145,23 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
 
   const kretsdelingOperations = historyToKretsdelingOperations(allKretsdelingHistoryEntries);
 
-  const metadataEntries: HistoryTypeValues[] = ["kommune", "stemmekrets", "grunnkrets"];
-
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
-  const utkastOperations = (
-    historyToCurrentIndex.filter((entry) => metadataEntries.includes(entry.type)) as MetadataEntry[]
-  ).reduce<UtkastOperasjoner>(
-    reduceMetadataOperations,
-    createUtkastOperations({
-      ...{
-        ...previousUtkast?.operasjoner.grenseendringer,
-        ...previousUtkast?.operasjoner.metadataendringer,
-        stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
-        kretsDelingEndringer: mergeKretsdelingOperations(
-          previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
-          kretsdelingOperations,
-        ),
-      },
-    }),
-  );
+  const utkastOperations = historyToCurrentIndex
+    .filter((entry): entry is MetadataEntry => METADATA_ENTRY_TYPE_VALUES.find((type) => type === entry.type) != null)
+    .reduce<UtkastOperasjoner>(
+      reduceMetadataOperations,
+      createUtkastOperations({
+        ...{
+          ...previousUtkast?.operasjoner.grenseendringer,
+          ...previousUtkast?.operasjoner.metadataendringer,
+          stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+          kretsDelingEndringer: mergeKretsdelingOperations(
+            previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
+            kretsdelingOperations,
+          ),
+        },
+      }),
+    );
 
   const sammenslaaingsOperations = (
     historyToCurrentIndex.filter(
