@@ -83,36 +83,39 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
+
     const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
-    if (changes.length > 0) {
-      switch (mainInndeling.inndelingtype) {
-        case "FYLKE":
-        case "KOMMUNE":
-          addHistoryEntry({
-            type: "KOMMUNE",
-            fylkeId: mainInndeling.id,
-            changes,
-          } as KommuneEntry);
-          break;
-        case "STEMMEKRETS":
-        case "GRUNNKRETS":
-        case "BOPLIKTOMRAADE":
-          addHistoryEntry({
-            type: mainInndeling.inndelingtype,
-            fylkeId: mainInndeling.id,
-            changes,
-          } as MetadataEntry);
-          break;
-      }
-
-      for (const change of changes) {
-        if ("navn" in change.to && "nummer" in change.to) {
-          updateRepresentasjonspunkt(change.id, change.to.nummer, change.to.navn);
-        }
-      }
-
-      setIsEditing(!isEditing);
+    if (changes.length < 1) {
+      return;
     }
+
+    switch (mainInndeling.inndelingtype) {
+      case "FYLKE":
+      case "KOMMUNE":
+        addHistoryEntry({
+          type: "KOMMUNE",
+          fylkeId: mainInndeling.id,
+          changes,
+        } as KommuneEntry);
+        break;
+      case "STEMMEKRETS":
+      case "GRUNNKRETS":
+      case "BOPLIKTOMRAADE":
+        addHistoryEntry({
+          type: mainInndeling.inndelingtype,
+          fylkeId: mainInndeling.id,
+          changes,
+        } as MetadataEntry);
+        break;
+    }
+
+    for (const change of changes) {
+      if ("navn" in change.to && "nummer" in change.to) {
+        updateRepresentasjonspunkt(change.id, change.to.nummer, change.to.navn);
+      }
+    }
+
+    setIsEditing(!isEditing);
   };
 
   const setPreviousValues = (fd: FlatedataInputs | undefined) => (previousValues.current = fd);
@@ -186,7 +189,10 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       <FlatedataFooter
         isEditing={isEditing}
         isDisabled={
-          allInndelingerHasFremtidigEndring || !utkast || !mainInndeling.isEditing || utkastHarSammenslaainger()
+          allInndelingerHasFremtidigEndring ||
+          !utkast ||
+          !(mainInndeling.isEditing === true) ||
+          utkastHarSammenslaainger()
         }
         toggleEditing={toggleEditing}
         canSave={isDirty}
@@ -199,7 +205,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
             : utkastHarSammenslaainger()
               ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
-              : utkast && mainInndeling.isEditing
+              : utkast && mainInndeling.isEditing === true
                 ? null
                 : "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
         }
