@@ -1,8 +1,7 @@
 import { TabPanel } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { BopliktomraadeEntry, GrunnkretsEntry, KommuneEntry, StemmekretsEntry } from "contexts/HistoryContext/types";
-import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
+import { KommuneEntry, MetadataEntry } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
@@ -12,15 +11,15 @@ import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNavnInSpraak } from "utils/language/language";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { capitalize } from "utils/string-utils";
+import { FlatedataTableInndeling } from "./FlatedataPanel";
 import FlatedataTableHeader from "./FlatedataTableHeader";
 import { FlatedataTableRow } from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
-import { getHistoryTypeValueForInndelingtype } from "contexts/HistoryContext/history-utils";
 
 type Props = {
-  mainInndeling: Inndeling;
+  mainInndeling: FlatedataTableInndeling;
   isEditing: boolean;
   setIsEditing: (isEditing: boolean) => void;
   searchValue: string;
@@ -84,31 +83,39 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
+
     const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
-    if (changes.length > 0) {
-      // Litt casting må til ettersom TypeScript ikke er smart nok til å tro på at vi har riktige typer
-      if (mainInndeling.inndelingtype === "FYLKE" || mainInndeling.inndelingtype === "KOMMUNE") {
+    if (changes.length < 1) {
+      return;
+    }
+
+    switch (mainInndeling.inndelingtype) {
+      case "FYLKE":
+      case "KOMMUNE":
         addHistoryEntry({
-          type: "kommune",
+          type: "KOMMUNE",
           fylkeId: mainInndeling.id,
           changes,
         } as KommuneEntry);
-      } else {
+        break;
+      case "STEMMEKRETS":
+      case "GRUNNKRETS":
+      case "BOPLIKTOMRAADE":
         addHistoryEntry({
-          type: getHistoryTypeValueForInndelingtype(mainInndeling.inndelingtype),
-          kommuneId: mainInndeling.id,
+          type: mainInndeling.inndelingtype,
+          fylkeId: mainInndeling.id,
           changes,
-        } as StemmekretsEntry | GrunnkretsEntry | BopliktomraadeEntry);
-      }
-
-      for (const change of changes) {
-        if ("navn" in change.to && "nummer" in change.to) {
-          updateRepresentasjonspunkt(change.id, change.to.nummer, change.to.navn);
-        }
-      }
-
-      setIsEditing(!isEditing);
+        } as MetadataEntry);
+        break;
     }
+
+    for (const change of changes) {
+      if ("navn" in change.to && "nummer" in change.to) {
+        updateRepresentasjonspunkt(change.id, change.to.nummer, change.to.navn);
+      }
+    }
+
+    setIsEditing(!isEditing);
   };
 
   const setPreviousValues = (fd: FlatedataInputs | undefined) => (previousValues.current = fd);
@@ -184,10 +191,8 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         isDisabled={
           allInndelingerHasFremtidigEndring ||
           !utkast ||
-          !mainInndeling.isEditing ||
-          utkastHarSammenslaainger() ||
-          // TODO: Fjernes når det er klart for å redigere bopliktområder
-          mainInndeling.inndelingtype === "BOPLIKTOMRAADE"
+          !(mainInndeling.isEditing === true) ||
+          utkastHarSammenslaainger()
         }
         toggleEditing={toggleEditing}
         canSave={isDirty}
@@ -200,7 +205,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
             : utkastHarSammenslaainger()
               ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
-              : utkast && mainInndeling.isEditing
+              : utkast && mainInndeling.isEditing === true
                 ? null
                 : "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
         }
