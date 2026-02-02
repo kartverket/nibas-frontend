@@ -1,4 +1,3 @@
-import { styled } from "styled-components";
 import {
   Icon,
   Input,
@@ -12,18 +11,30 @@ import {
   TabPanels,
   Tabs,
 } from "@kvib/react";
-import { ModalPanel, PanelHeader } from "../Panel";
+import { useConfirmationModal } from "contexts/ConfirmationModalContext";
+import { InndelingOfType, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import FlatedataTable from "./FlatedataTable";
-import { Inndeling, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import useSearch from "hooks/useSearch";
+import { useState } from "react";
+import { styled } from "styled-components";
 import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
-import { useState } from "react";
-import { useConfirmationModal } from "contexts/ConfirmationModalContext";
-import useSearch from "hooks/useSearch";
-import { Inndelingtype } from "types/api";
+import { ModalPanel, PanelHeader } from "../Panel";
+import FlatedataTable from "./FlatedataTable";
+import { INNDELINGTYPE_VALUES } from "types/api";
 
-const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
+export const FLATEDATA_TABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
+  (type) =>
+    type === "FYLKE" ||
+    type === "KOMMUNE" ||
+    type === "STEMMEKRETS" ||
+    type === "GRUNNKRETS" ||
+    type === "BOPLIKTOMRAADE",
+);
+export type FlatedataTableInndelingtype = (typeof FLATEDATA_TABLE_INNDELINGTYPE_VALUES)[number];
+export type FlatedataTableInndeling = InndelingOfType<FlatedataTableInndelingtype>;
+
+const pluralizeInndelingtype = (inndelingtype: FlatedataTableInndelingtype) => {
   const lowerCaseInndelingtype = inndelingtype.toLowerCase();
   switch (inndelingtype) {
     case "FYLKE":
@@ -37,7 +48,7 @@ const pluralizeInndelingtype = (inndelingtype: Inndelingtype) => {
   }
 };
 
-const getTabText = (inndeling: Inndeling, allInndelinger: Inndeling[]) => {
+const getTabText = (inndeling: FlatedataTableInndeling, allInndelinger: FlatedataTableInndeling[]) => {
   const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
   const inndelingIsUnique = !allInndelinger.some(
     (i) => i.id === inndeling.id && i.inndelingtype !== inndeling.inndelingtype,
@@ -52,13 +63,12 @@ const FlatedataPanel = () => {
   const { inputValue, searchValue, setInputValue, clearSearch } = useSearch();
 
   const { closeOverlayModal } = useOverlayPanel();
-  const { inndelinger } = useInndelinger();
+  const { getInndelingerOfType } = useInndelinger();
   const { open } = useConfirmationModal();
 
-  const allInndelinger = Object.values(inndelinger)
-    .flatMap((inndelingerMap) => [...inndelingerMap.values()])
-    .filter((inndeling) => inndeling.isViewing || inndeling.isEditing)
-    .toSorted((a, b) => (a.isEditing === b.isEditing ? 0 : a.isEditing ? -1 : 1));
+  const allInndelinger = FLATEDATA_TABLE_INNDELINGTYPE_VALUES.flatMap((type) =>
+    getInndelingerOfType(type).filter((inndeling) => inndeling.isViewing || inndeling.isEditing),
+  ).toSorted((a, b) => (a.isEditing === b.isEditing ? 0 : a.isEditing ? -1 : 1));
 
   // Dersom brukeren lukker panelet med ulagrede endringer ønsker vi en bekreftelse
   const handleDraft = (callback: () => void) => {

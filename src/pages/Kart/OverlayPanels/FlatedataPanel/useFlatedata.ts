@@ -10,10 +10,8 @@ import { HistoryEntry } from "contexts/HistoryContext/types";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { getEntityUtkastTypeForInndelingtype } from "contexts/UtkastContext/types";
 import { useUtkastEntity } from "contexts/UtkastContext/UtkastContext";
-import { useKommuneBopliktomraade } from "hooks/inndelinger/useBopliktomraader";
-import { useKommuneGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
+import useKommuneInndelinger from "hooks/inndelinger/useKommuneInndelinger";
 import useKommuner, { useKommune } from "hooks/inndelinger/useKommuner";
-import { useKommuneStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import {
   BopliktomraadeResponse,
   Inndelingtype,
@@ -28,18 +26,10 @@ const useFlatedataFromBackend = (
 ): MetadataResponse[] | undefined => {
   const { kommuner } = useKommuner(inndeling.id, gyldighetsdato, inndeling.inndelingtype === "FYLKE");
   const { kommune } = useKommune(inndeling.id, gyldighetsdato, inndeling.inndelingtype === "KOMMUNE");
-  const { data: grunnkretser } = useKommuneGrunnkretser(
-    inndeling.inndelingtype === "GRUNNKRETS" ? inndeling.id : null,
-    gyldighetsdato,
-  );
-  const { data: stemmekretser } = useKommuneStemmekretser(
-    inndeling.inndelingtype === "STEMMEKRETS" ? inndeling.id : null,
-    gyldighetsdato,
-  );
-  const { data: bopliktomraade } = useKommuneBopliktomraade(
-    inndeling.inndelingtype === "BOPLIKTOMRAADE" ? inndeling.id : null,
-    gyldighetsdato,
-  );
+
+  const nonAdmininndelingtype =
+    inndeling.inndelingtype !== "FYLKE" && inndeling.inndelingtype !== "KOMMUNE" ? inndeling.inndelingtype : undefined;
+  const inndelinger = useKommuneInndelinger(inndeling.id, gyldighetsdato, nonAdmininndelingtype);
 
   switch (inndeling.inndelingtype) {
     case "FYLKE":
@@ -47,15 +37,10 @@ const useFlatedataFromBackend = (
     case "KOMMUNE": {
       return kommune ? [kommune] : [];
     }
-    case "STEMMEKRETS": {
-      return stemmekretser;
-    }
-    case "GRUNNKRETS": {
-      return grunnkretser;
-    }
-    case "BOPLIKTOMRAADE": {
-      return bopliktomraade;
-    }
+    case "STEMMEKRETS":
+    case "GRUNNKRETS":
+    case "BOPLIKTOMRAADE":
+      return inndelinger;
   }
 };
 
@@ -127,6 +112,7 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
     flatedataFromBackend,
     getEntityUtkastTypeForInndelingtype(inndeling.inndelingtype),
   ) ?? []) as MetadataResponse[];
+
   return addHistoryChangesToMetadata(utkastFlatedata, getHistoryEntries(), inndeling.inndelingtype);
 };
 

@@ -139,7 +139,7 @@ type NavnOgNummer = {
 
 function createMetadataendringHistoryEntry(id: string, from: NavnOgNummer, to: NavnOgNummer): StemmekretsEntry {
   return {
-    type: "stemmekrets",
+    type: "STEMMEKRETS",
     kommuneId: mockKommune.id.lokalid.value,
     changes: [
       {
