@@ -14,7 +14,6 @@ import useKommuneInndelinger from "hooks/inndelinger/useKommuneInndelinger";
 import useKommuner, { useKommune } from "hooks/inndelinger/useKommuner";
 import {
   BopliktomraadeResponse,
-  GrunnkretsResponse,
   Inndelingtype,
   KommuneResponse,
   MetadataResponse,
@@ -117,12 +116,8 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
   return addHistoryChangesToMetadata(utkastFlatedata, getHistoryEntries(), inndeling.inndelingtype);
 };
 
-export const isKommuneInndeling = (
-  value: StemmekretsResponse | GrunnkretsResponse | KommuneResponse,
-): value is KommuneResponse => "samiskforvaltningsomraade" in value;
+export const isKommuneInndeling = (value: object): value is KommuneResponse => "samiskforvaltningsomraade" in value;
 
-export const isStemmekretsInndeling = (
-  value: StemmekretsResponse | GrunnkretsResponse | KommuneResponse,
-): value is StemmekretsResponse => "valgdistriktsnummer" in value;
+export const isStemmekretsInndeling = (value: object): value is StemmekretsResponse => "valgdistriktsnummer" in value;
 
 export const isBopliktomraadeInndeling = (value: object): value is BopliktomraadeResponse => "delvisBoplikt" in value;

@@ -30,6 +30,7 @@ const utkast: UtkastResponse = {
   version: 1,
   gyldigFra: "2022-01-01",
   endredeInndelinger: {
+    endredeBopliktomraader: [],
     endredeStemmekretser: [],
     endredeGrunnkretser: [],
     endredeKommuner: [],
