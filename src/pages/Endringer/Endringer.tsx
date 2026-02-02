@@ -31,12 +31,17 @@ import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import Loading from "pages/App/Loading";
 import { endringstyper } from "pages/Kart/constants";
+import {
+  isBopliktomraadeInndeling,
+  isStemmekretsInndeling,
+} from "pages/Kart/OverlayPanels/FlatedataPanel/useFlatedata";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { ApiErrorResponse, Inndelingtype, INNDELINGTYPE_VALUES, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
+import { getNavnInSpraak } from "utils/language/language";
 import { inndelingColors } from "utils/map/layerStyles";
 import { routes } from "utils/routes";
 
@@ -175,6 +180,28 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     }
   };
 
+  const getInndelingNumberLabel = (
+    inndeling: NonNullable<ReturnType<typeof getEndredeInndelingerForInndelingtype>>[number],
+    inndelingtype: Inndelingtype,
+  ) => {
+    switch (inndelingtype) {
+      case "GRUNNKRETS":
+        return `${inndeling.nummer}`;
+      case "STEMMEKRETS":
+        return isStemmekretsInndeling(inndeling)
+          ? `(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer}`
+          : undefined;
+      case "BOPLIKTOMRAADE":
+        return isBopliktomraadeInndeling(inndeling)
+          ? `(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer}`
+          : undefined;
+      case "FYLKE":
+        return `${inndeling.nummer}`;
+      case "KOMMUNE":
+        return `${inndeling.nummer}`;
+    }
+  };
+
   return (
     <Tr>
       <StyledCell>{utkast.navn}</StyledCell>
@@ -184,7 +211,9 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
         {INNDELINGTYPE_VALUES.map((inndelingtype) => (
           <InndelingerList key={inndelingtype} bulletcolor={inndelingColors[inndelingtype]}>
             {getEndredeInndelingerForInndelingtype(inndelingtype)?.map((inndeling) => (
-              <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${inndeling.navn}`}</li>
+              <li
+                key={inndeling.id.lokalid.value}
+              >{`${getInndelingNumberLabel(inndeling, inndelingtype)} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
             ))}
           </InndelingerList>
         ))}
