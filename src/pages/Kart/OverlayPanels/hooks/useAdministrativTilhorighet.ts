@@ -1,19 +1,19 @@
 import { Feature } from "ol";
 import { useEffect } from "react";
+import { useValgtGyldighetsdato } from "../../../../contexts/GyldighetsdatoContext";
 import { useInndelinger } from "../../../../contexts/InndelingerContext/InndelingerContext";
+import useNibasApi from "../../../../hooks/useNibasApi";
 import { FeatureProperties } from "../../../../types/api";
 import {
   CustomOption,
   getKommunerIdFromKontekstEgenskaper,
-  mapGrunnkretsResponseToKrets,
-  mapStemmekretResponseToKrets,
   Tilhorighet,
   TilhorighetInndelingtype,
   UseTilhorighet,
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
-import { useValgtGyldighetsdato } from "../../../../contexts/GyldighetsdatoContext";
-import useNibasApi from "../../../../hooks/useNibasApi";
+import { mapKommunalKretserResponseToKrets } from "hooks/inndelinger/useKommuneInndelinger";
+import { getApiPathForKommunalInndeling } from "utils/inndelinger-utils";
 
 // Bopliktgrenser er ikke med i administrativ tilhorighet da de ikke deltar i delt geometri.
 type InndelingForAdministrativGrense = Exclude<TilhorighetInndelingtype, "BOPLIKTOMRAADE">;
@@ -23,27 +23,21 @@ const useGetMuligeKretserForAdministrativGrense = (
   kommuneId: string | null | undefined,
 ) => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  const urlForKrets =
-    inndelingType === "GRUNNKRETS" ? "/v1/kommuner/{id}/grunnkretser" : "/v1/kommuner/{id}/stemmekretser";
+  const urlForKrets = getApiPathForKommunalInndeling(inndelingType);
   const url = kommuneId != null ? urlForKrets : null;
 
   const { data, isLoading } = useNibasApi(url, { id: kommuneId!, gyldighetsdato });
 
-  const kretserForFylket = (() => {
+  const kretserForFylket = () => {
     if (data == null) {
       return [];
     }
 
-    switch (inndelingType) {
-      case "STEMMEKRETS":
-        return mapStemmekretResponseToKrets(data);
-      case "GRUNNKRETS":
-        return mapGrunnkretsResponseToKrets(data);
-    }
-  })();
+    return mapKommunalKretserResponseToKrets(data, inndelingType);
+  };
 
   return {
-    muligeKretser: kretserForFylket,
+    muligeKretser: kretserForFylket(),
     isLoading,
   };
 };
