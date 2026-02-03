@@ -22,7 +22,8 @@ import {
 import { createUtkast } from "api/utkast";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { format, subDays, addDays } from "date-fns";
+import { addDays, format, subDays } from "date-fns";
+import { useBopliktomraader } from "hooks/inndelinger/useBopliktomraader";
 import { useFylkerByIds } from "hooks/inndelinger/useFylker";
 import { useGrunnkretser } from "hooks/inndelinger/useGrunnkretser";
 import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
@@ -30,11 +31,15 @@ import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import Loading from "pages/App/Loading";
 import { endringstyper } from "pages/Kart/constants";
+import {
+  isBopliktomraadeInndeling,
+  isStemmekretsInndeling,
+} from "pages/Kart/OverlayPanels/FlatedataPanel/useFlatedata";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { ApiErrorResponse, UtkastResponse } from "types/api";
+import { ApiErrorResponse, Inndelingtype, INNDELINGTYPE_VALUES, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { inndelingColors } from "utils/map/layerStyles";
@@ -126,6 +131,11 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     utkast.endredeInndelinger.endredeGrunnkretser,
     beforePublisering,
   );
+  const { data: endredeBopliktomraader } = useBopliktomraader(
+    utkast.endredeInndelinger.endredeBopliktomraader,
+    beforePublisering,
+  );
+
   const { data: endredeKommuner } = useKommunerByIds(utkast.endredeInndelinger.endredeKommuner, beforePublisering);
 
   const { data: endredeFylker } = useFylkerByIds(utkast.endredeInndelinger.endredeFylker, beforePublisering);
@@ -155,34 +165,58 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
     navigate(`../kart/${format(new Date(gyldigFra), "yyyy-MM-dd")}`);
   };
 
+  const getEndredeInndelingerForInndelingtype = (inndelingtype: Inndelingtype) => {
+    switch (inndelingtype) {
+      case "GRUNNKRETS":
+        return endredeGrunnkretser;
+      case "STEMMEKRETS":
+        return endredeStemmekretser;
+      case "BOPLIKTOMRAADE":
+        return endredeBopliktomraader;
+      case "FYLKE":
+        return endredeFylker;
+      case "KOMMUNE":
+        return endredeKommuner;
+    }
+  };
+
+  const getInndelingNumberLabel = (
+    inndeling: NonNullable<ReturnType<typeof getEndredeInndelingerForInndelingtype>>[number],
+    inndelingtype: Inndelingtype,
+  ) => {
+    switch (inndelingtype) {
+      case "GRUNNKRETS":
+        return `${inndeling.nummer}`;
+      case "STEMMEKRETS":
+        return isStemmekretsInndeling(inndeling)
+          ? `(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer}`
+          : undefined;
+      case "BOPLIKTOMRAADE":
+        return isBopliktomraadeInndeling(inndeling)
+          ? `(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer}`
+          : undefined;
+      case "FYLKE":
+        return `${inndeling.nummer}`;
+      case "KOMMUNE":
+        return `${inndeling.nummer}`;
+    }
+  };
+
   return (
     <Tr>
       <StyledCell>{utkast.navn}</StyledCell>
       <StyledCell>{utkast.endringstype}</StyledCell>
       <StyledCell>{format(utkast.gyldigFra, "dd.MM.yyyy")}</StyledCell>
       <StyledCell>
-        <InndelingerList bulletcolor={inndelingColors.GRUNNKRETS}>
-          {endredeGrunnkretser?.map((inndeling) => (
-            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${inndeling.navn}`}</li>
-          ))}
-        </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.STEMMEKRETS}>
-          {endredeStemmekretser?.map((inndeling) => (
-            <li
-              key={inndeling.id.lokalid.value}
-            >{`(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer} ${inndeling.navn}`}</li>
-          ))}
-        </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.KOMMUNE}>
-          {endredeKommuner?.map((inndeling) => (
-            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
-          ))}
-        </InndelingerList>
-        <InndelingerList bulletcolor={inndelingColors.FYLKE}>
-          {endredeFylker?.map((inndeling) => (
-            <li key={inndeling.id.lokalid.value}>{`${inndeling.nummer} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
-          ))}
-        </InndelingerList>
+        {INNDELINGTYPE_VALUES.map((inndelingtype) => (
+          <InndelingerList key={inndelingtype} bulletcolor={inndelingColors[inndelingtype]}>
+            {getEndredeInndelingerForInndelingtype(inndelingtype)?.map((inndeling) => (
+              <li
+                key={inndeling.id.lokalid.value}
+              >{`${getInndelingNumberLabel(inndeling, inndelingtype)} ${getNavnInSpraak(inndeling.navn, "nor")}`}</li>
+            ))}
+          </InndelingerList>
+        ))}
         <InndelingerList bulletcolor={inndelingColors.nasjon}>
           {utkast.endredeInndelinger.endredeNasjoner.length > 0 && <li key={`nasjon-${utkast.id}`}>Norge</li>}
         </InndelingerList>
