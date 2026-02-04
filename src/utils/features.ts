@@ -355,7 +355,15 @@ const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metada
       },
       datafangstdato: "",
     },
-    commonGrense: {},
+    commonGrense: {
+      posisjonskvalitet: {
+        maalemetode: {
+          id: "e8947d32-56c9-4f87-a248-1defed464caf",
+          href: "",
+        },
+        noeyaktighet: undefined,
+      },
+    },
     dokumentasjonsreferanser: [],
   };
 };
