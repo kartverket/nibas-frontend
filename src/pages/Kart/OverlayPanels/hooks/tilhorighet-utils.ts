@@ -1,13 +1,6 @@
+import { KommunalInndelingResponse, KommunalInndelingtype } from "hooks/inndelinger/useKommuneInndelinger";
 import { GrenseType } from "hooks/layers/types";
-import {
-  BopliktomraadeResponse,
-  FeatureProperties,
-  GrunnkretsResponse,
-  Inndelingtype,
-  KontekstEgenskaper,
-  ObjektIdentifikator,
-  StemmekretsResponse,
-} from "types/api";
+import { FeatureProperties, KontekstEgenskaper, ObjektIdentifikator } from "types/api";
 import { isGrenseType } from "utils/type-utils";
 
 export enum Tilhorighet {
@@ -15,7 +8,8 @@ export enum Tilhorighet {
   B = "b",
 }
 
-export type TilhorighetInndelingtype = Extract<Inndelingtype, "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE">;
+export const TILHORIGHET_INNDELINGTYPE_VALUES = ["GRUNNKRETS", "STEMMEKRETS", "BOPLIKTOMRAADE"] as const;
+export type TilhorighetInndelingtype = (typeof TILHORIGHET_INNDELINGTYPE_VALUES)[number];
 
 export type Krets = {
   id: ObjektIdentifikator;
@@ -41,12 +35,7 @@ export type TilhorighetChoice = {
   [Tilhorighet.B]: string | undefined;
 };
 
-export type TilhorighetForm = {
-  ["GRUNNKRETS"]: TilhorighetChoice;
-  ["STEMMEKRETS"]: TilhorighetChoice;
-  ["BOPLIKTOMRAADE"]: TilhorighetChoice;
-};
-
+export type TilhorighetForm = Record<TilhorighetInndelingtype, TilhorighetChoice>;
 export interface UseTilhorighet {
   inndelingType: TilhorighetInndelingtype;
   tilhorighetOptions: TilhorighetOptions | undefined;
@@ -66,7 +55,9 @@ const getDefaultTilhorighetData = () => ({
 
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
 export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm => {
-  if (tilhorigheter && tilhorigheter.length > 0) {
+  if (tilhorigheter == null || (tilhorigheter.length < 1 && tilhorigheter.length > 2)) {
+    return getDefaultTilhorighetData();
+  } else {
     const grunnkretser = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "GRUNNKRETS");
     const stemmekretser = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "STEMMEKRETS");
     const bopliktomraader = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "BOPLIKTOMRAADE");
@@ -144,13 +135,17 @@ export const getUpdatedKontekstEgenskaper = (
 };
 
 export const formatKretsNavn = (krets: Krets | null | undefined): string => {
-  if (krets == null) {
+  if (krets == null || krets.type == null) {
     return "Ikke valgt";
   }
-  if (krets.type === "STEMMEKRETS") {
-    return `(${krets.kommunenummer}) ${krets.nummer} ${krets.navn}`;
+  switch (krets.type) {
+    case "GRUNNKRETS":
+      return `${krets.nummer} ${krets.navn}`;
+    case "STEMMEKRETS":
+      return `(${krets.kommunenummer}) ${krets.nummer} ${krets.navn}`;
+    case "BOPLIKTOMRAADE":
+      return `${krets.nummer} ${krets.navn}`;
   }
-  return `${krets.nummer} ${krets.navn}`;
 };
 
 export const getKommunerIdFromKontekstEgenskaper = (
@@ -175,45 +170,19 @@ const sortKretserOptionsByFormattedName = (kretser: Krets[] | undefined): Krets[
 export const getIdForTilhorhetNyKrets = (kretsnummer: string | undefined, kommuneId: string | undefined) =>
   `NY_KRETS_${kretsnummer}_${kommuneId}`;
 
-// TODO: Disse funksjonene kan kanskje samkjøres.
-export const mapGrunnkretsResponseToKrets = (grunnkretser: GrunnkretsResponse[]): Krets[] => {
+export const mapKommunalInndelingResponseToKrets = (
+  inndelinger: KommunalInndelingResponse[],
+  inndelingtype: KommunalInndelingtype,
+): Krets[] => {
   return sortKretserOptionsByFormattedName(
-    grunnkretser.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
+    inndelinger.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
       id,
       kommuneId: kommuneIdentifikator,
       kommunenummer: kommunenummer.kodeverdi,
       version,
       nummer,
       navn,
-      type: "GRUNNKRETS",
-    })),
-  );
-};
-
-export const mapStemmekretResponseToKrets = (stemmekretser: StemmekretsResponse[]): Krets[] => {
-  return sortKretserOptionsByFormattedName(
-    stemmekretser.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
-      id,
-      kommuneId: kommuneIdentifikator,
-      kommunenummer: kommunenummer.kodeverdi,
-      version,
-      nummer,
-      navn,
-      type: "STEMMEKRETS",
-    })),
-  );
-};
-
-export const mapBopliktomraadeResponseToKrets = (bopliktomraader: BopliktomraadeResponse[]): Krets[] => {
-  return sortKretserOptionsByFormattedName(
-    bopliktomraader.map(({ id, version, nummer, navn, kommuneIdentifikator, kommunenummer }) => ({
-      id,
-      kommuneId: kommuneIdentifikator,
-      kommunenummer: kommunenummer.kodeverdi,
-      version,
-      nummer,
-      navn,
-      type: "BOPLIKTOMRAADE",
+      type: inndelingtype,
     })),
   );
 };

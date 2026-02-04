@@ -2,7 +2,10 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { HistoryEntry } from "contexts/HistoryContext/types";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { historyToKretsdelingOperations } from "contexts/UtkastContext/utkast-utils";
+import {
+  getMetadataEndringerKeyForInndelingtype,
+  historyToKretsdelingOperations,
+} from "contexts/UtkastContext/utkast-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -19,6 +22,7 @@ import {
   TilhorighetForm,
   TilhorighetOptions,
   TilhorighetInndelingtype,
+  TILHORIGHET_INNDELINGTYPE_VALUES,
 } from "./tilhorighet-utils";
 import { getGrenseTilhorighetEntries, getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
 import { usePrevious } from "hooks/usePrevious";
@@ -106,13 +110,7 @@ const getUpdatedMetadata = (
     .filter((entry): entry is { id: string; name: string; number: string } => entry !== null);
 
   const metadataFromUtkast = Object.values(
-    utkastEntries.metadataendringer[
-      inndelingType === "GRUNNKRETS"
-        ? "grunnkretsendringer"
-        : inndelingType === "STEMMEKRETS"
-          ? "stemmekretsendringer"
-          : "bopliktomraadeendringer"
-    ],
+    utkastEntries.metadataendringer[getMetadataEndringerKeyForInndelingtype(inndelingType)],
   ).map((endring) => ({
     id: endring.identifikasjon.lokalid,
     name: endring.navn,
@@ -187,11 +185,9 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
           kommunerIdOgNummer,
           utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === inndelingType),
         );
-        const tilhorighetOptionsFromHistory = getKretserFromHistory(
-          getHistoryEntries(),
-          kommunerIdOgNummer,
-          inndelingType,
-        );
+        const historyEntries = getHistoryEntries();
+        const tilhorighetOptionsFromHistory = getKretserFromHistory(historyEntries, kommunerIdOgNummer, inndelingType);
+
         const listeA: Krets[] = [
           ...commonOptions[Tilhorighet.A],
           ...tilhorighetOptionsFromUtkast,
@@ -204,8 +200,8 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
         ];
 
         setTilhorighetValg({
-          [Tilhorighet.A]: getUpdatedMetadata(listeA, getHistoryEntries(), utkast.operasjoner, inndelingType),
-          [Tilhorighet.B]: getUpdatedMetadata(listeB, getHistoryEntries(), utkast.operasjoner, inndelingType),
+          [Tilhorighet.A]: getUpdatedMetadata(listeA, historyEntries, utkast.operasjoner, inndelingType),
+          [Tilhorighet.B]: getUpdatedMetadata(listeB, historyEntries, utkast.operasjoner, inndelingType),
         });
       } else if (!utkast && commonOptions) {
         setTilhorighetValg(commonOptions);
@@ -223,18 +219,11 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
 
   const isDirty = () => {
     const initialData = getTilhorighetData(kontekstEgenskaper);
-
-    const grunnkretsIsDirty =
-      initialData["GRUNNKRETS"][Tilhorighet.A] !== formState["GRUNNKRETS"][Tilhorighet.A] ||
-      initialData["GRUNNKRETS"][Tilhorighet.B] !== formState["GRUNNKRETS"][Tilhorighet.B];
-    const stemmekretsIsDirty =
-      initialData["STEMMEKRETS"][Tilhorighet.A] !== formState["STEMMEKRETS"][Tilhorighet.A] ||
-      initialData["STEMMEKRETS"][Tilhorighet.B] !== formState["STEMMEKRETS"][Tilhorighet.B];
-    const bopliktomraadeIsDirty =
-      initialData["BOPLIKTOMRAADE"][Tilhorighet.A] !== formState["BOPLIKTOMRAADE"][Tilhorighet.A] ||
-      initialData["BOPLIKTOMRAADE"][Tilhorighet.B] !== formState["BOPLIKTOMRAADE"][Tilhorighet.B];
-
-    return stemmekretsIsDirty || grunnkretsIsDirty || bopliktomraadeIsDirty;
+    return TILHORIGHET_INNDELINGTYPE_VALUES.some(
+      (type) =>
+        initialData[type][Tilhorighet.A] !== formState[type][Tilhorighet.A] ||
+        initialData[type][Tilhorighet.B] !== formState[type][Tilhorighet.B],
+    );
   };
 
   const resetTilhorighet = useCallback(() => {

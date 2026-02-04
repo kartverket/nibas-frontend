@@ -13,33 +13,42 @@ import { useKommuneStemmekretser } from "./useStemmekretser";
 export const KOMMUNAL_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
   (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS" || type === "BOPLIKTOMRAADE",
 );
-type KommunalInndelingtype = (typeof KOMMUNAL_INNDELINGTYPE_VALUES)[number];
+export type KommunalInndelingtype = (typeof KOMMUNAL_INNDELINGTYPE_VALUES)[number];
+export type KommunalInndelingResponse = GrunnkretsResponse | StemmekretsResponse | BopliktomraadeResponse;
 
 // Abstraksjon for å hente inndelinger for en kommune i stedet for å måtte bruke hook for hver enkelt inndelingstype som er relevant for funksjonaliteten.
 const useKommuneInndelinger = (
   kommuneId: string | null,
   gyldighetsdato: string | undefined,
   inndelingtype: KommunalInndelingtype | undefined,
-) => {
-  const { data: grunnkretser } = useKommuneGrunnkretser(kommuneId, gyldighetsdato, inndelingtype === "GRUNNKRETS");
-  const { data: stemmekretser } = useKommuneStemmekretser(kommuneId, gyldighetsdato, inndelingtype === "STEMMEKRETS");
-  const { data: bopliktomraader } = useKommuneBopliktomraade(
+): { data: KommunalInndelingResponse[] | undefined; isLoading: boolean } => {
+  const { data: grunnkretser, isLoading: isLoadingGrunnkretser } = useKommuneGrunnkretser(
+    kommuneId,
+    gyldighetsdato,
+    inndelingtype === "GRUNNKRETS",
+  );
+  const { data: stemmekretser, isLoading: isLoadingStemmekretser } = useKommuneStemmekretser(
+    kommuneId,
+    gyldighetsdato,
+    inndelingtype === "STEMMEKRETS",
+  );
+  const { data: bopliktomraader, isLoading: isLoadingBopliktomraader } = useKommuneBopliktomraade(
     kommuneId,
     gyldighetsdato,
     inndelingtype === "BOPLIKTOMRAADE",
   );
 
   if (inndelingtype == null) {
-    return undefined;
+    return { data: undefined, isLoading: false };
   }
 
   switch (inndelingtype) {
     case "GRUNNKRETS":
-      return grunnkretser;
+      return { data: grunnkretser, isLoading: isLoadingGrunnkretser };
     case "STEMMEKRETS":
-      return stemmekretser;
+      return { data: stemmekretser, isLoading: isLoadingStemmekretser };
     case "BOPLIKTOMRAADE":
-      return bopliktomraader;
+      return { data: bopliktomraader, isLoading: isLoadingBopliktomraader };
   }
 };
 
