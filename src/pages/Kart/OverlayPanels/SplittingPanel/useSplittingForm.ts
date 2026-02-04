@@ -49,7 +49,7 @@ export const useSplittingForm = (inndeling: SplittableInndelingType | null) => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
   const inndelingtype = inndeling?.inndelingtype;
-  const kretser = useKommuneInndelinger(inndeling?.id ?? null, gyldighetsdato, inndelingtype);
+  const { data: kretser } = useKommuneInndelinger(inndeling?.id ?? null, gyldighetsdato, inndelingtype);
 
   const opprinneligFlateOptions =
     kretser != null && inndelingtype != null ? mapKommunalKretserResponseToKrets(kretser, inndelingtype) : null;
