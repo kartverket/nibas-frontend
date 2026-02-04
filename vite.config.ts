@@ -8,9 +8,9 @@ export default defineConfig(({ mode }) => {
   process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
   // Husk å restarte etter endringer i f.eks env.local
   const matWfsAuth = process.env.VITE_MATRIKKELWFS_AUTH;
+  const matWfsUrl = process.env.VITE_MATRIKKELWFS_URL;
   const baatUsername = process.env.VITE_BAAT_USERNAME;
   const baatPassword = process.env.VITE_BAAT_PASSWORD;
-  const localhost = process.env.VITE_ENVIRONMENT_LOCALHOST; // Sett denne til "localhost" i .env.local
   const repo_pr_access = process.env.VITE_REPO_PR_ACCESS; // finnes på gcp under samme navn
 
   return {
@@ -57,10 +57,7 @@ export default defineConfig(({ mode }) => {
           },
         },
         "/geoservergeo/wfs/matrikkel": {
-          target:
-            localhost === "localhost"
-              ? "https://nibas-main.atkv3-dev.kartverket-intern.cloud"
-              : "https://prodtest.matrikkel.no",
+          target: matWfsUrl,
           changeOrigin: true,
           headers: {
             Authorization: `Basic ${matWfsAuth}`,
