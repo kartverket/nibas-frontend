@@ -7,6 +7,7 @@ import { Control, Controller, FieldValues, Path, RegisterOptions } from "react-h
 import { styled } from "styled-components";
 import { InndelingSearchResponse, InndelingSearchType } from "types/api";
 import { useInndelingerSearch } from "./useInndelingerSearch";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 
 export type InndelingOption = InndelingSearchResponse & {
   representasjonspunkt: { x: number | undefined; y: number | undefined };
@@ -93,8 +94,11 @@ export const InndelingSearchField = <T extends FieldValues, K extends Path<T>>({
     const labelRegExp = new RegExp(`(.*)(${escapedInputValue})(.*)`, "i");
     const matches = inndeling.label.match(labelRegExp);
 
+    const inndelingTypeLabel =
+      inndeling.type !== "NASJON" ? getInndelingtypeLabel(inndeling.type).toUpperCase() : "NASJON";
+
     if (!matches) {
-      return <FormattedOption label={inndeling.label} type={inndeling.type} />;
+      return <FormattedOption label={inndeling.label} type={inndelingTypeLabel} />;
     }
 
     return (
@@ -106,7 +110,7 @@ export const InndelingSearchField = <T extends FieldValues, K extends Path<T>>({
             {matches[3]}
           </>
         }
-        type={inndeling.type}
+        type={inndelingTypeLabel}
       />
     );
   };

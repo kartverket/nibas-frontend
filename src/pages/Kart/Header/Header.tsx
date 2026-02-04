@@ -21,6 +21,7 @@ import HeaderBreadcrumb from "./HeaderBreadcrumb";
 import HeaderButton, { HeaderSection } from "./HeaderButton";
 import HeaderHistoryOperations from "./HeaderHistoryOperations";
 import HeaderUtkastOperations from "./HeaderUtkastOperations";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 
 const Header = () => {
   const { utkast } = useUtkast();
@@ -75,11 +76,11 @@ const Header = () => {
       case "KOMMUNE":
         return antall > 1 ? "kommunene" : "kommunen";
       case "STEMMEKRETS":
-        return "stemmekretser";
+        return getInndelingtypeLabel(inndelingtype) + "er";
       case "GRUNNKRETS":
-        return "grunnkretser";
+        return getInndelingtypeLabel(inndelingtype) + "er";
       case "BOPLIKTOMRAADE":
-        return "bopliktomraader";
+        return getInndelingtypeLabel(inndelingtype) + "r";
     }
   };
 
