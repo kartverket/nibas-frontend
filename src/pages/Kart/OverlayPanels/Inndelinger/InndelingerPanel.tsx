@@ -13,6 +13,7 @@ import { capitalize } from "utils/string-utils";
 import { ModalPanel, PanelHeader } from "../Panel";
 import InndelingOption from "./InndelingOption";
 import useInndelingerPanel from "./useInndelingerPanel";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 
 const InndelingerPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
@@ -84,7 +85,7 @@ const InndelingerPanel = () => {
                   rightIcon="chevron_right"
                   type="button"
                 >
-                  {capitalize(inndelingtype.toLowerCase())}
+                  {capitalize(getInndelingtypeLabel(inndelingtype))}
                 </InndelingOption>
               ))}
             </InndelingerList>

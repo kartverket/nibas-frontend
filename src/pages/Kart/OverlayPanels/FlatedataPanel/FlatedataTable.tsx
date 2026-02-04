@@ -17,6 +17,7 @@ import { FlatedataTableRow } from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 
 type Props = {
   mainInndeling: FlatedataTableInndeling;
@@ -79,7 +80,9 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     setIsEditing(!isEditing);
   };
 
-  const inndelingPrefix = isAdministrativEnhet ? "Kommune" : capitalize(mainInndeling.inndelingtype.toLowerCase());
+  const inndelingPrefix = isAdministrativEnhet
+    ? "Kommune"
+    : capitalize(getInndelingtypeLabel(mainInndeling.inndelingtype));
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
