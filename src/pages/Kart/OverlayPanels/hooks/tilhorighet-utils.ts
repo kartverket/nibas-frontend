@@ -55,9 +55,7 @@ const getDefaultTilhorighetData = () => ({
 
 // tar to kontekstEgenskaper og mapper de til TilhorighetForm
 export const getTilhorighetData = (tilhorigheter: KontekstEgenskaper[] | undefined): TilhorighetForm => {
-  if (tilhorigheter == null || (tilhorigheter.length < 1 && tilhorigheter.length > 2)) {
-    return getDefaultTilhorighetData();
-  } else {
+  if (tilhorigheter != null && tilhorigheter.length === 2) {
     const grunnkretser = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "GRUNNKRETS");
     const stemmekretser = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "STEMMEKRETS");
     const bopliktomraader = tilhorigheter.filter((kontekstEgenskaper) => kontekstEgenskaper.type === "BOPLIKTOMRAADE");
