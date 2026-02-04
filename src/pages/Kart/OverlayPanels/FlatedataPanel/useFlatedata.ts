@@ -29,7 +29,7 @@ const useFlatedataFromBackend = (
 
   const nonAdmininndelingtype =
     inndeling.inndelingtype !== "FYLKE" && inndeling.inndelingtype !== "KOMMUNE" ? inndeling.inndelingtype : undefined;
-  const inndelinger = useKommuneInndelinger(inndeling.id, gyldighetsdato, nonAdmininndelingtype);
+  const { data: inndelinger } = useKommuneInndelinger(inndeling.id, gyldighetsdato, nonAdmininndelingtype);
 
   switch (inndeling.inndelingtype) {
     case "FYLKE":

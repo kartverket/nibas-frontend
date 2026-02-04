@@ -115,7 +115,7 @@ const mergeKretsdelingOperations = (
   return [...kretdelingerInUtkastNotOverwritten, ...kretsdelingerFromHistory];
 };
 
-const getMetadataEndringerKeyForInndelingtype = (
+export const getMetadataEndringerKeyForInndelingtype = (
   inndelingtype: Inndelingtype,
 ): "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer" | "bopliktomraadeendringer" => {
   switch (inndelingtype) {

@@ -2,6 +2,7 @@ import { Inndelingtype } from "types/api";
 import { Path, RegisterOptions, ValidateResult } from "react-hook-form";
 import { capitalize } from "./string-utils";
 import { isIntegerString } from "./type-utils";
+import { KommunalInndelingtype } from "hooks/inndelinger/useKommuneInndelinger";
 
 const getCommonInndelingNumberValidator = <TForm extends Record<string, unknown>, TFieldName extends Path<TForm>>(
   inndelingType: Inndelingtype,
@@ -175,5 +176,30 @@ export const getInndelingtypeLabel = (inndelingtype: Inndelingtype | null): stri
       return "stemmekrets";
     case "BOPLIKTOMRAADE":
       return "bopliktområde";
+  }
+};
+
+export const pluralizeInndelingtype = (inndelingtype: Inndelingtype): string => {
+  const lowerCaseInndelingtype = inndelingtype.toLowerCase();
+  switch (inndelingtype) {
+    case "FYLKE":
+    case "KOMMUNE":
+      return lowerCaseInndelingtype + "r";
+    case "STEMMEKRETS":
+    case "GRUNNKRETS":
+      return lowerCaseInndelingtype + "er";
+    case "BOPLIKTOMRAADE":
+      return lowerCaseInndelingtype + "r";
+  }
+};
+
+export const getApiPathForKommunalInndeling = (inndelingType: KommunalInndelingtype) => {
+  switch (inndelingType) {
+    case "GRUNNKRETS":
+      return "/v1/kommuner/{id}/grunnkretser";
+    case "STEMMEKRETS":
+      return "/v1/kommuner/{id}/stemmekretser";
+    case "BOPLIKTOMRAADE":
+      return "/v1/kommuner/{id}/bopliktomraader";
   }
 };
