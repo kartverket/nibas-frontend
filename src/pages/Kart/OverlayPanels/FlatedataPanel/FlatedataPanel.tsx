@@ -18,9 +18,8 @@ import useSearch from "hooks/useSearch";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { INNDELINGTYPE_VALUES } from "types/api";
-import { pluralizeInndelingtype } from "utils/inndelinger-utils";
-import { getNavnInSpraak } from "utils/language/language";
 import { getInndelingtypeLabel } from "utils/inndelinger-utils";
+import { getNavnInSpraak } from "utils/language/language";
 import { ModalPanel, PanelHeader } from "../Panel";
 import FlatedataTable from "./FlatedataTable";
 
