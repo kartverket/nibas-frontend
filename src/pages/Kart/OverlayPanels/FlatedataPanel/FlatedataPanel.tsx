@@ -17,11 +17,12 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import useSearch from "hooks/useSearch";
 import { useState } from "react";
 import { styled } from "styled-components";
+import { INNDELINGTYPE_VALUES } from "types/api";
+import { pluralizeInndelingtype } from "utils/inndelinger-utils";
 import { getNavnInSpraak } from "utils/language/language";
 import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 import { ModalPanel, PanelHeader } from "../Panel";
 import FlatedataTable from "./FlatedataTable";
-import { INNDELINGTYPE_VALUES } from "types/api";
 
 export const FLATEDATA_TABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
   (type) =>
@@ -55,8 +56,8 @@ const FlatedataPanel = () => {
   const { open } = useConfirmationModal();
 
   const allInndelinger = FLATEDATA_TABLE_INNDELINGTYPE_VALUES.flatMap((type) =>
-    getInndelingerOfType(type).filter((inndeling) => inndeling.isViewing || inndeling.isEditing),
-  ).toSorted((a, b) => (a.isEditing === b.isEditing ? 0 : a.isEditing ? -1 : 1));
+    getInndelingerOfType(type).filter((inndeling) => inndeling.isViewing === true || inndeling.isEditing === true),
+  ).toSorted((a, b) => (a.isEditing === b.isEditing ? 0 : a.isEditing === true ? -1 : 1));
 
   // Dersom brukeren lukker panelet med ulagrede endringer ønsker vi en bekreftelse
   const handleDraft = (callback: () => void) => {
@@ -113,7 +114,7 @@ const FlatedataPanel = () => {
             {allInndelinger.map((inndeling) => (
               <FlatedataTab key={inndeling.id + inndeling.inndelingtype}>
                 {getTabText(inndeling, allInndelinger)}
-                {inndeling.isEditing ? (
+                {inndeling.isEditing === true ? (
                   <Icon icon="edit_document" aria-hidden />
                 ) : (
                   <Icon icon="visibility" aria-hidden />
