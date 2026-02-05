@@ -6,30 +6,28 @@ En klient som er bygget med React og TypeScript, og som bruker Vite som utviklin
 
 ### Miljøvariabeler
 
-For å la requests til låste kart gå gjennom er du nødt til å lage en `.env.local` fil. Innholdet vil da være key-value par med verdiene du ønsker å sette inn i koden din.
+I prod brukes Caddy som proxy, og alle credentials hentes automatisk fra Google Secret Manager (GSM). For lokal utvikling brukes Vite dev server, og du må sette credentials manuelt i `.env.local`.
 
-For de låste WMS-kartene er du nødt til å bruke din BAAT-bruker du får via geonorge sine sider. Det kan brukes slik:
+For de låste WMS-kartene er du nødt til å bruke din BAAT-bruker du får via geonorge sine sider:
 
 ```
 VITE_BAAT_USERNAME=Ditt_BAAT_brukernavn
 VITE_BAAT_PASSWORD=Ditt_BAAT_passord
 ```
 
-Credentials for matrikkel-wfs finnes i Vault, og settes med miljøvariabelen:
+For matrikkel WFS (finnes i GSM under `matrikkelen-wfs-credentials` og `matrikkelen-wfs-url`):
 
 ```
 VITE_MATRIKKELWFS_AUTH
+VITE_MATRIKKELWFS_URL
 ```
 
-I tilegg trenger å sette følgende miljøvariabeler i `.env.local`:
+
+For å hente aktive feature-miljøer fra GitHub, sett følgende i `.env.local`:
 
 ```
-VITE_ENVIRONMENT_LOCALHOST; // Sett denne til "localhost" i .env.local
-VITE_REPO_PR_ACCESS; // Finnes i gcp-dev
+VITE_REPO_PR_ACCESS
 ```
-
-ENVIRONMENT_LOCALHOST sier til vite at den skal kjøre med localhost config.
-REPO_PR_ACCESS gir lesetilgang i github-apiet slik at klienten kan hente alle aktive feature-miljøer.
 
 ### Oppstart av applikasjonen
 

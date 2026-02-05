@@ -1168,13 +1168,11 @@ export interface components {
       /** @description Tilleggsinformasjon om bopliktområdet */
       informasjon?: string;
       /** @description Om boplikten gjelder delvis innenfor området */
-      delvisBoplikt: boolean;
+      delvisBoplikt?: boolean;
       /** @description Forskriftsreferansen for bopliktområdet */
       forskriftsreferanse?: string;
       /** @description Lenke til mer informasjon */
       url?: string;
-      /** @description Geometrien til bopliktområdet, dvs representasjonspunkt og flaten */
-      features: components["schemas"]["FeatureCollection"];
     };
     KodelisteItem: {
       /** @description Id til kodeliste-innslaget. */
