@@ -9,10 +9,10 @@ import { styled } from "styled-components";
 import { Inndelingtype, INNDELINGTYPE_VALUES } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
-import { capitalize } from "utils/string-utils";
 import { ModalPanel, PanelHeader } from "../Panel";
 import InndelingOption from "./InndelingOption";
 import useInndelingerPanel from "./useInndelingerPanel";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 
 const InndelingerPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
@@ -84,7 +84,7 @@ const InndelingerPanel = () => {
                   rightIcon="chevron_right"
                   type="button"
                 >
-                  {capitalize(inndelingtype.toLowerCase())}
+                  {getInndelingtypeLabel(inndelingtype, { pluralizeLabel: false, capitalizeLabel: true })}
                 </InndelingOption>
               ))}
             </InndelingerList>

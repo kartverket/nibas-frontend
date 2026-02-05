@@ -10,13 +10,13 @@ import { getIdFromEntity } from "utils/api";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNavnInSpraak } from "utils/language/language";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
-import { capitalize } from "utils/string-utils";
 import { FlatedataTableInndeling } from "./FlatedataPanel";
 import FlatedataTableHeader from "./FlatedataTableHeader";
 import { FlatedataTableRow } from "./FlatedataTableRow";
 import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 
 type Props = {
   mainInndeling: FlatedataTableInndeling;
@@ -79,7 +79,9 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     setIsEditing(!isEditing);
   };
 
-  const inndelingPrefix = isAdministrativEnhet ? "Kommune" : capitalize(mainInndeling.inndelingtype.toLowerCase());
+  const inndelingPrefix = isAdministrativEnhet
+    ? "Kommune"
+    : getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: true });
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
