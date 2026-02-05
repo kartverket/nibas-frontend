@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { FeatureProperties } from "types/api";
 import { isAdministrativGrense, isBopliktGrense, isFylkesGrense, isKommuneGrense } from "utils/grenser";
-import { capitalize } from "utils/string-utils";
 import { isGrenseType } from "utils/type-utils";
 import {
   CustomOption,
@@ -24,6 +23,7 @@ import { useAdministrativTilhorighet } from "../hooks/useAdministrativTilhorighe
 import { useTilhorighet } from "../hooks/useTilhorighet";
 import GrenseinformasjonRowTilhorighet from "./GrenseinformasjonRowTilhorighet";
 import { addKontekstEntryFromFeature } from "./grenseinformasjon-utils";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 
 type TilhorighetRowProps = {
   feature: Feature;
@@ -44,7 +44,7 @@ const TilhorighetRow = ({
     <GrenseinformasjonRowTilhorighet
       isEditing={isEditing}
       isSubmitted={isSubmitted}
-      name={capitalize(inndelingType.toLocaleLowerCase()) + "er"}
+      name={getInndelingtypeLabel(inndelingType, { pluralizeLabel: true, capitalizeLabel: true })}
       valueLabel={
         getTilhorighetValuesFormatted(formState[inndelingType], tilhorighetOptions) ??
         (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
@@ -52,7 +52,7 @@ const TilhorighetRow = ({
       isValid={isValid}
       isLoading={isLoading}
       tooltipLabel={`
-      Definerer hvilke ${inndelingType.toLocaleLowerCase()}er grensen har på hver sin side.
+      Definerer hvilke ${getInndelingtypeLabel(inndelingType, { pluralizeLabel: true, capitalizeLabel: false })} grensen har på hver sin side.
       `}
     >
       <Stack>
@@ -87,7 +87,7 @@ const TilhorighetRowEnkel = ({
     <GrenseinformasjonRowTilhorighet
       isEditing={isEditing}
       isSubmitted={isSubmitted}
-      name={capitalize(inndelingType.toLocaleLowerCase())}
+      name={getInndelingtypeLabel(inndelingType, { pluralizeLabel: false, capitalizeLabel: true })}
       valueLabel={
         getLandgrenseTilhorighetValueFormatted(formState[inndelingType], tilhorighetOptions) ??
         (isTempFeatureId(feature.getId()?.toString()) ? "Ny grense - Mangler tilhørighet" : undefined)
@@ -95,7 +95,7 @@ const TilhorighetRowEnkel = ({
       isValid={isValid}
       isLoading={isLoading}
       tooltipLabel={`
-      Definerer hvilket ${inndelingType.toLocaleLowerCase()} grensen hører til.
+      Definerer hvilket ${getInndelingtypeLabel(inndelingType, { pluralizeLabel: false, capitalizeLabel: false })} grensen hører til.
       `}
     >
       <TilhorighetSearch

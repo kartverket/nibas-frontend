@@ -20,7 +20,7 @@ import { styled } from "styled-components";
 import { INNDELINGTYPE_VALUES } from "types/api";
 import { pluralizeInndelingtype } from "utils/inndelinger-utils";
 import { getNavnInSpraak } from "utils/language/language";
-import { capitalize } from "utils/string-utils";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 import { ModalPanel, PanelHeader } from "../Panel";
 import FlatedataTable from "./FlatedataTable";
 
@@ -40,7 +40,9 @@ const getTabText = (inndeling: FlatedataTableInndeling, allInndelinger: Flatedat
   const inndelingIsUnique = !allInndelinger.some(
     (i) => i.id === inndeling.id && i.inndelingtype !== inndeling.inndelingtype,
   );
-  const inndelingType = !inndelingIsUnique ? ` (${capitalize(pluralizeInndelingtype(inndeling.inndelingtype))})` : "";
+  const inndelingType = !inndelingIsUnique
+    ? ` (${getInndelingtypeLabel(inndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })})`
+    : "";
   return nameAndNumber + inndelingType;
 };
 

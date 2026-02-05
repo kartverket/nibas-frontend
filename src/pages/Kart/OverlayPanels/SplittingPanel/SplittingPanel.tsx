@@ -96,7 +96,10 @@ export const SplittingPanel = () => {
   const opprinneligKretsRegister = register("opprinneligKrets.lokalId");
 
   // Hvis vi av en eller annen grunn ikke har inndelingtype, så fallbacker vi til "krets" som label.
-  const inndelingtypeLabel = inndelingtype != null ? getInndelingtypeLabel(inndelingtype) : "krets";
+  const inndelingtypeLabel =
+    inndelingtype != null
+      ? getInndelingtypeLabel(inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })
+      : "krets";
 
   const validateNotDuplicateNewKretsnummere = (value: string) => {
     const nyeKretsNummere = getValues("nyeKretser").map((k) => k.kretsNummer);
