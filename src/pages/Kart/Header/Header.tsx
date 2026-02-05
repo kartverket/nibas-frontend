@@ -76,11 +76,11 @@ const Header = () => {
       case "KOMMUNE":
         return antall > 1 ? "kommunene" : "kommunen";
       case "STEMMEKRETS":
-        return getInndelingtypeLabel(inndelingtype) + "er";
+        return getInndelingtypeLabel(inndelingtype, { pluralizeLabel: true, capitalizeLabel: false });
       case "GRUNNKRETS":
-        return getInndelingtypeLabel(inndelingtype) + "er";
+        return getInndelingtypeLabel(inndelingtype, { pluralizeLabel: true, capitalizeLabel: false });
       case "BOPLIKTOMRAADE":
-        return getInndelingtypeLabel(inndelingtype) + "r";
+        return getInndelingtypeLabel(inndelingtype, { pluralizeLabel: true, capitalizeLabel: false });
     }
   };
 

@@ -10,7 +10,10 @@ const getCommonInndelingNumberValidator = <TForm extends Record<string, unknown>
   shouldNotBeEqualWith: string[],
   additionalValidation?: (number: string) => ValidateResult,
 ): RegisterOptions<TForm, TFieldName> => {
-  const formattedInndelingType = getInndelingtypeLabel(inndelingType);
+  const formattedInndelingType = getInndelingtypeLabel(inndelingType, {
+    pluralizeLabel: false,
+    capitalizeLabel: false,
+  });
   const capitalizedInndelingType = capitalize(formattedInndelingType);
   return {
     required: `${capitalizedInndelingType}nummer kan ikke være tomt`,
@@ -155,25 +158,52 @@ export const getNumberValidatorFunctionForInndelingType = <
   }
 };
 
+export type GetInndelingtypeLabelOptions = {
+  /**
+   * Om label skal være i flertallsform (f.eks. "fylker" i stedet for "fylke")
+   */
+  pluralizeLabel?: boolean;
+  /**
+   * Om label skal ha stor forbokstav (f.eks. "Fylke" i stedet for "fylke")
+   */
+  capitalizeLabel?: boolean;
+};
+
 /**
  * Returnerer visningsstring for en inndelingstype til bruk i labels og tekster
  * @param inndelingtype Inndelingstype å returnere label for
+ * @param options Options for labelen
  * @returns Visningsstring for inndelingstype (f.eks. "fylke", "kommune", "grunnkrets")
  */
-export const getInndelingtypeLabel = (inndelingtype: Inndelingtype | null): string => {
+export const getInndelingtypeLabel = (
+  inndelingtype: Inndelingtype | null,
+  options: GetInndelingtypeLabelOptions = {},
+): string => {
+  const { pluralizeLabel = false, capitalizeLabel = false } = options;
+
   if (inndelingtype == null) {
     return "";
   }
+  let label = "";
   switch (inndelingtype) {
     case "FYLKE":
-      return "fylke";
+      label = pluralizeLabel ? "fylker" : "fylke";
+      break;
     case "KOMMUNE":
-      return "kommune";
+      label = pluralizeLabel ? "kommuner" : "kommune";
+      break;
     case "GRUNNKRETS":
-      return "grunnkrets";
+      label = pluralizeLabel ? "grunnkretser" : "grunnkrets";
+      break;
     case "STEMMEKRETS":
-      return "stemmekrets";
+      label = pluralizeLabel ? "stemmekretser" : "stemmekrets";
+      break;
     case "BOPLIKTOMRAADE":
-      return "bopliktområde";
+      label = pluralizeLabel ? "bopliktområder" : "bopliktområde";
+      break;
   }
+  if (capitalizeLabel) {
+    label = capitalize(label);
+  }
+  return label;
 };

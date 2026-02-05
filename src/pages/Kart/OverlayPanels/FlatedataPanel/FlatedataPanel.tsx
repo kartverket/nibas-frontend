@@ -18,7 +18,7 @@ import useSearch from "hooks/useSearch";
 import { useState } from "react";
 import { styled } from "styled-components";
 import { getNavnInSpraak } from "utils/language/language";
-import { capitalize } from "utils/string-utils";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 import { ModalPanel, PanelHeader } from "../Panel";
 import FlatedataTable from "./FlatedataTable";
 import { INNDELINGTYPE_VALUES } from "types/api";
@@ -34,26 +34,14 @@ export const FLATEDATA_TABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
 export type FlatedataTableInndelingtype = (typeof FLATEDATA_TABLE_INNDELINGTYPE_VALUES)[number];
 export type FlatedataTableInndeling = InndelingOfType<FlatedataTableInndelingtype>;
 
-const pluralizeInndelingtype = (inndelingtype: FlatedataTableInndelingtype) => {
-  const lowerCaseInndelingtype = inndelingtype.toLowerCase();
-  switch (inndelingtype) {
-    case "FYLKE":
-    case "KOMMUNE":
-      return lowerCaseInndelingtype + "r";
-    case "STEMMEKRETS":
-    case "GRUNNKRETS":
-      return lowerCaseInndelingtype + "er";
-    case "BOPLIKTOMRAADE":
-      return lowerCaseInndelingtype + "r";
-  }
-};
-
 const getTabText = (inndeling: FlatedataTableInndeling, allInndelinger: FlatedataTableInndeling[]) => {
   const nameAndNumber = inndeling.nummer + " " + getNavnInSpraak(inndeling.navn, "nor");
   const inndelingIsUnique = !allInndelinger.some(
     (i) => i.id === inndeling.id && i.inndelingtype !== inndeling.inndelingtype,
   );
-  const inndelingType = !inndelingIsUnique ? ` (${capitalize(pluralizeInndelingtype(inndeling.inndelingtype))})` : "";
+  const inndelingType = !inndelingIsUnique
+    ? ` (${getInndelingtypeLabel(inndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })})`
+    : "";
   return nameAndNumber + inndelingType;
 };
 

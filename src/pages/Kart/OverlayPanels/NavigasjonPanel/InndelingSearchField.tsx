@@ -95,7 +95,9 @@ export const InndelingSearchField = <T extends FieldValues, K extends Path<T>>({
     const matches = inndeling.label.match(labelRegExp);
 
     const inndelingTypeLabel =
-      inndeling.type !== "NASJON" ? getInndelingtypeLabel(inndeling.type).toUpperCase() : "NASJON";
+      inndeling.type !== "NASJON"
+        ? getInndelingtypeLabel(inndeling.type, { pluralizeLabel: false, capitalizeLabel: false }).toUpperCase()
+        : "NASJON";
 
     if (!matches) {
       return <FormattedOption label={inndeling.label} type={inndelingTypeLabel} />;
