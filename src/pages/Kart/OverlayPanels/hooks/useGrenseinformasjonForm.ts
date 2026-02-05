@@ -42,9 +42,6 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
 
   const { addHistoryEntry } = useHistory();
 
-  const featureProperties = feature.getProperties() as FeatureProperties;
-  const metadata = featureProperties.metadata as Metadata;
-
   // formState.dirtyFields blir satt riktig ved første submit, men formState.isDirty blir ikke det, skjønner ikke hvorfor?
   const isDirty = Object.values(formState.dirtyFields).length > 0;
 
@@ -55,6 +52,8 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
         return;
       }
       const metadataDiscriminator = getMetadataDiscriminatorFromType(grensetype);
+      const featureProperties = feature.getProperties() as FeatureProperties;
+      const metadata = featureProperties.metadata as Metadata;
       const commonMetadata = metadata.common;
       if (!metadataDiscriminator || !commonMetadata) {
         return;
