@@ -13,7 +13,6 @@ import {
   getKretserFromKretsDelingEndringer,
   getKretsTypeForFeature,
   getTilhorighetData,
-  getUpdatedKontekstEgenskaper,
   getUpdatedMetadataForKretser,
   Krets,
   Tilhorighet,
@@ -43,7 +42,6 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
     newState[inndelingType][tilhorighet] = value;
     setFormState(newState);
   };
-  const [tilhorighetOptions, setTilhorighetValg] = useState<TilhorighetOptions>();
 
   // Her aner jeg ikke hvordan vi skal håndtere flere potensielle aktivt redigerte inndelinger
   const kommunerIds = useMemo(() => {
@@ -64,37 +62,41 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
   }, [kommuneResponses, kommunerIds]);
 
   // wrapper for setter av tilhørighetoptions. Spreader inn nye kretser i hver dropdown.
-  const setTilhorighetOptions = useCallback(
-    (commonOptions: TilhorighetOptions | undefined) => {
-      if (utkast && commonOptions) {
-        const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
-          kommunerIdOgNummer,
-          utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === inndelingType),
-        );
-        const historyEntries = getHistoryEntries();
-        const tilhorighetOptionsFromHistory = getKretserFromHistory(historyEntries, kommunerIdOgNummer, inndelingType);
-        const optionsFromUtkastAndHistory = [...tilhorighetOptionsFromUtkast, ...tilhorighetOptionsFromHistory];
-
-        const listeA: Krets[] = getUpdatedMetadataForKretser(
-          [...commonOptions[Tilhorighet.A], ...optionsFromUtkastAndHistory],
-          historyEntries,
-          utkast.operasjoner,
-          inndelingType,
-        );
-        const listeB: Krets[] = getUpdatedMetadataForKretser(
-          [...commonOptions[Tilhorighet.B], ...optionsFromUtkastAndHistory],
-          historyEntries,
-          utkast.operasjoner,
-          inndelingType,
-        );
-
-        setTilhorighetValg({
-          [Tilhorighet.A]: listeA,
-          [Tilhorighet.B]: listeB,
-        });
-      } else if (!utkast && commonOptions) {
-        setTilhorighetValg(commonOptions);
+  const buildTilhorighetOptions = useCallback(
+    (baseOptions: TilhorighetOptions | undefined): TilhorighetOptions | undefined => {
+      if (!baseOptions) {
+        return undefined;
       }
+
+      if (!utkast) {
+        return baseOptions;
+      }
+
+      const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
+        kommunerIdOgNummer,
+        utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === inndelingType),
+      );
+      const historyEntries = getHistoryEntries();
+      const tilhorighetOptionsFromHistory = getKretserFromHistory(historyEntries, kommunerIdOgNummer, inndelingType);
+      const optionsFromUtkastAndHistory = [...tilhorighetOptionsFromUtkast, ...tilhorighetOptionsFromHistory];
+
+      const listeA: Krets[] = getUpdatedMetadataForKretser(
+        [...baseOptions[Tilhorighet.A], ...optionsFromUtkastAndHistory],
+        historyEntries,
+        utkast.operasjoner,
+        inndelingType,
+      );
+      const listeB: Krets[] = getUpdatedMetadataForKretser(
+        [...baseOptions[Tilhorighet.B], ...optionsFromUtkastAndHistory],
+        historyEntries,
+        utkast.operasjoner,
+        inndelingType,
+      );
+
+      return {
+        [Tilhorighet.A]: listeA,
+        [Tilhorighet.B]: listeB,
+      };
     },
     [kommunerIdOgNummer, inndelingType, utkast, getHistoryEntries],
   );
@@ -116,22 +118,14 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
     resetTilhorighet();
   }, [feature, resetTilhorighet]);
 
-  const getCurrentOppdaterteKontekstEgenskaper = () => {
-    if (tilhorighetOptions) {
-      return getUpdatedKontekstEgenskaper(inndelingType, formState[inndelingType], tilhorighetOptions);
-    }
-  };
-
   return {
-    setTilhorighetOptions,
-    tilhorighetOptions,
+    buildTilhorighetOptions,
     formState,
     setValue,
     isDirty: isDirty(),
     resetTilhorighet,
     kommunerIds,
     inndelingType,
-    getCurrentOppdaterteKontekstEgenskaper,
     isLoading,
   };
 };
