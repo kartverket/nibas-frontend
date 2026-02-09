@@ -66,6 +66,7 @@ export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
         const hasKommune = context.has("KOMMUNE");
         const hasStemmekrets = context.has("STEMMEKRETS");
         const hasGrunnkrets = context.has("GRUNNKRETS");
+        const hasBopliktomraade = context.has("BOPLIKTOMRAADE");
 
         if (hasKommune || (hasStemmekrets && hasGrunnkrets)) {
           return "KOMMUNE";
@@ -76,6 +77,9 @@ export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
         }
         if (hasGrunnkrets) {
           return "GRUNNKRETS";
+        }
+        if (hasBopliktomraade) {
+          return "BOPLIKTOMRAADE";
         }
         return "KOMMUNE";
       };
