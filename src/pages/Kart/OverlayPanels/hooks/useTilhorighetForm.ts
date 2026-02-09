@@ -3,7 +3,6 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import useNibasApi from "hooks/useNibasApi";
-import { usePrevious } from "hooks/usePrevious";
 import { Feature } from "ol";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FeatureProperties } from "types/api";
@@ -29,7 +28,6 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const { data: kommuneResponses, isLoading } = useNibasApi("/v1/kommuner", { gyldighetsdato });
   const { utkast } = useUtkast();
-  const previousFeature = usePrevious(feature);
 
   const featureProperties = feature.getProperties() as FeatureProperties;
   const kontekstEgenskaper = useMemo(
@@ -116,7 +114,7 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
 
   useEffect(() => {
     resetTilhorighet();
-  }, [feature, previousFeature, resetTilhorighet]);
+  }, [feature, resetTilhorighet]);
 
   const getCurrentOppdaterteKontekstEgenskaper = () => {
     if (tilhorighetOptions) {
