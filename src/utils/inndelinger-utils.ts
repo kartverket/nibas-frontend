@@ -209,20 +209,6 @@ export const getInndelingtypeLabel = (
   return label;
 };
 
-export const pluralizeInndelingtype = (inndelingtype: Inndelingtype): string => {
-  const lowerCaseInndelingtype = inndelingtype.toLowerCase();
-  switch (inndelingtype) {
-    case "FYLKE":
-    case "KOMMUNE":
-      return lowerCaseInndelingtype + "r";
-    case "STEMMEKRETS":
-    case "GRUNNKRETS":
-      return lowerCaseInndelingtype + "er";
-    case "BOPLIKTOMRAADE":
-      return lowerCaseInndelingtype + "r";
-  }
-};
-
 export const getApiPathForKommunalInndeling = (inndelingType: KommunalInndelingtype) => {
   switch (inndelingType) {
     case "GRUNNKRETS":
