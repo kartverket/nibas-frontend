@@ -22,7 +22,16 @@ const sortablePropertiesByInndelingtype = {
   KOMMUNE: ["nummer", "navn", "samiskforvaltningsomraade"] as const,
   STEMMEKRETS: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"] as const,
   GRUNNKRETS: ["nummer", "navn"] as const,
-  BOPLIKTOMRAADE: ["nummer", "navn", "delvisBoplikt", "forskriftsreferanse", "url", "informasjon"] as const,
+  BOPLIKTOMRAADE: [
+    "nummer",
+    "navn",
+    "delvisBoplikt",
+    "forskriftsreferanse",
+    "url",
+    "informasjon",
+    "materielleVilkaar",
+    "andreavgrensninger",
+  ] as const,
 } satisfies Record<FlatedataTableInndelingtype, ResponseProperty[]>;
 
 export const useFlatedataTableSort = (inndelingtype: FlatedataTableInndelingtype) => {

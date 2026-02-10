@@ -287,8 +287,17 @@ export interface components {
       version: number;
       /** @description informasjon om bopliktomraade */
       informasjon?: string;
-      /** @description Indikrerer om bopliktomraadet dekker deler av kommunen eller ikke */
+      /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
       delvisBoplikt: boolean;
+      /** @description Materielle vilkår for bopliktområdet */
+      materielleVilkaar: (
+        | "BEBYGDEIENDOM"
+        | "IKKEHELAARSBOLIGUNDEROPPFORING"
+        | "UBEBYGDTOMT"
+        | "UNNTAKFRASLEKTSKAPSUNNTAK"
+      )[];
+      /** @description Andre avgrensninger */
+      andreavgrensninger?: string;
       /** @description Referanse til forskriften for bopliktomraadet */
       forskriftsreferanse?: string;
       /** @description URL til kommunen sin informasjonside */
@@ -1172,6 +1181,15 @@ export interface components {
       delvisBoplikt?: boolean;
       /** @description Forskriftsreferansen for bopliktområdet */
       forskriftsreferanse?: string;
+      /** @description Materielle vilkår for bopliktområdet */
+      materielleVilkaar: (
+        | "BEBYGDEIENDOM"
+        | "IKKEHELAARSBOLIGUNDEROPPFORING"
+        | "UBEBYGDTOMT"
+        | "UNNTAKFRASLEKTSKAPSUNNTAK"
+      )[];
+      /** @description andreavgrensninger */
+      andreavgrensninger?: string;
       /** @description Lenke til mer informasjon */
       url?: string;
     };
@@ -1199,9 +1217,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
+      valid?: boolean;
       coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {
@@ -1551,6 +1569,15 @@ export interface components {
       informasjon?: string;
       /** @description Forskriftsreferanse til boplikten */
       forskriftsreferanse?: string;
+      /** @description Materielle vilkår for bopliktområdet */
+      materielleVilkaar: (
+        | "BEBYGDEIENDOM"
+        | "IKKEHELAARSBOLIGUNDEROPPFORING"
+        | "UBEBYGDTOMT"
+        | "UNNTAKFRASLEKTSKAPSUNNTAK"
+      )[];
+      /** @description andreavgrensninger */
+      andreavgrensninger?: string;
       /** @description URL til informasjon om boplikten */
       url?: string;
       /** @description Geometrien til bopliktområdet, dvs representasjonspunkt og flaten */

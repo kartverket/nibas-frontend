@@ -118,6 +118,8 @@ const getRequestFromInputs = (
           forskriftsreferanse: data.forskriftsreferanse,
           url: data.url,
           informasjon: data.informasjon !== "" ? data.informasjon : undefined,
+          materielleVilkaar: inndeling.materielleVilkaar,
+          andreavgrensninger: inndeling.andreavgrensninger,
         };
         return bopliktomraadeRequest;
       }
