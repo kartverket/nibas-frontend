@@ -27,7 +27,7 @@ export const URLInputCell = forwardRef<HTMLInputElement, InputCellProps>(functio
         <Input type="url" defaultValue={data} {...inputProps} ref={ref} size="sm" />
       ) : (
         <Link href={data} target="_blank" rel="noopener noreferrer">
-          {data.match(/^[^/]*\/{2}([^/]+)/)?.[1] ?? data}
+          {new URL(data).hostname ?? data}
         </Link>
       )}
     </TableCell>
