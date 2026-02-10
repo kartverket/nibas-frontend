@@ -1,4 +1,4 @@
-import { Tag, Checkbox, FormControl, FormErrorMessage } from "@kvib/react";
+import { Tag, Checkbox, FormControl, FormErrorMessage, Link } from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
 import { styled } from "styled-components";
@@ -26,9 +26,9 @@ export const URLInputCell = forwardRef<HTMLInputElement, InputCellProps>(functio
       {isEditing ? (
         <Input type="url" defaultValue={data} {...inputProps} ref={ref} size="sm" />
       ) : (
-        <a href={data} target="_blank" rel="noopener noreferrer">
-          {data}
-        </a>
+        <Link href={data} target="_blank" rel="noopener noreferrer">
+          {data.match(/^[^/]*\/{2}([^/]+)/)?.[1] ?? data}
+        </Link>
       )}
     </TableCell>
   );
