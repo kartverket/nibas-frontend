@@ -17,6 +17,23 @@ const InputCell = forwardRef<HTMLInputElement, InputCellProps>(function InputCel
   return <TableCell>{isEditing ? <Input defaultValue={data} {...inputProps} ref={ref} size="sm" /> : data}</TableCell>;
 });
 
+export const URLInputCell = forwardRef<HTMLInputElement, InputCellProps>(function URLInputCell(
+  { data, isEditing, ...inputProps }: InputCellProps,
+  ref,
+) {
+  return (
+    <TableCell>
+      {isEditing ? (
+        <Input type="url" defaultValue={data} {...inputProps} ref={ref} size="sm" />
+      ) : (
+        <a href={data} target="_blank" rel="noopener noreferrer">
+          {data}
+        </a>
+      )}
+    </TableCell>
+  );
+});
+
 export const TableCell = ({ children }: { children: React.ReactNode }) => (
   <td>
     <CenteredText>{children}</CenteredText>

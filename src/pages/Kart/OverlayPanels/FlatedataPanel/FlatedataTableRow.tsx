@@ -13,7 +13,7 @@ import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { FlatedataInputs } from "./flatedata-utils";
-import InputCell, { MerknadCell, TableCell } from "./FlatedataTableCells";
+import InputCell, { MerknadCell, TableCell, URLInputCell } from "./FlatedataTableCells";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type FremtidigEndringIconProps = {
@@ -272,13 +272,13 @@ export const FlatedataTableRow = ({
                 data={getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt}
                 {...register(`${inndelingId}.delvisBoplikt`)}
               />
-              <InputCell
+              <URLInputCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
                 data={getValues(`${inndelingId}.forskriftsreferanse`) ?? inndeling.forskriftsreferanse}
                 {...register(`${inndelingId}.forskriftsreferanse`)}
               />
-              <InputCell
+              <URLInputCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
                 data={getValues(`${inndelingId}.url`) ?? inndeling.url}
