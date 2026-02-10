@@ -1,4 +1,4 @@
-import { Tag, Checkbox, FormControl, FormErrorMessage } from "@kvib/react";
+import { Tag, Checkbox, FormControl, FormErrorMessage, Select, SelectProps } from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
 import { styled } from "styled-components";
@@ -54,6 +54,35 @@ export const MerknadCell = forwardRef<HTMLInputElement, MerknadCellProps>(functi
             {label}
           </Tag>
         )
+      )}
+    </TableCell>
+  );
+});
+
+type SelectCellProps = {
+  data: string;
+  options: { label: string; value: string }[];
+  isEditing: boolean;
+} & SelectProps;
+
+export const SelectCell = forwardRef<HTMLSelectElement, SelectCellProps>(function SelectCell(
+  { data, isEditing, options, ...selectProps }: SelectCellProps,
+  ref,
+) {
+  return (
+    <TableCell>
+      {isEditing ? (
+        <Select defaultValue={data} ref={ref} size="sm" {...selectProps}>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+      ) : (
+        <Tag colorScheme="gray" size="md">
+          {data}
+        </Tag>
       )}
     </TableCell>
   );
