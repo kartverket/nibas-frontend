@@ -2,7 +2,7 @@ import { Icon, InputProps, SearchAsync, Text } from "@kvib/react";
 import { FormatOptionLabelMeta } from "chakra-react-select";
 import { ReactNode } from "react";
 import { styled } from "styled-components";
-import { pluralizeInndelingtype } from "utils/inndelinger-utils";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 import { TilhorighetInndelingtype } from "../hooks/tilhorighet-utils";
 
 type OptionType = { value: string; label: string };
@@ -44,7 +44,7 @@ const highlightFormatter = (option: OptionType, formatOptionLabelMeta: FormatOpt
 export const TilhorighetSearch = ({ options, value, onChange, inndelingType }: Props) => {
   const noOptionMessage = (obj: { inputValue: string }): ReactNode => {
     return obj.inputValue !== "" ? (
-      <ErrorMessage>{`Fant ingen ${pluralizeInndelingtype(inndelingType)} som matchet "${obj.inputValue}"`}</ErrorMessage>
+      <ErrorMessage>{`Fant ingen ${getInndelingtypeLabel(inndelingType, { pluralizeLabel: true, capitalizeLabel: false })} som matchet "${obj.inputValue}"`}</ErrorMessage>
     ) : null;
   };
 
