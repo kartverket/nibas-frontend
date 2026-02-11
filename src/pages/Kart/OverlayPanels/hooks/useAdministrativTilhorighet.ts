@@ -98,7 +98,7 @@ export const useAdministrativTilhorighet = (
 
   const getCurrentOppdaterteKontekstEgenskaper = useCallback(
     () =>
-      tilhorighetOptions
+      tilhorighetOptions != null
         ? getUpdatedKontekstEgenskaper(inndelingType, formState[inndelingType], tilhorighetOptions)
         : undefined,
     [tilhorighetOptions, inndelingType, formState],
