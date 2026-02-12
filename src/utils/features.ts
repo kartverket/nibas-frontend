@@ -141,8 +141,8 @@ export const getPropertiesForDuplicateOfFeature = (
             commonGrense: copiedMetadata.commonGrense,
             common: {
               ...newDefaultCommonMetadata,
-              informasjon: copiedFeatureProperties.metadata?.common?.informasjon,
-              opphav: copiedFeatureProperties.metadata?.common?.opphav,
+              informasjon: copiedMetadata.common?.informasjon,
+              opphav: copiedMetadata.common?.opphav,
             },
           },
         };
