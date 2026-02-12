@@ -95,7 +95,7 @@ const KartlagPanel = () => {
 
         addSOSIFileSublayers(allSublayers);
         addFeaturesToSource("sosiFiler", allFeatures);
-        zoomToFeatures(allFeatures, true);
+        zoomToFeatures(allFeatures);
       }
     } finally {
       setIsUploadingFiles(false);
