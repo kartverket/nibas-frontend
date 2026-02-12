@@ -38,7 +38,7 @@ const calculateFeaturesExtent = (features: Feature<Geometry>[]) => {
 };
 
 type useMapReturnValues = {
-  zoomToFeatures: (features: Feature<Geometry>[], ignoreSidePanel?: boolean, padding?: number[]) => void;
+  zoomToFeatures: (features: Feature<Geometry>[], options?: { ignoreSidePanel?: boolean; padding?: number[] }) => void;
 };
 
 export const useMap = (): useMapReturnValues => {
@@ -46,9 +46,9 @@ export const useMap = (): useMapReturnValues => {
 
   const zoomToFeatures = (
     features: Feature<Geometry>[],
-    ignoreSidePanel: boolean = false,
-    padding: number[] = [100, 100, 200, 100],
+    options?: { ignoreSidePanel?: boolean; padding?: number[] },
   ): void => {
+    const { ignoreSidePanel = false, padding = [100, 100, 200, 100] } = options ?? {};
     if (features.length === 0) {
       resetMapView();
     }
