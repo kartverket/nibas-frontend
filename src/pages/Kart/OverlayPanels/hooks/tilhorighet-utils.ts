@@ -99,10 +99,10 @@ export const getKretsIdFromKontekstegenskaper = (
     return undefined;
   }
 
-  if (kontekstegenskaper.id == null) {
+  if (kontekstegenskaper.id?.lokalid.value === CustomOption.NOT_CHOSEN) {
     return getIdForTilhorhetNyKrets(kontekstegenskaper.kretsNummer, kontekstegenskaper.kommuneId?.lokalid.value);
   }
-  return kontekstegenskaper.id.lokalid.value;
+  return kontekstegenskaper.id?.lokalid.value;
 };
 
 // Gir en krets med lokalid lik Default option slik at default verdien kan sendes som data slik som vanlige kretser.
