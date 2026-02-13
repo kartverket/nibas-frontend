@@ -21,6 +21,7 @@ import { getRepresentasjonspunktId } from "utils/map/source";
 import { inndelingResponseNavnToString } from "utils/language/language";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
+import { isBopliktomraadeInndeling } from "pages/Kart/OverlayPanels/FlatedataPanel/useFlatedata";
 
 type InndelingGrenserRequestPath = Pick<
   paths,
@@ -76,7 +77,39 @@ const getInndelingRequestUrl = (inndelingtype: Inndelingtype, isEditing: boolean
   }
 };
 
+const getAdditionalFeaturesRequestUrl = (inndelingtype: Inndelingtype): keyof InndelingGrenserRequestPath | null => {
+  switch (inndelingtype) {
+    case "BOPLIKTOMRAADE":
+      return "/v1/kommuner/{id}/grenser";
+    case "STEMMEKRETS":
+    case "GRUNNKRETS":
+    case "KOMMUNE":
+    case "FYLKE":
+      return null;
+    default:
+      throw new Error(`Ugyldig inndelingtype: ${inndelingtype}`);
+  }
+};
+
 type PotentialInndelingResponse = FullInndelingResponse | FullInndelingResponse[] | SimpleInndelingResponse[];
+
+const shouldFetchAdditionalFeatures = (inndelingtype: Inndelingtype, inndeling: PotentialInndelingResponse) => {
+  switch (inndelingtype) {
+    case "BOPLIKTOMRAADE":
+      return (
+        inndeling instanceof Array &&
+        inndeling.length > 0 &&
+        inndeling.every((omraade) => isBopliktomraadeInndeling(omraade) === true && omraade.delvisBoplikt === true)
+      );
+    case "FYLKE":
+    case "KOMMUNE":
+    case "GRUNNKRETS":
+    case "STEMMEKRETS":
+      return false;
+    default:
+      return false;
+  }
+};
 
 type InndelingWithFeatureCollection = {
   id: string;
@@ -97,10 +130,24 @@ const inndelingWithGrenseFetcher = async ([inndelinger, gyldighetsdato]: [Inndel
       getUrlWithParameters<typeof inndelingUrl>(inndelingUrl, { id: inndeling.id, gyldighetsdato }),
     ]);
 
+    // Hent andre grenser for inndeling om det er relevant.
+    const additionalGrenserUrl = getAdditionalFeaturesRequestUrl(inndeling.inndelingtype);
+    let additionalGeoJSONFeatures = null;
+    if (additionalGrenserUrl != null && shouldFetchAdditionalFeatures(inndeling.inndelingtype, inndelingerResponses)) {
+      additionalGeoJSONFeatures = await fetchUrl([
+        getUrlWithParameters<typeof additionalGrenserUrl>(additionalGrenserUrl, { id: inndeling.id }),
+      ]);
+    }
+
+    const featureCollection: FeatureCollection = {
+      type: "FeatureCollection",
+      features: geoJSONFeatures.features.concat(additionalGeoJSONFeatures?.features ?? []),
+    };
+
     return {
       id: inndeling.id,
       inndelingtype: inndeling.inndelingtype,
-      geoJSONFeatures,
+      geoJSONFeatures: featureCollection,
       inndelinger: inndelingerResponses,
     };
   });
