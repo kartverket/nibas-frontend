@@ -12,7 +12,7 @@ import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { FlatedataInputs } from "./flatedata-utils";
+import { FlatedataInputs, isValidUrl } from "./flatedata-utils";
 import InputCell, { MerknadCell, TableCell, URLInputCell } from "./FlatedataTableCells";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
@@ -172,15 +172,6 @@ export const FlatedataTableRow = ({
 
   const tellekretsnavnRegister = {
     ...register(`${inndelingId}.tellekretsnavn`, disabledDate == null ? tellekretsRegisterOptions.navn : undefined),
-  };
-
-  const isValidUrl = (value: string) => {
-    try {
-      const parsed = new URL(value);
-      return ["http:", "https:"].includes(parsed.protocol);
-    } catch {
-      return false;
-    }
   };
 
   const urlRegisterOptions = {

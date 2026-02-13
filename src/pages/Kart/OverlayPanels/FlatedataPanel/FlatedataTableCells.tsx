@@ -2,6 +2,7 @@ import { Tag, Checkbox, FormControl, FormErrorMessage, Link } from "@kvib/react"
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
 import { styled } from "styled-components";
+import { isValidUrl } from "./flatedata-utils";
 
 type InputProps = React.ComponentProps<typeof Input>;
 
@@ -27,7 +28,7 @@ export const URLInputCell = forwardRef<HTMLInputElement, InputCellProps>(functio
         <Input type="url" defaultValue={data} {...inputProps} ref={ref} size="sm" />
       ) : (
         <Link href={data} target="_blank" rel="noopener noreferrer">
-          {new URL(data).hostname ?? data}
+          {isValidUrl(data) ? new URL(data).hostname : data}
         </Link>
       )}
     </TableCell>
