@@ -190,3 +190,12 @@ export const reduceFlatedataChanges = (
 
     return accumulator;
   }, []);
+
+export const isValidUrl = (value: string) => {
+  try {
+    const parsed = new URL(value);
+    return ["http:", "https:"].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+};

@@ -12,8 +12,8 @@ import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { FlatedataInputs } from "./flatedata-utils";
-import InputCell, { MerknadCell, SelectCell, TableCell } from "./FlatedataTableCells";
+import { FlatedataInputs, isValidUrl } from "./flatedata-utils";
+import InputCell, { MerknadCell, SelectCell, TableCell, URLInputCell } from "./FlatedataTableCells";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type FremtidigEndringIconProps = {
@@ -174,6 +174,10 @@ export const FlatedataTableRow = ({
     ...register(`${inndelingId}.tellekretsnavn`, disabledDate == null ? tellekretsRegisterOptions.navn : undefined),
   };
 
+  const urlRegisterOptions = {
+    validate: (value: string) => (!isValidUrl(value) ? "URL må starte med 'https://'" : undefined),
+  };
+
   return (
     <Row key={inndelingId} $isSearchMatch={isSearchMatch}>
       {isKommuneInndeling(inndeling) ? (
@@ -281,17 +285,25 @@ export const FlatedataTableRow = ({
                   setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
                 })}
               />
-              <InputCell
+              <URLInputCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
                 data={getValues(`${inndelingId}.forskriftsreferanse`) ?? inndeling.forskriftsreferanse}
-                {...register(`${inndelingId}.forskriftsreferanse`)}
+                {...register(`${inndelingId}.forskriftsreferanse`, urlRegisterOptions)}
+                validationError={
+                  inndelingErrors != null && "forskriftsreferanse" in inndelingErrors
+                    ? validationError(inndelingErrors.forskriftsreferanse)
+                    : undefined
+                }
               />
-              <InputCell
+              <URLInputCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
                 data={getValues(`${inndelingId}.url`) ?? inndeling.url}
-                {...register(`${inndelingId}.url`)}
+                {...register(`${inndelingId}.url`, urlRegisterOptions)}
+                validationError={
+                  inndelingErrors != null && "url" in inndelingErrors ? validationError(inndelingErrors.url) : undefined
+                }
               />
             </>
           )}
