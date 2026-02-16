@@ -1,11 +1,12 @@
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import useKommuneInndelinger, { KommunalInndelingResponse } from "hooks/inndelinger/useKommuneInndelinger";
 import { Feature } from "ol";
-import { useEffect } from "react";
+import { useCallback, useMemo } from "react";
 import {
   TilhorighetInndelingtype,
   TilhorighetOptions,
   UseTilhorighet,
+  getUpdatedKontekstEgenskaper,
   mapKommunalInndelingResponseToKrets,
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
@@ -24,16 +25,14 @@ const getMuligeKretserForCommonGrense = (
 
 export const useTilhorighet = (feature: Feature): UseTilhorighet => {
   const {
-    setTilhorighetOptions,
-    tilhorighetOptions,
     formState,
     setValue,
     isDirty,
     resetTilhorighet,
     kommunerIds,
     inndelingType,
-    getCurrentOppdaterteKontekstEgenskaper,
-    isLoading,
+    buildTilhorighetOptions,
+    isLoading: isLoadingForm,
   } = useTilhorighetForm(feature);
   const { gyldighetsdato } = useValgtGyldighetsdato();
 
@@ -44,11 +43,19 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     inndelingType,
   );
 
-  useEffect(() => {
-    if (inndelinger) {
-      setTilhorighetOptions(getMuligeKretserForCommonGrense(inndelingType, inndelinger));
-    }
-  }, [inndelinger, inndelingType, setTilhorighetOptions]);
+  const tilhorighetOptions = useMemo(
+    () =>
+      buildTilhorighetOptions(inndelinger ? getMuligeKretserForCommonGrense(inndelingType, inndelinger) : undefined),
+    [inndelinger, inndelingType, buildTilhorighetOptions],
+  );
+
+  const getCurrentOppdaterteKontekstEgenskaper = useCallback(
+    () =>
+      tilhorighetOptions
+        ? getUpdatedKontekstEgenskaper(inndelingType, formState[inndelingType], tilhorighetOptions)
+        : undefined,
+    [tilhorighetOptions, inndelingType, formState],
+  );
 
   return {
     inndelingType,
@@ -57,7 +64,7 @@ export const useTilhorighet = (feature: Feature): UseTilhorighet => {
     resetTilhorighet,
     formState,
     setValue,
-    isLoading: isLoadingInndelinger || isLoading,
+    isLoading: isLoadingInndelinger || isLoadingForm,
     getCurrentOppdaterteKontekstEgenskaper,
   };
 };

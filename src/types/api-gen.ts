@@ -387,7 +387,8 @@ export interface components {
         | components["schemas"]["KommunalKretsgrenseMetadata"]
         | components["schemas"]["RiksgrenseMetadata"]
         | components["schemas"]["StatistiskgrenseMetadata"]
-        | components["schemas"]["TerritorialgrenseMetadata"];
+        | components["schemas"]["TerritorialgrenseMetadata"]
+        | unknown;
       /** @description Egenskaper til konteksten til grensen. */
       kontekstEgenskaper: components["schemas"]["KontekstEgenskaper"][];
       /**

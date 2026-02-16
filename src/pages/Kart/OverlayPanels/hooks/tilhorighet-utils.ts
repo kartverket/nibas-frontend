@@ -1,6 +1,18 @@
+import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
+import { HistoryEntry } from "contexts/HistoryContext/types";
+import {
+  getMetadataEndringerKeyForInndelingtype,
+  historyToKretsdelingOperations,
+} from "contexts/UtkastContext/utkast-utils";
 import { KommunalInndelingResponse, KommunalInndelingtype } from "hooks/inndelinger/useKommuneInndelinger";
 import { GrenseType } from "hooks/layers/types";
-import { FeatureProperties, KontekstEgenskaper, ObjektIdentifikator } from "types/api";
+import {
+  FeatureProperties,
+  KontekstEgenskaper,
+  KretsDelingEndringRequest,
+  ObjektIdentifikator,
+  UtkastOperasjoner,
+} from "types/api";
 import { isGrenseType } from "utils/type-utils";
 
 export enum Tilhorighet {
@@ -87,10 +99,10 @@ export const getKretsIdFromKontekstegenskaper = (
     return undefined;
   }
 
-  if (kontekstegenskaper.id == null) {
+  if (kontekstegenskaper.id?.lokalid.value === CustomOption.NOT_CHOSEN) {
     return getIdForTilhorhetNyKrets(kontekstegenskaper.kretsNummer, kontekstegenskaper.kommuneId?.lokalid.value);
   }
-  return kontekstegenskaper.id.lokalid.value;
+  return kontekstegenskaper.id?.lokalid.value;
 };
 
 // Gir en krets med lokalid lik Default option slik at default verdien kan sendes som data slik som vanlige kretser.
@@ -205,4 +217,119 @@ const mapGrenseTypeTilTilhorighetInndelingtype = (grenseType: GrenseType): Tilho
     default:
       return "GRUNNKRETS";
   }
+};
+
+export const getUpdatedMetadataForKretser = (
+  kretser: Krets[],
+  historyEntries: HistoryEntry[],
+  utkastEntries: UtkastOperasjoner,
+  inndelingType: TilhorighetInndelingtype,
+): Krets[] => {
+  const metadataFromHistory = historyEntries
+    .flatMap((historyEntry) =>
+      historyEntry.changes.map((change) => {
+        if (change.to != null && "navn" in change.to && "nummer" in change.to) {
+          return {
+            id: change.id,
+            name: change.to.navn,
+            number: change.to.nummer,
+          };
+        }
+        return null;
+      }),
+    )
+    .filter((entry): entry is { id: string; name: string; number: string } => entry !== null);
+
+  const metadataFromUtkast = Object.values(
+    utkastEntries.metadataendringer[getMetadataEndringerKeyForInndelingtype(inndelingType)],
+  ).map((endring) => ({
+    id: endring.identifikasjon.lokalid,
+    name: endring.navn,
+    number: endring.nummer,
+  }));
+
+  const metadataChanges = metadataFromHistory.concat(metadataFromUtkast);
+
+  return kretser.map((krets) => {
+    const matchingChange = metadataChanges.find((entry) => entry.id === krets.id.lokalid.value);
+
+    if (matchingChange !== undefined) {
+      return { ...krets, navn: matchingChange.name, nummer: matchingChange.number };
+    }
+
+    return krets;
+  });
+};
+
+export const getIdForKontekstEgenskaper = (
+  kontekstEgenskaper: KontekstEgenskaper,
+  currentOperasjoner: UtkastOperasjoner | undefined,
+): KontekstEgenskaper => {
+  // Hvis konteksten har en id betyr det at den ikke peker til en nyopprettet krets, og vi kan derfor bruke den IDen for å identifisere kretsen.
+  if (kontekstEgenskaper.id) {
+    return kontekstEgenskaper;
+  } else {
+    const newKretsWithEqualKommuneAndKretsNummerExists = currentOperasjoner?.kretsDelingEndringer
+      .filter((deling) => deling.kommuneId.lokalid.value === kontekstEgenskaper.kommuneId?.lokalid.value)
+      .find((deling) => deling.nyeKretser.find((krets) => krets.kretsNummer === kontekstEgenskaper.kretsNummer));
+    if (!newKretsWithEqualKommuneAndKretsNummerExists) {
+      return {
+        ...kontekstEgenskaper,
+        id: {
+          lokalid: { value: CustomOption.NOT_CHOSEN },
+          gyldighetsdato: "",
+        },
+      };
+      // hvis det finnes en ny krets med nummer og kommuneid lik en ny krets i utkastet OG kontekstegenskaper har id lik undefined lager vi en unik referanse til denne kretsen
+    } else {
+      return {
+        ...kontekstEgenskaper,
+        id: {
+          lokalid: {
+            value: getIdForTilhorhetNyKrets(
+              kontekstEgenskaper.kretsNummer,
+              kontekstEgenskaper.kommuneId?.lokalid.value,
+            ),
+          },
+          gyldighetsdato: "",
+        },
+      };
+    }
+  }
+};
+
+export const getKretserFromKretsDelingEndringer = (
+  kommunerIdOgNummer: { id: string; nummer: string }[],
+  kretsDelingEndringRequests: KretsDelingEndringRequest[],
+): Krets[] => {
+  return kretsDelingEndringRequests
+    .filter((kretsDeling) => kommunerIdOgNummer.some(({ id }) => id === kretsDeling.kommuneId.lokalid.value))
+    .flatMap((kretsDeling) =>
+      kretsDeling.nyeKretser.map((nyKrets) => ({
+        id: {
+          lokalid: { value: getIdForTilhorhetNyKrets(nyKrets.kretsNummer, kretsDeling.kommuneId.lokalid.value) },
+          gyldighetsdato: "",
+        },
+        kommuneId: kretsDeling.kommuneId,
+        kommunenummer:
+          kommunerIdOgNummer.find((idOgNummer) => idOgNummer.id === kretsDeling.kommuneId.lokalid.value)?.nummer ?? "",
+        version: kretsDeling.opprinneligKrets.version,
+        type: kretsDeling.flatetype as TilhorighetInndelingtype, // TODO: Backend burde redusere enum for flatetyper som er gyldig for kretsdeling.
+        navn: nyKrets.kretsNavn,
+        nummer: nyKrets.kretsNummer,
+      })),
+    );
+};
+
+export const getKretserFromHistory = (
+  entries: HistoryEntry[],
+  kommunerIdOgNummer: { id: string; nummer: string }[],
+  inndelingType: TilhorighetInndelingtype,
+): Krets[] => {
+  const kretsdelingerEntries = getKretsDelingEntries(entries);
+
+  const kretsdelingOperations = historyToKretsdelingOperations(kretsdelingerEntries).filter(
+    (kretsdeling) => kretsdeling.flatetype === inndelingType,
+  );
+  return getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
 };

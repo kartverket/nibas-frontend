@@ -152,7 +152,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
               </>
             ) : mainInndeling.inndelingtype === "BOPLIKTOMRAADE" ? (
               <>
-                <FlatedataTableHeader text="Merknad" {...sortHeaderProps("delvisBoplikt")} />
+                <FlatedataTableHeader text="Utstrekning" {...sortHeaderProps("delvisBoplikt")} />
                 <FlatedataTableHeader text="Forskriftsreferanse" {...sortHeaderProps("forskriftsreferanse")} />
                 <FlatedataTableHeader text="URL" {...sortHeaderProps("url")} />
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />

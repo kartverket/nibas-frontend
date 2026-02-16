@@ -1,5 +1,7 @@
+import { mapKommunalKretserResponseToKrets } from "hooks/inndelinger/useKommuneInndelinger";
 import { Feature } from "ol";
-import { useEffect } from "react";
+import { useCallback, useMemo } from "react";
+import { getApiPathForKommunalInndeling } from "utils/inndelinger-utils";
 import { useValgtGyldighetsdato } from "../../../../contexts/GyldighetsdatoContext";
 import { useInndelinger } from "../../../../contexts/InndelingerContext/InndelingerContext";
 import useNibasApi from "../../../../hooks/useNibasApi";
@@ -7,13 +9,13 @@ import { FeatureProperties } from "../../../../types/api";
 import {
   CustomOption,
   getKommunerIdFromKontekstEgenskaper,
+  getUpdatedKontekstEgenskaper,
   Tilhorighet,
   TilhorighetInndelingtype,
+  TilhorighetOptions,
   UseTilhorighet,
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
-import { mapKommunalKretserResponseToKrets } from "hooks/inndelinger/useKommuneInndelinger";
-import { getApiPathForKommunalInndeling } from "utils/inndelinger-utils";
 
 // Bopliktgrenser er ikke med i administrativ tilhorighet da de ikke deltar i delt geometri.
 type InndelingForAdministrativGrense = Exclude<TilhorighetInndelingtype, "BOPLIKTOMRAADE">;
@@ -47,14 +49,12 @@ export const useAdministrativTilhorighet = (
   inndelingType: InndelingForAdministrativGrense,
 ): UseTilhorighet => {
   const {
-    setTilhorighetOptions,
-    tilhorighetOptions,
     formState,
     setValue,
     isDirty,
     resetTilhorighet,
-    getCurrentOppdaterteKontekstEgenskaper,
-    isLoading,
+    buildTilhorighetOptions,
+    isLoading: isLoadingForm,
   } = useTilhorighetForm(feature, inndelingType);
   const { currentlyEditingInndelinger } = useInndelinger();
 
@@ -84,13 +84,25 @@ export const useAdministrativTilhorighet = (
     kommunerIds[1],
   );
 
-  useEffect(() => {
+  const tilhorighetOptions = useMemo(() => {
     const muligeKretser = muligeKretserA.concat(muligeKretserB);
-    setTilhorighetOptions({
+    if (muligeKretser.length === 0) {
+      return undefined;
+    }
+    const baseOptions: TilhorighetOptions = {
       [Tilhorighet.A]: muligeKretser,
       [Tilhorighet.B]: muligeKretser,
-    });
-  }, [muligeKretserA, muligeKretserB, setTilhorighetOptions]);
+    };
+    return buildTilhorighetOptions(baseOptions);
+  }, [muligeKretserA, muligeKretserB, buildTilhorighetOptions]);
+
+  const getCurrentOppdaterteKontekstEgenskaper = useCallback(
+    () =>
+      tilhorighetOptions != null
+        ? getUpdatedKontekstEgenskaper(inndelingType, formState[inndelingType], tilhorighetOptions)
+        : undefined,
+    [tilhorighetOptions, inndelingType, formState],
+  );
 
   return {
     inndelingType,
@@ -99,7 +111,7 @@ export const useAdministrativTilhorighet = (
     resetTilhorighet,
     formState,
     setValue,
-    isLoading: isLoadingA || isLoadingB || isLoading,
+    isLoading: isLoadingA || isLoadingB || isLoadingForm,
     getCurrentOppdaterteKontekstEgenskaper,
   };
 };

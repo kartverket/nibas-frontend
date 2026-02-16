@@ -13,7 +13,7 @@ import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import { FlatedataInputs, isValidUrl } from "./flatedata-utils";
-import InputCell, { MerknadCell, TableCell, URLInputCell } from "./FlatedataTableCells";
+import InputCell, { MerknadCell, SelectCell, TableCell, URLInputCell } from "./FlatedataTableCells";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type FremtidigEndringIconProps = {
@@ -269,12 +269,21 @@ export const FlatedataTableRow = ({
           {isStemmekretsInndeling(inndeling) && <TableCell>{inndeling.valgdistriktsnummer}</TableCell>}
           {isBopliktomraadeInndeling(inndeling) && (
             <>
-              <MerknadCell
+              <SelectCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
-                label="Delvis boplikt"
-                data={getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt}
-                {...register(`${inndelingId}.delvisBoplikt`)}
+                options={[
+                  { label: "Deler av kommunen", value: "true" },
+                  { label: "Hele kommunen", value: "false" },
+                ]}
+                data={
+                  (getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt)
+                    ? "Deler av kommunen"
+                    : "Hele kommunen"
+                }
+                {...register(`${inndelingId}.delvisBoplikt`, {
+                  setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
+                })}
               />
               <URLInputCell
                 isEditing={isEditing}
