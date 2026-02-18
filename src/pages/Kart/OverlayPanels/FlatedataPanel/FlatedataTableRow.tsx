@@ -2,7 +2,7 @@ import { Icon, Tooltip } from "@kvib/react";
 import { ValidationError } from "components/Input";
 import { HistoryDirection, MetadataEntry } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
-import { Control, FieldError, UseFormReturn, useFormState } from "react-hook-form";
+import { Control, Controller, FieldError, UseFormReturn, useFormState } from "react-hook-form";
 import { css, styled } from "styled-components";
 import { Inndelingtype, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -12,8 +12,15 @@ import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { FlatedataInputs, isValidUrl } from "./flatedata-utils";
-import InputCell, { MerknadCell, SelectCell, TableCell, URLInputCell } from "./FlatedataTableCells";
+import { FlatedataInputs, MaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
+import InputCell, {
+  MaterielleVilkaarOptions,
+  MerknadCell,
+  MultiSelectCell,
+  SelectCell,
+  TableCell,
+  URLInputCell,
+} from "./FlatedataTableCells";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type FremtidigEndringIconProps = {
@@ -313,6 +320,30 @@ export const FlatedataTableRow = ({
             data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
+          {isBopliktomraadeInndeling(inndeling) && (
+            <>
+              <Controller
+                control={control}
+                name={`${inndelingId}.materielleVilkaar`}
+                defaultValue={inndeling.materielleVilkaar ?? []}
+                render={({ field }) => (
+                  <MultiSelectCell
+                    isEditing={isEditing}
+                    isDisabled={disabledDate != null}
+                    options={MaterielleVilkaarOptions}
+                    data={field.value ?? []}
+                    onChange={(values: MaterielleVilkaarValue[]) => field.onChange(values)}
+                  />
+                )}
+              />
+              <InputCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                data={getValues(`${inndelingId}.andreAvgrensninger`) ?? inndeling.andreAvgrensninger ?? ""}
+                {...register(`${inndelingId}.andreAvgrensninger`)}
+              />
+            </>
+          )}
           {!isKommuneInndeling(inndeling) &&
             !isStemmekretsInndeling(inndeling) &&
             !isBopliktomraadeInndeling(inndeling) && (

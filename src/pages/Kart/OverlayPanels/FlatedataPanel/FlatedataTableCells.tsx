@@ -1,8 +1,21 @@
-import { Tag, Checkbox, FormControl, FormErrorMessage, Select, SelectProps, Link } from "@kvib/react";
+import {
+  Tag,
+  Checkbox,
+  FormControl,
+  FormErrorMessage,
+  Select,
+  SelectProps,
+  Link,
+  Wrap,
+  WrapItem,
+  Icon,
+  Box,
+} from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
+import ReactSelect, { MultiValue, OptionProps, components } from "react-select";
 import { styled } from "styled-components";
-import { isValidUrl } from "./flatedata-utils";
+import { MaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
 
 type InputProps = React.ComponentProps<typeof Input>;
 
@@ -105,5 +118,134 @@ export const SelectCell = forwardRef<HTMLSelectElement, SelectCellProps>(functio
     </TableCell>
   );
 });
+
+export const MaterielleVilkaarOptions: { value: MaterielleVilkaarValue; label: string }[] = [
+  { value: "BEBYGDEIENDOM", label: "Bebygd eiendom" },
+  { value: "IKKEHELAARSBOLIGUNDEROPPFORING", label: "Ikke helårsbolig under oppføring" },
+  { value: "UBEBYGDTOMT", label: "Ubebygd tomt" },
+  { value: "UNNTAKFRASLEKTSKAPSUNNTAK", label: "Unntak fra slektskapsunntak" },
+];
+
+type SelectOption = { value: MaterielleVilkaarValue; label: string };
+
+const OptionWithCheckmark = (props: OptionProps<SelectOption, true>) => {
+  return (
+    <components.Option {...props}>
+      <OptionContent>
+        <span>{props.label}</span>
+        {props.isSelected && <Icon icon="check" />}
+      </OptionContent>
+    </components.Option>
+  );
+};
+
+type MultiSelectCellProps = {
+  data: MaterielleVilkaarValue[];
+  options: SelectOption[];
+  isEditing: boolean;
+  isDisabled: boolean;
+  onChange: (values: MaterielleVilkaarValue[]) => void;
+};
+
+export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange }: MultiSelectCellProps) => {
+  const selectedOptions = options.filter((option) => data.includes(option.value));
+
+  const handleChange = (newValue: MultiValue<SelectOption>) => {
+    onChange(newValue.map((option) => option.value));
+  };
+
+  const selectedCount = selectedOptions.length;
+  const selectedLabels = selectedOptions.map((o) => o.label).join(", ");
+  const placeholderText = selectedCount > 0 ? `${selectedLabels} valgt` : "Ingen valgt";
+  const tooltipText = selectedCount > 0 ? placeholderText : undefined;
+
+  return (
+    <TableCell>
+      {isEditing ? (
+        <Box minWidth="200px">
+          <ReactSelect<SelectOption, true>
+            isMulti
+            isClearable={false}
+            value={selectedOptions}
+            options={options}
+            onChange={handleChange}
+            isDisabled={isDisabled}
+            placeholder={placeholderText}
+            noOptionsMessage={() => "Ingen alternativer"}
+            closeMenuOnSelect={false}
+            hideSelectedOptions={false}
+            controlShouldRenderValue={false}
+            components={{
+              Option: OptionWithCheckmark,
+              ClearIndicator: () => null,
+              IndicatorSeparator: () => null,
+              Placeholder: (props) => (
+                <components.Placeholder
+                  {...props}
+                  innerProps={{
+                    ...props.innerProps,
+                    title: tooltipText,
+                  }}
+                />
+              ),
+            }}
+            styles={{
+              control: (base) => ({
+                ...base,
+                minHeight: "32px",
+                fontSize: "14px",
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                padding: "0 8px",
+              }),
+              placeholder: (base) => ({
+                ...base,
+                color: selectedCount > 0 ? "#1A202C" : "A0AEC0",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "100%",
+              }),
+              indicatorsContainer: (base) => ({
+                ...base,
+                height: "30px",
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isSelected ? "#EFEFF1" : state.isFocused ? "#F7FAFC" : "white",
+                color: "inherit",
+                cursor: "pointer",
+                ":active": {
+                  backgroundColor: "#EDF2F7",
+                },
+              }),
+            }}
+          />
+        </Box>
+      ) : (
+        <Wrap spacing={1}>
+          {data.map((value) => {
+            const option = options.find((o) => o.value === value);
+            return option !== undefined ? (
+              <WrapItem key={value}>
+                <Tag colorScheme="gray" size="sm">
+                  {option.label}
+                </Tag>
+              </WrapItem>
+            ) : null;
+          })}
+        </Wrap>
+      )}
+    </TableCell>
+  );
+};
+
+const OptionContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
 
 export default InputCell;
