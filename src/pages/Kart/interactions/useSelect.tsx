@@ -2,7 +2,7 @@ import { useToast } from "@kvib/react";
 import { Feature, MapBrowserEvent } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { LineString } from "ol/geom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useFeatureStyle } from "../../../contexts/FeatureStyleContext/FeatureStyleContext";
 import { useOverlayPanel } from "../../../contexts/OverlayPanelContext";
 import { useOverlayPopup } from "../../../contexts/OverlayPopupContext";
@@ -55,7 +55,7 @@ const useSelect = () => {
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();
 
-  const select = (event: MapBrowserEvent<PointerEvent>) => {
+  const selectImpl = (event: MapBrowserEvent<PointerEvent>) => {
     if (
       !event.dragging &&
       !disallowedTools.includes(activeTool) &&
@@ -266,6 +266,13 @@ const useSelect = () => {
       }
     }
   };
+
+  // Holder en ref til select slik at vi kan oppdatere uavhengig av selve callbacken.
+  const selectImplRef = useRef(selectImpl);
+  selectImplRef.current = selectImpl;
+  const select = useCallback((event: MapBrowserEvent<PointerEvent>) => {
+    selectImplRef.current(event);
+  }, []);
 
   return { select };
 };

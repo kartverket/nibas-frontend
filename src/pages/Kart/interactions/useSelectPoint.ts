@@ -4,7 +4,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { Feature, MapBrowserEvent } from "ol";
 import LineString from "ol/geom/LineString";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { isFeatureEditable } from "utils/features";
 import { findNearbyVertexOnFeature, pixelDistance } from "utils/map/map-utils";
 import { pixelTolerance } from "./constants";
@@ -30,7 +30,7 @@ const useSelectPoint = () => {
     }
   }, [activeOverlayPanel, activeTool, clearSelection, closeOverlayPanel, selectedPoint]);
 
-  const selectPoint = (event: MapBrowserEvent<PointerEvent>) => {
+  const selectPointImpl = (event: MapBrowserEvent<PointerEvent>) => {
     if (!activeModeTools.includes("move") && allowedPointModes.includes(activeTool) && !event.dragging) {
       event.stopPropagation();
 
@@ -95,6 +95,13 @@ const useSelectPoint = () => {
       }
     }
   };
+
+  // Holder en ref til selectPoint slik at vi kan oppdatere uavhengig av selve callbacken.
+  const selectPointImplRef = useRef(selectPointImpl);
+  selectPointImplRef.current = selectPointImpl;
+  const selectPoint = useCallback((event: MapBrowserEvent<PointerEvent>) => {
+    selectPointImplRef.current(event);
+  }, []);
 
   return { selectPoint };
 };
