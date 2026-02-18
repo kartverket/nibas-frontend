@@ -1179,7 +1179,7 @@ export interface components {
         | "UBEBYGDTOMT"
         | "UNNTAKFRASLEKTSKAPSUNNTAK"
       )[];
-      /** @description Andre avgrensninger av bopliktsområdet */
+      /** @description Andre avgrensninger */
       andreAvgrensninger?: string;
       /** @description Lenke til mer informasjon */
       url?: string;
@@ -1567,7 +1567,7 @@ export interface components {
         | "UBEBYGDTOMT"
         | "UNNTAKFRASLEKTSKAPSUNNTAK"
       )[];
-      /** @description Andre avgrensninger av bopliktsområdet */
+      /** @description Andre avgrensninger */
       andreAvgrensninger?: string;
       /** @description URL til informasjon om boplikten */
       url?: string;

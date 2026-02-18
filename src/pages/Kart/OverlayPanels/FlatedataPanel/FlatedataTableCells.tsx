@@ -9,6 +9,7 @@ import {
   Wrap,
   WrapItem,
   Icon,
+  Box,
 } from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
@@ -154,14 +155,17 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
   };
 
   const selectedCount = selectedOptions.length;
-  const placeholderText = selectedCount > 0 ? `${selectedOptions.map((o) => o.label).join(", ")} valgt` : "Velg...";
+  const selectedLabels = selectedOptions.map((o) => o.label).join(", ");
+  const placeholderText = selectedCount > 0 ? `${selectedLabels} valgt` : "Ingen valgt";
+  const tooltipText = selectedCount > 0 ? placeholderText : undefined;
 
   return (
     <TableCell>
       {isEditing ? (
-        <MultiSelectContainer>
+        <Box minWidth="200px">
           <ReactSelect<SelectOption, true>
             isMulti
+            isClearable={false}
             value={selectedOptions}
             options={options}
             onChange={handleChange}
@@ -171,7 +175,20 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
             closeMenuOnSelect={false}
             hideSelectedOptions={false}
             controlShouldRenderValue={false}
-            components={{ Option: OptionWithCheckmark }}
+            components={{
+              Option: OptionWithCheckmark,
+              ClearIndicator: () => null,
+              IndicatorSeparator: () => null,
+              Placeholder: (props) => (
+                <components.Placeholder
+                  {...props}
+                  innerProps={{
+                    ...props.innerProps,
+                    title: tooltipText,
+                  }}
+                />
+              ),
+            }}
             styles={{
               control: (base) => ({
                 ...base,
@@ -184,25 +201,19 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
               }),
               placeholder: (base) => ({
                 ...base,
-                color: selectedCount > 0 ? "#1A202C" : "#A0AEC0",
-              }),
-              input: (base) => ({
-                ...base,
-                margin: 0,
-                padding: 0,
+                color: selectedCount > 0 ? "#1A202C" : "A0AEC0",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxWidth: "100%",
               }),
               indicatorsContainer: (base) => ({
                 ...base,
-                height: "32px",
-              }),
-              menu: (base) => ({
-                ...base,
-                zIndex: 9999,
+                height: "30px",
               }),
               option: (base, state) => ({
                 ...base,
-                backgroundColor: state.isSelected ? "#E2E8F0" : state.isFocused ? "#F7FAFC" : "white",
-                fontWeight: state.isSelected ? 600 : 400,
+                backgroundColor: state.isSelected ? "#EFEFF1" : state.isFocused ? "#F7FAFC" : "white",
                 color: "inherit",
                 cursor: "pointer",
                 ":active": {
@@ -211,7 +222,7 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
               }),
             }}
           />
-        </MultiSelectContainer>
+        </Box>
       ) : (
         <Wrap spacing={1}>
           {data.map((value) => {
@@ -229,10 +240,6 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
     </TableCell>
   );
 };
-
-const MultiSelectContainer = styled.div`
-  min-width: 200px;
-`;
 
 const OptionContent = styled.div`
   display: flex;
