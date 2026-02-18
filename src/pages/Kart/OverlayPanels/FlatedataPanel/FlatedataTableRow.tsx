@@ -12,8 +12,15 @@ import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { FlatedataInputs, isValidUrl } from "./flatedata-utils";
-import InputCell, { MerknadCell, SelectCell, TableCell, URLInputCell } from "./FlatedataTableCells";
+import { FlatedataInputs, MaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
+import InputCell, {
+  MaterielleVilkaarOptions,
+  MerknadCell,
+  MultiSelectCell,
+  SelectCell,
+  TableCell,
+  URLInputCell,
+} from "./FlatedataTableCells";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type FremtidigEndringIconProps = {
@@ -313,6 +320,25 @@ export const FlatedataTableRow = ({
             data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
+          {isBopliktomraadeInndeling(inndeling) && (
+            <>
+              <MultiSelectCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                options={MaterielleVilkaarOptions}
+                data={getValues(`${inndelingId}.materiellevilkaar`) ?? inndeling.materiellevilkaar ?? []}
+                onChange={(values: MaterielleVilkaarValue[]) => {
+                  setValue(`${inndelingId}.materiellevilkaar`, values);
+                }}
+              />
+              <InputCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                data={getValues(`${inndelingId}.andreavgrensninger`) ?? inndeling.andreavgrensninger ?? ""}
+                {...register(`${inndelingId}.andreavgrensninger`)}
+              />
+            </>
+          )}
           {!isKommuneInndeling(inndeling) &&
             !isStemmekretsInndeling(inndeling) &&
             !isBopliktomraadeInndeling(inndeling) && (

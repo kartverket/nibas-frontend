@@ -29,7 +29,7 @@ const sortablePropertiesByInndelingtype = {
     "forskriftsreferanse",
     "url",
     "informasjon",
-    "materielleVilkaar",
+    "materiellevilkaar",
     "andreavgrensninger",
   ] as const,
 } satisfies Record<FlatedataTableInndelingtype, ResponseProperty[]>;

@@ -1,8 +1,9 @@
-import { Tag, Checkbox, FormControl, FormErrorMessage, Select, SelectProps, Link } from "@kvib/react";
+import { Tag, Checkbox, FormControl, FormErrorMessage, Select, SelectProps, Link, Wrap, WrapItem } from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
+import ReactSelect, { MultiValue } from "react-select";
 import { styled } from "styled-components";
-import { isValidUrl } from "./flatedata-utils";
+import { MaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
 
 type InputProps = React.ComponentProps<typeof Input>;
 
@@ -105,5 +106,109 @@ export const SelectCell = forwardRef<HTMLSelectElement, SelectCellProps>(functio
     </TableCell>
   );
 });
+
+export const MaterielleVilkaarOptions: { value: MaterielleVilkaarValue; label: string }[] = [
+  { value: "BEBYGDEIENDOM", label: "Bebygd eiendom" },
+  { value: "IKKEHELAARSBOLIGUNDEROPPFORING", label: "Ikke helårsbolig under oppføring" },
+  { value: "UBEBYGDTOMT", label: "Ubebygd tomt" },
+  { value: "UNNTAKFRASLEKTSKAPSUNNTAK", label: "Unntak fra slektskapsunntak" },
+];
+
+type SelectOption = { value: MaterielleVilkaarValue; label: string };
+
+type MultiSelectCellProps = {
+  data: MaterielleVilkaarValue[];
+  options: SelectOption[];
+  isEditing: boolean;
+  isDisabled: boolean;
+  onChange: (values: MaterielleVilkaarValue[]) => void;
+};
+
+export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange }: MultiSelectCellProps) => {
+  const selectedOptions = options.filter((option) => data.includes(option.value));
+
+  const handleChange = (newValue: MultiValue<SelectOption>) => {
+    onChange(newValue.map((option) => option.value));
+  };
+
+  const selectedCount = selectedOptions.length;
+  const placeholderText = selectedCount > 0 ? `${selectedCount} valgt` : "Velg...";
+
+  return (
+    <TableCell>
+      {isEditing ? (
+        <MultiSelectContainer>
+          <ReactSelect<SelectOption, true>
+            isMulti
+            value={selectedOptions}
+            options={options}
+            onChange={handleChange}
+            isDisabled={isDisabled}
+            placeholder={placeholderText}
+            noOptionsMessage={() => "Ingen alternativer"}
+            closeMenuOnSelect={false}
+            hideSelectedOptions={false}
+            controlShouldRenderValue={false}
+            styles={{
+              control: (base) => ({
+                ...base,
+                minHeight: "32px",
+                fontSize: "14px",
+              }),
+              valueContainer: (base) => ({
+                ...base,
+                padding: "0 8px",
+              }),
+              placeholder: (base) => ({
+                ...base,
+                color: selectedCount > 0 ? "#1A202C" : "#A0AEC0",
+              }),
+              input: (base) => ({
+                ...base,
+                margin: 0,
+                padding: 0,
+              }),
+              indicatorsContainer: (base) => ({
+                ...base,
+                height: "32px",
+              }),
+              menu: (base) => ({
+                ...base,
+                zIndex: 9999,
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: state.isSelected ? "#E2E8F0" : state.isFocused ? "#F7FAFC" : "white",
+                fontWeight: state.isSelected ? 600 : 400,
+                color: "inherit",
+                cursor: "pointer",
+                ":active": {
+                  backgroundColor: "#EDF2F7",
+                },
+              }),
+            }}
+          />
+        </MultiSelectContainer>
+      ) : (
+        <Wrap spacing={1}>
+          {data.map((value) => {
+            const option = options.find((o) => o.value === value);
+            return option !== undefined ? (
+              <WrapItem key={value}>
+                <Tag colorScheme="gray" size="sm">
+                  {option.label}
+                </Tag>
+              </WrapItem>
+            ) : null;
+          })}
+        </Wrap>
+      )}
+    </TableCell>
+  );
+};
+
+const MultiSelectContainer = styled.div`
+  min-width: 200px;
+`;
 
 export default InputCell;

@@ -156,7 +156,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <FlatedataTableHeader text="Forskriftsreferanse" {...sortHeaderProps("forskriftsreferanse")} />
                 <FlatedataTableHeader text="URL" {...sortHeaderProps("url")} />
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
-                <FlatedataTableHeader text="Materielle vilkår" {...sortHeaderProps("materielleVilkaar")} />
+                <FlatedataTableHeader text="Materielle vilkår" {...sortHeaderProps("materiellevilkaar")} />
                 <FlatedataTableHeader text="Andre avgrensninger" {...sortHeaderProps("andreavgrensninger")} />
               </>
             ) : (
@@ -235,7 +235,7 @@ const Container = styled(TabPanel)`
 
 const Table = styled.table`
   display: grid;
-  grid-template-columns: auto auto auto auto auto auto 1fr auto;
+  grid-template-columns: auto auto auto auto auto auto auto auto 1fr auto;
   grid-auto-rows: max-content;
   width: 100%;
   overflow: auto;
