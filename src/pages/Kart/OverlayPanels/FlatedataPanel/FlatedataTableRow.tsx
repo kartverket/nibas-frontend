@@ -2,7 +2,7 @@ import { Icon, Tooltip } from "@kvib/react";
 import { ValidationError } from "components/Input";
 import { HistoryDirection, MetadataEntry } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
-import { Control, FieldError, UseFormReturn, useFormState } from "react-hook-form";
+import { Control, Controller, FieldError, UseFormReturn, useFormState } from "react-hook-form";
 import { css, styled } from "styled-components";
 import { Inndelingtype, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -322,14 +322,19 @@ export const FlatedataTableRow = ({
           />
           {isBopliktomraadeInndeling(inndeling) && (
             <>
-              <MultiSelectCell
-                isEditing={isEditing}
-                isDisabled={disabledDate != null}
-                options={MaterielleVilkaarOptions}
-                data={getValues(`${inndelingId}.materiellevilkaar`) ?? inndeling.materiellevilkaar ?? []}
-                onChange={(values: MaterielleVilkaarValue[]) => {
-                  setValue(`${inndelingId}.materiellevilkaar`, values);
-                }}
+              <Controller
+                control={control}
+                name={`${inndelingId}.materiellevilkaar`}
+                defaultValue={inndeling.materiellevilkaar ?? []}
+                render={({ field }) => (
+                  <MultiSelectCell
+                    isEditing={isEditing}
+                    isDisabled={disabledDate != null}
+                    options={MaterielleVilkaarOptions}
+                    data={field.value ?? []}
+                    onChange={(values: MaterielleVilkaarValue[]) => field.onChange(values)}
+                  />
+                )}
               />
               <InputCell
                 isEditing={isEditing}

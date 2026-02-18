@@ -1,7 +1,18 @@
-import { Tag, Checkbox, FormControl, FormErrorMessage, Select, SelectProps, Link, Wrap, WrapItem } from "@kvib/react";
+import {
+  Tag,
+  Checkbox,
+  FormControl,
+  FormErrorMessage,
+  Select,
+  SelectProps,
+  Link,
+  Wrap,
+  WrapItem,
+  Icon,
+} from "@kvib/react";
 import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
-import ReactSelect, { MultiValue } from "react-select";
+import ReactSelect, { MultiValue, OptionProps, components } from "react-select";
 import { styled } from "styled-components";
 import { MaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
 
@@ -116,6 +127,17 @@ export const MaterielleVilkaarOptions: { value: MaterielleVilkaarValue; label: s
 
 type SelectOption = { value: MaterielleVilkaarValue; label: string };
 
+const OptionWithCheckmark = (props: OptionProps<SelectOption, true>) => {
+  return (
+    <components.Option {...props}>
+      <OptionContent>
+        <span>{props.label}</span>
+        {props.isSelected && <Icon icon="check" />}
+      </OptionContent>
+    </components.Option>
+  );
+};
+
 type MultiSelectCellProps = {
   data: MaterielleVilkaarValue[];
   options: SelectOption[];
@@ -132,7 +154,7 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
   };
 
   const selectedCount = selectedOptions.length;
-  const placeholderText = selectedCount > 0 ? `${selectedCount} valgt` : "Velg...";
+  const placeholderText = selectedCount > 0 ? `${selectedOptions.map((o) => o.label).join(", ")} valgt` : "Velg...";
 
   return (
     <TableCell>
@@ -149,6 +171,7 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
             closeMenuOnSelect={false}
             hideSelectedOptions={false}
             controlShouldRenderValue={false}
+            components={{ Option: OptionWithCheckmark }}
             styles={{
               control: (base) => ({
                 ...base,
@@ -209,6 +232,13 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
 
 const MultiSelectContainer = styled.div`
   min-width: 200px;
+`;
+
+const OptionContent = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 `;
 
 export default InputCell;
