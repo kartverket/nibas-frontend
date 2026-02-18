@@ -324,8 +324,8 @@ export const FlatedataTableRow = ({
             <>
               <Controller
                 control={control}
-                name={`${inndelingId}.materiellevilkaar`}
-                defaultValue={inndeling.materiellevilkaar ?? []}
+                name={`${inndelingId}.materielleVilkaar`}
+                defaultValue={inndeling.materielleVilkaar ?? []}
                 render={({ field }) => (
                   <MultiSelectCell
                     isEditing={isEditing}
@@ -339,8 +339,8 @@ export const FlatedataTableRow = ({
               <InputCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
-                data={getValues(`${inndelingId}.andreavgrensninger`) ?? inndeling.andreavgrensninger ?? ""}
-                {...register(`${inndelingId}.andreavgrensninger`)}
+                data={getValues(`${inndelingId}.andreAvgrensninger`) ?? inndeling.andreAvgrensninger ?? ""}
+                {...register(`${inndelingId}.andreAvgrensninger`)}
               />
             </>
           )}

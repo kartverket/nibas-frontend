@@ -290,14 +290,14 @@ export interface components {
       /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
       delvisBoplikt: boolean;
       /** @description Materielle vilkår for bopliktområdet */
-      materiellevilkaar: (
+      materielleVilkaar: (
         | "BEBYGDEIENDOM"
         | "IKKEHELAARSBOLIGUNDEROPPFORING"
         | "UBEBYGDTOMT"
         | "UNNTAKFRASLEKTSKAPSUNNTAK"
       )[];
       /** @description Andre avgrensninger */
-      andreavgrensninger?: string;
+      andreAvgrensninger?: string;
       /** @description Referanse til forskriften for bopliktomraadet */
       forskriftsreferanse?: string;
       /** @description URL til kommunen sin informasjonside */
@@ -1173,14 +1173,14 @@ export interface components {
       /** @description Forskriftsreferansen for bopliktområdet */
       forskriftsreferanse?: string;
       /** @description Materielle vilkår for bopliktområdet */
-      materiellevilkaar: (
+      materielleVilkaar: (
         | "BEBYGDEIENDOM"
         | "IKKEHELAARSBOLIGUNDEROPPFORING"
         | "UBEBYGDTOMT"
         | "UNNTAKFRASLEKTSKAPSUNNTAK"
       )[];
-      /** @description andreavgrensninger */
-      andreavgrensninger?: string;
+      /** @description Andre avgrensninger av bopliktsområdet */
+      andreAvgrensninger?: string;
       /** @description Lenke til mer informasjon */
       url?: string;
     };
@@ -1561,14 +1561,14 @@ export interface components {
       /** @description Forskriftsreferanse til boplikten */
       forskriftsreferanse?: string;
       /** @description Materielle vilkår for bopliktområdet */
-      materiellevilkaar: (
+      materielleVilkaar: (
         | "BEBYGDEIENDOM"
         | "IKKEHELAARSBOLIGUNDEROPPFORING"
         | "UBEBYGDTOMT"
         | "UNNTAKFRASLEKTSKAPSUNNTAK"
       )[];
-      /** @description andreavgrensninger */
-      andreavgrensninger?: string;
+      /** @description Andre avgrensninger av bopliktsområdet */
+      andreAvgrensninger?: string;
       /** @description URL til informasjon om boplikten */
       url?: string;
       /** @description Geometrien til bopliktområdet, dvs representasjonspunkt og flaten */

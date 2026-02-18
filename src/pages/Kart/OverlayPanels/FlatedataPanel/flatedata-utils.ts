@@ -41,8 +41,8 @@ type BopliktomraadeInput = {
   forskriftsreferanse: string;
   url: string;
   informasjon: string;
-  materiellevilkaar: MaterielleVilkaarValue[];
-  andreavgrensninger: string;
+  materielleVilkaar: MaterielleVilkaarValue[];
+  andreAvgrensninger: string;
 };
 
 export type { MaterielleVilkaarValue };
@@ -63,8 +63,8 @@ const isBopliktomraadeInput = (
   "forskriftsreferanse" in value &&
   "url" in value &&
   "informasjon" in value &&
-  "materiellevilkaar" in value &&
-  "andreavgrensninger" in value;
+  "materielleVilkaar" in value &&
+  "andreAvgrensninger" in value;
 
 const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
@@ -133,8 +133,8 @@ const getRequestFromInputs = (
           forskriftsreferanse: data.forskriftsreferanse,
           url: data.url,
           informasjon: data.informasjon !== "" ? data.informasjon : undefined,
-          materiellevilkaar: data.materiellevilkaar,
-          andreavgrensninger: data.andreavgrensninger !== "" ? data.andreavgrensninger : undefined,
+          materielleVilkaar: data.materielleVilkaar,
+          andreAvgrensninger: data.andreAvgrensninger !== "" ? data.andreAvgrensninger : undefined,
         };
         return bopliktomraadeRequest;
       }
@@ -170,9 +170,9 @@ export const reduceFlatedataChanges = (
           return accumulator;
         }
       } else if (isBopliktomraadeInput(oldValues) && isBopliktomraadeInput(newValues)) {
-        const materiellevilkaarUnchanged =
-          newValues.materiellevilkaar.length === oldValues.materiellevilkaar.length &&
-          newValues.materiellevilkaar.every((v) => oldValues.materiellevilkaar.includes(v));
+        const materielleVilkaarUnchanged =
+          newValues.materielleVilkaar.length === oldValues.materielleVilkaar.length &&
+          newValues.materielleVilkaar.every((v) => oldValues.materielleVilkaar.includes(v));
         if (
           newValues.nummer === oldValues.nummer &&
           newValues.navn === oldValues.navn &&
@@ -180,8 +180,8 @@ export const reduceFlatedataChanges = (
           newValues.forskriftsreferanse === oldValues.forskriftsreferanse &&
           newValues.url === oldValues.url &&
           newValues.informasjon === oldValues.informasjon &&
-          materiellevilkaarUnchanged &&
-          newValues.andreavgrensninger === oldValues.andreavgrensninger
+          materielleVilkaarUnchanged &&
+          newValues.andreAvgrensninger === oldValues.andreAvgrensninger
         ) {
           return accumulator;
         }
