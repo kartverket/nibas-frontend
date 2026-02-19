@@ -312,16 +312,6 @@ export const FlatedataTableRow = ({
                   inndelingErrors != null && "url" in inndelingErrors ? validationError(inndelingErrors.url) : undefined
                 }
               />
-            </>
-          )}
-          <InputCell
-            isEditing={isEditing}
-            isDisabled={disabledDate != null}
-            data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
-            {...register(`${inndelingId}.informasjon`)}
-          />
-          {isBopliktomraadeInndeling(inndeling) && (
-            <>
               <Controller
                 control={control}
                 name={`${inndelingId}.materielleVilkaar`}
@@ -344,6 +334,12 @@ export const FlatedataTableRow = ({
               />
             </>
           )}
+          <InputCell
+            isEditing={isEditing}
+            isDisabled={disabledDate != null}
+            data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
+            {...register(`${inndelingId}.informasjon`)}
+          />
           {!isKommuneInndeling(inndeling) &&
             !isStemmekretsInndeling(inndeling) &&
             !isBopliktomraadeInndeling(inndeling) && (
