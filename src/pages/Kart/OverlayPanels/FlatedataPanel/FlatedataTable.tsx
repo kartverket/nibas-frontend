@@ -135,6 +135,8 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
+                <th></th>
               </>
             ) : mainInndeling.inndelingtype === "STEMMEKRETS" ? (
               <>
@@ -142,10 +144,14 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <FlatedataTableHeader text="Tellekretsnavn" {...sortHeaderProps("tellekretsnavn")} />
                 <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
+                <th></th>
+                <th></th>
               </>
             ) : mainInndeling.inndelingtype === "GRUNNKRETS" ? (
               <>
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
+                <th></th>
+                <th></th>
                 <th></th>
                 <th></th>
                 <th></th>

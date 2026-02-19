@@ -212,6 +212,8 @@ export const FlatedataTableRow = ({
           <td></td>
           <td></td>
           <td></td>
+          <td></td>
+          <td></td>
         </>
       ) : (
         <>
@@ -239,41 +241,49 @@ export const FlatedataTableRow = ({
             {...register(`${inndelingId}.navn`, disabledDate == null ? registerOptions.navn : undefined)}
           />
           {isStemmekretsInndeling(inndeling) && (
-            <InputCell
-              isEditing={isEditing}
-              isDisabled={disabledDate != null}
-              data={getValues(`${inndelingId}.tellekretsnummer`) ?? inndeling.tellekretsnummer}
-              validationError={
-                inndelingErrors != null && "tellekretsnummer" in inndelingErrors
-                  ? validationError(inndelingErrors.tellekretsnummer)
-                  : undefined
-              }
-              {...register(
-                `${inndelingId}.tellekretsnummer`,
-                disabledDate == null ? tellekretsRegisterOptions.nummer : undefined,
-              )}
-            />
-          )}
-          {isStemmekretsInndeling(inndeling) && (
-            <InputCell
-              isEditing={isEditing}
-              isDisabled={disabledDate != null}
-              data={getValues(`${inndelingId}.tellekretsnavn`) ?? inndeling.tellekretsnavn}
-              validationError={
-                inndelingErrors != null && "tellekretsnavn" in inndelingErrors
-                  ? validationError(inndelingErrors.tellekretsnavn)
-                  : undefined
-              }
-              {...tellekretsnavnRegister}
-              onChange={(e) => {
-                tellekretsnavnRegister.onChange(e);
-                if (isSubmitted) {
-                  trigger(allInndelinger.map((i) => getIdFromEntity(i).concat(".tellekretsnavn")));
+            <>
+              <InputCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                data={getValues(`${inndelingId}.tellekretsnummer`) ?? inndeling.tellekretsnummer}
+                validationError={
+                  inndelingErrors != null && "tellekretsnummer" in inndelingErrors
+                    ? validationError(inndelingErrors.tellekretsnummer)
+                    : undefined
                 }
-              }}
-            />
+                {...register(
+                  `${inndelingId}.tellekretsnummer`,
+                  disabledDate == null ? tellekretsRegisterOptions.nummer : undefined,
+                )}
+              />
+              <InputCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                data={getValues(`${inndelingId}.tellekretsnavn`) ?? inndeling.tellekretsnavn}
+                validationError={
+                  inndelingErrors != null && "tellekretsnavn" in inndelingErrors
+                    ? validationError(inndelingErrors.tellekretsnavn)
+                    : undefined
+                }
+                {...tellekretsnavnRegister}
+                onChange={(e) => {
+                  tellekretsnavnRegister.onChange(e);
+                  if (isSubmitted) {
+                    trigger(allInndelinger.map((i) => getIdFromEntity(i).concat(".tellekretsnavn")));
+                  }
+                }}
+              />
+              <TableCell>{inndeling.valgdistriktsnummer}</TableCell>
+              <InputCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
+                {...register(`${inndelingId}.informasjon`)}
+              />
+              <td></td>
+              <td></td>
+            </>
           )}
-          {isStemmekretsInndeling(inndeling) && <TableCell>{inndeling.valgdistriktsnummer}</TableCell>}
           {isBopliktomraadeInndeling(inndeling) && (
             <>
               <SelectCell
@@ -308,6 +318,12 @@ export const FlatedataTableRow = ({
                   inndelingErrors != null && "url" in inndelingErrors ? validationError(inndelingErrors.url) : undefined
                 }
               />
+              <InputCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
+                {...register(`${inndelingId}.informasjon`)}
+              />
               <Controller
                 control={control}
                 name={`${inndelingId}.materielleVilkaar`}
@@ -330,16 +346,18 @@ export const FlatedataTableRow = ({
               />
             </>
           )}
-          <InputCell
-            isEditing={isEditing}
-            isDisabled={disabledDate != null}
-            data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
-            {...register(`${inndelingId}.informasjon`)}
-          />
           {!isKommuneInndeling(inndeling) &&
             !isStemmekretsInndeling(inndeling) &&
             !isBopliktomraadeInndeling(inndeling) && (
               <>
+                <InputCell
+                  isEditing={isEditing}
+                  isDisabled={disabledDate != null}
+                  data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
+                  {...register(`${inndelingId}.informasjon`)}
+                />
+                <td></td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
