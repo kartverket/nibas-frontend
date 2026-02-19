@@ -12,7 +12,7 @@ import { getNavnInSpraak } from "utils/language/language";
 import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
-import { FlatedataInputs, MaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
+import { FlatedataInputs, isValidUrl } from "./flatedata-utils";
 import InputCell, {
   MaterielleVilkaarOptions,
   MerknadCell,
@@ -332,7 +332,7 @@ export const FlatedataTableRow = ({
                     isDisabled={disabledDate != null}
                     options={MaterielleVilkaarOptions}
                     data={field.value ?? []}
-                    onChange={(values: MaterielleVilkaarValue[]) => field.onChange(values)}
+                    onChange={field.onChange}
                   />
                 )}
               />

@@ -8,6 +8,7 @@ import {
   MetadataRequest,
   MetadataResponse,
   StemmekretsRequest,
+  MaterielleVilkaar,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
@@ -28,12 +29,7 @@ type StemmekretsInputs = { [inndelingId: string]: StemmekretsInput };
 type GrunnkretsInput = { navn: string; nummer: string; informasjon: string };
 type GrunnkretsInputs = { [inndelingId: string]: GrunnkretsInput };
 
-type MaterielleVilkaarValue =
-  | "BEBYGDEIENDOM"
-  | "IKKEHELAARSBOLIGUNDEROPPFORING"
-  | "UBEBYGDTOMT"
-  | "UNNTAKFRASLEKTSKAPSUNNTAK";
-
+export type MaterielleVilkaarValue = MaterielleVilkaar[number];
 type BopliktomraadeInput = {
   navn: string;
   nummer: string;
@@ -41,11 +37,10 @@ type BopliktomraadeInput = {
   forskriftsreferanse: string;
   url: string;
   informasjon: string;
-  materielleVilkaar: MaterielleVilkaarValue[];
+  materielleVilkaar: MaterielleVilkaar;
   andreAvgrensninger: string;
 };
 
-export type { MaterielleVilkaarValue };
 type BopliktomraadeInputs = { [inndelingId: string]: BopliktomraadeInput };
 
 export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs | BopliktomraadeInputs;
@@ -180,7 +175,7 @@ export const reduceFlatedataChanges = (
           newValues.forskriftsreferanse === oldValues.forskriftsreferanse &&
           newValues.url === oldValues.url &&
           newValues.informasjon === oldValues.informasjon &&
-          materielleVilkaarUnchanged &&
+          materielleVilkaarUnchanged === true &&
           newValues.andreAvgrensninger === oldValues.andreAvgrensninger
         ) {
           return accumulator;

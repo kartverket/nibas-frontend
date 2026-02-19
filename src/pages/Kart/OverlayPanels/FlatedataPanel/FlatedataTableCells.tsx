@@ -16,6 +16,7 @@ import { forwardRef } from "react";
 import ReactSelect, { MultiValue, OptionProps, components } from "react-select";
 import { styled } from "styled-components";
 import { MaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
+import { MaterielleVilkaar } from "types/api";
 
 type InputProps = React.ComponentProps<typeof Input>;
 
@@ -140,7 +141,7 @@ const OptionWithCheckmark = (props: OptionProps<SelectOption, true>) => {
 };
 
 type MultiSelectCellProps = {
-  data: MaterielleVilkaarValue[];
+  data: MaterielleVilkaar;
   options: SelectOption[];
   isEditing: boolean;
   isDisabled: boolean;
@@ -148,7 +149,7 @@ type MultiSelectCellProps = {
 };
 
 export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange }: MultiSelectCellProps) => {
-  const selectedOptions = options.filter((option) => data.includes(option.value));
+  const selectedOptions = options.filter((option) => data.includes(option.value) === true);
 
   const handleChange = (newValue: MultiValue<SelectOption>) => {
     onChange(newValue.map((option) => option.value));
