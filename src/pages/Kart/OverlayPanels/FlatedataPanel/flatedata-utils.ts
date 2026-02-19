@@ -8,6 +8,7 @@ import {
   MetadataRequest,
   MetadataResponse,
   StemmekretsRequest,
+  MaterielleVilkaar,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
@@ -28,6 +29,7 @@ type StemmekretsInputs = { [inndelingId: string]: StemmekretsInput };
 type GrunnkretsInput = { navn: string; nummer: string; informasjon: string };
 type GrunnkretsInputs = { [inndelingId: string]: GrunnkretsInput };
 
+export type MaterielleVilkaarValue = MaterielleVilkaar[number];
 type BopliktomraadeInput = {
   navn: string;
   nummer: string;
@@ -35,7 +37,10 @@ type BopliktomraadeInput = {
   forskriftsreferanse: string;
   url: string;
   informasjon: string;
+  materielleVilkaar: MaterielleVilkaar;
+  andreAvgrensninger: string;
 };
+
 type BopliktomraadeInputs = { [inndelingId: string]: BopliktomraadeInput };
 
 export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs | BopliktomraadeInputs;
@@ -49,7 +54,12 @@ const isStemmekretsInput = (value: KommuneInput | StemmekretsInput | GrunnkretsI
 const isBopliktomraadeInput = (
   value: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
 ): value is BopliktomraadeInput =>
-  "delvisBoplikt" in value && "forskriftsreferanse" in value && "url" in value && "informasjon" in value;
+  "delvisBoplikt" in value &&
+  "forskriftsreferanse" in value &&
+  "url" in value &&
+  "informasjon" in value &&
+  "materielleVilkaar" in value &&
+  "andreAvgrensninger" in value;
 
 const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
@@ -118,6 +128,8 @@ const getRequestFromInputs = (
           forskriftsreferanse: data.forskriftsreferanse,
           url: data.url,
           informasjon: data.informasjon !== "" ? data.informasjon : undefined,
+          materielleVilkaar: data.materielleVilkaar,
+          andreAvgrensninger: data.andreAvgrensninger !== "" ? data.andreAvgrensninger : undefined,
         };
         return bopliktomraadeRequest;
       }
@@ -152,14 +164,19 @@ export const reduceFlatedataChanges = (
         ) {
           return accumulator;
         }
-      } else if (isBopliktomraadeInput(oldValues)) {
+      } else if (isBopliktomraadeInput(oldValues) && isBopliktomraadeInput(newValues)) {
+        const materielleVilkaarUnchanged =
+          newValues.materielleVilkaar.length === oldValues.materielleVilkaar.length &&
+          newValues.materielleVilkaar.every((v) => oldValues.materielleVilkaar.includes(v));
         if (
           newValues.nummer === oldValues.nummer &&
           newValues.navn === oldValues.navn &&
           newValues.delvisBoplikt === oldValues.delvisBoplikt &&
           newValues.forskriftsreferanse === oldValues.forskriftsreferanse &&
           newValues.url === oldValues.url &&
-          newValues.informasjon === oldValues.informasjon
+          newValues.informasjon === oldValues.informasjon &&
+          materielleVilkaarUnchanged === true &&
+          newValues.andreAvgrensninger === oldValues.andreAvgrensninger
         ) {
           return accumulator;
         }
