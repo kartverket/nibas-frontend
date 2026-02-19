@@ -113,7 +113,7 @@ export const SelectCell = forwardRef<HTMLSelectElement, SelectCellProps>(functio
         </Select>
       ) : (
         <Tag colorScheme="gray" size="md">
-          {data}
+          {options.find((o) => o.value === data)?.label ?? data}
         </Tag>
       )}
     </TableCell>

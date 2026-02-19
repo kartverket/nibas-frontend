@@ -283,11 +283,7 @@ export const FlatedataTableRow = ({
                   { label: "Deler av kommunen", value: "true" },
                   { label: "Hele kommunen", value: "false" },
                 ]}
-                data={
-                  (getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt)
-                    ? "Deler av kommunen"
-                    : "Hele kommunen"
-                }
+                data={(getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt) ? "true" : "false"}
                 {...register(`${inndelingId}.delvisBoplikt`, {
                   setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
                 })}
