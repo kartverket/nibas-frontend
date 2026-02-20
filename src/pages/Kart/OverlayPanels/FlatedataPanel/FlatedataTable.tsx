@@ -220,7 +220,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 : "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
         }
       >
-        Rediger flatedetaljer
+        Rediger flateinformasjon
       </FlatedataFooter>
     </Container>
   );

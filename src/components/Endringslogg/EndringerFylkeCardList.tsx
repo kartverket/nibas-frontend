@@ -14,7 +14,7 @@ export const EndringerFylkeCardList = ({ endringer }: EndringerFylkeListProps) =
   }
 
   return (
-    <EndringCard title="Endring av flatedetaljer">
+    <EndringCard title="Endring av flateinformasjon">
       {nameChanges.map((namechange) => (
         <ChangeToFromRow
           withBadge

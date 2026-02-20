@@ -298,9 +298,9 @@ const Toolbar = () => {
                 onClick={() => toggleOverlayModal("flatedata")}
                 isActive={activeOverlayModal === "flatedata"}
                 isDisabled={!flatedataIsAvailable}
-                aria-label="Se flatedetaljer"
+                aria-label="Se flateinformasjon"
                 tooltip={{
-                  text: "Se flatedetaljer",
+                  text: "Se flateinformasjon",
                   additionalInfo: !flatedataIsAvailable
                     ? "Forhåndsvis en inndeling for å aktivere verktøyet"
                     : undefined,

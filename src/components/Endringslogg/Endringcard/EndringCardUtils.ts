@@ -7,8 +7,8 @@ export const getTitleForEndringstype = (endringstype: AllEndringTypes): string =
       return "Arkiverte grenser";
     case "deling":
       return "Delinger av kretser";
-    case "flatedetaljer":
-      return "Endring av flatedetaljer";
+    case "flateinformasjon":
+      return "Endring av flateinformasjon";
     case "grenseendring":
       return "Endringer på grenser";
     case "grenseinformasjon":
