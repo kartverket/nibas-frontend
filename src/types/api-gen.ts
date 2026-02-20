@@ -287,8 +287,17 @@ export interface components {
       version: number;
       /** @description informasjon om bopliktomraade */
       informasjon?: string;
-      /** @description Indikrerer om bopliktomraadet dekker deler av kommunen eller ikke */
+      /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
       delvisBoplikt: boolean;
+      /** @description Materielle vilkår for bopliktområdet */
+      materielleVilkaar: (
+        | "BEBYGDEIENDOM"
+        | "IKKEHELAARSBOLIGUNDEROPPFORING"
+        | "UBEBYGDTOMT"
+        | "UNNTAKFRASLEKTSKAPSUNNTAK"
+      )[];
+      /** @description Andre avgrensninger */
+      andreAvgrensninger?: string;
       /** @description Referanse til forskriften for bopliktomraadet */
       forskriftsreferanse?: string;
       /** @description URL til kommunen sin informasjonside */
@@ -569,13 +578,10 @@ export interface components {
     };
     /** @description Wrapper-objekt rundt en JTS LineString. */
     LineString: components["schemas"]["Geometry"] & {
-      /** @description Geometriens type. Diskriminator. */
-      type?: string;
       /** @description Liste av (x og y som liste). */
       coordinates?: number[][];
     } & {
       coordinates: unknown;
-      type: unknown;
     };
     Lokalid: {
       value: string;
@@ -611,13 +617,10 @@ export interface components {
     };
     /** @description Wrapper-objekt rundt et JTS MultiPolygon. */
     MultiPolygon: components["schemas"]["Geometry"] & {
-      /** @description Geometriens type. Diskriminator. */
-      type?: string;
       /** @description Liste av polygonenes liste av LinearRings som igjen har liste av koordinater som er liste av x og y. */
       coordinates?: number[][][][];
     } & {
       coordinates: unknown;
-      type: unknown;
     };
     NasjonRequest: {
       /** @description Navnene til nasjonen */
@@ -664,13 +667,10 @@ export interface components {
     };
     /** @description Wrapper-objekt rundt en JTS Point. */
     Point: components["schemas"]["Geometry"] & {
-      /** @description Geometriens type. Diskriminator. */
-      type?: string;
       /** @description X og y som liste. */
       coordinates?: number[];
     } & {
       coordinates: unknown;
-      type: unknown;
     };
     Posisjonskvalitet: {
       /** @description Metode for måling i grunnriss (x,y), og høyde (z) når metoden er den samme som ved måling i grunnriss. */
@@ -1172,6 +1172,15 @@ export interface components {
       delvisBoplikt?: boolean;
       /** @description Forskriftsreferansen for bopliktområdet */
       forskriftsreferanse?: string;
+      /** @description Materielle vilkår for bopliktområdet */
+      materielleVilkaar: (
+        | "BEBYGDEIENDOM"
+        | "IKKEHELAARSBOLIGUNDEROPPFORING"
+        | "UBEBYGDTOMT"
+        | "UNNTAKFRASLEKTSKAPSUNNTAK"
+      )[];
+      /** @description Andre avgrensninger */
+      andreAvgrensninger?: string;
       /** @description Lenke til mer informasjon */
       url?: string;
     };
@@ -1199,9 +1208,9 @@ export interface components {
       y?: number;
       /** Format: double */
       z?: number;
-      valid?: boolean;
       /** Format: double */
       m?: number;
+      valid?: boolean;
       coordinate?: components["schemas"]["Coordinate"];
     };
     InndelingSearchResponse: {
@@ -1551,6 +1560,15 @@ export interface components {
       informasjon?: string;
       /** @description Forskriftsreferanse til boplikten */
       forskriftsreferanse?: string;
+      /** @description Materielle vilkår for bopliktområdet */
+      materielleVilkaar: (
+        | "BEBYGDEIENDOM"
+        | "IKKEHELAARSBOLIGUNDEROPPFORING"
+        | "UBEBYGDTOMT"
+        | "UNNTAKFRASLEKTSKAPSUNNTAK"
+      )[];
+      /** @description Andre avgrensninger */
+      andreAvgrensninger?: string;
       /** @description URL til informasjon om boplikten */
       url?: string;
       /** @description Geometrien til bopliktområdet, dvs representasjonspunkt og flaten */

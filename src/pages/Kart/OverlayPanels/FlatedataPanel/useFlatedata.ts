@@ -81,7 +81,17 @@ const addHistoryChangesToMetadata = (
       return metadataresponses.map((metadatareponse) => {
         const change = changes.findLast((c) => c.id === metadatareponse.id.lokalid.value);
         if (change != null) {
-          return { ...metadatareponse, navn: change.to.navn, nummer: change.to.nummer } as MetadataResponse;
+          return {
+            ...metadatareponse,
+            navn: change.to.navn,
+            nummer: change.to.nummer,
+            delvisBoplikt: change.to.delvisBoplikt,
+            forskriftsreferanse: change.to.forskriftsreferanse,
+            url: change.to.url,
+            informasjon: change.to.informasjon,
+            materielleVilkaar: change.to.materielleVilkaar,
+            andreAvgrensninger: change.to.andreAvgrensninger,
+          } as MetadataResponse;
         }
         return metadatareponse;
       });
