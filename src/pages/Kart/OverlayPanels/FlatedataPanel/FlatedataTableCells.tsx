@@ -157,7 +157,7 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
 
   const selectedCount = selectedOptions.length;
   const selectedLabels = selectedOptions.map((o) => o.label).join(", ");
-  const placeholderText = selectedCount > 0 ? `${selectedLabels} valgt` : "Ingen valgt";
+  const placeholderText = selectedCount > 0 ? `${selectedLabels}` : "Ingen valgt";
   const tooltipText = selectedCount > 0 ? placeholderText : undefined;
 
   return (
