@@ -172,13 +172,13 @@ const ToolbarMenus = () => {
   ];
   const flateMenuItems: MenuItems = [
     {
-      label: "Flatedetaljer",
+      label: "Flateinformasjon",
       icon: <Icon icon="menu_book" />,
       command: KeyboardShortcuts["flatedata"].displayString,
       $isActive: activeOverlayModal === "flatedata",
       isDisabled: !flatedataIsAvailable,
       onClick: () => toggleOverlayModal("flatedata"),
-      "aria-label": "Se eller endre flatedetaljer",
+      "aria-label": "Se eller endre flateinformasjon",
     },
     {
       label: "Slå sammen flater",
