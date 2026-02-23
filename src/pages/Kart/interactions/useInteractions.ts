@@ -1,6 +1,7 @@
 import { Tool, useToolbar } from "contexts/ToolbarContext";
 import { VectorLayerId } from "hooks/layers/types";
 import { MapBrowserEvent } from "ol";
+import { ListenerFunction } from "ol/events";
 import { shiftKeyOnly } from "ol/events/condition";
 import { map } from "pages/Kart/constants";
 import { useEffect, useRef } from "react";
@@ -12,7 +13,6 @@ import useMeasure from "./useMeasure";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useSelectPoint from "./useSelectPoint";
-import { ListenerFunction } from "ol/events";
 const useInteractions = () => {
   const { modify } = useModify();
   const { dragPan, dragZoom } = useDragInteractions();
@@ -22,6 +22,21 @@ const useInteractions = () => {
   const { selectPoint } = useSelectPoint();
   const { activeModeTools, activeTool } = useToolbar();
   const kartlagSnapData = useRef<Record<VectorLayerId, SnapData | null>>();
+
+  // Quick fix for å hindre at view-state blir en avhenigighet i useEffect-dependecies for andre interactions.
+  const isMovingRef = useRef(false);
+  useEffect(() => {
+    const onMoveStart = () => (isMovingRef.current = true);
+    const onMoveEnd = () => (isMovingRef.current = false);
+
+    map.on("movestart", onMoveStart);
+    map.on("moveend", onMoveEnd);
+
+    return () => {
+      map.un("movestart", onMoveStart);
+      map.un("moveend", onMoveEnd);
+    };
+  }, []);
 
   const crosshairCursorTools: Tool[] = ["draw", "add", "remove", "measure", null];
   const pointerCursorTools: Tool[] = [
@@ -93,15 +108,18 @@ const useInteractions = () => {
     map.addInteraction(dragZoom);
 
     // snaps må legges til etter modify og draw interactions
-    kartlagSnapData.current = createKartlagSnapsData(activeModeTools, activeTool);
-    Object.values(kartlagSnapData.current).forEach((snapData) => {
-      if (snapData?.snap) {
-        map.addInteraction(snapData.snap);
-      }
-      if (snapData?.hover) {
-        map.addInteraction(snapData.hover);
-      }
-    });
+    // Vi legger kun til snapping hvis bruker er i edit-mode og ikke beveger seg.
+    if (isMovingRef.current === false && activeModeTools.includes("move") === false) {
+      kartlagSnapData.current = createKartlagSnapsData(activeModeTools, activeTool);
+      Object.values(kartlagSnapData.current).forEach((snapData) => {
+        if (snapData?.snap) {
+          map.addInteraction(snapData.snap);
+        }
+        if (snapData?.hover) {
+          map.addInteraction(snapData.hover);
+        }
+      });
+    }
 
     return () => {
       map.un("click", select as ListenerFunction);
