@@ -12,7 +12,7 @@ export const EndringerKommuneCardList = ({ endringer }: EndringerKommuneListProp
 
   return (
     <>
-      <EndringToFromCard type="flatedetaljer" changes={navnOgNummerChanges} />
+      <EndringToFromCard type="flateinformasjon" changes={navnOgNummerChanges} />
       {sammenslaaing != null && (
         <EndringToFromCard
           type="sammenslåing"
