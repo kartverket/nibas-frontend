@@ -15,57 +15,23 @@ import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
 import { getRepresentasjonspunktId } from "./source";
 import { FEATURE_VISIBLE_PROPERTY } from "contexts/KartlagContext/kartlag-utils";
-import { cachedEndpointsMultiPointKey, cachedNonEndpointsMultiPointKey } from "pages/Kart/interactions/constants";
 
 export const endpointStyleZIndex = 9999;
 
-type RevisedMultiPoint = {
-  multiPoint: MultiPoint;
-  revision: number;
-};
-
-const getCachedEndpointsMultiPoint = (feature: FeatureLike): RevisedMultiPoint | undefined => {
-  return feature.get(cachedEndpointsMultiPointKey) as RevisedMultiPoint | undefined;
-};
-
-const getCachedNonEndpointsMultiPoint = (feature: FeatureLike): RevisedMultiPoint | undefined => {
-  return feature.get(cachedNonEndpointsMultiPointKey) as RevisedMultiPoint | undefined;
-};
-
-// Vi trenger kun å faktisk finne endepunkter hvis featuren har endret seg. Ellers bruker vi cachet resultat.
-export const getNonEndpointsOnFeature = (feature: FeatureLike): MultiPoint | undefined => {
+export const getNonEndpointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
-  if (geometry instanceof LineString && feature instanceof Feature) {
-    const cachedNonEndpointsMultiPoint = getCachedNonEndpointsMultiPoint(feature);
-    const revision = geometry.getRevision();
-    if (cachedNonEndpointsMultiPoint != null && cachedNonEndpointsMultiPoint.revision === revision) {
-      return cachedNonEndpointsMultiPoint.multiPoint;
-    } else {
-      const coordinates = geometry.getCoordinates();
-      const newNonEndpointsMultiPoint = new MultiPoint(coordinates.slice(1, -1));
-      feature.set(cachedNonEndpointsMultiPointKey, { multiPoint: newNonEndpointsMultiPoint, revision: revision }, true); // true for å ikke trigge event ved oppdatering av dette feltet
-      return newNonEndpointsMultiPoint;
-    }
+  if (geometry instanceof LineString) {
+    const coordinates = geometry.getCoordinates();
+    return new MultiPoint(coordinates.slice(1, -1));
   }
-  return undefined;
 };
 
-// Vi trenger kun å faktisk finne endepunkter hvis featuren har endret seg. Ellers bruker vi cachet resultat.
-export const getEndPointsOnFeature = (feature: FeatureLike): MultiPoint | undefined => {
+export const getEndPointsOnFeature = (feature: FeatureLike) => {
   const geometry = feature.getGeometry();
-  if (geometry instanceof LineString && feature instanceof Feature) {
+  if (geometry instanceof LineString) {
     const endCoordinates = [geometry.getFirstCoordinate(), geometry.getLastCoordinate()];
-    const cachedEndpointsMultiPoint = getCachedEndpointsMultiPoint(feature);
-    const revision = geometry.getRevision();
-    if (cachedEndpointsMultiPoint != null && cachedEndpointsMultiPoint.revision === revision) {
-      return cachedEndpointsMultiPoint.multiPoint;
-    } else {
-      const newEndpointsMultiPoint = new MultiPoint(endCoordinates);
-      feature.set(cachedEndpointsMultiPointKey, { multiPoint: newEndpointsMultiPoint, revision: revision }, true); // true for å ikke trigge event ved oppdatering av dette feltet
-      return newEndpointsMultiPoint;
-    }
+    return new MultiPoint(endCoordinates);
   }
-  return undefined;
 };
 
 const lineAndPointStyles = ({
