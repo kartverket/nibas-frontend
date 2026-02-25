@@ -40,7 +40,7 @@ export const mockFylker: FylkeResponse[] = [
         shouldArchive: false,
       },
       geometry: {
-        type: "",
+        type: "LineString",
         coordinates: [],
       },
     },
@@ -78,7 +78,7 @@ export const mockFylker: FylkeResponse[] = [
         shouldArchive: false,
       },
       geometry: {
-        type: "",
+        type: "LineString",
         coordinates: [],
       },
     },

@@ -6,8 +6,17 @@ import { Coordinate, equals } from "ol/coordinate";
 import { Geometry, LineString } from "ol/geom";
 import { previousCoordinateKey } from "pages/Kart/interactions/constants";
 import { getTempFeatureId, isNonEditableFeatureId, isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { FeatureProperties, KontekstEgenskaper, Metadata, Posisjonskvalitet } from "types/api";
-import { MetadataDiscriminator, getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
+import {
+  CommonGrenseMetadata,
+  CommonMetadata,
+  DokumentasjonsreferanseDTO,
+  FeatureProperties,
+  KontekstEgenskaper,
+  Metadata,
+  MetadataDiscriminator,
+  Posisjonskvalitet,
+} from "types/api";
+import { getMetadataDiscriminatorFromType, isAdministrativGrense } from "./grenser";
 import { removeNil } from "./list-utils";
 import { getRepresentasjonspunktId } from "./map/source";
 import { isGrenseType, isNotNil } from "./type-utils";
@@ -343,8 +352,7 @@ export const isFeatureDeadEnd = (feature: Feature<Geometry>, allFeatureEndpoints
 };
 
 const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metadata => {
-  return {
-    discriminator: discriminator,
+  const metadata = {
     common: {
       gyldigFra: new Date().toISOString(),
       identifikasjon: {
@@ -364,8 +372,54 @@ const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metada
         noeyaktighet: undefined,
       },
     },
-    dokumentasjonsreferanser: [],
   };
+  switch (discriminator) {
+    case "StatistiskgrenseMetadata":
+    case "KommunalKretsgrenseMetadata":
+      return { ...metadata, discriminator, dokumentasjonsreferanser: undefined };
+    case "AdministrativGrenseMetadata":
+    case "AvtaltAvgrensningslinjeMetadata":
+    case "GrunnlinjeMetadata":
+    case "RiksgrenseMetadata":
+    case "TerritorialgrenseMetadata":
+      return { ...metadata, discriminator, dokumentasjonsreferanser: [] };
+  }
+};
+
+export const withUpdatedDokumentasjonsreferanser = (
+  metadata: Metadata,
+  dokumentasjonsreferanser: DokumentasjonsreferanseDTO[],
+): Metadata => {
+  switch (metadata.discriminator) {
+    case "StatistiskgrenseMetadata":
+    case "KommunalKretsgrenseMetadata":
+      return metadata;
+    case "AdministrativGrenseMetadata":
+    case "AvtaltAvgrensningslinjeMetadata":
+    case "GrunnlinjeMetadata":
+    case "RiksgrenseMetadata":
+    case "TerritorialgrenseMetadata":
+      return { ...metadata, dokumentasjonsreferanser };
+  }
+};
+
+export const withUpdatedMetadataCommonFields = (
+  existing: Metadata,
+  discriminator: MetadataDiscriminator,
+  common: CommonMetadata,
+  commonGrense: CommonGrenseMetadata,
+): Metadata => {
+  switch (discriminator) {
+    case "StatistiskgrenseMetadata":
+    case "KommunalKretsgrenseMetadata":
+      return { discriminator, common, commonGrense, dokumentasjonsreferanser: undefined };
+    case "AdministrativGrenseMetadata":
+    case "AvtaltAvgrensningslinjeMetadata":
+    case "GrunnlinjeMetadata":
+    case "RiksgrenseMetadata":
+    case "TerritorialgrenseMetadata":
+      return { discriminator, common, commonGrense, dokumentasjonsreferanser: existing.dokumentasjonsreferanser ?? [] };
+  }
 };
 
 export const getDefaultFeatureProperties = (grenseType: GrenseType): FeatureProperties | null => {

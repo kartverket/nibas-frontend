@@ -17,7 +17,7 @@ type GetPathParameters<T extends ApiPath> = paths[T] extends {
 // hvis pathen eksponererer et get-kall med query-parametere, returner typen til disse
 type GetQueryParameters<T extends ApiPath> = paths[T] extends {
   get: {
-    parameters: { query: infer U };
+    parameters: { query?: infer U };
   };
 }
   ? U extends Record<string, unknown>
