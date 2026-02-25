@@ -1,6 +1,7 @@
 import { Feature } from "ol";
 import { useForm } from "react-hook-form";
 import { DokumentasjonsreferanseDTO, FeatureProperties, Metadata } from "types/api";
+import { withUpdatedDokumentasjonsreferanser } from "utils/features";
 import { VedtakinfoForm, Referanse } from "../GrenseinformasjonPanel/Vedtaksinformasjon/Vedtaksinformasjon";
 import { LineString } from "ol/geom";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -167,10 +168,11 @@ export const useVedtaksinfoForm = (feature: Feature, vedtak?: Dokumentasjonsrefe
     if (isTempDokrefId(vedtak.id)) {
       // Vedtaksinformasjonen er ikke tidligere publisert. Fjern fra front end
       const updatedDokrefs = oldDokrefs.filter((dokref) => dokref.id !== vedtak.id);
-      addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
-        ...metadata,
-        dokumentasjonsreferanser: updatedDokrefs,
-      });
+      addMetadataEntryFromFeature(
+        feature as Feature<LineString>,
+        addHistoryEntry,
+        withUpdatedDokumentasjonsreferanser(metadata, updatedDokrefs),
+      );
     } else {
       // Arkiver eksisterende dokumentasjonsreferanse
       const dokrefsCopy = structuredClone(oldDokrefs);
@@ -178,10 +180,11 @@ export const useVedtaksinfoForm = (feature: Feature, vedtak?: Dokumentasjonsrefe
       if (dokrefsCopy[selectedVedtakIndex] != null) {
         dokrefsCopy[selectedVedtakIndex].shouldArchive = true;
       }
-      addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
-        ...metadata,
-        dokumentasjonsreferanser: dokrefsCopy,
-      });
+      addMetadataEntryFromFeature(
+        feature as Feature<LineString>,
+        addHistoryEntry,
+        withUpdatedDokumentasjonsreferanser(metadata, dokrefsCopy),
+      );
     }
 
     return true;
@@ -199,10 +202,11 @@ export const useVedtaksinfoForm = (feature: Feature, vedtak?: Dokumentasjonsrefe
       vedtaksinfo.id = createUniqueIshValue(16);
       dokrefsCopy.push(vedtaksinfo);
 
-      addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
-        ...metadata,
-        dokumentasjonsreferanser: dokrefsCopy,
-      });
+      addMetadataEntryFromFeature(
+        feature as Feature<LineString>,
+        addHistoryEntry,
+        withUpdatedDokumentasjonsreferanser(metadata, dokrefsCopy),
+      );
     } else {
       // Oppdaterer eksisterende dokumentasjonsreferanse
       const oldDokrefs: DokumentasjonsreferanseDTO[] = metadata.dokumentasjonsreferanser
@@ -212,10 +216,11 @@ export const useVedtaksinfoForm = (feature: Feature, vedtak?: Dokumentasjonsrefe
       const selectedVedtakIndex = dokrefsCopy.findIndex((dokref) => dokref.id === vedtak.id);
       dokrefsCopy[selectedVedtakIndex] = vedtaksinfo;
 
-      addMetadataEntryFromFeature(feature as Feature<LineString>, addHistoryEntry, {
-        ...metadata,
-        dokumentasjonsreferanser: dokrefsCopy,
-      });
+      addMetadataEntryFromFeature(
+        feature as Feature<LineString>,
+        addHistoryEntry,
+        withUpdatedDokumentasjonsreferanser(metadata, dokrefsCopy),
+      );
     }
   };
 

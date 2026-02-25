@@ -7,6 +7,7 @@ import { FeatureProperties, Metadata } from "types/api";
 import { getMetadataDiscriminatorFromType } from "utils/grenser";
 import { getGrensetypeFromString } from "utils/type-utils";
 import { addFeaturePropertiesEntryFromFeature } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
+import { withUpdatedMetadataCommonFields } from "utils/features";
 
 type GrenseinformasjonFormProps = {
   grenseType: string;
@@ -59,11 +60,10 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
         return;
       } // errorhåndtering på noe vis her
 
-      // Vi trenger sårt MetadataRequest/MetadataUpdate her. Merker det er veldig knotete å sende inn en request på metadata for felter som backenden *egentlig*
-      // ikke trenger blir likevel satt som påkrevd fra klienten. Må gjøre unødvendig spreading på common og sette en fallback på maalemetode.href på grunn av dette
-      const newMetadata: Metadata = {
-        ...metadata,
-        common: {
+      const newMetadata = withUpdatedMetadataCommonFields(
+        metadata,
+        metadataDiscriminator,
+        {
           ...commonMetadata,
           datafangstdato: data.datafangstDato
             ? formatISO(startOfDay(data.datafangstDato))
@@ -71,7 +71,7 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
           informasjon: data.informasjon,
           opphav: data.opphav,
         },
-        commonGrense: {
+        {
           posisjonskvalitet: {
             maalemetode: {
               id: data.maalemetode,
@@ -80,9 +80,7 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
             noeyaktighet: data.noeyaktighet,
           },
         },
-        discriminator: metadataDiscriminator,
-        dokumentasjonsreferanser: metadata.dokumentasjonsreferanser,
-      };
+      );
 
       const newProperties: FeatureProperties = {
         ...featureProperties,
