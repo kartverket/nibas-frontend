@@ -162,7 +162,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <FlatedataTableHeader text="Forskriftsreferanse" {...sortHeaderProps("forskriftsreferanse")} />
                 <FlatedataTableHeader text="URL" {...sortHeaderProps("url")} />
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
-                <FlatedataTableHeader text="Materielle vilkår" {...sortHeaderProps("materielleVilkaar")} />
+                <FlatedataTableHeader text="Gjeldende materielle vilkår" {...sortHeaderProps("materielleVilkaar")} />
                 <FlatedataTableHeader text="Andre avgrensninger" {...sortHeaderProps("andreAvgrensninger")} />
               </>
             ) : (
