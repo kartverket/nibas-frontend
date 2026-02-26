@@ -56,7 +56,7 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
       const featureProperties = feature.getProperties() as FeatureProperties;
       const metadata = featureProperties.metadata as Metadata;
       const commonMetadata = metadata.common;
-      if (!metadataDiscriminator || !commonMetadata) {
+      if (metadataDiscriminator == null || commonMetadata == null) {
         return;
       } // errorhåndtering på noe vis her
 
