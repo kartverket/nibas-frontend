@@ -23,21 +23,6 @@ const useInteractions = () => {
   const { activeModeTools, activeTool } = useToolbar();
   const kartlagSnapData = useRef<Record<VectorLayerId, SnapData | null>>();
 
-  // Quick fix for å hindre at view-state blir en avhenigighet i useEffect-dependecies for andre interactions.
-  const isMovingRef = useRef(false);
-  useEffect(() => {
-    const onMoveStart = () => (isMovingRef.current = true);
-    const onMoveEnd = () => (isMovingRef.current = false);
-
-    map.on("movestart", onMoveStart);
-    map.on("moveend", onMoveEnd);
-
-    return () => {
-      map.un("movestart", onMoveStart);
-      map.un("moveend", onMoveEnd);
-    };
-  }, []);
-
   const crosshairCursorTools: Tool[] = ["draw", "add", "remove", "measure", null];
   const pointerCursorTools: Tool[] = [
     "archive",
@@ -108,8 +93,8 @@ const useInteractions = () => {
     map.addInteraction(dragZoom);
 
     // snaps må legges til etter modify og draw interactions
-    // Vi legger kun til snapping hvis bruker er i edit-mode og ikke beveger seg.
-    if (isMovingRef.current === false && activeModeTools.includes("move") === false) {
+    // Vi legger kun til snapping hvis bruker er i edit-mode.
+    if (activeModeTools.includes("move") === false) {
       kartlagSnapData.current = createKartlagSnapsData(activeModeTools, activeTool);
       Object.values(kartlagSnapData.current).forEach((snapData) => {
         if (snapData?.snap) {
