@@ -1,4 +1,5 @@
 import { GrenseType } from "hooks/layers/types";
+import { MetadataDiscriminator } from "types/api";
 
 const administrativeGrenser: GrenseType[] = [
   "Kommunegrense",
@@ -17,16 +18,6 @@ export const isBopliktGrense = (grenseType: GrenseType): boolean => grenseType =
 export const isKommuneGrense = (grenseType: GrenseType): boolean => grenseType === "Kommunegrense";
 
 export const isFylkesGrense = (grenseType: GrenseType): boolean => grenseType === "Fylkesgrense";
-
-export type MetadataDiscriminator =
-  | "FlateMetadata"
-  | "AdministrativGrenseMetadata"
-  | "RiksgrenseMetadata"
-  | "TerritorialgrenseMetadata"
-  | "AvtaltAvgrensningslinjeMetadata"
-  | "GrunnlinjeMetadata"
-  | "StatistiskgrenseMetadata"
-  | "KommunalKretsgrenseMetadata";
 
 export const getMetadataDiscriminatorFromType = (grenseType: GrenseType): MetadataDiscriminator => {
   switch (grenseType) {
