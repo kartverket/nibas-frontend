@@ -83,15 +83,21 @@ type TerritorialgrenseMetadata = components["schemas"]["TerritorialgrenseMetadat
 type StatistiskGrenseMetadata = components["schemas"]["StatistiskgrenseMetadata"] & {
   dokumentasjonsreferanser: undefined;
 };
+type KommunalKretsgrenseMetadata = components["schemas"]["KommunalKretsgrenseMetadata"] & {
+  dokumentasjonsreferanser: undefined;
+};
+export type CommonMetadata = components["schemas"]["CommonMetadata"];
+export type CommonGrenseMetadata = components["schemas"]["CommonGrenseMetadata"];
 export type Posisjonskvalitet = components["schemas"]["CommonGrenseMetadata"]["posisjonskvalitet"];
-
 export type Metadata =
   | AvtaltAvgrensningslinjeMetadata
   | AdministrativGrenseMetadata
   | GrunnlinjeMetadata
   | RiksgrenseMetadata
   | TerritorialgrenseMetadata
-  | StatistiskGrenseMetadata;
+  | StatistiskGrenseMetadata
+  | KommunalKretsgrenseMetadata;
+export type MetadataDiscriminator = Metadata["discriminator"];
 
 export type KontekstEgenskaper = components["schemas"]["KontekstEgenskaper"];
 export type FeatureProperties = components["schemas"]["FeatureProperties"] & {
