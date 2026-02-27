@@ -144,7 +144,7 @@ const InndelingerPanel = () => {
             </InndelingerList>
             <Divider orientation="vertical" />
 
-            <InndelingerList>
+            <KommunerColumn>
               <Search
                 autoFocus={activePanelFylkeId != null}
                 disabled={activePanelFylkeId == null || selectedInndelingtype == null}
@@ -152,46 +152,48 @@ const InndelingerPanel = () => {
                 placeholder="Søk etter navn eller nummer"
                 onChange={(e) => setInputValue(e.currentTarget.value)}
               />
-              {kommuner != null
-                ? activePanelFylkeId != null &&
-                  selectedInndelingtype &&
-                  kommuner
-                    .filter((kommune) =>
-                      kommune.nummer
-                        .concat(" ", getNavnInSpraak(kommune.navn, "nor"))
-                        .toLowerCase()
-                        .includes(inputValue.toLowerCase().trim()),
-                    )
-                    .map((kommune) => {
-                      const kommuneId = getIdFromEntity(kommune);
+              <InndelingerList>
+                {kommuner != null
+                  ? activePanelFylkeId != null &&
+                    selectedInndelingtype &&
+                    kommuner
+                      .filter((kommune) =>
+                        kommune.nummer
+                          .concat(" ", getNavnInSpraak(kommune.navn, "nor"))
+                          .toLowerCase()
+                          .includes(inputValue.toLowerCase().trim()),
+                      )
+                      .map((kommune) => {
+                        const kommuneId = getIdFromEntity(kommune);
 
-                      const kommuneInndeling: BaseInndeling = {
-                        id: kommuneId,
-                        nummer: kommune.nummer,
-                        navn: kommune.navn,
-                        inndelingtype: selectedInndelingtype,
-                      };
-                      return (
-                        <InndelingOption
-                          key={kommuneId}
-                          isActive={isInndelingSelected(selectedInndelingtype, kommuneId) ?? false}
-                          onClick={() => toggleKommune(kommuneInndeling)}
-                          type={
-                            selectedInndelingtype === "KOMMUNE" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"
-                          }
-                        >
-                          {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
-                        </InndelingOption>
-                      );
-                    })
-                : kommunerIsLoading && (
-                    <InndelingSpinnerContainer>
-                      <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
-                    </InndelingSpinnerContainer>
-                  )}
-            </InndelingerList>
+                        const kommuneInndeling: BaseInndeling = {
+                          id: kommuneId,
+                          nummer: kommune.nummer,
+                          navn: kommune.navn,
+                          inndelingtype: selectedInndelingtype,
+                        };
+                        return (
+                          <InndelingOption
+                            key={kommuneId}
+                            isActive={isInndelingSelected(selectedInndelingtype, kommuneId) ?? false}
+                            onClick={() => toggleKommune(kommuneInndeling)}
+                            type={
+                              selectedInndelingtype === "KOMMUNE" ? "checkbox" : isEditingPanel ? "radio" : "checkbox"
+                            }
+                          >
+                            {`${kommune.nummer} ${getNavnInSpraak(kommune.navn, "nor")}`}
+                          </InndelingOption>
+                        );
+                      })
+                  : kommunerIsLoading && (
+                      <InndelingSpinnerContainer>
+                        <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
+                      </InndelingSpinnerContainer>
+                    )}
+              </InndelingerList>
+            </KommunerColumn>
           </InndelingerLayout>
-          <Divider></Divider>
+          <Divider />
           <ButtonContainer>
             <Link
               size={"md"}
@@ -254,4 +256,7 @@ const InndelingerList = styled.section`
   padding: 4px;
 `;
 
+const KommunerColumn = styled(InndelingerList)`
+  overflow: hidden;
+`;
 export default InndelingerPanel;
