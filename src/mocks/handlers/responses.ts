@@ -123,6 +123,7 @@ export const mockGeoJsonFeatureResponse: GeoJSONFeatureCollection = {
                 href: "",
               },
               noeyaktighet: 5,
+              usikkerAvgrensning: false,
             },
             fastsettingstype: { id: "", href: "" },
             grensestatus: { id: "", href: "" },

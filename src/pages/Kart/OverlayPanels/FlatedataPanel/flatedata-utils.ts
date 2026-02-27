@@ -34,6 +34,7 @@ type BopliktomraadeInput = {
   navn: string;
   nummer: string;
   delvisBoplikt: boolean;
+  usikkerAvgrensning: boolean;
   forskriftsreferanse: string;
   url: string;
   informasjon: string;
@@ -125,6 +126,7 @@ const getRequestFromInputs = (
           navn: data.navn,
           nummer: data.nummer,
           delvisBoplikt: data.delvisBoplikt,
+          usikkerAvgrensning: data.usikkerAvgrensning,
           forskriftsreferanse: data.forskriftsreferanse,
           url: data.url,
           informasjon: data.informasjon !== "" ? data.informasjon : undefined,
@@ -172,6 +174,7 @@ export const reduceFlatedataChanges = (
           newValues.nummer === oldValues.nummer &&
           newValues.navn === oldValues.navn &&
           newValues.delvisBoplikt === oldValues.delvisBoplikt &&
+          newValues.usikkerAvgrensning === oldValues.usikkerAvgrensning &&
           newValues.forskriftsreferanse === oldValues.forskriftsreferanse &&
           newValues.url === oldValues.url &&
           newValues.informasjon === oldValues.informasjon &&

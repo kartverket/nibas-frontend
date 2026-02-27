@@ -14,6 +14,7 @@ type GrenseinformasjonFormProps = {
   datafangstDato: Date | undefined;
   maalemetode: string | undefined;
   noeyaktighet: number | undefined;
+  usikkerAvgrensning: boolean | undefined;
   opphav: string | undefined;
   informasjon: string | undefined;
 };
@@ -30,6 +31,7 @@ const getDefaultValuesFromFeature = (feature: Feature): GrenseinformasjonFormPro
     informasjon: metadata.common?.informasjon,
     maalemetode: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
     noeyaktighet: metadata.commonGrense?.posisjonskvalitet?.noeyaktighet,
+    usikkerAvgrensning: metadata.commonGrense?.posisjonskvalitet?.usikkerAvgrensning,
     opphav: metadata.common?.opphav,
   };
 };
@@ -78,6 +80,8 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
               href: metadata.commonGrense?.posisjonskvalitet?.maalemetode.href ?? "",
             },
             noeyaktighet: data.noeyaktighet,
+            usikkerAvgrensning:
+              data.usikkerAvgrensning ?? metadata.commonGrense?.posisjonskvalitet?.usikkerAvgrensning ?? false,
           },
         },
       );
