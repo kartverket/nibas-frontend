@@ -65,7 +65,7 @@
     "@eslint-react/eslint-plugin": "^2.13.0",
     "@eslint/compat": "^2.0.2",
     "@eslint/eslintrc": "^3.3.4",
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^10.0.1",
     "@grafana/faro-react": "^2.2.4",
     "@testing-library/jest-dom": "~6.9.1",
     "@testing-library/react": "^16.3.2",
