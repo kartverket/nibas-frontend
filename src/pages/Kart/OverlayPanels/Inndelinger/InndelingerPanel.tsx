@@ -17,6 +17,7 @@ import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import useFylker from "hooks/inndelinger/useFylker";
 import useKommuner from "hooks/inndelinger/useKommuner";
 import useSearch from "hooks/useSearch";
+import { useEffect } from "react";
 import { styled } from "styled-components";
 import { Inndelingtype, INNDELINGTYPE_VALUES } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -25,8 +26,6 @@ import { getNavnInSpraak } from "utils/language/language";
 import { ModalPanel, PanelHeader } from "../Panel";
 import InndelingOption from "./InndelingOption";
 import useInndelingerPanel from "./useInndelingerPanel";
-import { usePrevious } from "hooks/usePrevious";
-import { useEffect } from "react";
 
 const InndelingerPanel = () => {
   const { closeOverlayModal } = useOverlayPanel();
@@ -55,13 +54,9 @@ const InndelingerPanel = () => {
     activePanelFylkeId != null,
   );
 
-  const prevActivePanelFylkeId = usePrevious(activePanelFylkeId);
-  const prevSelectedInndelingtype = usePrevious(selectedInndelingtype);
   useEffect(() => {
-    if (prevActivePanelFylkeId !== activePanelFylkeId || prevSelectedInndelingtype !== selectedInndelingtype) {
-      setInputValue("");
-    }
-  }, [activePanelFylkeId, selectedInndelingtype, prevActivePanelFylkeId, prevSelectedInndelingtype, setInputValue]);
+    setInputValue("");
+  }, [activePanelFylkeId, selectedInndelingtype, setInputValue]);
 
   const bopliktomraadeEditingEnabled = useFlag("BOPLIKTOMRADE_EDITING");
   const bopliktomraadeViewingEnabled = useFlag("BOPLIKTOMRADE_VIEWING");
