@@ -56,13 +56,6 @@ export default defineConfig(({ mode }) => {
             "X-Auth-Name": "Utvikler",
           },
         },
-        "/internal-api": {
-          target: "http://localhost:8082",
-          changeOrigin: true,
-          headers: {
-            "X-Auth-Name": "Utvikler",
-          },
-        },
         "/geoservergeo/wfs/matrikkel": {
           target: matWfsUrl,
           changeOrigin: true,
