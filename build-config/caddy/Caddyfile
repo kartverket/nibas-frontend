@@ -10,7 +10,7 @@
 }
 
 @arbeidslisteUrls {
-    path /api/v1/*
+    path /internal-api/api/v1/*
 }
 
 handle @backendUrls {
