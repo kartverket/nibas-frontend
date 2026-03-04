@@ -9,9 +9,19 @@
     path /v1/*
 }
 
+@arbeidslisteUrls {
+    path /internal-api/api/v1/*
+}
+
 handle @backendUrls {
     # Proxy kall til /v1/* til nibas-backend i test
     reverse_proxy {$BACKEND_HOST} {
+        header_up Host {upstream_hostport}
+    }
+}
+
+handle @arbeidslisteUrls {
+    reverse_proxy {$ARBEIDSLISTE_HOST} {
         header_up Host {upstream_hostport}
     }
 }
