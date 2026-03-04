@@ -64,7 +64,7 @@ export const getArbeidslisteUrlWithParameters = <Path extends keyof arbeidsliste
   if (params == null || url == null) {
     return url;
   }
-  const basePath = "v1/proxy/arbeidsliste";
+  const basePath = "/api/v1";
   let modifiedUrl = basePath + url.toString();
 
   const pathRegex = /{(\w+)}/i;
