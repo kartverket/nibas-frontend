@@ -41,7 +41,7 @@ export default [
       "@typescript-eslint": fixupPluginRules(typescriptEslint),
       import: fixupPluginRules(_import),
       "react-compiler": reactCompiler,
-      "react-hooks": reactHooks,
+      "react-hooks": fixupPluginRules(reactHooks),
     },
 
     languageOptions: {
@@ -100,6 +100,10 @@ export default [
           patterns: ["@chakra-ui/*"],
         },
       ],
+      // ESLint 10 added these to eslint:recommended; disable until addressed incrementally
+      "preserve-caught-error": "off",
+      "no-useless-assignment": "off",
+      "no-unassigned-vars": "off",
       "no-console": "warn",
       "import/no-unresolved": "error",
       "import/no-named-as-default-member": "off",

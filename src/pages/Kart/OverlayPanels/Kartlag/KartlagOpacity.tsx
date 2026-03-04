@@ -36,11 +36,11 @@ const KartlagOpacity = ({ layerId, isDisabled }: Props) => {
           aria-label="Juster gjennomsiktighet"
           variant="tertiary"
           icon="tonality"
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
           isDisabled={isDisabled}
         />
       </PopoverTrigger>
-      <PopoverContent onClick={(e) => e.stopPropagation()}>
+      <PopoverContent onClick={(e: React.MouseEvent) => e.stopPropagation()}>
         <PopoverArrow />
         <PopoverCloseButton />
         <PopoverHeader>Juster gjennomsiktighet</PopoverHeader>
