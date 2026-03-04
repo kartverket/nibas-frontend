@@ -22,7 +22,7 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ["src/types/api-gen.ts", "src/types/api-gen-arbeidsliste.ts"],
+    ignores: ["src/types/api-gen.ts", "src/types/api-gen-arbeidsliste.ts", "build/**"],
   },
   ...fixupConfigRules(
     compat.extends(
@@ -100,10 +100,9 @@ export default [
           patterns: ["@chakra-ui/*"],
         },
       ],
-      // ESLint 10 added these to eslint:recommended; disable until addressed incrementally
-      "preserve-caught-error": "off",
-      "no-useless-assignment": "off",
-      "no-unassigned-vars": "off",
+      "preserve-caught-error": "warn",
+      "no-useless-assignment": "warn",
+      "no-unassigned-vars": "warn",
       "no-console": "warn",
       "import/no-unresolved": "error",
       "import/no-named-as-default-member": "off",

@@ -175,18 +175,14 @@ const removeLayer = (layers: string, layerId: string) => {
 
   const hasLeadingComma = matches.at(1) === ",";
   const hasTrailingComma = matches.at(3) === ",";
-  let replaceString = "";
-
-  if (hasTrailingComma) {
-    // komma på slutten, potensielt på starten i tillegg men spiller ingen rolle
-    replaceString = `${layerId},`;
-  } else if (hasLeadingComma) {
-    // bare komma på starten
-    replaceString = `,${layerId}`;
-  } else {
-    // ikke noe komma
-    replaceString = `${layerId}`;
-  }
+  const replaceString = hasTrailingComma
+    ? // komma på slutten, potensielt på starten i tillegg men spiller ingen rolle
+      `${layerId},`
+    : hasLeadingComma
+      ? // bare komma på starten
+        `,${layerId}`
+      : // ikke noe komma
+        `${layerId}`;
 
   return layers.replace(replaceString, "");
 };
