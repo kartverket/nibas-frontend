@@ -110,7 +110,7 @@ const AlertModal = ({
     const regex: RegExp = /(\d+(?:\.\d+)?)N\s*(-?\d+(?:\.\d+)?)Ø/g;
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
-    let match: RegExpExecArray | null = null;
+    let match: RegExpExecArray | null;
 
     while ((match = regex.exec(text)) !== null) {
       const currMatch = match[0];
