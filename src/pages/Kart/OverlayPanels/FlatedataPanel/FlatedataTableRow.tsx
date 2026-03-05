@@ -4,7 +4,7 @@ import { HistoryDirection, MetadataEntry } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { Control, Controller, FieldError, UseFormReturn, useFormState } from "react-hook-form";
 import { css, styled } from "styled-components";
-import { Inndelingtype, MetadataResponse } from "types/api";
+import { Inndelingtype, Metadata, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
@@ -169,6 +169,11 @@ export const FlatedataTableRow = ({
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
   const disabledDate = getInndelingFremtidigEndringDato(inndelingId);
+  const existingUsikkerAvgrensning = isBopliktomraadeInndeling(inndeling)
+    ? (inndeling.usikkerAvgrensning ?? false)
+    : ((inndeling.representasjonspunkt.properties.metadata as Metadata | undefined)?.commonGrense?.posisjonskvalitet
+        ?.usikkerAvgrensning ?? false);
+  const usikkerAvgrensningValue = getValues(`${inndelingId}.usikkerAvgrensning`) ?? existingUsikkerAvgrensning;
 
   useHistoryFormSync<MetadataEntry>({
     entityId: inndelingId,
@@ -293,8 +298,26 @@ export const FlatedataTableRow = ({
                   { label: "Deler av kommunen", value: "true" },
                   { label: "Hele kommunen", value: "false" },
                 ]}
-                data={(getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt) ? "true" : "false"}
+                defaultValue={(getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt) ? "true" : "false"}
+                data={
+                  (getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt)
+                    ? "Deler av kommunen"
+                    : "Hele kommunen"
+                }
                 {...register(`${inndelingId}.delvisBoplikt`, {
+                  setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
+                })}
+              />
+              <SelectCell
+                isEditing={isEditing}
+                isDisabled={disabledDate != null}
+                options={[
+                  { label: "Ja", value: "true" },
+                  { label: "Nei", value: "false" },
+                ]}
+                defaultValue={usikkerAvgrensningValue ? "true" : "false"}
+                data={usikkerAvgrensningValue ? "Ja" : "Nei"}
+                {...register(`${inndelingId}.usikkerAvgrensning`, {
                   setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
                 })}
               />
@@ -346,6 +369,15 @@ export const FlatedataTableRow = ({
               />
             </>
           )}
+          {inndelingtype !== "BOPLIKTOMRAADE" && (
+            <InputCell
+              isEditing={isEditing}
+              isDisabled={disabledDate != null}
+              data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
+              {...register(`${inndelingId}.informasjon`)}
+            />
+          )}
+          {isStemmekretsInndeling(inndeling) && <td></td>}
           {!isKommuneInndeling(inndeling) &&
             !isStemmekretsInndeling(inndeling) &&
             !isBopliktomraadeInndeling(inndeling) && (
@@ -361,9 +393,10 @@ export const FlatedataTableRow = ({
                 <td></td>
                 <td></td>
                 <td></td>
+                <td></td>
               </>
             )}
-          <td></td>
+          {inndelingtype !== "BOPLIKTOMRAADE" && <td></td>}
           <TableCell>
             <FremtidigEndringIcon
               formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}

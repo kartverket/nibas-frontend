@@ -1174,6 +1174,8 @@ export interface components {
             informasjon?: string;
             /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
             delvisBoplikt: boolean;
+            /** @description Usikker avgrensning */
+            usikkerAvgrensning: boolean;
             /** @description Materielle vilkår for bopliktområdet */
             materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
             /** @description Andre avgrensninger */
@@ -1561,6 +1563,8 @@ export interface components {
              * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer. Merknad: Oppgitt i cm.
              */
             noeyaktighet?: number;
+            /** @description Usikker avgrensning */
+            usikkerAvgrensning: boolean;
         };
         /** @description Spesifikk metadata for en riksgrense. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5C4B9E4D_05D7_4b2e_B467_9FCA428994F9 */
         RiksgrenseMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
@@ -1983,6 +1987,8 @@ export interface components {
             informasjon?: string;
             /** @description Om boplikten gjelder delvis innenfor området */
             delvisBoplikt?: boolean;
+            /** @description Usikker avgrensning */
+            usikkerAvgrensning: boolean;
             /** @description Forskriftsreferansen for bopliktområdet */
             forskriftsreferanse?: string;
             /** @description Materielle vilkår for bopliktområdet */
