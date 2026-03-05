@@ -179,7 +179,6 @@ export const createDuplicateOfTeigFeature = (
   const posisjonskvalitet: Posisjonskvalitet = {
     maalemetode: { id: maalemetodeId, href: "" },
     noeyaktighet: noeyaktighet,
-    usikkerAvgrensning: false,
   };
 
   duplicateFeature.setProperties({

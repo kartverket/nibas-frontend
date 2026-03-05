@@ -1563,8 +1563,6 @@ export interface components {
              * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer. Merknad: Oppgitt i cm.
              */
             noeyaktighet?: number;
-            /** @description Usikker avgrensning */
-            usikkerAvgrensning: boolean;
         };
         /** @description Spesifikk metadata for en riksgrense. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5C4B9E4D_05D7_4b2e_B467_9FCA428994F9 */
         RiksgrenseMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {

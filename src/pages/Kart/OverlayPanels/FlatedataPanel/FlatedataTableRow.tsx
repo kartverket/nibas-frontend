@@ -4,7 +4,7 @@ import { HistoryDirection, MetadataEntry } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { Control, Controller, FieldError, UseFormReturn, useFormState } from "react-hook-form";
 import { css, styled } from "styled-components";
-import { Inndelingtype, Metadata, MetadataResponse } from "types/api";
+import { Inndelingtype, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
@@ -171,8 +171,7 @@ export const FlatedataTableRow = ({
   const disabledDate = getInndelingFremtidigEndringDato(inndelingId);
   const existingUsikkerAvgrensning = isBopliktomraadeInndeling(inndeling)
     ? (inndeling.usikkerAvgrensning ?? false)
-    : ((inndeling.representasjonspunkt.properties.metadata as Metadata | undefined)?.commonGrense?.posisjonskvalitet
-        ?.usikkerAvgrensning ?? false);
+    : false;
   const usikkerAvgrensningValue = getValues(`${inndelingId}.usikkerAvgrensning`) ?? existingUsikkerAvgrensning;
 
   useHistoryFormSync<MetadataEntry>({
