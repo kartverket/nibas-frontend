@@ -61,7 +61,7 @@ jobs:
           VITE_VERSION: ${{ steps.tag_version.outputs.new_version }}
 
       - name: Login to Github Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.registry }}
           username: ${{ github.actor }}
