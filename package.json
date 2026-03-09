@@ -7,7 +7,7 @@
     "@grafana/faro-react": "^2.2.4",
     "@kvib/react": "^4.3.3",
     "date-fns": "^4.1.0",
-    "framer-motion": "^10.16.1",
+    "framer-motion": "^12.35.1",
     "js-yaml": "^4.1.1",
     "lodash.get": "^4.4.2",
     "material-symbols": "^0.40.2",
