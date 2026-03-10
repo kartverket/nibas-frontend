@@ -15,7 +15,7 @@ type GetPathParameters<T extends keyof arbeidslistePaths> = arbeidslistePaths[T]
 
 type GetQueryParameters<T extends keyof arbeidslistePaths> = arbeidslistePaths[T] extends {
   get: {
-    parameters: { query: infer U };
+    parameters: { query?: infer U };
   };
 }
   ? U extends Record<string, unknown>
@@ -64,8 +64,8 @@ export const getArbeidslisteUrlWithParameters = <Path extends keyof arbeidsliste
   if (params == null || url == null) {
     return url;
   }
-  const basePath = "v1/proxy/arbeidsliste";
-  let modifiedUrl = basePath + url.toString();
+
+  let modifiedUrl = url.toString();
 
   const pathRegex = /{(\w+)}/i;
   const paramKeys = Object.keys(params);
@@ -97,6 +97,7 @@ export const getArbeidslisteUrlWithParameters = <Path extends keyof arbeidsliste
   return modifiedUrl.concat(pathParams);
 };
 
+// TODO: TS-2536
 // Main hook for fetching data from arbeidsliste API
 const useArbeidslisteApi = <Path extends keyof arbeidslistePaths>(
   url: Path | null,
