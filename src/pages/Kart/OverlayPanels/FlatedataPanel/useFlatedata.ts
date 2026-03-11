@@ -86,6 +86,7 @@ const addHistoryChangesToMetadata = (
             navn: change.to.navn,
             nummer: change.to.nummer,
             delvisBoplikt: change.to.delvisBoplikt,
+            usikkerAvgrensning: change.to.usikkerAvgrensning,
             forskriftsreferanse: change.to.forskriftsreferanse,
             url: change.to.url,
             informasjon: change.to.informasjon,
