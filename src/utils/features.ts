@@ -370,6 +370,7 @@ const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metada
           href: "",
         },
         noeyaktighet: undefined,
+        usikkerAvgrensning: false,
       },
     },
   };

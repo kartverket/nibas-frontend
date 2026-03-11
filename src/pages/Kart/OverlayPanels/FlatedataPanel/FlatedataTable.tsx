@@ -137,6 +137,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
               </>
             ) : mainInndeling.inndelingtype === "STEMMEKRETS" ? (
               <>
@@ -155,10 +156,17 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
               </>
             ) : mainInndeling.inndelingtype === "BOPLIKTOMRAADE" ? (
               <>
                 <FlatedataTableHeader text="Utstrekning" {...sortHeaderProps("delvisBoplikt")} />
+                <FlatedataTableHeader
+                  text="Usikker avgrensning"
+                  onClick={() => undefined}
+                  isActivated={false}
+                  isReversed={false}
+                />
                 <FlatedataTableHeader text="Forskriftsreferanse" {...sortHeaderProps("forskriftsreferanse")} />
                 <FlatedataTableHeader text="URL" {...sortHeaderProps("url")} />
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
@@ -168,7 +176,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             ) : (
               <></>
             )}
-            <th></th>
             <th></th>
           </tr>
         </thead>

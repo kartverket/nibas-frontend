@@ -1174,6 +1174,8 @@ export interface components {
             informasjon?: string;
             /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
             delvisBoplikt: boolean;
+            /** @description Usikker avgrensning */
+            usikkerAvgrensning: boolean;
             /** @description Materielle vilkår for bopliktområdet */
             materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
             /** @description Andre avgrensninger */
@@ -1983,6 +1985,8 @@ export interface components {
             informasjon?: string;
             /** @description Om boplikten gjelder delvis innenfor området */
             delvisBoplikt?: boolean;
+            /** @description Usikker avgrensning */
+            usikkerAvgrensning: boolean;
             /** @description Forskriftsreferansen for bopliktområdet */
             forskriftsreferanse?: string;
             /** @description Materielle vilkår for bopliktområdet */
