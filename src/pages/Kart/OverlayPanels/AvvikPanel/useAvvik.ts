@@ -54,3 +54,4 @@ export const avvikUpdateStatus = (updates: { id: number; status: string }[]) => 
     body: JSON.stringify(requestBody),
   });
 };
+ 
