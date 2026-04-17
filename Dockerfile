@@ -1,13 +1,9 @@
 
-FROM caddy:2.11.2-alpine
+FROM dhi.io/caddy:2.11.2-debian13@sha256:bc7c358df1b4fc857d722fc2f5b0b2c429bba2ee5f6167097225a7d67849c20c
 
 COPY /build /srv
 
 ENV PORT=8080
-RUN apk --no-cache add curl tzdata
-RUN addgroup -g 1242 nibas; \
-  adduser -u 1242 -D -G nibas nibas
-COPY build-config/caddy/Caddyfile /etc/caddy/Caddyfile
 ENV TZ=Europe/Oslo
-USER 1242
+COPY build-config/caddy/Caddyfile /etc/caddy/Caddyfile
 EXPOSE 8080
