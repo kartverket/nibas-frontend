@@ -60,12 +60,12 @@ jobs:
         env:
           VITE_VERSION: ${{ steps.tag_version.outputs.new_version }}
 
-      - name: Login to Github Container Registry
-        uses: docker/login-action@v4
-        with:
-          registry: ${{ env.registry }}
-          username: ${{ github.actor }}
-          password: ${{ github.token }}
+      # - name: Login to Github Container Registry
+      #   uses: docker/login-action@v4
+      #   with:
+      #     registry: ${{ env.registry }}
+      #     username: ${{ github.actor }}
+      #     password: ${{ github.token }}
 
       - name: Build docker and push
         id: build
