@@ -286,6 +286,7 @@ export const FlatedataTableRow = ({
               />
               <td></td>
               <td></td>
+              <td></td>
             </>
           )}
           {isBopliktomraadeInndeling(inndeling) && (
@@ -368,7 +369,7 @@ export const FlatedataTableRow = ({
               />
             </>
           )}
-          {inndelingtype !== "BOPLIKTOMRAADE" && (
+          {inndelingtype !== "BOPLIKTOMRAADE" && inndelingtype !== "STEMMEKRETS" && (
             <InputCell
               isEditing={isEditing}
               isDisabled={disabledDate != null}
@@ -376,7 +377,7 @@ export const FlatedataTableRow = ({
               {...register(`${inndelingId}.informasjon`)}
             />
           )}
-          {isStemmekretsInndeling(inndeling) && <td></td>}
+
           {!isKommuneInndeling(inndeling) &&
             !isStemmekretsInndeling(inndeling) &&
             !isBopliktomraadeInndeling(inndeling) && (
@@ -395,7 +396,6 @@ export const FlatedataTableRow = ({
                 <td></td>
               </>
             )}
-          {inndelingtype !== "BOPLIKTOMRAADE" && <td></td>}
           <TableCell>
             <FremtidigEndringIcon
               formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}
