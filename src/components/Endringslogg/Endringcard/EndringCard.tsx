@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
-import { Badge, Card, Heading, Icon, IconProps, Text } from "@kvib/react";
-import { FunctionComponent, ReactNode } from "react";
+import { Badge, Card, Heading, Icon, Text } from "@kvib/react";
+import { ReactNode } from "react";
 import { Change, NumericEndringType, ToFromChangeType } from "components/Endringslogg/Endringcard/EndringCardTypes";
 import {
   getBodyTextForNumericChange,
@@ -114,7 +114,7 @@ const StyledCard = styled(Card).attrs({ variant: "outline" })`
   margin-bottom: var(--kvib-space-4);
 `;
 
-const RightArrow: FunctionComponent<Omit<IconProps, "icon">> = styled(Icon).attrs({
+const RightArrow = styled(Icon).attrs({
   icon: "arrow_right_alt",
 })`
   color: var(--kvib-colors-blue-500);
