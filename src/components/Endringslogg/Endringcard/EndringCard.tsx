@@ -114,7 +114,7 @@ const StyledCard = styled(Card).attrs({ variant: "outline" })`
   margin-bottom: var(--kvib-space-4);
 `;
 
-const RightArrow: FunctionComponent<Omit<IconProps, "icon">> = styled(Icon).attrs({
+const RightArrow = styled(Icon).attrs({
   icon: "arrow_right_alt",
 })`
   color: var(--kvib-colors-blue-500);
