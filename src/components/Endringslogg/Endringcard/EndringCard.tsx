@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
-import { Badge, Card, Heading, Icon, IconProps, Text } from "@kvib/react";
-import { FunctionComponent, ReactNode } from "react";
+import { Badge, Card, Heading, Icon, Text } from "@kvib/react";
+import { ReactNode } from "react";
 import { Change, NumericEndringType, ToFromChangeType } from "components/Endringslogg/Endringcard/EndringCardTypes";
 import {
   getBodyTextForNumericChange,
