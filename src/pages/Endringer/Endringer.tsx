@@ -347,7 +347,8 @@ const StyledCell = styled(Td)`
   padding: 16px 28px;
 `;
 
-const OptionsCell = styled(StyledCell)`
+const OptionsCell = styled(Td)`
+  padding: 16px 28px;
   text-align: right;
 `;
 
