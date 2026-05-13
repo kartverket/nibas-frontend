@@ -131,7 +131,7 @@ const TitleContainer = styled.div`
   width: fit-content;
 `;
 
-const LoadingSkeleton = styled(SkeletonText)`
+const LoadingSkeleton = styled(SkeletonText as unknown as "div")`
   padding: 24px;
   border-radius: 8px;
   background: var(--kvib-colors-chakra-body-bg);
