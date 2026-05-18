@@ -147,6 +147,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
                 <th></th>
                 <th></th>
+                <th></th>
               </>
             ) : mainInndeling.inndelingtype === "GRUNNKRETS" ? (
               <>
