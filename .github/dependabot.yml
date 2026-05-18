@@ -26,14 +26,6 @@ updates:
       time: "03:23"
       timezone: "Europe/Oslo"
 
-  - package-ecosystem: "terraform"
-    directory: "/terraform"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "03:23"
-      timezone: "Europe/Oslo"
-
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
