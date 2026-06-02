@@ -1,4 +1,4 @@
-import { getArbeidslisteUrlForPath, getArbeidslisteUrlWithParameters } from "hooks/useArbeidslisteApi";
+import { getArbeidslisteUrlWithParameters } from "hooks/useArbeidslisteApi";
 import { fetchUrl } from "utils/api";
 import useSWR from "swr";
 import { getFeaturesFromGeoJson } from "utils/map/geoJson";
@@ -23,6 +23,6 @@ export const useMatrikkelGrenser = (shouldFetch: boolean, kommuneNummer: string)
 
 export const hentTilgjengeligeKommuner = async () => {
   const urlPath = "/internal-api/api/v1/matrikkel/grenselinjer/kommuner";
-  const url = getArbeidslisteUrlForPath(urlPath);
+  const url = getArbeidslisteUrlWithParameters(urlPath, null);
   return fetchUrl([url]);
 };
