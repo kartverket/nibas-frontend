@@ -1,4 +1,4 @@
-import { getArbeidslisteUrlForPath, getArbeidslisteUrlWithParameters } from "hooks/useArbeidslisteApi";
+import { getArbeidslisteUrlWithParameters } from "hooks/useArbeidslisteApi";
 import useSWR from "swr";
 import { fetchUrl } from "utils/api";
 import { AvvikForKommuneResponse } from "./avvik-utils";
@@ -42,7 +42,7 @@ export const useAvvikForKommunePar = (kommuneLokalIDs: string[]) => {
 };
 
 export const avvikUpdateStatus = (updates: { id: number; status: string }[]) => {
-  const url = getArbeidslisteUrlForPath("/internal-api/api/v1/avvik");
+  const url = getArbeidslisteUrlWithParameters("/internal-api/api/v1/avvik", null);
   const requestBody = {
     avvikUpdates: updates,
   };
