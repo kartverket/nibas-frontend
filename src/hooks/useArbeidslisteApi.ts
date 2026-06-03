@@ -38,28 +38,10 @@ type ResponseType<Path extends keyof arbeidslistePaths> = arbeidslistePaths[Path
   ? ResType
   : never;
 
-export const getArbeidslisteUrlForPath = (path: string): string => {
-  const baseUrl = document.location.origin ?? "http://localhost:3000";
-
-  // Prepend proxy path for arbeidsliste API
-  const proxyBasePath = "/v1/proxy/arbeidsliste";
-  if (!path.startsWith(proxyBasePath)) {
-    path = `${proxyBasePath}${path}`;
-  }
-
-  if (path.startsWith("http")) {
-    return path;
-  }
-
-  if (path.startsWith("/")) {
-    return baseUrl + path;
-  }
-  return `${baseUrl}/${path}`;
-};
 // Helper function to construct URLs with parameters
 export const getArbeidslisteUrlWithParameters = <Path extends keyof arbeidslistePaths>(
-  url: Path | null,
-  params: GetParameters<Path>,
+  url: Path,
+  params: GetParameters<Path> | null,
 ) => {
   if (params == null || url == null) {
     return url;
@@ -100,7 +82,7 @@ export const getArbeidslisteUrlWithParameters = <Path extends keyof arbeidsliste
 // TODO: TS-2536
 // Main hook for fetching data from arbeidsliste API
 const useArbeidslisteApi = <Path extends keyof arbeidslistePaths>(
-  url: Path | null,
+  url: Path,
   params?: GetParameters<Path> | null,
   swrOptions?:
     | Partial<
