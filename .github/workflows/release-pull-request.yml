@@ -130,14 +130,7 @@ jobs:
 
   deploy-pull-request-pr:
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name-pr.outputs.valid == 'true' }}
-    needs:
-      [
-        should-create-feature-env,
-        validate-branch-name-pr,
-        determine-branch-name-pr,
-        build,
-        pharos,
-      ]
+    needs: [should-create-feature-env, validate-branch-name-pr, determine-branch-name-pr, build]
     name: Deploy Pull Request (PR)
     permissions:
       id-token: write
@@ -155,8 +148,7 @@ jobs:
 
   deploy-pull-request-manual:
     if: ${{ github.event_name == 'workflow_dispatch' && needs.validate-branch-name-manual.outputs.valid == 'true' }}
-    needs:
-      [validate-branch-name-manual, determine-branch-name-manual, build, pharos]
+    needs: [validate-branch-name-manual, determine-branch-name-manual, build]
     name: Deploy Pull Request (Manual)
     permissions:
       id-token: write
@@ -174,13 +166,7 @@ jobs:
 
   post-deployed-message-pr:
     if: ${{ github.event_name == 'pull_request' && github.event.pull_request.draft == false && needs.should-create-feature-env.outputs.has-relevant-changes == 'true' && needs.validate-branch-name-pr.outputs.valid == 'true' }}
-    needs:
-      [
-        should-create-feature-env,
-        validate-branch-name-pr,
-        determine-branch-name-pr,
-        deploy-pull-request-pr,
-      ]
+    needs: [should-create-feature-env, validate-branch-name-pr, determine-branch-name-pr, deploy-pull-request-pr]
     runs-on: ubuntu-latest
     steps:
       - name: Post deployment comment

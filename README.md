@@ -22,12 +22,18 @@ VITE_MATRIKKELWFS_AUTH
 VITE_MATRIKKELWFS_URL
 ```
 
-
 For å hente aktive feature-miljøer fra GitHub, sett følgende i `.env.local`:
 
 ```
 VITE_REPO_PR_ACCESS
 ```
+
+Funksjonaliteten som bruker denne miljøvariabelen prøver å kalle disse endepunktene til github-apiet:
+
+- /repos/{owner}/{repo}/actions/runs
+- /repos/{owner}/{repo}/pulls
+
+Dermed trengs en fine-grained token med disse rettighetene: "Pull requests", "Acions", og "Metadata"
 
 ### Oppstart av applikasjonen
 
@@ -57,4 +63,4 @@ Types fra API blir generert ved `npm run update-api-types`. Videre blir disse ty
 
 ### Feature toggles
 
-Noen funksjoner er låst bak feature toggles. Hvilke feature toggles som er aktive kan ses i `components/FeatureToggle/FeatureToggle.tsx`. Disse har hardkodede nøkler som brukes i komponenten og hooken i samme fil, som sjekker basert på hvilken URL du befinner deg på. 
+Noen funksjoner er låst bak feature toggles. Hvilke feature toggles som er aktive kan ses i `components/FeatureToggle/FeatureToggle.tsx`. Disse har hardkodede nøkler som brukes i komponenten og hooken i samme fil, som sjekker basert på hvilken URL du befinner deg på.
