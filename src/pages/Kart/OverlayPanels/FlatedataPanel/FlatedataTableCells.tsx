@@ -25,17 +25,18 @@ type InputCellProps = {
   isEditing: boolean;
 } & InputProps;
 
-const InputCell = forwardRef<HTMLInputElement, InputCellProps>(function InputCell(
+const InputCellInner = (
   { data, isEditing, ...inputProps }: InputCellProps,
-  ref,
-) {
+  ref: React.ForwardedRef<HTMLInputElement>,
+) => {
   return <TableCell>{isEditing ? <Input defaultValue={data} {...inputProps} ref={ref} size="sm" /> : data}</TableCell>;
-});
+};
+const InputCell = forwardRef<HTMLInputElement, InputCellProps>(InputCellInner);
 
-export const URLInputCell = forwardRef<HTMLInputElement, InputCellProps>(function URLInputCell(
+const URLInputCellInner = (
   { data, isEditing, ...inputProps }: InputCellProps,
-  ref,
-) {
+  ref: React.ForwardedRef<HTMLInputElement>,
+) => {
   return (
     <TableCell>
       {isEditing ? (
@@ -47,7 +48,8 @@ export const URLInputCell = forwardRef<HTMLInputElement, InputCellProps>(functio
       )}
     </TableCell>
   );
-});
+};
+export const URLInputCell = forwardRef<HTMLInputElement, InputCellProps>(URLInputCellInner);
 
 export const TableCell = ({ children }: { children: React.ReactNode }) => (
   <td>
@@ -67,10 +69,10 @@ type MerknadCellProps = {
   validationError?: ValidationError;
 };
 
-export const MerknadCell = forwardRef<HTMLInputElement, MerknadCellProps>(function MerknadCell(
+const MerknadCellInner = (
   { data, label, isEditing, validationError, isDisabled, ...inputProps }: MerknadCellProps,
-  ref,
-) {
+  ref: React.ForwardedRef<HTMLInputElement>,
+) => {
   return (
     <TableCell>
       {isEditing ? (
@@ -89,7 +91,8 @@ export const MerknadCell = forwardRef<HTMLInputElement, MerknadCellProps>(functi
       )}
     </TableCell>
   );
-});
+};
+export const MerknadCell = forwardRef<HTMLInputElement, MerknadCellProps>(MerknadCellInner);
 
 type SelectCellProps = {
   data: string;
@@ -97,10 +100,10 @@ type SelectCellProps = {
   isEditing: boolean;
 } & SelectProps;
 
-export const SelectCell = forwardRef<HTMLSelectElement, SelectCellProps>(function SelectCell(
+const SelectCellInner = (
   { data, isEditing, options, ...selectProps }: SelectCellProps,
-  ref,
-) {
+  ref: React.ForwardedRef<HTMLSelectElement>,
+) => {
   return (
     <TableCell>
       {isEditing ? (
@@ -118,7 +121,8 @@ export const SelectCell = forwardRef<HTMLSelectElement, SelectCellProps>(functio
       )}
     </TableCell>
   );
-});
+};
+export const SelectCell = forwardRef<HTMLSelectElement, SelectCellProps>(SelectCellInner);
 
 export const MaterielleVilkaarOptions: { value: MaterielleVilkaarValue; label: string }[] = [
   { value: "BEBYGDEIENDOM", label: "Bebygd eiendom" },
