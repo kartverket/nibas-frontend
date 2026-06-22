@@ -34,14 +34,17 @@ export const getEndPointsOnFeature = (feature: FeatureLike) => {
   }
 };
 
+const DEFAULT_POINT_RADIUS = 4.5;
+const DEFAULT_ENDPOINT_RADIUS = 6.5;
+
 const lineAndPointStyles = ({
   color,
   dashed = false,
   points = true,
   lineStrokeWidth = 1.25,
-  pointRadius = 2.5,
+  pointRadius = DEFAULT_POINT_RADIUS,
   endpointStrokeWidth = 2,
-  endpointRadius = 3.5,
+  endpointRadius = DEFAULT_ENDPOINT_RADIUS,
 }: {
   color: string;
   dashed?: boolean;
@@ -85,7 +88,7 @@ const lineAndPointStyles = ({
 
 export const selectedPointStyle = new Style({
   image: new Circle({
-    radius: 6,
+    radius: DEFAULT_POINT_RADIUS + 4,
     stroke: new Stroke({ color: "#D163E6FF", width: 3 }),
     fill: new Fill({ color: "#ffffff" }),
   }),
@@ -96,7 +99,7 @@ export const selectedPointStyle = new Style({
 
 export const hoveredPointStyle = new Style({
   image: new Circle({
-    radius: 2.5,
+    radius: DEFAULT_POINT_RADIUS,
     fill: new Fill({ color: "#000000" }),
     stroke: new Stroke({ color: "#D163E680", width: 10 }),
   }),
@@ -122,7 +125,7 @@ export const inndelingColors = {
   edit: "#000000",
   measure: "#000000",
   sosiFiler: "#1A532A",
-  BOPLIKTOMRAADE: "#FF6600",
+  BOPLIKTOMRAADE: "#C0AFFBFF",
 };
 
 export const grenseStyles = {
@@ -139,7 +142,7 @@ export const grenseStyles = {
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
   error: lineAndPointStyles({ color: "#FF0000FF" }),
   fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"] }),
-  matrikkel: lineAndPointStyles({ color: "#C0AFFBFF" }),
+  matrikkel: lineAndPointStyles({ color: "#FF6600" }),
   historical: lineAndPointStyles({ color: "#FF00FF", pointRadius: 1.5, dashed: true, lineStrokeWidth: 2 }),
   sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
   flate: flateStyles,
