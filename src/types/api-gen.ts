@@ -1123,13 +1123,11 @@ export interface components {
              * Format: int32
              * @description Rekkefølge på navn
              */
-            rekkefoelge?: number;
+            rekkefoelge?: number | null;
         };
         /** @description Spesfikk metadata for en administrativ grense (fylkes/kommunegrense). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5142EDBA_4226_4ca3_924D_EECEFD216D1A */
         AdministrativGrenseMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
-            /** @description Felles metadata-egenskaper. */
             common: components["schemas"]["CommonMetadata"];
-            /** @description Felles metadata-egenskaper for grenser. */
             commonGrense: components["schemas"]["CommonGrenseMetadata"];
             /** @description Henviser til fastsettings- eller lovinformasjon. */
             dokumentasjonsreferanser: components["schemas"]["DokumentasjonsreferanseDTO"][];
@@ -1142,9 +1140,7 @@ export interface components {
         };
         /** @description Spesifikk metadata for en AvtaltAvgrensningslinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
         AvtaltAvgrensningslinjeMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
-            /** @description Felles metadata-egenskaper. */
             common: components["schemas"]["CommonMetadata"];
-            /** @description Felles metadata-egenskaper for grenser. */
             commonGrense: components["schemas"]["CommonGrenseMetadata"];
             /** @description Henviser til fastsettings- eller lovinformasjon. */
             dokumentasjonsreferanser: components["schemas"]["DokumentasjonsreferanseDTO"][];
@@ -1157,21 +1153,19 @@ export interface components {
         };
         /** @description Representasjon av et bopliktomraade */
         BopliktomraadeRequest: {
-            /** @description Identifikasjon av bopliktomraade */
             identifikasjon: components["schemas"]["Identifikasjon"];
             /** @description Navnet til bopliktomraadet */
             navn: string;
             /** @description Nummeret til bopliktomraadet */
             nummer: string;
-            /** @description Kommunenummeret bopliktomraadet tilhører til */
-            kommunenummer?: components["schemas"]["Kommunenummer"];
+            kommunenummer?: components["schemas"]["Kommunenummer"] | null;
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
             /** @description informasjon om bopliktomraade */
-            informasjon?: string;
+            informasjon?: string | null;
             /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
             delvisBoplikt: boolean;
             /** @description Usikker avgrensning */
@@ -1179,24 +1173,24 @@ export interface components {
             /** @description Materielle vilkår for bopliktområdet */
             materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
             /** @description Andre avgrensninger */
-            andreAvgrensninger?: string;
+            andreAvgrensninger?: string | null;
             /** @description Referanse til forskriften for bopliktomraadet */
-            forskriftsreferanse?: string;
+            forskriftsreferanse?: string | null;
             /** @description URL til kommunen sin informasjonside */
-            url?: string;
+            url?: string | null;
         };
+        /** @description Felles metadata-egenskaper for grenser. */
         CommonGrenseMetadata: {
-            /** @description Beskrivelse av kvaliteten på stedfestingen */
-            posisjonskvalitet?: components["schemas"]["Posisjonskvalitet"];
+            posisjonskvalitet: components["schemas"]["Posisjonskvalitet"];
         };
+        /** @description Felles metadata-egenskaper. */
         CommonMetadata: {
-            /** @description Unik identifikasjon av et objekt */
             identifikasjon: components["schemas"]["Identifikasjon"];
             /**
              * Format: date-time
              * @description Dato når objektet siste gang ble registrert/observert/målt i terrenget
              */
-            datafangstdato?: string;
+            datafangstdato?: string | null;
             /**
              * Format: date
              * @description Tidspunktet når objektet oppstod i den virkelige verden
@@ -1206,17 +1200,17 @@ export interface components {
              * Format: date
              * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden
              */
-            gyldigTil?: string;
+            gyldigTil?: string | null;
             /** @description Generelle opplysninger/merknad */
-            informasjon?: string;
-            /** @description Holder på informasjon om endring av objektet. */
+            informasjon?: string | null;
             sporingsinformasjon: components["schemas"]["Sporingsinformasjon"];
             /** @description Referanse til opphavsmaterialet, kildematerialet, organisasjons/publiseringskilde. */
-            opphav?: string;
+            opphav?: string | null;
         };
+        /** @description Henviser til fastsettings- eller lovinformasjon. */
         DokumentasjonsreferanseDTO: {
             /** @description ID for dokumentasjonsreferansen. */
-            id?: string;
+            id?: string | null;
             /** @description URL til saksdokument. */
             dokumentlenker: components["schemas"]["TekstHolder"][];
             /**
@@ -1225,36 +1219,35 @@ export interface components {
              */
             fastsettingsdato: string;
             /** @description Offentlig instans som har fastsatt en grense. */
-            fastsettingsmyndighet?: string;
+            fastsettingsmyndighet?: string | null;
             /** @description Lov som rettskilden er begrunnet i. */
-            hjemmel?: string;
+            hjemmel?: string | null;
             /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
             internReferanserKartverket: components["schemas"]["TekstHolder"][];
             /** @description Referanse til lov, forskrift, vedtak, dom eller traktat i form av kode som angir type dokument, dato og nummer For eksempel: LOV-2012-09-07-65. */
-            rettskildeId?: string;
+            rettskildeId?: string | null;
             /** @description Navn på lov, forskrift, vedtak, dom eller traktat. */
             rettskildeTittel: string;
             /**
              * Format: date
              * @description Tidspunktet når objektet oppstod i den virkelige verden (Vedtakets gyldighet). Påkrevd for alle nye dokumentasjonsreferanser.
              */
-            vedtakGyldigFra?: string;
+            vedtakGyldigFra?: string | null;
             /**
              * Format: date
              * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden (Vedtakets gyldighet)
              */
-            vedtakGyldigTil?: string;
+            vedtakGyldigTil?: string | null;
             /** @description Egenskap som sier om en dokumentasjonsreferanse skal arkiveres */
             shouldArchive: boolean;
         };
+        /** @description Liste av features som holder på dataene */
         Feature: {
             /** @description En konstant, navn: type, verdi: Feature */
             type: string;
             /** @description Id til feature */
-            id?: string;
-            /** @description Et sett med egenskaper som beskriver denne featuren */
+            id?: string | null;
             properties: components["schemas"]["FeatureProperties"];
-            /** @description Geometrien til denne featuren. */
             geometry: components["schemas"]["LineString"] | components["schemas"]["MultiPolygon"] | components["schemas"]["Point"];
         };
         /** @description Egenskaper som beskriver en gitt feature (properties-objektet i geojson-strukturen) */
@@ -1266,8 +1259,7 @@ export interface components {
              * @description Koordinatsystemet. Defaulter til 25833.
              */
             srid: number;
-            /** @description Diverse metadata-felter fra sosi-modellen. */
-            metadata?: components["schemas"]["AdministrativGrenseMetadata"] | components["schemas"]["AvtaltAvgrensningslinjeMetadata"] | components["schemas"]["FlateMetadata"] | components["schemas"]["GrunnlinjeMetadata"] | components["schemas"]["KommunalKretsgrenseMetadata"] | components["schemas"]["RiksgrenseMetadata"] | components["schemas"]["StatistiskgrenseMetadata"] | components["schemas"]["TerritorialgrenseMetadata"] | null;
+            metadata?: (components["schemas"]["AdministrativGrenseMetadata"] | components["schemas"]["AvtaltAvgrensningslinjeMetadata"] | components["schemas"]["FlateMetadata"] | components["schemas"]["GrunnlinjeMetadata"] | components["schemas"]["KommunalKretsgrenseMetadata"] | components["schemas"]["RiksgrenseMetadata"] | components["schemas"]["StatistiskgrenseMetadata"] | components["schemas"]["TerritorialgrenseMetadata"] | unknown) | null;
             /** @description Egenskaper til konteksten til grensen. */
             kontekstEgenskaper: components["schemas"]["KontekstEgenskaper"][];
             /**
@@ -1280,7 +1272,6 @@ export interface components {
         };
         /** @description Metadata for en flate (felles for nasjon, fylke, kommune og grunnkrets) */
         FlateMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
-            /** @description Felles metadata-egenskaper. */
             common: components["schemas"]["CommonMetadata"];
         } & {
             /**
@@ -1289,6 +1280,7 @@ export interface components {
              */
             discriminator: "FlateMetadata";
         };
+        /** @description Endringer på fylke. */
         FylkeRequest: {
             /** @description Navnene til fylket */
             administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
@@ -1317,7 +1309,6 @@ export interface components {
             navn: string;
             /** @description Grunnkretsnummeret til grunnkretsen */
             nummer: string;
-            /** @description Identifikasjon av grunnkretsen */
             identifikasjon: components["schemas"]["Identifikasjon"];
             /**
              * Format: int32
@@ -1325,11 +1316,10 @@ export interface components {
              */
             version: number;
             /** @description informasjon om grunnkretsen */
-            informasjon?: string;
+            informasjon?: string | null;
         };
         /** @description Representasjon av sammenslåing av en grunnkrets med 1 eller flere andre grunnkretser i samme kommune */
         GrunnkretsSammenslaaingsendringRequest: {
-            /** @description Identifikator til den grunnkretsen som skal videreføres */
             viderefoertGrunnkrets: components["schemas"]["IdentifikatorMedVersjon"];
             /** @description Liste av identifikatorer som skal bli del av den videreførte grunnkretsen */
             grunnkretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
@@ -1338,13 +1328,11 @@ export interface components {
             /** @description Grunnkretsnummeret til den sammenslåtte grunnkretsen */
             nummer: string;
             /** @description Informasjon om sammenslåingen som videreføres til den nye grunnkretsen og de gamle */
-            informasjon?: string;
+            informasjon?: string | null;
         };
         /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
         GrunnlinjeMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
-            /** @description Felles metadata-egenskaper. */
             common: components["schemas"]["CommonMetadata"];
-            /** @description Felles metadata-egenskaper for grenser. */
             commonGrense: components["schemas"]["CommonGrenseMetadata"];
             /** @description Henviser til fastsettings- eller lovinformasjon. */
             dokumentasjonsreferanser: components["schemas"]["DokumentasjonsreferanseDTO"][];
@@ -1355,6 +1343,7 @@ export interface components {
              */
             discriminator: "GrunnlinjeMetadata";
         };
+        /** @description Unik identifikasjon av et objekt */
         Identifikasjon: {
             /** @description Lokal id som identifiserer geometrien. Dette er en globalt unik id. */
             lokalid: string;
@@ -1369,9 +1358,10 @@ export interface components {
              */
             version: number;
         };
+        /** @description Metode for måling i grunnriss (x,y), og høyde (z) når metoden er den samme som ved måling i grunnriss. */
         KodelisteEntry: {
             /** @description Id for kodeliste-innslaget. */
-            id?: string;
+            id: string | null;
             /** @description Lenke til kodelista. */
             href: string;
         };
@@ -1379,9 +1369,7 @@ export interface components {
         KommunalKretsgrenseMetadata: {
             discriminator: "KommunalKretsgrenseMetadata";
         } & (Omit<components["schemas"]["Metadata"], "discriminator"> & {
-            /** @description Felles metadata-egenskaper. */
             common: components["schemas"]["CommonMetadata"];
-            /** @description Felles metadata-egenskaper for grenser. */
             commonGrense: components["schemas"]["CommonGrenseMetadata"];
         });
         /** @description Representasjon av en kommune */
@@ -1407,12 +1395,10 @@ export interface components {
         };
         /** @description Egenskaper som beskriver konteksten som grensen sees i. */
         KontekstEgenskaper: {
-            /** @description Id til objekt som det vises til i kontekst, er null hvis feature skal knyttes til en ny krets */
-            id?: components["schemas"]["ObjektIdentifikator"];
-            /** @description Id til kommunen som konteksten ligger i */
-            kommuneId?: components["schemas"]["ObjektIdentifikator"];
+            id?: components["schemas"]["ObjektIdentifikator"] | null;
+            kommuneId?: components["schemas"]["ObjektIdentifikator"] | null;
             /** @description kretsnummeret til konteksten */
-            kretsNummer?: string;
+            kretsNummer: string | null;
             /**
              * @description Hvilken kontekst geometrien skal sees i
              * @enum {string}
@@ -1426,9 +1412,7 @@ export interface components {
         };
         /** @description Representasjon av deling av en krets som ender i to kretser der én er videreført og én er ny */
         KretsDelingEndringRequest: {
-            /** @description Identifikator til den kretsen som skal deles */
             opprinneligKrets: components["schemas"]["IdentifikatorMedVersjon"];
-            /** @description Lokalid til kommune som deling foregår i */
             kommuneId: components["schemas"]["ObjektIdentifikator"];
             /**
              * @description Flatetypen som skal deles
@@ -1501,6 +1485,7 @@ export interface components {
              */
             type: "MultiPolygon";
         };
+        /** @description Endringer på nasjon. */
         NasjonRequest: {
             /** @description Navnene til nasjonen */
             administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
@@ -1512,6 +1497,7 @@ export interface components {
              */
             version: number;
         };
+        /** @description Id til kommunen som konteksten ligger i */
         ObjektIdentifikator: {
             lokalid: components["schemas"]["Lokalid"];
             /** Format: date */
@@ -1519,14 +1505,10 @@ export interface components {
         };
         /** @description Representasjon av operasjoner/handlinger som er utført i klienten. */
         Operasjoner: {
-            /** @description Endringer på metadata. */
             metadataendringer: components["schemas"]["Metadataendringer"];
-            /** @description Endringer på grenser. */
             grenseendringer: components["schemas"]["Grenseendringer"];
-            /** @description Sammenslåing av stemmekretser i samme kommune. */
-            stemmekretsSammenslaaingsendring?: components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
-            /** @description Sammenslåing av stemmekretser i samme kommune. */
-            grunnkretsSammenslaaingsendring?: components["schemas"]["GrunnkretsSammenslaaingsendringRequest"];
+            stemmekretsSammenslaaingsendring: components["schemas"]["StemmekretsSammenslaaingsendringRequest"] | null;
+            grunnkretsSammenslaaingsendring: components["schemas"]["GrunnkretsSammenslaaingsendringRequest"] | null;
             /** @description Deling av en stemmekrets eller grunnkrets */
             kretsDelingEndringer: components["schemas"]["KretsDelingEndringRequest"][];
         };
@@ -1536,7 +1518,6 @@ export interface components {
             navn: string;
             /** @description Typen endring utkastet representerer. */
             endringstype: string;
-            /** @description Representasjon av endringene som er utført i utkastet. */
             operasjoner: components["schemas"]["Operasjoner"];
             /**
              * Format: int32
@@ -1555,20 +1536,18 @@ export interface components {
              */
             type: "Point";
         };
+        /** @description Beskrivelse av kvaliteten på stedfestingen */
         Posisjonskvalitet: {
-            /** @description Metode for måling i grunnriss (x,y), og høyde (z) når metoden er den samme som ved måling i grunnriss. */
             maalemetode: components["schemas"]["KodelisteEntry"];
             /**
              * Format: int32
              * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer. Merknad: Oppgitt i cm.
              */
-            noeyaktighet?: number;
+            noeyaktighet: number | null;
         };
         /** @description Spesifikk metadata for en riksgrense. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5C4B9E4D_05D7_4b2e_B467_9FCA428994F9 */
         RiksgrenseMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
-            /** @description Felles metadata-egenskaper. */
             common: components["schemas"]["CommonMetadata"];
-            /** @description Felles metadata-egenskaper for grenser. */
             commonGrense: components["schemas"]["CommonGrenseMetadata"];
             /** @description Henviser til fastsettings- eller lovinformasjon. */
             dokumentasjonsreferanser: components["schemas"]["DokumentasjonsreferanseDTO"][];
@@ -1579,6 +1558,7 @@ export interface components {
              */
             discriminator: "RiksgrenseMetadata";
         };
+        /** @description Holder på informasjon om endring av objektet. */
         Sporingsinformasjon: {
             /**
              * Format: date-time
@@ -1588,9 +1568,7 @@ export interface components {
         };
         /** @description Spesifikk metadata for en statistisk grense (grunnkrets/delområde). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_374BE5B3_5F8B_498a_8F53_9CCA72619C36 */
         StatistiskgrenseMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
-            /** @description Felles metadata-egenskaper. */
             common: components["schemas"]["CommonMetadata"];
-            /** @description Felles metadata-egenskaper for grenser. */
             commonGrense: components["schemas"]["CommonGrenseMetadata"];
         } & {
             /**
@@ -1602,30 +1580,27 @@ export interface components {
         /** @description Representasjon av en stemmekrets */
         StemmekretsRequest: {
             /** @description Stemmekretsnavnet til stemmekretsen */
-            navn?: string;
+            navn: string;
             /** @description Stemmekretsnummeret til stemmekretsen */
-            nummer?: string;
-            /** @description Identifikasjon av stemmekretsen */
+            nummer: string;
             identifikasjon: components["schemas"]["Identifikasjon"];
             /** @description Tellekretsnummeret til stemmekretsen */
-            tellekretsnummer?: string;
+            tellekretsnummer?: string | null;
             /** @description Tellekretsnavnet til stemmekretsen */
-            tellekretsnavn?: string;
+            tellekretsnavn?: string | null;
             /** @description Valgdistriktsnummeret til stemmekretsen */
-            valgdistriktsnummer?: string;
-            /** @description Kommunenummeret stemmekretsen tilhører til */
-            kommunenummer?: components["schemas"]["Kommunenummer"];
+            valgdistriktsnummer?: string | null;
+            kommunenummer?: components["schemas"]["Kommunenummer"] | null;
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
             /** @description informasjon om stemmekretsen */
-            informasjon?: string;
+            informasjon?: string | null;
         };
         /** @description Representasjon av sammenslåing av en stemmekrets med 1 eller flere andre stemmekretser i samme kommune */
         StemmekretsSammenslaaingsendringRequest: {
-            /** @description Identifikator til den stemmekretsen som skal videreføres */
             viderefoertStemmekrets: components["schemas"]["IdentifikatorMedVersjon"];
             /** @description Liste av identifikatorer som skal bli del av den videreførte stemmekretsen */
             stemmekretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
@@ -1634,19 +1609,18 @@ export interface components {
             /** @description Stemmekretsnummeret til den sammenslåtte stemmekretsen */
             nummer: string;
             /** @description Informasjon om sammenslåingen som videreføres til den nye stemmekretsen og de gamle */
-            informasjon?: string;
+            informasjon?: string | null;
         };
+        /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
         TekstHolder: {
             /** @description ID for elementet. */
-            id?: string;
+            id?: string | null;
             /** @description Tekstfelt. */
             beskrivelse: string;
         };
         /** @description Spesifikk metadata for en territorialgrense. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
         TerritorialgrenseMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
-            /** @description Felles metadata-egenskaper. */
             common: components["schemas"]["CommonMetadata"];
-            /** @description Felles metadata-egenskaper for grenser. */
             commonGrense: components["schemas"]["CommonGrenseMetadata"];
             /** @description Henviser til fastsettings- eller lovinformasjon. */
             dokumentasjonsreferanser: components["schemas"]["DokumentasjonsreferanseDTO"][];
@@ -1660,17 +1634,18 @@ export interface components {
         ApiErrorResponse: {
             /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
             errorCode: string;
-            /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
             errorDescription: components["schemas"]["ErrorDescription"];
         };
+        /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
         ErrorDescription: {
             /** @description Tittelen på feilmeldingen som skal vises. */
             title: string;
             /** @description En beskrivende forklaring av feilen som oppstod. */
             description: string;
             /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-            additionalInfo?: string;
+            additionalInfo: string | null;
         };
+        /** @description Feil som har oppstått pga optimistisk lås. */
         OptimistiskLaasResponse: {
             /** @description Identifikatoren til objektet som er utdatert. */
             id: string;
@@ -1687,14 +1662,14 @@ export interface components {
              */
             gjeldendeVersjon: number;
             /** @description Beskrivelse av hva som har gått galt. */
-            melding?: string;
+            melding?: string | null;
         };
         OptimistiskLaasWrapper: {
             /**
              * @description HttpStatus for responsen.
              * @enum {string}
              */
-            httpStatus: "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "103 CHECKPOINT" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "302 MOVED_TEMPORARILY" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "305 USE_PROXY" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 PAYLOAD_TOO_LARGE" | "413 REQUEST_ENTITY_TOO_LARGE" | "414 URI_TOO_LONG" | "414 REQUEST_URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "419 INSUFFICIENT_SPACE_ON_RESOURCE" | "420 METHOD_FAILURE" | "421 DESTINATION_LOCKED" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
+            httpStatus: "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 CONTENT_TOO_LARGE" | "413 PAYLOAD_TOO_LARGE" | "414 URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "421 MISDIRECTED_REQUEST" | "422 UNPROCESSABLE_CONTENT" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
             /** @description Feil som har oppstått pga optimistisk lås. */
             optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
         };
@@ -1706,6 +1681,7 @@ export interface components {
              */
             oppdateringsdato: string;
         };
+        /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
         EndredeInndelinger: {
             endredeStemmekretser: string[];
             endredeGrunnkretser: string[];
@@ -1729,9 +1705,7 @@ export interface components {
              * @description Da utkastet ble opprettet.
              */
             opprettetDato: string;
-            /** @description Info om endringer på utkast. */
             auditInfoResponse: components["schemas"]["AuditInfoResponse"];
-            /** @description Representasjon av endringene som er utført i utkastet. */
             operasjoner: components["schemas"]["Operasjoner"];
             /**
              * Format: int32
@@ -1743,7 +1717,6 @@ export interface components {
              * @description Gyldig fra-datoen til utkastet
              */
             gyldigFra: string;
-            /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
             endredeInndelinger: components["schemas"]["EndredeInndelinger"];
         };
         /** @description Utkastet som ønskes opprettet */
@@ -1768,8 +1741,9 @@ export interface components {
             /** @enum {string} */
             logLevel: "INFO" | "WARN" | "ERROR";
             message: string;
-            stacktrace?: string;
+            stacktrace?: string | null;
         };
+        /** @description Gyldighetsintervall for objektet */
         GyldighetResponse: {
             /**
              * Format: date
@@ -1780,20 +1754,18 @@ export interface components {
              * Format: date
              * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
              */
-            gyldigTil?: string;
+            gyldigTil?: string | null;
         };
         /** @description Representasjon av en stemmekrets */
         StemmekretsResponse: {
-            /** @description ID-en til stemmekretsen */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Navnet på stemmekretsen */
             navn: string;
             /** @description Stemmekretsnummeret til stemmekretsen */
             nummer: string;
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string;
+            endringstype?: string | null;
             /**
              * Format: date-time
              * @description Siste oppdateringstidspunkt for objektet
@@ -1803,18 +1775,15 @@ export interface components {
              * Format: date-time
              * @description Datafangsdato for objektet
              */
-            datafangstdato?: string;
-            /** @description Kommunenummeret til stemmekretsen */
+            datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description ID-en til kommunen til stemmekretsen */
             kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
             /** @description Tellekretsnummer til stemmekretsen */
-            tellekretsnummer?: string;
+            tellekretsnummer?: string | null;
             /** @description Tellekretsnavn til stemmekretsen */
-            tellekretsnavn?: string;
+            tellekretsnavn?: string | null;
             /** @description Valgdistriktsnummer til stemmekretsen */
-            valgdistriktsnummer?: string;
-            /** @description Representasjonspunktet for stemmekretsen */
+            valgdistriktsnummer?: string | null;
             representasjonspunkt: components["schemas"]["Feature"];
             /**
              * Format: int32
@@ -1822,19 +1791,15 @@ export interface components {
              */
             version: number;
             /** @description Informasjon om stemmekretsen */
-            informasjon?: string;
+            informasjon?: string | null;
         };
         /** @description Representasjon av nasjon */
         NasjonResponse: {
-            /** @description ID-en til nasjonen */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Liste over navn til nasjon */
             navn: components["schemas"]["AdministrativEnhetNavn"][];
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
-            /** @description Området til nasjonen */
-            omraade?: components["schemas"]["MultiPolygon"];
-            /** @description Representasjonspunktet for nasjonen */
+            omraade?: Omit<components["schemas"]["MultiPolygon"], "type"> | null;
             representasjonspunkt: components["schemas"]["Feature"];
             /**
              * Format: date-time
@@ -1847,6 +1812,7 @@ export interface components {
              */
             version: number;
         };
+        /** @description Liste av terrengdetaljkoder fra Matrikkelen. */
         KodelisteEntryDTO: {
             /**
              * Format: int64
@@ -1870,7 +1836,6 @@ export interface components {
         };
         /** @description Representasjon av en kommune */
         KommuneResponse: {
-            /** @description ID-en til kommunen */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Lokal-id til fylket denne kommunen er i */
             fylkeId: string;
@@ -1878,7 +1843,6 @@ export interface components {
             navn: components["schemas"]["AdministrativEnhetNavn"][];
             /** @description Kommunenummeret til kommunen */
             nummer: string;
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
             samiskforvaltningsomraade: boolean;
@@ -1887,7 +1851,6 @@ export interface components {
              * @description Angir når denne kommunen ble sist oppdatert
              */
             oppdateringsdato: string;
-            /** @description Representasjonspunktet for kommunen */
             representasjonspunkt: components["schemas"]["Feature"];
             /**
              * Format: int32
@@ -1896,7 +1859,6 @@ export interface components {
             version: number;
         };
         InndelingResponse: {
-            /** @description ID til inndelingen */
             id: components["schemas"]["ObjektIdentifikator"];
             /**
              * @description Flatetypen til inndelingen
@@ -1907,20 +1869,16 @@ export interface components {
             navn: string;
             /** @description Nummeret til inndelingen */
             nummer: string;
-            /** @description Feature til representasjonspunktet til inndelingen. */
             representasjonspunkt: components["schemas"]["Feature"];
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
         };
         /** @description Representasjon av en grunnkrets */
         GrunnkretsResponse: {
-            /** @description ID-en til grunnkretsen */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Navnet på grunnkretsen */
             navn: string;
             /** @description Grunnkretsnummeret til grunnkretsen */
             nummer: string;
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /**
              * Format: date-time
@@ -1931,14 +1889,11 @@ export interface components {
              * Format: date-time
              * @description Datafangsdato for objektet
              */
-            datafangstdato?: string;
-            /** @description Kommunenummeret til grunnkretsen */
+            datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description ID-en til kommunen til grunnkretsen */
             kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
             /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string;
-            /** @description Representasjonspunktet for grunnkretsen */
+            endringstype?: string | null;
             representasjonspunkt: components["schemas"]["Feature"];
             /**
              * Format: int32
@@ -1946,17 +1901,15 @@ export interface components {
              */
             version: number;
             /** @description Informasjon om grunnkretsen */
-            informasjon?: string;
+            informasjon?: string | null;
         };
         /** @description Representasjon av et bopliktområde */
         BopliktomraadeResponse: {
-            /** @description ID-en til bopliktområdet */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Navnet til bopliktområdet */
             navn: string;
             /** @description Nummeret til bopliktområdet */
             nummer: string;
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /**
              * Format: date-time
@@ -1967,14 +1920,11 @@ export interface components {
              * Format: date-time
              * @description Datafangstdato for objektet
              */
-            datafangstdato?: string;
-            /** @description Kommunenummeret til bopliktområdet */
+            datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description ID-en til kommunen bopliktområdet tilhører */
             kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
             /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string;
-            /** @description Representasjonspunktet for bopliktområdet */
+            endringstype?: string | null;
             representasjonspunkt: components["schemas"]["Feature"];
             /**
              * Format: int32
@@ -1982,20 +1932,21 @@ export interface components {
              */
             version: number;
             /** @description Tilleggsinformasjon om bopliktområdet */
-            informasjon?: string;
+            informasjon: string | null;
             /** @description Om boplikten gjelder delvis innenfor området */
-            delvisBoplikt?: boolean;
+            delvisBoplikt?: boolean | null;
             /** @description Usikker avgrensning */
             usikkerAvgrensning: boolean;
             /** @description Forskriftsreferansen for bopliktområdet */
-            forskriftsreferanse?: string;
+            forskriftsreferanse?: string | null;
             /** @description Materielle vilkår for bopliktområdet */
             materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
             /** @description Andre avgrensninger */
-            andreAvgrensninger?: string;
+            andreAvgrensninger?: string | null;
             /** @description Lenke til mer informasjon */
-            url?: string;
+            url?: string | null;
         };
+        /** @description Liste av kodeliste-elementer. */
         KodelisteItem: {
             /** @description Id til kodeliste-innslaget. */
             id: string;
@@ -2013,6 +1964,7 @@ export interface components {
             /** @description Liste av kodeliste-elementer. */
             items: components["schemas"]["KodelisteItem"][];
         };
+        /** @description Koordinatet til representasjonspunktet til inndelingen. */
         Coordinate: {
             /** Format: double */
             x?: number;
@@ -2037,18 +1989,15 @@ export interface components {
             navn: string;
             /** @description Nummeret til inndelingen */
             nummer: string;
-            /** @description Koordinatet til representasjonspunktet til inndelingen. */
             representasjonspunkt: components["schemas"]["Coordinate"];
         };
         /** @description Representasjon av et fylke */
         FylkeResponse: {
-            /** @description ID-en til fylket */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Liste over navn til fylket */
             navn: components["schemas"]["AdministrativEnhetNavn"][];
             /** @description Fylkesnummeret til fylket */
             nummer: string;
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
             samiskforvaltningsomraade: boolean;
@@ -2057,7 +2006,6 @@ export interface components {
              * @description Angir når dette fylket ble sist oppdatert
              */
             oppdateringsdato: string;
-            /** @description Representasjonspunktet for fylket */
             representasjonspunkt: components["schemas"]["Feature"];
             /**
              * Format: int32
@@ -2073,19 +2021,15 @@ export interface components {
             navn: string;
             /** @description Nummeret til kretsen. */
             nummer: string;
-            /** @description Kommunenummeret til kretsen. */
             kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description Geometrien til kretsen, dvs representasjonspunkt og flaten */
             features: components["schemas"]["FeatureCollection"];
         };
         /** @description Representasjon av en stemmekrets */
         EksternStemmekretsResponse: {
-            /** @description ID-en til stemmekretsen */
             id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string;
+            endringstype?: string | null;
             /**
              * Format: date-time
              * @description Siste oppdateringstidspunkt for objektet
@@ -2095,20 +2039,18 @@ export interface components {
              * Format: date-time
              * @description Datafangsdato for objektet
              */
-            datafangstdato?: string;
+            datafangstdato?: string | null;
             /** @description Navnet på stemmekretsen */
             stemmekretsnavn: string;
             /** @description Stemmekretsnummeret til stemmekretsen */
             stemmekretsnummer: string;
-            /** @description Kommunenummeret til stemmekretsen */
             kommunenummer: components["schemas"]["Kommunenummer"];
             /** @description Tellekretsnummer til stemmekretsen */
-            tellekretsnummer?: string;
+            tellekretsnummer?: string | null;
             /** @description Tellekretsnavn til stemmekretsen */
-            tellekretsnavn?: string;
+            tellekretsnavn?: string | null;
             /** @description Valgdistriktsnummer til stemmekretsen */
-            valgdistriktsnummer?: string;
-            /** @description Geometrien til stemmekretsen, dvs representasjonspunkt og flaten */
+            valgdistriktsnummer?: string | null;
             features: components["schemas"]["FeatureCollection"];
             /**
              * Format: int32
@@ -2118,13 +2060,11 @@ export interface components {
         };
         /** @description En referanse til en kommune */
         EksternKommuneRef: {
-            /** @description ID-en til kommunen */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Liste over navn til kommunen */
             navn: components["schemas"]["AdministrativEnhetNavn"][];
             /** @description URL til full representasjon av kommunen */
             href: string;
-            /** @description Kommunenummeret til kommunen */
             kommunenummer: components["schemas"]["Kommunenummer"];
             /**
              * Format: int32
@@ -2134,13 +2074,11 @@ export interface components {
         };
         /** @description Representasjon av en grunnkrets */
         EksternGrunnkretsResponse: {
-            /** @description ID-en til grunnkretsen */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Navnet på grunnkretsen */
             navn: string;
             /** @description Grunnkretsnummeret til grunnkretsen */
             grunnkretsnummer: string;
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /**
              * Format: date-time
@@ -2151,12 +2089,10 @@ export interface components {
              * Format: date-time
              * @description Datafangsdato for objektet
              */
-            datafangstdato?: string;
-            /** @description Kommunenummeret til grunnkretsen */
+            datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
             /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string;
-            /** @description Geometrien til grunnkretsen, dvs representasjonspunkt og flaten */
+            endringstype?: string | null;
             features: components["schemas"]["FeatureCollection"];
             /**
              * Format: int32
@@ -2166,11 +2102,9 @@ export interface components {
         };
         /** @description Representasjon av en kommune */
         EksternKommuneResponse: {
-            /** @description ID-en til kommunen */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Liste over navn til kommunen */
             administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-            /** @description Kommunenummeret til kommunen */
             kommunenummer: components["schemas"]["Kommunenummer"];
             /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
             samiskforvaltningsomraade: boolean;
@@ -2179,7 +2113,6 @@ export interface components {
              * @description Angir når denne kommunen ble sist oppdatert
              */
             oppdateringsdato: string;
-            /** @description Geometrien til kommunen. Ikke grenser */
             features: components["schemas"]["FeatureCollection"];
             /**
              * Format: int32
@@ -2188,7 +2121,7 @@ export interface components {
             version: number;
         };
         PaginertRespons: {
-            innhold: unknown[];
+            innhold: Record<string, never>[];
             /** Format: int32 */
             side: number;
             /** Format: int32 */
@@ -2209,24 +2142,22 @@ export interface components {
              * @enum {string}
              */
             grensetype: "Kommunegrense" | "Fylkesgrense" | "Riksgrense" | "AvtaltAvgrensningslinje" | "Territorialgrense" | "Grunnlinje" | "Grunnkretsgrense" | "Delomraadegrense" | "Stemmekretsgrense" | "Bopliktgrense";
-            /** @description Geometri for grensen (GeoJSON format) */
             geometri: components["schemas"]["LineString"] | components["schemas"]["MultiPolygon"] | components["schemas"]["Point"];
-            /** @description Gyldighetsperiode for grensen */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /**
              * Format: date-time
              * @description Dato for datafangst
              */
-            datafangstdato?: string;
+            datafangstdato?: string | null;
             /**
              * Format: date-time
              * @description Dato for første digitalisering
              */
             foerstedigitaliseringsdato: string;
             /** @description Opphav/kilde til grensen */
-            opphav?: string;
+            opphav?: string | null;
             /** @description Tilleggsinformasjon om grensen */
-            informasjon?: string;
+            informasjon?: string | null;
             /** @description Brukeren som sist endret grensen */
             endretAv: string;
             /**
@@ -2240,19 +2171,19 @@ export interface components {
              */
             typeEndring: "KVALITETSHEVING" | "RETTING" | "VEDTATT_DELING" | "VEDTATT_SLETTING" | "VEDTATT_SAMMENSLAAING" | "VEDTATT_GRENSEJUSTERING" | "FASTSETTING" | "NAVNEENDRING" | "NUMMERENDRING" | "IMPORT";
             /** @description Metode for måling */
-            maalemetode?: string;
+            maalemetode?: string | null;
             /**
              * Format: int32
              * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer (oppgitt i cm)
              */
-            noeyaktighet?: number;
+            noeyaktighet?: number | null;
             /** @description Kommuner på grensen med side-informasjon */
             kommuner: components["schemas"]["KommuneInfoDTO"][];
         };
         /** @description Informasjon om en kommune på en side av en grense */
         KommuneInfoDTO: {
             /** @description Fylkes Lokal ID */
-            fylkesLokalID?: string;
+            fylkesLokalID?: string | null;
             /** @description Kommune Lokal ID */
             kommuneLokalID: string;
             /** @description Kommunenummer */
@@ -2273,13 +2204,11 @@ export interface components {
         };
         /** @description En referanse til et fylke */
         EksternFylkeRef: {
-            /** @description ID-en til fylket */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Liste over navn til fylket */
             navn: components["schemas"]["AdministrativEnhetNavn"][];
             /** @description URL til full representasjon av fylket */
             href: string;
-            /** @description Fylkesnummeret til fylket */
             fylkesnummer: components["schemas"]["Fylkesnummer"];
             /**
              * Format: int32
@@ -2296,11 +2225,9 @@ export interface components {
         };
         /** @description Representasjon av et fylke */
         EksternFylkeResponse: {
-            /** @description ID-en til fylket */
             id: components["schemas"]["ObjektIdentifikator"];
             /** @description Liste over navn til fylket */
             administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-            /** @description Fylkesnummeret til fylket */
             fylkesnummer: components["schemas"]["Fylkesnummer"];
             /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
             samiskforvaltningsomraade: boolean;
@@ -2309,7 +2236,6 @@ export interface components {
              * @description Angir når dette fylket ble sist oppdatert
              */
             oppdateringsdato: string;
-            /** @description Geometrien til fylket. Ikke grenser */
             features: components["schemas"]["FeatureCollection"];
             /**
              * Format: int32
@@ -2319,12 +2245,10 @@ export interface components {
         };
         /** @description Representasjon av et bopliktområde */
         EksternBopliktomraadeRespons: {
-            /** @description ID-en til bopliktområdet */
             id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Gyldighetsintervall for objektet */
             gyldighet: components["schemas"]["GyldighetResponse"];
             /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string;
+            endringstype?: string | null;
             /**
              * Format: date-time
              * @description Siste oppdateringstidspunkt for objektet
@@ -2334,22 +2258,22 @@ export interface components {
              * Format: date-time
              * @description Datafangstdato for objektet
              */
-            datafangstdato?: string;
-            /** @description Kommunenummeret til bopliktområdet */
+            datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
             /** @description Om boplikten gjelder delvis for området */
             delvisBoplikt: boolean;
             /** @description Tilleggsinformasjon om bopliktområdet */
-            informasjon?: string;
+            informasjon?: string | null;
             /** @description Forskriftsreferanse til boplikten */
-            forskriftsreferanse?: string;
+            forskriftsreferanse?: string | null;
             /** @description Materielle vilkår for bopliktområdet */
             materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
             /** @description Andre avgrensninger */
-            andreAvgrensninger?: string;
+            andreAvgrensninger?: string | null;
+            /** @description Usikker avgrensning */
+            usikkerAvgrensning: boolean;
             /** @description URL til informasjon om boplikten */
-            url?: string;
-            /** @description Geometrien til bopliktområdet, dvs representasjonspunkt og flaten */
+            url?: string | null;
             features: components["schemas"]["FeatureCollection"];
             /**
              * Format: int32
@@ -2359,7 +2283,7 @@ export interface components {
         };
         User: {
             /** @description Fullt navn til innlogget bruker. */
-            username?: string;
+            username?: string | null;
         };
     };
     responses: never;

@@ -10,21 +10,21 @@ import { isGrenseinformasjonPanelDisabled } from "../grenseinformasjon-utils";
 
 export type Referanse = {
   beskrivelse: string;
-  id?: string;
+  id?: string | null;
 };
 
 export type VedtakinfoForm = {
-  id?: string;
+  id?: string | null;
   dokumentlenker: Referanse[];
   leggTilDokumentlenke?: string;
   fastsettingsdato: Date;
   vedtakGyldigFra: Date | undefined;
   vedtakGyldigTil: Date | undefined;
-  fastsettingsmyndighet?: string;
-  hjemmel?: string;
+  fastsettingsmyndighet?: string | null;
+  hjemmel?: string | null;
   internreferanserKartverket: Referanse[];
   leggTilInternreferanse?: string;
-  rettskildeId?: string;
+  rettskildeId?: string | null;
   rettskildeTittel: string;
 };
 

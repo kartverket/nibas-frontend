@@ -90,7 +90,7 @@ const Utkast = () => {
           </EndringstypeList>
         ))}
       </UtkastPage>
-      {error && (
+      {error != null && (
         <AlertModal
           status="error"
           title={error.title}

@@ -87,9 +87,9 @@ const ToolbarPopups = () => {
             }
 
             const maalemetode = teiggrense.malemetodeId;
-            const noeyaktighet = teiggrense.noyaktighet ?? undefined;
+            const noeyaktighet = teiggrense.noyaktighet;
 
-            let maalemetodeId: string | undefined = undefined;
+            let maalemetodeId: string | null = null;
             if (maalemetode != null) {
               const matrikkelMaalemetode = matrikkelkodeliste.maalemetodeKodeliste.find(
                 (item) => item.id?.toString() === maalemetode?.toString(),
@@ -283,6 +283,7 @@ const ToolbarPopups = () => {
         }
       } else {
         setError({
+          errorCode: "500",
           title: "Feil ved henting av grenser fra matrikkelen",
           description:
             "En ukjent feil skjedde ved henting av grenser fra matrikkelen. Hvis feilen vedvarer, vennligst kontakt Kartverket.",

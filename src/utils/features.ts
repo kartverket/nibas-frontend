@@ -165,8 +165,8 @@ export const getPropertiesForDuplicateOfFeature = (
 export const createDuplicateOfTeigFeature = (
   feature: Feature<Geometry>,
   asGrenseType: GrenseType,
-  maalemetodeId?: string,
-  noeyaktighet?: number,
+  maalemetodeId: string | null,
+  noeyaktighet: number | null,
 ): Feature<Geometry> => {
   const duplicateFeature = feature.clone();
   duplicateFeature.setId(getTempFeatureId());
@@ -369,7 +369,7 @@ const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metada
           id: "e8947d32-56c9-4f87-a248-1defed464caf",
           href: "",
         },
-        noeyaktighet: undefined,
+        noeyaktighet: null,
         usikkerAvgrensning: false,
       },
     },

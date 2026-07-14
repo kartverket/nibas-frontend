@@ -12,10 +12,10 @@ import { withUpdatedMetadataCommonFields } from "utils/features";
 type GrenseinformasjonFormProps = {
   grenseType: string;
   datafangstDato: Date | undefined;
-  maalemetode: string | undefined;
-  noeyaktighet: number | undefined;
-  opphav: string | undefined;
-  informasjon: string | undefined;
+  maalemetode: string | null;
+  noeyaktighet: number | null;
+  opphav?: string | null;
+  informasjon?: string | null;
 };
 
 const getDefaultValuesFromFeature = (feature: Feature): GrenseinformasjonFormProps => {
