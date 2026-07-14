@@ -33,15 +33,15 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const { addHistoryEntry } = useHistory();
 
   const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
-  const utkastSammenslaaingInformasjon: Record<string, string | undefined> =
+  const utkastSammenslaaingInformasjon: Record<string, string | null> =
     utkastSammenslaaingEndring?.stemmekretserTilSammenslaaing
       .concat(utkastSammenslaaingEndring?.viderefoertStemmekrets)
       .reduce(
         (acc, sk) => {
-          acc[sk.lokalId] = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.informasjon;
+          acc[sk.lokalId] = utkast?.operasjoner?.stemmekretsSammenslaaingsendring?.informasjon ?? null;
           return acc;
         },
-        {} as Record<string, string | undefined>,
+        {} as Record<string, string | null>,
       ) ?? {};
 
   const flatedata = useFlatedata(mainInndeling) ?? [];

@@ -61,7 +61,7 @@ type Props = {
   formMethods: UseFormReturn<FlatedataInputs>;
   setPreviousValues: (flatedata: FlatedataInputs | undefined) => void;
   allInndelinger: MetadataResponse[];
-  sammenslaaingInformasjon: string | undefined;
+  sammenslaaingInformasjon: string | null | undefined;
   control: Control<FlatedataInputs>;
 };
 

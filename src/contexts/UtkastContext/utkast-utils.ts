@@ -19,6 +19,7 @@ import {
   FeatureProperties,
   FylkeRequest,
   GrunnkretsRequest,
+  GrunnkretsSammenslaaingsendringRequest,
   Inndelingtype,
   KommuneRequest,
   KretsDelingEndringRequest,
@@ -154,7 +155,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         ...{
           ...previousUtkast?.operasjoner.grenseendringer,
           ...previousUtkast?.operasjoner.metadataendringer,
-          stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+          stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring ?? null,
+          grunnkretssammenslaaingsendringer: previousUtkast?.operasjoner.grunnkretsSammenslaaingsendring ?? null,
           kretsDelingEndringer: mergeKretsdelingOperations(
             previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
             kretsdelingOperations,
@@ -343,7 +345,8 @@ export const createUtkastOperations = ({
   nasjonsendringer = {},
   stemmekretsendringer = {},
   bopliktomraadeendringer = {},
-  stemmekretssammenslaaingsendringer,
+  stemmekretssammenslaaingsendringer = null,
+  grunnkretssammenslaaingsendringer = null,
   kretsDelingEndringer = [],
 }: {
   endredeFeatures?: GeoJSONFeature[];
@@ -353,7 +356,8 @@ export const createUtkastOperations = ({
   nasjonsendringer?: Record<string, NasjonRequest>;
   stemmekretsendringer?: Record<string, StemmekretsRequest>;
   bopliktomraadeendringer?: Record<string, BopliktomraadeRequest>;
-  stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
+  stemmekretssammenslaaingsendringer: StemmekretsSammenslaaingsendringRequest | null;
+  grunnkretssammenslaaingsendringer: GrunnkretsSammenslaaingsendringRequest | null;
   kretsDelingEndringer?: KretsDelingEndringRequest[];
 }): UtkastOperasjoner => ({
   grenseendringer: {
@@ -368,5 +372,6 @@ export const createUtkastOperations = ({
     bopliktomraadeendringer,
   },
   stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
+  grunnkretsSammenslaaingsendring: grunnkretssammenslaaingsendringer,
   kretsDelingEndringer: kretsDelingEndringer,
 });
