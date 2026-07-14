@@ -57,7 +57,12 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
       }
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
-      setError({ ...wrapper.errorDescription, errorCode: wrapper.errorCode });
+      setError({
+        title: wrapper.errorDescription.title,
+        description: wrapper.errorDescription.description,
+        additionalInfo: wrapper.errorDescription.additionalInfo ?? undefined,
+        errorCode: wrapper.errorCode,
+      });
     }
   };
 

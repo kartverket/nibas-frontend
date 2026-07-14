@@ -15,6 +15,8 @@ const utkast: UtkastResponse = {
     grenseendringer: {
       endredeFeatures: [],
     },
+    stemmekretsSammenslaaingsendring: null,
+    grunnkretsSammenslaaingsendring: null,
     kretsDelingEndringer: [],
     metadataendringer: {
       fylkesendringer: {},

@@ -123,8 +123,8 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
   const gyldigTil = metadata.common?.gyldigTil;
   const isCommonFieldDisabled = isGrenseinformasjonPanelDisabled(feature) || metadata?.common?.gyldigTil != null;
 
-  const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | undefined) => {
-    if (id === undefined || id.length === 0) {
+  const getMaalemetodeText = (maalemetoder: KodelisteRespons, id: string | null) => {
+    if (id === null || id.length === 0) {
       return "Ikke spesifisert";
     }
 

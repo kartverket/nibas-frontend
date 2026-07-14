@@ -5,7 +5,7 @@ import Kart from "./Kart";
 import AlertModal from "components/Modals/AlertModal";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { isApiError, statusCode } from "utils/api";
-import { ApiErrorResponse } from "../../types/api";
+import type { ApiErrorResponse } from "types/api";
 import Header from "./Header/Header";
 
 const PageLayout = () => {
@@ -20,7 +20,9 @@ const PageLayout = () => {
             if (statusCode.isError(err.response?.status) && isApiError(err)) {
               const wrapper = err as ApiErrorResponse;
               setError({
-                ...wrapper.errorDescription,
+                title: wrapper.errorDescription.title,
+                description: wrapper.errorDescription.description,
+                additionalInfo: wrapper.errorDescription.additionalInfo ?? undefined,
                 errorCode: wrapper.errorCode,
               });
             } else {

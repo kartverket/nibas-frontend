@@ -177,7 +177,7 @@ const sortKretserOptionsByFormattedName = (kretser: Krets[] | undefined): Krets[
   return kretser.sort((a, b) => formatKretsNavn(a).localeCompare(formatKretsNavn(b)));
 };
 
-export const getIdForTilhorhetNyKrets = (kretsnummer: string | undefined, kommuneId: string | undefined) =>
+export const getIdForTilhorhetNyKrets = (kretsnummer: string | null, kommuneId: string | undefined) =>
   `NY_KRETS_${kretsnummer}_${kommuneId}`;
 
 export const mapKommunalInndelingResponseToKrets = (
