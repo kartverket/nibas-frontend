@@ -10,7 +10,7 @@ export const useAuthentication = (): UseAuthenticationReturnType => {
   const { data: userInfo } = useNibasApi("/v1/auth/user");
 
   return {
-    username: userInfo?.username,
+    username: userInfo?.username ?? undefined,
     // eslint-disable-next-line react-compiler/react-compiler
     signOut: () => (window.location.href = routes.logout),
   };

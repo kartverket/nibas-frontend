@@ -500,8 +500,8 @@ export const mockUtkast1: UtkastResponse = {
     grenseendringer: {
       endredeFeatures: [],
     },
-    stemmekretsSammenslaaingsendring: undefined,
-    grunnkretsSammenslaaingsendring: undefined,
+    stemmekretsSammenslaaingsendring: null,
+    grunnkretsSammenslaaingsendring: null,
     kretsDelingEndringer: [],
   },
   version: 0,
@@ -537,8 +537,8 @@ export const mockUtkast2: UtkastResponse = {
     grenseendringer: {
       endredeFeatures: [],
     },
-    stemmekretsSammenslaaingsendring: undefined,
-    grunnkretsSammenslaaingsendring: undefined,
+    stemmekretsSammenslaaingsendring: null,
+    grunnkretsSammenslaaingsendring: null,
     kretsDelingEndringer: [],
   },
   version: 0,

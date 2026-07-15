@@ -100,7 +100,10 @@ export const getKretsIdFromKontekstegenskaper = (
   }
 
   if (kontekstegenskaper.id?.lokalid.value === CustomOption.NOT_CHOSEN) {
-    return getIdForTilhorhetNyKrets(kontekstegenskaper.kretsNummer, kontekstegenskaper.kommuneId?.lokalid.value);
+    return getIdForTilhorhetNyKrets(
+      kontekstegenskaper.kretsNummer ?? undefined,
+      kontekstegenskaper.kommuneId?.lokalid.value,
+    );
   }
   return kontekstegenskaper.id?.lokalid.value;
 };
@@ -287,7 +290,7 @@ export const getIdForKontekstEgenskaper = (
         id: {
           lokalid: {
             value: getIdForTilhorhetNyKrets(
-              kontekstEgenskaper.kretsNummer,
+              kontekstEgenskaper.kretsNummer ?? undefined,
               kontekstEgenskaper.kommuneId?.lokalid.value,
             ),
           },

@@ -61,6 +61,7 @@ export type UtkastMetadataendringer = components["schemas"]["Metadataendringer"]
 export type OpprettUtkastRequest = components["schemas"]["OpprettUtkastRequest"];
 export type OppdaterUtkastRequest = components["schemas"]["OppdaterUtkastRequest"];
 export type StemmekretsSammenslaaingsendringRequest = components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
+export type GrunnkretsSammenslaaingsendringRequest = components["schemas"]["GrunnkretsSammenslaaingsendringRequest"];
 export type KretsDelingEndringRequest = components["schemas"]["KretsDelingEndringRequest"];
 
 /**

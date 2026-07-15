@@ -38,7 +38,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       .concat(utkastSammenslaaingEndring?.viderefoertStemmekrets)
       .reduce(
         (acc, sk) => {
-          acc[sk.lokalId] = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.informasjon;
+          acc[sk.lokalId] = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.informasjon ?? undefined;
           return acc;
         },
         {} as Record<string, string | undefined>,

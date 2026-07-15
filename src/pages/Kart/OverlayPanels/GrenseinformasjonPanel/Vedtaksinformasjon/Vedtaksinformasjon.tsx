@@ -10,7 +10,7 @@ import { isGrenseinformasjonPanelDisabled } from "../grenseinformasjon-utils";
 
 export type Referanse = {
   beskrivelse: string;
-  id?: string;
+  id?: string | null;
 };
 
 export type VedtakinfoForm = {
