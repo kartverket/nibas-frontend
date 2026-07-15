@@ -4,7 +4,7 @@ kind: "Component"
 metadata:
   name: "nibas-frontend"
   tags:
-  - "internal"
+    - "internal"
 spec:
   type: "website"
   lifecycle: "production"

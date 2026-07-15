@@ -1,10 +1,7 @@
 import { Inndelingtype, OppdaterUtkastRequest, UtkastResponse } from "types/api";
 
 export type EntityUtkastType =
-  | "stemmekretsendringer"
-  | "grunnkretsendringer"
-  | "kommuneendringer"
-  | "bopliktomraadeendringer";
+  "stemmekretsendringer" | "grunnkretsendringer" | "kommuneendringer" | "bopliktomraadeendringer";
 
 export type ResponseWithId = {
   id: {
