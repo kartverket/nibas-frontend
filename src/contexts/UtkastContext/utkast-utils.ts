@@ -19,6 +19,7 @@ import {
   FeatureProperties,
   FylkeRequest,
   GrunnkretsRequest,
+  GrunnkretsSammenslaaingsendringRequest,
   Inndelingtype,
   KommuneRequest,
   KretsDelingEndringRequest,
@@ -154,7 +155,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
         ...{
           ...previousUtkast?.operasjoner.grenseendringer,
           ...previousUtkast?.operasjoner.metadataendringer,
-          stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring,
+          stemmekretssammenslaaingsendringer: previousUtkast?.operasjoner.stemmekretsSammenslaaingsendring ?? undefined,
+          grunnkretssammenslaaingsendringer: previousUtkast?.operasjoner.grunnkretsSammenslaaingsendring ?? undefined,
           kretsDelingEndringer: mergeKretsdelingOperations(
             previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
             kretsdelingOperations,
@@ -344,6 +346,7 @@ export const createUtkastOperations = ({
   stemmekretsendringer = {},
   bopliktomraadeendringer = {},
   stemmekretssammenslaaingsendringer,
+  grunnkretssammenslaaingsendringer,
   kretsDelingEndringer = [],
 }: {
   endredeFeatures?: GeoJSONFeature[];
@@ -354,6 +357,7 @@ export const createUtkastOperations = ({
   stemmekretsendringer?: Record<string, StemmekretsRequest>;
   bopliktomraadeendringer?: Record<string, BopliktomraadeRequest>;
   stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
+  grunnkretssammenslaaingsendringer?: GrunnkretsSammenslaaingsendringRequest;
   kretsDelingEndringer?: KretsDelingEndringRequest[];
 }): UtkastOperasjoner => ({
   grenseendringer: {
@@ -367,6 +371,7 @@ export const createUtkastOperations = ({
     stemmekretsendringer,
     bopliktomraadeendringer,
   },
-  stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer,
+  stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer ?? null,
+  grunnkretsSammenslaaingsendring: grunnkretssammenslaaingsendringer ?? null,
   kretsDelingEndringer: kretsDelingEndringer,
 });

@@ -49,13 +49,13 @@ const mapFromApiToForm = (dokrefDTO: DokumentasjonsreferanseDTO): VedtakinfoForm
     dokumentlenker: dokrefDTO.dokumentlenker,
     fastsettingsdato: new Date(dokrefDTO.fastsettingsdato),
     internreferanserKartverket: dokrefDTO.internReferanserKartverket,
-    rettskildeId: dokrefDTO.rettskildeId,
+    rettskildeId: dokrefDTO.rettskildeId ?? undefined,
     rettskildeTittel: dokrefDTO.rettskildeTittel,
     vedtakGyldigFra: dokrefDTO.vedtakGyldigFra != null ? new Date(dokrefDTO.vedtakGyldigFra) : undefined,
     vedtakGyldigTil: dokrefDTO.vedtakGyldigTil != null ? new Date(dokrefDTO.vedtakGyldigTil) : undefined,
-    fastsettingsmyndighet: dokrefDTO.fastsettingsmyndighet,
-    hjemmel: dokrefDTO.hjemmel,
-    id: dokrefDTO.id,
+    fastsettingsmyndighet: dokrefDTO.fastsettingsmyndighet ?? undefined,
+    hjemmel: dokrefDTO.hjemmel ?? undefined,
+    id: dokrefDTO.id ?? undefined,
   };
 };
 

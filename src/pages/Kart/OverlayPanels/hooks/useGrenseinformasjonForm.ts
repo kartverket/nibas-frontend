@@ -27,10 +27,10 @@ const getDefaultValuesFromFeature = (feature: Feature): GrenseinformasjonFormPro
   return {
     grenseType: featureProperties.type,
     datafangstDato: isNaN(datafangstDato.valueOf()) ? undefined : datafangstDato,
-    informasjon: metadata.common?.informasjon,
-    maalemetode: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id,
-    noeyaktighet: metadata.commonGrense?.posisjonskvalitet?.noeyaktighet,
-    opphav: metadata.common?.opphav,
+    informasjon: metadata.common?.informasjon ?? undefined,
+    maalemetode: metadata.commonGrense?.posisjonskvalitet?.maalemetode.id ?? undefined,
+    noeyaktighet: metadata.commonGrense?.posisjonskvalitet?.noeyaktighet ?? undefined,
+    opphav: metadata.common?.opphav ?? undefined,
   };
 };
 
@@ -74,10 +74,10 @@ export const useGrenseinformasjonForm = (feature: Feature) => {
         {
           posisjonskvalitet: {
             maalemetode: {
-              id: data.maalemetode,
+              id: data.maalemetode ?? null,
               href: metadata.commonGrense?.posisjonskvalitet?.maalemetode.href ?? "",
             },
-            noeyaktighet: data.noeyaktighet,
+            noeyaktighet: data.noeyaktighet ?? null,
           },
         },
       );
