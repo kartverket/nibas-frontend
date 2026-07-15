@@ -31,8 +31,8 @@ import useSplit from "./useSplit";
 
 export type ContextualPosisjonskvalitet = {
   grensetype: "teig" | "nibas";
-  maalemetode: string | undefined;
-  noeyaktighet: number | undefined;
+  maalemetode: string | null;
+  noeyaktighet: number | null;
 };
 
 const useModify = () => {
@@ -284,26 +284,26 @@ const useModify = () => {
       // hvis det er et knutepunkt ønsker ikke å sette egenskaper man kan arve da vi ikke vet hvilken grense man prøver å kopiere fra.
       if (targetFeatures.length === 1) {
         const featureProperties = targetFeatures[0].getProperties();
-        let targetLineStringPosisjonskvalitet: ContextualPosisjonskvalitet | undefined;
+        let targetLineStringPosisjonskvalitet: ContextualPosisjonskvalitet;
         if (isTeiggrenseMetadata(featureProperties)) {
           targetLineStringPosisjonskvalitet = {
             grensetype: "teig",
-            maalemetode: featureProperties.malemetodeId?.toString(),
-            noeyaktighet: featureProperties.noyaktighet ?? undefined,
+            maalemetode: featureProperties.malemetodeId?.toString() ?? null,
+            noeyaktighet: featureProperties.noyaktighet ?? null,
           };
         } else if (isTeiggrenseMetadataWFS(featureProperties) === true) {
           targetLineStringPosisjonskvalitet = {
             grensetype: "teig",
-            maalemetode: featureProperties.MALEMETODE?.toString(),
-            noeyaktighet: featureProperties.NOYAKTIGHET ?? undefined,
+            maalemetode: featureProperties.MALEMETODE?.toString() ?? null,
+            noeyaktighet: featureProperties.NOYAKTIGHET ?? null,
           };
         } else {
           const posisjonskvalitet = ((featureProperties as FeatureProperties).metadata as Metadata).commonGrense
-            ?.posisjonskvalitet;
+            .posisjonskvalitet;
           targetLineStringPosisjonskvalitet = {
             grensetype: "nibas",
-            maalemetode: posisjonskvalitet?.maalemetode.id,
-            noeyaktighet: posisjonskvalitet?.noeyaktighet,
+            maalemetode: posisjonskvalitet.maalemetode.id,
+            noeyaktighet: posisjonskvalitet.noeyaktighet,
           };
         }
         // Vi må runde av koordinatene til 3 desimaler (nærmeste halve cm)
