@@ -11,19 +11,28 @@ import { styles } from "./EnvironmentOverlay";
 type EnvironmentOption = {
   label: string;
   value: string;
-  author?: string;
-  profile_pic_url?: string;
-  repository?: string;
+  author: string | null;
+  profile_pic_url: string | null;
+  lokasjon: string;
+  date: string;
 };
 
 const currentEnvironments: EnvironmentOption[] = [
   {
-    label: "nibas-main",
+    label: "Devmiljø (SKIP)",
     value: NibasOrigin.DEV_MAIN,
+    author: null,
+    profile_pic_url: null,
+    lokasjon: "main",
+    date: Date.now().toString(),
   },
   {
-    label: "localhost",
+    label: "Lokalt utviklingsmiljø",
     value: NibasOrigin.LOCALHOST,
+    author: null,
+    profile_pic_url: null,
+    lokasjon: "localhost",
+    date: Date.now().toString(),
   },
 ];
 
@@ -77,7 +86,8 @@ const mapPRtoOptionObject = (pr: GitHubPullRequest): EnvironmentOption | null =>
     value: "https://nibas-" + pr.head.ref.toLowerCase() + ".atkv3-dev.kartverket-intern.cloud",
     author: pr.user.login,
     profile_pic_url: pr.user.avatar_url,
-    repository: pr.head.repo.name,
+    lokasjon: pr.head.repo.name,
+    date: pr.updated_at,
   };
 };
 
@@ -86,10 +96,10 @@ const mapToEnvironmentSelectOption = (option: EnvironmentOption) => {
     <SelectContainer>
       <TitlesContainer>
         <TruncatedLabel>{option.label}</TruncatedLabel>
-        <RepositoryLabel>{option.repository}</RepositoryLabel>
+        <RepositoryLabel>{option.lokasjon}</RepositoryLabel>
       </TitlesContainer>
 
-      {option.author != null && (
+      {option.author != null && option.profile_pic_url != null && (
         <AuthorContainer>
           {option.author} <AuthorImage src={option.profile_pic_url} />
         </AuthorContainer>
@@ -99,28 +109,40 @@ const mapToEnvironmentSelectOption = (option: EnvironmentOption) => {
 };
 
 const selectWidth = 400;
+const refreshButtonWidth = 32;
 export const EnvironmentSelect = () => {
   const env = getCurrentEnvironment();
   const style = styles[env];
   const envSwitchEnabled = env !== "dev-e2e" && env !== "prod";
   const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
 
-  const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
-    envSwitchEnabled ? "nibas-frontend" : null,
-    fetchDeployedPRs,
-  );
-  const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR(
-    envSwitchEnabled ? "nibas-backend" : null,
-    fetchDeployedPRs,
-  );
-  const { data: nibasEventsPRs, isLoading: isEventsPRsLoading } = useSWR(
-    envSwitchEnabled ? "nibas-events" : null,
-    fetchDeployedPRs,
-  );
-  const { data: nibasArbeidslistePRs, isLoading: isArbeidslistePRsLoading } = useSWR(
-    envSwitchEnabled ? "nibas-arbeidsliste" : null,
-    fetchDeployedPRs,
-  );
+  const {
+    data: nibasFrontendPRs,
+    isLoading: isFrontendPRsLoading,
+    mutate: mutateFrontendPRs,
+  } = useSWR(envSwitchEnabled ? "nibas-frontend" : null, fetchDeployedPRs);
+  const {
+    data: nibasBackendPRs,
+    isLoading: isBackendPRsLoading,
+    mutate: mutateBackendPRs,
+  } = useSWR(envSwitchEnabled ? "nibas-backend" : null, fetchDeployedPRs);
+  const {
+    data: nibasEventsPRs,
+    isLoading: isEventsPRsLoading,
+    mutate: mutateEventsPRs,
+  } = useSWR(envSwitchEnabled ? "nibas-events" : null, fetchDeployedPRs);
+  const {
+    data: nibasArbeidslistePRs,
+    isLoading: isArbeidslistePRsLoading,
+    mutate: mutateArbeidslistePRs,
+  } = useSWR(envSwitchEnabled ? "nibas-arbeidsliste" : null, fetchDeployedPRs);
+
+  const mutateAllPRs = () => {
+    mutateFrontendPRs();
+    mutateBackendPRs();
+    mutateEventsPRs();
+    mutateArbeidslistePRs();
+  };
 
   const isLoading = isFrontendPRsLoading || isBackendPRsLoading || isArbeidslistePRsLoading || isEventsPRsLoading;
 
@@ -134,11 +156,11 @@ export const EnvironmentSelect = () => {
       ...(nibasArbeidslistePRs || []),
     ]
       .map(mapPRtoOptionObject)
-      .filter((pr) => pr !== null),
+      .filter((pr) => pr !== null)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()),
   );
 
   const onSelectEnvironment = (url: string) => {
-    // bruker samme database for alle dev-miljøer, så dermed skal vi kunne gå til samme paths på tvers av miljøer i dev.
     window.location.href = url.concat(window.location.pathname);
   };
 
@@ -175,6 +197,7 @@ export const EnvironmentSelect = () => {
       boxShadow: "none",
     }),
   };
+
   return (
     envSwitchEnabled === true && (
       <EnvironmentSelectContainer $color={style.color} $isOpen={environmentContainerOpen}>
@@ -195,14 +218,23 @@ export const EnvironmentSelect = () => {
           {isLoading ? (
             <Spinner size={"lg"} color="white" />
           ) : (
-            <StyledIconButton
-              $isOpen={environmentContainerOpen}
-              aria-label={"lukk miljøvelger"}
-              icon={"chevron_left"}
-              variant="ghost"
-              size={"sm"}
-              onClick={onToggleEnvironmentSelectContainer}
-            />
+            <>
+              <StyledIconButton
+                icon={"refresh"}
+                variant="ghost"
+                size={"sm"}
+                aria-label={"refresh miljøvelger"}
+                onClick={() => mutateAllPRs()}
+              />
+              <StyledIconButton
+                $isOpen={environmentContainerOpen}
+                aria-label={"lukk miljøvelger"}
+                icon={"chevron_left"}
+                variant="ghost"
+                size={"sm"}
+                onClick={onToggleEnvironmentSelectContainer}
+              />
+            </>
           )}
         </>
       </EnvironmentSelectContainer>
@@ -219,7 +251,7 @@ const EnvironmentSelectContainer = styled.div<{ $color: string; $isOpen: boolean
   display: flex;
   align-items: center;
   column-gap: 5px;
-  left: ${(props) => (!props.$isOpen ? `-${selectWidth}px` : "4px")};
+  left: ${(props) => (!props.$isOpen ? `-${selectWidth + refreshButtonWidth}px` : "4px")};
   transition: left 0.5s ease-in-out;
 `;
 
