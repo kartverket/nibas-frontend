@@ -52,7 +52,7 @@ const ClickableHeader = styled(Button)<{ $iconCompensation: boolean }>`
     background: none;
   }
 
-  ${(props) => props.$iconCompensation && "margin-right: 24px"};
+  ${(props) => props.$iconCompensation && "margin-right: 8px"};
 `;
 
 export default FlatedataTableHeader;
