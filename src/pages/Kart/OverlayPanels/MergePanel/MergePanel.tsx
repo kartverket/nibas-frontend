@@ -58,8 +58,7 @@ const MergePanel = () => {
   );
 
   const utkastStemmekretser = useUtkastEntity(stemmekretserByKommune, "stemmekretsendringer") as
-    | StemmekretsResponse[]
-    | undefined;
+    StemmekretsResponse[] | undefined;
 
   const formMethods = useForm<MergeFormData>({
     defaultValues: {
