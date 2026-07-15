@@ -267,7 +267,7 @@ const Table = styled.table`
 
   th,
   td {
-    padding: 12px 18px;
+    padding: 12px 8px;
     border-bottom: 1px solid var(--kvib-colors-chakra-border-color);
 
     &:first-child {
