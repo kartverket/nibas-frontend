@@ -302,8 +302,8 @@ const useModify = () => {
             ?.posisjonskvalitet;
           targetLineStringPosisjonskvalitet = {
             grensetype: "nibas",
-            maalemetode: posisjonskvalitet?.maalemetode.id,
-            noeyaktighet: posisjonskvalitet?.noeyaktighet,
+            maalemetode: posisjonskvalitet?.maalemetode.id ?? undefined,
+            noeyaktighet: posisjonskvalitet?.noeyaktighet ?? undefined,
           };
         }
         // Vi må runde av koordinatene til 3 desimaler (nærmeste halve cm)

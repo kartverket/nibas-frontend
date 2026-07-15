@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from "react";
 type Error = {
   title: string;
   description: string;
-  additionalInfo?: string;
+  additionalInfo?: string | null;
   errorCode?: string;
 } | null;
 

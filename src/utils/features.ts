@@ -177,8 +177,8 @@ export const createDuplicateOfTeigFeature = (
   }
 
   const posisjonskvalitet: Posisjonskvalitet = {
-    maalemetode: { id: maalemetodeId, href: "" },
-    noeyaktighet: noeyaktighet,
+    maalemetode: { id: maalemetodeId ?? null, href: "" },
+    noeyaktighet: noeyaktighet ?? null,
   };
 
   duplicateFeature.setProperties({
@@ -369,7 +369,7 @@ const getDefaultFeatureMetadata = (discriminator: MetadataDiscriminator): Metada
           id: "e8947d32-56c9-4f87-a248-1defed464caf",
           href: "",
         },
-        noeyaktighet: undefined,
+        noeyaktighet: null,
         usikkerAvgrensning: false,
       },
     },

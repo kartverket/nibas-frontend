@@ -41,7 +41,7 @@ const PageLayout = () => {
             status="error"
             title={error.title}
             description={error.description}
-            additionalInfo={error.additionalInfo}
+            additionalInfo={error.additionalInfo ?? undefined}
             errorCode={error.errorCode}
             isOpen={true}
             onClose={() => setError(null)}
