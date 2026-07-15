@@ -99,28 +99,40 @@ const mapToEnvironmentSelectOption = (option: EnvironmentOption) => {
 };
 
 const selectWidth = 400;
+const refreshButtonWidth = 32;
 export const EnvironmentSelect = () => {
   const env = getCurrentEnvironment();
   const style = styles[env];
   const envSwitchEnabled = env !== "dev-e2e" && env !== "prod";
   const [environmentContainerOpen, setEnvironmentContainerOpen] = useState(false);
 
-  const { data: nibasFrontendPRs, isLoading: isFrontendPRsLoading } = useSWR(
-    envSwitchEnabled ? "nibas-frontend" : null,
-    fetchDeployedPRs,
-  );
-  const { data: nibasBackendPRs, isLoading: isBackendPRsLoading } = useSWR(
-    envSwitchEnabled ? "nibas-backend" : null,
-    fetchDeployedPRs,
-  );
-  const { data: nibasEventsPRs, isLoading: isEventsPRsLoading } = useSWR(
-    envSwitchEnabled ? "nibas-events" : null,
-    fetchDeployedPRs,
-  );
-  const { data: nibasArbeidslistePRs, isLoading: isArbeidslistePRsLoading } = useSWR(
-    envSwitchEnabled ? "nibas-arbeidsliste" : null,
-    fetchDeployedPRs,
-  );
+  const {
+    data: nibasFrontendPRs,
+    isLoading: isFrontendPRsLoading,
+    mutate: mutateFrontendPRs,
+  } = useSWR(envSwitchEnabled ? "nibas-frontend" : null, fetchDeployedPRs);
+  const {
+    data: nibasBackendPRs,
+    isLoading: isBackendPRsLoading,
+    mutate: mutateBackendPRs,
+  } = useSWR(envSwitchEnabled ? "nibas-backend" : null, fetchDeployedPRs);
+  const {
+    data: nibasEventsPRs,
+    isLoading: isEventsPRsLoading,
+    mutate: mutateEventsPRs,
+  } = useSWR(envSwitchEnabled ? "nibas-events" : null, fetchDeployedPRs);
+  const {
+    data: nibasArbeidslistePRs,
+    isLoading: isArbeidslistePRsLoading,
+    mutate: mutateArbeidslistePRs,
+  } = useSWR(envSwitchEnabled ? "nibas-arbeidsliste" : null, fetchDeployedPRs);
+
+  const mutateAllPRs = () => {
+    mutateFrontendPRs();
+    mutateBackendPRs();
+    mutateEventsPRs();
+    mutateArbeidslistePRs();
+  };
 
   const isLoading = isFrontendPRsLoading || isBackendPRsLoading || isArbeidslistePRsLoading || isEventsPRsLoading;
 
@@ -138,7 +150,6 @@ export const EnvironmentSelect = () => {
   );
 
   const onSelectEnvironment = (url: string) => {
-    // bruker samme database for alle dev-miljøer, så dermed skal vi kunne gå til samme paths på tvers av miljøer i dev.
     window.location.href = url.concat(window.location.pathname);
   };
 
@@ -195,14 +206,23 @@ export const EnvironmentSelect = () => {
           {isLoading ? (
             <Spinner size={"lg"} color="white" />
           ) : (
-            <StyledIconButton
-              $isOpen={environmentContainerOpen}
-              aria-label={"lukk miljøvelger"}
-              icon={"chevron_left"}
-              variant="ghost"
-              size={"sm"}
-              onClick={onToggleEnvironmentSelectContainer}
-            />
+            <>
+              <StyledIconButton
+                icon={"refresh"}
+                variant="ghost"
+                size={"sm"}
+                aria-label={"refresh miljøvelger"}
+                onClick={() => mutateAllPRs()}
+              />
+              <StyledIconButton
+                $isOpen={environmentContainerOpen}
+                aria-label={"lukk miljøvelger"}
+                icon={"chevron_left"}
+                variant="ghost"
+                size={"sm"}
+                onClick={onToggleEnvironmentSelectContainer}
+              />
+            </>
           )}
         </>
       </EnvironmentSelectContainer>
@@ -219,7 +239,7 @@ const EnvironmentSelectContainer = styled.div<{ $color: string; $isOpen: boolean
   display: flex;
   align-items: center;
   column-gap: 5px;
-  left: ${(props) => (!props.$isOpen ? `-${selectWidth}px` : "4px")};
+  left: ${(props) => (!props.$isOpen ? `-${selectWidth + refreshButtonWidth}px` : "4px")};
   transition: left 0.5s ease-in-out;
 `;
 
