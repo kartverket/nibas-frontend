@@ -215,17 +215,17 @@ export const EnvironmentSelect = () => {
             menuPlacement="top"
             formatOptionLabel={mapToEnvironmentSelectOption}
           />
+          <StyledIconButton
+            icon={"refresh"}
+            variant="ghost"
+            size={"sm"}
+            aria-label={"refresh miljøvelger"}
+            onClick={() => mutateAllPRs()}
+          />
           {isLoading ? (
             <Spinner size={"lg"} color="white" />
           ) : (
             <>
-              <StyledIconButton
-                icon={"refresh"}
-                variant="ghost"
-                size={"sm"}
-                aria-label={"refresh miljøvelger"}
-                onClick={() => mutateAllPRs()}
-              />
               <StyledIconButton
                 $isOpen={environmentContainerOpen}
                 aria-label={"lukk miljøvelger"}
