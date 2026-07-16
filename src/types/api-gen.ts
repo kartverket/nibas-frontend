@@ -1167,13 +1167,21 @@ export interface components {
             /** @description informasjon om bopliktomraade */
             informasjon?: string | null;
             /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
-            delvisBoplikt: boolean;
+            delvisBoplikt?: boolean | null;
+            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
+            gjelderKunDelAvKommunen: boolean;
             /** @description Usikker avgrensning */
-            usikkerAvgrensning: boolean;
+            usikkerAvgrensning?: boolean | null;
+            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
+            harUsikkerAvgrensning: boolean;
             /** @description Materielle vilkår for bopliktområdet */
-            materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
+            materielleVilkaar?: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[] | null;
+            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
+            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
             /** @description Andre avgrensninger */
             andreAvgrensninger?: string | null;
+            /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
+            andreLokaleAvgrensninger?: string | null;
             /** @description Referanse til forskriften for bopliktomraadet */
             forskriftsreferanse?: string | null;
             /** @description URL til kommunen sin informasjonside */
@@ -1935,14 +1943,22 @@ export interface components {
             informasjon?: string | null;
             /** @description Om boplikten gjelder delvis innenfor området */
             delvisBoplikt?: boolean | null;
+            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
+            gjelderKunDelAvKommunen: boolean;
             /** @description Usikker avgrensning */
             usikkerAvgrensning: boolean;
+            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
+            harUsikkerAvgrensning: boolean;
             /** @description Forskriftsreferansen for bopliktområdet */
             forskriftsreferanse?: string | null;
             /** @description Materielle vilkår for bopliktområdet */
             materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
+            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
+            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
             /** @description Andre avgrensninger */
             andreAvgrensninger?: string | null;
+            /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
+            andreLokaleAvgrensninger?: string | null;
             /** @description Lenke til mer informasjon */
             url?: string | null;
         };
@@ -1972,10 +1988,10 @@ export interface components {
             y?: number;
             /** Format: double */
             z?: number;
+            coordinate?: components["schemas"]["Coordinate"];
             /** Format: double */
             m?: number;
             valid?: boolean;
-            coordinate?: components["schemas"]["Coordinate"];
         };
         InndelingSearchResponse: {
             /** @description Lokalid til inndelingen */
@@ -2262,16 +2278,24 @@ export interface components {
             kommunenummer: components["schemas"]["Kommunenummer"];
             /** @description Om boplikten gjelder delvis for området */
             delvisBoplikt: boolean;
+            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
+            gjelderKunDelAvKommunen: boolean;
             /** @description Tilleggsinformasjon om bopliktområdet */
             informasjon?: string | null;
             /** @description Forskriftsreferanse til boplikten */
             forskriftsreferanse?: string | null;
             /** @description Materielle vilkår for bopliktområdet */
             materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
+            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
+            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
             /** @description Andre avgrensninger */
             andreAvgrensninger?: string | null;
+            /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
+            andreLokaleAvgrensninger?: string | null;
             /** @description Usikker avgrensning */
             usikkerAvgrensning: boolean;
+            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
+            harUsikkerAvgrensning: boolean;
             /** @description URL til informasjon om boplikten */
             url?: string | null;
             features: components["schemas"]["FeatureCollection"];

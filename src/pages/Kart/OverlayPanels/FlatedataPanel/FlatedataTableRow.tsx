@@ -169,10 +169,10 @@ export const FlatedataTableRow = ({
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
   const disabledDate = getInndelingFremtidigEndringDato(inndelingId);
-  const existingUsikkerAvgrensning = isBopliktomraadeInndeling(inndeling)
-    ? (inndeling.usikkerAvgrensning ?? false)
+  const existingHarUsikkerAvgrensning = isBopliktomraadeInndeling(inndeling)
+    ? (inndeling.harUsikkerAvgrensning ?? false)
     : false;
-  const usikkerAvgrensningValue = getValues(`${inndelingId}.usikkerAvgrensning`) ?? existingUsikkerAvgrensning;
+  const harUsikkerAvgrensningValue = getValues(`${inndelingId}.harUsikkerAvgrensning`) ?? existingHarUsikkerAvgrensning;
 
   useHistoryFormSync<MetadataEntry>({
     entityId: inndelingId,
@@ -291,36 +291,6 @@ export const FlatedataTableRow = ({
           )}
           {isBopliktomraadeInndeling(inndeling) && (
             <>
-              <SelectCell
-                isEditing={isEditing}
-                isDisabled={disabledDate != null}
-                options={[
-                  { label: "Deler av kommunen", value: "true" },
-                  { label: "Hele kommunen", value: "false" },
-                ]}
-                defaultValue={(getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt) ? "true" : "false"}
-                data={
-                  (getValues(`${inndelingId}.delvisBoplikt`) ?? inndeling.delvisBoplikt)
-                    ? "Deler av kommunen"
-                    : "Hele kommunen"
-                }
-                {...register(`${inndelingId}.delvisBoplikt`, {
-                  setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
-                })}
-              />
-              <SelectCell
-                isEditing={isEditing}
-                isDisabled={disabledDate != null}
-                options={[
-                  { label: "Ja", value: "true" },
-                  { label: "Nei", value: "false" },
-                ]}
-                defaultValue={usikkerAvgrensningValue ? "true" : "false"}
-                data={usikkerAvgrensningValue ? "Ja" : "Nei"}
-                {...register(`${inndelingId}.usikkerAvgrensning`, {
-                  setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
-                })}
-              />
               <URLInputCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
@@ -332,25 +302,44 @@ export const FlatedataTableRow = ({
                     : undefined
                 }
               />
-              <URLInputCell
+              <SelectCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
-                data={getValues(`${inndelingId}.url`) ?? inndeling.url}
-                {...register(`${inndelingId}.url`, urlRegisterOptions)}
-                validationError={
-                  inndelingErrors != null && "url" in inndelingErrors ? validationError(inndelingErrors.url) : undefined
+                options={[
+                  { label: "Deler av kommunen", value: "true" },
+                  { label: "Hele kommunen", value: "false" },
+                ]}
+                defaultValue={
+                  (getValues(`${inndelingId}.gjelderKunDelAvKommunen`) ?? inndeling.gjelderKunDelAvKommunen)
+                    ? "true"
+                    : "false"
                 }
+                data={
+                  (getValues(`${inndelingId}.gjelderKunDelAvKommunen`) ?? inndeling.gjelderKunDelAvKommunen)
+                    ? "Deler av kommunen"
+                    : "Hele kommunen"
+                }
+                {...register(`${inndelingId}.gjelderKunDelAvKommunen`, {
+                  setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
+                })}
               />
-              <InputCell
+              <SelectCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
-                data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? inndeling.informasjon}
-                {...register(`${inndelingId}.informasjon`)}
+                options={[
+                  { label: "Ja", value: "true" },
+                  { label: "Nei", value: "false" },
+                ]}
+                defaultValue={harUsikkerAvgrensningValue ? "true" : "false"}
+                data={harUsikkerAvgrensningValue ? "Ja" : "Nei"}
+                {...register(`${inndelingId}.harUsikkerAvgrensning`, {
+                  setValueAs: (value) => (typeof value === "string" ? value === "true" : value),
+                })}
               />
               <Controller
                 control={control}
-                name={`${inndelingId}.materielleVilkaar`}
-                defaultValue={inndeling.materielleVilkaar ?? []}
+                name={`${inndelingId}.gjeldendeMaterielleVilkaar`}
+                defaultValue={inndeling.gjeldendeMaterielleVilkaar ?? []}
                 render={({ field }) => (
                   <MultiSelectCell
                     isEditing={isEditing}
@@ -364,8 +353,8 @@ export const FlatedataTableRow = ({
               <InputCell
                 isEditing={isEditing}
                 isDisabled={disabledDate != null}
-                data={getValues(`${inndelingId}.andreAvgrensninger`) ?? inndeling.andreAvgrensninger ?? ""}
-                {...register(`${inndelingId}.andreAvgrensninger`)}
+                data={getValues(`${inndelingId}.andreLokaleAvgrensninger`) ?? inndeling.andreLokaleAvgrensninger ?? ""}
+                {...register(`${inndelingId}.andreLokaleAvgrensninger`)}
               />
             </>
           )}
