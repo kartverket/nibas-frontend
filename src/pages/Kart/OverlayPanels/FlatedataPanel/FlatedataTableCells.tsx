@@ -198,6 +198,7 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
               control: (base) => ({
                 ...base,
                 minHeight: "32px",
+                maxWidth: "200px",
                 fontSize: "14px",
               }),
               valueContainer: (base) => ({
@@ -210,7 +211,7 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
                 whiteSpace: "nowrap",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
-                maxWidth: "100%",
+                maxWidth: "100",
               }),
               indicatorsContainer: (base) => ({
                 ...base,
