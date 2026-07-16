@@ -85,13 +85,11 @@ const addHistoryChangesToMetadata = (
             ...metadatareponse,
             navn: change.to.navn,
             nummer: change.to.nummer,
-            delvisBoplikt: change.to.delvisBoplikt,
-            usikkerAvgrensning: change.to.usikkerAvgrensning,
             forskriftsreferanse: change.to.forskriftsreferanse,
-            url: change.to.url,
-            informasjon: change.to.informasjon,
-            materielleVilkaar: change.to.materielleVilkaar,
-            andreAvgrensninger: change.to.andreAvgrensninger,
+            andreLokaleAvgrensninger: change.to.andreLokaleAvgrensninger,
+            gjelderKunDelAvKommunen: change.to.gjelderKunDelAvKommunen,
+            gjeldendeMaterielleVilkaar: change.to.gjeldendeMaterielleVilkaar,
+            harUsikkerAvgrensning: change.to.harUsikkerAvgrensning,
           } as MetadataResponse;
         }
         return metadatareponse;
@@ -131,4 +129,5 @@ export const isKommuneInndeling = (value: object): value is KommuneResponse => "
 
 export const isStemmekretsInndeling = (value: object): value is StemmekretsResponse => "valgdistriktsnummer" in value;
 
-export const isBopliktomraadeInndeling = (value: object): value is BopliktomraadeResponse => "delvisBoplikt" in value;
+export const isBopliktomraadeInndeling = (value: object): value is BopliktomraadeResponse =>
+  "gjelderKunDelAvKommunen" in value;

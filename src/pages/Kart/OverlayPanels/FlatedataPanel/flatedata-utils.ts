@@ -8,7 +8,7 @@ import {
   MetadataRequest,
   MetadataResponse,
   StemmekretsRequest,
-  MaterielleVilkaar,
+  GjeldendeMaterielleVilkaar,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
@@ -29,38 +29,44 @@ type StemmekretsInputs = { [inndelingId: string]: StemmekretsInput };
 type GrunnkretsInput = { navn: string; nummer: string; informasjon: string };
 type GrunnkretsInputs = { [inndelingId: string]: GrunnkretsInput };
 
-export type MaterielleVilkaarValue = MaterielleVilkaar[number];
+export type GjeldendeMaterielleVilkaarValue = GjeldendeMaterielleVilkaar[number];
+
 type BopliktomraadeInput = {
   navn: string;
   nummer: string;
-  delvisBoplikt: boolean;
-  usikkerAvgrensning: boolean;
+  gjelderKunDelAvKommunen: boolean;
+  harUsikkerAvgrensning: boolean;
   forskriftsreferanse: string;
-  url: string;
-  informasjon: string;
-  materielleVilkaar: MaterielleVilkaar;
-  andreAvgrensninger: string;
+  gjeldendeMaterielleVilkaar: GjeldendeMaterielleVilkaar;
+  andreLokaleAvgrensninger: string;
 };
 
 type BopliktomraadeInputs = { [inndelingId: string]: BopliktomraadeInput };
 
 export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs | BopliktomraadeInputs;
 
-const isKommuneInput = (value: KommuneInput | StemmekretsInput | GrunnkretsInput): value is KommuneInput =>
-  "samiskforvaltningsomraade" in value;
+// Litt uheldig distinksjon da vi ikke har noen diskriminator for å skille mellom de ulike input-typene.
+const isGrunnkretsInput = (
+  value: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
+): value is GrunnkretsInput =>
+  "informasjon" in value && !isBopliktomraadeInput(value) && !isStemmekretsInput(value) && !isKommuneInput(value);
 
-const isStemmekretsInput = (value: KommuneInput | StemmekretsInput | GrunnkretsInput): value is StemmekretsInput =>
-  "tellekretsnummer" in value && "tellekretsnavn" in value;
+const isKommuneInput = (
+  value: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
+): value is KommuneInput => "samiskforvaltningsomraade" in value;
+
+const isStemmekretsInput = (
+  value: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
+): value is StemmekretsInput => "tellekretsnummer" in value && "tellekretsnavn" in value;
 
 const isBopliktomraadeInput = (
   value: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
 ): value is BopliktomraadeInput =>
-  "delvisBoplikt" in value &&
+  "gjelderKunDelAvKommunen" in value &&
   "forskriftsreferanse" in value &&
-  "url" in value &&
-  "informasjon" in value &&
-  "materielleVilkaar" in value &&
-  "andreAvgrensninger" in value;
+  "gjeldendeMaterielleVilkaar" in value &&
+  "andreLokaleAvgrensninger" in value &&
+  "harUsikkerAvgrensning" in value;
 
 const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
@@ -101,7 +107,7 @@ const getRequestFromInputs = (
       return null;
     }
     case "GRUNNKRETS": {
-      if (!isKommuneInput(data)) {
+      if (isGrunnkretsInput(data)) {
         const grunnkretsRequest: GrunnkretsRequest = {
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
@@ -125,13 +131,11 @@ const getRequestFromInputs = (
           version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
-          delvisBoplikt: data.delvisBoplikt,
-          usikkerAvgrensning: data.usikkerAvgrensning,
           forskriftsreferanse: data.forskriftsreferanse,
-          url: data.url,
-          informasjon: data.informasjon !== "" ? data.informasjon : undefined,
-          materielleVilkaar: data.materielleVilkaar,
-          andreAvgrensninger: data.andreAvgrensninger !== "" ? data.andreAvgrensninger : undefined,
+          gjeldendeMaterielleVilkaar: data.gjeldendeMaterielleVilkaar,
+          andreLokaleAvgrensninger: data.andreLokaleAvgrensninger !== "" ? data.andreLokaleAvgrensninger : undefined,
+          harUsikkerAvgrensning: data.harUsikkerAvgrensning,
+          gjelderKunDelAvKommunen: data.gjelderKunDelAvKommunen,
         };
         return bopliktomraadeRequest;
       }
@@ -168,27 +172,27 @@ export const reduceFlatedataChanges = (
         }
       } else if (isBopliktomraadeInput(oldValues) && isBopliktomraadeInput(newValues)) {
         const materielleVilkaarUnchanged =
-          newValues.materielleVilkaar.length === oldValues.materielleVilkaar.length &&
-          newValues.materielleVilkaar.every((v) => oldValues.materielleVilkaar.includes(v));
+          newValues.gjeldendeMaterielleVilkaar.length === oldValues.gjeldendeMaterielleVilkaar.length &&
+          newValues.gjeldendeMaterielleVilkaar.every((v) => oldValues.gjeldendeMaterielleVilkaar.includes(v));
         if (
           newValues.nummer === oldValues.nummer &&
           newValues.navn === oldValues.navn &&
-          newValues.delvisBoplikt === oldValues.delvisBoplikt &&
-          newValues.usikkerAvgrensning === oldValues.usikkerAvgrensning &&
+          newValues.gjelderKunDelAvKommunen === oldValues.gjelderKunDelAvKommunen &&
+          newValues.harUsikkerAvgrensning === oldValues.harUsikkerAvgrensning &&
           newValues.forskriftsreferanse === oldValues.forskriftsreferanse &&
-          newValues.url === oldValues.url &&
-          newValues.informasjon === oldValues.informasjon &&
           materielleVilkaarUnchanged === true &&
-          newValues.andreAvgrensninger === oldValues.andreAvgrensninger
+          newValues.andreLokaleAvgrensninger === oldValues.andreLokaleAvgrensninger
         ) {
           return accumulator;
         }
-      } else if (
-        newValues.nummer === oldValues.nummer &&
-        newValues.navn === oldValues.navn &&
-        newValues.informasjon === oldValues.informasjon
-      ) {
-        return accumulator;
+      } else if (isGrunnkretsInput(oldValues)) {
+        if (
+          newValues.nummer === oldValues.nummer &&
+          newValues.navn === oldValues.navn &&
+          newValues.informasjon === oldValues.informasjon
+        ) {
+          return accumulator;
+        }
       }
 
       const changedInndeling = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);
