@@ -144,14 +144,14 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 <FlatedataTableHeader text="Tellekretsnummer" {...sortHeaderProps("tellekretsnummer")} />
                 <FlatedataTableHeader text="Tellekretsnavn" {...sortHeaderProps("tellekretsnavn")} />
                 <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
-                <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
+                <FlatedataTableHeader text="Informasjon" />
                 <th></th>
                 <th></th>
                 <th></th>
               </>
             ) : mainInndeling.inndelingtype === "GRUNNKRETS" ? (
               <>
-                <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
+                <FlatedataTableHeader text="Informasjon" />
                 <th></th>
                 <th></th>
                 <th></th>
@@ -161,18 +161,13 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
               </>
             ) : mainInndeling.inndelingtype === "BOPLIKTOMRAADE" ? (
               <>
-                <FlatedataTableHeader text="Utstrekning" {...sortHeaderProps("delvisBoplikt")} />
-                <FlatedataTableHeader
-                  text="Usikker avgrensning"
-                  onClick={() => undefined}
-                  isActivated={false}
-                  isReversed={false}
-                />
-                <FlatedataTableHeader text="Forskriftsreferanse" {...sortHeaderProps("forskriftsreferanse")} />
-                <FlatedataTableHeader text="URL" {...sortHeaderProps("url")} />
-                <FlatedataTableHeader text="Informasjon" {...sortHeaderProps("informasjon")} />
-                <FlatedataTableHeader text="Gjeldende materielle vilkår" {...sortHeaderProps("materielleVilkaar")} />
-                <FlatedataTableHeader text="Andre avgrensninger" {...sortHeaderProps("andreAvgrensninger")} />
+                <FlatedataTableHeader text="Forskriftsreferanse" />
+                <FlatedataTableHeader text="Utstrekning" {...sortHeaderProps("gjelderKunDelAvKommunen")} />
+                <FlatedataTableHeader text="Har usikker avgrensning" {...sortHeaderProps("harUsikkerAvgrensning")} />
+                <FlatedataTableHeader text="Gjeldende materielle vilkår" />
+                <FlatedataTableHeader text="Andre lokale avgrensninger" />
+                <th></th>
+                <th></th>
               </>
             ) : (
               <></>

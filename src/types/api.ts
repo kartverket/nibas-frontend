@@ -42,7 +42,7 @@ export type FylkeResponse = components["schemas"]["FylkeResponse"];
 export type NasjonRequest = components["schemas"]["NasjonRequest"];
 export type BopliktomraadeResponse = components["schemas"]["BopliktomraadeResponse"];
 
-export type MaterielleVilkaar = components["schemas"]["BopliktomraadeResponse"]["materielleVilkaar"];
+export type GjeldendeMaterielleVilkaar = components["schemas"]["BopliktomraadeResponse"]["gjeldendeMaterielleVilkaar"];
 
 type KretsResponse = GrunnkretsResponse | StemmekretsResponse | BopliktomraadeResponse;
 type AdministrativEnhetResponse = FylkeResponse | KommuneResponse;

@@ -99,7 +99,9 @@ const shouldFetchAdditionalFeatures = (inndelingtype: Inndelingtype, inndeling: 
       return (
         inndeling instanceof Array &&
         inndeling.length > 0 &&
-        inndeling.every((omraade) => isBopliktomraadeInndeling(omraade) === true && omraade.delvisBoplikt === true)
+        inndeling.every(
+          (omraade) => isBopliktomraadeInndeling(omraade) === true && omraade.gjelderKunDelAvKommunen === true,
+        )
       );
     case "FYLKE":
     case "KOMMUNE":
