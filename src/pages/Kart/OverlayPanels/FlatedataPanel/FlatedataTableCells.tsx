@@ -15,8 +15,8 @@ import Input, { ValidationError } from "components/Input";
 import { forwardRef } from "react";
 import ReactSelect, { MultiValue, OptionProps, components } from "react-select";
 import { styled } from "styled-components";
-import { MaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
-import { MaterielleVilkaar } from "types/api";
+import { GjeldendeMaterielleVilkaarValue, isValidUrl } from "./flatedata-utils";
+import type { GjeldendeMaterielleVilkaar } from "types/api";
 
 type InputProps = React.ComponentProps<typeof Input>;
 
@@ -124,14 +124,14 @@ const SelectCellInner = (
 };
 export const SelectCell = forwardRef<HTMLSelectElement, SelectCellProps>(SelectCellInner);
 
-export const MaterielleVilkaarOptions: { value: MaterielleVilkaarValue; label: string }[] = [
-  { value: "BEBYGDEIENDOM", label: "Bebygd eiendom" },
-  { value: "IKKEHELAARSBOLIGUNDEROPPFORING", label: "Ikke helårsbolig under oppføring" },
-  { value: "UBEBYGDTOMT", label: "Ubebygd tomt" },
-  { value: "UNNTAKFRASLEKTSKAPSUNNTAK", label: "Unntak fra slektskapsunntak" },
+export const MaterielleVilkaarOptions: { value: GjeldendeMaterielleVilkaarValue; label: string }[] = [
+  { value: "GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK", label: "Gjelder for bolig ikke tatt i bruk" },
+  { value: "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG", label: "Gjelder for brukt som helårsbolig" },
+  { value: "GJELDER_FOR_UBEBYGD_BOLIGTOMT", label: "Gjelder for ubebygd boligtomt" },
+  { value: "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK", label: "Har unntak fra slektskapsunntak" },
 ];
 
-type SelectOption = { value: MaterielleVilkaarValue; label: string };
+type SelectOption = { value: GjeldendeMaterielleVilkaarValue; label: string };
 
 const OptionWithCheckmark = (props: OptionProps<SelectOption, true>) => {
   return (
@@ -145,11 +145,11 @@ const OptionWithCheckmark = (props: OptionProps<SelectOption, true>) => {
 };
 
 type MultiSelectCellProps = {
-  data: MaterielleVilkaar;
+  data: GjeldendeMaterielleVilkaar;
   options: SelectOption[];
   isEditing: boolean;
   isDisabled: boolean;
-  onChange: (values: MaterielleVilkaarValue[]) => void;
+  onChange: (values: GjeldendeMaterielleVilkaarValue[]) => void;
 };
 
 export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange }: MultiSelectCellProps) => {

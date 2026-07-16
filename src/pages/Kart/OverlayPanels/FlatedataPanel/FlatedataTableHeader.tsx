@@ -1,34 +1,51 @@
-import { Button } from "@kvib/react";
+import { Button, Text } from "@kvib/react";
 import { styled } from "styled-components";
 
-type Props = {
-  text: string;
+type SortableProps = {
   onClick: () => void;
   isActivated: boolean;
   isReversed: boolean;
 };
 
+type Props = {
+  text: string;
+} & Partial<SortableProps>;
+
 const FlatedataTableHeader = ({ text, onClick, isActivated, isReversed }: Props) => {
-  const rightIcon = !isActivated ? undefined : isReversed ? "expand_less" : "expand_more";
+  const rightIcon = !(isActivated ?? false) ? undefined : (isReversed ?? false) ? "expand_less" : "expand_more";
 
   return (
     <th>
-      <ClickableHeader
-        variant="tertiary"
-        colorScheme="blue"
-        size="sm"
-        isActive={isActivated}
-        onClick={onClick}
-        rightIcon={rightIcon}
-        $iconCompensation={rightIcon === undefined}
-        title={text}
-        aria-label={"Sorter etter " + text}
-      >
-        {text}
-      </ClickableHeader>
+      {onClick == null || isActivated == null || isReversed == null ? (
+        <Header>{text}</Header>
+      ) : (
+        <ClickableHeader
+          variant="tertiary"
+          colorScheme="blue"
+          size="sm"
+          isActive={isActivated}
+          onClick={onClick}
+          rightIcon={rightIcon}
+          $iconCompensation={rightIcon === undefined}
+          title={text}
+          aria-label={"Sorter etter " + text}
+        >
+          {text}
+        </ClickableHeader>
+      )}
     </th>
   );
 };
+
+const Header = styled(Text)`
+  display: inline;
+  margin-left: -8px;
+  padding: 0 8px;
+  height: 20px;
+  font-weight: 600;
+  font-size: var(--kvib-fontSizes-sm);
+  white-space: nowrap;
+`;
 
 const ClickableHeader = styled(Button)<{ $iconCompensation: boolean }>`
   display: inline;
