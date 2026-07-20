@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
     "paths": {
-      "utils/*": ["utils/*"],
-      "components/*": ["components/*"],
-      "pages/*": ["pages/*"],
-      "contexts/*": ["contexts/*"],
-      "hooks/*": ["hooks/*"],
-      "api/*": ["api/*"]
+      "utils/*": ["./src/utils/*"],
+      "components/*": ["./src/components/*"],
+      "pages/*": ["./src/pages/*"],
+      "contexts/*": ["./src/contexts/*"],
+      "hooks/*": ["./src/hooks/*"],
+      "api/*": ["./src/api/*"],
+      "*": ["./src/*"]
     },
     "target": "ES6",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -19,7 +19,7 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
