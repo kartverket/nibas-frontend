@@ -30,7 +30,6 @@ import { useKommunerByIds } from "hooks/inndelinger/useKommuner";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import Loading from "pages/App/Loading";
-import { endringstyper } from "pages/Kart/constants";
 import {
   isBopliktomraadeInndeling,
   isStemmekretsInndeling,
@@ -39,7 +38,7 @@ import LandingHeader from "pages/Landing/LandingHeader";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { ApiErrorResponse, Inndelingtype, INNDELINGTYPE_VALUES, UtkastResponse } from "types/api";
+import { ApiErrorResponse, ENDRINGSTYPE_VALUES, Inndelingtype, INNDELINGTYPE_VALUES, UtkastResponse } from "types/api";
 import { statusCode } from "utils/api";
 import { getNavnInSpraak } from "utils/language/language";
 import { inndelingColors } from "utils/map/layerStyles";
@@ -141,9 +140,10 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
   const { data: endredeFylker } = useFylkerByIds(utkast.endredeInndelinger.endredeFylker, beforePublisering);
 
   const opprettFeilrettingUtkast = async () => {
+    const RETTING = ENDRINGSTYPE_VALUES[1];
     const response = await createUtkast({
       navn: "Feilretting: ".concat(utkast.navn),
-      endringstype: endringstyper[7],
+      endringstype: RETTING,
       gyldigFra: utkast.gyldigFra,
     });
 

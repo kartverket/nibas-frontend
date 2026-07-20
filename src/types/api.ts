@@ -8,16 +8,31 @@ export type Spraak = {
   spraak: string;
 };
 
-type FlateType = components["schemas"]["InndelingResponse"]["type"];
-type ImplementedFlateType = Extract<FlateType, "FYLKE" | "KOMMUNE" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE">;
+export const ENDRINGSTYPE_VALUES = [
+  "Kvalitetsheving",
+  "Retting",
+  "Vedtatt deling",
+  "Vedtatt sletting",
+  "Vedtatt sammenslåing",
+  "Vedtatt grensejustering",
+  "Fastsetting",
+  "Navneendring",
+  "Nummerendring",
+  "Ny forskrift",
+  "Utgått forskrift",
+  "Forskriftsendring",
+  "Oppdatert geometri",
+  "Import",
+] as const satisfies readonly components["schemas"]["UtkastResponse"]["endringstype"][];
+export type Endringstype = (typeof ENDRINGSTYPE_VALUES)[number];
 
-export const INNDELINGTYPE_VALUES: Extract<FlateType, ImplementedFlateType>[] = [
+export const INNDELINGTYPE_VALUES = [
   "FYLKE",
   "KOMMUNE",
   "GRUNNKRETS",
   "STEMMEKRETS",
   "BOPLIKTOMRAADE",
-];
+] as const satisfies readonly components["schemas"]["InndelingResponse"]["type"][];
 export type Inndelingtype = (typeof INNDELINGTYPE_VALUES)[number];
 
 export type AdministrativEnhetNavn = components["schemas"]["AdministrativEnhetNavn"][];

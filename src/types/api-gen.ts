@@ -1524,8 +1524,11 @@ export interface components {
         OppdaterUtkastRequest: {
             /** @description Arbeidsnavnet til utkastet. */
             navn: string;
-            /** @description Typen endring utkastet representerer. */
-            endringstype: string;
+            /**
+             * @description Typen endring utkastet representerer.
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             operasjoner: components["schemas"]["Operasjoner"];
             /**
              * Format: int32
@@ -1704,8 +1707,11 @@ export interface components {
             id: string;
             /** @description Arbeidsnavnet til utkastet. */
             navn: string;
-            /** @description Typen endring utkastet representerer. */
-            endringstype: string;
+            /**
+             * @description Typen endring utkastet representerer.
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             /** @description Status for utkastet. */
             status: string;
             /**
@@ -1731,8 +1737,11 @@ export interface components {
         OpprettUtkastRequest: {
             /** @description Arbeidsnavnet til utkastet. */
             navn: string;
-            /** @description Typen endring utkastet representerer. */
-            endringstype: string;
+            /**
+             * @description Typen endring utkastet representerer.
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             /**
              * Format: date
              * @description Gyldig fra-datoen til utkastet.
@@ -1772,8 +1781,11 @@ export interface components {
             /** @description Stemmekretsnummeret til stemmekretsen */
             nummer: string;
             gyldighet: components["schemas"]["GyldighetResponse"];
-            /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             /**
              * Format: date-time
              * @description Siste oppdateringstidspunkt for objektet
@@ -1900,8 +1912,11 @@ export interface components {
             datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
             kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
-            /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             representasjonspunkt: components["schemas"]["Feature"];
             /**
              * Format: int32
@@ -1931,8 +1946,11 @@ export interface components {
             datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
             kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
-            /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             representasjonspunkt: components["schemas"]["Feature"];
             /**
              * Format: int32
@@ -1988,10 +2006,10 @@ export interface components {
             y?: number;
             /** Format: double */
             z?: number;
-            coordinate?: components["schemas"]["Coordinate"];
             /** Format: double */
             m?: number;
             valid?: boolean;
+            coordinate?: components["schemas"]["Coordinate"];
         };
         InndelingSearchResponse: {
             /** @description Lokalid til inndelingen */
@@ -2044,8 +2062,11 @@ export interface components {
         EksternStemmekretsResponse: {
             id: components["schemas"]["ObjektIdentifikator"];
             gyldighet: components["schemas"]["GyldighetResponse"];
-            /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             /**
              * Format: date-time
              * @description Siste oppdateringstidspunkt for objektet
@@ -2107,8 +2128,11 @@ export interface components {
              */
             datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             features: components["schemas"]["FeatureCollection"];
             /**
              * Format: int32
@@ -2185,7 +2209,7 @@ export interface components {
              * @description Type endring som ble gjort
              * @enum {string}
              */
-            typeEndring: "KVALITETSHEVING" | "RETTING" | "VEDTATT_DELING" | "VEDTATT_SLETTING" | "VEDTATT_SAMMENSLAAING" | "VEDTATT_GRENSEJUSTERING" | "FASTSETTING" | "NAVNEENDRING" | "NUMMERENDRING" | "IMPORT";
+            typeEndring: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             /** @description Metode for måling */
             maalemetode?: string | null;
             /**
@@ -2263,8 +2287,11 @@ export interface components {
         EksternBopliktomraadeRespons: {
             id: components["schemas"]["ObjektIdentifikator"];
             gyldighet: components["schemas"]["GyldighetResponse"];
-            /** @description Typen endring som ble gjort på objektet */
-            endringstype?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
             /**
              * Format: date-time
              * @description Siste oppdateringstidspunkt for objektet
