@@ -8,6 +8,24 @@ export type Spraak = {
   spraak: string;
 };
 
+export type Endringstype = components["schemas"]["UtkastResponse"]["endringstype"];
+export const ENDRINGSTYPE_VALUES = [
+  "Kvalitetsheving",
+  "Retting",
+  "Vedtatt deling",
+  "Vedtatt sletting",
+  "Vedtatt sammenslåing",
+  "Vedtatt grensejustering",
+  "Fastsetting",
+  "Navneendring",
+  "Nummerendring",
+  "Ny forskrift",
+  "Utgått forskrift",
+  "Forskriftsendring",
+  "Oppdatert geometri",
+  "Import",
+] as const satisfies readonly Endringstype[];
+
 type FlateType = components["schemas"]["InndelingResponse"]["type"];
 type ImplementedFlateType = Extract<FlateType, "FYLKE" | "KOMMUNE" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE">;
 

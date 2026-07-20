@@ -6,7 +6,7 @@ import { UtkastResponse } from "types/api";
 
 const utkast: UtkastResponse = {
   id: "1",
-  endringstype: "asd",
+  endringstype: "Fastsetting",
   auditInfoResponse: {
     oppdateringsdato: "123",
   },

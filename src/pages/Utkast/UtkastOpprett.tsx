@@ -20,18 +20,17 @@ import {
 } from "@kvib/react";
 import { createUtkast } from "api/utkast";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
-import { endringstyper } from "pages/Kart/constants";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { ApiErrorResponse } from "types/api";
+import { ApiErrorResponse, Endringstype, ENDRINGSTYPE_VALUES } from "types/api";
 import { statusCode } from "utils/api";
 import { format } from "date-fns";
 
 type UtkastFormData = {
   navn: string;
-  endringstype: string;
+  endringstype: Endringstype | "";
   gyldigFra: string;
 };
 
@@ -61,10 +60,14 @@ const UtkastOpprett = () => {
   };
 
   const opprettUtkast = async () => {
+    const endringstype = getValues("endringstype");
+    if (endringstype === "") {
+      return;
+    }
     setIsLoading(true);
     const response = await createUtkast({
       navn: getValues("navn"),
-      endringstype: getValues("endringstype"),
+      endringstype: endringstype,
       gyldigFra: getValues("gyldigFra"),
     });
     setIsLoading(false);
@@ -119,7 +122,7 @@ const UtkastOpprett = () => {
                     placeholder="Velg en endringstype fra listen"
                     {...register("endringstype", { required: "Du må velge en endringstype for utkastet" })}
                   >
-                    {endringstyper.map((type) => (
+                    {ENDRINGSTYPE_VALUES.map((type) => (
                       <option key={type} value={type}>
                         {type}
                       </option>
