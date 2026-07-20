@@ -15,11 +15,10 @@ import {
   ModalOverlay,
   Select,
 } from "@kvib/react";
-import { endringstyper } from "pages/Kart/constants";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
-import { UtkastResponse } from "types/api";
+import { ENDRINGSTYPE_VALUES, Endringstype, UtkastResponse } from "types/api";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import { statusCode } from "utils/api";
@@ -32,7 +31,7 @@ type Props = {
 
 type UtkastFormData = {
   navn: string;
-  endringstype: string;
+  endringstype: Endringstype;
 };
 
 const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
@@ -108,7 +107,7 @@ const UtkastEndreModal = ({ isOpen, onClose, utkast }: Props) => {
                   placeholder="Velg en endringstype fra listen"
                   {...register("endringstype", { required: "Du må velge en endringstype for utkastet" })}
                 >
-                  {endringstyper.map((type) => (
+                  {ENDRINGSTYPE_VALUES.map((type) => (
                     <option key={type} value={type}>
                       {type}
                     </option>
