@@ -327,6 +327,7 @@ export const mockStemmekrets1: StemmekretsResponse = {
       value: "2",
     },
   },
+  endringstype: "Fastsetting",
 };
 
 export const mockStemmekrets2: StemmekretsResponse = {
@@ -355,6 +356,7 @@ export const mockStemmekrets2: StemmekretsResponse = {
       value: "2",
     },
   },
+  endringstype: "Fastsetting",
 };
 
 export const mockStemmekretser: StemmekretsResponse[] = [mockStemmekrets1, mockStemmekrets2];
@@ -483,7 +485,7 @@ export const mockUtkast1: UtkastResponse = {
   id: "1",
   navn: "Mock utkast",
   opprettetDato: "2022-06-01",
-  endringstype: "",
+  endringstype: "Fastsetting",
   status: "",
   auditInfoResponse: {
     oppdateringsdato: "",
@@ -520,7 +522,7 @@ export const mockUtkast2: UtkastResponse = {
   id: "2",
   navn: "Et nytt utkast",
   opprettetDato: "2022-06-01",
-  endringstype: "",
+  endringstype: "Fastsetting",
   status: "",
   auditInfoResponse: {
     oppdateringsdato: "",

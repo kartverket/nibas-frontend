@@ -31,15 +31,3 @@ export const map = new Map({
   interactions: defaults({ altShiftDragRotate: false, dragPan: false, shiftDragZoom: false, doubleClickZoom: false }),
   maxTilesLoading: Infinity,
 });
-
-export const endringstyper = [
-  "Vedtatt grensejustering",
-  "Vedtatt sammenslåing",
-  "Vedtatt deling",
-  "Fastsetting",
-  "Kvalitetsheving",
-  "Navneendring",
-  "Nummerendring",
-  "Retting",
-] as const;
-export type Endringstype = (typeof endringstyper)[number];

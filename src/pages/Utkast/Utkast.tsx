@@ -1,4 +1,5 @@
 import { Heading, Icon, Link, SkeletonText } from "@kvib/react";
+import type { Endringstype } from "types/api";
 import AlertModal from "components/Modals/AlertModal";
 import { Page, PageContainer } from "components/Page";
 import { useErrorHandling } from "contexts/ErrorHandlingContext";
@@ -14,7 +15,7 @@ import { routes } from "utils/routes";
 import UtkastCard from "./UtkastCard";
 import UtkastOpprett from "./UtkastOpprett";
 
-type UtkastGroup = Record<UtkastResponse["endringstype"], UtkastResponse[]>;
+type UtkastGroup = Partial<Record<Endringstype, UtkastResponse[]>>;
 
 const sortUtkastByCreatedDesc = (a: UtkastResponse, b: UtkastResponse): number =>
   b.opprettetDato.localeCompare(a.opprettetDato);
@@ -35,20 +36,24 @@ const Utkast = () => {
     Navneendring: [],
     Nummerendring: [],
     Retting: [],
+    Forskriftsendring: [],
   };
 
   const leftColumn: UtkastGroup = {
     "Vedtatt grensejustering": [],
     "Vedtatt sammenslåing": [],
     "Vedtatt deling": [],
+    "Ny forskrift": [],
+    "Utgått forskrift": [],
+    "Oppdatert geometri": [],
   };
 
   // Grupperer utkast etter endringstype
   for (const utkast of utkasts ?? []) {
     if (utkast.endringstype in leftColumn) {
-      leftColumn[utkast.endringstype] = [...leftColumn[utkast.endringstype], utkast];
+      leftColumn[utkast.endringstype] = [...(leftColumn[utkast.endringstype] ?? []), utkast];
     } else if (utkast.endringstype in rightColumn) {
-      rightColumn[utkast.endringstype] = [...rightColumn[utkast.endringstype], utkast];
+      rightColumn[utkast.endringstype] = [...(rightColumn[utkast.endringstype] ?? []), utkast];
     }
   }
 
