@@ -82,7 +82,6 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
     handleSubmit,
     clearErrors,
     setValue,
-    reset,
     control,
     formState: { errors: formErrors, isDirty },
   } = useForm<Eiendom>({
@@ -98,7 +97,6 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
   const { searchForEiendom, isLoading } = useEiendom();
   const [notFound, setNotFound] = useState<boolean>(false);
 
-  // Bruker useForm sin reset til å sette form-verdier når kommuner har blitt fetchet
   useEffect(() => {
     const getDefaultSuggestedKommune = () => {
       if (suggestedKommunerInndelingOptions?.length === 1) {
@@ -107,11 +105,8 @@ export const EiendomSearch = ({ onSearchSuccess }: SearchProps) => {
         return null;
       }
     };
-    reset((formValues) => ({
-      ...formValues, // hvis cachen til kommuner fetcher på nytt i det man fyller ut formet har vi ikke lyst til at bruker mister sine eksisterende data i andre felt
-      kommune: formValues.kommune != null ? formValues.kommune : getDefaultSuggestedKommune(),
-    }));
-  }, [kommuner, reset, suggestedKommunerInndelingOptions]);
+    setValue("kommune", getDefaultSuggestedKommune(), { shouldDirty: false });
+  }, [kommuner, setValue, suggestedKommunerInndelingOptions]);
 
   const eiendomFieldValidator = {
     kommune: {
