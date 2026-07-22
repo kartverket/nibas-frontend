@@ -119,15 +119,16 @@ export const inndelingColors = {
   KOMMUNE: "#637DF3",
   nasjon: "#61538B",
   GRUNNKRETS: "#4D94AF",
-  STEMMEKRETS: "#FFAE49FF",
+  STEMMEKRETS: "#784814",
   delomraade: "#5DB9DC",
   fremtidigEndring: "#B92659",
   edit: "#000000",
   measure: "#000000",
-  sosiFiler: "#1A532A",
-  BOPLIKTOMRAADE: "#C0AFFBFF",
+  sosiFiler: "#1A237E",
+  BOPLIKTOMRAADE: "#FF6600",
 };
 
+const sammenslaaingColor = "#7E1A78";
 export const grenseStyles = {
   FYLKE: lineAndPointStyles({ color: inndelingColors["FYLKE"] }),
   KOMMUNE: lineAndPointStyles({ color: inndelingColors["KOMMUNE"] }),
@@ -142,12 +143,12 @@ export const grenseStyles = {
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
   error: lineAndPointStyles({ color: "#FF0000FF" }),
   fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"] }),
-  matrikkel: lineAndPointStyles({ color: "#FF6600" }),
+  matrikkel: lineAndPointStyles({ color: "#009688" }),
   historical: lineAndPointStyles({ color: "#FF00FF", pointRadius: 1.5, dashed: true, lineStrokeWidth: 2 }),
-  sammenslaaing: lineAndPointStyles({ color: "#D3C439B3" }),
+  sammenslaaing: lineAndPointStyles({ color: sammenslaaingColor }),
   flate: flateStyles,
   sammenslaaingOverlapping: lineAndPointStyles({
-    color: "#D3C439B3",
+    color: sammenslaaingColor,
     dashed: true,
     points: false,
   }),
