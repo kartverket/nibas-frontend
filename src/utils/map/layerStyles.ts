@@ -125,7 +125,7 @@ export const inndelingColors = {
   edit: "#000000",
   measure: "#000000",
   sosiFiler: "#1A237E",
-  BOPLIKTOMRAADE: "#FF6600",
+  BOPLIKTOMRAADE: "#64ab00",
 };
 
 const sammenslaaingColor = "#7E1A78";
