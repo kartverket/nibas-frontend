@@ -9,7 +9,7 @@
     "@rolldown/plugin-babel": "^0.2.3",
     "date-fns": "^4.4.0",
     "framer-motion": "^12.42.2",
-    "js-yaml": "^5.2.1",
+    "js-yaml": "^5.2.2",
     "lodash.get": "^4.4.2",
     "material-symbols": "^0.45.8",
     "minimatch": "^10.2.5",
