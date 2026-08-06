@@ -22,7 +22,10 @@ jobs:
             | map(select(.key | test("^GHSA-")))
             | map(select(
                 (.value.active // true) == true
-                and ((.value.expiry // null) == null or (.value.expiry | tonumber) > $now)
+                and (
+                  (.value.expiry // null) == null
+                  or ((.value.expiry + "T00:00:00Z" | fromdateiso8601) * 1000 > $now)
+                )
               ))
             | map(.key)
             | join("\n")
