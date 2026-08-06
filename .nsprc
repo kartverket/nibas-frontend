@@ -1,0 +1,7 @@
+{
+  "GHSA-qwww-vcr4-c8h2": {
+    "active": true,
+    "notes": "Ikke relevant da vi ikke bruker RSC",
+    "expiry": "2027-01-01"
+  }
+}
