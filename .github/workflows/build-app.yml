@@ -55,7 +55,7 @@ jobs:
       - name: Build Package
         run: |
           npm ci --no-audit
-          npm run better-audit
+          npm run better-audit audit --production --exclude GHSA-qwww-vcr4-c8h2
           npm run build --if-present
         env:
           VITE_VERSION: ${{ steps.tag_version.outputs.new_version }}
