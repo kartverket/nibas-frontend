@@ -21,7 +21,7 @@
     "react-dom": "~18.3.1",
     "react-hook-form": "~7.82.0",
     "react-oidc-context": "^3.3.1",
-    "react-router": "^8.2.0",
+    "react-router": "^8.3.0",
     "react-router-dom": "^7.18.1",
     "react-select": "^5.10.2",
     "styled-components": "^6.4.4",
@@ -46,7 +46,8 @@
     "update-api-types": "openapi-typescript http://localhost:8080/api-docs --output src/types/api-gen.ts",
     "update-api-types-arbeidsliste": "openapi-typescript http://localhost:8082/api-docs --output src/types/api-gen-arbeidsliste.ts",
     "format": "prettier --write .",
-    "clean": "rm -rf node_modules/.vite/"
+    "clean": "rm -rf node_modules/.vite/",
+    "better-audit": "better-npm-audit audit --production --level high"
   },
   "eslintConfig": {
     "extends": [
@@ -86,6 +87,7 @@
     "@typescript-eslint/parser": "8.64.0",
     "@vitejs/plugin-react": "^6.0.3",
     "babel-plugin-react-compiler": "^19.1.0-rc.3",
+    "better-npm-audit": "^3.11.0",
     "cross-env": "^10.1.0",
     "eslint": "~10.7.0",
     "eslint-config-prettier": "~10.1.8",
