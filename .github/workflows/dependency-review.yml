@@ -13,8 +13,26 @@ jobs:
     steps:
       - name: "Checkout Repository"
         uses: actions/checkout@v7
+      - name: Extract GHSA allowlist from .nsprc
+        id: nsprc
+        run: |
+          now_ms=$(( $(date +%s) * 1000 ))
+          ghsas=$(jq -r --argjson now "$now_ms" '
+            to_entries
+            | map(select(.key | test("^GHSA-")))
+            | map(select(
+                (.value.active // true) == true
+                and ((.value.expiry // null) == null or (.value.expiry | tonumber) > $now)
+              ))
+            | map(.key)
+            | join("\n")
+          ' .nsprc)
+          echo "ghsas<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$ghsas" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
       - name: "Dependency Review"
         uses: actions/dependency-review-action@v5
         with:
           comment-summary-in-pr: true
           allow-licenses: MIT, Apache-2.0, ISC, BSD-2-Clause, BSD-3-Clause, Python-2.0, BlueOak-1.0.0
+          allow-ghsas: ${{ steps.nsprc.outputs.ghsas }}
