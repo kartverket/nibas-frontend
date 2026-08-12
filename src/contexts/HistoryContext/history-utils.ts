@@ -31,6 +31,7 @@ import {
   NyGrense,
   NyGrenseDeleteEntry,
   NyGrenseEntry,
+  NyInndelingEntry,
   PropertyEntry,
   StemmekretsEntry,
 } from "./types";
@@ -410,4 +411,8 @@ export const getGrenseArkiveringEntries = (entries: HistoryEntry[]): GrenseArkiv
 
 export const getGrenseMergeEntries = (entries: HistoryEntry[]): MergeGrenseEntry[] => {
   return entries.filter((entry) => entry.type === "merge_grenser") as MergeGrenseEntry[];
+};
+
+export const getNyInndelingEntries = (entries: HistoryEntry[]): NyInndelingEntry[] => {
+  return entries.filter((entry) => entry.type === "create_inndeling") as NyInndelingEntry[];
 };

@@ -2,15 +2,16 @@ import { HistoryChange } from "contexts/HistoryContext/types";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import {
   BopliktomraadeRequest,
+  GjeldendeMaterielleVilkaar,
   GrunnkretsRequest,
   Inndelingtype,
   KommuneRequest,
   MetadataRequest,
   MetadataResponse,
   StemmekretsRequest,
-  GjeldendeMaterielleVilkaar,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
+import { NonExhaustiveInndelingRequest } from "./FlatedataTable";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
@@ -68,7 +69,7 @@ const isBopliktomraadeInput = (
   "andreLokaleAvgrensninger" in value &&
   "harUsikkerAvgrensning" in value;
 
-const getRequestFromInputs = (
+export const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
   data: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
   inndeling: MetadataResponse,
@@ -223,3 +224,149 @@ export const isValidUrl = (value: string) => {
     return false;
   }
 };
+
+export const isInndelingNonExhaustive = (inndelingtype: Inndelingtype): boolean => {
+  switch (inndelingtype) {
+    case "BOPLIKTOMRAADE":
+      return true;
+    case "STEMMEKRETS":
+    case "GRUNNKRETS":
+    case "FYLKE":
+    case "KOMMUNE":
+      return false;
+  }
+};
+
+export const getDefaultFlatedataForInndelingtype = (inndelingtype: Inndelingtype): MetadataResponse => {
+  const date = new Date().toISOString();
+  switch (inndelingtype) {
+    case "FYLKE": {
+      throw new Error('Not implemented yet: "FYLKE" case');
+    }
+    case "KOMMUNE": {
+      throw new Error('Not implemented yet: "KOMMUNE" case');
+    }
+    case "GRUNNKRETS": {
+      throw new Error('Not implemented yet: "GRUNNKRETS" case');
+    }
+    case "STEMMEKRETS": {
+      throw new Error('Not implemented yet: "STEMMEKRETS" case');
+    }
+    case "BOPLIKTOMRAADE": {
+      return {
+        id: {
+          lokalid: {
+            value: getTempFlateId(inndelingtype),
+          },
+          gyldighetsdato: date,
+        },
+        navn: "",
+        nummer: "01",
+        gyldighet: {
+          gyldigFra: "",
+          gyldigTil: null,
+        },
+        oppdateringsdato: date,
+        datafangstdato: date,
+        kommunenummer: {
+          id: "",
+          kodeverdi: "",
+        },
+        kommuneIdentifikator: {
+          lokalid: {
+            value: "",
+          },
+          gyldighetsdato: "",
+        },
+        endringstype: "Import",
+        representasjonspunkt: {
+          type: "Feature",
+          id: null,
+          properties: {
+            type: "Posisjon",
+            srid: 25833,
+            metadata: null,
+            kontekstEgenskaper: [],
+            version: 1,
+            shouldArchive: false,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [0, 0],
+          },
+        },
+        version: 1,
+        informasjon: "",
+        delvisBoplikt: false,
+        gjelderKunDelAvKommunen: false,
+        usikkerAvgrensning: false,
+        harUsikkerAvgrensning: false,
+        forskriftsreferanse: "",
+        materielleVilkaar: [],
+        gjeldendeMaterielleVilkaar: [],
+        andreAvgrensninger: null,
+        andreLokaleAvgrensninger: null,
+        url: "",
+      };
+    }
+  }
+};
+
+const getTempFlateId = (inndelingtype: Inndelingtype): string => {
+  return `temp-${inndelingtype}-${Math.floor(Math.random() * 1000000)}`;
+};
+
+export const isTempFlateId = (id: string): boolean => {
+  return id.startsWith("temp-");
+};
+
+export const partitionDictBy = <T extends Record<string, unknown>>(
+  dict: T,
+  predicate: (key: string) => boolean,
+): [T, T] => {
+  const matching: Record<string, unknown> = {};
+  const nonMatching: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(dict)) {
+    if (predicate(key)) {
+      matching[key] = value;
+    } else {
+      nonMatching[key] = value;
+    }
+  }
+
+  return [matching as T, nonMatching as T];
+};
+
+export const isBopliktomraadeRequest = (request: MetadataRequest): request is BopliktomraadeRequest => {
+  return "identifikasjon" in request && "gjelderKunDelAvKommunen" in request;
+};
+
+export const reduceFlatedataChangesForNewInndelinger = (
+  formValues: FlatedataInputs,
+  utkastFlatedata: MetadataResponse[],
+  inndeling: Inndeling,
+) =>
+  Object.entries(formValues).reduce<HistoryChange<NonExhaustiveInndelingRequest | null>[]>(
+    (accumulator, [key, newValues]) => {
+      if (isBopliktomraadeInput(newValues) && isInndelingNonExhaustive(inndeling.inndelingtype)) {
+        const changedInndeling = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);
+        if (changedInndeling != null) {
+          const toRequest = getRequestFromInputs(inndeling.inndelingtype, newValues, changedInndeling);
+          if (toRequest != null && isBopliktomraadeRequest(toRequest)) {
+            return [
+              ...accumulator,
+              {
+                id: key,
+                from: null,
+                to: toRequest,
+              },
+            ];
+          }
+        }
+      }
+
+      return accumulator;
+    },
+    [],
+  );

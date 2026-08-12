@@ -1215,6 +1215,35 @@ export interface components {
             /** @description Referanse til opphavsmaterialet, kildematerialet, organisasjons/publiseringskilde. */
             opphav?: string | null;
         };
+        /** @description Representasjon av opprettelsen av nytt bopliktområde */
+        CreateBopliktomraadeRequest: Omit<components["schemas"]["CreateInndelingRequest"], "discriminator"> & {
+            nummer: string;
+            navn: string;
+            informasjon?: string | null;
+            /** Format: int32 */
+            version: number;
+            url?: string | null;
+            kommunenummer?: components["schemas"]["Kommunenummer"] | null;
+            harUsikkerAvgrensning: boolean;
+            andreLokaleAvgrensninger?: string | null;
+            gjelderKunDelAvKommunen: boolean;
+            usikkerAvgrensning?: boolean | null;
+            forskriftsreferanse?: string | null;
+            andreAvgrensninger?: string | null;
+            delvisBoplikt?: boolean | null;
+            materielleVilkaar?: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[] | null;
+            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
+        } & {
+            /**
+             * @description discriminator enum property added by openapi-typescript
+             * @enum {string}
+             */
+            discriminator: "CreateBopliktomraadeRequest";
+        };
+        /** @description Inndelinger som det kan opprettes nye inndelinger */
+        CreateInndelingRequest: {
+            discriminator: string;
+        };
         /** @description Henviser til fastsettings- eller lovinformasjon. */
         DokumentasjonsreferanseDTO: {
             /** @description ID for dokumentasjonsreferansen. */
@@ -1519,6 +1548,8 @@ export interface components {
             grunnkretsSammenslaaingsendring?: components["schemas"]["GrunnkretsSammenslaaingsendringRequest"] | null;
             /** @description Deling av en stemmekrets eller grunnkrets */
             kretsDelingEndringer: components["schemas"]["KretsDelingEndringRequest"][];
+            /** @description Opprettelse av nye inndelinger for en inndelingstype som ikke er heldekkende */
+            createInndelingEndringer: components["schemas"]["CreateBopliktomraadeRequest"][];
         };
         /** @description Representasjon for oppdatering av utkast */
         OppdaterUtkastRequest: {
@@ -2006,10 +2037,10 @@ export interface components {
             y?: number;
             /** Format: double */
             z?: number;
+            coordinate?: components["schemas"]["Coordinate"];
             /** Format: double */
             m?: number;
             valid?: boolean;
-            coordinate?: components["schemas"]["Coordinate"];
         };
         InndelingSearchResponse: {
             /** @description Lokalid til inndelingen */

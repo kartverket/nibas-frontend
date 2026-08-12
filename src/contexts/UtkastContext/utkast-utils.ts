@@ -374,4 +374,5 @@ export const createUtkastOperations = ({
   stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer ?? null,
   grunnkretsSammenslaaingsendring: grunnkretssammenslaaingsendringer ?? null,
   kretsDelingEndringer: kretsDelingEndringer,
+  createInndelingEndringer: [],
 });

@@ -3,6 +3,7 @@ import {
   getBopliktomraadeMetadataEntries,
   getGrunnkretsMetadataEntries,
   getKommuneMetadataEntries,
+  getNyInndelingEntries,
   getStemmekretsMetadataEntries,
 } from "contexts/HistoryContext/history-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -19,6 +20,12 @@ import {
   MetadataResponse,
   StemmekretsResponse,
 } from "types/api";
+import {
+  getDefaultFlatedataForInndelingtype,
+  isBopliktomraadeRequest,
+  isInndelingNonExhaustive,
+} from "./flatedata-utils";
+import { NonExhaustiveInndelingtype } from "./FlatedataTable";
 
 const useFlatedataFromBackend = (
   inndeling: Inndeling,
@@ -112,17 +119,59 @@ const addHistoryChangesToMetadata = (
   }
 };
 
+const getNyeInndelingerMetadataForInndelingtype = (
+  entries: HistoryEntry[],
+  inndelingtype: NonExhaustiveInndelingtype,
+): MetadataResponse[] => {
+  const nyInndelingEntries = getNyInndelingEntries(entries);
+  switch (inndelingtype) {
+    case "BOPLIKTOMRAADE":
+      return nyInndelingEntries
+        .filter((entry) => entry.changes[0].to != null && isBopliktomraadeRequest(entry.changes[0].to))
+        .flatMap((entry) => {
+          if (entry.changes.length > 0) {
+            const change = entry.changes[0];
+            const newInndelingRequest = change.to;
+            if (newInndelingRequest != null) {
+              return {
+                ...getDefaultFlatedataForInndelingtype(inndelingtype),
+                navn: newInndelingRequest.navn,
+                nummer: newInndelingRequest.nummer,
+                forskriftsreferanse: newInndelingRequest.forskriftsreferanse,
+                gjelderKunDelAvKommunen: newInndelingRequest.gjelderKunDelAvKommunen,
+                gjeldendeMaterielleVilkaar: newInndelingRequest.gjeldendeMaterielleVilkaar,
+                andreLokaleAvgrensninger: newInndelingRequest.andreLokaleAvgrensninger,
+              } as MetadataResponse;
+            }
+            return [];
+          }
+          return [];
+        });
+  }
+};
+
+const isNonExhaustiveInndelingtype = (inndelingtype: Inndelingtype): inndelingtype is NonExhaustiveInndelingtype => {
+  return isInndelingNonExhaustive(inndelingtype);
+};
+
 export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefined => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const flatedataFromBackend = useFlatedataFromBackend(inndeling, gyldighetsdato);
   const { getHistoryEntries } = useHistory();
 
-  const utkastFlatedata = (useUtkastEntity(
-    flatedataFromBackend,
-    getEntityUtkastTypeForInndelingtype(inndeling.inndelingtype),
-  ) ?? []) as MetadataResponse[];
+  const inndelingtype = inndeling.inndelingtype;
 
-  return addHistoryChangesToMetadata(utkastFlatedata, getHistoryEntries(), inndeling.inndelingtype);
+  const utkastFlatedata = (useUtkastEntity(flatedataFromBackend, getEntityUtkastTypeForInndelingtype(inndelingtype)) ??
+    []) as MetadataResponse[];
+
+  const newFlatedataFromHistory = isNonExhaustiveInndelingtype(inndelingtype)
+    ? getNyeInndelingerMetadataForInndelingtype(getHistoryEntries(), inndelingtype)
+    : [];
+
+  return [
+    ...addHistoryChangesToMetadata(utkastFlatedata, getHistoryEntries(), inndelingtype),
+    ...newFlatedataFromHistory,
+  ];
 };
 
 export const isKommuneInndeling = (value: object): value is KommuneResponse => "samiskforvaltningsomraade" in value;
