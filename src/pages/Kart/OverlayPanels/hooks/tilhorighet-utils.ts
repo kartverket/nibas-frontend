@@ -1,5 +1,5 @@
-import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
-import { HistoryEntry } from "contexts/HistoryContext/types";
+import { getKretsDelingEntries, getNyInndelingEntriesForInndelingtype } from "contexts/HistoryContext/history-utils";
+import { HistoryEntry, NyInndelingEntry } from "contexts/HistoryContext/types";
 import {
   getMetadataEndringerKeyForInndelingtype,
   historyToKretsdelingOperations,
@@ -13,6 +13,7 @@ import {
   ObjektIdentifikator,
   UtkastOperasjoner,
 } from "types/api";
+import { removeNil } from "utils/list-utils";
 import { isGrenseType } from "utils/type-utils";
 
 export enum Tilhorighet {
@@ -23,6 +24,7 @@ export enum Tilhorighet {
 export const TILHORIGHET_INNDELINGTYPE_VALUES = ["GRUNNKRETS", "STEMMEKRETS", "BOPLIKTOMRAADE"] as const;
 export type TilhorighetInndelingtype = (typeof TILHORIGHET_INNDELINGTYPE_VALUES)[number];
 
+// TODO: Vurder rename til "Område" for å passe med både heldekkende og ikke-heldekkende inndelinger. (EXHAUSTIVE/NON-EXHAUSTIVE)
 export type Krets = {
   id: ObjektIdentifikator;
   kommuneId: ObjektIdentifikator;
@@ -324,6 +326,39 @@ export const getKretserFromKretsDelingEndringer = (
     );
 };
 
+export const getKretserFromNyInndelingEntries = (
+  entries: NyInndelingEntry[],
+  kommunerIdOgNummer: { id: string; nummer: string }[],
+): Krets[] => {
+  const changes = entries.flatMap((entry) => entry.changes);
+  const allInndelingRequests = removeNil(changes.flatMap((change) => change.to));
+
+  return allInndelingRequests.map((inndelingRequest) => {
+    const kommune = kommunerIdOgNummer.find(
+      (idOgNummer) => idOgNummer.nummer === inndelingRequest.kommunenummer?.kodeverdi,
+    );
+    return {
+      id: {
+        lokalid: {
+          value: getIdForTilhorhetNyKrets(inndelingRequest.nummer, kommune?.id ?? ""),
+        },
+        gyldighetsdato: "",
+      },
+      kommuneId: {
+        lokalid: {
+          value: kommune?.id ?? "",
+        },
+        gyldighetsdato: "",
+      },
+      kommunenummer: kommune?.nummer ?? "",
+      version: inndelingRequest.version,
+      nummer: inndelingRequest.nummer,
+      navn: inndelingRequest.navn,
+      type: "BOPLIKTOMRAADE",
+    };
+  });
+};
+
 export const getKretserFromHistory = (
   entries: HistoryEntry[],
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -331,8 +366,13 @@ export const getKretserFromHistory = (
 ): Krets[] => {
   const kretsdelingerEntries = getKretsDelingEntries(entries);
 
+  const nyeInndelingerEntries = getNyInndelingEntriesForInndelingtype(entries, inndelingType);
+
   const kretsdelingOperations = historyToKretsdelingOperations(kretsdelingerEntries).filter(
     (kretsdeling) => kretsdeling.flatetype === inndelingType,
   );
-  return getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
+
+  const kretserForDelinger = getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
+  const kretserForNyeInndelinger = getKretserFromNyInndelingEntries(nyeInndelingerEntries, kommunerIdOgNummer);
+  return [...kretserForDelinger, ...kretserForNyeInndelinger];
 };

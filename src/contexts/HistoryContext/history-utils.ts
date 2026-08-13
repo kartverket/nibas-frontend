@@ -5,8 +5,12 @@ import { Feature } from "ol";
 import { Coordinate } from "ol/coordinate";
 import { Geometry } from "ol/geom";
 import LineString from "ol/geom/LineString";
+import {
+  isBopliktomraadeRequest,
+  isNonExhaustiveInndelingtype,
+} from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
-import { FeatureProperties, KontekstEgenskaper } from "types/api";
+import { FeatureProperties, Inndelingtype, KontekstEgenskaper } from "types/api";
 import { setDefaultFeatureProperties } from "utils/features";
 import { removeNil } from "utils/list-utils";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
@@ -415,4 +419,23 @@ export const getGrenseMergeEntries = (entries: HistoryEntry[]): MergeGrenseEntry
 
 export const getNyInndelingEntries = (entries: HistoryEntry[]): NyInndelingEntry[] => {
   return entries.filter((entry) => entry.type === "create_inndeling") as NyInndelingEntry[];
+};
+
+export const getNyInndelingEntriesForInndelingtype = (
+  entries: HistoryEntry[],
+  inndelingtype: Inndelingtype,
+): NyInndelingEntry[] => {
+  if (!isNonExhaustiveInndelingtype(inndelingtype)) {
+    return [];
+  }
+  return getNyInndelingEntries(entries).filter((entry) => {
+    const request = entry.changes[0].to;
+    if (request == null) {
+      return false;
+    }
+    switch (inndelingtype) {
+      case "BOPLIKTOMRAADE":
+        return isBopliktomraadeRequest(request);
+    }
+  }) as NyInndelingEntry[];
 };

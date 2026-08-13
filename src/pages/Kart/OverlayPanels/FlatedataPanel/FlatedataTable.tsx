@@ -143,9 +143,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       }
     }
 
-    console.log("newFlaterChanges", newFlaterChanges);
-    console.log("existingFlaterChanges", changesToExisting);
-
     if (newFlaterChanges.length > 0) {
       addHistoryEntry({
         type: "create_inndeling",
@@ -160,7 +157,10 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const handleCreateNewFlate = () => {
     if (isInndelingNonExhaustive(mainInndeling.inndelingtype)) {
       setTempFlatedata((prevState) => {
-        const newFlate: MetadataResponse = getDefaultFlatedataForInndelingtype(mainInndeling.inndelingtype);
+        const newFlate: MetadataResponse = getDefaultFlatedataForInndelingtype(
+          mainInndeling.inndelingtype,
+          mainInndeling,
+        );
         return [...prevState, newFlate];
       });
       setIsEditing(true);

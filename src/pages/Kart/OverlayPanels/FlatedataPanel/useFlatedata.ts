@@ -23,9 +23,8 @@ import {
 import {
   getDefaultFlatedataForInndelingtype,
   isBopliktomraadeRequest,
-  isInndelingNonExhaustive,
+  isNonExhaustiveInndelingtype,
 } from "./flatedata-utils";
-import { NonExhaustiveInndelingtype } from "./FlatedataTable";
 
 const useFlatedataFromBackend = (
   inndeling: Inndeling,
@@ -121,8 +120,12 @@ const addHistoryChangesToMetadata = (
 
 const getNyeInndelingerMetadataForInndelingtype = (
   entries: HistoryEntry[],
-  inndelingtype: NonExhaustiveInndelingtype,
+  inndeling: Inndeling,
 ): MetadataResponse[] => {
+  const inndelingtype = inndeling.inndelingtype;
+  if (!isNonExhaustiveInndelingtype(inndelingtype)) {
+    return [];
+  }
   const nyInndelingEntries = getNyInndelingEntries(entries);
   switch (inndelingtype) {
     case "BOPLIKTOMRAADE":
@@ -134,7 +137,7 @@ const getNyeInndelingerMetadataForInndelingtype = (
             const newInndelingRequest = change.to;
             if (newInndelingRequest != null) {
               return {
-                ...getDefaultFlatedataForInndelingtype(inndelingtype),
+                ...getDefaultFlatedataForInndelingtype(inndelingtype, inndeling),
                 navn: newInndelingRequest.navn,
                 nummer: newInndelingRequest.nummer,
                 forskriftsreferanse: newInndelingRequest.forskriftsreferanse,
@@ -150,10 +153,6 @@ const getNyeInndelingerMetadataForInndelingtype = (
   }
 };
 
-const isNonExhaustiveInndelingtype = (inndelingtype: Inndelingtype): inndelingtype is NonExhaustiveInndelingtype => {
-  return isInndelingNonExhaustive(inndelingtype);
-};
-
 export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefined => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const flatedataFromBackend = useFlatedataFromBackend(inndeling, gyldighetsdato);
@@ -164,9 +163,7 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
   const utkastFlatedata = (useUtkastEntity(flatedataFromBackend, getEntityUtkastTypeForInndelingtype(inndelingtype)) ??
     []) as MetadataResponse[];
 
-  const newFlatedataFromHistory = isNonExhaustiveInndelingtype(inndelingtype)
-    ? getNyeInndelingerMetadataForInndelingtype(getHistoryEntries(), inndelingtype)
-    : [];
+  const newFlatedataFromHistory = getNyeInndelingerMetadataForInndelingtype(getHistoryEntries(), inndeling);
 
   return [
     ...addHistoryChangesToMetadata(utkastFlatedata, getHistoryEntries(), inndelingtype),

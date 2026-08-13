@@ -72,10 +72,13 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
         return baseOptions;
       }
 
-      const tilhorighetOptionsFromUtkast = getKretserFromKretsDelingEndringer(
+      const kretsDelingerFromUtkast = getKretserFromKretsDelingEndringer(
         kommunerIdOgNummer,
         utkast.operasjoner.kretsDelingEndringer.filter((deling) => deling.flatetype === inndelingType),
       );
+      const nyeInndelingerFromUtkast = [] as Krets[]; // TODO
+      const tilhorighetOptionsFromUtkast = [...kretsDelingerFromUtkast, ...nyeInndelingerFromUtkast];
+
       const historyEntries = getHistoryEntries();
       const tilhorighetOptionsFromHistory = getKretserFromHistory(historyEntries, kommunerIdOgNummer, inndelingType);
       const optionsFromUtkastAndHistory = [...tilhorighetOptionsFromUtkast, ...tilhorighetOptionsFromHistory];

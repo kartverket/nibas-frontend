@@ -11,7 +11,7 @@ import {
   StemmekretsRequest,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
-import { NonExhaustiveInndelingRequest } from "./FlatedataTable";
+import { NonExhaustiveInndelingRequest, NonExhaustiveInndelingtype } from "./FlatedataTable";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
@@ -237,7 +237,16 @@ export const isInndelingNonExhaustive = (inndelingtype: Inndelingtype): boolean 
   }
 };
 
-export const getDefaultFlatedataForInndelingtype = (inndelingtype: Inndelingtype): MetadataResponse => {
+export const isNonExhaustiveInndelingtype = (
+  inndelingtype: Inndelingtype,
+): inndelingtype is NonExhaustiveInndelingtype => {
+  return isInndelingNonExhaustive(inndelingtype);
+};
+
+export const getDefaultFlatedataForInndelingtype = (
+  inndelingtype: Inndelingtype,
+  withKommune?: Inndeling,
+): MetadataResponse => {
   const date = new Date().toISOString();
   switch (inndelingtype) {
     case "FYLKE": {
@@ -252,6 +261,8 @@ export const getDefaultFlatedataForInndelingtype = (inndelingtype: Inndelingtype
     case "STEMMEKRETS": {
       throw new Error('Not implemented yet: "STEMMEKRETS" case');
     }
+    // TODO: Trenger vi egt å ha hele responsobjekter i spill i formet? kunne vi redusert objektet slik at det er enklere å bruke andre datakilder for formet i fremtiden?
+    // Feks. det å legge til ny inndeling som ikke er basert på en eksisterende har ingen responsobjekt å basere seg på. Da må vi lage et mindre subset av responstypen som formet bruker og som alle kan mappe til.
     case "BOPLIKTOMRAADE": {
       return {
         id: {
@@ -270,11 +281,11 @@ export const getDefaultFlatedataForInndelingtype = (inndelingtype: Inndelingtype
         datafangstdato: date,
         kommunenummer: {
           id: "",
-          kodeverdi: "",
+          kodeverdi: withKommune?.nummer ?? "",
         },
         kommuneIdentifikator: {
           lokalid: {
-            value: "",
+            value: withKommune?.id ?? "",
           },
           gyldighetsdato: "",
         },
