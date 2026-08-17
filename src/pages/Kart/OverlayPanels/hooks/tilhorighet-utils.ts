@@ -15,6 +15,7 @@ import {
 } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isGrenseType } from "utils/type-utils";
+import { getNonExhaustiveInndelingTypeFromRequest } from "../FlatedataPanel/flatedata-utils";
 
 export enum Tilhorighet {
   A = "a",
@@ -333,30 +334,37 @@ export const getKretserFromNyInndelingEntries = (
   const changes = entries.flatMap((entry) => entry.changes);
   const allInndelingRequests = removeNil(changes.flatMap((change) => change.to));
 
-  return allInndelingRequests.map((inndelingRequest) => {
-    const kommune = kommunerIdOgNummer.find(
-      (idOgNummer) => idOgNummer.nummer === inndelingRequest.kommunenummer?.kodeverdi,
-    );
-    return {
-      id: {
-        lokalid: {
-          value: getIdForTilhorhetNyKrets(inndelingRequest.nummer, kommune?.id ?? ""),
+  return removeNil(
+    allInndelingRequests.map((inndelingRequest) => {
+      const kommune = kommunerIdOgNummer.find(
+        (idOgNummer) => idOgNummer.nummer === inndelingRequest.kommunenummer?.kodeverdi,
+      );
+      const currentDate = new Date().toISOString();
+      const type = getNonExhaustiveInndelingTypeFromRequest(inndelingRequest);
+      if (type == null) {
+        return null;
+      }
+      return {
+        id: {
+          lokalid: {
+            value: getIdForTilhorhetNyKrets(inndelingRequest.nummer, kommune?.id ?? ""),
+          },
+          gyldighetsdato: currentDate,
         },
-        gyldighetsdato: "",
-      },
-      kommuneId: {
-        lokalid: {
-          value: kommune?.id ?? "",
+        kommuneId: {
+          lokalid: {
+            value: kommune?.id ?? "",
+          },
+          gyldighetsdato: currentDate,
         },
-        gyldighetsdato: "",
-      },
-      kommunenummer: kommune?.nummer ?? "",
-      version: inndelingRequest.version,
-      nummer: inndelingRequest.nummer,
-      navn: inndelingRequest.navn,
-      type: "BOPLIKTOMRAADE",
-    };
-  });
+        kommunenummer: kommune?.nummer ?? "",
+        version: inndelingRequest.version,
+        nummer: inndelingRequest.nummer,
+        navn: inndelingRequest.navn,
+        type: type,
+      };
+    }),
+  );
 };
 
 export const getKretserFromHistory = (

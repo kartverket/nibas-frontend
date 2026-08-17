@@ -13,6 +13,7 @@ import {
 import { getIdFromEntity } from "utils/api";
 import { NonExhaustiveInndelingRequest, NonExhaustiveInndelingtype } from "./FlatedataTable";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
+import { getDiscriminatorForCreateInndelingRequest } from "contexts/UtkastContext/utkast-utils";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
@@ -261,7 +262,7 @@ export const getDefaultFlatedataForInndelingtype = (
     case "STEMMEKRETS": {
       throw new Error('Not implemented yet: "STEMMEKRETS" case');
     }
-    // TODO: Trenger vi egt å ha hele responsobjekter i spill i formet? kunne vi redusert objektet slik at det er enklere å bruke andre datakilder for formet i fremtiden?
+    // TODO: Trenger vi egt å ha hele responsobjekter i formet? kunne vi redusert objektet slik at det er enklere å bruke andre datakilder for formet i fremtiden?
     // Feks. det å legge til ny inndeling som ikke er basert på en eksisterende har ingen responsobjekt å basere seg på. Da må vi lage et mindre subset av responstypen som formet bruker og som alle kan mappe til.
     case "BOPLIKTOMRAADE": {
       return {
@@ -274,7 +275,7 @@ export const getDefaultFlatedataForInndelingtype = (
         navn: "",
         nummer: "01",
         gyldighet: {
-          gyldigFra: "",
+          gyldigFra: date,
           gyldigTil: null,
         },
         oppdateringsdato: date,
@@ -287,7 +288,7 @@ export const getDefaultFlatedataForInndelingtype = (
           lokalid: {
             value: withKommune?.id ?? "",
           },
-          gyldighetsdato: "",
+          gyldighetsdato: date,
         },
         endringstype: "Import",
         representasjonspunkt: {
@@ -381,3 +382,16 @@ export const reduceFlatedataChangesForNewInndelinger = (
     },
     [],
   );
+
+export const getNonExhaustiveInndelingTypeFromRequest = (
+  request: NonExhaustiveInndelingRequest,
+): NonExhaustiveInndelingtype | null => {
+  const discriminator = getDiscriminatorForCreateInndelingRequest(request);
+  if (discriminator == null) {
+    return null;
+  }
+  switch (discriminator) {
+    case "CreateBopliktomraadeRequest":
+      return "BOPLIKTOMRAADE";
+  }
+};

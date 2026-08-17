@@ -78,6 +78,20 @@ export type OppdaterUtkastRequest = components["schemas"]["OppdaterUtkastRequest
 export type StemmekretsSammenslaaingsendringRequest = components["schemas"]["StemmekretsSammenslaaingsendringRequest"];
 export type GrunnkretsSammenslaaingsendringRequest = components["schemas"]["GrunnkretsSammenslaaingsendringRequest"];
 export type KretsDelingEndringRequest = components["schemas"]["KretsDelingEndringRequest"];
+/**
+ * NB: Denne unionen må oppdateres manuelt når nye typer legges til i
+ * CreateInndelingRequest i backend (sealed interface).
+ *
+ * Den genererte CreateInndelingRequest i api-gen.ts kan ikke brukes direkte,
+ * siden springdoc/swagger-core genererer en sirkulær type når en klasse både
+ * implementerer et Schema-annotert interface (for oneOf/discriminator) og
+ * blir tolket som en subtype via arv (allOf).
+ *
+ * Husk å legge til nye varianter her når de dukker opp i de genererte
+ * schemaene
+ */
+export type CreateInndelingRequest = components["schemas"]["CreateBopliktomraadeRequest"];
+export type CreateInndelingRequestDiscriminator = CreateInndelingRequest["discriminator"];
 
 /**
  * API kall
