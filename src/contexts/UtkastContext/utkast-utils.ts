@@ -139,17 +139,6 @@ const mergeKretsdelingOperations = (
   return [...kretdelingerInUtkastNotOverwritten, ...kretsdelingerFromHistory];
 };
 
-const mergeNyInndelingOperations = (
-  nyeInndelingerFromUtkast: CreateInndelingRequest[],
-  nyeInndelingerFromHistory: CreateInndelingRequest[],
-): CreateInndelingRequest[] => {
-  const nyeInndelingIdsFromHistory = nyeInndelingerFromHistory.map((inndeling) => inndeling.identifikasjon.lokalid);
-  const nyeInndelingerInUtkastNotOverwritten = nyeInndelingerFromUtkast.filter(
-    (inndeling) => !nyeInndelingIdsFromHistory.includes(inndeling.identifikasjon.lokalid),
-  );
-  return [...nyeInndelingerInUtkastNotOverwritten, ...nyeInndelingerFromHistory];
-};
-
 export const getMetadataEndringerKeyForInndelingtype = (
   inndelingtype: Inndelingtype,
 ): "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer" | "bopliktomraadeendringer" => {
@@ -199,10 +188,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
             previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
             kretsdelingOperations,
           ),
-          nyeInndelingEndringer: mergeNyInndelingOperations(
-            previousUtkast?.operasjoner.createInndelingEndringer ?? [],
-            createInndelingOperations,
-          ),
+          nyeInndelingEndringer: previousUtkast?.operasjoner.createInndelingEndringer.concat(createInndelingOperations),
         },
       }),
     );
@@ -390,6 +376,7 @@ export const createUtkastOperations = ({
   stemmekretssammenslaaingsendringer,
   grunnkretssammenslaaingsendringer,
   kretsDelingEndringer = [],
+  nyeInndelingEndringer = [],
 }: {
   endredeFeatures?: GeoJSONFeature[];
   fylkesendringer?: Record<string, FylkeRequest>;
@@ -401,6 +388,7 @@ export const createUtkastOperations = ({
   stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
   grunnkretssammenslaaingsendringer?: GrunnkretsSammenslaaingsendringRequest;
   kretsDelingEndringer?: KretsDelingEndringRequest[];
+  nyeInndelingEndringer?: CreateInndelingRequest[];
 }): UtkastOperasjoner => ({
   grenseendringer: {
     endredeFeatures,
@@ -416,7 +404,7 @@ export const createUtkastOperations = ({
   stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer ?? null,
   grunnkretsSammenslaaingsendring: grunnkretssammenslaaingsendringer ?? null,
   kretsDelingEndringer: kretsDelingEndringer,
-  createInndelingEndringer: [],
+  createInndelingEndringer: nyeInndelingEndringer,
 });
 
 // Map fra type CreateInndelingRequest til attrbibuttet som er unikt for subtypen.

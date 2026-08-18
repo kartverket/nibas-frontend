@@ -32,17 +32,20 @@ export const useUtkastBopliktomraadeEndringer = (
     shouldFetchEndringer,
   );
 
+  const bopliktomraaderList = bopliktomraader ?? [];
+  const kommunerList = kommuner ?? [];
+
   const lasterData = lasterBopliktomraader || lasterKommuner;
 
   const endringer = (() => {
-    if (!lasterData && bopliktomraader && kommuner) {
-      return getBopliktomraadeEndringer(bopliktomraaderMedEndringer, operasjoner, bopliktomraader, kommuner);
+    if (!lasterData) {
+      return getBopliktomraadeEndringer(bopliktomraaderMedEndringer, operasjoner, bopliktomraaderList, kommunerList);
     }
     return null;
   })();
 
   return {
-    harEndringer: bopliktomraaderMedEndringer.length > 0,
+    harEndringer: endringer !== null && endringer.length > 0,
     laster: lasterData,
     endringer,
   };
