@@ -42,6 +42,10 @@ import { getIdFromEntity } from "utils/api";
 import { getUniqueItems, removeNil } from "utils/list-utils";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { EntityUtkastType, ResponseWithId, UtkastEntity } from "./types";
+import {
+  isBopliktomraadeRequest,
+  isNonExhaustiveInndelingtype,
+} from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
 
 const getCombinedEntity = <T extends ResponseWithId>(
   entity: T,
@@ -421,4 +425,19 @@ export const getDiscriminatorForCreateInndelingRequest = (
     }
   }
   return null;
+};
+
+export const getCreateInndelingEntriesForInndelingtype = (
+  utkastOperasjoner: UtkastOperasjoner,
+  inndelingtype: Inndelingtype,
+): CreateInndelingRequest[] => {
+  if (!isNonExhaustiveInndelingtype(inndelingtype)) {
+    return [];
+  }
+  return utkastOperasjoner.createInndelingEndringer.filter((request) => {
+    switch (inndelingtype) {
+      case "BOPLIKTOMRAADE":
+        return isBopliktomraadeRequest(request);
+    }
+  }) as CreateInndelingRequest[];
 };

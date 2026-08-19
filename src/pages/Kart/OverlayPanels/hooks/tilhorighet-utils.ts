@@ -1,6 +1,7 @@
 import { getKretsDelingEntries, getNyInndelingEntriesForInndelingtype } from "contexts/HistoryContext/history-utils";
 import { HistoryEntry, NyInndelingEntry } from "contexts/HistoryContext/types";
 import {
+  getCreateInndelingEntriesForInndelingtype,
   getMetadataEndringerKeyForInndelingtype,
   historyToKretsdelingOperations,
 } from "contexts/UtkastContext/utkast-utils";
@@ -325,6 +326,39 @@ export const getKretserFromKretsDelingEndringer = (
         nummer: nyKrets.kretsNummer,
       })),
     );
+};
+
+export const getNyeInndelingerFromUtkast = (
+  kommunerIdOgNummer: { id: string; nummer: string }[],
+  utkastOperasjoner: UtkastOperasjoner,
+  inndelingType: TilhorighetInndelingtype,
+): Krets[] => {
+  return getCreateInndelingEntriesForInndelingtype(utkastOperasjoner, inndelingType)
+    .filter((entry) => kommunerIdOgNummer.some(({ nummer }) => nummer === entry.kommunenummer?.kodeverdi))
+    .map((entry) => {
+      const kommuneLokalid = kommunerIdOgNummer.find(
+        (idOgNummer) => idOgNummer.nummer === entry.kommunenummer?.kodeverdi,
+      )?.id;
+      return {
+        id: {
+          lokalid: {
+            value: getIdForTilhorhetNyKrets(entry.nummer, kommuneLokalid ?? ""),
+          },
+          gyldighetsdato: "",
+        },
+        kommuneId: {
+          lokalid: {
+            value: kommuneLokalid ?? "",
+          },
+          gyldighetsdato: new Date().toISOString(),
+        },
+        kommunenummer: entry.kommunenummer?.kodeverdi ?? "",
+        version: entry.version,
+        nummer: entry.nummer,
+        navn: entry.navn,
+        type: inndelingType,
+      };
+    });
 };
 
 export const getKretserFromNyInndelingEntries = (
