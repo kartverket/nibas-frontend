@@ -253,10 +253,14 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       {flatedata.length === 0 && (
         <CreateFlateContainer>
           <BoldHeading>{`Ingen ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: true, capitalizeLabel: false })} i denne kommunen.`}</BoldHeading>
-          {`For å opprette et nytt ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })}, klikk på "Opprett ny flate".`}
-          <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
-            Opprett ny flate
-          </Button>
+          {utkast != null ? (
+            <>
+              {`For å opprette et nytt ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })}, klikk på "Opprett ny flate".`}
+              <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
+                Opprett ny flate
+              </Button>
+            </>
+          ) : null}
         </CreateFlateContainer>
       )}
       <FlatedataFooter
