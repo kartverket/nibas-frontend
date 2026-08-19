@@ -10,6 +10,7 @@ import useKommuner from "hooks/inndelinger/useKommuner";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { UtkastResponse } from "types/api";
 import { useBopliktomraader } from "hooks/inndelinger/useBopliktomraader";
+import { getCreateInndelingEntriesForInndelingtype } from "contexts/UtkastContext/utkast-utils";
 
 type useUtkastKretsEndringerReturnType = {
   harEndringer: boolean;
@@ -25,6 +26,10 @@ export const useUtkastBopliktomraadeEndringer = (
   const operasjoner = utkast.operasjoner;
 
   const bopliktomraaderMedEndringer = getKretserAvTypeMedEndringer(operasjoner, "BOPLIKTOMRAADE");
+
+  const harEndringer =
+    bopliktomraaderMedEndringer.length > 0 ||
+    getCreateInndelingEntriesForInndelingtype(operasjoner, "BOPLIKTOMRAADE").length > 0;
 
   const { data: bopliktomraader, isValidating: lasterBopliktomraader } = useBopliktomraader(
     bopliktomraaderMedEndringer,
@@ -45,7 +50,7 @@ export const useUtkastBopliktomraadeEndringer = (
   })();
 
   return {
-    harEndringer: endringer !== null && endringer.length > 0,
+    harEndringer: harEndringer,
     laster: lasterData,
     endringer,
   };
