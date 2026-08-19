@@ -41,13 +41,14 @@ import {
 import { getIdFromEntity } from "utils/api";
 import { getUniqueItems, removeNil } from "utils/list-utils";
 import { featureToGeoJson } from "utils/map/geoJson";
-import { EntityUtkastType, ResponseWithId, UtkastEntity } from "./types";
+import { EntityUtkastType, ResponseWithId, ResponseWithIdentifikasjon, UtkastEntity } from "./types";
 import {
   isBopliktomraadeRequest,
   isNonExhaustiveInndelingtype,
 } from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
 
-const getCombinedEntity = <T extends ResponseWithId>(
+// Legger utkastendringer til metadata som kommer fra backend, og returnerer en ny liste med metadata
+const getCombinedEntity = <T extends ResponseWithId | ResponseWithIdentifikasjon>(
   entity: T,
   utkastSlice: NonNullable<NonNullable<UtkastMetadataendringer>[EntityUtkastType]>,
 ) => {
