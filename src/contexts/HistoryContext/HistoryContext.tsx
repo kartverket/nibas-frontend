@@ -95,6 +95,13 @@ const onUndo = (entry: HistoryEntry) => {
     case "merge_grenser": {
       return handleGrenseMerge(entry, "from");
     }
+    case "create_inndeling": {
+      return document.dispatchEvent(
+        new CustomEvent("create_inndelingUndo", {
+          detail: { entry },
+        }),
+      );
+    }
   }
 };
 
@@ -177,6 +184,13 @@ const onRedo = (entry: HistoryEntry) => {
     }
     case "merge_grenser": {
       return handleGrenseMerge(entry, "to");
+    }
+    case "create_inndeling": {
+      return document.dispatchEvent(
+        new CustomEvent("create_inndelingRedo", {
+          detail: { entry },
+        }),
+      );
     }
   }
 };

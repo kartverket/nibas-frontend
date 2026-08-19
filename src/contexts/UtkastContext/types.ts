@@ -11,6 +11,12 @@ export type ResponseWithId = {
   };
 };
 
+export type ResponseWithIdentifikasjon = {
+  identifikasjon: {
+    lokalid: string;
+  };
+};
+
 export const getEntityUtkastTypeForInndelingtype = (inndelingtype: Inndelingtype): EntityUtkastType => {
   switch (inndelingtype) {
     case "STEMMEKRETS":
@@ -39,4 +45,5 @@ export type UtkastContextValue = {
 
 export type UtkastRequestWithoutOperations = Omit<OppdaterUtkastRequest, "operasjoner">;
 
-export type UtkastEntity = ResponseWithId | ResponseWithId[] | undefined;
+export type UtkastEntity =
+  ResponseWithId | ResponseWithId[] | ResponseWithIdentifikasjon | ResponseWithIdentifikasjon[] | undefined;
