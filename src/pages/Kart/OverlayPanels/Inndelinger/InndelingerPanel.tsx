@@ -10,7 +10,6 @@ import {
   Search,
   Spinner,
 } from "@kvib/react";
-import { useFlag } from "components/FeatureToggle";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { BaseInndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -58,20 +57,13 @@ const InndelingerPanel = () => {
     setInputValue("");
   }, [activePanelFylkeId, selectedInndelingtype, setInputValue]);
 
-  const bopliktomraadeEditingEnabled = useFlag("BOPLIKTOMRADE_EDITING");
-  const bopliktomraadeViewingEnabled = useFlag("BOPLIKTOMRADE_VIEWING");
-
   const isInndelingtypeDisabledForEditing = (inndelingtype: Inndelingtype) => {
-    const DISABLED_FOR_EDITING_INNDELINGTYPER: string[] = [
-      bopliktomraadeEditingEnabled === false ? "bopliktomraade" : "",
-    ];
+    const DISABLED_FOR_EDITING_INNDELINGTYPER: string[] = [];
     return isEditingPanel && DISABLED_FOR_EDITING_INNDELINGTYPER.includes(inndelingtype);
   };
 
   const isInndelingtypeDisabledForViewing = (inndelingtype: Inndelingtype) => {
-    const DISABLED_FOR_VIEWING_INNDELINGTYPER: string[] = [
-      bopliktomraadeViewingEnabled === false ? "bopliktomraade" : "",
-    ];
+    const DISABLED_FOR_VIEWING_INNDELINGTYPER: string[] = [];
     return !isEditingPanel && DISABLED_FOR_VIEWING_INNDELINGTYPER.includes(inndelingtype);
   };
 

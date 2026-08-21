@@ -33,6 +33,7 @@ import {
 } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
+import FeatureToggle from "components/FeatureToggle";
 
 type Props = {
   mainInndeling: FlatedataTableInndeling;
@@ -252,15 +253,21 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       </Table>
       {flatedata.length === 0 && (
         <CreateFlateContainer>
-          <BoldHeading>{`Ingen ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: true, capitalizeLabel: false })} i denne kommunen.`}</BoldHeading>
-          {utkast != null ? (
-            <>
-              {`For å opprette et nytt ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })}, klikk på "Opprett ny flate".`}
-              <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
-                Opprett ny flate
-              </Button>
-            </>
-          ) : null}
+          <FeatureToggle feature="CREATE_INNDELINGER">
+            {
+              <>
+                <BoldHeading>{`Ingen ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: true, capitalizeLabel: false })} i denne kommunen.`}</BoldHeading>
+                {utkast != null ? (
+                  <>
+                    {`For å opprette et nytt ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })}, klikk på "Opprett ny flate".`}
+                    <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
+                      Opprett ny flate
+                    </Button>
+                  </>
+                ) : null}
+              </>
+            }
+          </FeatureToggle>
         </CreateFlateContainer>
       )}
       <FlatedataFooter
