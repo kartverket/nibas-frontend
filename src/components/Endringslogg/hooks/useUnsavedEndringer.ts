@@ -3,6 +3,7 @@ import {
   Kretsendringer,
   KretsSplittingEndring,
   Metadataendringer,
+  NyInndelingEndring,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import {
@@ -13,6 +14,7 @@ import {
   getKretsDelingEntries,
   getMetadataEntries,
   getNyGrenserEntriesEntries,
+  getNyInndelingEntries,
 } from "contexts/HistoryContext/history-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import {
@@ -33,6 +35,7 @@ import {
   KretsDelingEndringRequest,
   StemmekretsResponse,
 } from "../../../types/api";
+import { getNonExhaustiveInndelingTypeFromRequest } from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
 
 type UseUnsavedEndringerReturnType = {
   harEndringer: boolean;
@@ -54,6 +57,7 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
   const metadataendringer = getMetadataChanges(history);
   const { laster: lasterDelinger, endringer: kretsdelinger } = useKretsdelingChanges(history);
   const kommuneendringer = getKommuneendringer(history, alleKommuner);
+  const nyeInndelingerChanges = getNyeInndelinger(history);
 
   const antallNyeGrenserArkivert = nyeGrenser.filter((id) => arkiverteGrenser.includes(id)).length;
   const antallNyeGrenserEndret = nyeGrenser.filter((id) => endredeGrenser.includes(id)).length;
@@ -75,7 +79,8 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
     metadataendringer.length +
     kretsdelinger.length +
     antallKommuneNavnendringer +
-    antallKommuneEndringSamiskForvaltningsomraade;
+    antallKommuneEndringSamiskForvaltningsomraade +
+    nyeInndelingerChanges.length;
 
   return {
     harEndringer: antallEndringer > 0,
@@ -88,6 +93,7 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
       antallEndredeGrenser,
       sammenslaaing: null, // Sammenslåing blir lagret med en gang
       delinger: kretsdelinger,
+      nyeInndelinger: nyeInndelingerChanges,
     },
     kommuneendringer: kommuneendringer,
   };
@@ -171,6 +177,26 @@ const getNyeGrenser = (entries: HistoryEntry[]): string[] => {
   );
 
   return getUniqueItems(nyeGrenser.concat(nyeGrenserFraGrensedelinger).concat(nyeGrenserFraGrenseMerge));
+};
+
+const getNyeInndelinger = (entries: HistoryEntry[]): NyInndelingEndring[] => {
+  return removeNil(
+    getNyInndelingEntries(entries).map((entry) => {
+      const change = entry.changes[0];
+      if (change.to == null) {
+        return null;
+      }
+      const inndelingType = getNonExhaustiveInndelingTypeFromRequest(change.to);
+      if (inndelingType == null) {
+        return null;
+      }
+      return {
+        navn: change.to?.navn,
+        nummer: change.to?.nummer,
+        inndelingtype: inndelingType,
+      };
+    }),
+  );
 };
 
 const getEndredeGrenser = (entries: HistoryEntry[]): string[] => {

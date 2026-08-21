@@ -20,17 +20,10 @@ const environmentByUrl: Record<string, Environment> = {
 // noe som `type Keys = "flagg1" | "flagg2" | ...`
 // features som skal fjernes kan slettes fra denne listen
 // hvis det ikke er noen keys skal Keys være av typen `never`
-type Keys = "BOPLIKTOMRADE_VIEWING" | "BOPLIKTOMRADE_EDITING";
+type Keys = "CREATE_INNDELINGER";
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
-  BOPLIKTOMRADE_VIEWING: {
-    prod: false,
-    "dev-main": true,
-    "dev-e2e": true,
-    localhost: true,
-    "feature-branch": true,
-  },
-  BOPLIKTOMRADE_EDITING: {
+  CREATE_INNDELINGER: {
     prod: false,
     "dev-main": true,
     "dev-e2e": true,

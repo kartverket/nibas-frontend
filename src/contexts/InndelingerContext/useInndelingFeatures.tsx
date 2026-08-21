@@ -93,15 +93,25 @@ const getAdditionalFeaturesRequestUrl = (inndelingtype: Inndelingtype): keyof In
 
 type PotentialInndelingResponse = FullInndelingResponse | FullInndelingResponse[] | SimpleInndelingResponse[];
 
+const isEmptyInndelingResponse = (inndeling: PotentialInndelingResponse): boolean => {
+  if (inndeling instanceof Array) {
+    return inndeling.length === 0;
+  } else {
+    return false;
+  }
+};
+
 const shouldFetchAdditionalFeatures = (inndelingtype: Inndelingtype, inndeling: PotentialInndelingResponse) => {
   switch (inndelingtype) {
     case "BOPLIKTOMRAADE":
       return (
+        // Vi henter kommunegrenser når det enten ikke er noe bopliktområde eller alle bopliktområdene gjelder kun deler av kommunene.
         inndeling instanceof Array &&
-        inndeling.length > 0 &&
-        inndeling.every(
-          (omraade) => isBopliktomraadeInndeling(omraade) === true && omraade.gjelderKunDelAvKommunen === true,
-        )
+        (isEmptyInndelingResponse(inndeling) ||
+          (inndeling.length > 0 &&
+            inndeling.every(
+              (omraade) => isBopliktomraadeInndeling(omraade) === true && omraade.gjelderKunDelAvKommunen === true,
+            )))
       );
     case "FYLKE":
     case "KOMMUNE":

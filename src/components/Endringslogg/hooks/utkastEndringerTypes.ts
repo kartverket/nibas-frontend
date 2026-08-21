@@ -1,3 +1,4 @@
+import { NonExhaustiveInndelingtype } from "pages/Kart/OverlayPanels/FlatedataPanel/FlatedataTable";
 import {
   BopliktomraadeResponse,
   GrunnkretsResponse,
@@ -57,6 +58,13 @@ export type Kretsendringer = {
   antallEndredeGrenser: number;
   sammenslaaing: KretsSammenslaaingEndring | null;
   delinger: KretsSplittingEndring[] | null;
+  nyeInndelinger: NyInndelingEndring[];
+};
+
+export type NyInndelingEndring = {
+  navn: string;
+  nummer: string;
+  inndelingtype: NonExhaustiveInndelingtype;
 };
 
 export type KretsSplittingEndring = { opprinneligKrets: KretsNavnOgNummer; nyeKretser: KretsNavnOgNummer[] };
