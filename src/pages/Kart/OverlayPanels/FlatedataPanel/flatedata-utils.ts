@@ -2,16 +2,18 @@ import { HistoryChange } from "contexts/HistoryContext/types";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import {
   BopliktomraadeRequest,
+  GjeldendeMaterielleVilkaar,
   GrunnkretsRequest,
   Inndelingtype,
   KommuneRequest,
   MetadataRequest,
   MetadataResponse,
   StemmekretsRequest,
-  GjeldendeMaterielleVilkaar,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
+import { NonExhaustiveInndelingRequest, NonExhaustiveInndelingtype } from "./FlatedataTable";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
+import { getDiscriminatorForCreateInndelingRequest } from "contexts/UtkastContext/utkast-utils";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
@@ -68,7 +70,7 @@ const isBopliktomraadeInput = (
   "andreLokaleAvgrensninger" in value &&
   "harUsikkerAvgrensning" in value;
 
-const getRequestFromInputs = (
+export const getRequestFromInputs = (
   inndelingtype: Inndelingtype,
   data: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,
   inndeling: MetadataResponse,
@@ -221,5 +223,175 @@ export const isValidUrl = (value: string) => {
     return ["http:", "https:"].includes(parsed.protocol);
   } catch {
     return false;
+  }
+};
+
+export const isInndelingNonExhaustive = (inndelingtype: Inndelingtype): boolean => {
+  switch (inndelingtype) {
+    case "BOPLIKTOMRAADE":
+      return true;
+    case "STEMMEKRETS":
+    case "GRUNNKRETS":
+    case "FYLKE":
+    case "KOMMUNE":
+      return false;
+  }
+};
+
+export const isNonExhaustiveInndelingtype = (
+  inndelingtype: Inndelingtype,
+): inndelingtype is NonExhaustiveInndelingtype => {
+  return isInndelingNonExhaustive(inndelingtype);
+};
+
+export const getDefaultFlatedataForInndelingtype = (
+  inndelingtype: Inndelingtype,
+  withKommune?: Inndeling,
+): MetadataResponse => {
+  const date = new Date().toISOString();
+  switch (inndelingtype) {
+    case "FYLKE": {
+      throw new Error('Not implemented yet: "FYLKE" case');
+    }
+    case "KOMMUNE": {
+      throw new Error('Not implemented yet: "KOMMUNE" case');
+    }
+    case "GRUNNKRETS": {
+      throw new Error('Not implemented yet: "GRUNNKRETS" case');
+    }
+    case "STEMMEKRETS": {
+      throw new Error('Not implemented yet: "STEMMEKRETS" case');
+    }
+    // TODO: Trenger vi egt å ha hele responsobjekter i formet? kunne vi redusert objektet slik at det er enklere å bruke andre datakilder for formet i fremtiden?
+    // Feks. det å legge til ny inndeling som ikke er basert på en eksisterende har ingen responsobjekt å basere seg på. Da må vi lage et mindre subset av responstypen som formet bruker og som alle kan mappe til.
+    case "BOPLIKTOMRAADE": {
+      return {
+        id: {
+          lokalid: {
+            value: getTempFlateId(inndelingtype),
+          },
+          gyldighetsdato: date,
+        },
+        navn: "",
+        nummer: "01",
+        gyldighet: {
+          gyldigFra: date,
+          gyldigTil: null,
+        },
+        oppdateringsdato: date,
+        datafangstdato: date,
+        kommunenummer: {
+          id: "",
+          kodeverdi: withKommune?.nummer ?? "",
+        },
+        kommuneIdentifikator: {
+          lokalid: {
+            value: withKommune?.id ?? "",
+          },
+          gyldighetsdato: date,
+        },
+        endringstype: "Import",
+        representasjonspunkt: {
+          type: "Feature",
+          id: null,
+          properties: {
+            type: "Posisjon",
+            srid: 25833,
+            metadata: null,
+            kontekstEgenskaper: [],
+            version: 1,
+            shouldArchive: false,
+          },
+          geometry: {
+            type: "Point",
+            coordinates: [0, 0],
+          },
+        },
+        version: 1,
+        informasjon: "",
+        delvisBoplikt: false,
+        gjelderKunDelAvKommunen: false,
+        usikkerAvgrensning: false,
+        harUsikkerAvgrensning: false,
+        forskriftsreferanse: "",
+        materielleVilkaar: [],
+        gjeldendeMaterielleVilkaar: [],
+        andreAvgrensninger: null,
+        andreLokaleAvgrensninger: null,
+        url: "",
+      };
+    }
+  }
+};
+
+const getTempFlateId = (inndelingtype: Inndelingtype): string => {
+  return `temp-${inndelingtype}-${Math.floor(Math.random() * 1000000)}`;
+};
+
+export const isTempFlateId = (id: string): boolean => {
+  return id.startsWith("temp-");
+};
+
+export const partitionDictBy = <T extends Record<string, unknown>>(
+  dict: T,
+  predicate: (key: string) => boolean,
+): [T, T] => {
+  const matching: Record<string, unknown> = {};
+  const nonMatching: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(dict)) {
+    if (predicate(key)) {
+      matching[key] = value;
+    } else {
+      nonMatching[key] = value;
+    }
+  }
+
+  return [matching as T, nonMatching as T];
+};
+
+export const isBopliktomraadeRequest = (request: MetadataRequest): request is BopliktomraadeRequest => {
+  return "identifikasjon" in request && "gjelderKunDelAvKommunen" in request;
+};
+
+export const reduceFlatedataChangesForNewInndelinger = (
+  formValues: FlatedataInputs,
+  utkastFlatedata: MetadataResponse[],
+  inndeling: Inndeling,
+) =>
+  Object.entries(formValues).reduce<HistoryChange<NonExhaustiveInndelingRequest | null>[]>(
+    (accumulator, [key, newValues]) => {
+      if (isBopliktomraadeInput(newValues) && isInndelingNonExhaustive(inndeling.inndelingtype)) {
+        const changedInndeling = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);
+        if (changedInndeling != null) {
+          const toRequest = getRequestFromInputs(inndeling.inndelingtype, newValues, changedInndeling);
+          if (toRequest != null && isBopliktomraadeRequest(toRequest)) {
+            return [
+              ...accumulator,
+              {
+                id: key,
+                from: null,
+                to: toRequest,
+              },
+            ];
+          }
+        }
+      }
+
+      return accumulator;
+    },
+    [],
+  );
+
+export const getNonExhaustiveInndelingTypeFromRequest = (
+  request: NonExhaustiveInndelingRequest,
+): NonExhaustiveInndelingtype | null => {
+  const discriminator = getDiscriminatorForCreateInndelingRequest(request);
+  if (discriminator == null) {
+    return null;
+  }
+  switch (discriminator) {
+    case "CreateBopliktomraadeRequest":
+      return "BOPLIKTOMRAADE";
   }
 };
