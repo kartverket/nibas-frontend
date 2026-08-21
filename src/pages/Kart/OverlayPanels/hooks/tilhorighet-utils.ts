@@ -1,6 +1,7 @@
-import { getKretsDelingEntries } from "contexts/HistoryContext/history-utils";
-import { HistoryEntry } from "contexts/HistoryContext/types";
+import { getKretsDelingEntries, getNyInndelingEntriesForInndelingtype } from "contexts/HistoryContext/history-utils";
+import { HistoryEntry, NyInndelingEntry } from "contexts/HistoryContext/types";
 import {
+  getCreateInndelingEntriesForInndelingtype,
   getMetadataEndringerKeyForInndelingtype,
   historyToKretsdelingOperations,
 } from "contexts/UtkastContext/utkast-utils";
@@ -13,7 +14,9 @@ import {
   ObjektIdentifikator,
   UtkastOperasjoner,
 } from "types/api";
+import { removeNil } from "utils/list-utils";
 import { isGrenseType } from "utils/type-utils";
+import { getNonExhaustiveInndelingTypeFromRequest } from "../FlatedataPanel/flatedata-utils";
 
 export enum Tilhorighet {
   A = "a",
@@ -23,6 +26,7 @@ export enum Tilhorighet {
 export const TILHORIGHET_INNDELINGTYPE_VALUES = ["GRUNNKRETS", "STEMMEKRETS", "BOPLIKTOMRAADE"] as const;
 export type TilhorighetInndelingtype = (typeof TILHORIGHET_INNDELINGTYPE_VALUES)[number];
 
+// TODO: Vurder rename til "Område" for å passe med både heldekkende og ikke-heldekkende inndelinger. (EXHAUSTIVE/NON-EXHAUSTIVE)
 export type Krets = {
   id: ObjektIdentifikator;
   kommuneId: ObjektIdentifikator;
@@ -324,6 +328,79 @@ export const getKretserFromKretsDelingEndringer = (
     );
 };
 
+export const getNyeInndelingerFromUtkast = (
+  kommunerIdOgNummer: { id: string; nummer: string }[],
+  utkastOperasjoner: UtkastOperasjoner,
+  inndelingType: TilhorighetInndelingtype,
+): Krets[] => {
+  return getCreateInndelingEntriesForInndelingtype(utkastOperasjoner, inndelingType)
+    .filter((entry) => kommunerIdOgNummer.some(({ nummer }) => nummer === entry.kommunenummer?.kodeverdi))
+    .map((entry) => {
+      const kommuneLokalid = kommunerIdOgNummer.find(
+        (idOgNummer) => idOgNummer.nummer === entry.kommunenummer?.kodeverdi,
+      )?.id;
+      return {
+        id: {
+          lokalid: {
+            value: getIdForTilhorhetNyKrets(entry.nummer, kommuneLokalid ?? ""),
+          },
+          gyldighetsdato: "",
+        },
+        kommuneId: {
+          lokalid: {
+            value: kommuneLokalid ?? "",
+          },
+          gyldighetsdato: new Date().toISOString(),
+        },
+        kommunenummer: entry.kommunenummer?.kodeverdi ?? "",
+        version: entry.version,
+        nummer: entry.nummer,
+        navn: entry.navn,
+        type: inndelingType,
+      };
+    });
+};
+
+export const getKretserFromNyInndelingEntries = (
+  entries: NyInndelingEntry[],
+  kommunerIdOgNummer: { id: string; nummer: string }[],
+): Krets[] => {
+  const changes = entries.flatMap((entry) => entry.changes);
+  const allInndelingRequests = removeNil(changes.flatMap((change) => change.to));
+
+  return removeNil(
+    allInndelingRequests.map((inndelingRequest) => {
+      const kommune = kommunerIdOgNummer.find(
+        (idOgNummer) => idOgNummer.nummer === inndelingRequest.kommunenummer?.kodeverdi,
+      );
+      const currentDate = new Date().toISOString();
+      const type = getNonExhaustiveInndelingTypeFromRequest(inndelingRequest);
+      if (type == null) {
+        return null;
+      }
+      return {
+        id: {
+          lokalid: {
+            value: getIdForTilhorhetNyKrets(inndelingRequest.nummer, kommune?.id ?? ""),
+          },
+          gyldighetsdato: currentDate,
+        },
+        kommuneId: {
+          lokalid: {
+            value: kommune?.id ?? "",
+          },
+          gyldighetsdato: currentDate,
+        },
+        kommunenummer: kommune?.nummer ?? "",
+        version: inndelingRequest.version,
+        nummer: inndelingRequest.nummer,
+        navn: inndelingRequest.navn,
+        type: type,
+      };
+    }),
+  );
+};
+
 export const getKretserFromHistory = (
   entries: HistoryEntry[],
   kommunerIdOgNummer: { id: string; nummer: string }[],
@@ -331,8 +408,13 @@ export const getKretserFromHistory = (
 ): Krets[] => {
   const kretsdelingerEntries = getKretsDelingEntries(entries);
 
+  const nyeInndelingerEntries = getNyInndelingEntriesForInndelingtype(entries, inndelingType);
+
   const kretsdelingOperations = historyToKretsdelingOperations(kretsdelingerEntries).filter(
     (kretsdeling) => kretsdeling.flatetype === inndelingType,
   );
-  return getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
+
+  const kretserForDelinger = getKretserFromKretsDelingEndringer(kommunerIdOgNummer, kretsdelingOperations);
+  const kretserForNyeInndelinger = getKretserFromNyInndelingEntries(nyeInndelingerEntries, kommunerIdOgNummer);
+  return [...kretserForDelinger, ...kretserForNyeInndelinger];
 };

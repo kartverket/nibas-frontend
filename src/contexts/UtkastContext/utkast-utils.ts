@@ -1,21 +1,27 @@
-import { Feature } from "ol";
-import { GeoJSONFeature } from "ol/format/GeoJSON";
-import { EntityUtkastType, UtkastEntity, ResponseWithId } from "./types";
+import { getNyInndelingEntries } from "contexts/HistoryContext/history-utils";
 import {
-  MetadataEntry,
   HistoryChange,
   HistoryState,
   HistoryTypeValues,
   KretsdelingEntry,
-  StemmekretsSammenslaaingsendringEntry,
-  NyGrense,
-  NyGrenseDeleteEntry,
   MergeGrenseModel,
   METADATA_ENTRY_TYPE_VALUES,
+  MetadataEntry,
+  NyGrense,
+  NyGrenseDeleteEntry,
+  NyInndelingEntry,
+  StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
+import { Feature } from "ol";
+import { GeoJSONFeature } from "ol/format/GeoJSON";
+import { getTempFeatureId, isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
+import { NonExhaustiveInndelingRequest } from "pages/Kart/OverlayPanels/FlatedataPanel/FlatedataTable";
+import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 import {
   BopliktomraadeRequest,
+  CreateInndelingRequest,
+  CreateInndelingRequestDiscriminator,
   FeatureProperties,
   FylkeRequest,
   GrunnkretsRequest,
@@ -32,13 +38,17 @@ import {
   UtkastOperasjoner,
   UtkastResponse,
 } from "types/api";
-import { featureToGeoJson } from "utils/map/geoJson";
 import { getIdFromEntity } from "utils/api";
-import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 import { getUniqueItems, removeNil } from "utils/list-utils";
-import { isTempFeatureId, getTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
+import { featureToGeoJson } from "utils/map/geoJson";
+import { EntityUtkastType, ResponseWithId, ResponseWithIdentifikasjon, UtkastEntity } from "./types";
+import {
+  isBopliktomraadeRequest,
+  isNonExhaustiveInndelingtype,
+} from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
 
-const getCombinedEntity = <T extends ResponseWithId>(
+// Legger utkastendringer til metadata som kommer fra backend, og returnerer en ny liste med metadata
+const getCombinedEntity = <T extends ResponseWithId | ResponseWithIdentifikasjon>(
   entity: T,
   utkastSlice: NonNullable<NonNullable<UtkastMetadataendringer>[EntityUtkastType]>,
 ) => {
@@ -103,6 +113,24 @@ export const historyToKretsdelingOperations = (kretsdelingEntries: KretsdelingEn
   return Object.values(kretsdelingerMap);
 };
 
+export const nyInndelingEntriesToCreateInndelingOperations = (
+  nyInndelingEntries: NyInndelingEntry[],
+): CreateInndelingRequest[] => {
+  const changes = removeNil(nyInndelingEntries.flatMap((entry) => entry.changes[0].to));
+  return removeNil(
+    changes.map((change) => {
+      const discriminator = getDiscriminatorForCreateInndelingRequest(change);
+      if (discriminator == null) {
+        return null;
+      }
+      return {
+        ...change,
+        discriminator: discriminator,
+      };
+    }),
+  );
+};
+
 const mergeKretsdelingOperations = (
   kretsdelingerFromUtkast: KretsDelingEndringRequest[],
   kretsdelingerFromHistory: KretsDelingEndringRequest[],
@@ -144,6 +172,10 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     (entry) => entry.type === "kretsdelingendring",
   ) as KretsdelingEntry[];
 
+  const allNyInndelingEntries = getNyInndelingEntries(historyToCurrentIndex);
+
+  const createInndelingOperations = nyInndelingEntriesToCreateInndelingOperations(allNyInndelingEntries);
+
   const kretsdelingOperations = historyToKretsdelingOperations(allKretsdelingHistoryEntries);
 
   // hent endringer på enheter og gjør endringene om til utkastoperasjoner
@@ -161,6 +193,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
             previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
             kretsdelingOperations,
           ),
+          nyeInndelingEndringer: previousUtkast?.operasjoner.createInndelingEndringer.concat(createInndelingOperations),
         },
       }),
     );
@@ -348,6 +381,7 @@ export const createUtkastOperations = ({
   stemmekretssammenslaaingsendringer,
   grunnkretssammenslaaingsendringer,
   kretsDelingEndringer = [],
+  nyeInndelingEndringer = [],
 }: {
   endredeFeatures?: GeoJSONFeature[];
   fylkesendringer?: Record<string, FylkeRequest>;
@@ -359,6 +393,7 @@ export const createUtkastOperations = ({
   stemmekretssammenslaaingsendringer?: StemmekretsSammenslaaingsendringRequest;
   grunnkretssammenslaaingsendringer?: GrunnkretsSammenslaaingsendringRequest;
   kretsDelingEndringer?: KretsDelingEndringRequest[];
+  nyeInndelingEndringer?: CreateInndelingRequest[];
 }): UtkastOperasjoner => ({
   grenseendringer: {
     endredeFeatures,
@@ -374,4 +409,36 @@ export const createUtkastOperations = ({
   stemmekretsSammenslaaingsendring: stemmekretssammenslaaingsendringer ?? null,
   grunnkretsSammenslaaingsendring: grunnkretssammenslaaingsendringer ?? null,
   kretsDelingEndringer: kretsDelingEndringer,
+  createInndelingEndringer: nyeInndelingEndringer,
 });
+
+// Map fra type CreateInndelingRequest til attrbibuttet som er unikt for subtypen.
+const KEY_BY_DISCRIMINATOR: Record<CreateInndelingRequestDiscriminator, keyof CreateInndelingRequest> = {
+  CreateBopliktomraadeRequest: "gjelderKunDelAvKommunen",
+};
+
+export const getDiscriminatorForCreateInndelingRequest = (
+  request: NonExhaustiveInndelingRequest,
+): CreateInndelingRequestDiscriminator | null => {
+  for (const discriminator of Object.keys(KEY_BY_DISCRIMINATOR) as CreateInndelingRequestDiscriminator[]) {
+    if (KEY_BY_DISCRIMINATOR[discriminator] in request) {
+      return discriminator;
+    }
+  }
+  return null;
+};
+
+export const getCreateInndelingEntriesForInndelingtype = (
+  utkastOperasjoner: UtkastOperasjoner,
+  inndelingtype: Inndelingtype,
+): CreateInndelingRequest[] => {
+  if (!isNonExhaustiveInndelingtype(inndelingtype)) {
+    return [];
+  }
+  return utkastOperasjoner.createInndelingEndringer.filter((request) => {
+    switch (inndelingtype) {
+      case "BOPLIKTOMRAADE":
+        return isBopliktomraadeRequest(request);
+    }
+  }) as CreateInndelingRequest[];
+};
