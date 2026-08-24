@@ -18,9 +18,15 @@ import {
   OperasjonerOrNull,
   ResponseTypeFromInndelingtype,
   EndringsloggInndelingType,
+  NyInndelingEndring,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { getNavnInSpraak, inndelingResponseNavnToString } from "utils/language/language";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
+import {
+  getNonExhaustiveInndelingTypeFromRequest,
+  isNonExhaustiveInndelingtype,
+} from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
+import { NonExhaustiveInndelingtype } from "pages/Kart/OverlayPanels/FlatedataPanel/FlatedataTable";
 
 const getEndredeFeaturesForKretstype = (
   operasjoner: OperasjonerOrNull,
@@ -78,6 +84,26 @@ function groupEndringerByKommune(
       return { ...acc, [kommune]: addToList(stemmekretsid, acc[kommune]) };
     }, {});
 }
+
+const groupNyeInndelingerByKommune = (
+  alleKommuner: KommuneResponse[],
+  operasjoner: UtkastOperasjoner,
+  kretstype: EndringsloggInndelingType,
+) => {
+  return alleKommuner.reduce(
+    (acc, kommune) => {
+      if (!isNonExhaustiveInndelingtype(kretstype)) {
+        return acc;
+      }
+      const nyeInndelingerForKommune = getNyeInndelingerForKommune(kommune.id.lokalid.value, operasjoner, kretstype);
+      if (nyeInndelingerForKommune.length > 0) {
+        acc[kommune.id.lokalid.value] = nyeInndelingerForKommune;
+      }
+      return acc;
+    },
+    {} as { [kommuneId: string]: NyInndelingEndring[] },
+  );
+};
 
 function findKrets<T extends StemmekretsResponse | GrunnkretsResponse>(id: string, kretser: T[]): T {
   const resultat = kretser.find((krets) => krets.id.lokalid.value === id);
@@ -207,6 +233,26 @@ const getKretsdelinger = (
       };
       return kretsSplittingEndring;
     });
+};
+
+const getNyeInndelingerForKommune = (
+  kommuneLokalid: string | undefined,
+  operasjoner: UtkastOperasjoner,
+  inndelingType: NonExhaustiveInndelingtype,
+): NyInndelingEndring[] => {
+  return (
+    operasjoner.createInndelingEndringer
+      ?.filter(
+        (inndeling) =>
+          getNonExhaustiveInndelingTypeFromRequest(inndeling) === inndelingType &&
+          inndeling.kommuneIdentifikasjon?.lokalid === kommuneLokalid,
+      )
+      .map((inndeling) => ({
+        navn: inndeling.navn,
+        nummer: inndeling.nummer,
+        inndelingtype: inndelingType,
+      })) ?? []
+  );
 };
 
 const erKretsIKommune = (
@@ -340,6 +386,9 @@ const getEndringerForKommune = <T extends EndringsloggInndelingType>(
     antallNyeGrenser,
     sammenslaaing: getSammenslaaingEndring(kretserMedEndringer, operasjoner, alleKretser),
     delinger: getKretsdelinger(kommune?.id.lokalid.value, operasjoner, alleKretser, kretstype),
+    nyeInndelinger: isNonExhaustiveInndelingtype(kretstype)
+      ? getNyeInndelingerForKommune(kommune?.id.lokalid.value, operasjoner, kretstype)
+      : [],
   };
 };
 
@@ -358,6 +407,7 @@ export const getGrenseendringerUtenTilhorighet = (operasjoner: UtkastOperasjoner
     antallNyeGrenser,
     sammenslaaing: null,
     delinger: null,
+    nyeInndelinger: [],
   };
 };
 
@@ -395,13 +445,26 @@ const getKretsEndringer = <T extends EndringsloggInndelingType>(
   alleKommuner: KommuneResponse[],
   kretstype: T,
 ): KretsendringerForKommune[] | null => {
-  if (!operasjoner || endredeKretser.length === 0) {
+  if (!operasjoner) {
     return null;
   }
 
   const endredeKretserGroupedByKommuneId = groupEndringerByKommune(endredeKretser, alleKretser);
+  const nyeInndelingerGroupedByKommuneId = groupNyeInndelingerByKommune(alleKommuner, operasjoner, kretstype);
 
-  return Object.entries(endredeKretserGroupedByKommuneId).map(([kommune, kretser]) =>
-    getEndringerForKommune(kommune, kretser, operasjoner, alleKretser, alleKommuner, kretstype),
+  const kommuneIds = [
+    ...Object.keys(endredeKretserGroupedByKommuneId),
+    ...Object.keys(nyeInndelingerGroupedByKommuneId),
+  ];
+
+  return kommuneIds.map((kommuneId) =>
+    getEndringerForKommune(
+      kommuneId,
+      endredeKretserGroupedByKommuneId[kommuneId] ?? [],
+      operasjoner,
+      alleKretser,
+      alleKommuner,
+      kretstype,
+    ),
   );
 };

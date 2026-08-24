@@ -26,6 +26,7 @@ const utkast: UtkastResponse = {
       stemmekretsendringer: {},
       bopliktomraadeendringer: {},
     },
+    createInndelingEndringer: [],
   },
   opprettetDato: "123",
   status: "123",

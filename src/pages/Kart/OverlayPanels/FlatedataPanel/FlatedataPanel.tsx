@@ -183,6 +183,7 @@ const FlatedataTabList = styled(TabList)`
 const FlatedataTabPanels = styled(TabPanels)`
   height: 100%;
   overflow: hidden;
+  display: flex;
 `;
 
 const FlatedataTab = styled(Tab)`
