@@ -43,6 +43,7 @@ import { getUniqueItems, removeNil } from "utils/list-utils";
 import { featureToGeoJson } from "utils/map/geoJson";
 import { EntityUtkastType, ResponseWithId, ResponseWithIdentifikasjon, UtkastEntity } from "./types";
 import {
+  getKommuneLokalidFromTempFlateId,
   isBopliktomraadeRequest,
   isNonExhaustiveInndelingtype,
 } from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
@@ -125,6 +126,7 @@ export const nyInndelingEntriesToCreateInndelingOperations = (
       }
       return {
         ...change,
+        kommuneIdentifikasjon: { lokalid: getKommuneLokalidFromTempFlateId(change.identifikasjon.lokalid) ?? "" },
         discriminator: discriminator,
       };
     }),
@@ -193,7 +195,8 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
             previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
             kretsdelingOperations,
           ),
-          nyeInndelingEndringer: previousUtkast?.operasjoner.createInndelingEndringer.concat(createInndelingOperations),
+          nyeInndelingEndringer:
+            previousUtkast?.operasjoner.createInndelingEndringer?.concat(createInndelingOperations),
         },
       }),
     );
@@ -435,7 +438,7 @@ export const getCreateInndelingEntriesForInndelingtype = (
   if (!isNonExhaustiveInndelingtype(inndelingtype)) {
     return [];
   }
-  return utkastOperasjoner.createInndelingEndringer.filter((request) => {
+  return utkastOperasjoner.createInndelingEndringer?.filter((request) => {
     switch (inndelingtype) {
       case "BOPLIKTOMRAADE":
         return isBopliktomraadeRequest(request);

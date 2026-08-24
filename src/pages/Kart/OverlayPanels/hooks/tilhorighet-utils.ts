@@ -334,25 +334,23 @@ export const getNyeInndelingerFromUtkast = (
   inndelingType: TilhorighetInndelingtype,
 ): Krets[] => {
   return getCreateInndelingEntriesForInndelingtype(utkastOperasjoner, inndelingType)
-    .filter((entry) => kommunerIdOgNummer.some(({ nummer }) => nummer === entry.kommunenummer?.kodeverdi))
+    .filter((entry) => kommunerIdOgNummer.some(({ id }) => id === entry.kommuneIdentifikasjon.lokalid))
     .map((entry) => {
-      const kommuneLokalid = kommunerIdOgNummer.find(
-        (idOgNummer) => idOgNummer.nummer === entry.kommunenummer?.kodeverdi,
-      )?.id;
+      const kommune = kommunerIdOgNummer.find((idOgNummer) => idOgNummer.id === entry.kommuneIdentifikasjon.lokalid);
       return {
         id: {
           lokalid: {
-            value: getIdForTilhorhetNyKrets(entry.nummer, kommuneLokalid ?? ""),
+            value: getIdForTilhorhetNyKrets(entry.nummer, kommune?.id ?? ""),
           },
           gyldighetsdato: "",
         },
         kommuneId: {
           lokalid: {
-            value: kommuneLokalid ?? "",
+            value: kommune?.id ?? "",
           },
           gyldighetsdato: new Date().toISOString(),
         },
-        kommunenummer: entry.kommunenummer?.kodeverdi ?? "",
+        kommunenummer: kommune?.nummer ?? "",
         version: entry.version,
         nummer: entry.nummer,
         navn: entry.navn,
@@ -371,7 +369,7 @@ export const getKretserFromNyInndelingEntries = (
   return removeNil(
     allInndelingRequests.map((inndelingRequest) => {
       const kommune = kommunerIdOgNummer.find(
-        (idOgNummer) => idOgNummer.nummer === inndelingRequest.kommunenummer?.kodeverdi,
+        (idOgNummer) => idOgNummer.id === inndelingRequest.kommuneIdentifikasjon.lokalid,
       );
       const currentDate = new Date().toISOString();
       const type = getNonExhaustiveInndelingTypeFromRequest(inndelingRequest);

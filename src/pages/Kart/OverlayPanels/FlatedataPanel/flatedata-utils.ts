@@ -1,5 +1,6 @@
 import { HistoryChange } from "contexts/HistoryContext/types";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
+import { getDiscriminatorForCreateInndelingRequest } from "contexts/UtkastContext/utkast-utils";
 import {
   BopliktomraadeRequest,
   GjeldendeMaterielleVilkaar,
@@ -13,7 +14,6 @@ import {
 import { getIdFromEntity } from "utils/api";
 import { NonExhaustiveInndelingRequest, NonExhaustiveInndelingtype } from "./FlatedataTable";
 import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
-import { getDiscriminatorForCreateInndelingRequest } from "contexts/UtkastContext/utkast-utils";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
@@ -129,7 +129,9 @@ export const getRequestFromInputs = (
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
           },
-          kommunenummer: inndeling.kommunenummer,
+          kommuneIdentifikasjon: {
+            lokalid: inndeling.kommuneIdentifikator.lokalid.value,
+          },
           version: inndeling.version,
           navn: data.navn,
           nummer: data.nummer,
@@ -265,15 +267,16 @@ export const getDefaultFlatedataForInndelingtype = (
     // TODO: Trenger vi egt å ha hele responsobjekter i formet? kunne vi redusert objektet slik at det er enklere å bruke andre datakilder for formet i fremtiden?
     // Feks. det å legge til ny inndeling som ikke er basert på en eksisterende har ingen responsobjekt å basere seg på. Da må vi lage et mindre subset av responstypen som formet bruker og som alle kan mappe til.
     case "BOPLIKTOMRAADE": {
+      const nummer = "01";
       return {
         id: {
           lokalid: {
-            value: getTempFlateId(inndelingtype),
+            value: getTempFlateId(inndelingtype, nummer, withKommune?.id ?? ""),
           },
           gyldighetsdato: date,
         },
         navn: "",
-        nummer: "01",
+        nummer: nummer,
         gyldighet: {
           gyldigFra: date,
           gyldigTil: null,
@@ -324,12 +327,44 @@ export const getDefaultFlatedataForInndelingtype = (
   }
 };
 
-const getTempFlateId = (inndelingtype: Inndelingtype): string => {
-  return `temp-${inndelingtype}-${Math.floor(Math.random() * 1000000)}`;
+declare const tempFlateIdBrand: unique symbol;
+// Branded string type for å skille denne IDen fra vanlige strings
+export type TempFlateId = string & { [tempFlateIdBrand]: true };
+
+const PREFIX = "TEMP";
+const SEPARATOR = "_"; // Hvis du skal endre denne må du være sikker på at ingen av medlemmene i IDen har denne verdien.
+
+const ID_PARTS = {
+  PREFIX: 0,
+  INNDELINGTYPE: 1,
+  INNDELING_NUMMER: 2,
+  KOMMUNE_LOKALID: 3,
+  TIMESTAMP: 4,
 };
 
-export const isTempFlateId = (id: string): boolean => {
-  return id.startsWith("temp-");
+const getTempFlateId = (inndelingtype: Inndelingtype, inndelingNummer: string, kommuneLokalid: string): TempFlateId => {
+  const parts = new Array<string>(Object.keys(ID_PARTS).length);
+
+  parts[ID_PARTS.PREFIX] = PREFIX;
+  parts[ID_PARTS.INNDELINGTYPE] = inndelingtype;
+  parts[ID_PARTS.INNDELING_NUMMER] = inndelingNummer;
+  parts[ID_PARTS.KOMMUNE_LOKALID] = kommuneLokalid;
+  parts[ID_PARTS.TIMESTAMP] = Date.now().toString();
+
+  return parts.join(SEPARATOR) as TempFlateId;
+};
+
+export const getKommuneLokalidFromTempFlateId = (tempFlateId: string): string | null => {
+  if (isValidTempFlateId(tempFlateId)) {
+    const parts = tempFlateId.split(SEPARATOR);
+    return parts[ID_PARTS.KOMMUNE_LOKALID];
+  }
+  return null;
+};
+
+export const isValidTempFlateId = (id: string): boolean => {
+  const parts = id.split(SEPARATOR);
+  return parts.length === 5 && parts[ID_PARTS.PREFIX] === PREFIX;
 };
 
 export const partitionDictBy = <T extends Record<string, unknown>>(

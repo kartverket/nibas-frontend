@@ -26,7 +26,7 @@ import {
   FlatedataInputs,
   getDefaultFlatedataForInndelingtype,
   isInndelingNonExhaustive,
-  isTempFlateId,
+  isValidTempFlateId,
   partitionDictBy,
   reduceFlatedataChanges,
   reduceFlatedataChangesForNewInndelinger,
@@ -110,7 +110,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     clearSearch();
     clearNewFlatedata();
 
-    const [newFlater, existingFlater] = partitionDictBy<FlatedataInputs>(data, isTempFlateId);
+    const [newFlater, existingFlater] = partitionDictBy<FlatedataInputs>(data, isValidTempFlateId);
 
     const changesToExisting = reduceFlatedataChanges(existingFlater, previousValues.current, flatedata, mainInndeling);
     const newFlaterChanges = reduceFlatedataChangesForNewInndelinger(newFlater, flatedata, mainInndeling);

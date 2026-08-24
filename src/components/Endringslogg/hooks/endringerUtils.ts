@@ -95,7 +95,7 @@ const groupNyeInndelingerByKommune = (
       if (!isNonExhaustiveInndelingtype(kretstype)) {
         return acc;
       }
-      const nyeInndelingerForKommune = getNyeInndelingerForKommune(kommune.nummer, operasjoner, kretstype);
+      const nyeInndelingerForKommune = getNyeInndelingerForKommune(kommune.id.lokalid.value, operasjoner, kretstype);
       if (nyeInndelingerForKommune.length > 0) {
         acc[kommune.id.lokalid.value] = nyeInndelingerForKommune;
       }
@@ -236,21 +236,23 @@ const getKretsdelinger = (
 };
 
 const getNyeInndelingerForKommune = (
-  kommunenummer: string | undefined,
+  kommuneLokalid: string | undefined,
   operasjoner: UtkastOperasjoner,
   inndelingType: NonExhaustiveInndelingtype,
 ): NyInndelingEndring[] => {
-  return operasjoner.createInndelingEndringer
-    .filter(
-      (inndeling) =>
-        getNonExhaustiveInndelingTypeFromRequest(inndeling) === inndelingType &&
-        inndeling.kommunenummer?.kodeverdi === kommunenummer,
-    )
-    .map((inndeling) => ({
-      navn: inndeling.navn,
-      nummer: inndeling.nummer,
-      inndelingtype: inndelingType,
-    }));
+  return (
+    operasjoner.createInndelingEndringer
+      ?.filter(
+        (inndeling) =>
+          getNonExhaustiveInndelingTypeFromRequest(inndeling) === inndelingType &&
+          inndeling.kommuneIdentifikasjon?.lokalid === kommuneLokalid,
+      )
+      .map((inndeling) => ({
+        navn: inndeling.navn,
+        nummer: inndeling.nummer,
+        inndelingtype: inndelingType,
+      })) ?? []
+  );
 };
 
 const erKretsIKommune = (
@@ -385,7 +387,7 @@ const getEndringerForKommune = <T extends EndringsloggInndelingType>(
     sammenslaaing: getSammenslaaingEndring(kretserMedEndringer, operasjoner, alleKretser),
     delinger: getKretsdelinger(kommune?.id.lokalid.value, operasjoner, alleKretser, kretstype),
     nyeInndelinger: isNonExhaustiveInndelingtype(kretstype)
-      ? getNyeInndelingerForKommune(kommune?.nummer, operasjoner, kretstype)
+      ? getNyeInndelingerForKommune(kommune?.id.lokalid.value, operasjoner, kretstype)
       : [],
   };
 };

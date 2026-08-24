@@ -1158,7 +1158,7 @@ export interface components {
             navn: string;
             /** @description Nummeret til bopliktomraadet */
             nummer: string;
-            kommunenummer?: components["schemas"]["Kommunenummer"] | null;
+            kommuneIdentifikasjon: components["schemas"]["Identifikasjon"];
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
@@ -1217,23 +1217,23 @@ export interface components {
         };
         /** @description Representasjon av opprettelsen av nytt bopliktområde */
         CreateBopliktomraadeRequest: Omit<components["schemas"]["CreateInndelingRequest"], "discriminator"> & {
-            url?: string | null;
+            nummer: string;
+            navn: string;
+            informasjon?: string | null;
             /** Format: int32 */
             version: number;
-            kommunenummer?: components["schemas"]["Kommunenummer"] | null;
+            url?: string | null;
+            harUsikkerAvgrensning: boolean;
+            andreLokaleAvgrensninger?: string | null;
+            kommuneIdentifikasjon: components["schemas"]["Identifikasjon"];
+            gjelderKunDelAvKommunen: boolean;
             usikkerAvgrensning?: boolean | null;
             forskriftsreferanse?: string | null;
             andreAvgrensninger?: string | null;
-            navn: string;
-            nummer: string;
-            informasjon?: string | null;
-            harUsikkerAvgrensning: boolean;
-            andreLokaleAvgrensninger?: string | null;
-            gjelderKunDelAvKommunen: boolean;
             delvisBoplikt?: boolean | null;
             identifikasjon: components["schemas"]["Identifikasjon"];
-            materielleVilkaar?: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[] | null;
             gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
+            materielleVilkaar?: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[] | null;
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -1550,7 +1550,7 @@ export interface components {
             /** @description Deling av en stemmekrets eller grunnkrets */
             kretsDelingEndringer: components["schemas"]["KretsDelingEndringRequest"][];
             /** @description Opprettelse av nye inndelinger for en inndelingstype som ikke er heldekkende */
-            createInndelingEndringer: components["schemas"]["CreateBopliktomraadeRequest"][];
+            createInndelingEndringer?: components["schemas"]["CreateBopliktomraadeRequest"][] | null;
         };
         /** @description Representasjon for oppdatering av utkast */
         OppdaterUtkastRequest: {
@@ -2038,10 +2038,10 @@ export interface components {
             y?: number;
             /** Format: double */
             z?: number;
+            coordinate?: components["schemas"]["Coordinate"];
             /** Format: double */
             m?: number;
             valid?: boolean;
-            coordinate?: components["schemas"]["Coordinate"];
         };
         InndelingSearchResponse: {
             /** @description Lokalid til inndelingen */
