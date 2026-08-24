@@ -1,22 +1,39 @@
-import { TabPanel } from "@kvib/react";
+import { Button, TabPanel, Text } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { KommuneEntry, MetadataEntry } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
+import {
+  BopliktomraadeRequest,
+  GrunnkretsRequest,
+  INNDELINGTYPE_VALUES,
+  KommuneRequest,
+  MetadataResponse,
+  StemmekretsRequest,
+} from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getInndelingFremtidigEndringDato } from "utils/features";
+import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 import { getNavnInSpraak } from "utils/language/language";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { FlatedataTableInndeling } from "./FlatedataPanel";
 import FlatedataTableHeader from "./FlatedataTableHeader";
 import { FlatedataTableRow } from "./FlatedataTableRow";
-import { FlatedataInputs, reduceFlatedataChanges } from "./flatedata-utils";
+import {
+  FlatedataInputs,
+  getDefaultFlatedataForInndelingtype,
+  isInndelingNonExhaustive,
+  isValidTempFlateId,
+  partitionDictBy,
+  reduceFlatedataChanges,
+  reduceFlatedataChangesForNewInndelinger,
+} from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
-import { getInndelingtypeLabel } from "utils/inndelinger-utils";
+import FeatureToggle from "components/FeatureToggle";
 
 type Props = {
   mainInndeling: FlatedataTableInndeling;
@@ -26,11 +43,17 @@ type Props = {
   clearSearch: () => void;
 };
 
+export type NonExhaustiveInndelingRequest = BopliktomraadeRequest;
+export type ExhaustiveInndelingRequest = KommuneRequest | StemmekretsRequest | GrunnkretsRequest;
+export const NONEXHAUSTIVE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter((type) => type === "BOPLIKTOMRAADE");
+export type NonExhaustiveInndelingtype = (typeof NONEXHAUSTIVE_INNDELINGTYPE_VALUES)[number];
+
 const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch }: Props) => {
   const { utkast, utkastHarSammenslaainger } = useUtkast();
   const isAdministrativEnhet = mainInndeling.inndelingtype === "FYLKE" || mainInndeling.inndelingtype === "KOMMUNE";
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
+  const [tempFlatedata, setTempFlatedata] = useState<MetadataResponse[]>([]);
 
   const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
   const utkastSammenslaaingInformasjon: Record<string, string | undefined> =
@@ -44,7 +67,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         {} as Record<string, string | undefined>,
       ) ?? {};
 
-  const flatedata = useFlatedata(mainInndeling) ?? [];
+  const flatedata = [...(useFlatedata(mainInndeling) ?? []), ...tempFlatedata];
 
   const allInndelingerHasFremtidigEndring = flatedata.every(
     (inndeling) => getInndelingFremtidigEndringDato(inndeling?.id.lokalid.value) != null,
@@ -85,9 +108,13 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
+    clearNewFlatedata();
 
-    const changes = reduceFlatedataChanges(data, previousValues.current, flatedata, mainInndeling);
-    if (changes.length < 1) {
+    const [newFlater, existingFlater] = partitionDictBy<FlatedataInputs>(data, isValidTempFlateId);
+
+    const changesToExisting = reduceFlatedataChanges(existingFlater, previousValues.current, flatedata, mainInndeling);
+    const newFlaterChanges = reduceFlatedataChangesForNewInndelinger(newFlater, flatedata, mainInndeling);
+    if (changesToExisting.length < 1 && newFlaterChanges.length < 1) {
       return;
     }
 
@@ -97,7 +124,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         addHistoryEntry({
           type: "KOMMUNE",
           fylkeId: mainInndeling.id,
-          changes,
+          changes: changesToExisting,
         } as KommuneEntry);
         break;
       case "STEMMEKRETS":
@@ -106,24 +133,48 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         addHistoryEntry({
           type: mainInndeling.inndelingtype,
           fylkeId: mainInndeling.id,
-          changes,
+          changes: changesToExisting,
         } as MetadataEntry);
         break;
     }
 
-    for (const change of changes) {
+    for (const change of changesToExisting) {
       if ("navn" in change.to && "nummer" in change.to) {
         updateRepresentasjonspunkt(change.id, change.to.nummer, change.to.navn);
       }
     }
 
+    if (newFlaterChanges.length > 0) {
+      addHistoryEntry({
+        type: "create_inndeling",
+        changes: newFlaterChanges,
+      });
+    }
     setIsEditing(!isEditing);
   };
 
   const setPreviousValues = (fd: FlatedataInputs | undefined) => (previousValues.current = fd);
 
+  const handleCreateNewFlate = () => {
+    if (isInndelingNonExhaustive(mainInndeling.inndelingtype)) {
+      setTempFlatedata((prevState) => {
+        const newFlate: MetadataResponse = getDefaultFlatedataForInndelingtype(
+          mainInndeling.inndelingtype,
+          mainInndeling,
+        );
+        return [...prevState, newFlate];
+      });
+
+      setIsEditing(true);
+    }
+  };
+
+  const clearNewFlatedata = () => {
+    setTempFlatedata([]);
+  };
+
   return (
-    <Container>
+    <Container $emptyTable={flatedata.length === 0}>
       <Table>
         <thead>
           <tr>
@@ -175,30 +226,51 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             <th></th>
           </tr>
         </thead>
-        <tbody>
-          {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((inndeling) => {
-            const inndelingId = getIdFromEntity(inndeling);
+        {flatedata.length > 0 && (
+          <tbody>
+            {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((inndeling) => {
+              const inndelingId = getIdFromEntity(inndeling);
 
-            const isSearchMatch =
-              inndeling.nummer.includes(searchValue) === true ||
-              getNavnInSpraak(inndeling.navn, "nor").toLowerCase().includes(searchValue) === true;
-            return (
-              <FlatedataTableRow
-                key={inndelingId}
-                inndelingtype={mainInndeling.inndelingtype}
-                inndeling={inndeling}
-                isSearchMatch={isSearchMatch}
-                isEditing={isEditing}
-                formMethods={formMethods}
-                control={control}
-                setPreviousValues={setPreviousValues}
-                allInndelinger={flatedata}
-                sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
-              />
-            );
-          })}
-        </tbody>
+              const isSearchMatch =
+                inndeling.nummer.includes(searchValue) === true ||
+                getNavnInSpraak(inndeling.navn, "nor").toLowerCase().includes(searchValue) === true;
+              return (
+                <FlatedataTableRow
+                  key={inndelingId}
+                  inndelingtype={mainInndeling.inndelingtype}
+                  inndeling={inndeling}
+                  isSearchMatch={isSearchMatch}
+                  isEditing={isEditing}
+                  formMethods={formMethods}
+                  control={control}
+                  setPreviousValues={setPreviousValues}
+                  allInndelinger={flatedata}
+                  sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
+                />
+              );
+            })}
+          </tbody>
+        )}
       </Table>
+      {flatedata.length === 0 && (
+        <CreateFlateContainer>
+          <FeatureToggle feature="CREATE_INNDELINGER">
+            {
+              <>
+                <BoldHeading>{`Ingen ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: true, capitalizeLabel: false })} i denne kommunen.`}</BoldHeading>
+                {utkast != null ? (
+                  <>
+                    {`For å opprette et nytt ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })}, klikk på "Opprett ny flate".`}
+                    <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
+                      Opprett ny flate
+                    </Button>
+                  </>
+                ) : null}
+              </>
+            }
+          </FeatureToggle>
+        </CreateFlateContainer>
+      )}
       <FlatedataFooter
         isEditing={isEditing}
         isDisabled={
@@ -214,13 +286,15 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
           handleSubmit(submitAndAddHistoryEntry)(e);
         }}
         tooltip={
-          allInndelingerHasFremtidigEndring
-            ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
-            : utkastHarSammenslaainger()
-              ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
-              : utkast && mainInndeling.isEditing === true
-                ? null
-                : "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
+          flatedata.length === 0
+            ? "Det finnes ingen flater i denne kommunen, og det er derfor ikke mulig å redigere flateinformasjon"
+            : allInndelingerHasFremtidigEndring
+              ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
+              : utkastHarSammenslaainger()
+                ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
+                : utkast && mainInndeling.isEditing === true
+                  ? null
+                  : "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
         }
       >
         Rediger flateinformasjon
@@ -229,15 +303,14 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   );
 };
 
-const FlatedataFooter = styled(EditAndSaveButton)`
-  padding: 16px;
-  border-top: 1px solid var(--kvib-colors-chakra-border-color);
+const BoldHeading = styled(Text)`
+  font-weight: bold;
+  font-size: var(--kvib-fontSizes-lg);
 `;
 
-const Container = styled(TabPanel)`
+const Container = styled(TabPanel)<{ $emptyTable: boolean }>`
   display: grid;
-  grid-template-rows: 1fr auto;
-  height: 100%;
+  grid-template-rows: ${({ $emptyTable }) => ($emptyTable ? "auto 1fr auto" : "1fr auto")};
   padding: 0;
   overflow: hidden;
 `;
@@ -269,6 +342,19 @@ const Table = styled.table`
       padding-left: 16px;
     }
   }
+`;
+
+const CreateFlateContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FlatedataFooter = styled(EditAndSaveButton)`
+  padding: 16px;
+  border-top: 1px solid var(--kvib-colors-chakra-border-color);
 `;
 
 export default FlatedataTable;

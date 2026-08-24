@@ -13,6 +13,7 @@ import {
 } from "types/api";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
+import { NonExhaustiveInndelingRequest } from "pages/Kart/OverlayPanels/FlatedataPanel/FlatedataTable";
 
 // Obs: navnsetting for å unngå overlapp med innebygd History type
 export type HistoryState = {
@@ -44,7 +45,8 @@ export type HistoryTypeValues =
   | "nygrense"
   | "grensedeling"
   | "grensedelete"
-  | "merge_grenser";
+  | "merge_grenser"
+  | "create_inndeling";
 
 export type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
   type: HistoryType;
@@ -98,6 +100,8 @@ export type NyGrenseDeleteEntry = BaseHistoryEntry<"grensedelete", Feature<Geome
 
 export type MergeGrenseEntry = BaseHistoryEntry<"merge_grenser", MergeGrenseModel>;
 
+export type NyInndelingEntry = BaseHistoryEntry<"create_inndeling", NonExhaustiveInndelingRequest | null>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -111,7 +115,8 @@ export type HistoryEntry =
   | NyGrenseEntry
   | PropertyEntry
   | NyGrenseDeleteEntry
-  | MergeGrenseEntry;
+  | MergeGrenseEntry
+  | NyInndelingEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
