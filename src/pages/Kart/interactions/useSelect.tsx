@@ -50,7 +50,7 @@ const useSelect = () => {
   }, [activeTool, closeOverlayPopup]);
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
-  const safeTools: Tool[] = ["grenseinfo", "split", "duplicate", "historiskeGrenser", "merge_grenser"];
+  const safeTools: Tool[] = ["grenseinfo", "split", "duplicate", "historiskeGrenser", "merge_grenser", "delete"];
   const pointTools: Tool[] = ["add", "remove", "split"];
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();
