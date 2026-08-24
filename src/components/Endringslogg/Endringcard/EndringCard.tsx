@@ -1,11 +1,11 @@
-import { styled } from "styled-components";
 import { Badge, Card, Heading, Icon, Text } from "@kvib/react";
-import { ReactNode } from "react";
 import { Change, NumericEndringType, ToFromChangeType } from "components/Endringslogg/Endringcard/EndringCardTypes";
 import {
   getBodyTextForNumericChange,
   getTitleForEndringstype,
 } from "components/Endringslogg/Endringcard/EndringCardUtils";
+import { ReactNode } from "react";
+import { styled } from "styled-components";
 
 type EndringCardProps = {
   title: string;
@@ -52,6 +52,19 @@ export const EndringToFromCard = ({ type, changes }: EndringToFromProps) => {
       {changes.map(({ from, to }) => (
         <ChangeToFromRow withBadge key={from.join("-") + "-" + to.join("-")} from={from} to={to} />
       ))}
+    </EndringCard>
+  );
+};
+
+type NyInndelingCardProps = {
+  navn: string;
+  nummer: string;
+};
+
+export const NyInndelingCard = ({ navn, nummer }: NyInndelingCardProps) => {
+  return (
+    <EndringCard title={"Inndeling"}>
+      <TextWithBadge badge={"ny"}>{`${nummer} ${navn}`}</TextWithBadge>
     </EndringCard>
   );
 };
