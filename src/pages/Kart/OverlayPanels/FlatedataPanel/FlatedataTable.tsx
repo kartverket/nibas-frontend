@@ -164,6 +164,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         );
         return [...prevState, newFlate];
       });
+
       setIsEditing(true);
     }
   };
