@@ -213,6 +213,9 @@ const ToolbarPopups = () => {
 
   const deleteFeatures = (featuresToDelete: typeof selectedFeatures) => {
     const selectedFeatureIds = removeNil(featuresToDelete.map((feature) => feature.getId()?.toString()));
+    if (selectedFeatureIds.length === 0) {
+      return;
+    }
 
     const selectedFeaturesContainsExistingGrenser = !selectedFeatureIds.every((id) => isTempFeatureId(id));
 

@@ -1,8 +1,8 @@
 import { Text } from "@kvib/react";
 import { styled } from "styled-components";
-import { FeatureProperties, Metadata } from "../../../types/api";
-import { SelectFeature } from "../interactions/useSelect";
 import { isTeigFeature } from "utils/features";
+import { FeatureProperties } from "../../../types/api";
+import { SelectFeature } from "../interactions/useSelect";
 
 type Props = {
   activeFeaturesAmount: number;
