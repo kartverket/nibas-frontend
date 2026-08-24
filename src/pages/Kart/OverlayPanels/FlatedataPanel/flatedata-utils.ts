@@ -332,7 +332,7 @@ declare const tempFlateIdBrand: unique symbol;
 export type TempFlateId = string & { [tempFlateIdBrand]: true };
 
 const PREFIX = "TEMP";
-const SEPARATOR = "_"; // Hvis du skal endre denne må du være sikker på at ingen av medlemmene i IDen har denne verdien.
+const SEPARATOR = "_"; // Hvis du skal endre denne må du være sikker på at ingen av medlemmene i IDen har denne verdien ellers vil split ikke fungere.
 
 const ID_PARTS = {
   PREFIX: 0,
