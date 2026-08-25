@@ -258,6 +258,15 @@ const useSelect = () => {
         return;
       }
 
+      if (activeTool === "delete" && !isFeatureEditable(clickedFeature)) {
+        toast({
+          status: "error",
+          title: "Du kan ikke slette grenser som ikke er redigerbare",
+        });
+        event.stopPropagation();
+        return;
+      }
+
       // Noen verktøy skal kun kunne velge én grense om gangen
       if (exclusiveSelectTools.includes(activeTool)) {
         selectFeatures([clickedFeature]);
