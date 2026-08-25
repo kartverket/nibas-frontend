@@ -1,4 +1,4 @@
-import { Text } from "@kvib/react";
+import { Tag, Text } from "@kvib/react";
 import { styled } from "styled-components";
 import { isTeigFeature } from "utils/features";
 import { FeatureProperties } from "../../../types/api";
@@ -15,7 +15,7 @@ const Container = styled.div`
   border-radius: 16px;
   box-shadow: var(--kvib-shadows-md);
 
-  :last-child {
+  & > :last-child {
     border-radius: 0 0 16px 16px;
   }
 `;
@@ -27,6 +27,19 @@ const PaddedText = styled(Text)`
 const FeatureItem = styled.div<{ $clicked: boolean }>`
   background-color: ${({ $clicked }) => ($clicked ? "var(--kvib-colors-gray-100)" : "none")};
   overflow: hidden;
+`;
+
+const FeatureItemContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+`;
+
+const ArchivedTag = styled(Tag)`
+  background-color: var(--kvib-colors-orange-200);
+  color: var(--kvib-colors-orange-800);
+  border-radius: 5px;
 `;
 
 export const SelectedFeatureList = ({ activeFeaturesAmount, selectedFeatures, selectedFeatureId }: Props) => {
@@ -42,7 +55,10 @@ export const SelectedFeatureList = ({ activeFeaturesAmount, selectedFeatures, se
         const grenseType = isTeigFeature(sf.feature) ? "Teiggrense" : properties.type;
         return (
           <FeatureItem key={sf.feature.getId()} $clicked={sf.feature.getId() === selectedFeatureId}>
-            <PaddedText>{`${properties.shouldArchive ? "(Arkivert)" : ""} ${grenseType}`}</PaddedText>
+            <FeatureItemContent>
+              <Text>{grenseType}</Text>
+              {properties.shouldArchive ? <ArchivedTag>Arkivert</ArchivedTag> : null}
+            </FeatureItemContent>
           </FeatureItem>
         );
       })}
