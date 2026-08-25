@@ -262,10 +262,10 @@ const StyledSelect = styled(Select<EnvironmentOption>)`
   width: ${selectWidth}px;
 `;
 
-const StyledIconButton = styled(IconButton)<{ $isOpen: boolean }>`
+const StyledIconButton = styled(IconButton)<{ $isOpen?: boolean }>`
   pointer-events: auto;
   transition: transform 0.5s ease-in-out;
-  transform: ${(props) => (!props.$isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+  transform: ${({ $isOpen = false }) => ($isOpen ? "rotate(0deg)" : "rotate(180deg)")};
 `;
 
 const SelectContainer = styled.div`
