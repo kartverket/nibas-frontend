@@ -1,8 +1,8 @@
 import { Text } from "@kvib/react";
 import { styled } from "styled-components";
+import { isTeigFeature } from "utils/features";
 import { FeatureProperties } from "../../../types/api";
 import { SelectFeature } from "../interactions/useSelect";
-import { isTeigFeature } from "utils/features";
 
 type Props = {
   activeFeaturesAmount: number;
@@ -38,12 +38,11 @@ export const SelectedFeatureList = ({ activeFeaturesAmount, selectedFeatures, se
         Trykk igjen for å velge en annen grense
       </PaddedText>
       {activeFeaturesSorted.map((sf) => {
-        const grenseType = isTeigFeature(sf.feature)
-          ? "Teiggrense"
-          : (sf.feature.getProperties() as FeatureProperties).type;
+        const properties = sf.feature.getProperties() as FeatureProperties;
+        const grenseType = isTeigFeature(sf.feature) ? "Teiggrense" : properties.type;
         return (
           <FeatureItem key={sf.feature.getId()} $clicked={sf.feature.getId() === selectedFeatureId}>
-            <PaddedText>{grenseType}</PaddedText>
+            <PaddedText>{`${properties.shouldArchive ? "(Arkivert)" : ""} ${grenseType}`}</PaddedText>
           </FeatureItem>
         );
       })}
