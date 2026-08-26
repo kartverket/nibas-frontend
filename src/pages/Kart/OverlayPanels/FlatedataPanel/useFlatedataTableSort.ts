@@ -17,7 +17,7 @@ type ResponseProperty =
   | keyof GrunnkretsResponse
   | keyof BopliktomraadeResponse;
 
-const sortablePropertiesByInndelingtype = {
+export const sortablePropertiesByInndelingtype = {
   FYLKE: ["nummer", "navn", "samiskforvaltningsomraade"] as const,
   KOMMUNE: ["nummer", "navn", "samiskforvaltningsomraade"] as const,
   STEMMEKRETS: ["nummer", "navn", "valgdistriktsnummer", "tellekretsnavn", "tellekretsnummer"] as const,
@@ -25,10 +25,13 @@ const sortablePropertiesByInndelingtype = {
   BOPLIKTOMRAADE: ["nummer", "navn", "gjelderKunDelAvKommunen", "harUsikkerAvgrensning"] as const,
 } satisfies Record<FlatedataTableInndelingtype, ResponseProperty[]>;
 
-export const useFlatedataTableSort = (inndelingtype: FlatedataTableInndelingtype) => {
+export type SortPropertyFor<T extends FlatedataTableInndelingtype> =
+  (typeof sortablePropertiesByInndelingtype)[T][number];
+
+export const useFlatedataTableSort = <T extends FlatedataTableInndelingtype>(inndelingtype: T) => {
   const sortProperties = sortablePropertiesByInndelingtype[inndelingtype];
-  type SortProperty = (typeof sortProperties)[number];
-  const [sortProperty, setSortProperty] = useState<SortProperty>(sortProperties[0]);
+  type SortProperty = SortPropertyFor<T>;
+  const [sortProperty, setSortProperty] = useState<SortProperty>(sortProperties[0] as SortProperty);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const onSort = (property: SortProperty) => {
@@ -37,7 +40,7 @@ export const useFlatedataTableSort = (inndelingtype: FlatedataTableInndelingtype
         setSortOrder("desc");
       } else if (sortOrder === "desc") {
         // Hvis man har trykket på en knapp tre ganger går vi tilbake til start
-        setSortProperty(sortProperties[0]);
+        setSortProperty(sortProperties[0] as SortProperty);
         setSortOrder("asc");
       }
     } else {
