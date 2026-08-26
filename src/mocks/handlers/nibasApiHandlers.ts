@@ -7,6 +7,18 @@ export const nibasApiHandlers: HttpHandler[] = [
   http.get("/v1/fylker", () => HttpResponse.json(mocks.mockFylker, { status: 200 })),
   http.get("/v1/kommuner", () => HttpResponse.json(mocks.mockKommuner, { status: 200 })),
   http.get("v1/kommuner/:id/grenser", () => HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 })),
+  http.get("/v1/kommuner/:id/stemmekretsgrenser", () =>
+    HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 }),
+  ),
+  http.get("/v1/kommuner/:id/grunnkretsgrenser", () =>
+    HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 }),
+  ),
+  http.get("/v1/kommuner/:id/inndelingerdeltgeometri", () =>
+    HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 }),
+  ),
+  http.get("/v1/kommuner/:id/inndelingerdeltgeometrigrenser", () =>
+    HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 }),
+  ),
   http.get("/v1/fylker/:fylkeId/grenser", () => HttpResponse.json(mocks.mockGeoJsonFeatureResponse, { status: 200 })),
   http.get("/v1/kodeliste/maalemetode-koder", () => HttpResponse.json(mocks.mockMaalemetodeResponse, { status: 200 })),
   http.post("/v1/grenser", () => new HttpResponse(null, { status: 200 })),
