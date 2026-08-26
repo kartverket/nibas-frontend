@@ -10,6 +10,7 @@ import useKommuner from "hooks/inndelinger/useKommuner";
 import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { UtkastResponse } from "types/api";
 import { useBopliktomraader } from "hooks/inndelinger/useBopliktomraader";
+import { getCreateInndelingEntriesForInndelingtype } from "contexts/UtkastContext/utkast-utils";
 
 type useUtkastKretsEndringerReturnType = {
   harEndringer: boolean;
@@ -26,23 +27,30 @@ export const useUtkastBopliktomraadeEndringer = (
 
   const bopliktomraaderMedEndringer = getKretserAvTypeMedEndringer(operasjoner, "BOPLIKTOMRAADE");
 
+  const harEndringer =
+    bopliktomraaderMedEndringer.length > 0 ||
+    getCreateInndelingEntriesForInndelingtype(operasjoner, "BOPLIKTOMRAADE").length > 0;
+
   const { data: bopliktomraader, isValidating: lasterBopliktomraader } = useBopliktomraader(
     bopliktomraaderMedEndringer,
     utkast.gyldigFra,
     shouldFetchEndringer,
   );
 
+  const bopliktomraaderList = bopliktomraader ?? [];
+  const kommunerList = kommuner ?? [];
+
   const lasterData = lasterBopliktomraader || lasterKommuner;
 
   const endringer = (() => {
-    if (!lasterData && bopliktomraader && kommuner) {
-      return getBopliktomraadeEndringer(bopliktomraaderMedEndringer, operasjoner, bopliktomraader, kommuner);
+    if (!lasterData) {
+      return getBopliktomraadeEndringer(bopliktomraaderMedEndringer, operasjoner, bopliktomraaderList, kommunerList);
     }
     return null;
   })();
 
   return {
-    harEndringer: bopliktomraaderMedEndringer.length > 0,
+    harEndringer: harEndringer,
     laster: lasterData,
     endringer,
   };
