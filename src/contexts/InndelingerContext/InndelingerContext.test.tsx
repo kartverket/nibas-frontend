@@ -40,8 +40,8 @@ const AllProviders = ({ children }: { children: React.ReactNode }) => (
   </SWRConfig>
 );
 
-vi.mock("./useInndelingFeatures", async (importOriginal) => {
-  const module = await importOriginal<typeof import("./useInndelingFeatures")>();
+vi.mock("./useInndelingFeatures.tsx", async (importOriginal) => {
+  const module = await importOriginal<typeof import("./useInndelingFeatures.tsx")>();
 
   return {
     ...module,
