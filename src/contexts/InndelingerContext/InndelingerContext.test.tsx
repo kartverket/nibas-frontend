@@ -7,19 +7,37 @@ import { MockUtkastProvider } from "mocks/contexts/UtkastContextMock";
 import { MockHistoryProvider } from "mocks/contexts/HistoryContextMock";
 import { MockOverlayPanelProvider } from "mocks/contexts/OverlayPanelContextMock";
 import { MockToolbarContextProvider } from "mocks/contexts/ToolbarContextMock";
+import { SWRConfig } from "swr";
+
+// SWRConfig hindrer at SWR forsøker å lese document.visibilityState/onLine i
+// bakgrunnspromises som fullfører etter at jsdom-miljøet er revet ned. Uten
+// dette får vi "ReferenceError: document is not defined" som unhandled rejection
+// tilfeldig i CI.
+const testSwrConfig = {
+  provider: () => new Map(),
+  dedupingInterval: 0,
+  revalidateOnFocus: false,
+  revalidateOnReconnect: false,
+  revalidateOnMount: false,
+  revalidateIfStale: false,
+  isVisible: () => true,
+  isOnline: () => true,
+};
 
 const AllProviders = ({ children }: { children: React.ReactNode }) => (
-  <MockOverlayPanelProvider>
-    <MockToolbarContextProvider>
-      <MockHistoryProvider>
-        <MockUtkastProvider>
-          <MockFeatureStyleProvider>
-            <InndelingerProvider>{children}</InndelingerProvider>
-          </MockFeatureStyleProvider>
-        </MockUtkastProvider>
-      </MockHistoryProvider>
-    </MockToolbarContextProvider>
-  </MockOverlayPanelProvider>
+  <SWRConfig value={testSwrConfig}>
+    <MockOverlayPanelProvider>
+      <MockToolbarContextProvider>
+        <MockHistoryProvider>
+          <MockUtkastProvider>
+            <MockFeatureStyleProvider>
+              <InndelingerProvider>{children}</InndelingerProvider>
+            </MockFeatureStyleProvider>
+          </MockUtkastProvider>
+        </MockHistoryProvider>
+      </MockToolbarContextProvider>
+    </MockOverlayPanelProvider>
+  </SWRConfig>
 );
 
 vi.mock("./useInndelingFeatures.tsx", async (importOriginal) => {
