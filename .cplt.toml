@@ -1,0 +1,14 @@
+[deny]
+paths = [
+    ".env",
+    ".env.local",
+]
+
+[propose]
+gh_guard = true
+git_push_prevention = true
+allow_docker = true
+
+[propose.allow]
+ports = [3000]
+socket = ["/var/run/docker.sock"]
