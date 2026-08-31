@@ -3,7 +3,7 @@ import {
   getBopliktomraadeMetadataEntries,
   getGrunnkretsMetadataEntries,
   getKommuneMetadataEntries,
-  getNyInndelingEntries,
+  getDeduplicatedNyInndelingChanges,
   getStemmekretsMetadataEntries,
 } from "contexts/HistoryContext/history-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -26,6 +26,7 @@ import {
   isBopliktomraadeRequest,
   isNonExhaustiveInndelingtype,
 } from "./flatedata-utils";
+import { getIdFromEntity } from "utils/api";
 
 const useFlatedataFromBackend = (
   inndeling: Inndeling,
@@ -127,30 +128,32 @@ const getNyeInndelingerMetadataForInndelingtypeFromHistory = (
   if (!isNonExhaustiveInndelingtype(inndelingtype)) {
     return [];
   }
-  const nyInndelingEntries = getNyInndelingEntries(entries);
+  const nyInndelingChanges = getDeduplicatedNyInndelingChanges(entries);
   switch (inndelingtype) {
-    case "BOPLIKTOMRAADE":
-      return nyInndelingEntries
-        .filter((entry) => entry.changes[0].to != null && isBopliktomraadeRequest(entry.changes[0].to))
-        .flatMap((entry) => {
-          if (entry.changes.length > 0) {
-            const change = entry.changes[0];
-            const newInndelingRequest = change.to;
-            if (newInndelingRequest != null) {
-              return {
-                ...getDefaultFlatedataForInndelingtype(inndelingtype, inndeling),
-                navn: newInndelingRequest.navn,
-                nummer: newInndelingRequest.nummer,
-                forskriftsreferanse: newInndelingRequest.forskriftsreferanse,
-                gjelderKunDelAvKommunen: newInndelingRequest.gjelderKunDelAvKommunen,
-                gjeldendeMaterielleVilkaar: newInndelingRequest.gjeldendeMaterielleVilkaar,
-                andreLokaleAvgrensninger: newInndelingRequest.andreLokaleAvgrensninger,
-              } as MetadataResponse;
-            }
-            return [];
+    case "BOPLIKTOMRAADE": {
+      return nyInndelingChanges
+        .filter((change) => change.to != null && isBopliktomraadeRequest(change.to))
+        .flatMap((change) => {
+          const newInndelingRequest = change.to;
+          if (newInndelingRequest != null) {
+            const defaultFlatedata = getDefaultFlatedataForInndelingtype(inndelingtype, { withKommune: inndeling });
+            return {
+              ...defaultFlatedata,
+              id: {
+                ...defaultFlatedata.id,
+                lokalid: { value: change.id },
+              },
+              navn: newInndelingRequest.navn,
+              nummer: newInndelingRequest.nummer,
+              forskriftsreferanse: newInndelingRequest.forskriftsreferanse,
+              gjelderKunDelAvKommunen: newInndelingRequest.gjelderKunDelAvKommunen,
+              gjeldendeMaterielleVilkaar: newInndelingRequest.gjeldendeMaterielleVilkaar,
+              andreLokaleAvgrensninger: newInndelingRequest.andreLokaleAvgrensninger,
+            } as MetadataResponse;
           }
           return [];
         });
+    }
   }
 };
 
@@ -169,8 +172,13 @@ const getNyeInndelingerMetadataForInndelingtypeFromUtkast = (
         .filter((entry) => isBopliktomraadeRequest(entry))
         .flatMap((newInndelingRequest) => {
           if (newInndelingRequest != null) {
+            const defaultFlatedata = getDefaultFlatedataForInndelingtype(inndelingtype, { withKommune: inndeling });
             return {
-              ...getDefaultFlatedataForInndelingtype(inndelingtype, inndeling),
+              ...defaultFlatedata,
+              id: {
+                ...defaultFlatedata.id,
+                lokalid: { value: newInndelingRequest.identifikasjon.lokalid },
+              },
               navn: newInndelingRequest.navn,
               nummer: newInndelingRequest.nummer,
               forskriftsreferanse: newInndelingRequest.forskriftsreferanse,
@@ -209,13 +217,17 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
 
   const newFlatedataFromHistory = getNyeInndelingerMetadataForInndelingtypeFromHistory(getHistoryEntries(), inndeling);
 
+  // Når en bruker redigerer en ny inndeling som allerede er lagret i utkastet, vil history inneholde
+  // en nyere create_inndelinger-entry for samme temp-ID. Utkast-operasjon-entrien må da ekskluderes for å unngå
+  // at samme ID dukker opp to ganger i tabellen.
+  const historyNewIds = new Set(newFlatedataFromHistory.map((f) => getIdFromEntity(f)));
+  const utkastFlatedataWithoutHistoryOverrides = flatedataFromBackendWithUtkastChangesAndNewFlatedataInUtkast.filter(
+    (f) => !historyNewIds.has(getIdFromEntity(f)),
+  );
+
   return [
-    ...addHistoryChangesToMetadata(
-      flatedataFromBackendWithUtkastChangesAndNewFlatedataInUtkast,
-      getHistoryEntries(),
-      inndelingtype,
-    ),
-    ...newFlatedataFromHistory, // TODO avsjekk på om det kan komme endringer på disse som må gjenspeiles
+    ...addHistoryChangesToMetadata(utkastFlatedataWithoutHistoryOverrides, getHistoryEntries(), inndelingtype),
+    ...newFlatedataFromHistory,
   ];
 };
 

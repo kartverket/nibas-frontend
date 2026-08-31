@@ -248,7 +248,11 @@ export const isNonExhaustiveInndelingtype = (
 
 export const getDefaultFlatedataForInndelingtype = (
   inndelingtype: Inndelingtype,
-  withKommune?: Inndeling,
+  options?: Partial<{
+    withNummer: string;
+    withKommune: Inndeling;
+    withLokalid: string;
+  }>,
 ): MetadataResponse => {
   const date = new Date().toISOString();
   switch (inndelingtype) {
@@ -267,11 +271,11 @@ export const getDefaultFlatedataForInndelingtype = (
     // TODO: Trenger vi egt å ha hele responsobjekter i formet? kunne vi redusert objektet slik at det er enklere å bruke andre datakilder for formet i fremtiden?
     // Feks. det å legge til ny inndeling som ikke er basert på en eksisterende har ingen responsobjekt å basere seg på. Da må vi lage et mindre subset av responstypen som formet bruker og som alle kan mappe til.
     case "BOPLIKTOMRAADE": {
-      const nummer = "01";
+      const nummer = options?.withNummer ?? "01";
       return {
         id: {
           lokalid: {
-            value: getTempFlateId(inndelingtype, nummer, withKommune?.id ?? ""),
+            value: options?.withLokalid ?? "",
           },
           gyldighetsdato: date,
         },
@@ -285,11 +289,11 @@ export const getDefaultFlatedataForInndelingtype = (
         datafangstdato: date,
         kommunenummer: {
           id: "",
-          kodeverdi: withKommune?.nummer ?? "",
+          kodeverdi: options?.withKommune?.nummer ?? "",
         },
         kommuneIdentifikator: {
           lokalid: {
-            value: withKommune?.id ?? "",
+            value: options?.withKommune?.id ?? "",
           },
           gyldighetsdato: date,
         },
@@ -312,8 +316,8 @@ export const getDefaultFlatedataForInndelingtype = (
         },
         version: 1,
         informasjon: "",
-        delvisBoplikt: false,
-        gjelderKunDelAvKommunen: false,
+        delvisBoplikt: true,
+        gjelderKunDelAvKommunen: true,
         usikkerAvgrensning: false,
         harUsikkerAvgrensning: false,
         forskriftsreferanse: "",
@@ -337,19 +341,17 @@ const SEPARATOR = "_"; // Hvis du skal endre denne må du være sikker på at in
 const ID_PARTS = {
   PREFIX: 0,
   INNDELINGTYPE: 1,
-  INNDELING_NUMMER: 2,
-  KOMMUNE_LOKALID: 3,
-  TIMESTAMP: 4,
+  KOMMUNE_LOKALID: 2,
+  RANDOM_NUM: 3,
 };
 
-const getTempFlateId = (inndelingtype: Inndelingtype, inndelingNummer: string, kommuneLokalid: string): TempFlateId => {
+export const getTempFlateId = (inndelingtype: Inndelingtype, kommuneLokalid: string): TempFlateId => {
   const parts = new Array<string>(Object.keys(ID_PARTS).length);
 
   parts[ID_PARTS.PREFIX] = PREFIX;
   parts[ID_PARTS.INNDELINGTYPE] = inndelingtype;
-  parts[ID_PARTS.INNDELING_NUMMER] = inndelingNummer;
   parts[ID_PARTS.KOMMUNE_LOKALID] = kommuneLokalid;
-  parts[ID_PARTS.TIMESTAMP] = Date.now().toString();
+  parts[ID_PARTS.RANDOM_NUM] = Math.floor(Math.random() * 1000000).toString();
 
   return parts.join(SEPARATOR) as TempFlateId;
 };
@@ -364,7 +366,7 @@ export const getKommuneLokalidFromTempFlateId = (tempFlateId: string): string | 
 
 export const isValidTempFlateId = (id: string): boolean => {
   const parts = id.split(SEPARATOR);
-  return parts.length === 5 && parts[ID_PARTS.PREFIX] === PREFIX;
+  return parts.length === 4 && parts[ID_PARTS.PREFIX] === PREFIX;
 };
 
 export const partitionDictBy = <T extends Record<string, unknown>>(
@@ -393,10 +395,29 @@ export const reduceFlatedataChangesForNewInndelinger = (
   formValues: FlatedataInputs,
   utkastFlatedata: MetadataResponse[],
   inndeling: Inndeling,
+  previousValues?: FlatedataInputs,
 ) =>
   Object.entries(formValues).reduce<HistoryChange<NonExhaustiveInndelingRequest | null>[]>(
     (accumulator, [key, newValues]) => {
       if (isBopliktomraadeInput(newValues) && isInndelingNonExhaustive(inndeling.inndelingtype)) {
+        const oldValues = previousValues?.[key];
+        if (oldValues != null && isBopliktomraadeInput(oldValues)) {
+          const materielleVilkaarUnchanged =
+            newValues.gjeldendeMaterielleVilkaar.length === oldValues.gjeldendeMaterielleVilkaar.length &&
+            newValues.gjeldendeMaterielleVilkaar.every((v) => oldValues.gjeldendeMaterielleVilkaar.includes(v));
+          if (
+            newValues.nummer === oldValues.nummer &&
+            newValues.navn === oldValues.navn &&
+            newValues.gjelderKunDelAvKommunen === oldValues.gjelderKunDelAvKommunen &&
+            newValues.harUsikkerAvgrensning === oldValues.harUsikkerAvgrensning &&
+            newValues.forskriftsreferanse === oldValues.forskriftsreferanse &&
+            materielleVilkaarUnchanged &&
+            newValues.andreLokaleAvgrensninger === oldValues.andreLokaleAvgrensninger
+          ) {
+            return accumulator;
+          }
+        }
+
         const changedInndeling = utkastFlatedata.find((flate) => getIdFromEntity(flate) === key);
         if (changedInndeling != null) {
           const toRequest = getRequestFromInputs(inndeling.inndelingtype, newValues, changedInndeling);

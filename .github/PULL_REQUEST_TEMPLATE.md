@@ -5,6 +5,7 @@ _Beskriv hva som har blitt endret i denne pull requesten. Vennligst inkluder kon
 ## Sjekkliste
 
 - [ ] Akseptansekriteriene i saken er testet i feature-miljø
+- [ ] Har AI blitt brukt til utvikling av denne PR-en?
 - [ ] Det er skrevet cypress-test som dekker endringen i [nibas-cypress](https://github.com/kartverket/nibas-cypress-job)
 - [ ] Readme er oppdatert (hvis nødvendig)
 - [ ] RoS er oppdatert (hvis nødvendig)
