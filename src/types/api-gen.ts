@@ -1164,22 +1164,12 @@ export interface components {
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
-            /** @description informasjon om bopliktomraade */
-            informasjon?: string | null;
-            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
-            delvisBoplikt?: boolean | null;
             /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
             gjelderKunDelAvKommunen: boolean;
-            /** @description Usikker avgrensning */
-            usikkerAvgrensning?: boolean | null;
             /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
             harUsikkerAvgrensning: boolean;
-            /** @description Materielle vilkår for bopliktområdet */
-            materielleVilkaar?: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[] | null;
             /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
             gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
-            /** @description Andre avgrensninger */
-            andreAvgrensninger?: string | null;
             /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
             andreLokaleAvgrensninger?: string | null;
             /** @description Referanse til forskriften for bopliktomraadet */
@@ -1217,23 +1207,18 @@ export interface components {
         };
         /** @description Representasjon av opprettelsen av nytt bopliktområde */
         CreateBopliktomraadeRequest: Omit<components["schemas"]["CreateInndelingRequest"], "discriminator"> & {
+            forskriftsreferanse?: string | null;
             nummer: string;
             navn: string;
-            informasjon?: string | null;
-            /** Format: int32 */
-            version: number;
+            identifikasjon: components["schemas"]["Identifikasjon"];
             url?: string | null;
             harUsikkerAvgrensning: boolean;
             andreLokaleAvgrensninger?: string | null;
-            kommuneIdentifikasjon: components["schemas"]["Identifikasjon"];
             gjelderKunDelAvKommunen: boolean;
-            usikkerAvgrensning?: boolean | null;
-            forskriftsreferanse?: string | null;
-            andreAvgrensninger?: string | null;
-            delvisBoplikt?: boolean | null;
-            identifikasjon: components["schemas"]["Identifikasjon"];
+            kommuneIdentifikasjon: components["schemas"]["Identifikasjon"];
             gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
-            materielleVilkaar?: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[] | null;
+            /** Format: int32 */
+            version: number;
         } & {
             /**
              * @description discriminator enum property added by openapi-typescript
@@ -1241,7 +1226,7 @@ export interface components {
              */
             discriminator: "CreateBopliktomraadeRequest";
         };
-        /** @description Inndelinger som det kan opprettes nye inndelinger */
+        /** @description Representasjon av en opprettelse av en ny inndeling for en non-exhaustive inndeling. */
         CreateInndelingRequest: {
             discriminator: string;
         };
@@ -1989,24 +1974,14 @@ export interface components {
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
-            /** @description Tilleggsinformasjon om bopliktområdet */
-            informasjon?: string | null;
-            /** @description Om boplikten gjelder delvis innenfor området */
-            delvisBoplikt?: boolean | null;
             /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
             gjelderKunDelAvKommunen: boolean;
-            /** @description Usikker avgrensning */
-            usikkerAvgrensning: boolean;
             /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
             harUsikkerAvgrensning: boolean;
             /** @description Forskriftsreferansen for bopliktområdet */
             forskriftsreferanse?: string | null;
-            /** @description Materielle vilkår for bopliktområdet */
-            materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
             /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
             gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
-            /** @description Andre avgrensninger */
-            andreAvgrensninger?: string | null;
             /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
             andreLokaleAvgrensninger?: string | null;
             /** @description Lenke til mer informasjon */
@@ -2335,24 +2310,14 @@ export interface components {
              */
             datafangstdato?: string | null;
             kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description Om boplikten gjelder delvis for området */
-            delvisBoplikt: boolean;
             /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
             gjelderKunDelAvKommunen: boolean;
-            /** @description Tilleggsinformasjon om bopliktområdet */
-            informasjon?: string | null;
             /** @description Forskriftsreferanse til boplikten */
             forskriftsreferanse?: string | null;
-            /** @description Materielle vilkår for bopliktområdet */
-            materielleVilkaar: ("BEBYGDEIENDOM" | "IKKEHELAARSBOLIGUNDEROPPFORING" | "UBEBYGDTOMT" | "UNNTAKFRASLEKTSKAPSUNNTAK")[];
             /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
             gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
-            /** @description Andre avgrensninger */
-            andreAvgrensninger?: string | null;
             /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
             andreLokaleAvgrensninger?: string | null;
-            /** @description Usikker avgrensning */
-            usikkerAvgrensning: boolean;
             /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
             harUsikkerAvgrensning: boolean;
             /** @description URL til informasjon om boplikten */
