@@ -3,7 +3,7 @@ import EditAndSaveButton from "components/EditAndSaveButton";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { KommuneEntry, MetadataEntry } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import {
@@ -20,6 +20,7 @@ import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 import { getNavnInSpraak } from "utils/language/language";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { FlatedataTableInndeling } from "./FlatedataPanel";
+import { getFlatedataColumns } from "./FlatedatColumns";
 import FlatedataTableHeader from "./FlatedataTableHeader";
 import { FlatedataTableRow } from "./FlatedataTableRow";
 import {
@@ -50,9 +51,10 @@ export type NonExhaustiveInndelingtype = (typeof NONEXHAUSTIVE_INNDELINGTYPE_VAL
 
 const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch }: Props) => {
   const { utkast, utkastHarSammenslaainger } = useUtkast();
-  const isAdministrativEnhet = mainInndeling.inndelingtype === "FYLKE" || mainInndeling.inndelingtype === "KOMMUNE";
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
+  const columns = useMemo(() => getFlatedataColumns(mainInndeling.inndelingtype), [mainInndeling.inndelingtype]);
+  const gridTemplateColumns = columns.map((c) => c.size ?? "auto").join(" ");
   const [tempFlatedata, setTempFlatedata] = useState<MetadataResponse[]>([]);
 
   const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
@@ -101,10 +103,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     }
     setIsEditing(!isEditing);
   };
-
-  const inndelingPrefix = isAdministrativEnhet
-    ? "Kommune"
-    : getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: true });
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
@@ -156,7 +154,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const setPreviousValues = (fd: FlatedataInputs | undefined) => (previousValues.current = fd);
 
   const handleCreateNewFlate = () => {
-    if (isInndelingNonExhaustive(mainInndeling.inndelingtype)) {
+    if (isInndelingNonExhaustive(mainInndeling.inndelingtype) === true) {
       setTempFlatedata((prevState) => {
         const newFlate: MetadataResponse = getDefaultFlatedataForInndelingtype(
           mainInndeling.inndelingtype,
@@ -175,55 +173,14 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
 
   return (
     <Container $emptyTable={flatedata.length === 0}>
-      <Table>
+      <Table $gridTemplateColumns={gridTemplateColumns}>
         <thead>
           <tr>
-            <FlatedataTableHeader text={`${inndelingPrefix}nummer`} {...sortHeaderProps("nummer")} />
-            <FlatedataTableHeader text={`${inndelingPrefix}navn`} {...sortHeaderProps("navn")} />
-            {isAdministrativEnhet ? (
-              <>
-                <FlatedataTableHeader text="Merknad" {...sortHeaderProps("samiskforvaltningsomraade")} />
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </>
-            ) : mainInndeling.inndelingtype === "STEMMEKRETS" ? (
-              <>
-                <FlatedataTableHeader text="Tellekretsnummer" {...sortHeaderProps("tellekretsnummer")} />
-                <FlatedataTableHeader text="Tellekretsnavn" {...sortHeaderProps("tellekretsnavn")} />
-                <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
-                <FlatedataTableHeader text="Informasjon" />
-                <th></th>
-                <th></th>
-                <th></th>
-              </>
-            ) : mainInndeling.inndelingtype === "GRUNNKRETS" ? (
-              <>
-                <FlatedataTableHeader text="Informasjon" />
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </>
-            ) : mainInndeling.inndelingtype === "BOPLIKTOMRAADE" ? (
-              <>
-                <FlatedataTableHeader text="Forskriftsreferanse" />
-                <FlatedataTableHeader text="Utstrekning" {...sortHeaderProps("gjelderKunDelAvKommunen")} />
-                <FlatedataTableHeader text="Har usikker avgrensning" {...sortHeaderProps("harUsikkerAvgrensning")} />
-                <FlatedataTableHeader text="Gjeldende materielle vilkår" />
-                <FlatedataTableHeader text="Andre lokale avgrensninger" />
-                <th></th>
-                <th></th>
-              </>
-            ) : (
-              <></>
-            )}
-            <th></th>
+            {columns.map((c, i) => (
+              <Fragment key={i}>
+                <FlatedataTableHeader text={c.header} {...(c.sortKey != null ? sortHeaderProps(c.sortKey) : {})} />
+              </Fragment>
+            ))}
           </tr>
         </thead>
         {flatedata.length > 0 && (
@@ -239,6 +196,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                   key={inndelingId}
                   inndelingtype={mainInndeling.inndelingtype}
                   inndeling={inndeling}
+                  columns={columns}
                   isSearchMatch={isSearchMatch}
                   isEditing={isEditing}
                   formMethods={formMethods}
@@ -315,9 +273,9 @@ const Container = styled(TabPanel)<{ $emptyTable: boolean }>`
   overflow: hidden;
 `;
 
-const Table = styled.table`
+const Table = styled.table<{ $gridTemplateColumns: string }>`
   display: grid;
-  grid-template-columns: auto auto auto auto auto auto auto auto 1fr auto;
+  grid-template-columns: ${(props) => props.$gridTemplateColumns};
   grid-auto-rows: max-content;
   width: 100%;
   overflow: auto;
