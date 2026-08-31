@@ -200,6 +200,7 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
                 minHeight: "32px",
                 maxWidth: "200px",
                 fontSize: "14px",
+                borderRadius: "var(--kvib-radii-md, 6px)",
               }),
               valueContainer: (base) => ({
                 ...base,

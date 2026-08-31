@@ -32,7 +32,7 @@ const getCommonInndelingNumberValidator = <TForm extends Record<string, unknown>
         return `${capitalizedInndelingType}nummer må ha minst ${minLength} siffer og maks ${maxLength} siffer`;
       }
       if (shouldNotBeEqualWith.find((num) => num === number) != null) {
-        return `${capitalizedInndelingType}nummer brukes allerede av ${inndelingType === "FYLKE" ? "et annet" : "en annen"} ${formattedInndelingType}`;
+        return `${capitalizedInndelingType}nummer brukes allerede av ${inndelingType === "FYLKE" || inndelingType === "BOPLIKTOMRAADE" ? "et annet" : "en annen"} ${formattedInndelingType}`;
       }
       if (additionalValidation != null) {
         const additionalValidationResult = additionalValidation(number);
