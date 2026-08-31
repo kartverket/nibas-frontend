@@ -35,7 +35,7 @@ import {
   NyGrense,
   NyGrenseDeleteEntry,
   NyGrenseEntry,
-  NyInndelingEntry,
+  NyeInndelingerEntry,
   PropertyEntry,
   StemmekretsEntry,
 } from "./types";
@@ -417,25 +417,36 @@ export const getGrenseMergeEntries = (entries: HistoryEntry[]): MergeGrenseEntry
   return entries.filter((entry) => entry.type === "merge_grenser") as MergeGrenseEntry[];
 };
 
-export const getNyInndelingEntries = (entries: HistoryEntry[]): NyInndelingEntry[] => {
-  return entries.filter((entry) => entry.type === "create_inndeling") as NyInndelingEntry[];
+export const getNyInndelingEntries = (entries: HistoryEntry[]): NyeInndelingerEntry[] => {
+  return entries.filter((entry) => entry.type === "create_inndelinger") as NyeInndelingerEntry[];
+};
+
+/**
+ * Returnerer dedupliserte endringer fra alle ny-inndeling-endringer, og beholder siste forekomst
+ * for hver ID (siste skriving gjelder). Bruk denne i stedet for getNyInndelingEntries når du trenger
+ * gjeldende tilstand for nye inndelinger uten utdaterte, overskrevne endringer.
+ */
+export const getDeduplicatedNyInndelingChanges = (entries: HistoryEntry[]): NyeInndelingerEntry["changes"] => {
+  const allChanges = getNyInndelingEntries(entries).flatMap((entry) => entry.changes);
+  return allChanges.filter((change, i) => allChanges.findLastIndex((c) => c.id === change.id) === i);
 };
 
 export const getNyInndelingEntriesForInndelingtype = (
   entries: HistoryEntry[],
   inndelingtype: Inndelingtype,
-): NyInndelingEntry[] => {
+): NyeInndelingerEntry[] => {
   if (!isNonExhaustiveInndelingtype(inndelingtype)) {
     return [];
   }
-  return getNyInndelingEntries(entries).filter((entry) => {
-    const request = entry.changes[0].to;
-    if (request == null) {
-      return false;
-    }
-    switch (inndelingtype) {
-      case "BOPLIKTOMRAADE":
-        return isBopliktomraadeRequest(request);
-    }
-  }) as NyInndelingEntry[];
+  return getNyInndelingEntries(entries).filter((entry) =>
+    entry.changes.some((change) => {
+      if (change.to == null) {
+        return false;
+      }
+      switch (inndelingtype) {
+        case "BOPLIKTOMRAADE":
+          return isBopliktomraadeRequest(change.to);
+      }
+    }),
+  );
 };

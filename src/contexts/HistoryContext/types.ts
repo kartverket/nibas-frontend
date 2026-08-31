@@ -46,7 +46,7 @@ export type HistoryTypeValues =
   | "grensedeling"
   | "grensedelete"
   | "merge_grenser"
-  | "create_inndeling";
+  | "create_inndelinger";
 
 export type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
   type: HistoryType;
@@ -100,7 +100,7 @@ export type NyGrenseDeleteEntry = BaseHistoryEntry<"grensedelete", Feature<Geome
 
 export type MergeGrenseEntry = BaseHistoryEntry<"merge_grenser", MergeGrenseModel>;
 
-export type NyInndelingEntry = BaseHistoryEntry<"create_inndeling", NonExhaustiveInndelingRequest | null>;
+export type NyeInndelingerEntry = BaseHistoryEntry<"create_inndelinger", NonExhaustiveInndelingRequest | null>;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
@@ -116,7 +116,7 @@ export type HistoryEntry =
   | PropertyEntry
   | NyGrenseDeleteEntry
   | MergeGrenseEntry
-  | NyInndelingEntry;
+  | NyeInndelingerEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;

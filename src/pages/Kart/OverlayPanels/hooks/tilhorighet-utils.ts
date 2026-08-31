@@ -1,5 +1,5 @@
 import { getKretsDelingEntries, getNyInndelingEntriesForInndelingtype } from "contexts/HistoryContext/history-utils";
-import { HistoryEntry, NyInndelingEntry } from "contexts/HistoryContext/types";
+import { HistoryEntry, NyeInndelingerEntry } from "contexts/HistoryContext/types";
 import {
   getCreateInndelingEntriesForInndelingtype,
   getMetadataEndringerKeyForInndelingtype,
@@ -360,7 +360,7 @@ export const getNyeInndelingerFromUtkast = (
 };
 
 export const getKretserFromNyInndelingEntries = (
-  entries: NyInndelingEntry[],
+  entries: NyeInndelingerEntry[],
   kommunerIdOgNummer: { id: string; nummer: string }[],
 ): Krets[] => {
   const changes = entries.flatMap((entry) => entry.changes);
