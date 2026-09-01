@@ -43,8 +43,8 @@
     "test:coverage": "npm test -- src/* --coverage",
     "lint": "eslint src --max-warnings 0 && stylelint src --max-warnings 0",
     "lint:fix": "eslint src --fix",
-    "update-api-types": "openapi-typescript http://localhost:8080/api-docs --output src/types/api-gen.ts",
-    "update-api-types-arbeidsliste": "openapi-typescript http://localhost:8082/api-docs --output src/types/api-gen-arbeidsliste.ts",
+    "update-api-types": "openapi-typescript http://localhost:8080/api-docs --alphabetize --output src/types/api-gen.ts",
+    "update-api-types-arbeidsliste": "openapi-typescript http://localhost:8082/api-docs --alphabetize --output src/types/api-gen-arbeidsliste.ts",
     "format": "prettier --write .",
     "clean": "rm -rf node_modules/.vite/",
     "better-audit": "better-npm-audit audit --production --level high"
