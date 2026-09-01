@@ -1,5 +1,5 @@
 
-FROM dhi.io/caddy:2.11.4-debian13@sha256:840c0df5f0e30e0845ab63fff6dd5da8ebbcb8416054848dfa18924f490a358b
+FROM dhi.io/caddy:2.11.4-debian13@sha256:f5c2b026d9befb297e43f12c9e2fdde521e9eb3464aee21f245d1dcca786c26c
 
 COPY /build /srv
 
