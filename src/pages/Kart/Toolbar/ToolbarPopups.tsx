@@ -189,7 +189,14 @@ const ToolbarPopups = () => {
       });
       return;
     }
-    archiveFeatures(selectedFeatures);
+    const selectedExistingFeatures = selectedFeatures.filter(
+      (feature) => !isTempFeatureId(feature.getId()?.toString() ?? ""),
+    );
+    const selectedNewFeatures = selectedFeatures.filter((feature) =>
+      isTempFeatureId(feature.getId()?.toString() ?? ""),
+    );
+    archiveFeatures(selectedExistingFeatures);
+    deleteFeaturesAndAddHistoryEntry(selectedNewFeatures);
     addFeaturesToSource("edit", [mergeFeature]);
     addHistoryEntry({
       type: "merge_grenser",
@@ -204,9 +211,23 @@ const ToolbarPopups = () => {
     });
   };
 
-  const deleteFeatures = () => {
+  const deleteSelectedFeatures = () => {
     const selectedFeatureIds = removeNil(selectedFeatures.map((feature) => feature.getId()?.toString()));
+    if (selectedFeatureIds.length === 0) {
+      return;
+    }
 
+    deleteFeaturesAndAddHistoryEntry(selectedFeatures);
+    clearSelection();
+
+    toast({
+      status: "success",
+      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble slettet`,
+    });
+  };
+
+  const deleteFeaturesAndAddHistoryEntry = (featuresToDelete: typeof selectedFeatures) => {
+    const selectedFeatureIds = removeNil(featuresToDelete.map((feature) => feature.getId()?.toString()));
     const selectedFeaturesContainsExistingGrenser = !selectedFeatureIds.every((id) => isTempFeatureId(id));
 
     if (selectedFeaturesContainsExistingGrenser) {
@@ -217,18 +238,11 @@ const ToolbarPopups = () => {
       });
       return;
     }
-
-    clearSelection();
     removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
 
     // Oppretter entry som sier at grensen blir slettet, denne blir tatt i bruk ved lagring for å fjerne grenser man har slettet.
     // Denne entrien blir selv slettet (ignorert) ved lagring da den ikke skal med i utkastet.
-    addGrenseDeleteEntryFromFeatureList(selectedFeatures, addHistoryEntry);
-
-    toast({
-      status: "success",
-      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble slettet`,
-    });
+    addGrenseDeleteEntryFromFeatureList(featuresToDelete, addHistoryEntry);
   };
 
   const handleHistoriskeGrenser = async (gyldigTilDate: string) => {
@@ -398,7 +412,7 @@ const ToolbarPopups = () => {
             icon="delete_forever"
             text="Velg en eller flere grenser du ønsker å slette"
             buttonText="Slett"
-            onClick={deleteFeatures}
+            onClick={deleteSelectedFeatures}
             isDisabled={selectedFeatures.length === 0}
             onClose={resetTool}
           />

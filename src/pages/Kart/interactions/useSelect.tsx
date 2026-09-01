@@ -50,7 +50,7 @@ const useSelect = () => {
   }, [activeTool, closeOverlayPopup]);
 
   const disallowedTools: Tool[] = ["draw", "koordinater"];
-  const safeTools: Tool[] = ["grenseinfo", "split", "duplicate", "historiskeGrenser", "merge_grenser"];
+  const safeTools: Tool[] = ["grenseinfo", "split", "duplicate", "historiskeGrenser", "merge_grenser", "delete"];
   const pointTools: Tool[] = ["add", "remove", "split"];
 
   const [prevSelectData, setPrevSelectData] = useState<SelectData>();
@@ -253,6 +253,15 @@ const useSelect = () => {
         toast({
           status: "error",
           title: "Du kan ikke slå sammen grenser som ikke er redigerbare",
+        });
+        event.stopPropagation();
+        return;
+      }
+
+      if (activeTool === "delete" && !isFeatureEditable(clickedFeature)) {
+        toast({
+          status: "error",
+          title: "Du kan ikke slette grenser som ikke er redigerbare",
         });
         event.stopPropagation();
         return;
