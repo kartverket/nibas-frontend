@@ -2,7 +2,7 @@ import { HistoryDirection, MetadataEntry } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { Fragment } from "react";
 import { Control, UseFormReturn, useFormState } from "react-hook-form";
-import { css, styled } from "styled-components";
+import { css, keyframes, styled } from "styled-components";
 import { MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getInndelingFremtidigEndringDato } from "utils/features";
@@ -16,6 +16,7 @@ type Props = {
   columns: FlatedataColumn[];
   isSearchMatch: boolean;
   isEditing: boolean;
+  isNew: boolean;
   formMethods: UseFormReturn<FlatedataInputs>;
   setPreviousValues: (flatedata: FlatedataInputs | undefined) => void;
   allInndelinger: MetadataResponse[];
@@ -29,6 +30,7 @@ export const FlatedataTableRow = ({
   columns,
   isSearchMatch,
   isEditing,
+  isNew,
   formMethods,
   setPreviousValues,
   allInndelinger,
@@ -77,7 +79,7 @@ export const FlatedataTableRow = ({
   };
 
   return (
-    <Row key={inndelingId} $isSearchMatch={isSearchMatch}>
+    <Row key={inndelingId} $isSearchMatch={isSearchMatch} $isNew={isNew && isEditing}>
       {columns.map((c, i) => (
         <Fragment key={i}>{c.renderCell(ctx)}</Fragment>
       ))}
@@ -85,10 +87,33 @@ export const FlatedataTableRow = ({
   );
 };
 
-const Row = styled.tr<{ $isSearchMatch: boolean }>`
+const Row = styled.tr<{ $isSearchMatch: boolean; $isNew: boolean }>`
   ${(props) =>
     !props.$isSearchMatch &&
     css`
       display: none !important;
     `};
+
+  ${(props) =>
+    props.$isNew &&
+    css`
+      td {
+        animation: ${fadeFromBlue} 1.5s ease-out forwards;
+      }
+
+      td input,
+      td select,
+      td textarea {
+        background-color: white;
+      }
+    `};
+`;
+
+const fadeFromBlue = keyframes`
+  from {
+    background-color: var(--kvib-colors-blue-50, #ebf8ff);
+  }
+  to {
+    background-color: transparent;
+  }
 `;
