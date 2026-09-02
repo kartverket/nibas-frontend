@@ -11,7 +11,6 @@ import {
 } from "types/api";
 import { getInndelingtypeLabel, getNumberValidatorFunctionForInndelingType } from "utils/inndelinger-utils";
 import { getNavnInSpraak } from "utils/language/language";
-import { capitalize } from "utils/string-utils";
 import { isIntegerString } from "utils/type-utils";
 import { datestringToFormattedDatestring } from "../GrenseinformasjonPanel/grenseinformasjon-utils";
 import type { FlatedataTableInndelingtype } from "./FlatedataPanel";
@@ -193,7 +192,7 @@ const navnColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, lab
   renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, inndelingErrors }) => {
     const { register, getValues } = formMethods;
     const registerOptions = {
-      required: `${capitalize(inndelingtype)}navn kan ikke være tomt`,
+      required: `${getInndelingtypeLabel(inndelingtype, { pluralizeLabel: false, capitalizeLabel: true })}navn kan ikke være tomt`,
     };
     return (
       <InputCell
