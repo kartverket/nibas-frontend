@@ -24,7 +24,7 @@ type Keys = "CREATE_INNDELINGER";
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   CREATE_INNDELINGER: {
-    prod: false,
+    prod: true,
     "dev-main": true,
     "dev-e2e": true,
     localhost: true,
