@@ -224,7 +224,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
           )}
         </Table>
         {flatedata.length > 0 && (
-          <FeatureToggle feature="CREATE_INNDELINGER">
+          <FeatureToggle feature="CREATE_MULTIPLE_INNDELINGER">
             {isEditing === true && isInndelingNonExhaustive(mainInndeling.inndelingtype) === true ? (
               <AddFlateContainer>
                 <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
