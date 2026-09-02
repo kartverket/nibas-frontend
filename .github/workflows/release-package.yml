@@ -41,6 +41,7 @@ jobs:
 
   deploy-dev:
     permissions:
+      contents: read
       id-token: write
     needs: [build, test, pharos]
     uses: kartverket/smia-workflows/.github/workflows/deploy-app.yml@main
