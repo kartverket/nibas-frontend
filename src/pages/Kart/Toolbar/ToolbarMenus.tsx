@@ -283,6 +283,7 @@ const ToolbarMenus = () => {
                   <MenuDivider />
                 </>
               </FeatureToggle>
+              <MenuDivider />
               {flateMenuItems.map((fmi) =>
                 fmi.isDisabled ? (
                   <CustomTooltip
