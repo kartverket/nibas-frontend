@@ -1,4 +1,4 @@
-import { getNyInndelingEntries } from "contexts/HistoryContext/history-utils";
+import { getDeduplicatedNyInndelingChanges } from "contexts/HistoryContext/history-utils";
 import {
   HistoryChange,
   HistoryState,
@@ -9,7 +9,7 @@ import {
   MetadataEntry,
   NyGrense,
   NyGrenseDeleteEntry,
-  NyInndelingEntry,
+  NyeInndelingerEntry,
   StemmekretsSammenslaaingsendringEntry,
 } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
@@ -115,9 +115,9 @@ export const historyToKretsdelingOperations = (kretsdelingEntries: KretsdelingEn
 };
 
 export const nyInndelingEntriesToCreateInndelingOperations = (
-  nyInndelingEntries: NyInndelingEntry[],
+  nyInndelingChanges: NyeInndelingerEntry["changes"],
 ): CreateInndelingRequest[] => {
-  const changes = removeNil(nyInndelingEntries.flatMap((entry) => entry.changes[0].to));
+  const changes = removeNil(nyInndelingChanges.map((change) => change.to));
   return removeNil(
     changes.map((change) => {
       const discriminator = getDiscriminatorForCreateInndelingRequest(change);
@@ -144,6 +144,17 @@ const mergeKretsdelingOperations = (
     (kretsdeling) => !kretsIdsForKretserSplittedOnHistory.includes(kretsdeling.opprinneligKrets.lokalId),
   );
   return [...kretdelingerInUtkastNotOverwritten, ...kretsdelingerFromHistory];
+};
+
+const mergeNyInndelingOperations = (
+  nyeInndelingerFromUtkast: CreateInndelingRequest[],
+  nyeInndelingerFromHistory: CreateInndelingRequest[],
+): CreateInndelingRequest[] => {
+  const nyInndelingIdsInHistory = nyeInndelingerFromHistory.map((nyInndeling) => nyInndeling.identifikasjon.lokalid);
+  const nyeInndelingerInUtkastNotOverwritten = nyeInndelingerFromUtkast.filter(
+    (nyInndeling) => !nyInndelingIdsInHistory.includes(nyInndeling.identifikasjon.lokalid),
+  );
+  return [...nyeInndelingerInUtkastNotOverwritten, ...nyeInndelingerFromHistory];
 };
 
 export const getMetadataEndringerKeyForInndelingtype = (
@@ -174,9 +185,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     (entry) => entry.type === "kretsdelingendring",
   ) as KretsdelingEntry[];
 
-  const allNyInndelingEntries = getNyInndelingEntries(historyToCurrentIndex);
-
-  const createInndelingOperations = nyInndelingEntriesToCreateInndelingOperations(allNyInndelingEntries);
+  const createInndelingOperations = nyInndelingEntriesToCreateInndelingOperations(
+    getDeduplicatedNyInndelingChanges(historyToCurrentIndex),
+  );
 
   const kretsdelingOperations = historyToKretsdelingOperations(allKretsdelingHistoryEntries);
 
@@ -195,8 +206,10 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
             previousUtkast?.operasjoner.kretsDelingEndringer ?? [],
             kretsdelingOperations,
           ),
-          nyeInndelingEndringer:
-            previousUtkast?.operasjoner.createInndelingEndringer?.concat(createInndelingOperations),
+          nyeInndelingEndringer: mergeNyInndelingOperations(
+            previousUtkast?.operasjoner.createInndelingEndringer ?? [],
+            createInndelingOperations,
+          ),
         },
       }),
     );

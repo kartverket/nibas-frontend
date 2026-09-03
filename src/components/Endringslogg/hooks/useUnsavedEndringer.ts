@@ -7,6 +7,7 @@ import {
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import {
+  getDeduplicatedNyInndelingChanges,
   getGrenseArkiveringEntries,
   getGrenseDelingEntries,
   getGrenseMergeEntries,
@@ -14,7 +15,6 @@ import {
   getKretsDelingEntries,
   getMetadataEntries,
   getNyGrenserEntriesEntries,
-  getNyInndelingEntries,
 } from "contexts/HistoryContext/history-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import {
@@ -181,8 +181,7 @@ const getNyeGrenser = (entries: HistoryEntry[]): string[] => {
 
 const getNyeInndelinger = (entries: HistoryEntry[]): NyInndelingEndring[] => {
   return removeNil(
-    getNyInndelingEntries(entries).map((entry) => {
-      const change = entry.changes[0];
+    getDeduplicatedNyInndelingChanges(entries).map((change) => {
       if (change.to == null) {
         return null;
       }
