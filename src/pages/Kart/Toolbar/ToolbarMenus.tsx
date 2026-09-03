@@ -9,6 +9,7 @@ import { INNDELINGTYPE_VALUES } from "types/api";
 import { anyFeatureIsEditable } from "utils/features";
 import { FLATEDATA_TABLE_INNDELINGTYPE_VALUES } from "../OverlayPanels/FlatedataPanel/FlatedataPanel";
 import CustomTooltip from "./CustomTooltip";
+import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
 
 export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
@@ -62,6 +63,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditingSplittableInndelinger);
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useKeyboardShortcut("historiskeGrenser", () => toggleTool("historiskeGrenser"), isEditing);
+  useKeyboardShortcut("flater", () => {}, isEditing);
 
   const showBigMenu = (activeOverlayPanel === null && isSmall) || (activeOverlayPanel !== null && isWide);
 
@@ -199,6 +201,9 @@ const ToolbarMenus = () => {
       command: KeyboardShortcuts["flatesplit"].displayString,
     },
   ];
+
+  const visFlaterIsActive: boolean = false;
+
   return (
     <>
       <Divider orientation="vertical" />
@@ -258,10 +263,21 @@ const ToolbarMenus = () => {
             label="Flate"
             icon={<Icon icon="border_all" weight={400} />}
             isDisabled={false}
-            isActive={flateMenuItems.some((fmi) => fmi.$isActive)}
+            isActive={flateMenuItems.some((fmi) => fmi.$isActive) || visFlaterIsActive}
             tooltip="Flate"
           >
             <MenuList>
+              <SwitchWithShortcutDesc
+                value={""}
+                onChange={() => {}}
+                isChecked={false}
+                shortcut={KeyboardShortcuts["flater"].displayString}
+                isDisabled={isEditing === false}
+              >
+                Vis flater
+              </SwitchWithShortcutDesc>
+
+              <MenuDivider />
               {flateMenuItems.map((fmi) =>
                 fmi.isDisabled ? (
                   <CustomTooltip

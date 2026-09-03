@@ -30,7 +30,8 @@ export type Shortcut =
   | "preview"
   | "goto"
   | "duplicate"
-  | "merge_grenser";
+  | "merge_grenser"
+  | "flater";
 
 type KeyboardShortcut = {
   displayString: string;
@@ -109,6 +110,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   merge: createShortcut("m", { control: true }),
   flatedata: createShortcut("i", { control: true, shift: true }),
   flatesplit: createShortcut("m", { control: true, shift: true }),
+  flater: createShortcut("f", { control: true, alt: true }),
 
   // Misc Toolbar
   snap: createShortcut("g", { control: true }),
