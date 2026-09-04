@@ -1,9 +1,10 @@
 import { Button, TabPanel, Text } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
+import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { KommuneEntry, MetadataEntry } from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import {
@@ -19,12 +20,14 @@ import { getInndelingFremtidigEndringDato } from "utils/features";
 import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 import { getNavnInSpraak } from "utils/language/language";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
+import { getFlatedataColumns } from "./FlatedatColumns";
 import { FlatedataTableInndeling } from "./FlatedataPanel";
 import FlatedataTableHeader from "./FlatedataTableHeader";
 import { FlatedataTableRow } from "./FlatedataTableRow";
 import {
   FlatedataInputs,
   getDefaultFlatedataForInndelingtype,
+  getTempFlateId,
   isInndelingNonExhaustive,
   isValidTempFlateId,
   partitionDictBy,
@@ -33,7 +36,6 @@ import {
 } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
-import FeatureToggle from "components/FeatureToggle";
 
 type Props = {
   mainInndeling: FlatedataTableInndeling;
@@ -50,9 +52,10 @@ export type NonExhaustiveInndelingtype = (typeof NONEXHAUSTIVE_INNDELINGTYPE_VAL
 
 const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch }: Props) => {
   const { utkast, utkastHarSammenslaainger } = useUtkast();
-  const isAdministrativEnhet = mainInndeling.inndelingtype === "FYLKE" || mainInndeling.inndelingtype === "KOMMUNE";
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
+  const columns = useMemo(() => getFlatedataColumns(mainInndeling.inndelingtype), [mainInndeling.inndelingtype]);
+  const gridTemplateColumns = columns.map((c) => c.size ?? "auto").join(" ");
   const [tempFlatedata, setTempFlatedata] = useState<MetadataResponse[]>([]);
 
   const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
@@ -98,13 +101,10 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const toggleEditing = () => {
     if (isEditing) {
       reset(previousValues.current);
+      clearNewFlatedata();
     }
     setIsEditing(!isEditing);
   };
-
-  const inndelingPrefix = isAdministrativEnhet
-    ? "Kommune"
-    : getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: true });
 
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
@@ -113,7 +113,12 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     const [newFlater, existingFlater] = partitionDictBy<FlatedataInputs>(data, isValidTempFlateId);
 
     const changesToExisting = reduceFlatedataChanges(existingFlater, previousValues.current, flatedata, mainInndeling);
-    const newFlaterChanges = reduceFlatedataChangesForNewInndelinger(newFlater, flatedata, mainInndeling);
+    const newFlaterChanges = reduceFlatedataChangesForNewInndelinger(
+      newFlater,
+      flatedata,
+      mainInndeling,
+      previousValues.current,
+    );
     if (changesToExisting.length < 1 && newFlaterChanges.length < 1) {
       return;
     }
@@ -146,7 +151,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
 
     if (newFlaterChanges.length > 0) {
       addHistoryEntry({
-        type: "create_inndeling",
+        type: "create_inndelinger",
         changes: newFlaterChanges,
       });
     }
@@ -156,12 +161,16 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const setPreviousValues = (fd: FlatedataInputs | undefined) => (previousValues.current = fd);
 
   const handleCreateNewFlate = () => {
-    if (isInndelingNonExhaustive(mainInndeling.inndelingtype)) {
+    if (isInndelingNonExhaustive(mainInndeling.inndelingtype) === true) {
+      const nextNumberAsInt =
+        flatedata.map((i) => parseInt(i.nummer, 10)).reduce((max, current) => (current > max ? current : max), 0) + 1;
+      const nextNumber = nextNumberAsInt > 9 ? nextNumberAsInt.toString() : nextNumberAsInt.toString().padStart(2, "0");
       setTempFlatedata((prevState) => {
-        const newFlate: MetadataResponse = getDefaultFlatedataForInndelingtype(
-          mainInndeling.inndelingtype,
-          mainInndeling,
-        );
+        const newFlate: MetadataResponse = getDefaultFlatedataForInndelingtype(mainInndeling.inndelingtype, {
+          withNummer: nextNumber,
+          withKommune: mainInndeling,
+          withLokalid: getTempFlateId(mainInndeling.inndelingtype, mainInndeling?.id ?? ""),
+        });
         return [...prevState, newFlate];
       });
 
@@ -174,84 +183,60 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   };
 
   return (
-    <Container $emptyTable={flatedata.length === 0}>
-      <Table>
-        <thead>
-          <tr>
-            <FlatedataTableHeader text={`${inndelingPrefix}nummer`} {...sortHeaderProps("nummer")} />
-            <FlatedataTableHeader text={`${inndelingPrefix}navn`} {...sortHeaderProps("navn")} />
-            {isAdministrativEnhet ? (
-              <>
-                <FlatedataTableHeader text="Merknad" {...sortHeaderProps("samiskforvaltningsomraade")} />
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </>
-            ) : mainInndeling.inndelingtype === "STEMMEKRETS" ? (
-              <>
-                <FlatedataTableHeader text="Tellekretsnummer" {...sortHeaderProps("tellekretsnummer")} />
-                <FlatedataTableHeader text="Tellekretsnavn" {...sortHeaderProps("tellekretsnavn")} />
-                <FlatedataTableHeader text="Valgdistriktsnummer" {...sortHeaderProps("valgdistriktsnummer")} />
-                <FlatedataTableHeader text="Informasjon" />
-                <th></th>
-                <th></th>
-                <th></th>
-              </>
-            ) : mainInndeling.inndelingtype === "GRUNNKRETS" ? (
-              <>
-                <FlatedataTableHeader text="Informasjon" />
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-              </>
-            ) : mainInndeling.inndelingtype === "BOPLIKTOMRAADE" ? (
-              <>
-                <FlatedataTableHeader text="Forskriftsreferanse" />
-                <FlatedataTableHeader text="Utstrekning" {...sortHeaderProps("gjelderKunDelAvKommunen")} />
-                <FlatedataTableHeader text="Har usikker avgrensning" {...sortHeaderProps("harUsikkerAvgrensning")} />
-                <FlatedataTableHeader text="Gjeldende materielle vilkår" />
-                <FlatedataTableHeader text="Andre lokale avgrensninger" />
-                <th></th>
-                <th></th>
-              </>
+    <Container>
+      <TableScrollArea $hasRows={flatedata.length > 0}>
+        <Table $gridTemplateColumns={gridTemplateColumns}>
+          <thead>
+            <tr>
+              {columns.map((c, i) => (
+                <Fragment key={i}>
+                  <FlatedataTableHeader text={c.header} {...(c.sortKey != null ? sortHeaderProps(c.sortKey) : {})} />
+                </Fragment>
+              ))}
+            </tr>
+          </thead>
+          {flatedata.length > 0 && (
+            <tbody>
+              {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((inndeling) => {
+                const inndelingId = getIdFromEntity(inndeling);
+
+                const isSearchMatch =
+                  inndeling.nummer.includes(searchValue) === true ||
+                  getNavnInSpraak(inndeling.navn, "nor").toLowerCase().includes(searchValue) === true;
+                return (
+                  <FlatedataTableRow
+                    key={inndelingId}
+                    inndelingtype={mainInndeling.inndelingtype}
+                    inndeling={inndeling}
+                    columns={columns}
+                    isSearchMatch={isSearchMatch}
+                    isEditing={isEditing}
+                    isNew={tempFlatedata.some((f) => getIdFromEntity(f) === inndelingId)}
+                    formMethods={formMethods}
+                    control={control}
+                    setPreviousValues={setPreviousValues}
+                    allInndelinger={flatedata}
+                    sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
+                  />
+                );
+              })}
+            </tbody>
+          )}
+        </Table>
+        {flatedata.length > 0 && (
+          <FeatureToggle feature="CREATE_MULTIPLE_INNDELINGER">
+            {isEditing === true && isInndelingNonExhaustive(mainInndeling.inndelingtype) === true ? (
+              <AddFlateContainer>
+                <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
+                  Opprett ny flate
+                </Button>
+              </AddFlateContainer>
             ) : (
               <></>
             )}
-            <th></th>
-          </tr>
-        </thead>
-        {flatedata.length > 0 && (
-          <tbody>
-            {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((inndeling) => {
-              const inndelingId = getIdFromEntity(inndeling);
-
-              const isSearchMatch =
-                inndeling.nummer.includes(searchValue) === true ||
-                getNavnInSpraak(inndeling.navn, "nor").toLowerCase().includes(searchValue) === true;
-              return (
-                <FlatedataTableRow
-                  key={inndelingId}
-                  inndelingtype={mainInndeling.inndelingtype}
-                  inndeling={inndeling}
-                  isSearchMatch={isSearchMatch}
-                  isEditing={isEditing}
-                  formMethods={formMethods}
-                  control={control}
-                  setPreviousValues={setPreviousValues}
-                  allInndelinger={flatedata}
-                  sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
-                />
-              );
-            })}
-          </tbody>
+          </FeatureToggle>
         )}
-      </Table>
+      </TableScrollArea>
       {flatedata.length === 0 && (
         <CreateFlateContainer>
           <FeatureToggle feature="CREATE_INNDELINGER">
@@ -308,19 +293,24 @@ const BoldHeading = styled(Text)`
   font-size: var(--kvib-fontSizes-lg);
 `;
 
-const Container = styled(TabPanel)<{ $emptyTable: boolean }>`
-  display: grid;
-  grid-template-rows: ${({ $emptyTable }) => ($emptyTable ? "auto 1fr auto" : "1fr auto")};
+const Container = styled(TabPanel)`
+  display: flex;
+  flex-direction: column;
   padding: 0;
   overflow: hidden;
 `;
 
-const Table = styled.table`
+const TableScrollArea = styled.div<{ $hasRows: boolean }>`
+  flex: ${({ $hasRows }) => ($hasRows ? "1 1 0" : "0 0 auto")};
+  overflow: auto;
+  min-height: 0;
+`;
+
+const Table = styled.table<{ $gridTemplateColumns: string }>`
   display: grid;
-  grid-template-columns: auto auto auto auto auto auto auto auto 1fr auto;
+  grid-template-columns: ${(props) => props.$gridTemplateColumns};
   grid-auto-rows: max-content;
   width: 100%;
-  overflow: auto;
 
   thead,
   tbody,
@@ -342,9 +332,19 @@ const Table = styled.table`
       padding-left: 16px;
     }
   }
+
+  td input,
+  td select {
+    border-radius: var(--kvib-radii-md, 6px) !important;
+  }
+`;
+
+const AddFlateContainer = styled.div`
+  padding: 12px 16px;
 `;
 
 const CreateFlateContainer = styled.div`
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
