@@ -1,4 +1,14 @@
-import { Divider, Flex, Icon, MenuDivider, MenuList, MenuOptionGroup, useMediaQuery, useTheme } from "@kvib/react";
+import {
+  Divider,
+  Flex,
+  Icon,
+  MenuDivider,
+  MenuList,
+  MenuOptionGroup,
+  useDisclosure,
+  useMediaQuery,
+  useTheme,
+} from "@kvib/react";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
@@ -8,7 +18,7 @@ import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
 import { INNDELINGTYPE_VALUES } from "types/api";
 import { anyFeatureIsEditable } from "utils/features";
 import { FLATEDATA_TABLE_INNDELINGTYPE_VALUES } from "../OverlayPanels/FlatedataPanel/FlatedataPanel";
-import useFlateHighlight from "../OverlayPanels/FlatedataPanel/useFlateHighlight";
+import InndelingerHighlightLoader from "../OverlayPanels/FlatedataPanel/FlateHighlightLoader";
 import CustomTooltip from "./CustomTooltip";
 import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
@@ -43,7 +53,7 @@ const ToolbarMenus = () => {
     getInndelingerOfType(type).some((inndeling) => inndeling.isViewing === true || inndeling.isEditing === true),
   );
 
-  const { isActive: visFlaterIsActive, toggle: toggleVisFlater } = useFlateHighlight();
+  const { isOpen: visFlaterIsActive, onToggle: toggleVisFlater } = useDisclosure();
 
   const toggleMovePoint = () => {
     toggleTool("koordinater");
@@ -208,6 +218,7 @@ const ToolbarMenus = () => {
 
   return (
     <>
+      <InndelingerHighlightLoader isActive={visFlaterIsActive} />
       <Divider orientation="vertical" />
       {showBigMenu && (
         <Flex gap="18px">
