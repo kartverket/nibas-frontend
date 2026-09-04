@@ -11,6 +11,7 @@ import { FLATEDATA_TABLE_INNDELINGTYPE_VALUES } from "../OverlayPanels/Flatedata
 import CustomTooltip from "./CustomTooltip";
 import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
+import FeatureToggle from "components/FeatureToggle";
 
 export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
   (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS",
@@ -267,17 +268,21 @@ const ToolbarMenus = () => {
             tooltip="Flate"
           >
             <MenuList>
-              <SwitchWithShortcutDesc
-                value={""}
-                onChange={() => {}}
-                isChecked={false}
-                shortcut={KeyboardShortcuts["flater"].displayString}
-                isDisabled={isEditing === false}
-              >
-                Vis flater
-              </SwitchWithShortcutDesc>
+              <FeatureToggle feature="VIS_FLATER">
+                <>
+                  <SwitchWithShortcutDesc
+                    value={""}
+                    onChange={() => {}}
+                    isChecked={false}
+                    shortcut={KeyboardShortcuts["flater"].displayString}
+                    isDisabled={isEditing === false}
+                  >
+                    Vis flater
+                  </SwitchWithShortcutDesc>
 
-              <MenuDivider />
+                  <MenuDivider />
+                </>
+              </FeatureToggle>
               {flateMenuItems.map((fmi) =>
                 fmi.isDisabled ? (
                   <CustomTooltip
