@@ -1,5 +1,5 @@
 import { InndelingOfType, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { grenserLayers } from "hooks/layers/constants";
+import { highlightLayers } from "hooks/layers/constants";
 import {
   TILHORIGHET_INNDELINGTYPE_VALUES,
   TilhorighetInndelingtype,
@@ -27,7 +27,7 @@ const InndelingerHighlightLoader = ({ isActive }: Props) => {
 
   useEffect(() => {
     if (!isActive) {
-      grenserLayers.flater.getSource()?.clear();
+      highlightLayers.flateHighlight.getSource()?.clear();
     }
   }, [isActive]);
 
@@ -53,13 +53,13 @@ type FlateKommuneOmraaderHighlighterProps = {
 };
 
 /**
- * Henter ut områdene for en gitt inndeling og bygger flatepolygoner for hver av dem som legges inn i "flater"-laget.
+ * Henter ut områdene for en gitt inndeling og bygger flatepolygoner for hver av dem som legges inn i "highlightFlate"-laget.
  */
 const InndelingHighlighter = ({ inndeling }: FlateKommuneOmraaderHighlighterProps) => {
   const omraader = useFlatedata(inndeling) ?? [];
 
   useEffect(() => {
-    const flaterSource = grenserLayers.flater.getSource();
+    const flaterSource = highlightLayers.flateHighlight.getSource();
     if (!flaterSource) {
       return;
     }
@@ -68,7 +68,7 @@ const InndelingHighlighter = ({ inndeling }: FlateKommuneOmraaderHighlighterProp
       omraader.map((omraade) => getPolygonForOmraade(inndeling.inndelingtype, inndeling.id, omraade)),
     );
 
-    addFeaturesToSource("flater", features);
+    addFeaturesToSource("flateHighlight", features);
 
     return () => {
       features.forEach((feature) => {
