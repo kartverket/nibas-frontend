@@ -66,6 +66,7 @@ export const grenserLayers: Record<VectorLayerId, VectorLayer<VectorSource<Featu
   measure: createVectorLayer("measure", measureSource),
   historical: createVectorLayer("historical"),
   BOPLIKTOMRAADE: createVectorLayer("BOPLIKTOMRAADE"),
+  flater: createVectorLayer("flater"),
 };
 
 export const highlightStrokeSource = new VectorSource();

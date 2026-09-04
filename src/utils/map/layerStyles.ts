@@ -247,7 +247,8 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: VectorLayer
     number == null ||
     grenseId === "archived" ||
     grenseId === "matrikkel" ||
-    grenseId === "historical"
+    grenseId === "historical" ||
+    grenseId === "flater"
   ) {
     return new Style();
   }
