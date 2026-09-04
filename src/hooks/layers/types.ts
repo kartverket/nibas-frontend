@@ -16,8 +16,8 @@ export type KartlagLayerId =
   | "norgesMaritimeGrenser"
   | "sjokartElektroniske";
 
-export type VectorLayerId =
-  Inndelingtype | "matrikkel" | "archived" | "edit" | "measure" | "historical" | "sosiFiler" | "flater";
+export type VectorLayerId = Inndelingtype | "matrikkel" | "archived" | "edit" | "measure" | "historical" | "sosiFiler";
+export type HighlightVectorLayerId = "flateHighlight" | "strokeHighlight" | "pointsHighlight";
 
 export const GRENSETYPER = [
   "Kommunegrense",
@@ -100,4 +100,4 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
 };
 
 // denne iden brukes både til Sources og Layers
-export type LayerId = KartlagLayerId | VectorLayerId;
+export type LayerId = KartlagLayerId | VectorLayerId | HighlightVectorLayerId;
