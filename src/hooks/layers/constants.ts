@@ -55,6 +55,7 @@ const createVectorLayer = (id: VectorLayerId, source?: VectorSource) => {
 };
 
 export const grenserLayers: Record<VectorLayerId, VectorLayer<VectorSource<Feature>>> = {
+  flater: createVectorLayer("flater"),
   matrikkel: createVectorLayer("matrikkel"),
   sosiFiler: createVectorLayer("sosiFiler"),
   FYLKE: createVectorLayer("FYLKE"),
@@ -66,7 +67,6 @@ export const grenserLayers: Record<VectorLayerId, VectorLayer<VectorSource<Featu
   measure: createVectorLayer("measure", measureSource),
   historical: createVectorLayer("historical"),
   BOPLIKTOMRAADE: createVectorLayer("BOPLIKTOMRAADE"),
-  flater: createVectorLayer("flater"),
 };
 
 export const highlightStrokeSource = new VectorSource();
