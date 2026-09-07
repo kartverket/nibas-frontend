@@ -282,16 +282,34 @@ const ToolbarMenus = () => {
             <MenuList>
               <FeatureToggle feature="VIS_FLATER">
                 <>
-                  <SwitchWithShortcutDesc
-                    value="flater"
-                    onChange={toggleVisFlater}
-                    isChecked={visFlaterIsActive}
-                    shortcut={KeyboardShortcuts["flater"].displayString}
-                    isDisabled={isEditing === false}
-                    closeOnSelect={false}
-                  >
-                    Vis flater
-                  </SwitchWithShortcutDesc>
+                  {isEditing === false ? (
+                    <CustomTooltip
+                      text={defaultToolDisabledMessage}
+                      aria-label="Verktøyet er ikke tilgjengelig. Du må først velge å redigere en inndeling."
+                    >
+                      <SwitchWithShortcutDesc
+                        value="flater"
+                        onChange={toggleVisFlater}
+                        isChecked={visFlaterIsActive}
+                        shortcut={KeyboardShortcuts["flater"].displayString}
+                        isDisabled={true}
+                        closeOnSelect={false}
+                      >
+                        Vis flater
+                      </SwitchWithShortcutDesc>
+                    </CustomTooltip>
+                  ) : (
+                    <SwitchWithShortcutDesc
+                      value="flater"
+                      onChange={toggleVisFlater}
+                      isChecked={visFlaterIsActive}
+                      shortcut={KeyboardShortcuts["flater"].displayString}
+                      isDisabled={false}
+                      closeOnSelect={false}
+                    >
+                      Vis flater
+                    </SwitchWithShortcutDesc>
+                  )}
 
                   <MenuDivider />
                 </>
