@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/v1/utkast/{id}": {
+    "/v1/auth/user": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,125 +12,36 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Hent et utkast med gitt id
-         * @description Henter utkast med gitt id
+         * Hent innlogget bruker
+         * @description Henter informasjon om innlogget bruker. Dette hentes fra headere satt av ztoperator
          */
-        get: operations["hentUtkast"];
-        /**
-         * Oppdater angitt utkast.
-         * @description Oppdaterer angitt utkast. Returnerer oppdatert utkast.
-         */
-        put: operations["oppdaterUtkast"];
+        get: operations["getUser"];
+        put?: never;
         post?: never;
-        /**
-         * Forkast angitt utkast.
-         * @description Forkast angitt utkast.
-         */
-        delete: operations["forkastUtkast"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/utkast": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Henter alle utkast med gitt status og som er gyldige fra og med gitt dato.
-         * @description Henter alle utkast med gitt status og som er gyldige fra og med gitt dato.
-         */
-        get: operations["hentUtkast_1"];
-        put?: never;
-        /**
-         * Oppretter et utkast og returnerer id.
-         * @description Oppretter et utkast og returnerer id.
-         */
-        post: operations["opprettUtkast"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/v1/utkast/{id}/valider": {
+    "/v1/bopliktomraader": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Henter alle bopliktområder */
+        get: operations["hentAlleBopliktomraader_1"];
         put?: never;
-        /**
-         * Forhåndsvalidering av angitt utkast.
-         * @description Validerer angitt utkast, inkludert evt ulagrede endringer i OppdaterUtkastRequest
-         */
-        post: operations["validerUtkast"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/v1/utkast/{id}/publiser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Publiserer utkastet med gitt id.
-         * @description Publiserer utkastet med gitt id.
-         */
-        post: operations["publiserUtkast"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kartlag/upload": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Konverterer en SOSI-fil til en GeoJSON-fil */
-        post: operations["convertSOSIToGeoJSON"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/frontendlogger": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Logger en gitt melding så utviklere får tak i den. */
-        post: operations["logMelding"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/stemmekretser/{lokalid}/framtidigeversjoner": {
+    "/v1/bopliktomraader/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -138,10 +49,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Hent framtidige versjoner for en stemmekrets.
-         * @description Returnerer en liste av nåværende Stemmekrets og eventuelt publiserte framtidige versjoner som matcher lokalid.
+         * Hent en bopliktomraade med gitt id
+         * @description Henter bopliktomraade med gitt id
          */
-        get: operations["hentFramtidigeVersjonerForStemmekrets"];
+        get: operations["hentBopliktomraade_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -150,7 +61,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/stemmekretser/{id}": {
+    "/v1/bopliktomraader/{id}/grenser": {
         parameters: {
             query?: never;
             header?: never;
@@ -158,10 +69,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Hent en stemmekrets med gitt id
-         * @description Henter stemmekrets med gitt id
+         * Hent grensene til et gitt bopliktområde
+         * @description Henter grensene til et bopliktområde med gitt id
          */
-        get: operations["hentStemmekrets"];
+        get: operations["hentGrenserForBopliktomraade_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -170,7 +81,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/stemmekretser/{id}/grenser": {
+    "/v1/ekstern/bopliktomraader": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter alle bopliktområder */
+        get: operations["hentAlleBopliktomraader"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/bopliktomraader/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter ett bopliktområde basert på ID */
+        get: operations["hentBopliktomraade"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/bopliktomraader/{id}/grenser": {
         parameters: {
             query?: never;
             header?: never;
@@ -178,10 +123,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Hent grensene til en gitt stemmekrets
-         * @description Henter grensene til en stemmekrets med gitt id
+         * Hent grensene til et gitt bopliktområde
+         * @description Henter grensene til et bopliktområde med gitt id
          */
-        get: operations["hentGrenserForStemmekrets"];
+        get: operations["hentGrenserForBopliktomraade"];
         put?: never;
         post?: never;
         delete?: never;
@@ -190,398 +135,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/nasjon/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent nasjon
-         * @description Henter nasjon på en gitt dato
-         */
-        get: operations["hentNasjon"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/matrikkelkodelister": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchMatrikkelKodelister"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent alle kommuner
-         * @description Henter alle kommuner i Nasjonal inndelingsbase.
-         */
-        get: operations["hentKommuner"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent en kommune med gitt id
-         * @description Henter kommune med gitt id
-         */
-        get: operations["hentKommune"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/stemmekretsgrenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter alle stemmekretsgrensene til en gitt kommune */
-        get: operations["hentKommunesStemmekretsgrenser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/stemmekretsgrenserHistoriske": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter stemmekretsgrenser som ble historiske på gitt gyldigTil-dato, knyttet til gitt kommune */
-        get: operations["hentKommunesStemmekretsgrenserHistoriske"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/stemmekretser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent kommunes stemmekretser
-         * @description Henter alle stemmekretser som tilhører en kommune.
-         */
-        get: operations["hentKommunesStemmekretser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter alle grenser til inndelinger med delt geometri til kommunegrensa i en gitt kommune */
-        get: operations["hentKommunesInndelingerMedDeltGeometriGrenser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/inndelingerdeltgeometri": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter alle inndelinger med delt geometri til kommunegrensa i en gitt kommune */
-        get: operations["hentKommunesInndelingerMedDeltGeometri"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/grunnkretsgrenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter alle grunnkretsgrensene til en gitt kommune */
-        get: operations["hentKommunesGrunnkretsgrenser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/grunnkretsgrenserHistoriske": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter grunnkretsgrenser som ble historiske på gitt gyldigTil-dato, knyttet til gitt kommune */
-        get: operations["hentKommunesGrunnkretsgrenserHistoriske"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/grunnkretser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent kommunes grunnkretser
-         * @description Henter alle grunnkretser som tilhører en kommune.
-         */
-        get: operations["hentKommunesGrunnkretser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/grenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent grensene til en gitt kommune
-         * @description Henter grensene til en kommune med gitt id
-         */
-        get: operations["hentGrenserForKommune"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/bopliktomraader": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent kommunes bopliktområde
-         * @description Henter bopliktområdet som tilhører en kommune.
-         */
-        get: operations["hentKommunesBopliktomraade"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/{id}/bopliktomraadegrenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter alle bopliktomraadegrensene til en gitt kommune */
-        get: operations["hentKommunesBopliktomraadegrenser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kommuner/forFylker": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent alle kommuner i gitte fylker
-         * @description Henter alle kommuner i gitte fylker.
-         */
-        get: operations["hentKommunerForFylker"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/kodeliste/maalemetode-koder": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["fetchMaalemetodeKoder"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/inndelinger/": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Søk etter inndelinger
-         * @description Søk etter inndelinger ved å bruke en søkestring
-         */
-        get: operations["finnInndelinger"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/grunnkretser/{lokalid}/framtidigeversjoner": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent framtidige versjoner for en grunnkrets.
-         * @description Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid.
-         */
-        get: operations["hentFramtidigeVersjonerForGrunnkrets"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/grunnkretser/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent en grunnkrets med gitt id
-         * @description Henter grunnkrets med gitt id
-         */
-        get: operations["hentGrunnkrets"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/grunnkretser/{id}/grenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent grensene til en gitt grunnkrets
-         * @description Henter grensene til en grunnkrets med gitt id
-         */
-        get: operations["hentGrenserForGrunnkrets"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fylker": {
+    "/v1/ekstern/fylker": {
         parameters: {
             query?: never;
             header?: never;
@@ -592,7 +146,7 @@ export interface paths {
          * Hent alle fylker
          * @description Henter alle fylker i Nasjonal inndelingsbase.
          */
-        get: operations["hentFylker"];
+        get: operations["hentFylker_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -601,7 +155,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/fylker/{id}": {
+    "/v1/ekstern/fylker/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -612,7 +166,7 @@ export interface paths {
          * Hent et fylke med gitt id
          * @description Henter fylke med gitt id
          */
-        get: operations["hentFylke"];
+        get: operations["hentFylke_1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -621,39 +175,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/fylker/{id}/stemmekretser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["hentFylkesStemmekretser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fylker/{id}/grunnkretser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["hentFylkesGrunnkretser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fylker/{id}/grenser": {
+    "/v1/ekstern/grenser": {
         parameters: {
             query?: never;
             header?: never;
@@ -661,10 +183,190 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Hent grensene til et gitt fylke
-         * @description Henter grensene til et fylke med gitt id
+         * Hent grenser
+         * @description Henter Kommunegrense, Fylkesgrense, Riksgrense, Territorialgrense og AvtaltAvgrensningslinje
          */
-        get: operations["hentGrenserForFylke"];
+        get: operations["hentGrenser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/grenser/{lokalid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent grense med angitt lokalid
+         * @description Henter en spesifikk grense basert på lokalid
+         */
+        get: operations["hentGrense"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/grunnkretser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Henter grunnkretser med gitte id-er
+         * @description Henter grunnkretser med gitte id-er
+         */
+        get: operations["hentGrunnkretserForIds"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/grunnkretser/{id}/grenser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent grensene til en gitt grunnkrets
+         * @description Henter grensene til en grunnkrets med gitt id
+         */
+        get: operations["hentGrenserForGrunnkrets_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/kommuner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent alle kommuner
+         * @description Henter alle kommuner i Nasjonal inndelingsbase.
+         */
+        get: operations["hentKommuner_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/kommuner/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent en kommune med gitt id
+         * @description Henter kommune med gitt id
+         */
+        get: operations["hentKommune_1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/kommuner/{kommunenummer}/grunnkretser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Henter alle grunnkretser for gitt kommunenummer
+         * @description Henter alle grunnkretser for gitt kommunenummer
+         */
+        get: operations["hentAlleGrunnkretserForKommune"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/kommuner/{kommunenummer}/grunnkretsermeddetaljer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Henter alle grunnkretser med detaljer for gitt kommunenummer
+         * @description Henter alle grunnkretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform.
+         */
+        get: operations["hentAlleGrunnkretserMedDetaljerForKommune"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/kommuner/{kommunenummer}/stemmekretser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Henter alle stemmekretser for gitt kommunenummer
+         * @description Henter alle stemmekretser for gitt kommunenummer
+         */
+        get: operations["hentAlleStemmekretserForKommune"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ekstern/kommuner/{kommunenummer}/stemmekretsermeddetaljer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Henter alle stemmekretser med detaljer for gitt kommunenummer
+         * @description Henter alle stemmekretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform.
+         */
+        get: operations["hentAlleStemmekretserMedDetaljerForKommune"];
         put?: never;
         post?: never;
         delete?: never;
@@ -733,207 +435,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/ekstern/kommuner": {
+    "/v1/frontendlogger": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Hent alle kommuner
-         * @description Henter alle kommuner i Nasjonal inndelingsbase.
-         */
-        get: operations["hentKommuner_1"];
+        get?: never;
         put?: never;
-        post?: never;
+        /** Logger en gitt melding så utviklere får tak i den. */
+        post: operations["logMelding"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/v1/ekstern/kommuner/{kommunenummer}/stemmekretsermeddetaljer": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Henter alle stemmekretser med detaljer for gitt kommunenummer
-         * @description Henter alle stemmekretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform.
-         */
-        get: operations["hentAlleStemmekretserMedDetaljerForKommune"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/kommuner/{kommunenummer}/stemmekretser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Henter alle stemmekretser for gitt kommunenummer
-         * @description Henter alle stemmekretser for gitt kommunenummer
-         */
-        get: operations["hentAlleStemmekretserForKommune"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/kommuner/{kommunenummer}/grunnkretsermeddetaljer": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Henter alle grunnkretser med detaljer for gitt kommunenummer
-         * @description Henter alle grunnkretser med detaljer for gitt kommunenummer. Denne brukes for uthenting av data til dataplattform.
-         */
-        get: operations["hentAlleGrunnkretserMedDetaljerForKommune"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/kommuner/{kommunenummer}/grunnkretser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Henter alle grunnkretser for gitt kommunenummer
-         * @description Henter alle grunnkretser for gitt kommunenummer
-         */
-        get: operations["hentAlleGrunnkretserForKommune"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/kommuner/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent en kommune med gitt id
-         * @description Henter kommune med gitt id
-         */
-        get: operations["hentKommune_1"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/grunnkretser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Henter grunnkretser med gitte id-er
-         * @description Henter grunnkretser med gitte id-er
-         */
-        get: operations["hentGrunnkretserForIds"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/grunnkretser/{id}/grenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent grensene til en gitt grunnkrets
-         * @description Henter grensene til en grunnkrets med gitt id
-         */
-        get: operations["hentGrenserForGrunnkrets_1"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/grenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent grenser
-         * @description Henter Kommunegrense, Fylkesgrense, Riksgrense, Territorialgrense og AvtaltAvgrensningslinje
-         */
-        get: operations["hentGrenser"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/grenser/{lokalid}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent grense med angitt lokalid
-         * @description Henter en spesifikk grense basert på lokalid
-         */
-        get: operations["hentGrense"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/fylker": {
+    "/v1/fylker": {
         parameters: {
             query?: never;
             header?: never;
@@ -944,7 +463,7 @@ export interface paths {
          * Hent alle fylker
          * @description Henter alle fylker i Nasjonal inndelingsbase.
          */
-        get: operations["hentFylker_1"];
+        get: operations["hentFylker"];
         put?: never;
         post?: never;
         delete?: never;
@@ -953,7 +472,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/ekstern/fylker/{id}": {
+    "/v1/fylker/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -964,7 +483,7 @@ export interface paths {
          * Hent et fylke med gitt id
          * @description Henter fylke med gitt id
          */
-        get: operations["hentFylke_1"];
+        get: operations["hentFylke"];
         put?: never;
         post?: never;
         delete?: never;
@@ -973,41 +492,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/ekstern/bopliktomraader": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter alle bopliktområder */
-        get: operations["hentAlleBopliktomraader"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/bopliktomraader/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Henter ett bopliktområde basert på ID */
-        get: operations["hentBopliktomraade"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/ekstern/bopliktomraader/{id}/grenser": {
+    "/v1/fylker/{id}/grenser": {
         parameters: {
             query?: never;
             header?: never;
@@ -1015,10 +500,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Hent grensene til et gitt bopliktområde
-         * @description Henter grensene til et bopliktområde med gitt id
+         * Hent grensene til et gitt fylke
+         * @description Henter grensene til et fylke med gitt id
          */
-        get: operations["hentGrenserForBopliktomraade"];
+        get: operations["hentGrenserForFylke"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1027,15 +512,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/bopliktomraader": {
+    "/v1/fylker/{id}/grunnkretser": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /** Henter alle bopliktområder */
-        get: operations["hentAlleBopliktomraader_1"];
+        get: operations["hentFylkesGrunnkretser"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1044,18 +528,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/bopliktomraader/{id}": {
+    "/v1/fylker/{id}/stemmekretser": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        /**
-         * Hent en bopliktomraade med gitt id
-         * @description Henter bopliktomraade med gitt id
-         */
-        get: operations["hentBopliktomraade_1"];
+        get: operations["hentFylkesStemmekretser"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1064,27 +544,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/bopliktomraader/{id}/grenser": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Hent grensene til et gitt bopliktområde
-         * @description Henter grensene til et bopliktområde med gitt id
-         */
-        get: operations["hentGrenserForBopliktomraade_1"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/auth/user": {
+    "/v1/grunnkretser/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -1092,12 +552,552 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Hent innlogget bruker
-         * @description Henter informasjon om innlogget bruker. Dette hentes fra headere satt av ztoperator
+         * Hent en grunnkrets med gitt id
+         * @description Henter grunnkrets med gitt id
          */
-        get: operations["getUser"];
+        get: operations["hentGrunnkrets"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/grunnkretser/{id}/grenser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent grensene til en gitt grunnkrets
+         * @description Henter grensene til en grunnkrets med gitt id
+         */
+        get: operations["hentGrenserForGrunnkrets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/grunnkretser/{lokalid}/framtidigeversjoner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent framtidige versjoner for en grunnkrets.
+         * @description Returnerer en liste av nåværende Grunnkrets og eventuelt publiserte framtidige versjoner som matcher lokalid.
+         */
+        get: operations["hentFramtidigeVersjonerForGrunnkrets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/inndelinger/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Søk etter inndelinger
+         * @description Søk etter inndelinger ved å bruke en søkestring
+         */
+        get: operations["finnInndelinger"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kartlag/upload": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Konverterer en SOSI-fil til en GeoJSON-fil */
+        post: operations["convertSOSIToGeoJSON"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kodeliste/maalemetode-koder": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchMaalemetodeKoder"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent alle kommuner
+         * @description Henter alle kommuner i Nasjonal inndelingsbase.
+         */
+        get: operations["hentKommuner"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent en kommune med gitt id
+         * @description Henter kommune med gitt id
+         */
+        get: operations["hentKommune"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/bopliktomraadegrenser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter alle bopliktomraadegrensene til en gitt kommune */
+        get: operations["hentKommunesBopliktomraadegrenser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/bopliktomraader": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent kommunes bopliktområde
+         * @description Henter bopliktområdet som tilhører en kommune.
+         */
+        get: operations["hentKommunesBopliktomraade"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/grenser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent grensene til en gitt kommune
+         * @description Henter grensene til en kommune med gitt id
+         */
+        get: operations["hentGrenserForKommune"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/grunnkretser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent kommunes grunnkretser
+         * @description Henter alle grunnkretser som tilhører en kommune.
+         */
+        get: operations["hentKommunesGrunnkretser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/grunnkretsgrenser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter alle grunnkretsgrensene til en gitt kommune */
+        get: operations["hentKommunesGrunnkretsgrenser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/grunnkretsgrenserHistoriske": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter grunnkretsgrenser som ble historiske på gitt gyldigTil-dato, knyttet til gitt kommune */
+        get: operations["hentKommunesGrunnkretsgrenserHistoriske"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/inndelingerdeltgeometri": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter alle inndelinger med delt geometri til kommunegrensa i en gitt kommune */
+        get: operations["hentKommunesInndelingerMedDeltGeometri"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/inndelingerdeltgeometrigrenser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter alle grenser til inndelinger med delt geometri til kommunegrensa i en gitt kommune */
+        get: operations["hentKommunesInndelingerMedDeltGeometriGrenser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/stemmekretser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent kommunes stemmekretser
+         * @description Henter alle stemmekretser som tilhører en kommune.
+         */
+        get: operations["hentKommunesStemmekretser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/stemmekretsgrenser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter alle stemmekretsgrensene til en gitt kommune */
+        get: operations["hentKommunesStemmekretsgrenser"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/{id}/stemmekretsgrenserHistoriske": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Henter stemmekretsgrenser som ble historiske på gitt gyldigTil-dato, knyttet til gitt kommune */
+        get: operations["hentKommunesStemmekretsgrenserHistoriske"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/kommuner/forFylker": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent alle kommuner i gitte fylker
+         * @description Henter alle kommuner i gitte fylker.
+         */
+        get: operations["hentKommunerForFylker"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/matrikkelkodelister": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["fetchMatrikkelKodelister"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/nasjon/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent nasjon
+         * @description Henter nasjon på en gitt dato
+         */
+        get: operations["hentNasjon"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/stemmekretser/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent en stemmekrets med gitt id
+         * @description Henter stemmekrets med gitt id
+         */
+        get: operations["hentStemmekrets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/stemmekretser/{id}/grenser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent grensene til en gitt stemmekrets
+         * @description Henter grensene til en stemmekrets med gitt id
+         */
+        get: operations["hentGrenserForStemmekrets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/stemmekretser/{lokalid}/framtidigeversjoner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent framtidige versjoner for en stemmekrets.
+         * @description Returnerer en liste av nåværende Stemmekrets og eventuelt publiserte framtidige versjoner som matcher lokalid.
+         */
+        get: operations["hentFramtidigeVersjonerForStemmekrets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/utkast": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Henter alle utkast med gitt status og som er gyldige fra og med gitt dato.
+         * @description Henter alle utkast med gitt status og som er gyldige fra og med gitt dato.
+         */
+        get: operations["hentUtkast_1"];
+        put?: never;
+        /**
+         * Oppretter et utkast og returnerer id.
+         * @description Oppretter et utkast og returnerer id.
+         */
+        post: operations["opprettUtkast"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/utkast/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Hent et utkast med gitt id
+         * @description Henter utkast med gitt id
+         */
+        get: operations["hentUtkast"];
+        /**
+         * Oppdater angitt utkast.
+         * @description Oppdaterer angitt utkast. Returnerer oppdatert utkast.
+         */
+        put: operations["oppdaterUtkast"];
+        post?: never;
+        /**
+         * Forkast angitt utkast.
+         * @description Forkast angitt utkast.
+         */
+        delete: operations["forkastUtkast"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/utkast/{id}/publiser": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Publiserer utkastet med gitt id.
+         * @description Publiserer utkastet med gitt id.
+         */
+        post: operations["publiserUtkast"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/utkast/{id}/valider": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Forhåndsvalidering av angitt utkast.
+         * @description Validerer angitt utkast, inkludert evt ulagrede endringer i OppdaterUtkastRequest
+         */
+        post: operations["validerUtkast"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1112,6 +1112,11 @@ export interface components {
         AdministrativEnhetNavn: {
             /** @description Navnet på en administrativ enhet */
             navn: string;
+            /**
+             * Format: int32
+             * @description Rekkefølge på navn
+             */
+            rekkefoelge?: number | null;
             /** @description Språkkoden til det administrative navnet */
             spraak: string;
             /**
@@ -1119,11 +1124,6 @@ export interface components {
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
-            /**
-             * Format: int32
-             * @description Rekkefølge på navn
-             */
-            rekkefoelge?: number | null;
         };
         /** @description Spesfikk metadata for en administrativ grense (fylkes/kommunegrense). Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Objekttype/Index/EAID_5142EDBA_4226_4ca3_924D_EECEFD216D1A */
         AdministrativGrenseMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
@@ -1137,6 +1137,19 @@ export interface components {
              * @enum {string}
              */
             discriminator: "AdministrativGrenseMetadata";
+        };
+        ApiErrorResponse: {
+            /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
+            errorCode: string;
+            errorDescription: components["schemas"]["ErrorDescription"];
+        };
+        /** @description Representasjon av audit info for et objekt. */
+        AuditInfoResponse: {
+            /**
+             * Format: date-time
+             * @description Da objektet sist ble oppdatert.
+             */
+            oppdateringsdato: string;
         };
         /** @description Spesifikk metadata for en AvtaltAvgrensningslinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
         AvtaltAvgrensningslinjeMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
@@ -1153,29 +1166,73 @@ export interface components {
         };
         /** @description Representasjon av et bopliktomraade */
         BopliktomraadeRequest: {
+            /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
+            andreLokaleAvgrensninger?: string | null;
+            /** @description Referanse til forskriften for bopliktomraadet */
+            forskriftsreferanse?: string | null;
+            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
+            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
+            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
+            gjelderKunDelAvKommunen: boolean;
+            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
+            harUsikkerAvgrensning: boolean;
             identifikasjon: components["schemas"]["Identifikasjon"];
+            kommuneIdentifikasjon: components["schemas"]["Identifikasjon"];
             /** @description Navnet til bopliktomraadet */
             navn: string;
             /** @description Nummeret til bopliktomraadet */
             nummer: string;
-            kommuneIdentifikasjon: components["schemas"]["Identifikasjon"];
+            /** @description URL til kommunen sin informasjonside */
+            url?: string | null;
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
-            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
-            gjelderKunDelAvKommunen: boolean;
-            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
-            harUsikkerAvgrensning: boolean;
-            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
-            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
+        };
+        /** @description Representasjon av et bopliktområde */
+        BopliktomraadeResponse: {
             /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
             andreLokaleAvgrensninger?: string | null;
-            /** @description Referanse til forskriften for bopliktomraadet */
+            /**
+             * Format: date-time
+             * @description Datafangstdato for objektet
+             */
+            datafangstdato?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            /** @description Forskriftsreferansen for bopliktområdet */
             forskriftsreferanse?: string | null;
-            /** @description URL til kommunen sin informasjonside */
+            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
+            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
+            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
+            gjelderKunDelAvKommunen: boolean;
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
+            harUsikkerAvgrensning: boolean;
+            id: components["schemas"]["ObjektIdentifikator"];
+            kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /** @description Navnet til bopliktområdet */
+            navn: string;
+            /** @description Nummeret til bopliktområdet */
+            nummer: string;
+            /**
+             * Format: date-time
+             * @description Siste oppdateringstidspunkt for objektet
+             */
+            oppdateringsdato: string;
+            representasjonspunkt: components["schemas"]["Feature"];
+            /** @description Lenke til mer informasjon */
             url?: string | null;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
         };
         /** @description Felles metadata-egenskaper for grenser. */
         CommonGrenseMetadata: {
@@ -1183,7 +1240,6 @@ export interface components {
         };
         /** @description Felles metadata-egenskaper. */
         CommonMetadata: {
-            identifikasjon: components["schemas"]["Identifikasjon"];
             /**
              * Format: date-time
              * @description Dato når objektet siste gang ble registrert/observert/målt i terrenget
@@ -1199,24 +1255,38 @@ export interface components {
              * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden
              */
             gyldigTil?: string | null;
+            identifikasjon: components["schemas"]["Identifikasjon"];
             /** @description Generelle opplysninger/merknad */
             informasjon?: string | null;
-            sporingsinformasjon: components["schemas"]["Sporingsinformasjon"];
             /** @description Referanse til opphavsmaterialet, kildematerialet, organisasjons/publiseringskilde. */
             opphav?: string | null;
+            sporingsinformasjon: components["schemas"]["Sporingsinformasjon"];
+        };
+        /** @description Koordinatet til representasjonspunktet til inndelingen. */
+        Coordinate: {
+            coordinate?: components["schemas"]["Coordinate"];
+            /** Format: double */
+            m?: number;
+            valid?: boolean;
+            /** Format: double */
+            x?: number;
+            /** Format: double */
+            y?: number;
+            /** Format: double */
+            z?: number;
         };
         /** @description Representasjon av opprettelsen av nytt bopliktområde */
         CreateBopliktomraadeRequest: Omit<components["schemas"]["CreateInndelingRequest"], "discriminator"> & {
-            forskriftsreferanse?: string | null;
-            nummer: string;
-            navn: string;
-            identifikasjon: components["schemas"]["Identifikasjon"];
-            url?: string | null;
-            harUsikkerAvgrensning: boolean;
             andreLokaleAvgrensninger?: string | null;
-            gjelderKunDelAvKommunen: boolean;
-            kommuneIdentifikasjon: components["schemas"]["Identifikasjon"];
+            forskriftsreferanse?: string | null;
             gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
+            gjelderKunDelAvKommunen: boolean;
+            harUsikkerAvgrensning: boolean;
+            identifikasjon: components["schemas"]["Identifikasjon"];
+            kommuneIdentifikasjon: components["schemas"]["Identifikasjon"];
+            navn: string;
+            nummer: string;
+            url?: string | null;
             /** Format: int32 */
             version: number;
         } & {
@@ -1226,14 +1296,12 @@ export interface components {
              */
             discriminator: "CreateBopliktomraadeRequest";
         };
-        /** @description Representasjon av en opprettelse av en ny inndeling for en non-exhaustive inndeling. */
+        /** @description Representasjon av en opprettelse av en ny inndeling for en ikke-heldekkende inndeling. */
         CreateInndelingRequest: {
             discriminator: string;
         };
         /** @description Henviser til fastsettings- eller lovinformasjon. */
         DokumentasjonsreferanseDTO: {
-            /** @description ID for dokumentasjonsreferansen. */
-            id?: string | null;
             /** @description URL til saksdokument. */
             dokumentlenker: components["schemas"]["TekstHolder"][];
             /**
@@ -1245,12 +1313,16 @@ export interface components {
             fastsettingsmyndighet?: string | null;
             /** @description Lov som rettskilden er begrunnet i. */
             hjemmel?: string | null;
+            /** @description ID for dokumentasjonsreferansen. */
+            id?: string | null;
             /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
             internReferanserKartverket: components["schemas"]["TekstHolder"][];
             /** @description Referanse til lov, forskrift, vedtak, dom eller traktat i form av kode som angir type dokument, dato og nummer For eksempel: LOV-2012-09-07-65. */
             rettskildeId?: string | null;
             /** @description Navn på lov, forskrift, vedtak, dom eller traktat. */
             rettskildeTittel: string;
+            /** @description Egenskap som sier om en dokumentasjonsreferanse skal arkiveres */
+            shouldArchive: boolean;
             /**
              * Format: date
              * @description Tidspunktet når objektet oppstod i den virkelige verden (Vedtakets gyldighet). Påkrevd for alle nye dokumentasjonsreferanser.
@@ -1261,37 +1333,245 @@ export interface components {
              * @description Tidspunktet når objektet opphørte å eksistere i den virkelige verden (Vedtakets gyldighet)
              */
             vedtakGyldigTil?: string | null;
-            /** @description Egenskap som sier om en dokumentasjonsreferanse skal arkiveres */
-            shouldArchive: boolean;
         };
-        /** @description Liste av features som holder på dataene */
-        Feature: {
-            /** @description En konstant, navn: type, verdi: Feature */
-            type: string;
-            /** @description Id til feature */
-            id?: string | null;
-            properties: components["schemas"]["FeatureProperties"];
-            geometry: components["schemas"]["LineString"] | components["schemas"]["MultiPolygon"] | components["schemas"]["Point"];
-        };
-        /** @description Egenskaper som beskriver en gitt feature (properties-objektet i geojson-strukturen) */
-        FeatureProperties: {
-            /** @description Avhengig av hva slags feature man har kan dette være enten grensetype eller geometri-type (posisjon eller flate) */
-            type: string;
+        /** @description Representasjon av et bopliktområde */
+        EksternBopliktomraadeRespons: {
+            /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
+            andreLokaleAvgrensninger?: string | null;
             /**
-             * Format: int32
-             * @description Koordinatsystemet. Defaulter til 25833.
+             * Format: date-time
+             * @description Datafangstdato for objektet
              */
-            srid: number;
-            metadata?: (components["schemas"]["AdministrativGrenseMetadata"] | components["schemas"]["AvtaltAvgrensningslinjeMetadata"] | components["schemas"]["FlateMetadata"] | components["schemas"]["GrunnlinjeMetadata"] | components["schemas"]["KommunalKretsgrenseMetadata"] | components["schemas"]["RiksgrenseMetadata"] | components["schemas"]["StatistiskgrenseMetadata"] | components["schemas"]["TerritorialgrenseMetadata"] | unknown) | null;
-            /** @description Egenskaper til konteksten til grensen. */
-            kontekstEgenskaper: components["schemas"]["KontekstEgenskaper"][];
+            datafangstdato?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            features: components["schemas"]["FeatureCollection"];
+            /** @description Forskriftsreferanse til boplikten */
+            forskriftsreferanse?: string | null;
+            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
+            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
+            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
+            gjelderKunDelAvKommunen: boolean;
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
+            harUsikkerAvgrensning: boolean;
+            id: components["schemas"]["ObjektIdentifikator"];
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /**
+             * Format: date-time
+             * @description Siste oppdateringstidspunkt for objektet
+             */
+            oppdateringsdato: string;
+            /** @description URL til informasjon om boplikten */
+            url?: string | null;
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
+        };
+        /** @description En referanse til et fylke */
+        EksternFylkeRef: {
+            /**
+             * Format: int32
+             * @description Antall publiserte framtidige gyldige versjoner.
+             */
+            antallFramtidigeVersjoner: number;
+            fylkesnummer: components["schemas"]["Fylkesnummer"];
+            /** @description URL til full representasjon av fylket */
+            href: string;
+            id: components["schemas"]["ObjektIdentifikator"];
+            /** @description Liste over navn til fylket */
+            navn: components["schemas"]["AdministrativEnhetNavn"][];
+        };
+        /** @description Representasjon av et fylke */
+        EksternFylkeResponse: {
+            /** @description Liste over navn til fylket */
+            administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+            features: components["schemas"]["FeatureCollection"];
+            fylkesnummer: components["schemas"]["Fylkesnummer"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            /**
+             * Format: date-time
+             * @description Angir når dette fylket ble sist oppdatert
+             */
+            oppdateringsdato: string;
+            /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
+            samiskforvaltningsomraade: boolean;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
+        };
+        /** @description Representasjon av en grunnkrets */
+        EksternGrunnkretsResponse: {
+            /**
+             * Format: date-time
+             * @description Datafangsdato for objektet
+             */
+            datafangstdato?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            features: components["schemas"]["FeatureCollection"];
+            /** @description Grunnkretsnummeret til grunnkretsen */
+            grunnkretsnummer: string;
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /** @description Navnet på grunnkretsen */
+            navn: string;
+            /**
+             * Format: date-time
+             * @description Siste oppdateringstidspunkt for objektet
+             */
+            oppdateringsdato: string;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
+        };
+        /** @description En referanse til en kommune */
+        EksternKommuneRef: {
+            /**
+             * Format: int32
+             * @description Antall publiserte framtidige gyldige versjoner.
+             */
+            antallFramtidigeVersjoner: number;
+            /** @description URL til full representasjon av kommunen */
+            href: string;
+            id: components["schemas"]["ObjektIdentifikator"];
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /** @description Liste over navn til kommunen */
+            navn: components["schemas"]["AdministrativEnhetNavn"][];
+        };
+        /** @description Representasjon av en kommune */
+        EksternKommuneResponse: {
+            /** @description Liste over navn til kommunen */
+            administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
+            features: components["schemas"]["FeatureCollection"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /**
+             * Format: date-time
+             * @description Angir når denne kommunen ble sist oppdatert
+             */
+            oppdateringsdato: string;
+            /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
+            samiskforvaltningsomraade: boolean;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
+        };
+        /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
+        EksternKretsResponse: {
+            features: components["schemas"]["FeatureCollection"];
+            /** @description Lokalid-en til kretsen. */
+            id: string;
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /** @description Navnet på kretsen. */
+            navn: string;
+            /** @description Nummeret til kretsen. */
+            nummer: string;
+        };
+        /** @description Representasjon av en stemmekrets */
+        EksternStemmekretsResponse: {
+            /**
+             * Format: date-time
+             * @description Datafangsdato for objektet
+             */
+            datafangstdato?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            features: components["schemas"]["FeatureCollection"];
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /**
+             * Format: date-time
+             * @description Siste oppdateringstidspunkt for objektet
+             */
+            oppdateringsdato: string;
+            /** @description Navnet på stemmekretsen */
+            stemmekretsnavn: string;
+            /** @description Stemmekretsnummeret til stemmekretsen */
+            stemmekretsnummer: string;
+            /** @description Tellekretsnavn til stemmekretsen */
+            tellekretsnavn?: string | null;
+            /** @description Tellekretsnummer til stemmekretsen */
+            tellekretsnummer?: string | null;
+            /** @description Valgdistriktsnummer til stemmekretsen */
+            valgdistriktsnummer?: string | null;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
+        };
+        /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
+        EndredeInndelinger: {
+            endredeBopliktomraader: string[];
+            endredeFylker: string[];
+            endredeGrunnkretser: string[];
+            endredeKommuner: string[];
+            endredeNasjoner: string[];
+            endredeStemmekretser: string[];
+        };
+        /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
+        ErrorDescription: {
+            /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
+            additionalInfo?: string | null;
+            /** @description En beskrivende forklaring av feilen som oppstod. */
+            description: string;
+            /** @description Tittelen på feilmeldingen som skal vises. */
+            title: string;
+        };
+        /** @description Liste av features som holder på dataene */
+        Feature: {
+            geometry: components["schemas"]["LineString"] | components["schemas"]["MultiPolygon"] | components["schemas"]["Point"];
+            /** @description Id til feature */
+            id?: string | null;
+            properties: components["schemas"]["FeatureProperties"];
+            /** @description En konstant, navn: type, verdi: Feature */
+            type: string;
+        };
+        FeatureCollection: {
+            /** @description Liste av features som holder på dataene */
+            features: components["schemas"]["Feature"][];
+            /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
+            type: string;
+        };
+        /** @description Egenskaper som beskriver en gitt feature (properties-objektet i geojson-strukturen) */
+        FeatureProperties: {
+            /** @description Egenskaper til konteksten til grensen. */
+            kontekstEgenskaper: components["schemas"]["KontekstEgenskaper"][];
+            metadata?: (components["schemas"]["AdministrativGrenseMetadata"] | components["schemas"]["AvtaltAvgrensningslinjeMetadata"] | components["schemas"]["FlateMetadata"] | components["schemas"]["GrunnlinjeMetadata"] | components["schemas"]["KommunalKretsgrenseMetadata"] | components["schemas"]["RiksgrenseMetadata"] | components["schemas"]["StatistiskgrenseMetadata"] | components["schemas"]["TerritorialgrenseMetadata"] | unknown) | null;
             /** @description Egenskap som sier om en grense med en grenseendring er skal arkiveres */
             shouldArchive: boolean;
+            /**
+             * Format: int32
+             * @description Koordinatsystemet. Defaulter til 25833.
+             */
+            srid: number;
+            /** @description Avhengig av hva slags feature man har kan dette være enten grensetype eller geometri-type (posisjon eller flate) */
+            type: string;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
         };
         /** @description Metadata for en flate (felles for nasjon, fylke, kommune og grunnkrets) */
         FlateMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
@@ -1302,6 +1582,12 @@ export interface components {
              * @enum {string}
              */
             discriminator: "FlateMetadata";
+        };
+        FrontendLogRequest: {
+            /** @enum {string} */
+            logLevel: "INFO" | "WARN" | "ERROR";
+            message: string;
+            stacktrace?: string | null;
         };
         /** @description Endringer på fylke. */
         FylkeRequest: {
@@ -1317,6 +1603,35 @@ export interface components {
              */
             version: number;
         };
+        /** @description Representasjon av et fylke */
+        FylkeResponse: {
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            /** @description Liste over navn til fylket */
+            navn: components["schemas"]["AdministrativEnhetNavn"][];
+            /** @description Fylkesnummeret til fylket */
+            nummer: string;
+            /**
+             * Format: date-time
+             * @description Angir når dette fylket ble sist oppdatert
+             */
+            oppdateringsdato: string;
+            representasjonspunkt: components["schemas"]["Feature"];
+            /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
+            samiskforvaltningsomraade: boolean;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
+        };
+        /** @description Representasjon av et fylkesnummer */
+        Fylkesnummer: {
+            /** @description Unik UUID for fylkesnummeret */
+            id: string;
+            /** @description Det faktiske fylkesnummeret */
+            kodeverdi: string;
+        };
         /** @description Geometry-typene vi støtter i NIBAS. */
         Geometry: {
             type: string;
@@ -1326,32 +1641,115 @@ export interface components {
             /** @description Endringer på features. */
             endredeFeatures: components["schemas"]["Feature"][];
         };
+        /** @description Representasjon av en grense */
+        GrenseResponse: {
+            /**
+             * Format: date-time
+             * @description Dato for datafangst
+             */
+            datafangstdato?: string | null;
+            /** @description Brukeren som sist endret grensen */
+            endretAv: string;
+            /**
+             * Format: date-time
+             * @description Dato for siste endring
+             */
+            endretDato: string;
+            /**
+             * Format: date-time
+             * @description Dato for første digitalisering
+             */
+            foerstedigitaliseringsdato: string;
+            geometri: components["schemas"]["LineString"] | components["schemas"]["MultiPolygon"] | components["schemas"]["Point"];
+            /**
+             * @description Type grense
+             * @enum {string}
+             */
+            grensetype: "Kommunegrense" | "Fylkesgrense" | "Riksgrense" | "AvtaltAvgrensningslinje" | "Territorialgrense" | "Grunnlinje" | "Grunnkretsgrense" | "Delomraadegrense" | "Stemmekretsgrense" | "Bopliktgrense";
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            /** @description Unik ID for grensen */
+            id: string;
+            /** @description Tilleggsinformasjon om grensen */
+            informasjon?: string | null;
+            /** @description Kommuner på grensen med side-informasjon */
+            kommuner: components["schemas"]["KommuneInfoDTO"][];
+            /** @description Lokal ID for grensen */
+            lokalid: string;
+            /** @description Metode for måling */
+            maalemetode?: string | null;
+            /**
+             * Format: int32
+             * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer (oppgitt i cm)
+             */
+            noeyaktighet?: number | null;
+            /** @description Opphav/kilde til grensen */
+            opphav?: string | null;
+            /**
+             * @description Type endring som ble gjort
+             * @enum {string}
+             */
+            typeEndring: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+        };
         /** @description Representasjon av en grunnkrets */
         GrunnkretsRequest: {
+            identifikasjon: components["schemas"]["Identifikasjon"];
+            /** @description informasjon om grunnkretsen */
+            informasjon?: string | null;
             /** @description Navnet på grunnkretsen */
             navn: string;
             /** @description Grunnkretsnummeret til grunnkretsen */
             nummer: string;
-            identifikasjon: components["schemas"]["Identifikasjon"];
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
-            /** @description informasjon om grunnkretsen */
+        };
+        /** @description Representasjon av en grunnkrets */
+        GrunnkretsResponse: {
+            /**
+             * Format: date-time
+             * @description Datafangsdato for objektet
+             */
+            datafangstdato?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            /** @description Informasjon om grunnkretsen */
             informasjon?: string | null;
+            kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /** @description Navnet på grunnkretsen */
+            navn: string;
+            /** @description Grunnkretsnummeret til grunnkretsen */
+            nummer: string;
+            /**
+             * Format: date-time
+             * @description Siste oppdateringstidspunkt for objektet
+             */
+            oppdateringsdato: string;
+            representasjonspunkt: components["schemas"]["Feature"];
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
         };
         /** @description Representasjon av sammenslåing av en grunnkrets med 1 eller flere andre grunnkretser i samme kommune */
         GrunnkretsSammenslaaingsendringRequest: {
-            viderefoertGrunnkrets: components["schemas"]["IdentifikatorMedVersjon"];
             /** @description Liste av identifikatorer som skal bli del av den videreførte grunnkretsen */
             grunnkretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
+            /** @description Informasjon om sammenslåingen som videreføres til den nye grunnkretsen og de gamle */
+            informasjon?: string | null;
             /** @description Navnet til den sammenslåtte grunnkretsen */
             navn: string;
             /** @description Grunnkretsnummeret til den sammenslåtte grunnkretsen */
             nummer: string;
-            /** @description Informasjon om sammenslåingen som videreføres til den nye grunnkretsen og de gamle */
-            informasjon?: string | null;
+            viderefoertGrunnkrets: components["schemas"]["IdentifikatorMedVersjon"];
         };
         /** @description Spesifikk metadata for en Grunnlinje. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
         GrunnlinjeMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
@@ -1365,6 +1763,19 @@ export interface components {
              * @enum {string}
              */
             discriminator: "GrunnlinjeMetadata";
+        };
+        /** @description Gyldighetsintervall for objektet */
+        GyldighetResponse: {
+            /**
+             * Format: date
+             * @description Tidspunktet objektet er gyldig fra
+             */
+            gyldigFra: string;
+            /**
+             * Format: date
+             * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
+             */
+            gyldigTil?: string | null;
         };
         /** @description Unik identifikasjon av et objekt */
         Identifikasjon: {
@@ -1381,12 +1792,70 @@ export interface components {
              */
             version: number;
         };
+        InndelingResponse: {
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            /** @description Navnet til inndelingen */
+            navn: string;
+            /** @description Nummeret til inndelingen */
+            nummer: string;
+            representasjonspunkt: components["schemas"]["Feature"];
+            /**
+             * @description Flatetypen til inndelingen
+             * @enum {string}
+             */
+            type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE";
+        };
+        InndelingSearchResponse: {
+            /** @description Lokalid til inndelingen */
+            id: string;
+            /** @description Navnet til inndelingen */
+            navn: string;
+            /** @description Nummeret til inndelingen */
+            nummer: string;
+            representasjonspunkt: components["schemas"]["Coordinate"];
+            /**
+             * @description Flatetypen til inndelingen
+             * @enum {string}
+             */
+            type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE";
+        };
         /** @description Metode for måling i grunnriss (x,y), og høyde (z) når metoden er den samme som ved måling i grunnriss. */
         KodelisteEntry: {
-            /** @description Id for kodeliste-innslaget. */
-            id?: string | null;
             /** @description Lenke til kodelista. */
             href: string;
+            /** @description Id for kodeliste-innslaget. */
+            id?: string | null;
+        };
+        /** @description Liste av terrengdetaljkoder fra Matrikkelen. */
+        KodelisteEntryDTO: {
+            /**
+             * Format: int64
+             * @description Id til koden.
+             */
+            id: number;
+            /** @description Kodeverdi for koden, kan være SOSI-kodeverdi. */
+            kodeverdi: string;
+            /** @description Beskrivende navn til koden på bokmål. */
+            navn: string;
+        };
+        /** @description Liste av kodeliste-elementer. */
+        KodelisteItem: {
+            /** @description Id til kodeliste-innslaget. */
+            id: string;
+            /** @description kode til kodeliste-innslaget. */
+            kode: string;
+            /** @description Navnet til kodeliste-innslaget. */
+            label: string;
+        };
+        KodelisteRespons: {
+            /** @description Liste av kodeliste-elementer. */
+            items: components["schemas"]["KodelisteItem"][];
+            /**
+             * @description Angir typen av kodeliste.
+             * @enum {string}
+             */
+            type: "KOMMUNENUMMER" | "FYLKESNUMMER" | "MAALEMETODE_KODE";
         };
         /** @description Spesifikk metadata for en kommunal kretsgrense (stemmekretsgrense/valgdistriktgrense/skolekretsgrense) */
         KommunalKretsgrenseMetadata: {
@@ -1395,6 +1864,24 @@ export interface components {
             common: components["schemas"]["CommonMetadata"];
             commonGrense: components["schemas"]["CommonGrenseMetadata"];
         });
+        /** @description Informasjon om en kommune på en side av en grense */
+        KommuneInfoDTO: {
+            /** @description Fylkes Lokal ID */
+            fylkesLokalID?: string | null;
+            /** @description Kommune Lokal ID */
+            kommuneLokalID: string;
+            /** @description Kommunenavn */
+            kommunenavn: string;
+            /** @description Kommunenummer */
+            kommunenummer: string;
+        };
+        /** @description Representasjon av et kommunenummer */
+        Kommunenummer: {
+            /** @description Unik UUID for kommunenummeret */
+            id: string;
+            /** @description Det faktiske kommunenummeret */
+            kodeverdi: string;
+        };
         /** @description Representasjon av en kommune */
         KommuneRequest: {
             /** @description Navnene til kommunen */
@@ -1409,12 +1896,29 @@ export interface components {
              */
             version: number;
         };
-        /** @description Representasjon av et kommunenummer */
-        Kommunenummer: {
-            /** @description Unik UUID for kommunenummeret */
-            id: string;
-            /** @description Det faktiske kommunenummeret */
-            kodeverdi: string;
+        /** @description Representasjon av en kommune */
+        KommuneResponse: {
+            /** @description Lokal-id til fylket denne kommunen er i */
+            fylkeId: string;
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            /** @description Liste over navn til kommunen */
+            navn: components["schemas"]["AdministrativEnhetNavn"][];
+            /** @description Kommunenummeret til kommunen */
+            nummer: string;
+            /**
+             * Format: date-time
+             * @description Angir når denne kommunen ble sist oppdatert
+             */
+            oppdateringsdato: string;
+            representasjonspunkt: components["schemas"]["Feature"];
+            /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
+            samiskforvaltningsomraade: boolean;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
         };
         /** @description Egenskaper som beskriver konteksten som grensen sees i. */
         KontekstEgenskaper: {
@@ -1435,15 +1939,15 @@ export interface components {
         };
         /** @description Representasjon av deling av en krets som ender i to kretser der én er videreført og én er ny */
         KretsDelingEndringRequest: {
-            opprinneligKrets: components["schemas"]["IdentifikatorMedVersjon"];
-            kommuneId: components["schemas"]["ObjektIdentifikator"];
             /**
              * @description Flatetypen som skal deles
              * @enum {string}
              */
             flatetype: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE";
+            kommuneId: components["schemas"]["ObjektIdentifikator"];
             /** @description Navn og nummer for de nye kretsene som skal utledes fra opprinnelig krets */
             nyeKretser: components["schemas"]["KretsNavnOgNummer"][];
+            opprinneligKrets: components["schemas"]["IdentifikatorMedVersjon"];
         };
         /** @description Representasjon av navn og nummer for en ny krets */
         KretsNavnOgNummer: {
@@ -1466,35 +1970,45 @@ export interface components {
         Lokalid: {
             value: string;
         };
+        MatrikkelKodelisterRespons: {
+            /** @description Liste av administrativ grensekoder fra Matrikkelen. */
+            administrativGrenseKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+            /** @description Liste av hjelpelinjetyper fra Matrikkelen. */
+            hjelpelinjetypeKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+            /** @description Liste av målemetodekoder fra Matrikkelen. */
+            maalemetodeKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+            /** @description Liste av terrengdetaljkoder fra Matrikkelen. */
+            terrengdetaljKodeliste: components["schemas"]["KodelisteEntryDTO"][];
+        };
         /** @description Diverse metadata-felter fra sosi-modellen. */
         Metadata: {
             discriminator: string;
         };
         /** @description Representasjon av endringer på metadata. */
         Metadataendringer: {
-            /** @description Endringer på nasjon. */
-            nasjonsendringer: {
-                [key: string]: components["schemas"]["NasjonRequest"];
+            /** @description Endringer på bopliktomraade. */
+            bopliktomraadeendringer: {
+                [key: string]: components["schemas"]["BopliktomraadeRequest"];
             };
             /** @description Endringer på fylke. */
             fylkesendringer: {
                 [key: string]: components["schemas"]["FylkeRequest"];
             };
-            /** @description Endringer på kommune. */
-            kommuneendringer: {
-                [key: string]: components["schemas"]["KommuneRequest"];
-            };
             /** @description Endringer på grunnkrets. */
             grunnkretsendringer: {
                 [key: string]: components["schemas"]["GrunnkretsRequest"];
             };
+            /** @description Endringer på kommune. */
+            kommuneendringer: {
+                [key: string]: components["schemas"]["KommuneRequest"];
+            };
+            /** @description Endringer på nasjon. */
+            nasjonsendringer: {
+                [key: string]: components["schemas"]["NasjonRequest"];
+            };
             /** @description Endringer på stemmekrets. */
             stemmekretsendringer: {
                 [key: string]: components["schemas"]["StemmekretsRequest"];
-            };
-            /** @description Endringer på bopliktomraade. */
-            bopliktomraadeendringer: {
-                [key: string]: components["schemas"]["BopliktomraadeRequest"];
             };
         };
         /** @description Wrapper-objekt rundt et JTS MultiPolygon. */
@@ -1520,38 +2034,122 @@ export interface components {
              */
             version: number;
         };
+        /** @description Representasjon av nasjon */
+        NasjonResponse: {
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            /** @description Liste over navn til nasjon */
+            navn: components["schemas"]["AdministrativEnhetNavn"][];
+            omraade?: Omit<components["schemas"]["MultiPolygon"], "type"> | null;
+            /**
+             * Format: date-time
+             * @description Angir når denne nasjonen ble sist oppdatert
+             */
+            oppdateringsdato: string;
+            representasjonspunkt: components["schemas"]["Feature"];
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
+        };
         /** @description Id til kommunen som konteksten ligger i */
         ObjektIdentifikator: {
-            lokalid: components["schemas"]["Lokalid"];
             /** Format: date */
             gyldighetsdato: string;
+            lokalid: components["schemas"]["Lokalid"];
         };
         /** @description Representasjon av operasjoner/handlinger som er utført i klienten. */
         Operasjoner: {
-            metadataendringer: components["schemas"]["Metadataendringer"];
+            /** @description Opprettelse av nye inndelinger for en inndelingstype som er ikke-heldekkende */
+            createInndelingEndringer?: components["schemas"]["CreateBopliktomraadeRequest"][] | null;
             grenseendringer: components["schemas"]["Grenseendringer"];
-            stemmekretsSammenslaaingsendring?: components["schemas"]["StemmekretsSammenslaaingsendringRequest"] | null;
             grunnkretsSammenslaaingsendring?: components["schemas"]["GrunnkretsSammenslaaingsendringRequest"] | null;
             /** @description Deling av en stemmekrets eller grunnkrets */
             kretsDelingEndringer: components["schemas"]["KretsDelingEndringRequest"][];
-            /** @description Opprettelse av nye inndelinger for en inndelingstype som ikke er heldekkende */
-            createInndelingEndringer?: components["schemas"]["CreateBopliktomraadeRequest"][] | null;
+            metadataendringer: components["schemas"]["Metadataendringer"];
+            stemmekretsSammenslaaingsendring?: components["schemas"]["StemmekretsSammenslaaingsendringRequest"] | null;
         };
         /** @description Representasjon for oppdatering av utkast */
         OppdaterUtkastRequest: {
-            /** @description Arbeidsnavnet til utkastet. */
-            navn: string;
             /**
              * @description Typen endring utkastet representerer.
              * @enum {string}
              */
             endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            /** @description Arbeidsnavnet til utkastet. */
+            navn: string;
             operasjoner: components["schemas"]["Operasjoner"];
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
+        };
+        /** @description Utkastet som ønskes opprettet */
+        OpprettUtkastRequest: {
+            /**
+             * @description Typen endring utkastet representerer.
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            /**
+             * Format: date
+             * @description Gyldig fra-datoen til utkastet.
+             */
+            gyldigFra: string;
+            /** @description Arbeidsnavnet til utkastet. */
+            navn: string;
+        };
+        /** @description Feil som har oppstått pga optimistisk lås. */
+        OptimistiskLaasResponse: {
+            /**
+             * Format: int32
+             * @description Versjon som er gjeldende for objektet nå.
+             */
+            gjeldendeVersjon: number;
+            /** @description Identifikatoren til objektet som er utdatert. */
+            id: string;
+            /** @description Beskrivelse av hva som har gått galt. */
+            melding?: string | null;
+            /** @description Typen til objektet som er utdatert. */
+            type: string;
+            /**
+             * Format: int32
+             * @description Versjon som prøves å oppdateres.
+             */
+            versjon: number;
+        };
+        OptimistiskLaasWrapper: {
+            /**
+             * @description HttpStatus for responsen.
+             * @enum {string}
+             */
+            httpStatus: "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 CONTENT_TOO_LARGE" | "413 PAYLOAD_TOO_LARGE" | "414 URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "421 MISDIRECTED_REQUEST" | "422 UNPROCESSABLE_CONTENT" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
+            /** @description Feil som har oppstått pga optimistisk lås. */
+            optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
+        };
+        PaginertRespons: {
+            /** Format: int32 */
+            antallPerSide: number;
+            innhold: Record<string, never>[];
+            /** Format: int32 */
+            side: number;
+            /** Format: int64 */
+            totaltAntall: number;
+            /** Format: int32 */
+            totaltAntallSider: number;
+        };
+        PaginertResponsGrenseResponse: {
+            /** Format: int32 */
+            antallPerSide: number;
+            innhold: components["schemas"]["GrenseResponse"][];
+            /** Format: int32 */
+            side: number;
+            /** Format: int64 */
+            totaltAntall: number;
+            /** Format: int32 */
+            totaltAntallSider: number;
         };
         /** @description Wrapper-objekt rundt en JTS Point. */
         Point: Omit<components["schemas"]["Geometry"], "type"> & {
@@ -1607,44 +2205,84 @@ export interface components {
         };
         /** @description Representasjon av en stemmekrets */
         StemmekretsRequest: {
+            identifikasjon: components["schemas"]["Identifikasjon"];
+            /** @description informasjon om stemmekretsen */
+            informasjon?: string | null;
+            kommunenummer?: components["schemas"]["Kommunenummer"] | null;
             /** @description Stemmekretsnavnet til stemmekretsen */
             navn: string;
             /** @description Stemmekretsnummeret til stemmekretsen */
             nummer: string;
-            identifikasjon: components["schemas"]["Identifikasjon"];
-            /** @description Tellekretsnummeret til stemmekretsen */
-            tellekretsnummer?: string | null;
             /** @description Tellekretsnavnet til stemmekretsen */
             tellekretsnavn?: string | null;
+            /** @description Tellekretsnummeret til stemmekretsen */
+            tellekretsnummer?: string | null;
             /** @description Valgdistriktsnummeret til stemmekretsen */
             valgdistriktsnummer?: string | null;
-            kommunenummer?: components["schemas"]["Kommunenummer"] | null;
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
-            /** @description informasjon om stemmekretsen */
+        };
+        /** @description Representasjon av en stemmekrets */
+        StemmekretsResponse: {
+            /**
+             * Format: date-time
+             * @description Datafangsdato for objektet
+             */
+            datafangstdato?: string | null;
+            /**
+             * @description Typen endring som ble gjort på objektet
+             * @enum {string}
+             */
+            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            gyldighet: components["schemas"]["GyldighetResponse"];
+            id: components["schemas"]["ObjektIdentifikator"];
+            /** @description Informasjon om stemmekretsen */
             informasjon?: string | null;
+            kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
+            kommunenummer: components["schemas"]["Kommunenummer"];
+            /** @description Navnet på stemmekretsen */
+            navn: string;
+            /** @description Stemmekretsnummeret til stemmekretsen */
+            nummer: string;
+            /**
+             * Format: date-time
+             * @description Siste oppdateringstidspunkt for objektet
+             */
+            oppdateringsdato: string;
+            representasjonspunkt: components["schemas"]["Feature"];
+            /** @description Tellekretsnavn til stemmekretsen */
+            tellekretsnavn?: string | null;
+            /** @description Tellekretsnummer til stemmekretsen */
+            tellekretsnummer?: string | null;
+            /** @description Valgdistriktsnummer til stemmekretsen */
+            valgdistriktsnummer?: string | null;
+            /**
+             * Format: int32
+             * @description Teknisk versjon for å støtte samhandling og redigering
+             */
+            version: number;
         };
         /** @description Representasjon av sammenslåing av en stemmekrets med 1 eller flere andre stemmekretser i samme kommune */
         StemmekretsSammenslaaingsendringRequest: {
-            viderefoertStemmekrets: components["schemas"]["IdentifikatorMedVersjon"];
-            /** @description Liste av identifikatorer som skal bli del av den videreførte stemmekretsen */
-            stemmekretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
+            /** @description Informasjon om sammenslåingen som videreføres til den nye stemmekretsen og de gamle */
+            informasjon?: string | null;
             /** @description Navnet til den sammenslåtte stemmekretsen */
             navn: string;
             /** @description Stemmekretsnummeret til den sammenslåtte stemmekretsen */
             nummer: string;
-            /** @description Informasjon om sammenslåingen som videreføres til den nye stemmekretsen og de gamle */
-            informasjon?: string | null;
+            /** @description Liste av identifikatorer som skal bli del av den videreførte stemmekretsen */
+            stemmekretserTilSammenslaaing: components["schemas"]["IdentifikatorMedVersjon"][];
+            viderefoertStemmekrets: components["schemas"]["IdentifikatorMedVersjon"];
         };
         /** @description Henvisning til saksdokument i Kartverkets eget arkiv. */
         TekstHolder: {
-            /** @description ID for elementet. */
-            id?: string | null;
             /** @description Tekstfelt. */
             beskrivelse: string;
+            /** @description ID for elementet. */
+            id?: string | null;
         };
         /** @description Spesifikk metadata for en territorialgrense. Beskrevet i SOSI-modellen her: https://objektkatalog.geonorge.no/Diagram/Index/EAID_EEECEE48_B3FA_4807_AAE4_B30B63BC28E1 */
         TerritorialgrenseMetadata: Omit<components["schemas"]["Metadata"], "discriminator"> & {
@@ -1659,679 +2297,41 @@ export interface components {
              */
             discriminator: "TerritorialgrenseMetadata";
         };
-        ApiErrorResponse: {
-            /** @description En unik feilkode for denne feilen som kan vises til bruker. Denne feilkoden burde også være med i loggene så man finner igjen feilen som oppstod. */
-            errorCode: string;
-            errorDescription: components["schemas"]["ErrorDescription"];
-        };
-        /** @description En forklaring av feilen som oppstod. Denne er ment til å kunne vises direkte til brukeren. */
-        ErrorDescription: {
-            /** @description Tittelen på feilmeldingen som skal vises. */
-            title: string;
-            /** @description En beskrivende forklaring av feilen som oppstod. */
-            description: string;
-            /** @description Litt tilleggsinfo relatert til feilen om man vil gi noe mer forklaring av konteksten. Ikke obligatorisk. */
-            additionalInfo?: string | null;
-        };
-        /** @description Feil som har oppstått pga optimistisk lås. */
-        OptimistiskLaasResponse: {
-            /** @description Identifikatoren til objektet som er utdatert. */
-            id: string;
-            /** @description Typen til objektet som er utdatert. */
-            type: string;
-            /**
-             * Format: int32
-             * @description Versjon som prøves å oppdateres.
-             */
-            versjon: number;
-            /**
-             * Format: int32
-             * @description Versjon som er gjeldende for objektet nå.
-             */
-            gjeldendeVersjon: number;
-            /** @description Beskrivelse av hva som har gått galt. */
-            melding?: string | null;
-        };
-        OptimistiskLaasWrapper: {
-            /**
-             * @description HttpStatus for responsen.
-             * @enum {string}
-             */
-            httpStatus: "100 CONTINUE" | "101 SWITCHING_PROTOCOLS" | "102 PROCESSING" | "103 EARLY_HINTS" | "200 OK" | "201 CREATED" | "202 ACCEPTED" | "203 NON_AUTHORITATIVE_INFORMATION" | "204 NO_CONTENT" | "205 RESET_CONTENT" | "206 PARTIAL_CONTENT" | "207 MULTI_STATUS" | "208 ALREADY_REPORTED" | "226 IM_USED" | "300 MULTIPLE_CHOICES" | "301 MOVED_PERMANENTLY" | "302 FOUND" | "303 SEE_OTHER" | "304 NOT_MODIFIED" | "307 TEMPORARY_REDIRECT" | "308 PERMANENT_REDIRECT" | "400 BAD_REQUEST" | "401 UNAUTHORIZED" | "402 PAYMENT_REQUIRED" | "403 FORBIDDEN" | "404 NOT_FOUND" | "405 METHOD_NOT_ALLOWED" | "406 NOT_ACCEPTABLE" | "407 PROXY_AUTHENTICATION_REQUIRED" | "408 REQUEST_TIMEOUT" | "409 CONFLICT" | "410 GONE" | "411 LENGTH_REQUIRED" | "412 PRECONDITION_FAILED" | "413 CONTENT_TOO_LARGE" | "413 PAYLOAD_TOO_LARGE" | "414 URI_TOO_LONG" | "415 UNSUPPORTED_MEDIA_TYPE" | "416 REQUESTED_RANGE_NOT_SATISFIABLE" | "417 EXPECTATION_FAILED" | "418 I_AM_A_TEAPOT" | "421 MISDIRECTED_REQUEST" | "422 UNPROCESSABLE_CONTENT" | "422 UNPROCESSABLE_ENTITY" | "423 LOCKED" | "424 FAILED_DEPENDENCY" | "425 TOO_EARLY" | "426 UPGRADE_REQUIRED" | "428 PRECONDITION_REQUIRED" | "429 TOO_MANY_REQUESTS" | "431 REQUEST_HEADER_FIELDS_TOO_LARGE" | "451 UNAVAILABLE_FOR_LEGAL_REASONS" | "500 INTERNAL_SERVER_ERROR" | "501 NOT_IMPLEMENTED" | "502 BAD_GATEWAY" | "503 SERVICE_UNAVAILABLE" | "504 GATEWAY_TIMEOUT" | "505 HTTP_VERSION_NOT_SUPPORTED" | "506 VARIANT_ALSO_NEGOTIATES" | "507 INSUFFICIENT_STORAGE" | "508 LOOP_DETECTED" | "509 BANDWIDTH_LIMIT_EXCEEDED" | "510 NOT_EXTENDED" | "511 NETWORK_AUTHENTICATION_REQUIRED";
-            /** @description Feil som har oppstått pga optimistisk lås. */
-            optimisticLockExceptions: components["schemas"]["OptimistiskLaasResponse"][];
-        };
-        /** @description Representasjon av audit info for et objekt. */
-        AuditInfoResponse: {
-            /**
-             * Format: date-time
-             * @description Da objektet sist ble oppdatert.
-             */
-            oppdateringsdato: string;
-        };
-        /** @description Liste med lokalider for inndelinger som har blitt endret i utkastet. Kun satt hvis status er PUBLISERT */
-        EndredeInndelinger: {
-            endredeStemmekretser: string[];
-            endredeGrunnkretser: string[];
-            endredeBopliktomraader: string[];
-            endredeKommuner: string[];
-            endredeFylker: string[];
-            endredeNasjoner: string[];
+        User: {
+            /** @description Fullt navn til innlogget bruker. */
+            username?: string | null;
         };
         /** @description Representasjon av utkast */
         UtkastResponse: {
-            /** @description Unik uuid for utkastet */
-            id: string;
-            /** @description Arbeidsnavnet til utkastet. */
-            navn: string;
+            auditInfoResponse: components["schemas"]["AuditInfoResponse"];
+            endredeInndelinger: components["schemas"]["EndredeInndelinger"];
             /**
              * @description Typen endring utkastet representerer.
              * @enum {string}
              */
             endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
-            /** @description Status for utkastet. */
-            status: string;
-            /**
-             * Format: date-time
-             * @description Da utkastet ble opprettet.
-             */
-            opprettetDato: string;
-            auditInfoResponse: components["schemas"]["AuditInfoResponse"];
-            operasjoner: components["schemas"]["Operasjoner"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
             /**
              * Format: date
              * @description Gyldig fra-datoen til utkastet
              */
             gyldigFra: string;
-            endredeInndelinger: components["schemas"]["EndredeInndelinger"];
-        };
-        /** @description Utkastet som ønskes opprettet */
-        OpprettUtkastRequest: {
+            /** @description Unik uuid for utkastet */
+            id: string;
             /** @description Arbeidsnavnet til utkastet. */
             navn: string;
-            /**
-             * @description Typen endring utkastet representerer.
-             * @enum {string}
-             */
-            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
-            /**
-             * Format: date
-             * @description Gyldig fra-datoen til utkastet.
-             */
-            gyldigFra: string;
-        };
-        FeatureCollection: {
-            /** @description Toppnivå for geojson-strukturen, definert av en konstant med navn type og verdi FeatureCollection */
-            type: string;
-            /** @description Liste av features som holder på dataene */
-            features: components["schemas"]["Feature"][];
-        };
-        FrontendLogRequest: {
-            /** @enum {string} */
-            logLevel: "INFO" | "WARN" | "ERROR";
-            message: string;
-            stacktrace?: string | null;
-        };
-        /** @description Gyldighetsintervall for objektet */
-        GyldighetResponse: {
-            /**
-             * Format: date
-             * @description Tidspunktet objektet er gyldig fra
-             */
-            gyldigFra: string;
-            /**
-             * Format: date
-             * @description Tidspunktet objektet er gyldig til. Kan være tomt/løpende.
-             */
-            gyldigTil?: string | null;
-        };
-        /** @description Representasjon av en stemmekrets */
-        StemmekretsResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Navnet på stemmekretsen */
-            navn: string;
-            /** @description Stemmekretsnummeret til stemmekretsen */
-            nummer: string;
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /**
-             * @description Typen endring som ble gjort på objektet
-             * @enum {string}
-             */
-            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
+            operasjoner: components["schemas"]["Operasjoner"];
             /**
              * Format: date-time
-             * @description Siste oppdateringstidspunkt for objektet
+             * @description Da utkastet ble opprettet.
              */
-            oppdateringsdato: string;
-            /**
-             * Format: date-time
-             * @description Datafangsdato for objektet
-             */
-            datafangstdato?: string | null;
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
-            /** @description Tellekretsnummer til stemmekretsen */
-            tellekretsnummer?: string | null;
-            /** @description Tellekretsnavn til stemmekretsen */
-            tellekretsnavn?: string | null;
-            /** @description Valgdistriktsnummer til stemmekretsen */
-            valgdistriktsnummer?: string | null;
-            representasjonspunkt: components["schemas"]["Feature"];
+            opprettetDato: string;
+            /** @description Status for utkastet. */
+            status: string;
             /**
              * Format: int32
              * @description Teknisk versjon for å støtte samhandling og redigering
              */
             version: number;
-            /** @description Informasjon om stemmekretsen */
-            informasjon?: string | null;
-        };
-        /** @description Representasjon av nasjon */
-        NasjonResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Liste over navn til nasjon */
-            navn: components["schemas"]["AdministrativEnhetNavn"][];
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            omraade?: Omit<components["schemas"]["MultiPolygon"], "type"> | null;
-            representasjonspunkt: components["schemas"]["Feature"];
-            /**
-             * Format: date-time
-             * @description Angir når denne nasjonen ble sist oppdatert
-             */
-            oppdateringsdato: string;
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-        };
-        /** @description Liste av terrengdetaljkoder fra Matrikkelen. */
-        KodelisteEntryDTO: {
-            /**
-             * Format: int64
-             * @description Id til koden.
-             */
-            id: number;
-            /** @description Kodeverdi for koden, kan være SOSI-kodeverdi. */
-            kodeverdi: string;
-            /** @description Beskrivende navn til koden på bokmål. */
-            navn: string;
-        };
-        MatrikkelKodelisterRespons: {
-            /** @description Liste av målemetodekoder fra Matrikkelen. */
-            maalemetodeKodeliste: components["schemas"]["KodelisteEntryDTO"][];
-            /** @description Liste av hjelpelinjetyper fra Matrikkelen. */
-            hjelpelinjetypeKodeliste: components["schemas"]["KodelisteEntryDTO"][];
-            /** @description Liste av administrativ grensekoder fra Matrikkelen. */
-            administrativGrenseKodeliste: components["schemas"]["KodelisteEntryDTO"][];
-            /** @description Liste av terrengdetaljkoder fra Matrikkelen. */
-            terrengdetaljKodeliste: components["schemas"]["KodelisteEntryDTO"][];
-        };
-        /** @description Representasjon av en kommune */
-        KommuneResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Lokal-id til fylket denne kommunen er i */
-            fylkeId: string;
-            /** @description Liste over navn til kommunen */
-            navn: components["schemas"]["AdministrativEnhetNavn"][];
-            /** @description Kommunenummeret til kommunen */
-            nummer: string;
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
-            samiskforvaltningsomraade: boolean;
-            /**
-             * Format: date-time
-             * @description Angir når denne kommunen ble sist oppdatert
-             */
-            oppdateringsdato: string;
-            representasjonspunkt: components["schemas"]["Feature"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-        };
-        InndelingResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /**
-             * @description Flatetypen til inndelingen
-             * @enum {string}
-             */
-            type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE";
-            /** @description Navnet til inndelingen */
-            navn: string;
-            /** @description Nummeret til inndelingen */
-            nummer: string;
-            representasjonspunkt: components["schemas"]["Feature"];
-            gyldighet: components["schemas"]["GyldighetResponse"];
-        };
-        /** @description Representasjon av en grunnkrets */
-        GrunnkretsResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Navnet på grunnkretsen */
-            navn: string;
-            /** @description Grunnkretsnummeret til grunnkretsen */
-            nummer: string;
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /**
-             * Format: date-time
-             * @description Siste oppdateringstidspunkt for objektet
-             */
-            oppdateringsdato: string;
-            /**
-             * Format: date-time
-             * @description Datafangsdato for objektet
-             */
-            datafangstdato?: string | null;
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
-            /**
-             * @description Typen endring som ble gjort på objektet
-             * @enum {string}
-             */
-            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
-            representasjonspunkt: components["schemas"]["Feature"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-            /** @description Informasjon om grunnkretsen */
-            informasjon?: string | null;
-        };
-        /** @description Representasjon av et bopliktområde */
-        BopliktomraadeResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Navnet til bopliktområdet */
-            navn: string;
-            /** @description Nummeret til bopliktområdet */
-            nummer: string;
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /**
-             * Format: date-time
-             * @description Siste oppdateringstidspunkt for objektet
-             */
-            oppdateringsdato: string;
-            /**
-             * Format: date-time
-             * @description Datafangstdato for objektet
-             */
-            datafangstdato?: string | null;
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            kommuneIdentifikator: components["schemas"]["ObjektIdentifikator"];
-            /**
-             * @description Typen endring som ble gjort på objektet
-             * @enum {string}
-             */
-            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
-            representasjonspunkt: components["schemas"]["Feature"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
-            gjelderKunDelAvKommunen: boolean;
-            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
-            harUsikkerAvgrensning: boolean;
-            /** @description Forskriftsreferansen for bopliktområdet */
-            forskriftsreferanse?: string | null;
-            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
-            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
-            /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
-            andreLokaleAvgrensninger?: string | null;
-            /** @description Lenke til mer informasjon */
-            url?: string | null;
-        };
-        /** @description Liste av kodeliste-elementer. */
-        KodelisteItem: {
-            /** @description Id til kodeliste-innslaget. */
-            id: string;
-            /** @description kode til kodeliste-innslaget. */
-            kode: string;
-            /** @description Navnet til kodeliste-innslaget. */
-            label: string;
-        };
-        KodelisteRespons: {
-            /**
-             * @description Angir typen av kodeliste.
-             * @enum {string}
-             */
-            type: "KOMMUNENUMMER" | "FYLKESNUMMER" | "MAALEMETODE_KODE";
-            /** @description Liste av kodeliste-elementer. */
-            items: components["schemas"]["KodelisteItem"][];
-        };
-        /** @description Koordinatet til representasjonspunktet til inndelingen. */
-        Coordinate: {
-            /** Format: double */
-            x?: number;
-            /** Format: double */
-            y?: number;
-            /** Format: double */
-            z?: number;
-            coordinate?: components["schemas"]["Coordinate"];
-            /** Format: double */
-            m?: number;
-            valid?: boolean;
-        };
-        InndelingSearchResponse: {
-            /** @description Lokalid til inndelingen */
-            id: string;
-            /**
-             * @description Flatetypen til inndelingen
-             * @enum {string}
-             */
-            type: "FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE";
-            /** @description Navnet til inndelingen */
-            navn: string;
-            /** @description Nummeret til inndelingen */
-            nummer: string;
-            representasjonspunkt: components["schemas"]["Coordinate"];
-        };
-        /** @description Representasjon av et fylke */
-        FylkeResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Liste over navn til fylket */
-            navn: components["schemas"]["AdministrativEnhetNavn"][];
-            /** @description Fylkesnummeret til fylket */
-            nummer: string;
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
-            samiskforvaltningsomraade: boolean;
-            /**
-             * Format: date-time
-             * @description Angir når dette fylket ble sist oppdatert
-             */
-            oppdateringsdato: string;
-            representasjonspunkt: components["schemas"]["Feature"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-        };
-        /** @description Representasjon av en krets. Response-type kun for Matrikkelen. Kan være grunnkrets, stemmekrets etc. */
-        EksternKretsResponse: {
-            /** @description Lokalid-en til kretsen. */
-            id: string;
-            /** @description Navnet på kretsen. */
-            navn: string;
-            /** @description Nummeret til kretsen. */
-            nummer: string;
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            features: components["schemas"]["FeatureCollection"];
-        };
-        /** @description Representasjon av en stemmekrets */
-        EksternStemmekretsResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /**
-             * @description Typen endring som ble gjort på objektet
-             * @enum {string}
-             */
-            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
-            /**
-             * Format: date-time
-             * @description Siste oppdateringstidspunkt for objektet
-             */
-            oppdateringsdato: string;
-            /**
-             * Format: date-time
-             * @description Datafangsdato for objektet
-             */
-            datafangstdato?: string | null;
-            /** @description Navnet på stemmekretsen */
-            stemmekretsnavn: string;
-            /** @description Stemmekretsnummeret til stemmekretsen */
-            stemmekretsnummer: string;
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description Tellekretsnummer til stemmekretsen */
-            tellekretsnummer?: string | null;
-            /** @description Tellekretsnavn til stemmekretsen */
-            tellekretsnavn?: string | null;
-            /** @description Valgdistriktsnummer til stemmekretsen */
-            valgdistriktsnummer?: string | null;
-            features: components["schemas"]["FeatureCollection"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-        };
-        /** @description En referanse til en kommune */
-        EksternKommuneRef: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Liste over navn til kommunen */
-            navn: components["schemas"]["AdministrativEnhetNavn"][];
-            /** @description URL til full representasjon av kommunen */
-            href: string;
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            /**
-             * Format: int32
-             * @description Antall publiserte framtidige gyldige versjoner.
-             */
-            antallFramtidigeVersjoner: number;
-        };
-        /** @description Representasjon av en grunnkrets */
-        EksternGrunnkretsResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Navnet på grunnkretsen */
-            navn: string;
-            /** @description Grunnkretsnummeret til grunnkretsen */
-            grunnkretsnummer: string;
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /**
-             * Format: date-time
-             * @description Siste oppdateringstidspunkt for objektet
-             */
-            oppdateringsdato: string;
-            /**
-             * Format: date-time
-             * @description Datafangsdato for objektet
-             */
-            datafangstdato?: string | null;
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            /**
-             * @description Typen endring som ble gjort på objektet
-             * @enum {string}
-             */
-            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
-            features: components["schemas"]["FeatureCollection"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-        };
-        /** @description Representasjon av en kommune */
-        EksternKommuneResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Liste over navn til kommunen */
-            administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description Angir om kommunen er et samisk forvaltningsområde eller ikke */
-            samiskforvaltningsomraade: boolean;
-            /**
-             * Format: date-time
-             * @description Angir når denne kommunen ble sist oppdatert
-             */
-            oppdateringsdato: string;
-            features: components["schemas"]["FeatureCollection"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-        };
-        PaginertRespons: {
-            innhold: Record<string, never>[];
-            /** Format: int32 */
-            side: number;
-            /** Format: int32 */
-            antallPerSide: number;
-            /** Format: int64 */
-            totaltAntall: number;
-            /** Format: int32 */
-            totaltAntallSider: number;
-        };
-        /** @description Representasjon av en grense */
-        GrenseResponse: {
-            /** @description Unik ID for grensen */
-            id: string;
-            /** @description Lokal ID for grensen */
-            lokalid: string;
-            /**
-             * @description Type grense
-             * @enum {string}
-             */
-            grensetype: "Kommunegrense" | "Fylkesgrense" | "Riksgrense" | "AvtaltAvgrensningslinje" | "Territorialgrense" | "Grunnlinje" | "Grunnkretsgrense" | "Delomraadegrense" | "Stemmekretsgrense" | "Bopliktgrense";
-            geometri: components["schemas"]["LineString"] | components["schemas"]["MultiPolygon"] | components["schemas"]["Point"];
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /**
-             * Format: date-time
-             * @description Dato for datafangst
-             */
-            datafangstdato?: string | null;
-            /**
-             * Format: date-time
-             * @description Dato for første digitalisering
-             */
-            foerstedigitaliseringsdato: string;
-            /** @description Opphav/kilde til grensen */
-            opphav?: string | null;
-            /** @description Tilleggsinformasjon om grensen */
-            informasjon?: string | null;
-            /** @description Brukeren som sist endret grensen */
-            endretAv: string;
-            /**
-             * Format: date-time
-             * @description Dato for siste endring
-             */
-            endretDato: string;
-            /**
-             * @description Type endring som ble gjort
-             * @enum {string}
-             */
-            typeEndring: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
-            /** @description Metode for måling */
-            maalemetode?: string | null;
-            /**
-             * Format: int32
-             * @description Punktstandardavviket i grunnriss for punkter samt tverravvik for linjer (oppgitt i cm)
-             */
-            noeyaktighet?: number | null;
-            /** @description Kommuner på grensen med side-informasjon */
-            kommuner: components["schemas"]["KommuneInfoDTO"][];
-        };
-        /** @description Informasjon om en kommune på en side av en grense */
-        KommuneInfoDTO: {
-            /** @description Fylkes Lokal ID */
-            fylkesLokalID?: string | null;
-            /** @description Kommune Lokal ID */
-            kommuneLokalID: string;
-            /** @description Kommunenummer */
-            kommunenummer: string;
-            /** @description Kommunenavn */
-            kommunenavn: string;
-        };
-        PaginertResponsGrenseResponse: {
-            innhold: components["schemas"]["GrenseResponse"][];
-            /** Format: int32 */
-            side: number;
-            /** Format: int32 */
-            antallPerSide: number;
-            /** Format: int64 */
-            totaltAntall: number;
-            /** Format: int32 */
-            totaltAntallSider: number;
-        };
-        /** @description En referanse til et fylke */
-        EksternFylkeRef: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Liste over navn til fylket */
-            navn: components["schemas"]["AdministrativEnhetNavn"][];
-            /** @description URL til full representasjon av fylket */
-            href: string;
-            fylkesnummer: components["schemas"]["Fylkesnummer"];
-            /**
-             * Format: int32
-             * @description Antall publiserte framtidige gyldige versjoner.
-             */
-            antallFramtidigeVersjoner: number;
-        };
-        /** @description Representasjon av et fylkesnummer */
-        Fylkesnummer: {
-            /** @description Unik UUID for fylkesnummeret */
-            id: string;
-            /** @description Det faktiske fylkesnummeret */
-            kodeverdi: string;
-        };
-        /** @description Representasjon av et fylke */
-        EksternFylkeResponse: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            /** @description Liste over navn til fylket */
-            administrativenhetnavn: components["schemas"]["AdministrativEnhetNavn"][];
-            fylkesnummer: components["schemas"]["Fylkesnummer"];
-            /** @description Angir om fylket er et samisk forvaltningsområde eller ikke */
-            samiskforvaltningsomraade: boolean;
-            /**
-             * Format: date-time
-             * @description Angir når dette fylket ble sist oppdatert
-             */
-            oppdateringsdato: string;
-            features: components["schemas"]["FeatureCollection"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-        };
-        /** @description Representasjon av et bopliktområde */
-        EksternBopliktomraadeRespons: {
-            id: components["schemas"]["ObjektIdentifikator"];
-            gyldighet: components["schemas"]["GyldighetResponse"];
-            /**
-             * @description Typen endring som ble gjort på objektet
-             * @enum {string}
-             */
-            endringstype: "Kvalitetsheving" | "Retting" | "Vedtatt deling" | "Vedtatt sletting" | "Vedtatt sammenslåing" | "Vedtatt grensejustering" | "Fastsetting" | "Navneendring" | "Nummerendring" | "Ny forskrift" | "Utgått forskrift" | "Forskriftsendring" | "Oppdatert geometri" | "Import";
-            /**
-             * Format: date-time
-             * @description Siste oppdateringstidspunkt for objektet
-             */
-            oppdateringsdato: string;
-            /**
-             * Format: date-time
-             * @description Datafangstdato for objektet
-             */
-            datafangstdato?: string | null;
-            kommunenummer: components["schemas"]["Kommunenummer"];
-            /** @description Indikerer om bopliktomraadet dekker deler av kommunen eller ikke */
-            gjelderKunDelAvKommunen: boolean;
-            /** @description Forskriftsreferanse til boplikten */
-            forskriftsreferanse?: string | null;
-            /** @description Materielle vilkår for bopliktområdet (nye enum-verdier, erstatter materielleVilkaar) */
-            gjeldendeMaterielleVilkaar: ("GJELDER_FOR_BOLIG_IKKE_TATT_I_BRUK" | "GJELDER_FOR_BRUKT_SOM_HELARSBOLIG" | "GJELDER_FOR_UBEBYGD_BOLIGTOMT" | "HAR_UNNTAK_FRA_SLEKTSKAPSUNNTAK")[];
-            /** @description Andre lokale avgrensninger (nytt navn for andreAvgrensninger) */
-            andreLokaleAvgrensninger?: string | null;
-            /** @description Har usikker avgrensning (nytt navn for usikkerAvgrensning) */
-            harUsikkerAvgrensning: boolean;
-            /** @description URL til informasjon om boplikten */
-            url?: string | null;
-            features: components["schemas"]["FeatureCollection"];
-            /**
-             * Format: int32
-             * @description Teknisk versjon for å støtte samhandling og redigering
-             */
-            version: number;
-        };
-        User: {
-            /** @description Fullt navn til innlogget bruker. */
-            username?: string | null;
         };
     };
     responses: never;
@@ -2342,6 +2342,2184 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    getUser: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["User"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentAlleBopliktomraader_1: {
+        parameters: {
+            query?: {
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternBopliktomraadeRespons"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentBopliktomraade_1: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for bopliktomraadet (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til bopliktomraadet man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BopliktomraadeResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BopliktomraadeResponse"];
+                };
+            };
+        };
+    };
+    hentGrenserForBopliktomraade_1: {
+        parameters: {
+            query?: {
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentAlleBopliktomraader: {
+        parameters: {
+            query?: {
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternBopliktomraadeRespons"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentBopliktomraade: {
+        parameters: {
+            query?: {
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternBopliktomraadeRespons"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternBopliktomraadeRespons"];
+                };
+            };
+        };
+    };
+    hentGrenserForBopliktomraade: {
+        parameters: {
+            query?: {
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentFylker_1: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for fylkene (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternFylkeRef"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentFylke_1: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for fylke (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til fylket man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternFylkeResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternFylkeResponse"];
+                };
+            };
+        };
+    };
+    hentGrenser: {
+        parameters: {
+            query?: {
+                /** @description Antall resultater per side (standard er 10) */
+                antall?: number;
+                /** @description Dato for gyldighet av grensene (standard er dagens dato) */
+                gyldighetsdato?: string;
+                /** @description Sidenummer for paginering (starter på 0) */
+                side?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Vellykket operasjon */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginertRespons"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Ikke funnet */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginertResponsGrenseResponse"];
+                };
+            };
+        };
+    };
+    hentGrense: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Lokal ID for grensen som skal hentes */
+                lokalid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Vellykket operasjon */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrenseResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Ikke funnet */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrenseResponse"];
+                };
+            };
+        };
+    };
+    hentGrunnkretserForIds: {
+        parameters: {
+            query: {
+                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
+                gyldighetsdato?: string;
+                /** @description ID-ene til grunnkretsene man vil hente */
+                ids: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+        };
+    };
+    hentGrenserForGrunnkrets_1: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til grunnkretsen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentKommuner_1: {
+        parameters: {
+            query?: {
+                /** @description Valgfri id til et fylke for å filtrere kommuner innenfor et fylke */
+                fylkeid?: string;
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKommuneRef"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentKommune_1: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til kommunen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKommuneResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKommuneResponse"];
+                };
+            };
+        };
+    };
+    hentAlleGrunnkretserForKommune: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Kommunenummer for kommune man ønsker å hente grunnkretsene til */
+                kommunenummer: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+        };
+    };
+    hentAlleGrunnkretserMedDetaljerForKommune: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Kommunenummer for kommune man ønsker å hente grunnkretsene til */
+                kommunenummer: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternGrunnkretsResponse"][];
+                };
+            };
+        };
+    };
+    hentAlleStemmekretserForKommune: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Kommunenummer for kommune man ønsker å hente stemmekretsene til */
+                kommunenummer: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+        };
+    };
+    hentAlleStemmekretserMedDetaljerForKommune: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description Kommunenummer for kommune man ønsker å hente stemmekretsene til */
+                kommunenummer: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternStemmekretsResponse"][];
+                };
+            };
+        };
+    };
+    hentStemmekretserForIds: {
+        parameters: {
+            query: {
+                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+                gyldighetsdato?: string;
+                /** @description ID-ene til stemmekretsene man vil hente */
+                ids: string[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternKretsResponse"][];
+                };
+            };
+        };
+    };
+    hentStemmekrets_1: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til stemmekretsen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternStemmekretsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EksternStemmekretsResponse"];
+                };
+            };
+        };
+    };
+    hentGrenserForStemmekrets_1: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til stemmekretsen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    logMelding: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FrontendLogRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentFylker: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for fylkene (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FylkeResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentFylke: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for fylke (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til fylket man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FylkeResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FylkeResponse"];
+                };
+            };
+        };
+    };
+    hentGrenserForFylke: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for fylke (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til fylket man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentFylkesGrunnkretser: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for fylket (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til fylket man vil hente grunnkretsene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrunnkretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentFylkesStemmekretser: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for fylket (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til fylket man vil hente stemmekretsenee til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StemmekretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentGrunnkrets: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til grunnkretsen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrunnkretsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrunnkretsResponse"];
+                };
+            };
+        };
+    };
+    hentGrenserForGrunnkrets: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til grunnkretsen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentFramtidigeVersjonerForGrunnkrets: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description LokalID-en til grunnkretsen man vil hente versjoner for */
+                lokalid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrunnkretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    finnInndelinger: {
+        parameters: {
+            query: {
+                /** @description Hvilke typer inndelinger man ønsker å søke etter */
+                filter?: ("FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE")[];
+                /** @description Eventuell gyldighetsdato for inndelingene (default = dagens dato) */
+                gyldighetsdato?: string;
+                /** @description Maksgrense for antall treff man ønsker seg */
+                limit?: number;
+                /** @description Søkestring for å finne inndelinger */
+                searchString: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InndelingSearchResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InndelingSearchResponse"][];
+                };
+            };
+        };
+    };
+    convertSOSIToGeoJSON: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": {
+                    /** Format: binary */
+                    file: string;
+                };
+            };
+        };
+        responses: {
+            /** @description SOSI-fil ble konvertert til en GeoJSON-fil */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    fetchMaalemetodeKoder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KodelisteRespons"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentKommuner: {
+        parameters: {
+            query?: {
+                /** @description Valgfri id til et fylke for å filtrere kommuner innenfor et fylke */
+                fylkeid?: string;
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KommuneResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentKommune: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til kommunen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KommuneResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KommuneResponse"];
+                };
+            };
+        };
+    };
+    hentKommunesBopliktomraadegrenser: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente bopliktomraadegrensene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentKommunesBopliktomraade: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente bopliktområdet til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BopliktomraadeResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentGrenserForKommune: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til kommunen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentKommunesGrunnkretser: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente grunnkretsene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GrunnkretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentKommunesGrunnkretsgrenser: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente grunnkretsgrensene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentKommunesGrunnkretsgrenserHistoriske: {
+        parameters: {
+            query: {
+                /** @description gyldigTilDate for da grunnkretsgrensene ble historiske */
+                gyldigTilDate: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente grunnkretsgrensene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentKommunesInndelingerMedDeltGeometri: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente inndelingene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InndelingResponse"][];
+                };
+            };
+        };
+    };
+    hentKommunesInndelingerMedDeltGeometriGrenser: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente grensene i inndelingene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentKommunesStemmekretser: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente stemmekretsene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StemmekretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentKommunesStemmekretsgrenser: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente stemmekretsgrensene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentKommunesStemmekretsgrenserHistoriske: {
+        parameters: {
+            query: {
+                /** @description gyldigTilDate for da stemmekretsgrensene ble historiske */
+                gyldigTilDate: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID til kommunen man vil hente stemmekretsgrensene til */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentKommunerForFylker: {
+        parameters: {
+            query: {
+                /** @description Liste med fylkeid'er for å hente kommuner i flere fylker */
+                fylkeid: string[];
+                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KommuneResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    fetchMatrikkelKodelister: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MatrikkelKodelisterRespons"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentNasjon: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for nasjonen (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NasjonResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NasjonResponse"];
+                };
+            };
+        };
+    };
+    hentStemmekrets: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til stemmekretsen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StemmekretsResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StemmekretsResponse"];
+                };
+            };
+        };
+    };
+    hentGrenserForStemmekrets: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description ID-en til stemmekretsen man vil hente */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FeatureCollection"];
+                };
+            };
+        };
+    };
+    hentFramtidigeVersjonerForStemmekrets: {
+        parameters: {
+            query?: {
+                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
+                gyldighetsdato?: string;
+            };
+            header?: never;
+            path: {
+                /** @description LokalID-en til stemmekretsen man vil hente versjoner for */
+                lokalid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StemmekretsResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    hentUtkast_1: {
+        parameters: {
+            query?: {
+                gyldigFra?: string;
+                utkastStatus?: ("OPPRETTET" | "PUBLISERT" | "FORKASTET")[];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful operation */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UtkastResponse"][];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
+    opprettUtkast: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OpprettUtkastRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful operation */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": string;
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "*/*": Record<string, never>;
+                };
+            };
+        };
+    };
     hentUtkast: {
         parameters: {
             query?: never;
@@ -2476,14 +4654,14 @@ export interface operations {
             };
         };
     };
-    hentUtkast_1: {
+    publiserUtkast: {
         parameters: {
-            query?: {
-                utkastStatus?: ("OPPRETTET" | "PUBLISERT" | "FORKASTET")[];
-                gyldigFra?: string;
-            };
+            query?: never;
             header?: never;
-            path?: never;
+            path: {
+                /** @description ID-en til utkastet man vil publisere */
+                id: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -2493,50 +4671,33 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content: {
-                    "application/json": components["schemas"]["UtkastResponse"][];
-                };
+                content?: never;
             };
-            /** @description Bad Request */
+            /** @description Bad request. Check the request body and path */
             400: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "application/json": components["schemas"]["ApiErrorResponse"];
                 };
             };
-        };
-    };
-    opprettUtkast: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["OpprettUtkastRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful operation */
-            201: {
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": string;
+                    "application/json": components["schemas"]["ApiErrorResponse"];
                 };
             };
-            /** @description Bad Request */
-            400: {
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "*/*": Record<string, never>;
+                    "application/json": components["schemas"]["OptimistiskLaasWrapper"];
                 };
             };
         };
@@ -2589,2167 +4750,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OptimistiskLaasWrapper"];
-                };
-            };
-        };
-    };
-    publiserUtkast: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description ID-en til utkastet man vil publisere */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad request. Check the request body and path */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ApiErrorResponse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OptimistiskLaasWrapper"];
-                };
-            };
-        };
-    };
-    convertSOSIToGeoJSON: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "multipart/form-data": {
-                    /** Format: binary */
-                    file: string;
-                };
-            };
-        };
-        responses: {
-            /** @description SOSI-fil ble konvertert til en GeoJSON-fil */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    logMelding: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FrontendLogRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentFramtidigeVersjonerForStemmekrets: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description LokalID-en til stemmekretsen man vil hente versjoner for */
-                lokalid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StemmekretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentStemmekrets: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til stemmekretsen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StemmekretsResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StemmekretsResponse"];
-                };
-            };
-        };
-    };
-    hentGrenserForStemmekrets: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til stemmekretsen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentNasjon: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for nasjonen (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NasjonResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["NasjonResponse"];
-                };
-            };
-        };
-    };
-    fetchMatrikkelKodelister: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["MatrikkelKodelisterRespons"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentKommuner: {
-        parameters: {
-            query?: {
-                /** @description Valgfri id til et fylke for å filtrere kommuner innenfor et fylke */
-                fylkeid?: string;
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["KommuneResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentKommune: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til kommunen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["KommuneResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["KommuneResponse"];
-                };
-            };
-        };
-    };
-    hentKommunesStemmekretsgrenser: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente stemmekretsgrensene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentKommunesStemmekretsgrenserHistoriske: {
-        parameters: {
-            query: {
-                /** @description gyldigTilDate for da stemmekretsgrensene ble historiske */
-                gyldigTilDate: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente stemmekretsgrensene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentKommunesStemmekretser: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente stemmekretsene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StemmekretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentKommunesInndelingerMedDeltGeometriGrenser: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente grensene i inndelingene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentKommunesInndelingerMedDeltGeometri: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente inndelingene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["InndelingResponse"][];
-                };
-            };
-        };
-    };
-    hentKommunesGrunnkretsgrenser: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente grunnkretsgrensene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentKommunesGrunnkretsgrenserHistoriske: {
-        parameters: {
-            query: {
-                /** @description gyldigTilDate for da grunnkretsgrensene ble historiske */
-                gyldigTilDate: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente grunnkretsgrensene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentKommunesGrunnkretser: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente grunnkretsene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GrunnkretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentGrenserForKommune: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til kommunen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentKommunesBopliktomraade: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente bopliktområdet til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BopliktomraadeResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentKommunesBopliktomraadegrenser: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til kommunen man vil hente bopliktomraadegrensene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentKommunerForFylker: {
-        parameters: {
-            query: {
-                /** @description Liste med fylkeid'er for å hente kommuner i flere fylker */
-                fylkeid: string[];
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["KommuneResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    fetchMaalemetodeKoder: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["KodelisteRespons"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    finnInndelinger: {
-        parameters: {
-            query: {
-                /** @description Søkestring for å finne inndelinger */
-                searchString: string;
-                /** @description Eventuell gyldighetsdato for inndelingene (default = dagens dato) */
-                gyldighetsdato?: string;
-                /** @description Maksgrense for antall treff man ønsker seg */
-                limit?: number;
-                /** @description Hvilke typer inndelinger man ønsker å søke etter */
-                filter?: ("FYLKE" | "KOMMUNE" | "NASJON" | "GRUNNKRETS" | "STEMMEKRETS" | "BOPLIKTOMRAADE")[];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["InndelingSearchResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["InndelingSearchResponse"][];
-                };
-            };
-        };
-    };
-    hentFramtidigeVersjonerForGrunnkrets: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description LokalID-en til grunnkretsen man vil hente versjoner for */
-                lokalid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GrunnkretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentGrunnkrets: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til grunnkretsen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GrunnkretsResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GrunnkretsResponse"];
-                };
-            };
-        };
-    };
-    hentGrenserForGrunnkrets: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til grunnkretsen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentFylker: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for fylkene (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FylkeResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentFylke: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for fylke (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til fylket man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FylkeResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FylkeResponse"];
-                };
-            };
-        };
-    };
-    hentFylkesStemmekretser: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for fylket (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til fylket man vil hente stemmekretsenee til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StemmekretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentFylkesGrunnkretser: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for fylket (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID til fylket man vil hente grunnkretsene til */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GrunnkretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentGrenserForFylke: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for fylke (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til fylket man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentStemmekretserForIds: {
-        parameters: {
-            query: {
-                /** @description ID-ene til stemmekretsene man vil hente */
-                ids: string[];
-                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-        };
-    };
-    hentStemmekrets_1: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til stemmekretsen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternStemmekretsResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternStemmekretsResponse"];
-                };
-            };
-        };
-    };
-    hentGrenserForStemmekrets_1: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for stemmekrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til stemmekretsen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentKommuner_1: {
-        parameters: {
-            query?: {
-                /** @description Valgfri id til et fylke for å filtrere kommuner innenfor et fylke */
-                fylkeid?: string;
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKommuneRef"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentAlleStemmekretserMedDetaljerForKommune: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description Kommunenummer for kommune man ønsker å hente stemmekretsene til */
-                kommunenummer: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternStemmekretsResponse"][];
-                };
-            };
-        };
-    };
-    hentAlleStemmekretserForKommune: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description Kommunenummer for kommune man ønsker å hente stemmekretsene til */
-                kommunenummer: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-        };
-    };
-    hentAlleGrunnkretserMedDetaljerForKommune: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description Kommunenummer for kommune man ønsker å hente grunnkretsene til */
-                kommunenummer: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternGrunnkretsResponse"][];
-                };
-            };
-        };
-    };
-    hentAlleGrunnkretserForKommune: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description Kommunenummer for kommune man ønsker å hente grunnkretsene til */
-                kommunenummer: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-        };
-    };
-    hentKommune_1: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for kommune (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til kommunen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKommuneResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKommuneResponse"];
-                };
-            };
-        };
-    };
-    hentGrunnkretserForIds: {
-        parameters: {
-            query: {
-                /** @description ID-ene til grunnkretsene man vil hente */
-                ids: string[];
-                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternKretsResponse"][];
-                };
-            };
-        };
-    };
-    hentGrenserForGrunnkrets_1: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for grunnkrets (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til grunnkretsen man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentGrenser: {
-        parameters: {
-            query?: {
-                /** @description Dato for gyldighet av grensene (standard er dagens dato) */
-                gyldighetsdato?: string;
-                /** @description Sidenummer for paginering (starter på 0) */
-                side?: number;
-                /** @description Antall resultater per side (standard er 10) */
-                antall?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Vellykket operasjon */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginertRespons"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Ikke funnet */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PaginertResponsGrenseResponse"];
-                };
-            };
-        };
-    };
-    hentGrense: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Lokal ID for grensen som skal hentes */
-                lokalid: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Vellykket operasjon */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GrenseResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Ikke funnet */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["GrenseResponse"];
-                };
-            };
-        };
-    };
-    hentFylker_1: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for fylkene (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternFylkeRef"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentFylke_1: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for fylke (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til fylket man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternFylkeResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternFylkeResponse"];
-                };
-            };
-        };
-    };
-    hentAlleBopliktomraader: {
-        parameters: {
-            query?: {
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternBopliktomraadeRespons"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentBopliktomraade: {
-        parameters: {
-            query?: {
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternBopliktomraadeRespons"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternBopliktomraadeRespons"];
-                };
-            };
-        };
-    };
-    hentGrenserForBopliktomraade: {
-        parameters: {
-            query?: {
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    hentAlleBopliktomraader_1: {
-        parameters: {
-            query?: {
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["EksternBopliktomraadeRespons"][];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-        };
-    };
-    hentBopliktomraade_1: {
-        parameters: {
-            query?: {
-                /** @description Eventuell gyldighetsdato for bopliktomraadet (default = dagens dato */
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                /** @description ID-en til bopliktomraadet man vil hente */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BopliktomraadeResponse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["BopliktomraadeResponse"];
-                };
-            };
-        };
-    };
-    hentGrenserForBopliktomraade_1: {
-        parameters: {
-            query?: {
-                gyldighetsdato?: string;
-            };
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FeatureCollection"];
-                };
-            };
-        };
-    };
-    getUser: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful operation */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["User"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "*/*": Record<string, never>;
                 };
             };
         };
