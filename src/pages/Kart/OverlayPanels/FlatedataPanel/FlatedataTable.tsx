@@ -169,7 +169,12 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         const newFlate: MetadataResponse = getDefaultFlatedataForInndelingtype(mainInndeling.inndelingtype, {
           withNummer: nextNumber,
           withKommune: mainInndeling,
-          withLokalid: getTempFlateId(mainInndeling.inndelingtype, mainInndeling?.id ?? ""),
+          withLokalid: getTempFlateId({
+            inndelingtype: mainInndeling.inndelingtype,
+            kommuneLokalid: mainInndeling?.id ?? "",
+            nummer: nextNumber,
+            distinguisher: Math.floor(Math.random() * 1000000).toString(),
+          }),
         });
         return [...prevState, newFlate];
       });
