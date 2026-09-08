@@ -1,4 +1,4 @@
-import { Divider, Flex, Icon, MenuItem, MenuItemProps, MenuList, useDisclosure } from "@kvib/react";
+import { Divider, Icon, MenuItem, MenuItemProps, MenuList, useDisclosure } from "@kvib/react";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
@@ -22,6 +22,7 @@ export type MenuItems = (MenuItemProps & {
   $isActive: boolean;
   isDisabled: boolean;
   label: string;
+  isVisible?: boolean;
   $tooltipTextOverride?: string;
 })[];
 
@@ -38,12 +39,8 @@ const Toolbar = () => {
     toggleOverlayModal,
   } = useOverlayPanel();
   const { selectedFeatures, selectedPoint, clearSelectedPoint, clearSelection } = useFeatureStyle();
-  const { currentlyEditingInndelinger, getAllInndelinger } = useInndelinger();
+  const { currentlyEditingInndelinger } = useInndelinger();
   const isEditing = currentlyEditingInndelinger.length > 0;
-
-  // TODO Sjekk om vi kan fjerne ubrukte inndelinger
-  const flatedataIsAvailable =
-    getAllInndelinger().filter((inndeling) => inndeling.isViewing || inndeling.isEditing).length > 0;
 
   const { isOpen: isSnapMenuOpen, onClose: closeSnapMenu, onToggle: toggleSnapMenu } = useDisclosure();
 
@@ -290,27 +287,7 @@ const Toolbar = () => {
             aria-label="Zoom inn på kartet"
             tooltip={{ text: "Zoom inn" }}
           />
-          {!utkast && (
-            <Flex height="100%" gap="18px">
-              <Divider orientation="vertical" />
-              <ToolbarButton
-                icon="menu_book"
-                onClick={() => toggleOverlayModal("flatedata")}
-                isActive={activeOverlayModal === "flatedata"}
-                isDisabled={!flatedataIsAvailable}
-                aria-label="Se flateinformasjon"
-                tooltip={{
-                  text: "Se flateinformasjon",
-                  additionalInfo: !flatedataIsAvailable
-                    ? "Forhåndsvis en inndeling for å aktivere verktøyet"
-                    : undefined,
-                  shortcut: "flatedata",
-                }}
-              ></ToolbarButton>
-              <Divider orientation="vertical" />
-            </Flex>
-          )}
-          {utkast && <ToolbarMenus />}
+          <ToolbarMenus />
 
           <ToolbarButton
             icon="search"
