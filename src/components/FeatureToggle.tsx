@@ -20,7 +20,7 @@ const environmentByUrl: Record<string, Environment> = {
 // noe som `type Keys = "flagg1" | "flagg2" | ...`
 // features som skal fjernes kan slettes fra denne listen
 // hvis det ikke er noen keys skal Keys være av typen `never`
-type Keys = "CREATE_INNDELINGER" | "CREATE_MULTIPLE_INNDELINGER";
+type Keys = "CREATE_INNDELINGER" | "CREATE_MULTIPLE_INNDELINGER" | "VIS_FLATER";
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   CREATE_INNDELINGER: {
@@ -31,6 +31,13 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
     "feature-branch": true,
   },
   CREATE_MULTIPLE_INNDELINGER: {
+    prod: false,
+    "dev-main": true,
+    "dev-e2e": true,
+    localhost: true,
+    "feature-branch": true,
+  },
+  VIS_FLATER: {
     prod: false,
     "dev-main": true,
     "dev-e2e": true,
