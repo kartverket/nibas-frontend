@@ -1,6 +1,7 @@
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { VectorLayerId, GrenseType } from "hooks/layers/types";
 import { Feature } from "ol";
+import { asArray, Color } from "ol/color";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import MultiPoint from "ol/geom/MultiPoint";
@@ -10,6 +11,7 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style, { StyleFunction } from "ol/style/Style";
 import Text from "ol/style/Text";
+import { INNDELINGTYPE_VALUES, Inndelingtype } from "types/api";
 import { getFeatureFremtidigEndringDato, isFeatureEditable, isTeigFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
 import { FeatureLike } from "ol/Feature";
@@ -162,6 +164,30 @@ export const grenseStyles = {
   sosiFiler: lineAndPointStyles({ color: inndelingColors["sosiFiler"] }),
 };
 
+const withOpacity = (color: string, opacity: number): Color => {
+  const [r, g, b] = asArray(color);
+  return [r, g, b, opacity];
+};
+
+const flateHighlightFillStyles: Record<Inndelingtype, Style> = INNDELINGTYPE_VALUES.reduce(
+  (styles, inndelingtype) => ({
+    ...styles,
+    [inndelingtype]: new Style({
+      fill: new Fill({ color: withOpacity(inndelingColors[inndelingtype], 0.4) }),
+    }),
+  }),
+  {} as Record<Inndelingtype, Style>,
+);
+
+const getFlateHighlightStyle = (feature: FeatureLike): Style[] => {
+  const inndelingtype = feature.get("inndelingtype") as Inndelingtype | undefined;
+  if (inndelingtype == null) {
+    return [];
+  }
+
+  return [flateHighlightFillStyles[inndelingtype]];
+};
+
 const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
   switch (grenseType) {
     case "Fylkesgrense": {
@@ -198,6 +224,10 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
 
 export const getLayerStyle = (feature: FeatureLike, grenseId: VectorLayerId, archived: boolean): Style[] => {
   const grenseType = feature.get("type");
+
+  if (grenseId === "flater") {
+    return getFlateHighlightStyle(feature);
+  }
 
   if (getFeatureFremtidigEndringDato(feature) != null) {
     return grenseStyles.fremtidigEndring;
