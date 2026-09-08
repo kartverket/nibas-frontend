@@ -8,6 +8,7 @@ import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
 import { INNDELINGTYPE_VALUES } from "types/api";
 import { anyFeatureIsEditable } from "utils/features";
 import { FLATEDATA_TABLE_INNDELINGTYPE_VALUES } from "../OverlayPanels/FlatedataPanel/FlatedataPanel";
+import useFlateHighlight from "../OverlayPanels/FlatedataPanel/useFlateHighlight";
 import CustomTooltip from "./CustomTooltip";
 import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
@@ -42,6 +43,8 @@ const ToolbarMenus = () => {
     getInndelingerOfType(type).some((inndeling) => inndeling.isViewing === true || inndeling.isEditing === true),
   );
 
+  const { isActive: visFlaterIsActive, toggle: toggleVisFlater } = useFlateHighlight();
+
   const toggleMovePoint = () => {
     toggleTool("koordinater");
 
@@ -64,7 +67,7 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditingSplittableInndelinger);
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useKeyboardShortcut("historiskeGrenser", () => toggleTool("historiskeGrenser"), isEditing);
-  useKeyboardShortcut("flater", () => {}, isEditing);
+  useKeyboardShortcut("flater", toggleVisFlater, isEditing);
 
   const showBigMenu = (activeOverlayPanel === null && isSmall) || (activeOverlayPanel !== null && isWide);
 
@@ -203,8 +206,6 @@ const ToolbarMenus = () => {
     },
   ];
 
-  const visFlaterIsActive: boolean = false;
-
   return (
     <>
       <Divider orientation="vertical" />
@@ -271,11 +272,12 @@ const ToolbarMenus = () => {
               <FeatureToggle feature="VIS_FLATER">
                 <>
                   <SwitchWithShortcutDesc
-                    value={""}
-                    onChange={() => {}}
-                    isChecked={false}
+                    value="flater"
+                    onChange={toggleVisFlater}
+                    isChecked={visFlaterIsActive}
                     shortcut={KeyboardShortcuts["flater"].displayString}
                     isDisabled={isEditing === false}
+                    closeOnSelect={false}
                   >
                     Vis flater
                   </SwitchWithShortcutDesc>
