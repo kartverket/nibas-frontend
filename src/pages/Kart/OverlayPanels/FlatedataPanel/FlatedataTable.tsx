@@ -295,7 +295,9 @@ const BoldHeading = styled(Text)`
 
 const Container = styled(TabPanel)`
   display: flex;
+  flex: 1;
   flex-direction: column;
+  min-height: 0;
   padding: 0;
   overflow: hidden;
 `;
