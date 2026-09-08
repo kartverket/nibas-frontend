@@ -108,6 +108,13 @@ const spacerColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
   renderCell: () => <SpacerCell />,
 });
 
+const withTrailingSpacerAndLock = <T extends FlatedataTableInndelingtype>(
+  cols: FlatedataColumn<T>[],
+): FlatedataColumn<T>[] => {
+  const hasStretchColumn = cols.some((c) => c.size === "1fr");
+  return hasStretchColumn ? [...cols, lockIconColumn()] : [...cols, spacerColumn(), lockIconColumn()];
+};
+
 const getKommuneColumns = <T extends "FYLKE" | "KOMMUNE">(): FlatedataColumn<T>[] => {
   const prefix = "Kommune";
   return [
@@ -149,7 +156,6 @@ const getKommuneColumns = <T extends "FYLKE" | "KOMMUNE">(): FlatedataColumn<T>[
         );
       },
     },
-    lockIconColumn(),
   ];
 };
 
@@ -343,7 +349,6 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
         );
       },
     },
-    lockIconColumn(),
   ];
 };
 
@@ -367,8 +372,6 @@ const getGrunnkretsColumns = (): FlatedataColumn<"GRUNNKRETS">[] => {
         );
       },
     },
-    spacerColumn(),
-    lockIconColumn(),
   ];
 };
 
@@ -488,7 +491,6 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
         );
       },
     },
-    lockIconColumn(),
   ];
 };
 
@@ -496,12 +498,12 @@ export function getFlatedataColumns<T extends FlatedataTableInndelingtype>(innde
   switch (inndelingtype) {
     case "FYLKE":
     case "KOMMUNE":
-      return getKommuneColumns() as FlatedataColumn<T>[];
+      return withTrailingSpacerAndLock(getKommuneColumns()) as FlatedataColumn<T>[];
     case "STEMMEKRETS":
-      return getStemmekretsColumns() as FlatedataColumn<T>[];
+      return withTrailingSpacerAndLock(getStemmekretsColumns()) as FlatedataColumn<T>[];
     case "GRUNNKRETS":
-      return getGrunnkretsColumns() as FlatedataColumn<T>[];
+      return withTrailingSpacerAndLock(getGrunnkretsColumns()) as FlatedataColumn<T>[];
     case "BOPLIKTOMRAADE":
-      return getBopliktomraadeColumns() as FlatedataColumn<T>[];
+      return withTrailingSpacerAndLock(getBopliktomraadeColumns()) as FlatedataColumn<T>[];
   }
 }
