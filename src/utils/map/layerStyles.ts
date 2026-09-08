@@ -1,7 +1,9 @@
+import { FEATURE_VISIBLE_PROPERTY } from "contexts/KartlagContext/kartlag-utils";
 import { archivedSource, editSource } from "hooks/layers/constants";
-import { VectorLayerId, GrenseType } from "hooks/layers/types";
+import { GrenseType, VectorLayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { asArray, Color } from "ol/color";
+import { FeatureLike } from "ol/Feature";
 import Geometry from "ol/geom/Geometry";
 import LineString from "ol/geom/LineString";
 import MultiPoint from "ol/geom/MultiPoint";
@@ -11,12 +13,10 @@ import Fill from "ol/style/Fill";
 import Stroke from "ol/style/Stroke";
 import Style, { StyleFunction } from "ol/style/Style";
 import Text from "ol/style/Text";
-import { INNDELINGTYPE_VALUES, Inndelingtype } from "types/api";
+import { Inndelingtype, INNDELINGTYPE_VALUES } from "types/api";
 import { getFeatureFremtidigEndringDato, isFeatureEditable, isTeigFeature } from "utils/features";
 import { isGrenseType } from "utils/type-utils";
-import { FeatureLike } from "ol/Feature";
 import { getRepresentasjonspunktId } from "./source";
-import { FEATURE_VISIBLE_PROPERTY } from "contexts/KartlagContext/kartlag-utils";
 
 export const endpointStyleZIndex = 9999;
 
@@ -179,7 +179,7 @@ const flateHighlightFillStyles: Record<Inndelingtype, Style> = INNDELINGTYPE_VAL
   {} as Record<Inndelingtype, Style>,
 );
 
-const getFlateHighlightStyle = (feature: FeatureLike): Style[] => {
+export const getFlateHighlightStyle = (feature: FeatureLike): Style[] => {
   const inndelingtype = feature.get("inndelingtype") as Inndelingtype | undefined;
   if (inndelingtype == null) {
     return [];
@@ -224,10 +224,6 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
 
 export const getLayerStyle = (feature: FeatureLike, grenseId: VectorLayerId, archived: boolean): Style[] => {
   const grenseType = feature.get("type");
-
-  if (grenseId === "flater") {
-    return getFlateHighlightStyle(feature);
-  }
 
   if (getFeatureFremtidigEndringDato(feature) != null) {
     return grenseStyles.fremtidigEndring;
@@ -277,8 +273,7 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: VectorLayer
     number == null ||
     grenseId === "archived" ||
     grenseId === "matrikkel" ||
-    grenseId === "historical" ||
-    grenseId === "flater"
+    grenseId === "historical"
   ) {
     return new Style();
   }

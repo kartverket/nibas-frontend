@@ -6,9 +6,9 @@ import VectorSource from "ol/source/Vector";
 import WMTS from "ol/source/WMTS";
 import { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
-import { getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
+import { getFlateHighlightStyle, getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
 import { kartlagSources } from "./kartlagSources";
-import { VectorLayerId, KartlagLayerId } from "./types";
+import { VectorLayerId, KartlagLayerId, HighlightVectorLayerId } from "./types";
 import { Feature } from "ol";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, options?: Options<WMTS | TileWMS>) => {
@@ -55,7 +55,6 @@ const createVectorLayer = (id: VectorLayerId, source?: VectorSource) => {
 };
 
 export const grenserLayers: Record<VectorLayerId, VectorLayer<VectorSource<Feature>>> = {
-  flater: createVectorLayer("flater"),
   matrikkel: createVectorLayer("matrikkel"),
   sosiFiler: createVectorLayer("sosiFiler"),
   FYLKE: createVectorLayer("FYLKE"),
@@ -72,18 +71,25 @@ export const grenserLayers: Record<VectorLayerId, VectorLayer<VectorSource<Featu
 export const highlightStrokeSource = new VectorSource();
 export const highlightPointSource = new VectorSource();
 
-const createHighlightVectorLayer = (id: string, source: VectorSource, zIndex: number) => {
+const createHighlightVectorLayer = (
+  id: HighlightVectorLayerId,
+  source: VectorSource,
+  zIndex: number,
+  style?: StyleFunction,
+) => {
   const newLayer = new VectorLayer({
     source,
     zIndex,
     declutter: false,
+    style,
   });
   newLayer.set("id", id);
   map.addLayer(newLayer);
   return newLayer;
 };
 
-// Stroke should render under edit layer (default 0), so give it a lower zIndex
-export const highlightStrokeLayer = createHighlightVectorLayer("highlight-stroke", highlightStrokeSource, -1);
-// Points should render above everything else in the editing context
-export const highlightPointLayer = createHighlightVectorLayer("highlight-points", highlightPointSource, 1000);
+export const highlightLayers: Record<HighlightVectorLayerId, VectorLayer<VectorSource<Feature>>> = {
+  strokeHighlight: createHighlightVectorLayer("strokeHighlight", highlightStrokeSource, -1),
+  pointsHighlight: createHighlightVectorLayer("pointsHighlight", highlightPointSource, 1000),
+  flateHighlight: createHighlightVectorLayer("flateHighlight", new VectorSource(), -1, getFlateHighlightStyle),
+};

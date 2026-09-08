@@ -1,4 +1,4 @@
-import { grenserLayers, kartlagLayers } from "hooks/layers/constants";
+import { grenserLayers, kartlagLayers, highlightLayers } from "hooks/layers/constants";
 import { VectorLayerId, LayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { WFS } from "ol/format";
@@ -26,7 +26,7 @@ export const getLayerById = <T extends LayerId>(id: T) => {
     );
   }
 
-  return layersWithId[0] as (typeof kartlagLayers & typeof grenserLayers)[T];
+  return layersWithId[0] as (typeof kartlagLayers & typeof grenserLayers & typeof highlightLayers)[T];
 };
 
 export const getAllViewingLayers = (): VectorLayer<VectorSource<Feature>>[] => {
