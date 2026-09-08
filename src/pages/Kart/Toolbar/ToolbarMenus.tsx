@@ -258,6 +258,43 @@ const ToolbarMenus = () => {
       </ToolbarMenuItem>
     );
 
+  const renderVisFlaterMenuItem = () => (
+    <FeatureToggle feature="VIS_FLATER">
+      <>
+        {visFlaterIsAvailable ? (
+          <SwitchWithShortcutDesc
+            value="flater"
+            onChange={toggleVisFlater}
+            isChecked={visFlaterIsActive}
+            closeOnSelect={false}
+            size="md"
+            shortcut={KeyboardShortcuts["flater"].displayString}
+          >
+            Vis flater
+          </SwitchWithShortcutDesc>
+        ) : (
+          <CustomTooltip
+            text={defaultToolDisabledMessage}
+            aria-label="Verktøyet er ikke tilgjengelig. Du må først åpne en inndeling."
+          >
+            <SwitchWithShortcutDesc
+              value="flater"
+              onChange={toggleVisFlater}
+              isChecked={visFlaterIsActive}
+              isDisabled={true}
+              closeOnSelect={false}
+              size="md"
+              shortcut={KeyboardShortcuts["flater"].displayString}
+            >
+              Vis flater
+            </SwitchWithShortcutDesc>
+          </CustomTooltip>
+        )}
+        <MenuDivider />
+      </>
+    </FeatureToggle>
+  );
+
   return (
     <>
       <InndelingerHighlightLoader isActive={visFlaterIsActive} />
@@ -294,41 +331,7 @@ const ToolbarMenus = () => {
             tooltip="Flate"
           >
             <MenuList>
-              <FeatureToggle feature="VIS_FLATER">
-                <>
-                  {visFlaterIsAvailable ? (
-                    <SwitchWithShortcutDesc
-                      value="flater"
-                      onChange={toggleVisFlater}
-                      isChecked={visFlaterIsActive}
-                      closeOnSelect={false}
-                      size="md"
-                      shortcut={KeyboardShortcuts["flater"].displayString}
-                    >
-                      Vis flater
-                    </SwitchWithShortcutDesc>
-                  ) : (
-                    <CustomTooltip
-                      text={defaultToolDisabledMessage}
-                      aria-label="Verktøyet er ikke tilgjengelig. Du må først åpne en inndeling."
-                    >
-                      <SwitchWithShortcutDesc
-                        value="flater"
-                        onChange={toggleVisFlater}
-                        isChecked={visFlaterIsActive}
-                        isDisabled={true}
-                        closeOnSelect={false}
-                        size="md"
-                        shortcut={KeyboardShortcuts["flater"].displayString}
-                      >
-                        Vis flater
-                      </SwitchWithShortcutDesc>
-                    </CustomTooltip>
-                  )}
-
-                  <MenuDivider />
-                </>
-              </FeatureToggle>
+              {renderVisFlaterMenuItem()}
               {visibleFlateMenuItems.map(renderMenuItem)}
             </MenuList>
           </ToolbarMenu>
@@ -356,7 +359,10 @@ const ToolbarMenus = () => {
               <MenuOptionGroup title="Grense">{visibleGrenseMenuItems.map(renderMenuItem)}</MenuOptionGroup>
             )}
             {(visiblePunktMenuItems.length > 0 || visibleGrenseMenuItems.length > 0) && <MenuDivider />}
-            <MenuOptionGroup title="Flate">{visibleFlateMenuItems.map(renderMenuItem)}</MenuOptionGroup>
+            <MenuOptionGroup title="Flate">
+              {renderVisFlaterMenuItem()}
+              {visibleFlateMenuItems.map(renderMenuItem)}
+            </MenuOptionGroup>
           </MenuList>
         </ToolbarMenu>
       )}
