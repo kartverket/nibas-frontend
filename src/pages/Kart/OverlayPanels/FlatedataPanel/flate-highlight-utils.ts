@@ -10,7 +10,6 @@ import { removeNil } from "utils/list-utils";
 
 const RELEVANT_GRENSE_LAYER_IDS: VectorLayerId[] = ["GRUNNKRETS", "STEMMEKRETS", "BOPLIKTOMRAADE", "edit"];
 
-// TODO: Støtte hull?
 export const buildRingsFromLineStrings = (lineStrings: LineString[]): Coordinate[][] => {
   const remainingSegments = lineStrings.map((lineString) => lineString.getCoordinates());
   const rings: Coordinate[][] = [];
