@@ -7,6 +7,7 @@ import { TilhorighetInndelingtype } from "pages/Kart/OverlayPanels/hooks/tilhori
 import { FeatureProperties, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { removeNil } from "utils/list-utils";
+import { isBopliktomraadeInndeling } from "./useFlatedata";
 
 const RELEVANT_GRENSE_LAYER_IDS: VectorLayerId[] = ["GRUNNKRETS", "STEMMEKRETS", "BOPLIKTOMRAADE", "edit"];
 
@@ -77,13 +78,53 @@ const getLineStringsForOmraadeFromSource = (
   );
 };
 
+const getLineStringsForKommuneFromSource = (kommuneId: string): LineString[] => {
+  const candidateFeatures = RELEVANT_GRENSE_LAYER_IDS.flatMap(
+    (layerId) => grenserLayers[layerId].getSource()?.getFeatures() ?? [],
+  );
+
+  return removeNil(
+    candidateFeatures.map((feature) => {
+      const geometry = feature.getGeometry();
+      if (!(geometry instanceof LineString)) {
+        return null;
+      }
+
+      const properties = feature.getProperties() as FeatureProperties;
+      const belongsToKommune = properties.kontekstEgenskaper.some(
+        (kontekst) => kontekst.kommuneId?.lokalid.value === kommuneId,
+      );
+
+      return belongsToKommune ? geometry : null;
+    }),
+  );
+};
+
+const getLineStringsForOmraade = (
+  inndelingtype: TilhorighetInndelingtype,
+  kommuneId: string,
+  omraadeId: string,
+  omraade: MetadataResponse,
+): LineString[] => {
+  switch (inndelingtype) {
+    case "GRUNNKRETS":
+    case "STEMMEKRETS":
+      return getLineStringsForOmraadeFromSource(inndelingtype, kommuneId, omraadeId);
+    case "BOPLIKTOMRAADE":
+      if (isBopliktomraadeInndeling(omraade) && omraade.gjelderKunDelAvKommunen === false) {
+        return getLineStringsForKommuneFromSource(kommuneId);
+      }
+      return getLineStringsForOmraadeFromSource(inndelingtype, kommuneId, omraadeId);
+  }
+};
+
 export const getPolygonForOmraade = (
   inndelingtype: TilhorighetInndelingtype,
   kommuneId: string,
   omraade: MetadataResponse,
 ): Feature<Polygon> | null => {
   const omraadeId = getIdFromEntity(omraade);
-  const lineStrings = getLineStringsForOmraadeFromSource(inndelingtype, kommuneId, omraadeId);
+  const lineStrings = getLineStringsForOmraade(inndelingtype, kommuneId, omraadeId, omraade);
   const rings = buildRingsFromLineStrings(lineStrings);
 
   if (rings.length === 0) {
