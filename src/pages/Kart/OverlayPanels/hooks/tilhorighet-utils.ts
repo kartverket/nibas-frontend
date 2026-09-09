@@ -16,7 +16,11 @@ import {
 } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { isGrenseType } from "utils/type-utils";
-import { getNonExhaustiveInndelingTypeFromRequest } from "../FlatedataPanel/flatedata-utils";
+import {
+  getNonExhaustiveInndelingTypeFromRequest,
+  getTempFlateId,
+  isValidTempFlateId,
+} from "../FlatedataPanel/flatedata-utils";
 
 export enum Tilhorighet {
   A = "a",
@@ -104,10 +108,12 @@ export const getKretsIdFromKontekstegenskaper = (
   }
 
   if (kontekstegenskaper.id?.lokalid.value === CustomOption.NOT_CHOSEN) {
-    return getIdForTilhorhetNyKrets(
-      kontekstegenskaper.kretsNummer ?? undefined,
-      kontekstegenskaper.kommuneId?.lokalid.value,
-    );
+    return getTempFlateId({
+      inndelingtype: kontekstegenskaper.type,
+      kommuneLokalid: kontekstegenskaper.kommuneId?.lokalid.value ?? "",
+      nummer: kontekstegenskaper.kretsNummer ?? "",
+      distinguisher: kontekstegenskaper.kretsNummer ?? "",
+    });
   }
   return kontekstegenskaper.id?.lokalid.value;
 };
@@ -142,7 +148,7 @@ export const getUpdatedKontekstEgenskaper = (
     (id) => allPossibleOptions.find((krets) => krets.id.lokalid.value === id) ?? getDefaultKrets(inndelingType),
   );
   const nyeKontekstEgenskaper = kretser.map((krets) => ({
-    id: krets.id.lokalid.value.startsWith("NY_KRETS") ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
+    id: isValidTempFlateId(krets.id.lokalid.value) ? undefined : krets.id, // fjerner tempid når vi setter kontekstEgenskapene på featuren
     kommuneId: krets.kommuneId,
     kretsNummer: krets.nummer,
     type: krets.type,
@@ -183,9 +189,6 @@ const sortKretserOptionsByFormattedName = (kretser: Krets[] | undefined): Krets[
 
   return kretser.sort((a, b) => formatKretsNavn(a).localeCompare(formatKretsNavn(b)));
 };
-
-export const getIdForTilhorhetNyKrets = (kretsnummer: string | undefined, kommuneId: string | undefined) =>
-  `NY_KRETS_${kretsnummer}_${kommuneId}`;
 
 export const mapKommunalInndelingResponseToKrets = (
   inndelinger: KommunalInndelingResponse[],
@@ -293,10 +296,12 @@ export const getIdForKontekstEgenskaper = (
         ...kontekstEgenskaper,
         id: {
           lokalid: {
-            value: getIdForTilhorhetNyKrets(
-              kontekstEgenskaper.kretsNummer ?? undefined,
-              kontekstEgenskaper.kommuneId?.lokalid.value,
-            ),
+            value: getTempFlateId({
+              inndelingtype: kontekstEgenskaper.type,
+              kommuneLokalid: kontekstEgenskaper.kommuneId?.lokalid.value ?? "",
+              nummer: kontekstEgenskaper.kretsNummer ?? "",
+              distinguisher: kontekstEgenskaper.kretsNummer ?? "",
+            }),
           },
           gyldighetsdato: "",
         },
@@ -314,7 +319,14 @@ export const getKretserFromKretsDelingEndringer = (
     .flatMap((kretsDeling) =>
       kretsDeling.nyeKretser.map((nyKrets) => ({
         id: {
-          lokalid: { value: getIdForTilhorhetNyKrets(nyKrets.kretsNummer, kretsDeling.kommuneId.lokalid.value) },
+          lokalid: {
+            value: getTempFlateId({
+              inndelingtype: kretsDeling.flatetype as TilhorighetInndelingtype,
+              kommuneLokalid: kretsDeling.kommuneId.lokalid.value,
+              nummer: nyKrets.kretsNummer,
+              distinguisher: nyKrets.kretsNummer,
+            }),
+          },
           gyldighetsdato: "",
         },
         kommuneId: kretsDeling.kommuneId,
@@ -340,7 +352,12 @@ export const getNyeInndelingerFromUtkast = (
       return {
         id: {
           lokalid: {
-            value: getIdForTilhorhetNyKrets(entry.nummer, kommune?.id ?? ""),
+            value: getTempFlateId({
+              inndelingtype: inndelingType,
+              kommuneLokalid: kommune?.id ?? "",
+              nummer: entry.nummer,
+              distinguisher: entry.nummer,
+            }),
           },
           gyldighetsdato: "",
         },
@@ -379,7 +396,15 @@ export const getKretserFromNyInndelingEntries = (
       return {
         id: {
           lokalid: {
-            value: getIdForTilhorhetNyKrets(inndelingRequest.nummer, kommune?.id ?? ""),
+            // Her burde man teknisk sett kunne bare gjenbruke IDen på inndelingRequest,
+            // men den har et random nummer som distinguisher så da vil ikke tilhørighetkoden klare å matche den
+            // TODO: Finn ut om flatedatapanelet kan bruke nummer som distinguisher slik at vi kan bare droppe hele distinguisher-feltet
+            value: getTempFlateId({
+              inndelingtype: type,
+              kommuneLokalid: kommune?.id ?? "",
+              nummer: inndelingRequest.nummer,
+              distinguisher: inndelingRequest.nummer,
+            }),
           },
           gyldighetsdato: currentDate,
         },

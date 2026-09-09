@@ -8,6 +8,12 @@ import { FeatureProperties, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { removeNil } from "utils/list-utils";
 import { isBopliktomraadeInndeling } from "./useFlatedata";
+import {
+  getKommuneLokalidFromTempFlateId,
+  getInndelingtypeFromTempFlateId,
+  getNummerFromTempFlateId,
+  isValidTempFlateId,
+} from "./flatedata-utils";
 
 const RELEVANT_GRENSE_LAYER_IDS: VectorLayerId[] = ["GRUNNKRETS", "STEMMEKRETS", "BOPLIKTOMRAADE", "edit"];
 
@@ -66,12 +72,20 @@ const getLineStringsForOmraadeFromSource = (
       }
 
       const properties = feature.getProperties() as FeatureProperties;
-      const belongsToOmraade = properties.kontekstEgenskaper.some(
-        (kontekst) =>
+      const belongsToOmraade = properties.kontekstEgenskaper.some((kontekst) => {
+        if (isValidTempFlateId(omraadeId)) {
+          return (
+            getKommuneLokalidFromTempFlateId(omraadeId) === kontekst.kommuneId?.lokalid.value &&
+            getInndelingtypeFromTempFlateId(omraadeId) === inndelingtype &&
+            getNummerFromTempFlateId(omraadeId) === kontekst.kretsNummer
+          );
+        }
+        return (
           kontekst.type === inndelingtype &&
           kontekst.kommuneId?.lokalid.value === kommuneId &&
-          kontekst.id?.lokalid.value === omraadeId,
-      );
+          kontekst.id?.lokalid.value === omraadeId
+        );
+      });
 
       return belongsToOmraade ? geometry : null;
     }),

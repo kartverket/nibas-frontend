@@ -338,16 +338,33 @@ const ID_PARTS = {
   PREFIX: 0,
   INNDELINGTYPE: 1,
   KOMMUNE_LOKALID: 2,
-  RANDOM_NUM: 3,
+  NUMMER: 3,
+  DISTINGUISHER: 4,
 };
 
-export const getTempFlateId = (inndelingtype: Inndelingtype, kommuneLokalid: string): TempFlateId => {
+type GetTempFlateIdOptions = {
+  inndelingtype: Inndelingtype;
+  kommuneLokalid: string;
+  nummer: string;
+  // distinguisher brukes for å skille flere temp-IDer fra hverandre for samme inndelingtype/kommune.
+  // Sett den til noe deterministisk hvis samme logiske objekt skal få samme temp-ID hver gang,
+  // eller til et tilfeldig tall hvis IDen bare trenger å være unik.
+  distinguisher: string;
+};
+
+export const getTempFlateId = ({
+  inndelingtype,
+  kommuneLokalid,
+  nummer,
+  distinguisher,
+}: GetTempFlateIdOptions): TempFlateId => {
   const parts = new Array<string>(Object.keys(ID_PARTS).length);
 
   parts[ID_PARTS.PREFIX] = PREFIX;
   parts[ID_PARTS.INNDELINGTYPE] = inndelingtype;
   parts[ID_PARTS.KOMMUNE_LOKALID] = kommuneLokalid;
-  parts[ID_PARTS.RANDOM_NUM] = Math.floor(Math.random() * 1000000).toString();
+  parts[ID_PARTS.NUMMER] = nummer;
+  parts[ID_PARTS.DISTINGUISHER] = distinguisher;
 
   return parts.join(SEPARATOR) as TempFlateId;
 };
@@ -360,9 +377,25 @@ export const getKommuneLokalidFromTempFlateId = (tempFlateId: string): string | 
   return null;
 };
 
-export const isValidTempFlateId = (id: string): boolean => {
+export const getNummerFromTempFlateId = (tempFlateId: string): string | null => {
+  if (isValidTempFlateId(tempFlateId)) {
+    const parts = tempFlateId.split(SEPARATOR);
+    return parts[ID_PARTS.NUMMER];
+  }
+  return null;
+};
+
+export const getInndelingtypeFromTempFlateId = (tempFlateId: string): string | null => {
+  if (isValidTempFlateId(tempFlateId)) {
+    const parts = tempFlateId.split(SEPARATOR);
+    return parts[ID_PARTS.INNDELINGTYPE];
+  }
+  return null;
+};
+
+export const isValidTempFlateId = (id: string): id is TempFlateId => {
   const parts = id.split(SEPARATOR);
-  return parts.length === 4 && parts[ID_PARTS.PREFIX] === PREFIX;
+  return parts.length === 5 && parts[ID_PARTS.PREFIX] === PREFIX;
 };
 
 export const partitionDictBy = <T extends Record<string, unknown>>(
