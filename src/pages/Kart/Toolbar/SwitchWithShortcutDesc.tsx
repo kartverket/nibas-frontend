@@ -18,7 +18,7 @@ const SwitchWithShortcutDesc = ({
   shortcut,
   isDisabled,
   closeOnSelect,
-  size,
+  size = "sm",
   children,
 }: SwitchWithShortcutDescProps) => {
   return (
@@ -27,7 +27,7 @@ const SwitchWithShortcutDesc = ({
         value={value}
         onChange={onChange}
         isChecked={isChecked}
-        size={size ?? "sm"}
+        size={size}
         display="flex"
         alignItems="center"
         cursor="pointer"
