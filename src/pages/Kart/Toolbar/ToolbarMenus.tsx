@@ -294,6 +294,7 @@ const ToolbarMenus = () => {
                         shortcut={KeyboardShortcuts["flater"].displayString}
                         isDisabled={true}
                         closeOnSelect={false}
+                        size="md"
                       >
                         Vis flater
                       </SwitchWithShortcutDesc>
@@ -306,6 +307,7 @@ const ToolbarMenus = () => {
                       shortcut={KeyboardShortcuts["flater"].displayString}
                       isDisabled={false}
                       closeOnSelect={false}
+                      size="md"
                     >
                       Vis flater
                     </SwitchWithShortcutDesc>

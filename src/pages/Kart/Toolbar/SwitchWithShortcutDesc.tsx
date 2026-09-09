@@ -8,6 +8,7 @@ type SwitchWithShortcutDescProps = {
   children: React.ReactNode;
   isDisabled?: boolean;
   closeOnSelect?: boolean;
+  size?: "sm" | "md" | "lg";
 };
 
 const SwitchWithShortcutDesc = ({
@@ -17,11 +18,20 @@ const SwitchWithShortcutDesc = ({
   shortcut,
   isDisabled,
   closeOnSelect,
+  size = "sm",
   children,
 }: SwitchWithShortcutDescProps) => {
   return (
-    <MenuItem isDisabled={isDisabled} closeOnSelect={closeOnSelect} justifyContent={"space-between"}>
-      <Switch value={value} onChange={onChange} isChecked={isChecked} size="sm" display="flex" alignItems="center">
+    <MenuItem isDisabled={isDisabled} closeOnSelect={closeOnSelect} justifyContent={"space-between"} cursor="default">
+      <Switch
+        value={value}
+        onChange={onChange}
+        isChecked={isChecked}
+        size={size}
+        display="flex"
+        alignItems="center"
+        cursor="pointer"
+      >
         {children}
       </Switch>
       <Text fontSize="sm" color="gray.500" ml="auto" marginLeft={2}>
