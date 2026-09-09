@@ -116,7 +116,6 @@ const Toolbar = () => {
   useKeyboardShortcut("measure", () => toggleTool("measure"));
   useKeyboardShortcut("goto", () => toggleOverlayModal("navigasjon"));
   useKeyboardShortcut("tegnforklaring", () => toggleOverlayPanel("tegnforklaring"));
-  useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useHoldButtonToggle(
     "alt",
     activeModeTools.includes("move"),
