@@ -2,7 +2,7 @@ import { grenserLayers } from "hooks/layers/constants";
 import { VectorLayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
-import { LineString, Polygon } from "ol/geom";
+import { LineString, MultiPolygon, Polygon } from "ol/geom";
 import { TilhorighetInndelingtype } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { FeatureProperties, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -53,6 +53,43 @@ export const buildRingsFromLineStrings = (lineStrings: LineString[]): Coordinate
   }
 
   return rings;
+};
+
+export const groupRingsIntoPolygons = (rings: Coordinate[][]): Coordinate[][][] => {
+  const ringPolygons = rings.map((ring) => new Polygon([ring]));
+  const areas = ringPolygons.map((polygon) => polygon.getArea());
+  const parentIndexes = ringPolygons.map((polygon, ringIndex) => {
+    const interiorCoordinate = polygon.getInteriorPoint().getCoordinates();
+
+    return ringPolygons.reduce<number | null>((smallestParentIndex, candidate, candidateIndex) => {
+      if (
+        candidateIndex === ringIndex ||
+        areas[candidateIndex] <= areas[ringIndex] ||
+        !candidate.intersectsCoordinate(interiorCoordinate)
+      ) {
+        return smallestParentIndex;
+      }
+
+      if (smallestParentIndex == null || areas[candidateIndex] < areas[smallestParentIndex]) {
+        return candidateIndex;
+      }
+      return smallestParentIndex;
+    }, null);
+  });
+
+  const getDepth = (ringIndex: number): number => {
+    const parentIndex = parentIndexes[ringIndex];
+    return parentIndex == null ? 0 : getDepth(parentIndex) + 1;
+  };
+
+  return rings.flatMap((ring, ringIndex) => {
+    if (getDepth(ringIndex) % 2 !== 0) {
+      return [];
+    }
+
+    const holes = rings.filter((_, candidateIndex) => parentIndexes[candidateIndex] === ringIndex);
+    return [[ring, ...holes]];
+  });
 };
 
 const getLineStringsForOmraadeFromSource = (
@@ -136,7 +173,7 @@ export const getPolygonForOmraade = (
   inndelingtype: TilhorighetInndelingtype,
   kommuneId: string,
   omraade: MetadataResponse,
-): Feature<Polygon> | null => {
+): Feature<MultiPolygon> | null => {
   const omraadeId = getIdFromEntity(omraade);
   const lineStrings = getLineStringsForOmraade(inndelingtype, kommuneId, omraadeId, omraade);
   const rings = buildRingsFromLineStrings(lineStrings);
@@ -145,7 +182,7 @@ export const getPolygonForOmraade = (
     return null;
   }
 
-  const feature = new Feature({ geometry: new Polygon(rings) });
+  const feature = new Feature({ geometry: new MultiPolygon(groupRingsIntoPolygons(rings)) });
   feature.setId(`flate-${inndelingtype}-${omraadeId}`);
   feature.setProperties({ inndelingtype, inndelingId: omraadeId });
   return feature;
