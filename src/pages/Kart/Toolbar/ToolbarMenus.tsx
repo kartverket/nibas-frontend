@@ -44,16 +44,19 @@ const VisFlaterMenuItem = ({ isAvailable, isActive, onToggle, disabledMessage }:
   return (
     <>
       {isAvailable ? (
-        <SwitchWithShortcutDesc
-          value="flater"
-          onChange={onToggle}
-          isChecked={isActive}
-          closeOnSelect={false}
-          size="md"
-          shortcut={KeyboardShortcuts["flater"].displayString}
-        >
-          Vis flater
-        </SwitchWithShortcutDesc>
+        <>
+          <InndelingerHighlightLoader isActive={isActive} />
+          <SwitchWithShortcutDesc
+            value="flater"
+            onChange={onToggle}
+            isChecked={isActive}
+            closeOnSelect={false}
+            size="md"
+            shortcut={KeyboardShortcuts["flater"].displayString}
+          >
+            Vis flater
+          </SwitchWithShortcutDesc>
+        </>
       ) : (
         <CustomTooltip
           text={disabledMessage}
@@ -305,7 +308,6 @@ const ToolbarMenus = () => {
 
   return (
     <>
-      <InndelingerHighlightLoader isActive={visFlaterIsActive} />
       <Divider orientation="vertical" />
       {showBigMenu && (
         <Flex gap="18px">
