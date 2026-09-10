@@ -110,7 +110,7 @@ export const KeyboardShortcuts: { [name in Shortcut]: KeyboardShortcut } = {
   merge: createShortcut("m", { control: true }),
   flatedata: createShortcut("i", { control: true, shift: true }),
   flatesplit: createShortcut("m", { control: true, shift: true }),
-  flater: createShortcut("f", { control: true, alt: true }),
+  flater: createShortcut("v", { control: true, shift: true }),
 
   // Misc Toolbar
   snap: createShortcut("g", { control: true }),

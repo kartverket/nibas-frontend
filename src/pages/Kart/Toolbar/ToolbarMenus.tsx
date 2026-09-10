@@ -31,6 +31,55 @@ export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
 
 type VisibleMenuItem = Omit<MenuItems[number], "isVisible">;
 
+type VisFlaterMenuItemProps = {
+  isAvailable: boolean;
+  isActive: boolean;
+  onToggle: () => void;
+  disabledMessage: string;
+};
+
+const VisFlaterMenuItem = ({ isAvailable, isActive, onToggle, disabledMessage }: VisFlaterMenuItemProps) => {
+  useKeyboardShortcut("flater", onToggle);
+
+  return (
+    <>
+      {isAvailable ? (
+        <>
+          <InndelingerHighlightLoader isActive={isActive} />
+          <SwitchWithShortcutDesc
+            value="flater"
+            onChange={onToggle}
+            isChecked={isActive}
+            closeOnSelect={false}
+            size="md"
+            shortcut={KeyboardShortcuts["flater"].displayString}
+          >
+            Vis flater
+          </SwitchWithShortcutDesc>
+        </>
+      ) : (
+        <CustomTooltip
+          text={disabledMessage}
+          aria-label="Verktøyet er ikke tilgjengelig. Du må først åpne en inndeling."
+        >
+          <SwitchWithShortcutDesc
+            value="flater"
+            onChange={onToggle}
+            isChecked={isActive}
+            isDisabled={true}
+            closeOnSelect={false}
+            size="md"
+            shortcut={KeyboardShortcuts["flater"].displayString}
+          >
+            Vis flater
+          </SwitchWithShortcutDesc>
+        </CustomTooltip>
+      )}
+      <MenuDivider />
+    </>
+  );
+};
+
 const ToolbarMenus = () => {
   const { utkast } = useUtkast();
   const { activeTool, toggleTool, disableModeTool, activeModeTools } = useToolbar();
@@ -84,7 +133,6 @@ const ToolbarMenus = () => {
   useKeyboardShortcut("flatesplit", () => toggleOverlayPanel("splitting"), isEditingSplittableInndelinger);
   useKeyboardShortcut("flatedata", () => toggleOverlayModal("flatedata"));
   useKeyboardShortcut("historiskeGrenser", () => toggleTool("historiskeGrenser"), isEditing);
-  useKeyboardShortcut("flater", toggleVisFlater, visFlaterIsAvailable);
 
   const showBigMenu = (activeOverlayPanel === null && isSmall) || (activeOverlayPanel !== null && isWide);
 
@@ -258,46 +306,8 @@ const ToolbarMenus = () => {
       </ToolbarMenuItem>
     );
 
-  const renderVisFlaterMenuItem = () => (
-    <FeatureToggle feature="VIS_FLATER">
-      <>
-        {visFlaterIsAvailable ? (
-          <SwitchWithShortcutDesc
-            value="flater"
-            onChange={toggleVisFlater}
-            isChecked={visFlaterIsActive}
-            closeOnSelect={false}
-            size="md"
-            shortcut={KeyboardShortcuts["flater"].displayString}
-          >
-            Vis flater
-          </SwitchWithShortcutDesc>
-        ) : (
-          <CustomTooltip
-            text={defaultToolDisabledMessage}
-            aria-label="Verktøyet er ikke tilgjengelig. Du må først åpne en inndeling."
-          >
-            <SwitchWithShortcutDesc
-              value="flater"
-              onChange={toggleVisFlater}
-              isChecked={visFlaterIsActive}
-              isDisabled={true}
-              closeOnSelect={false}
-              size="md"
-              shortcut={KeyboardShortcuts["flater"].displayString}
-            >
-              Vis flater
-            </SwitchWithShortcutDesc>
-          </CustomTooltip>
-        )}
-        <MenuDivider />
-      </>
-    </FeatureToggle>
-  );
-
   return (
     <>
-      <InndelingerHighlightLoader isActive={visFlaterIsActive} />
       <Divider orientation="vertical" />
       {showBigMenu && (
         <Flex gap="18px">
@@ -331,7 +341,14 @@ const ToolbarMenus = () => {
             tooltip="Flate"
           >
             <MenuList>
-              {renderVisFlaterMenuItem()}
+              <FeatureToggle feature="VIS_FLATER">
+                <VisFlaterMenuItem
+                  isAvailable={visFlaterIsAvailable}
+                  isActive={visFlaterIsActive}
+                  onToggle={toggleVisFlater}
+                  disabledMessage={defaultToolDisabledMessage}
+                />
+              </FeatureToggle>
               {visibleFlateMenuItems.map(renderMenuItem)}
             </MenuList>
           </ToolbarMenu>
@@ -360,7 +377,14 @@ const ToolbarMenus = () => {
             )}
             {(visiblePunktMenuItems.length > 0 || visibleGrenseMenuItems.length > 0) && <MenuDivider />}
             <MenuOptionGroup title="Flate">
-              {renderVisFlaterMenuItem()}
+              <FeatureToggle feature="VIS_FLATER">
+                <VisFlaterMenuItem
+                  isAvailable={visFlaterIsAvailable}
+                  isActive={visFlaterIsActive}
+                  onToggle={toggleVisFlater}
+                  disabledMessage={defaultToolDisabledMessage}
+                />
+              </FeatureToggle>
               {visibleFlateMenuItems.map(renderMenuItem)}
             </MenuOptionGroup>
           </MenuList>
