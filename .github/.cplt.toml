@@ -1,0 +1,13 @@
+[deny]
+paths = [
+    .env
+    .env.local
+]
+
+[propose]
+gh_guard = true
+git_push_prevention = true
+
+[propose.allow]
+ports = [3000]
+localhost = [3000]
