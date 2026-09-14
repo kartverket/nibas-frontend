@@ -57,7 +57,7 @@ export const buildRingsFromLineStrings = (lineStrings: LineString[]): Coordinate
 
 export const groupRingsIntoPolygons = (rings: Coordinate[][]): Coordinate[][][] => {
   const ringPolygons = rings.map((ring) => new Polygon([ring]));
-  const areas = ringPolygons.map((polygon) => polygon.getArea());
+  const areas = ringPolygons.map((polygon) => Math.abs(polygon.getArea()));
   const parentIndexes = ringPolygons.map((polygon, ringIndex) => {
     const interiorCoordinate = polygon.getInteriorPoint().getCoordinates();
 
