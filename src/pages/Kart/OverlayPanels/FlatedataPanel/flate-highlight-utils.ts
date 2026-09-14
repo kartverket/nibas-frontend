@@ -2,7 +2,7 @@ import { grenserLayers } from "hooks/layers/constants";
 import { VectorLayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
-import { LineString, Polygon } from "ol/geom";
+import { LineString, MultiPolygon, Polygon } from "ol/geom";
 import { TilhorighetInndelingtype } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { FeatureProperties, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -53,6 +53,48 @@ export const buildRingsFromLineStrings = (lineStrings: LineString[]): Coordinate
   }
 
   return rings;
+};
+
+const containsPolygon = (candidateParent: Polygon, candidateChild: Polygon): boolean => {
+  return candidateChild.getCoordinates()[0].every((coordinate) => candidateParent.intersectsCoordinate(coordinate));
+};
+
+// tar imot ringer for et område og finner grupperingen av skall og hull
+export const groupRingsIntoPolygons = (rings: Coordinate[][]): Coordinate[][][] => {
+  const ringPolygons = rings.map((ring) => new Polygon([ring]));
+  const areas = ringPolygons.map((polygon) => Math.abs(polygon.getArea()));
+  const parentIndexes = ringPolygons.map((polygon, ringIndex) => {
+    // Finn det minste polygonet som inneholder polygonet vi ser på i mappingen. Altså nærmeste forelder.
+    return ringPolygons.reduce<number | null>((smallestParentIndex, candidatePolygon, candidatePolygonIndex) => {
+      if (
+        candidatePolygonIndex === ringIndex || // ikke sammenligne med seg selv
+        areas[candidatePolygonIndex] <= areas[ringIndex] || // Vi leter etter foreldre til polygon, så hvis arealet til candidatePolygon er mindre enn polygonet vi ser på kan det ikke være en forelder
+        !containsPolygon(candidatePolygon, polygon) // hvis candidatePolygon sine polygoner ikke omkranser alle punktene i polygonet vi ser på kan ikke candidatePolygon være en forelder for polygonet
+      ) {
+        // candidatePolygon er ikke en gyldig forelder for polygonet vi ser på
+        return smallestParentIndex;
+      }
+
+      if (smallestParentIndex == null || areas[candidatePolygonIndex] < areas[smallestParentIndex]) {
+        return candidatePolygonIndex;
+      }
+      return smallestParentIndex;
+    }, null);
+  });
+
+  const getDepth = (ringIndex: number): number => {
+    const parentIndex = parentIndexes[ringIndex];
+    return parentIndex == null ? 0 : getDepth(parentIndex) + 1;
+  };
+
+  return rings.flatMap((ring, ringIndex) => {
+    if (getDepth(ringIndex) % 2 !== 0) {
+      return [];
+    }
+
+    const holes = rings.filter((_, candidateIndex) => parentIndexes[candidateIndex] === ringIndex);
+    return [[ring, ...holes]];
+  });
 };
 
 const getLineStringsForOmraadeFromSource = (
@@ -136,7 +178,7 @@ export const getPolygonForOmraade = (
   inndelingtype: TilhorighetInndelingtype,
   kommuneId: string,
   omraade: MetadataResponse,
-): Feature<Polygon> | null => {
+): Feature<MultiPolygon> | null => {
   const omraadeId = getIdFromEntity(omraade);
   const lineStrings = getLineStringsForOmraade(inndelingtype, kommuneId, omraadeId, omraade);
   const rings = buildRingsFromLineStrings(lineStrings);
@@ -145,7 +187,7 @@ export const getPolygonForOmraade = (
     return null;
   }
 
-  const feature = new Feature({ geometry: new Polygon(rings) });
+  const feature = new Feature({ geometry: new MultiPolygon(groupRingsIntoPolygons(rings)) });
   feature.setId(`flate-${inndelingtype}-${omraadeId}`);
   feature.setProperties({ inndelingtype, inndelingId: omraadeId });
   return feature;
