@@ -55,23 +55,28 @@ export const buildRingsFromLineStrings = (lineStrings: LineString[]): Coordinate
   return rings;
 };
 
+const containsPolygon = (candidateParent: Polygon, candidateChild: Polygon): boolean => {
+  return candidateChild.getCoordinates()[0].every((coordinate) => candidateParent.intersectsCoordinate(coordinate));
+};
+
+// tar imot ringer for et område og finner grupperingen av skall og hull
 export const groupRingsIntoPolygons = (rings: Coordinate[][]): Coordinate[][][] => {
   const ringPolygons = rings.map((ring) => new Polygon([ring]));
   const areas = ringPolygons.map((polygon) => Math.abs(polygon.getArea()));
   const parentIndexes = ringPolygons.map((polygon, ringIndex) => {
-    const interiorCoordinate = polygon.getInteriorPoint().getCoordinates();
-
-    return ringPolygons.reduce<number | null>((smallestParentIndex, candidate, candidateIndex) => {
+    // Finn det minste polygonet som inneholder polygonet vi ser på i mappingen. Altså nærmeste forelder.
+    return ringPolygons.reduce<number | null>((smallestParentIndex, candidatePolygon, candidatePolygonIndex) => {
       if (
-        candidateIndex === ringIndex ||
-        areas[candidateIndex] <= areas[ringIndex] ||
-        !candidate.intersectsCoordinate(interiorCoordinate)
+        candidatePolygonIndex === ringIndex || // ikke sammenligne med seg selv
+        areas[candidatePolygonIndex] <= areas[ringIndex] || // Vi leter etter foreldre til polygon, så hvis arealet til candidatePolygon er mindre enn polygonet vi ser på kan det ikke være en forelder
+        !containsPolygon(candidatePolygon, polygon) // hvis candidatePolygon sine polygoner ikke omkranser alle punktene i polygonet vi ser på kan ikke candidatePolygon være en forelder for polygonet
       ) {
+        // candidatePolygon er ikke en gyldig forelder for polygonet vi ser på
         return smallestParentIndex;
       }
 
-      if (smallestParentIndex == null || areas[candidateIndex] < areas[smallestParentIndex]) {
-        return candidateIndex;
+      if (smallestParentIndex == null || areas[candidatePolygonIndex] < areas[smallestParentIndex]) {
+        return candidatePolygonIndex;
       }
       return smallestParentIndex;
     }, null);
