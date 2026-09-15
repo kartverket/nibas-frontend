@@ -213,6 +213,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                     key={inndelingId}
                     inndelingtype={mainInndeling.inndelingtype}
                     inndeling={inndeling}
+                    kommuneLokalid={mainInndeling.id}
                     columns={columns}
                     isSearchMatch={isSearchMatch}
                     isEditing={isEditing}
