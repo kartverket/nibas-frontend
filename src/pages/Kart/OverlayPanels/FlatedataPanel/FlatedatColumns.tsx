@@ -25,6 +25,8 @@ import InputCell, {
 import { FlatedataInputs, isNonExhaustiveInndelingtype, isValidTempFlateId, isValidUrl } from "./flatedata-utils";
 import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { ArchiveInndelingEntry } from "contexts/HistoryContext/types";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -80,15 +82,33 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
+  const { addHistoryEntry } = useHistory();
+  const handleArchiveInndeling = () => {
+    if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
+      return;
+    }
+    const archiveInndelingEntry: ArchiveInndelingEntry = {
+      type: "archive_inndeling",
+      changes: [
+        {
+          id: ctx.inndelingId,
+          from: null,
+          to: {
+            flatetype: ctx.inndelingtype,
+            identifikator: {
+              lokalId: ctx.inndeling.id.lokalid.value,
+              version: ctx.inndeling.version,
+            },
+          },
+        },
+      ],
+    };
+    addHistoryEntry(archiveInndelingEntry);
+    //TODO: Kalle funksjon for å sette arkiveringsstil på grenser for inndeling
+  };
+
   return (
-    <IconButton
-      variant="ghost"
-      aria-label="Arkiver inndelingen"
-      icon="archive"
-      onClick={() => {
-        return ctx;
-      }}
-    />
+    <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
   );
 };
 

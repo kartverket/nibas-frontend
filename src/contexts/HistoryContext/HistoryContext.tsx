@@ -1,19 +1,20 @@
-import React, { createContext, useContext } from "react";
-import { HistoryContextValue, HistoryEntry } from "./types";
-import {
-  setFeatureCoordinatesForEntry,
-  setKontekstEgenskaperForEntry,
-  setFeaturePropertiesForEntry,
-  redoArchiving,
-  undoArchving,
-  handleGrensedeling,
-  handleNyGrense,
-  setRepresentasjonspunktForMetadataEntry,
-  undoDelete,
-  redoDelete,
-  handleGrenseMerge,
-} from "./history-utils";
 import useHistoryState from "contexts/HistoryContext/useHistoryState";
+import React, { createContext, useContext } from "react";
+import {
+  handleArchiveInndeling,
+  handleGrensedeling,
+  handleGrenseMerge,
+  handleNyGrense,
+  redoArchiving,
+  redoDelete,
+  setFeatureCoordinatesForEntry,
+  setFeaturePropertiesForEntry,
+  setKontekstEgenskaperForEntry,
+  setRepresentasjonspunktForMetadataEntry,
+  undoArchving,
+  undoDelete,
+} from "./history-utils";
+import { HistoryContextValue, HistoryEntry } from "./types";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -101,6 +102,9 @@ const onUndo = (entry: HistoryEntry) => {
           detail: { entry },
         }),
       );
+    }
+    case "archive_inndeling": {
+      return handleArchiveInndeling(entry, "from");
     }
   }
 };
@@ -191,6 +195,9 @@ const onRedo = (entry: HistoryEntry) => {
           detail: { entry },
         }),
       );
+    }
+    case "archive_inndeling": {
+      return handleArchiveInndeling(entry, "to");
     }
   }
 };

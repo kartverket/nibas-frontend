@@ -16,6 +16,7 @@ import { removeNil } from "utils/list-utils";
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import {
+  ArchiveInndelingEntry,
   BopliktomraadeEntry,
   GrenseArkiveringsEntry,
   GrenseDelingEntry,
@@ -274,6 +275,26 @@ export const undoArchving = (entry: GrenseArkiveringsEntry) => {
   );
 };
 
+export const handleArchiveInndeling = (entry: ArchiveInndelingEntry, direction: HistoryDirection) => {
+  // TODO: kalle funksjon som legger til/ fjerner arkiveringsstil på grenser for inndeling i entry
+  switch (direction) {
+    case "from": {
+      return document.dispatchEvent(
+        new CustomEvent("archive_inndelingUndo", {
+          detail: { entry },
+        }),
+      );
+    }
+    case "to": {
+      return document.dispatchEvent(
+        new CustomEvent("archive_inndelingRedo", {
+          detail: { entry },
+        }),
+      );
+    }
+  }
+};
+
 export const redoDelete = (entry: NyGrenseDeleteEntry) => {
   const allIdsToBeDeleted = entry.changes.map((change) => change.id);
   removeFeaturesFromSourceByIds("edit", allIdsToBeDeleted);
@@ -419,6 +440,10 @@ export const getGrenseMergeEntries = (entries: HistoryEntry[]): MergeGrenseEntry
 
 export const getNyInndelingEntries = (entries: HistoryEntry[]): NyeInndelingerEntry[] => {
   return entries.filter((entry) => entry.type === "create_inndelinger") as NyeInndelingerEntry[];
+};
+
+export const getArchiveInndelingEntries = (entries: HistoryEntry[]): ArchiveInndelingEntry[] => {
+  return entries.filter((entry) => entry.type === "archive_inndeling") as ArchiveInndelingEntry[];
 };
 
 /**
