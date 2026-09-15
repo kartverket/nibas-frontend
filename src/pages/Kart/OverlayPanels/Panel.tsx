@@ -74,7 +74,7 @@ export const ModalPanel = styled(Panel).withConfig({
   shouldForwardProp: (prop) => !propsToNotForward.includes(prop),
 })`
   height: 100%;
-  max-width: 1250px;
+  max-width: 1350px;
   margin-left: 16px;
   margin-right: 16px;
   animation: ${fadeIn} 0.2s ease-out;

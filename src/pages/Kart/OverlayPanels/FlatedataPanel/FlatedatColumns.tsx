@@ -1,4 +1,4 @@
-import { Icon, Tooltip } from "@kvib/react";
+import { Icon, IconButton, Tooltip } from "@kvib/react";
 import { ValidationError } from "components/Input";
 import { Control, Controller, FieldError, UseFormReturn } from "react-hook-form";
 import { styled } from "styled-components";
@@ -22,8 +22,9 @@ import InputCell, {
   TableCell,
   URLInputCell,
 } from "./FlatedataTableCells";
-import { FlatedataInputs, isValidUrl } from "./flatedata-utils";
+import { FlatedataInputs, isNonExhaustiveInndelingtype, isValidTempFlateId, isValidUrl } from "./flatedata-utils";
 import { SortPropertyFor } from "./useFlatedataTableSort";
+import FeatureToggle from "components/FeatureToggle";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -63,20 +64,44 @@ type FremtidigEndringIconProps = {
 
 const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
   return (
-    formattedDate != null && (
-      <Tooltip
-        label={`Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`}
-        placement="left"
-      >
-        <IconContainer>
-          <Icon
-            color="var(--kvib-colors-blue-500)"
-            aria-label="Inndelingen har fremtidig endring"
-            icon="lock_clock"
-          ></Icon>
-        </IconContainer>
-      </Tooltip>
-    )
+    <Tooltip
+      label={`Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`}
+      placement="left"
+    >
+      <IconContainer>
+        <Icon
+          color="var(--kvib-colors-blue-500)"
+          aria-label="Inndelingen har fremtidig endring"
+          icon="lock_clock"
+        ></Icon>
+      </IconContainer>
+    </Tooltip>
+  );
+};
+
+const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
+  return (
+    <IconButton
+      variant="ghost"
+      aria-label="Arkiver inndelingen"
+      icon="archive"
+      onClick={() => {
+        return ctx;
+      }}
+    />
+  );
+};
+
+const SlettInndelingButton = (ctx: FlatedataColumnCtx) => {
+  return (
+    <IconButton
+      variant="ghost"
+      aria-label="Slett inndelingen"
+      icon="delete_forever"
+      onClick={() => {
+        return ctx;
+      }}
+    />
   );
 };
 
@@ -108,11 +133,46 @@ const spacerColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
   renderCell: () => <SpacerCell />,
 });
 
-const withTrailingSpacerAndLock = <T extends FlatedataTableInndelingtype>(
+const archiveColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<T> => ({
+  header: "",
+  renderCell: (ctx: FlatedataColumnCtx) => (
+    <TableCell>
+      <FeatureToggle feature="ARCHIVE_INNDELING">
+        {isNonExhaustiveInndelingtype(ctx.inndelingtype) ? <ArkiverInndelingButton {...ctx} /> : <></>}
+      </FeatureToggle>
+    </TableCell>
+  ),
+});
+
+const deleteColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<T> => ({
+  header: "",
+  renderCell: (ctx: FlatedataColumnCtx) => (
+    <TableCell>
+      <FeatureToggle feature="DELETE_INNDELING">
+        {isNonExhaustiveInndelingtype(ctx.inndelingtype) ? <SlettInndelingButton {...ctx} /> : <></>}
+      </FeatureToggle>
+    </TableCell>
+  ),
+});
+
+const endColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<T> => ({
+  header: "",
+  renderCell: (ctx: FlatedataColumnCtx) => {
+    if (ctx.disabledDate != null) {
+      return lockIconColumn<T>().renderCell({ ...ctx });
+    } else if (isValidTempFlateId(ctx.inndeling.id.lokalid.value)) {
+      return deleteColumn<T>().renderCell({ ...ctx });
+    } else {
+      return archiveColumn<T>().renderCell({ ...ctx });
+    }
+  },
+});
+
+const withTrailingSpacerAndEndColumn = <T extends FlatedataTableInndelingtype>(
   cols: FlatedataColumn<T>[],
 ): FlatedataColumn<T>[] => {
   const hasStretchColumn = cols.some((c) => c.size === "1fr");
-  return hasStretchColumn ? [...cols, lockIconColumn()] : [...cols, spacerColumn(), lockIconColumn()];
+  return hasStretchColumn ? [...cols, endColumn()] : [...cols, spacerColumn(), endColumn()];
 };
 
 const getKommuneColumns = <T extends "FYLKE" | "KOMMUNE">(): FlatedataColumn<T>[] => {
@@ -498,12 +558,12 @@ export function getFlatedataColumns<T extends FlatedataTableInndelingtype>(innde
   switch (inndelingtype) {
     case "FYLKE":
     case "KOMMUNE":
-      return withTrailingSpacerAndLock(getKommuneColumns()) as FlatedataColumn<T>[];
+      return withTrailingSpacerAndEndColumn(getKommuneColumns()) as FlatedataColumn<T>[];
     case "STEMMEKRETS":
-      return withTrailingSpacerAndLock(getStemmekretsColumns()) as FlatedataColumn<T>[];
+      return withTrailingSpacerAndEndColumn(getStemmekretsColumns()) as FlatedataColumn<T>[];
     case "GRUNNKRETS":
-      return withTrailingSpacerAndLock(getGrunnkretsColumns()) as FlatedataColumn<T>[];
+      return withTrailingSpacerAndEndColumn(getGrunnkretsColumns()) as FlatedataColumn<T>[];
     case "BOPLIKTOMRAADE":
-      return withTrailingSpacerAndLock(getBopliktomraadeColumns()) as FlatedataColumn<T>[];
+      return withTrailingSpacerAndEndColumn(getBopliktomraadeColumns()) as FlatedataColumn<T>[];
   }
 }
