@@ -34,7 +34,6 @@ export type FlatedataColumnCtx = {
   inndeling: MetadataResponse;
   inndelingId: string;
   inndelingtype: FlatedataTableInndelingtype;
-  kommuneLokalid: string;
   isEditing: boolean;
   disabledDate: string | undefined;
   formMethods: UseFormReturn<FlatedataInputs>;

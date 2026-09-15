@@ -13,7 +13,6 @@ import type { FlatedataTableInndelingtype } from "./FlatedataPanel";
 type Props = {
   inndelingtype: FlatedataTableInndelingtype;
   inndeling: MetadataResponse;
-  kommuneLokalid: string;
   columns: FlatedataColumn[];
   isSearchMatch: boolean;
   isEditing: boolean;
@@ -28,7 +27,6 @@ type Props = {
 export const FlatedataTableRow = ({
   inndelingtype,
   inndeling,
-  kommuneLokalid,
   columns,
   isSearchMatch,
   isEditing,
@@ -78,7 +76,6 @@ export const FlatedataTableRow = ({
     inndelingErrors,
     allInndelinger,
     sammenslaaingInformasjon,
-    kommuneLokalid,
   };
 
   return (
