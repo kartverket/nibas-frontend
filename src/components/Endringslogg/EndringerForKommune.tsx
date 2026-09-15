@@ -18,7 +18,8 @@ export const harEndringer = (endringer: Kretsendringer) =>
   (endringer.delinger?.length ?? 0) !== 0 ||
   endringer.sammenslaaing != null ||
   endringer.metadataendringer.length > 0 ||
-  endringer.nyeInndelinger.length > 0;
+  endringer.nyeInndelinger.length > 0 ||
+  endringer.arkiverteInndelinger.length > 0;
 
 export const EndringerForKommune = ({ inndelingType, endringer }: EndringerForKommuneProps) => {
   const titlePrefix =

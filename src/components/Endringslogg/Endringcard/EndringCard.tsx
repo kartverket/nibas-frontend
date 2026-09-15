@@ -59,12 +59,13 @@ export const EndringToFromCard = ({ type, changes }: EndringToFromProps) => {
 type NyInndelingCardProps = {
   navn: string;
   nummer: string;
+  handling: "ny" | "utgår";
 };
 
-export const NyInndelingCard = ({ navn, nummer }: NyInndelingCardProps) => {
+export const InndelingCard = ({ navn, nummer, handling }: NyInndelingCardProps) => {
   return (
     <EndringCard title={"Inndeling"}>
-      <TextWithBadge badge={"ny"}>{`${nummer} ${navn}`}</TextWithBadge>
+      <TextWithBadge badge={handling}>{`${nummer} ${navn}`}</TextWithBadge>
     </EndringCard>
   );
 };

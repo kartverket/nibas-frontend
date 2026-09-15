@@ -19,6 +19,7 @@ import {
   ResponseTypeFromInndelingtype,
   EndringsloggInndelingType,
   NyInndelingEndring,
+  ArkivertInndelingEndringsloggEntry,
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { getNavnInSpraak, inndelingResponseNavnToString } from "utils/language/language";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
@@ -125,6 +126,7 @@ export const getKretserAvTypeMedEndringer = (
 
   const kretserMedMetadataEndringer = getKretserMedMetadataEndringer(operasjoner, inndelingType);
   const kretserMedSammenslaaing = getKretserMedSammenslaaing(operasjoner, inndelingType);
+  const inndelingerMedArkivering = getInndelingerMedArkivering(operasjoner, inndelingType);
 
   const kretserMedSplitting = operasjoner.kretsDelingEndringer
     .filter((splitting) => splitting.flatetype === inndelingType)
@@ -133,7 +135,8 @@ export const getKretserAvTypeMedEndringer = (
   const alleKretserMedEndringer = getKretserMedGrensejusteringer(operasjoner, inndelingType)
     .concat(kretserMedMetadataEndringer)
     .concat(kretserMedSammenslaaing)
-    .concat(kretserMedSplitting);
+    .concat(kretserMedSplitting)
+    .concat(inndelingerMedArkivering);
 
   return getUniqueItems(alleKretserMedEndringer);
 };
@@ -152,6 +155,21 @@ const getKretserMedSammenslaaing = (
     operasjoner.stemmekretsSammenslaaingsendring?.viderefoertStemmekrets?.lokalId;
 
   return removeNil(gamleKretser.concat(videreFoertKretsVedSammenSlaaing ?? []));
+};
+
+const getInndelingerMedArkivering = (
+  operasjoner: UtkastOperasjoner,
+  inndelingType: EndringsloggInndelingType,
+): string[] => {
+  if (!isNonExhaustiveInndelingtype(inndelingType)) {
+    return [];
+  }
+
+  return (
+    operasjoner.archiveInndelingEndringer
+      ?.filter((request) => request.flatetype === inndelingType)
+      .map((request) => request.identifikator.lokalId) ?? []
+  );
 };
 
 const getKretserMedMetadataEndringer = (
@@ -253,6 +271,25 @@ const getNyeInndelingerForKommune = (
         inndelingtype: inndelingType,
       })) ?? []
   );
+};
+
+const getArkiverteInndelingerForKommune = (
+  kommuneLokalid: string | undefined,
+  operasjoner: UtkastOperasjoner,
+  alleBopliktomraader: BopliktomraadeResponse[],
+): ArkivertInndelingEndringsloggEntry[] => {
+  const archivedBopliktomraadeIds = getInndelingerMedArkivering(operasjoner, "BOPLIKTOMRAADE");
+  return alleBopliktomraader
+    .filter(
+      (bopliktomraade) =>
+        bopliktomraade.kommuneIdentifikator.lokalid.value === kommuneLokalid &&
+        archivedBopliktomraadeIds.includes(bopliktomraade.id.lokalid.value),
+    )
+    .map((bopliktomraade) => ({
+      navn: bopliktomraade.navn,
+      nummer: bopliktomraade.nummer,
+      inndelingtype: "BOPLIKTOMRAADE",
+    }));
 };
 
 const erKretsIKommune = (
@@ -389,6 +426,14 @@ const getEndringerForKommune = <T extends EndringsloggInndelingType>(
     nyeInndelinger: isNonExhaustiveInndelingtype(kretstype)
       ? getNyeInndelingerForKommune(kommune?.id.lokalid.value, operasjoner, kretstype)
       : [],
+    arkiverteInndelinger:
+      kretstype === "BOPLIKTOMRAADE"
+        ? getArkiverteInndelingerForKommune(
+            kommune?.id.lokalid.value,
+            operasjoner,
+            alleKretser as BopliktomraadeResponse[],
+          )
+        : [],
   };
 };
 
@@ -408,6 +453,7 @@ export const getGrenseendringerUtenTilhorighet = (operasjoner: UtkastOperasjoner
     sammenslaaing: null,
     delinger: null,
     nyeInndelinger: [],
+    arkiverteInndelinger: [],
   };
 };
 

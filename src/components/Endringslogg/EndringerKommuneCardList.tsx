@@ -1,9 +1,5 @@
 import { Kretsendringer } from "components/Endringslogg/hooks/utkastEndringerTypes";
-import {
-  EndringNumericCard,
-  EndringToFromCard,
-  NyInndelingCard,
-} from "components/Endringslogg/Endringcard/EndringCard";
+import { EndringNumericCard, EndringToFromCard, InndelingCard } from "components/Endringslogg/Endringcard/EndringCard";
 import { getNavnOgNummerChanges } from "components/Endringslogg/Endringcard/EndringCardUtils";
 
 type EndringerKommuneListProps = {
@@ -18,6 +14,7 @@ export const EndringerKommuneCardList = ({ endringer }: EndringerKommuneListProp
     delinger,
     sammenslaaing,
     nyeInndelinger,
+    arkiverteInndelinger,
   } = endringer;
   const navnOgNummerChanges = getNavnOgNummerChanges(metadataendringer);
 
@@ -45,7 +42,13 @@ export const EndringerKommuneCardList = ({ endringer }: EndringerKommuneListProp
         />
       )}
       {nyeInndelinger.length > 0 &&
-        nyeInndelinger.map(({ navn, nummer }, i) => <NyInndelingCard key={i} navn={navn} nummer={nummer} />)}
+        nyeInndelinger.map(({ navn, nummer }, i) => (
+          <InndelingCard key={i} navn={navn} nummer={nummer} handling="ny" />
+        ))}
+      {arkiverteInndelinger.length > 0 &&
+        arkiverteInndelinger.map(({ navn, nummer }, i) => (
+          <InndelingCard key={i} navn={navn} nummer={nummer} handling="utgår" />
+        ))}
       <EndringNumericCard type="grenseendring" value={antallEndredeGrenser} />
       <EndringNumericCard type="nyegrenser" value={antallNyeGrenser} />
       <EndringNumericCard type="arkiveringer" value={antallArkiverteGrenser} />

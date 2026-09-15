@@ -486,13 +486,3 @@ export const getCreateInndelingEntriesForInndelingtype = (
     }
   }) as CreateInndelingRequest[];
 };
-
-export const getArchiveInndelingEntriesForInndelingtype = (
-  utkastOperasjoner: UtkastOperasjoner,
-  inndelingtype: Inndelingtype,
-): ArchiveInndelingRequest[] => {
-  if (!isNonExhaustiveInndelingtype(inndelingtype)) {
-    return [];
-  }
-  return utkastOperasjoner.archiveInndelingEndringer?.filter((request) => request.flatetype === inndelingtype) ?? [];
-};

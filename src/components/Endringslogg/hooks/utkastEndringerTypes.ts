@@ -59,9 +59,16 @@ export type Kretsendringer = {
   sammenslaaing: KretsSammenslaaingEndring | null;
   delinger: KretsSplittingEndring[] | null;
   nyeInndelinger: NyInndelingEndring[];
+  arkiverteInndelinger: ArkivertInndelingEndringsloggEntry[];
 };
 
 export type NyInndelingEndring = {
+  navn: string;
+  nummer: string;
+  inndelingtype: NonExhaustiveInndelingtype;
+};
+
+export type ArkivertInndelingEndringsloggEntry = {
   navn: string;
   nummer: string;
   inndelingtype: NonExhaustiveInndelingtype;

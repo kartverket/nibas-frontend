@@ -1,4 +1,5 @@
 import {
+  ArkivertInndelingEndringsloggEntry,
   Kommuneendringer,
   Kretsendringer,
   KretsSplittingEndring,
@@ -7,6 +8,7 @@ import {
 } from "components/Endringslogg/hooks/utkastEndringerTypes";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import {
+  getArchiveInndelingEntries,
   getDeduplicatedNyInndelingChanges,
   getGrenseArkiveringEntries,
   getGrenseDelingEntries,
@@ -35,7 +37,12 @@ import {
   KretsDelingEndringRequest,
   StemmekretsResponse,
 } from "../../../types/api";
-import { getNonExhaustiveInndelingTypeFromRequest } from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
+import {
+  getInndelingtypeFromResponse,
+  getNonExhaustiveInndelingTypeFromRequest,
+  isNonExhaustiveInndelingtype,
+} from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-utils";
+import { useNonExhaustiveInndelinger } from "hooks/inndelinger/useNonExhaustiveInndelinger";
 
 type UseUnsavedEndringerReturnType = {
   harEndringer: boolean;
@@ -58,6 +65,10 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
   const { laster: lasterDelinger, endringer: kretsdelinger } = useKretsdelingChanges(history);
   const kommuneendringer = getKommuneendringer(history, alleKommuner);
   const nyeInndelingerChanges = getNyeInndelinger(history);
+  const { data: arkiverteInndelingerChanges, isLoading: lasterArkiverteInndelinger } = useArkiverteInndelingerEndringer(
+    history,
+    gyldighetsdato,
+  );
 
   const antallNyeGrenserArkivert = nyeGrenser.filter((id) => arkiverteGrenser.includes(id)).length;
   const antallNyeGrenserEndret = nyeGrenser.filter((id) => endredeGrenser.includes(id)).length;
@@ -80,12 +91,13 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
     kretsdelinger.length +
     antallKommuneNavnendringer +
     antallKommuneEndringSamiskForvaltningsomraade +
-    nyeInndelingerChanges.length;
+    nyeInndelingerChanges.length +
+    arkiverteInndelingerChanges.length;
 
   return {
     harEndringer: antallEndringer > 0,
     antallEndringer,
-    laster: lasterDelinger || lasterKommuner,
+    laster: lasterDelinger || lasterKommuner || lasterArkiverteInndelinger,
     kretsendringer: {
       metadataendringer,
       antallArkiverteGrenser,
@@ -94,6 +106,7 @@ export const useUnsavedEndringer = (): UseUnsavedEndringerReturnType => {
       sammenslaaing: null, // Sammenslåing blir lagret med en gang
       delinger: kretsdelinger,
       nyeInndelinger: nyeInndelingerChanges,
+      arkiverteInndelinger: arkiverteInndelingerChanges,
     },
     kommuneendringer: kommuneendringer,
   };
@@ -234,6 +247,39 @@ const useKretsdelingChanges = (entries: HistoryEntry[]): UseKretsdelingChangesRe
   return {
     laster: isLoadingGrunnkretser || isLoadingStemmekretser,
     endringer: stemmekretsdelinger.concat(grunnkretsdelinger),
+  };
+};
+
+const useArkiverteInndelingerEndringer = (
+  entries: HistoryEntry[],
+  gyldighetsdato: string | undefined,
+): { data: ArkivertInndelingEndringsloggEntry[]; isLoading: boolean } => {
+  const arkiverteInndelingerEntries = getArchiveInndelingEntries(entries);
+  const changedIds = removeNil(
+    arkiverteInndelingerEntries.flatMap((entry) => entry.changes).flatMap((change) => change.to?.identifikator.lokalId),
+  );
+
+  const { data: nonExhaustiveInndelinger, isLoading: isLoadingNonExhaustiveInndelinger } = useNonExhaustiveInndelinger(
+    changedIds,
+    gyldighetsdato,
+    changedIds.length > 0,
+  );
+
+  return {
+    data: removeNil(
+      nonExhaustiveInndelinger?.map((inndeling) => {
+        const inndelingtype = getInndelingtypeFromResponse(inndeling);
+        if (inndelingtype == null || !isNonExhaustiveInndelingtype(inndelingtype)) {
+          return null;
+        }
+        return {
+          navn: inndeling.navn,
+          nummer: inndeling.nummer,
+          inndelingtype: inndelingtype,
+        };
+      }) ?? [],
+    ),
+    isLoading: isLoadingNonExhaustiveInndelinger,
   };
 };
 
