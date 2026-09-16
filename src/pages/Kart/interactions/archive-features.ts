@@ -1,11 +1,11 @@
-import { HistoryChange, HistoryContextValue, HistoryEntry, HistoryState } from "contexts/HistoryContext/types";
+import { getArchiveInndelingEntries, getChangesForArchiveInndelingEntry } from "contexts/HistoryContext/history-utils";
+import { HistoryChange, HistoryContextValue, HistoryEntry } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { FeatureProperties, UtkastResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getLineStringsForOmraadeFromSource } from "../OverlayPanels/FlatedataPanel/flate-highlight-utils";
-import { getArchiveInndelingEntries, getChangesForArchiveInndelingEntry } from "contexts/HistoryContext/history-utils";
 
 type ArchiveFeaturesOptions = {
   addArchivedStyles: (featureIds: string[]) => void;
