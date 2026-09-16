@@ -498,10 +498,10 @@ const getKretsEndringer = <T extends EndringsloggInndelingType>(
   const endredeKretserGroupedByKommuneId = groupEndringerByKommune(endredeKretser, alleKretser);
   const nyeInndelingerGroupedByKommuneId = groupNyeInndelingerByKommune(alleKommuner, operasjoner, kretstype);
 
-  const kommuneIds = [
+  const kommuneIds = getUniqueItems([
     ...Object.keys(endredeKretserGroupedByKommuneId),
     ...Object.keys(nyeInndelingerGroupedByKommuneId),
-  ];
+  ]);
 
   return kommuneIds.map((kommuneId) =>
     getEndringerForKommune(
