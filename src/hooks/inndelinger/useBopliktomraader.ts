@@ -11,15 +11,8 @@ const bopliktomraaderFetcher = async ([bopliktomraadeIds, gyldighetsdato]: [stri
   return await Promise.all(promises);
 };
 
-export const useBopliktomraader = (
-  bopliktomraadeIds: string[],
-  gyldighetsdato: string | undefined,
-  shouldFetch: boolean = true,
-) => {
-  return useSWRImmutable(
-    bopliktomraadeIds.length > 0 && shouldFetch ? [bopliktomraadeIds, gyldighetsdato] : null,
-    bopliktomraaderFetcher,
-  );
+export const useBopliktomraader = (ids: string[], gyldighetsdato: string | undefined, shouldFetch: boolean = true) => {
+  return useSWRImmutable(ids.length > 0 && shouldFetch ? [ids, gyldighetsdato] : null, bopliktomraaderFetcher);
 };
 
 export const useKommuneBopliktomraade = (

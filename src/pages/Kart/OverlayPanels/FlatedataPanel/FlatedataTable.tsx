@@ -10,7 +10,7 @@ import { styled } from "styled-components";
 import {
   BopliktomraadeRequest,
   GrunnkretsRequest,
-  INNDELINGTYPE_VALUES,
+  Inndelingtype,
   KommuneRequest,
   MetadataResponse,
   StemmekretsRequest,
@@ -47,7 +47,7 @@ type Props = {
 
 export type NonExhaustiveInndelingRequest = BopliktomraadeRequest;
 export type ExhaustiveInndelingRequest = KommuneRequest | StemmekretsRequest | GrunnkretsRequest;
-export const NONEXHAUSTIVE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter((type) => type === "BOPLIKTOMRAADE");
+export const NONEXHAUSTIVE_INNDELINGTYPE_VALUES = ["BOPLIKTOMRAADE"] as const satisfies readonly Inndelingtype[];
 export type NonExhaustiveInndelingtype = (typeof NONEXHAUSTIVE_INNDELINGTYPE_VALUES)[number];
 
 const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, clearSearch }: Props) => {
@@ -213,6 +213,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                     key={inndelingId}
                     inndelingtype={mainInndeling.inndelingtype}
                     inndeling={inndeling}
+                    kommuneLokalid={mainInndeling.id}
                     columns={columns}
                     isSearchMatch={isSearchMatch}
                     isEditing={isEditing}

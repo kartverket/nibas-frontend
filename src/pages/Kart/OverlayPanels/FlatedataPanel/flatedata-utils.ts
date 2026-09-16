@@ -246,6 +246,23 @@ export const isNonExhaustiveInndelingtype = (
   return isInndelingNonExhaustive(inndelingtype);
 };
 
+// Obs: rekkefølgen her er dessverre viktig da grunnkrets ikke har noen bra diskriminator i responsen sin.
+const inndelingtypeFromResponse = {
+  KOMMUNE: isKommuneInndeling,
+  STEMMEKRETS: isStemmekretsInndeling,
+  BOPLIKTOMRAADE: isBopliktomraadeInndeling,
+  GRUNNKRETS: (inndeling: MetadataResponse) => "informasjon" in inndeling,
+} satisfies Record<Exclude<Inndelingtype, "FYLKE">, (inndeling: MetadataResponse) => boolean>;
+
+export const getInndelingtypeFromResponse = (inndeling: MetadataResponse): Inndelingtype | null => {
+  for (const [inndelingtype, isMatchingResponse] of Object.entries(inndelingtypeFromResponse)) {
+    if (isMatchingResponse(inndeling)) {
+      return inndelingtype as Inndelingtype;
+    }
+  }
+  return null;
+};
+
 export const getDefaultFlatedataForInndelingtype = (
   inndelingtype: Inndelingtype,
   options?: Partial<{
