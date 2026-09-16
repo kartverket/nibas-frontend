@@ -1143,6 +1143,15 @@ export interface components {
             errorCode: string;
             errorDescription: components["schemas"]["ErrorDescription"];
         };
+        /** @description Representasjon av arkivering av en ikke-heldekkende inndeling. */
+        ArchiveInndelingRequest: {
+            /**
+             * @description Type inndeling som skal arkiveres
+             * @enum {string}
+             */
+            flatetype: "BOPLIKTOMRAADE";
+            identifikator: components["schemas"]["IdentifikatorMedVersjon"];
+        };
         /** @description Representasjon av audit info for et objekt. */
         AuditInfoResponse: {
             /**
@@ -2061,6 +2070,8 @@ export interface components {
         };
         /** @description Representasjon av operasjoner/handlinger som er utført i klienten. */
         Operasjoner: {
+            /** @description Arkivering av eksisterende inndelinger for en inndelingstype som er ikke-heldekkende */
+            archiveInndelingEndringer?: components["schemas"]["ArchiveInndelingRequest"][] | null;
             /** @description Opprettelse av nye inndelinger for en inndelingstype som er ikke-heldekkende */
             createInndelingEndringer?: components["schemas"]["CreateBopliktomraadeRequest"][] | null;
             grenseendringer: components["schemas"]["Grenseendringer"];

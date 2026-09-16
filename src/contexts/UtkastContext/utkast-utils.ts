@@ -1,4 +1,4 @@
-import { getDeduplicatedNyInndelingChanges } from "contexts/HistoryContext/history-utils";
+import { getArchiveInndelingEntries, getDeduplicatedNyInndelingChanges } from "contexts/HistoryContext/history-utils";
 import {
   HistoryChange,
   HistoryState,
@@ -20,6 +20,7 @@ import { NonExhaustiveInndelingRequest } from "pages/Kart/OverlayPanels/Flatedat
 import { isTempDokrefId } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/Vedtaksinformasjon/util/vedtaksinfoHelperMethods";
 import {
   BopliktomraadeRequest,
+  ArchiveInndelingRequest,
   CreateInndelingRequest,
   CreateInndelingRequestDiscriminator,
   FeatureProperties,
@@ -157,6 +158,21 @@ const mergeNyInndelingOperations = (
   return [...nyeInndelingerInUtkastNotOverwritten, ...nyeInndelingerFromHistory];
 };
 
+const mergeArchiveInndelingOperations = (
+  archiveInndelingerFromUtkast: ArchiveInndelingRequest[],
+  archiveInndelingerFromHistory: ArchiveInndelingRequest[],
+): ArchiveInndelingRequest[] => {
+  const archivedLokalIds = new Set(
+    archiveInndelingerFromHistory.map((archiveInndeling) => archiveInndeling.identifikator.lokalId),
+  );
+  return [
+    ...archiveInndelingerFromUtkast.filter(
+      (archiveInndeling) => !archivedLokalIds.has(archiveInndeling.identifikator.lokalId),
+    ),
+    ...archiveInndelingerFromHistory,
+  ];
+};
+
 export const getMetadataEndringerKeyForInndelingtype = (
   inndelingtype: Inndelingtype,
 ): "grunnkretsendringer" | "stemmekretsendringer" | "kommuneendringer" | "bopliktomraadeendringer" => {
@@ -188,6 +204,11 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   const createInndelingOperations = nyInndelingEntriesToCreateInndelingOperations(
     getDeduplicatedNyInndelingChanges(historyToCurrentIndex),
   );
+  const archiveInndelingOperations = removeNil(
+    getArchiveInndelingEntries(historyToCurrentIndex)
+      .flatMap((entry) => entry.changes)
+      .map((change) => change.to),
+  );
 
   const kretsdelingOperations = historyToKretsdelingOperations(allKretsdelingHistoryEntries);
 
@@ -209,6 +230,10 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
           nyeInndelingEndringer: mergeNyInndelingOperations(
             previousUtkast?.operasjoner.createInndelingEndringer ?? [],
             createInndelingOperations,
+          ),
+          archiveInndelingEndringer: mergeArchiveInndelingOperations(
+            previousUtkast?.operasjoner.archiveInndelingEndringer ?? [],
+            archiveInndelingOperations,
           ),
         },
       }),
@@ -398,6 +423,7 @@ export const createUtkastOperations = ({
   grunnkretssammenslaaingsendringer,
   kretsDelingEndringer = [],
   nyeInndelingEndringer = [],
+  archiveInndelingEndringer = [],
 }: {
   endredeFeatures?: GeoJSONFeature[];
   fylkesendringer?: Record<string, FylkeRequest>;
@@ -410,6 +436,7 @@ export const createUtkastOperations = ({
   grunnkretssammenslaaingsendringer?: GrunnkretsSammenslaaingsendringRequest;
   kretsDelingEndringer?: KretsDelingEndringRequest[];
   nyeInndelingEndringer?: CreateInndelingRequest[];
+  archiveInndelingEndringer?: ArchiveInndelingRequest[];
 }): UtkastOperasjoner => ({
   grenseendringer: {
     endredeFeatures,
@@ -426,6 +453,7 @@ export const createUtkastOperations = ({
   grunnkretsSammenslaaingsendring: grunnkretssammenslaaingsendringer ?? null,
   kretsDelingEndringer: kretsDelingEndringer,
   createInndelingEndringer: nyeInndelingEndringer,
+  archiveInndelingEndringer,
 });
 
 // Map fra type CreateInndelingRequest til attrbibuttet som er unikt for subtypen.

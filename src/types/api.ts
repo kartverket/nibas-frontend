@@ -92,6 +92,7 @@ export type KretsDelingEndringRequest = components["schemas"]["KretsDelingEndrin
  */
 export type CreateInndelingRequest = components["schemas"]["CreateBopliktomraadeRequest"];
 export type CreateInndelingRequestDiscriminator = CreateInndelingRequest["discriminator"];
+export type ArchiveInndelingRequest = components["schemas"]["ArchiveInndelingRequest"];
 
 /**
  * API kall

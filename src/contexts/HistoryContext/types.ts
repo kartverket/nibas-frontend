@@ -10,6 +10,7 @@ import {
   StemmekretsRequest,
   StemmekretsSammenslaaingsendringRequest,
   INNDELINGTYPE_VALUES,
+  ArchiveInndelingRequest,
 } from "types/api";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
@@ -46,7 +47,8 @@ export type HistoryTypeValues =
   | "grensedeling"
   | "grensedelete"
   | "merge_grenser"
-  | "create_inndelinger";
+  | "create_inndelinger"
+  | "archive_inndeling";
 
 export type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
   type: HistoryType;
@@ -102,6 +104,8 @@ export type MergeGrenseEntry = BaseHistoryEntry<"merge_grenser", MergeGrenseMode
 
 export type NyeInndelingerEntry = BaseHistoryEntry<"create_inndelinger", NonExhaustiveInndelingRequest | null>;
 
+export type ArchiveInndelingEntry = BaseHistoryEntry<"archive_inndeling", ArchiveInndelingRequest | null>;
+
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
   | GrenseEntry
@@ -116,7 +120,8 @@ export type HistoryEntry =
   | PropertyEntry
   | NyGrenseDeleteEntry
   | MergeGrenseEntry
-  | NyeInndelingerEntry;
+  | NyeInndelingerEntry
+  | ArchiveInndelingEntry;
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
