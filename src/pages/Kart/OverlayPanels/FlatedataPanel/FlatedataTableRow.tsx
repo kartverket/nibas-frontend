@@ -9,6 +9,9 @@ import { getInndelingFremtidigEndringDato } from "utils/features";
 import { FlatedataInputs } from "./flatedata-utils";
 import { FlatedataColumn, InndelingErrors } from "./FlatedatColumns";
 import type { FlatedataTableInndelingtype } from "./FlatedataPanel";
+import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { inndelingIsArchived } from "pages/Kart/interactions/archive-features";
 
 type Props = {
   inndelingtype: FlatedataTableInndelingtype;
@@ -43,6 +46,8 @@ export const FlatedataTableRow = ({
   const inndelingId = getIdFromEntity(inndeling);
   const { errors } = useFormState({ control });
   const inndelingErrors = errors?.[inndelingId] as InndelingErrors;
+  const { utkast } = useUtkast();
+  const { getHistoryEntries } = useHistory();
 
   // Ved undo og redo må grensesnittet oppdateres med riktig informasjon
   const setFormValues = (change: MetadataEntry["changes"][number], direction: HistoryDirection) => {
@@ -56,9 +61,10 @@ export const FlatedataTableRow = ({
     setPreviousValues(structuredClone(getValues()));
   };
 
+  const isInndelingDisabled = utkast ? inndelingIsArchived(inndelingId, utkast, getHistoryEntries()) : false;
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
-  const disabledDate = getInndelingFremtidigEndringDato(inndelingId);
+  const disabledByFremtidigEndringUntilDate = getInndelingFremtidigEndringDato(inndelingId);
 
   useHistoryFormSync<MetadataEntry>({
     entityId: inndelingId,
@@ -71,8 +77,8 @@ export const FlatedataTableRow = ({
     inndeling,
     inndelingId,
     inndelingtype,
-    isEditing,
-    disabledDate,
+    isEditing: isEditing && !isInndelingDisabled,
+    disabledDate: disabledByFremtidigEndringUntilDate,
     formMethods,
     control,
     inndelingErrors,
@@ -82,7 +88,7 @@ export const FlatedataTableRow = ({
   };
 
   return (
-    <Row key={inndelingId} $isSearchMatch={isSearchMatch} $isNew={isNew && isEditing}>
+    <Row key={inndelingId} $isSearchMatch={isSearchMatch} $isNew={isNew && isEditing} $isDisabled={isInndelingDisabled}>
       {columns.map((c, i) => (
         <Fragment key={i}>{c.renderCell(ctx)}</Fragment>
       ))}
@@ -90,7 +96,7 @@ export const FlatedataTableRow = ({
   );
 };
 
-const Row = styled.tr<{ $isSearchMatch: boolean; $isNew: boolean }>`
+const Row = styled.tr<{ $isSearchMatch: boolean; $isNew: boolean; $isDisabled: boolean }>`
   ${(props) =>
     !props.$isSearchMatch &&
     css`
@@ -108,6 +114,17 @@ const Row = styled.tr<{ $isSearchMatch: boolean; $isNew: boolean }>`
       td select,
       td textarea {
         background-color: white;
+      }
+    `};
+
+  ${(props) =>
+    props.$isDisabled &&
+    css`
+      td {
+        background-color: var(--kvib-colors-gray-100, #f5f5f5);
+        filter: grayscale(1);
+        opacity: 0.65;
+        pointer-events: none;
       }
     `};
 `;
