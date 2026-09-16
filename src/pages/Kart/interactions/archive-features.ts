@@ -1,11 +1,11 @@
 import { getArchiveInndelingEntries, getChangesForArchiveInndelingEntry } from "contexts/HistoryContext/history-utils";
 import { HistoryChange, HistoryContextValue, HistoryEntry } from "contexts/HistoryContext/types";
+import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { FeatureProperties, UtkastResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { addFeaturesToSource, getRepresentasjonspunktId, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { archivedSource, editSource } from "hooks/layers/constants";
 import { getLineStringsForOmraadeFromSource } from "../OverlayPanels/FlatedataPanel/flate-highlight-utils";
 
 type ArchiveFeaturesOptions = {
