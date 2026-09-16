@@ -16,18 +16,17 @@ import { removeNil } from "utils/list-utils";
 import { clearMatrikkelLayer, getMatrikkelFeatures } from "utils/map/layers";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { map } from "../constants";
+import { archiveFeatures } from "../interactions/archive-features";
 import { isTempFeatureId } from "../interactions/feature-id-utils";
 import { createMergeGrenserHistoryChange, createNyGrenseHistoryChange } from "../interactions/grense-history-utils";
 import useSplit from "../interactions/useSplit";
 import { addGrenseDeleteEntryFromFeatureList } from "../OverlayPanels/GrenseinformasjonPanel/grenseinformasjon-utils";
 import ToolbarPopup from "./ToolbarPopup";
 
-import { HistoryChange } from "contexts/HistoryContext/types";
 import useNibasApi from "hooks/useNibasApi";
 import { Feature } from "ol";
-import { Geometry, LineString } from "ol/geom";
+import { Geometry } from "ol/geom";
 import HistoriskeGrenserDatoModal from "pages/Kart/OverlayPanels/HistoriskeGrenserDatoModal";
-import { FeatureProperties } from "types/api";
 import useHistoriskeGrenser from "../interactions/useHistoriskeGrenser";
 import {
   isTeiggrenseMetadata,
@@ -54,7 +53,7 @@ const ToolbarPopups = () => {
   } = useHistoriskeGrenser();
 
   const archiveSelectedFeatures = () => {
-    archiveFeatures(selectedFeatures, true);
+    archiveFeatures(selectedFeatures, { addArchivedStyles, addHistoryEntry });
     clearSelection();
     toast({
       status: "success",
@@ -125,52 +124,6 @@ const ToolbarPopups = () => {
     }
   };
 
-  const archiveFeatures = (features: Feature<LineString>[], shouldAddHistoryEntry?: boolean) => {
-    const oldPropertiesMap = features.reduce(
-      (acc, feature) => {
-        const id = feature.getId()?.toString();
-        if (id != null) {
-          acc[id] = feature.getProperties() as FeatureProperties;
-        }
-        return acc;
-      },
-      {} as Record<string, FeatureProperties>,
-    );
-    const featuresId = Object.keys(oldPropertiesMap);
-    // Setter shouldArchive på alle features som arkiveres
-    for (const feature of features) {
-      const featureId = feature.getId()?.toString();
-      if (featureId != null) {
-        const newProperties: FeatureProperties = {
-          ...oldPropertiesMap[featureId],
-          shouldArchive: true,
-        };
-        feature.setProperties(newProperties);
-      }
-    }
-    addArchivedStyles(featuresId);
-    removeFeaturesFromSourceByIds("edit", featuresId);
-    addFeaturesToSource("archived", features);
-    if (shouldAddHistoryEntry ?? false) {
-      const changeEntries: HistoryChange<FeatureProperties>[] = removeNil(
-        features.map((feature) => {
-          const id = feature.getId()?.toString();
-          if (id != null) {
-            return {
-              id: id,
-              from: oldPropertiesMap[id],
-              to: feature.getProperties() as FeatureProperties,
-            };
-          }
-        }),
-      );
-      addHistoryEntry({
-        type: "grensearkivering",
-        changes: changeEntries,
-      });
-    }
-  };
-
   const mergeSelectedFeatures = () => {
     const grenseType =
       currentlyEditingInndelinger.length > 0
@@ -195,7 +148,7 @@ const ToolbarPopups = () => {
     const selectedNewFeatures = selectedFeatures.filter((feature) =>
       isTempFeatureId(feature.getId()?.toString() ?? ""),
     );
-    archiveFeatures(selectedExistingFeatures);
+    archiveFeatures(selectedExistingFeatures, { addArchivedStyles });
     deleteFeaturesAndAddHistoryEntry(selectedNewFeatures);
     addFeaturesToSource("edit", [mergeFeature]);
     addHistoryEntry({

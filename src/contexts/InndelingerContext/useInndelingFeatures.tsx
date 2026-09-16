@@ -252,17 +252,42 @@ const getEditedFeaturesOnUtkastInSelectedInndelinger = (
 ): Feature[] => {
   const endredeFeatures = utkast?.operasjoner.grenseendringer.endredeFeatures;
 
-  if (endredeFeatures == null || endredeFeatures.length === 0 || inndelingFeatures.length === 0) {
+  if (inndelingFeatures.length === 0) {
     return [];
   }
 
   const featureCollection: FeatureCollection = {
     type: "FeatureCollection",
-    features: endredeFeatures,
+    features: endredeFeatures ?? [],
   };
 
   const featuresInUtkast = geoJsonToSource(featureCollection).getFeatures();
-  return featuresInUtkast.filter((feature) => featureIsInSelectedInndelinger(feature, inndelinger, inndelingFeatures));
+  const editedFeaturesInSelectedInndelinger = featuresInUtkast.filter((feature) =>
+    featureIsInSelectedInndelinger(feature, inndelinger, inndelingFeatures),
+  );
+  const editedFeatureIds = new Set(
+    removeNil(editedFeaturesInSelectedInndelinger.map((feature) => feature.getId()?.toString())),
+  );
+  const archivedInndelingIds = new Set(
+    utkast?.operasjoner.archiveInndelingEndringer?.map((operation) => operation.identifikator.lokalId) ?? [],
+  );
+
+  const implicitlyArchivedFeatures = inndelingFeatures
+    .flatMap((inndeling) => inndeling.features)
+    .filter((feature) => {
+      return (feature.getProperties() as FeatureProperties).kontekstEgenskaper.some((kontekst) =>
+        archivedInndelingIds.has(kontekst.id?.lokalid.value ?? ""),
+      );
+    })
+    .map((feature) => {
+      const clone = feature.clone();
+      clone.setId(feature.getId());
+      clone.setProperties({ ...feature.getProperties(), shouldArchive: true });
+      return clone;
+    })
+    .filter((feature) => !editedFeatureIds.has(feature.getId()?.toString() ?? ""));
+
+  return [...editedFeaturesInSelectedInndelinger, ...implicitlyArchivedFeatures];
 };
 
 const featureIsInSelectedInndelinger = (

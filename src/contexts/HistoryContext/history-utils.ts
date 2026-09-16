@@ -40,6 +40,7 @@ import {
   PropertyEntry,
   StemmekretsEntry,
 } from "./types";
+import { archiveFeaturesForInndeling, unarchiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -275,10 +276,17 @@ export const undoArchiving = (entry: GrenseArkiveringsEntry) => {
   );
 };
 
+const getChangesForArchiveInndelingEntry = (entry: ArchiveInndelingEntry) => {
+  // For archive_inndeling entries er det kun én change, så vi kan ta index 0.
+  return entry.changes[0];
+};
+
 export const handleArchiveInndeling = (entry: ArchiveInndelingEntry, direction: HistoryDirection) => {
-  // TODO: kalle funksjon som legger til/ fjerner arkiveringsstil på grenser for inndeling i entry
+  const change = getChangesForArchiveInndelingEntry(entry);
+  const { id: inndelingId } = change;
   switch (direction) {
     case "from": {
+      unarchiveFeaturesForInndeling(inndelingId);
       return document.dispatchEvent(
         new CustomEvent("archive_inndelingUndo", {
           detail: { entry },
@@ -286,6 +294,7 @@ export const handleArchiveInndeling = (entry: ArchiveInndelingEntry, direction: 
       );
     }
     case "to": {
+      archiveFeaturesForInndeling(inndelingId);
       return document.dispatchEvent(
         new CustomEvent("archive_inndelingRedo", {
           detail: { entry },
