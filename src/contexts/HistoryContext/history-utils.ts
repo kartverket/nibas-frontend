@@ -257,7 +257,7 @@ export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
   );
 };
 
-export const undoArchving = (entry: GrenseArkiveringsEntry) => {
+export const undoArchiving = (entry: GrenseArkiveringsEntry) => {
   const features = removeNil(entry.changes.map((c) => archivedSource.getFeatureById(c.id)));
   const featureIds = entry.changes.map((c) => c.id);
 

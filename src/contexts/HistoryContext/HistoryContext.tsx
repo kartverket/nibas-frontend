@@ -11,7 +11,7 @@ import {
   setFeaturePropertiesForEntry,
   setKontekstEgenskaperForEntry,
   setRepresentasjonspunktForMetadataEntry,
-  undoArchving,
+  undoArchiving,
   undoDelete,
 } from "./history-utils";
 import { HistoryContextValue, HistoryEntry } from "./types";
@@ -75,7 +75,7 @@ const onUndo = (entry: HistoryEntry) => {
       );
     }
     case "grensearkivering": {
-      return undoArchving(entry);
+      return undoArchiving(entry);
     }
     case "grensedelete": {
       return undoDelete(entry);
