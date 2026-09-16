@@ -1,4 +1,4 @@
-import { grenserLayers, kartlagLayers, highlightLayers } from "hooks/layers/constants";
+import { grenserLayers, kartlagLayers, highlightLayers, matrikkelnummerLayer } from "hooks/layers/constants";
 import { VectorLayerId, LayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { WFS } from "ol/format";
@@ -13,6 +13,7 @@ import { getFeaturesFromGeoJson } from "./geoJson";
 import { mapProjectionEPSGCode } from "./projections";
 import { addFeaturesToSource } from "./source";
 import { LineString } from "ol/geom";
+import { Extent } from "ol/extent";
 import { roundToNearestHalf } from "pages/Kart/OverlayPanels/NavigasjonPanel/koordinater-utils";
 
 const getLayersArray = () => map.getLayers().getArray() ?? [];
@@ -56,8 +57,7 @@ export const isVectorLayer = (layer: BaseLayer): layer is VectorLayer<VectorSour
   return layer instanceof VectorLayer && layer.getSource() instanceof VectorSource;
 };
 
-export const getMatrikkelFeatures = async () => {
-  const extent = map.getView().calculateExtent(map.getSize());
+export const getMatrikkelFeatures = async (extent: Extent) => {
   const request: Node = new WFS({ version: "2.0.0" }).writeGetFeature({
     srsName: mapProjectionEPSGCode,
     featureNS: "http://www.statkart.no/matrikkel",
@@ -102,6 +102,8 @@ export const getMatrikkelFeatures = async () => {
 };
 
 export const clearMatrikkelLayer = () => {
+  matrikkelnummerLayer.setVisible(false);
+  matrikkelnummerLayer.setExtent(undefined);
   const source = grenserLayers.matrikkel.getSource();
 
   if (source) {

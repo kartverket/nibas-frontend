@@ -78,6 +78,8 @@ export default defineConfig(({ mode }) => {
               tjenesteId = "wms.ecc_enc";
             } else if (path.indexOf("tjenesteid=wms.nib") !== -1) {
               tjenesteId = "wms.nib";
+            } else if (path.indexOf("tjenesteid=background") !== -1) {
+              tjenesteId = "background";
             }
 
             return `/skbaatts/req?tjenesteid=${tjenesteId}&brukerid=${baatUsername}&passord=${baatPassword}&retformat=s`;
