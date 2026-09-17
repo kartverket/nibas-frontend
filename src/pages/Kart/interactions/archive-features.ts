@@ -4,7 +4,8 @@ import { Feature } from "ol";
 import { LineString } from "ol/geom";
 import { FeatureProperties, UtkastResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
-import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { addFeaturesToSource, getRepresentasjonspunktId, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { archivedSource, editSource } from "hooks/layers/constants";
 import { getLineStringsForOmraadeFromSource } from "../OverlayPanels/FlatedataPanel/flate-highlight-utils";
 
 type ArchiveFeaturesOptions = {
@@ -57,20 +58,28 @@ export const archiveFeatures = (features: Feature<LineString>[], options: Archiv
 };
 
 export const archiveFeaturesForInndeling = (inndelingId: string) => {
-  const features = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["edit"]);
+  const linestrings = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["edit"]);
+  const representasjonspunkt = editSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
+  const features = [...linestrings, ...removeNil([representasjonspunkt])];
+
   for (const feature of features) {
     feature.set("shouldArchive", true);
   }
+
   const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
   removeFeaturesFromSourceByIds("edit", featureIds);
   addFeaturesToSource("archived", features);
 };
 
 export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
-  const features = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["archived"]);
+  const linestrings = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["archived"]);
+  const representasjonspunkt = archivedSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
+  const features = [...linestrings, ...removeNil([representasjonspunkt])];
+
   for (const feature of features) {
     feature.set("shouldArchive", false);
   }
+
   const featureIds = removeNil(features.map((f) => f.getId()?.toString()));
   removeFeaturesFromSourceByIds("archived", featureIds);
   addFeaturesToSource("edit", features);

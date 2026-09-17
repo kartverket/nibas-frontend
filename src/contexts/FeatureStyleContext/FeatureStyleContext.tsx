@@ -118,12 +118,11 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
 
   const resetFeatureStyles = (featureIdsToReset: string[]) => {
     for (const featureId of featureIdsToReset) {
-      setFeatureStyle(featureId, grenseStyles.edit);
       const savedCustomStyleForFeature = customStyles.find((cs) => cs.savedCustomFeatureIds.includes(featureId));
       if (savedCustomStyleForFeature != null) {
         setFeatureStyle(featureId, savedCustomStyleForFeature.customStyle);
       } else {
-        setFeatureStyle(featureId, grenseStyles.edit);
+        setFeatureStyle(featureId);
       }
     }
 
