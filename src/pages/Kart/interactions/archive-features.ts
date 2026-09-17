@@ -84,5 +84,5 @@ export const inndelingIsArchived = (inndelingId: string, utkast: UtkastResponse,
     (entry) => getChangesForArchiveInndelingEntry(entry).id === inndelingId,
   );
 
-  return isArchivedInUtkast || isArchivedInHistory;
+  return isArchivedInUtkast === true || isArchivedInHistory === true;
 };
