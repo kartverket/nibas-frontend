@@ -97,14 +97,12 @@ export const groupRingsIntoPolygons = (rings: Coordinate[][]): Coordinate[][][] 
   });
 };
 
-const getLineStringsForOmraadeFromSource = (
+export const getLineStringsForOmraadeFromSource = (
   inndelingtype: TilhorighetInndelingtype,
-  kommuneId: string,
   omraadeId: string,
-): LineString[] => {
-  const candidateFeatures = RELEVANT_GRENSE_LAYER_IDS.flatMap(
-    (layerId) => grenserLayers[layerId].getSource()?.getFeatures() ?? [],
-  );
+  layers: VectorLayerId[],
+): Feature<LineString>[] => {
+  const candidateFeatures = layers.flatMap((layerId) => grenserLayers[layerId].getSource()?.getFeatures() ?? []);
 
   return removeNil(
     candidateFeatures.map((feature) => {
@@ -122,14 +120,10 @@ const getLineStringsForOmraadeFromSource = (
             getNummerFromTempFlateId(omraadeId) === kontekst.kretsNummer
           );
         }
-        return (
-          kontekst.type === inndelingtype &&
-          kontekst.kommuneId?.lokalid.value === kommuneId &&
-          kontekst.id?.lokalid.value === omraadeId
-        );
+        return kontekst.type === inndelingtype && kontekst.id?.lokalid.value === omraadeId;
       });
 
-      return belongsToOmraade ? geometry : null;
+      return belongsToOmraade ? (feature as Feature<LineString>) : null;
     }),
   );
 };
@@ -165,12 +159,16 @@ const getLineStringsForOmraade = (
   switch (inndelingtype) {
     case "GRUNNKRETS":
     case "STEMMEKRETS":
-      return getLineStringsForOmraadeFromSource(inndelingtype, kommuneId, omraadeId);
+      return getLineStringsForOmraadeFromSource(inndelingtype, omraadeId, RELEVANT_GRENSE_LAYER_IDS).map(
+        (feature) => feature.getGeometry() as LineString,
+      );
     case "BOPLIKTOMRAADE":
       if (isBopliktomraadeInndeling(omraade) && omraade.gjelderKunDelAvKommunen === false) {
         return getLineStringsForKommuneFromSource(kommuneId);
       }
-      return getLineStringsForOmraadeFromSource(inndelingtype, kommuneId, omraadeId);
+      return getLineStringsForOmraadeFromSource(inndelingtype, omraadeId, RELEVANT_GRENSE_LAYER_IDS).map(
+        (feature) => feature.getGeometry() as LineString,
+      );
   }
 };
 

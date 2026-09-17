@@ -27,6 +27,7 @@ import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { ArchiveInndelingEntry } from "contexts/HistoryContext/types";
+import { archiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -104,8 +105,8 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
         },
       ],
     };
+    archiveFeaturesForInndeling(ctx.inndelingId);
     addHistoryEntry(archiveInndelingEntry);
-    //TODO: Kalle funksjon for å sette arkiveringsstil på grenser for inndeling
   };
 
   return (

@@ -1,0 +1,76 @@
+import { HistoryChange, HistoryContextValue } from "contexts/HistoryContext/types";
+import { Feature } from "ol";
+import { LineString } from "ol/geom";
+import { FeatureProperties } from "types/api";
+import { removeNil } from "utils/list-utils";
+import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
+import { getLineStringsForOmraadeFromSource } from "../OverlayPanels/FlatedataPanel/flate-highlight-utils";
+
+type ArchiveFeaturesOptions = {
+  addArchivedStyles: (featureIds: string[]) => void;
+  addHistoryEntry?: HistoryContextValue["addHistoryEntry"];
+};
+
+export const archiveFeatures = (features: Feature<LineString>[], options: ArchiveFeaturesOptions) => {
+  const oldPropertiesMap = features.reduce(
+    (accumulator, feature) => {
+      const id = feature.getId()?.toString();
+      if (id != null) {
+        accumulator[id] = feature.getProperties() as FeatureProperties;
+      }
+      return accumulator;
+    },
+    {} as Record<string, FeatureProperties>,
+  );
+  const featureIds = Object.keys(oldPropertiesMap);
+
+  for (const feature of features) {
+    const featureId = feature.getId()?.toString();
+    if (featureId != null) {
+      feature.setProperties({
+        ...oldPropertiesMap[featureId],
+        shouldArchive: true,
+      } as FeatureProperties);
+    }
+  }
+
+  options.addArchivedStyles(featureIds);
+  removeFeaturesFromSourceByIds("edit", featureIds);
+  addFeaturesToSource("archived", features);
+
+  if (options.addHistoryEntry != null) {
+    const changes: HistoryChange<FeatureProperties>[] = removeNil(
+      features.map((feature) => {
+        const id = feature.getId()?.toString();
+        if (id != null) {
+          return {
+            id,
+            from: oldPropertiesMap[id],
+            to: feature.getProperties() as FeatureProperties,
+          };
+        }
+      }),
+    );
+    options.addHistoryEntry({ type: "grensearkivering", changes });
+  }
+};
+
+export const archiveFeaturesForInndeling = (inndelingId: string) => {
+  const features = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["edit"]);
+  for (const feature of features) {
+    feature.set("shouldArchive", true);
+  }
+  const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
+  removeFeaturesFromSourceByIds("edit", featureIds);
+  addFeaturesToSource("archived", features);
+};
+
+export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
+  const features = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["archived"]);
+  for (const feature of features) {
+    feature.set("shouldArchive", false);
+  }
+  const featureIds = removeNil(features.map((f) => f.getId()?.toString()));
+  removeFeaturesFromSourceByIds("archived", featureIds);
+  addFeaturesToSource("edit", features);
+};
