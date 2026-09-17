@@ -1,4 +1,4 @@
-import { Icon, IconButton, Tooltip, useToast } from "@kvib/react";
+import { Badge, Icon, IconButton, Tooltip, useToast } from "@kvib/react";
 import { ValidationError } from "components/Input";
 import { Control, Controller, FieldError, UseFormReturn } from "react-hook-form";
 import { styled } from "styled-components";
