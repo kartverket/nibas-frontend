@@ -168,6 +168,10 @@ export type GetInndelingtypeLabelOptions = {
    * Om label skal ha stor forbokstav (f.eks. "Fylke" i stedet for "fylke")
    */
   capitalizeLabel?: boolean;
+  /**
+   * Om label skal være i bestemt form (f.eks. "fylket" i stedet for "fylke")
+   */
+  definiteForm?: boolean;
 };
 
 /**
@@ -180,7 +184,7 @@ export const getInndelingtypeLabel = (
   inndelingtype: Inndelingtype | null,
   options: GetInndelingtypeLabelOptions = {},
 ): string => {
-  const { pluralizeLabel = false, capitalizeLabel = false } = options;
+  const { pluralizeLabel = false, capitalizeLabel = false, definiteForm = false } = options;
 
   if (inndelingtype == null) {
     return "";
@@ -188,19 +192,19 @@ export const getInndelingtypeLabel = (
   let label = "";
   switch (inndelingtype) {
     case "FYLKE":
-      label = pluralizeLabel ? "fylker" : "fylke";
+      label = pluralizeLabel ? "fylker" : definiteForm ? "fylket" : "fylke";
       break;
     case "KOMMUNE":
-      label = pluralizeLabel ? "kommuner" : "kommune";
+      label = pluralizeLabel ? "kommuner" : definiteForm ? "kommunen" : "kommune";
       break;
     case "GRUNNKRETS":
-      label = pluralizeLabel ? "grunnkretser" : "grunnkrets";
+      label = pluralizeLabel ? "grunnkretser" : definiteForm ? "grunnkretsen" : "grunnkrets";
       break;
     case "STEMMEKRETS":
-      label = pluralizeLabel ? "stemmekretser" : "stemmekrets";
+      label = pluralizeLabel ? "stemmekretser" : definiteForm ? "stemmekretsen" : "stemmekrets";
       break;
     case "BOPLIKTOMRAADE":
-      label = pluralizeLabel ? "bopliktområder" : "bopliktområde";
+      label = pluralizeLabel ? "bopliktområder" : definiteForm ? "bopliktområdet" : "bopliktområde";
       break;
   }
   if (capitalizeLabel) {

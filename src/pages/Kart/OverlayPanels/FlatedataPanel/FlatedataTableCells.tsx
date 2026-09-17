@@ -84,7 +84,7 @@ const MerknadCellInner = (
         </FormControl>
       ) : (
         data && (
-          <Tag colorScheme="gray" size="md">
+          <Tag className="flatedata-badge" colorScheme="gray" size="md">
             {label}
           </Tag>
         )
@@ -115,7 +115,7 @@ const SelectCellInner = (
           ))}
         </Select>
       ) : (
-        <Tag colorScheme="gray" size="md">
+        <Tag className="flatedata-badge" colorScheme="gray" size="md">
           {options.find((o) => o.value === data)?.label ?? data}
         </Tag>
       )}
@@ -236,7 +236,7 @@ export const MultiSelectCell = ({ data, isEditing, options, isDisabled, onChange
             const option = options.find((o) => o.value === value);
             return option !== undefined ? (
               <WrapItem key={value}>
-                <Tag colorScheme="gray" size="sm">
+                <Tag className="flatedata-badge" colorScheme="gray" size="sm">
                   {option.label}
                 </Tag>
               </WrapItem>

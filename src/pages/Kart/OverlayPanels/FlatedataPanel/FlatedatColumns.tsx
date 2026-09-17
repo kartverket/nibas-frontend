@@ -1,4 +1,4 @@
-import { Icon, IconButton, Tooltip } from "@kvib/react";
+import { Icon, IconButton, Tooltip, useToast } from "@kvib/react";
 import { ValidationError } from "components/Input";
 import { Control, Controller, FieldError, UseFormReturn } from "react-hook-form";
 import { styled } from "styled-components";
@@ -37,6 +37,7 @@ export type FlatedataColumnCtx = {
   inndelingtype: FlatedataTableInndelingtype;
   isEditing: boolean;
   disabledDate: string | undefined;
+  isArchived: boolean;
   formMethods: UseFormReturn<FlatedataInputs>;
   control: Control<FlatedataInputs>;
   inndelingErrors: InndelingErrors;
@@ -84,6 +85,7 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
   const { addHistoryEntry } = useHistory();
+  const toast = useToast();
   const handleArchiveInndeling = () => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
       return;
@@ -106,23 +108,33 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     };
     archiveFeaturesForInndeling(ctx.inndelingId);
     addHistoryEntry(archiveInndelingEntry);
+    toast({
+      status: "success",
+      title: `Arkiverte ${getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true })} "${ctx.inndeling.nummer} ${getNavnInSpraak(ctx.inndeling.navn, "nor")}".`,
+    });
   };
 
-  return (
-    <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
+  return ctx.isArchived ? (
+    <></>
+  ) : (
+    <Tooltip label="Arkiver inndelingen. Dette vil også arkivere alle tilknyttede grenser." placement="left" hasArrow>
+      <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
+    </Tooltip>
   );
 };
 
 const SlettInndelingButton = (ctx: FlatedataColumnCtx) => {
   return (
-    <IconButton
-      variant="ghost"
-      aria-label="Slett inndelingen"
-      icon="delete_forever"
-      onClick={() => {
-        return ctx;
-      }}
-    />
+    <Tooltip label="Slett inndelingen fra utkastet." placement="left" hasArrow>
+      <IconButton
+        variant="ghost"
+        aria-label="Slett inndelingen"
+        icon="delete_forever"
+        onClick={() => {
+          return ctx;
+        }}
+      />
+    </Tooltip>
   );
 };
 
