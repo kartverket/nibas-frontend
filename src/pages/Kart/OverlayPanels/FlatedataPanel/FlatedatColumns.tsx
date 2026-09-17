@@ -122,7 +122,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
 
 const SlettInndelingButton = (ctx: FlatedataColumnCtx) => {
   return (
-    <Tooltip label="Slett den nye inndelingen." placement="left" hasArrow>
+    <Tooltip label="Slett inndelingen fra utkastet." placement="left" hasArrow>
       <IconButton
         variant="ghost"
         aria-label="Slett inndelingen"
