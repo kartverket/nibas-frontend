@@ -1,4 +1,4 @@
-import { Icon, IconButton, Tooltip, useToast } from "@kvib/react";
+import { Badge, Icon, IconButton, Tooltip, useToast } from "@kvib/react";
 import { ValidationError } from "components/Input";
 import { Control, Controller, FieldError, UseFormReturn } from "react-hook-form";
 import { styled } from "styled-components";
@@ -37,6 +37,7 @@ export type FlatedataColumnCtx = {
   inndelingtype: FlatedataTableInndelingtype;
   isEditing: boolean;
   disabledDate: string | undefined;
+  isArchived: boolean;
   formMethods: UseFormReturn<FlatedataInputs>;
   control: Control<FlatedataInputs>;
   inndelingErrors: InndelingErrors;
@@ -113,7 +114,9 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     });
   };
 
-  return (
+  return ctx.isArchived ? (
+    <></>
+  ) : (
     <Tooltip label="Arkiver inndelingen. Dette vil også arkivere alle tilknyttede grenser." placement="left" hasArrow>
       <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
     </Tooltip>

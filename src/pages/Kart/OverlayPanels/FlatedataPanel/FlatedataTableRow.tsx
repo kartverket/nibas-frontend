@@ -61,7 +61,7 @@ export const FlatedataTableRow = ({
     setPreviousValues(structuredClone(getValues()));
   };
 
-  const isInndelingDisabled = utkast ? inndelingIsArchived(inndelingId, utkast, getHistoryEntries()) : false;
+  const isInndelingArchivedInUtkast = utkast ? inndelingIsArchived(inndelingId, utkast, getHistoryEntries()) : false;
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
   const disabledByFremtidigEndringUntilDate = getInndelingFremtidigEndringDato(inndelingId);
@@ -77,8 +77,9 @@ export const FlatedataTableRow = ({
     inndeling,
     inndelingId,
     inndelingtype,
-    isEditing: isEditing && !isInndelingDisabled,
+    isEditing: isEditing && !isInndelingArchivedInUtkast,
     disabledDate: disabledByFremtidigEndringUntilDate,
+    isArchived: isInndelingArchivedInUtkast,
     formMethods,
     control,
     inndelingErrors,
@@ -88,7 +89,12 @@ export const FlatedataTableRow = ({
   };
 
   return (
-    <Row key={inndelingId} $isSearchMatch={isSearchMatch} $isNew={isNew && isEditing} $isDisabled={isInndelingDisabled}>
+    <Row
+      key={inndelingId}
+      $isSearchMatch={isSearchMatch}
+      $isNew={isNew && isEditing}
+      $isDisabled={isInndelingArchivedInUtkast}
+    >
       {columns.map((c, i) => (
         <Fragment key={i}>{c.renderCell(ctx)}</Fragment>
       ))}
@@ -124,7 +130,6 @@ const Row = styled.tr<{ $isSearchMatch: boolean; $isNew: boolean; $isDisabled: b
         background-color: var(--kvib-colors-gray-100, #f5f5f5);
         filter: grayscale(1);
         opacity: 0.65;
-        pointer-events: none;
       }
     `};
 `;
