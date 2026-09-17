@@ -35,7 +35,6 @@ export type FlatedataColumnCtx = {
   inndeling: MetadataResponse;
   inndelingId: string;
   inndelingtype: FlatedataTableInndelingtype;
-  kommuneLokalid: string;
   isEditing: boolean;
   disabledDate: string | undefined;
   formMethods: UseFormReturn<FlatedataInputs>;
@@ -257,6 +256,7 @@ const nummerColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, l
       shouldNotBeEqualWith: existingIndelingtypeNumbers,
       prefixNumber,
     });
+    const shouldValidate = isEditing && disabledDate == null;
     return (
       <InputCell
         isEditing={isEditing}
@@ -265,7 +265,7 @@ const nummerColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, l
         validationError={
           inndelingErrors != null && "nummer" in inndelingErrors ? validationError(inndelingErrors.nummer) : undefined
         }
-        {...register(`${inndelingId}.nummer`, disabledDate == null ? registerOptions : undefined)}
+        {...register(`${inndelingId}.nummer`, shouldValidate ? registerOptions : undefined)}
         onBlur={() => {
           trigger(); // Ønsker å validere de andre radene etter at vi har skrevet inn et nummer
         }}
@@ -282,6 +282,7 @@ const navnColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, lab
     const registerOptions = {
       required: `${getInndelingtypeLabel(inndelingtype, { pluralizeLabel: false, capitalizeLabel: true })}navn kan ikke være tomt`,
     };
+    const shouldValidate = isEditing && disabledDate == null;
     return (
       <InputCell
         isEditing={isEditing}
@@ -290,7 +291,7 @@ const navnColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, lab
         validationError={
           inndelingErrors != null && "navn" in inndelingErrors ? validationError(inndelingErrors.navn) : undefined
         }
-        {...register(`${inndelingId}.navn`, disabledDate == null ? registerOptions : undefined)}
+        {...register(`${inndelingId}.navn`, shouldValidate ? registerOptions : undefined)}
       />
     );
   },
@@ -326,6 +327,7 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
           },
           required: undefined,
         };
+        const shouldValidate = isEditing && disabledDate == null;
         return (
           <InputCell
             isEditing={isEditing}
@@ -336,7 +338,7 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
                 ? validationError(inndelingErrors.tellekretsnummer)
                 : undefined
             }
-            {...register(`${inndelingId}.tellekretsnummer`, disabledDate == null ? tellekretsNummerOptions : undefined)}
+            {...register(`${inndelingId}.tellekretsnummer`, shouldValidate ? tellekretsNummerOptions : undefined)}
           />
         );
       },
@@ -382,9 +384,10 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
           },
           required: undefined,
         };
+        const shouldValidate = isEditing && disabledDate == null;
         const tellekretsnavnRegister = register(
           `${inndelingId}.tellekretsnavn`,
-          disabledDate == null ? tellekretsNavnOptions : undefined,
+          shouldValidate ? tellekretsNavnOptions : undefined,
         );
         return (
           <InputCell
@@ -470,12 +473,13 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
       renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, inndelingErrors }) => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
+        const shouldValidate = isEditing && disabledDate == null;
         return (
           <URLInputCell
             isEditing={isEditing}
             isDisabled={disabledDate != null}
             data={getValues(`${inndelingId}.forskriftsreferanse`) ?? bopliktomraade.forskriftsreferanse}
-            {...register(`${inndelingId}.forskriftsreferanse`, urlOptions)}
+            {...register(`${inndelingId}.forskriftsreferanse`, shouldValidate ? urlOptions : undefined)}
             validationError={
               inndelingErrors != null && "forskriftsreferanse" in inndelingErrors
                 ? validationError(inndelingErrors.forskriftsreferanse)

@@ -276,7 +276,7 @@ export const undoArchiving = (entry: GrenseArkiveringsEntry) => {
   );
 };
 
-const getChangesForArchiveInndelingEntry = (entry: ArchiveInndelingEntry) => {
+export const getChangesForArchiveInndelingEntry = (entry: ArchiveInndelingEntry) => {
   // For archive_inndeling entries er det kun én change, så vi kan ta index 0.
   return entry.changes[0];
 };

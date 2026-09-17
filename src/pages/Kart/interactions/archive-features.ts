@@ -1,7 +1,8 @@
-import { HistoryChange, HistoryContextValue } from "contexts/HistoryContext/types";
+import { getArchiveInndelingEntries, getChangesForArchiveInndelingEntry } from "contexts/HistoryContext/history-utils";
+import { HistoryChange, HistoryContextValue, HistoryEntry } from "contexts/HistoryContext/types";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
-import { FeatureProperties } from "types/api";
+import { FeatureProperties, UtkastResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { addFeaturesToSource, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getLineStringsForOmraadeFromSource } from "../OverlayPanels/FlatedataPanel/flate-highlight-utils";
@@ -73,4 +74,15 @@ export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
   const featureIds = removeNil(features.map((f) => f.getId()?.toString()));
   removeFeaturesFromSourceByIds("archived", featureIds);
   addFeaturesToSource("edit", features);
+};
+
+export const inndelingIsArchived = (inndelingId: string, utkast: UtkastResponse, historyEntries: HistoryEntry[]) => {
+  const isArchivedInUtkast = utkast?.operasjoner.archiveInndelingEndringer?.some(
+    (operation) => operation.identifikator.lokalId === inndelingId,
+  );
+  const isArchivedInHistory = getArchiveInndelingEntries(historyEntries).some(
+    (entry) => getChangesForArchiveInndelingEntry(entry).id === inndelingId,
+  );
+
+  return isArchivedInUtkast === true || isArchivedInHistory === true;
 };
