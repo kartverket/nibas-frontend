@@ -127,9 +127,15 @@ const Row = styled.tr<{ $isSearchMatch: boolean; $isNew: boolean; $isDisabled: b
     props.$isDisabled &&
     css`
       td {
-        background-color: var(--kvib-colors-gray-100, #f5f5f5);
+        background-color: var(--kvib-colors-gray-100);
+        color: var(--kvib-colors-gray-500);
         filter: grayscale(1);
-        opacity: 0.65;
+        opacity: 0.75;
+      }
+
+      .flatedata-badge {
+        background-color: var(--kvib-colors-gray-200);
+        color: var(--kvib-colors-gray-500);
       }
     `};
 `;
