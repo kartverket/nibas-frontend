@@ -83,6 +83,7 @@ export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
   const featureIds = removeNil(features.map((f) => f.getId()?.toString()));
   removeFeaturesFromSourceByIds("archived", featureIds);
   addFeaturesToSource("edit", features);
+  return featureIds;
 };
 
 export const inndelingIsArchived = (inndelingId: string, utkast: UtkastResponse, historyEntries: HistoryEntry[]) => {
