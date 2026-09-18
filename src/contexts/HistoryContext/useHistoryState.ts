@@ -56,7 +56,7 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     });
   };
 
-  const popHistoryEntry = (entryId: string) => {
+  const popHistoryChangeById = (entryId: string) => {
     const entryIndex = history.entries.findIndex((entry) => getChangeIds(entry).includes(entryId));
     const entry = history.entries[entryIndex];
 
@@ -159,7 +159,7 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     history,
     restoreHistoryState,
     addHistoryEntry,
-    popHistoryEntry,
+    popHistoryChangeById,
     clearHistory,
     undo,
     redo,

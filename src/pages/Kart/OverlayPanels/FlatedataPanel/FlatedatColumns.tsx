@@ -89,7 +89,7 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry, popHistoryEntry, getHistoryEntries } = useHistory();
+  const { addHistoryEntry, popHistoryChangeById, getHistoryEntries } = useHistory();
   const { utkast } = useUtkast();
   const toast = useToast();
   const handleArchiveInndeling = () => {
@@ -123,7 +123,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
 
   const hanndleUndoArchivingFromHistoryOrUtkast = () => {
     if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
-      popHistoryEntry(ctx.inndelingId);
+      popHistoryChangeById(ctx.inndelingId);
     } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
       // her må vi ta vare på historikken man har, og reapplye den etter man har lagret utkastet på nytt uten arkiveringen
     }
