@@ -126,7 +126,7 @@ export type HistoryEntry =
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
-  popHistoryEntry: (entryId: string) => void;
+  popHistoryChangeById: (entryId: string) => void;
   history: HistoryState;
   clearHistory: (historySaved?: boolean) => void;
   getHistoryEntries: () => HistoryEntry[];
