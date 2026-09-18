@@ -58,7 +58,7 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     const entryIndex = history.entries.findIndex((entry) => getChangeIds(entry).includes(entryId));
     const entry = history.entries[entryIndex];
 
-    if (!entry || entry.prunable !== true) {
+    if (entry == null || entry.prunable !== true) {
       return;
     }
 
