@@ -54,6 +54,45 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     });
   };
 
+  const popHistoryChangeById = (entryId: string) => {
+    const entryIndex = history.entries.findIndex((entry) => getChangeIds(entry).includes(entryId));
+    const entry = history.entries[entryIndex];
+
+    if (entry == null || entry.prunable !== true) {
+      return;
+    }
+
+    const wasApplied = entryIndex < history.index;
+    const changeIndex = entry.changes.findIndex((change) => change.id === entryId);
+
+    if (changeIndex === -1) {
+      return;
+    }
+
+    const entryWithRemovedChange = {
+      ...entry,
+      changes: entry.changes.slice(changeIndex, changeIndex + 1),
+    } as HistoryEntry;
+
+    if (wasApplied) {
+      onUndo(entryWithRemovedChange);
+    }
+
+    const remainingChanges = entry.changes.filter((_, index) => index !== changeIndex);
+    const entries: HistoryEntry[] =
+      remainingChanges.length === 0
+        ? history.entries.filter((_, index) => index !== entryIndex)
+        : history.entries.map((currentEntry, index) =>
+            index === entryIndex ? ({ ...currentEntry, changes: remainingChanges } as HistoryEntry) : currentEntry,
+          );
+    const index = history.index - (wasApplied && remainingChanges.length === 0 ? 1 : 0);
+    updateFeatureStyles(entries.slice(0, index));
+    setHistory({
+      entries,
+      index,
+    });
+  };
+
   const clearHistory = (historySaved: boolean = false) => {
     if (historySaved) {
       saveFeatureStyles();
@@ -118,6 +157,7 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     history,
     restoreHistoryState,
     addHistoryEntry,
+    popHistoryChangeById,
     clearHistory,
     undo,
     redo,

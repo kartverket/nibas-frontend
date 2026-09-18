@@ -1,12 +1,13 @@
 import { getArchiveInndelingEntries, getChangesForArchiveInndelingEntry } from "contexts/HistoryContext/history-utils";
 import { HistoryChange, HistoryContextValue, HistoryEntry } from "contexts/HistoryContext/types";
+import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
-import { FeatureProperties, UtkastResponse } from "types/api";
+import { FeatureProperties, Inndelingtype, UtkastResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { addFeaturesToSource, getRepresentasjonspunktId, removeFeaturesFromSourceByIds } from "utils/map/source";
-import { archivedSource, editSource } from "hooks/layers/constants";
 import { getLineStringsForOmraadeFromSource } from "../OverlayPanels/FlatedataPanel/flate-highlight-utils";
+import { TilhorighetInndelingtype } from "../OverlayPanels/hooks/tilhorighet-utils";
 
 type ArchiveFeaturesOptions = {
   addArchivedStyles: (featureIds: string[]) => void;
@@ -57,8 +58,8 @@ export const archiveFeatures = (features: Feature<LineString>[], options: Archiv
   }
 };
 
-export const archiveFeaturesForInndeling = (inndelingId: string) => {
-  const linestrings = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["edit"]);
+export const archiveFeaturesForInndeling = (inndelingId: string, inndelingtype: TilhorighetInndelingtype) => {
+  const linestrings = getLineStringsForOmraadeFromSource(inndelingtype, inndelingId, ["edit"]);
   const representasjonspunkt = editSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   const features = [...linestrings, ...removeNil([representasjonspunkt])];
 
@@ -71,8 +72,8 @@ export const archiveFeaturesForInndeling = (inndelingId: string) => {
   addFeaturesToSource("archived", features);
 };
 
-export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
-  const linestrings = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["archived"]);
+export const unarchiveFeaturesForInndeling = (inndelingId: string, inndelingtype: TilhorighetInndelingtype) => {
+  const linestrings = getLineStringsForOmraadeFromSource(inndelingtype, inndelingId, ["archived"]);
   const representasjonspunkt = archivedSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   const features = [...linestrings, ...removeNil([representasjonspunkt])];
 
@@ -83,15 +84,26 @@ export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
   const featureIds = removeNil(features.map((f) => f.getId()?.toString()));
   removeFeaturesFromSourceByIds("archived", featureIds);
   addFeaturesToSource("edit", features);
+  return featureIds;
 };
 
 export const inndelingIsArchived = (inndelingId: string, utkast: UtkastResponse, historyEntries: HistoryEntry[]) => {
-  const isArchivedInUtkast = utkast?.operasjoner.archiveInndelingEndringer?.some(
-    (operation) => operation.identifikator.lokalId === inndelingId,
+  return (
+    inndelingIsArchivedInUtkast(inndelingId, utkast) === true ||
+    inndelingIsArchivedInHistory(inndelingId, historyEntries) === true
   );
-  const isArchivedInHistory = getArchiveInndelingEntries(historyEntries).some(
+};
+
+export const inndelingIsArchivedInUtkast = (inndelingId: string, utkast: UtkastResponse) => {
+  return (
+    utkast?.operasjoner.archiveInndelingEndringer?.some(
+      (operation) => operation.identifikator.lokalId === inndelingId,
+    ) === true
+  );
+};
+
+export const inndelingIsArchivedInHistory = (inndelingId: string, historyEntries: HistoryEntry[]) => {
+  return getArchiveInndelingEntries(historyEntries).some(
     (entry) => getChangesForArchiveInndelingEntry(entry).id === inndelingId,
   );
-
-  return isArchivedInUtkast === true || isArchivedInHistory === true;
 };

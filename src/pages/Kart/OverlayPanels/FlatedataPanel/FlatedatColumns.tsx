@@ -27,7 +27,14 @@ import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { ArchiveInndelingEntry } from "contexts/HistoryContext/types";
-import { archiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
+import {
+  archiveFeaturesForInndeling,
+  inndelingIsArchivedInHistory,
+  inndelingIsArchivedInUtkast,
+  unarchiveFeaturesForInndeling,
+} from "pages/Kart/interactions/archive-features";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -84,7 +91,9 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry } = useHistory();
+  const { addHistoryEntry, popHistoryChangeById, getHistoryEntries } = useHistory();
+  const { utkast, updateUtkast } = useUtkast();
+  const { removeArchivedStyles } = useFeatureStyle();
   const toast = useToast();
   const handleArchiveInndeling = () => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
@@ -92,6 +101,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     }
     const archiveInndelingEntry: ArchiveInndelingEntry = {
       type: "archive_inndeling",
+      prunable: true,
       changes: [
         {
           id: ctx.inndelingId,
@@ -106,7 +116,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
         },
       ],
     };
-    archiveFeaturesForInndeling(ctx.inndelingId);
+    archiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype);
     addHistoryEntry(archiveInndelingEntry);
     toast({
       status: "success",
@@ -114,10 +124,41 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     });
   };
 
+  const hanndleUndoArchivingFromHistoryOrUtkast = () => {
+    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
+      popHistoryChangeById(ctx.inndelingId);
+    } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
+      updateUtkast(
+        utkast.id,
+        {
+          ...utkast,
+          operasjoner: {
+            ...utkast.operasjoner,
+            archiveInndelingEndringer: utkast.operasjoner.archiveInndelingEndringer?.filter(
+              (endring) => endring.identifikator.lokalId !== ctx.inndelingId,
+            ),
+          },
+        },
+        false,
+      ).then(() => {
+        if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === true) {
+          removeArchivedStyles(unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype));
+        }
+      });
+    }
+  };
+
   return ctx.isArchived ? (
-    <></>
+    <Tooltip label="Angre arkivering av inndelingen" placement="left" hasArrow>
+      <IconButton
+        variant="ghost"
+        aria-label="Angre arkivering av inndelingen"
+        icon="undo"
+        onClick={hanndleUndoArchivingFromHistoryOrUtkast}
+      />
+    </Tooltip>
   ) : (
-    <Tooltip label="Arkiver inndelingen. Dette vil også arkivere alle tilknyttede grenser." placement="left" hasArrow>
+    <Tooltip label="Arkiver inndelingen" placement="left" hasArrow>
       <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
     </Tooltip>
   );
@@ -169,7 +210,7 @@ const spacerColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
 const archiveColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<T> => ({
   header: "",
   renderCell: (ctx: FlatedataColumnCtx) => (
-    <TableCell>
+    <TableCell className="archive-action-cell">
       <FeatureToggle feature="ARCHIVE_INNDELING">
         {isNonExhaustiveInndelingtype(ctx.inndelingtype) ? <ArkiverInndelingButton {...ctx} /> : <></>}
       </FeatureToggle>
