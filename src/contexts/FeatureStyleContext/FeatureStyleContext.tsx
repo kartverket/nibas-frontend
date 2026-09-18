@@ -182,6 +182,21 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     renderSelectStyles(selectedFeatures);
   };
 
+  const removeArchivedStyles = (featureIds: string[]) => {
+    archivedStyleFunctions.removeCustomStyles(featureIds);
+    archivedStyleFunctions.removeSavedCustomStyles(featureIds);
+
+    for (const featureId of featureIds) {
+      const remainingStyle = customStyles.find(
+        (customStyle) =>
+          customStyle !== archivedStyleFunctions &&
+          (customStyle.customFeatureIds.includes(featureId) || customStyle.savedCustomFeatureIds.includes(featureId)),
+      );
+      setFeatureStyle(featureId, remainingStyle?.customStyle);
+    }
+    renderSelectStyles(selectedFeatures);
+  };
+
   const clearFeatureStyles = () => {
     for (const customStyle of customStyles) {
       customStyle.clearCustomStyles();
@@ -268,6 +283,7 @@ export const FeatureStyleProvider = ({ children }: { children: React.ReactNode }
     addDirtyStyles: dirtyStyleFunctions.addCustomStyles,
     addErrorStyles: errorStyleFunctions.addCustomStyles,
     addArchivedStyles: archivedStyleFunctions.addCustomStyles,
+    removeArchivedStyles,
     addHistoriskeGrenserStyles: historiskeGrenserStyleFunctions.addCustomStyles,
 
     setAndSaveFremtidigEndringStyles: fremtidigEndringStyleFunctions.setAndSaveCustomStyles,

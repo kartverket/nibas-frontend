@@ -31,8 +31,10 @@ import {
   archiveFeaturesForInndeling,
   inndelingIsArchivedInHistory,
   inndelingIsArchivedInUtkast,
+  unarchiveFeaturesForInndeling,
 } from "pages/Kart/interactions/archive-features";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -90,7 +92,8 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
   const { addHistoryEntry, popHistoryChangeById, getHistoryEntries } = useHistory();
-  const { utkast } = useUtkast();
+  const { utkast, updateUtkast } = useUtkast();
+  const { removeArchivedStyles } = useFeatureStyle();
   const toast = useToast();
   const handleArchiveInndeling = () => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
@@ -125,7 +128,21 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
       popHistoryChangeById(ctx.inndelingId);
     } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
-      // her må vi ta vare på historikken man har, og reapplye den etter man har lagret utkastet på nytt uten arkiveringen
+      updateUtkast(
+        utkast.id,
+        {
+          ...utkast,
+          operasjoner: {
+            ...utkast.operasjoner,
+            archiveInndelingEndringer: utkast.operasjoner.archiveInndelingEndringer?.filter(
+              (endring) => endring.identifikator.lokalId !== ctx.inndelingId,
+            ),
+          },
+        },
+        false,
+      ).then(() => {
+        removeArchivedStyles(unarchiveFeaturesForInndeling(ctx.inndelingId));
+      });
     }
   };
 
