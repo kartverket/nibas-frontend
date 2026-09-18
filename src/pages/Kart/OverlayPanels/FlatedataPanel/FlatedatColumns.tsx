@@ -116,7 +116,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
         },
       ],
     };
-    archiveFeaturesForInndeling(ctx.inndelingId);
+    archiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype);
     addHistoryEntry(archiveInndelingEntry);
     toast({
       status: "success",
@@ -141,7 +141,9 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
         },
         false,
       ).then(() => {
-        removeArchivedStyles(unarchiveFeaturesForInndeling(ctx.inndelingId));
+        if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === true) {
+          removeArchivedStyles(unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype));
+        }
       });
     }
   };

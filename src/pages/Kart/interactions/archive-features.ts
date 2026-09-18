@@ -3,10 +3,11 @@ import { HistoryChange, HistoryContextValue, HistoryEntry } from "contexts/Histo
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
-import { FeatureProperties, UtkastResponse } from "types/api";
+import { FeatureProperties, Inndelingtype, UtkastResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { addFeaturesToSource, getRepresentasjonspunktId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getLineStringsForOmraadeFromSource } from "../OverlayPanels/FlatedataPanel/flate-highlight-utils";
+import { TilhorighetInndelingtype } from "../OverlayPanels/hooks/tilhorighet-utils";
 
 type ArchiveFeaturesOptions = {
   addArchivedStyles: (featureIds: string[]) => void;
@@ -57,8 +58,8 @@ export const archiveFeatures = (features: Feature<LineString>[], options: Archiv
   }
 };
 
-export const archiveFeaturesForInndeling = (inndelingId: string) => {
-  const linestrings = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["edit"]);
+export const archiveFeaturesForInndeling = (inndelingId: string, inndelingtype: TilhorighetInndelingtype) => {
+  const linestrings = getLineStringsForOmraadeFromSource(inndelingtype, inndelingId, ["edit"]);
   const representasjonspunkt = editSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   const features = [...linestrings, ...removeNil([representasjonspunkt])];
 
@@ -71,8 +72,8 @@ export const archiveFeaturesForInndeling = (inndelingId: string) => {
   addFeaturesToSource("archived", features);
 };
 
-export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
-  const linestrings = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["archived"]); // TODO dynamisk inndelingtype
+export const unarchiveFeaturesForInndeling = (inndelingId: string, inndelingtype: TilhorighetInndelingtype) => {
+  const linestrings = getLineStringsForOmraadeFromSource(inndelingtype, inndelingId, ["archived"]);
   const representasjonspunkt = archivedSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   const features = [...linestrings, ...removeNil([representasjonspunkt])];
 
