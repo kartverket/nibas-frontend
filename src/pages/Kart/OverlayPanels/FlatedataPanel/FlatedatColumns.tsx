@@ -27,7 +27,12 @@ import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { ArchiveInndelingEntry } from "contexts/HistoryContext/types";
-import { archiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
+import {
+  archiveFeaturesForInndeling,
+  inndelingIsArchivedInHistory,
+  inndelingIsArchivedInUtkast,
+} from "pages/Kart/interactions/archive-features";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -84,7 +89,8 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry, popHistoryEntry } = useHistory();
+  const { addHistoryEntry, popHistoryEntry, getHistoryEntries } = useHistory();
+  const { utkast } = useUtkast();
   const toast = useToast();
   const handleArchiveInndeling = () => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
@@ -115,13 +121,21 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     });
   };
 
+  const hanndleUndoArchivingFromHistoryOrUtkast = () => {
+    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
+      popHistoryEntry(ctx.inndelingId);
+    } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
+      // her må vi ta vare på historikken man har, og reapplye den etter man har lagret utkastet på nytt uten arkiveringen
+    }
+  };
+
   return ctx.isArchived ? (
     <Tooltip label="Angre arkivering av inndelingen og tilknyttede grenser." placement="left" hasArrow>
       <IconButton
         variant="ghost"
         aria-label="Angre arkivering av inndelingen"
         icon="undo"
-        onClick={() => popHistoryEntry(ctx.inndelingId)}
+        onClick={hanndleUndoArchivingFromHistoryOrUtkast}
       />
     </Tooltip>
   ) : (

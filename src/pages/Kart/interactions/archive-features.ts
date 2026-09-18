@@ -86,12 +86,22 @@ export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
 };
 
 export const inndelingIsArchived = (inndelingId: string, utkast: UtkastResponse, historyEntries: HistoryEntry[]) => {
-  const isArchivedInUtkast = utkast?.operasjoner.archiveInndelingEndringer?.some(
-    (operation) => operation.identifikator.lokalId === inndelingId,
+  return (
+    inndelingIsArchivedInUtkast(inndelingId, utkast) === true ||
+    inndelingIsArchivedInHistory(inndelingId, historyEntries) === true
   );
-  const isArchivedInHistory = getArchiveInndelingEntries(historyEntries).some(
+};
+
+export const inndelingIsArchivedInUtkast = (inndelingId: string, utkast: UtkastResponse) => {
+  return (
+    utkast?.operasjoner.archiveInndelingEndringer?.some(
+      (operation) => operation.identifikator.lokalId === inndelingId,
+    ) === true
+  );
+};
+
+export const inndelingIsArchivedInHistory = (inndelingId: string, historyEntries: HistoryEntry[]) => {
+  return getArchiveInndelingEntries(historyEntries).some(
     (entry) => getChangesForArchiveInndelingEntry(entry).id === inndelingId,
   );
-
-  return isArchivedInUtkast === true || isArchivedInHistory === true;
 };
