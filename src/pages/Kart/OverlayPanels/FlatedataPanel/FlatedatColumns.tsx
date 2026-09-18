@@ -84,7 +84,7 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry } = useHistory();
+  const { addHistoryEntry, popHistoryEntry } = useHistory();
   const toast = useToast();
   const handleArchiveInndeling = () => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
@@ -92,6 +92,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     }
     const archiveInndelingEntry: ArchiveInndelingEntry = {
       type: "archive_inndeling",
+      prunable: true,
       changes: [
         {
           id: ctx.inndelingId,
@@ -115,7 +116,14 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
   };
 
   return ctx.isArchived ? (
-    <></>
+    <Tooltip label="Angre arkivering av inndelingen og tilknyttede grenser." placement="left" hasArrow>
+      <IconButton
+        variant="ghost"
+        aria-label="Angre arkivering av inndelingen"
+        icon="undo"
+        onClick={() => popHistoryEntry(ctx.inndelingId)}
+      />
+    </Tooltip>
   ) : (
     <Tooltip label="Arkiver inndelingen. Dette vil også arkivere alle tilknyttede grenser." placement="left" hasArrow>
       <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />

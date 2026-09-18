@@ -17,6 +17,8 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     entries: initialState,
   });
 
+  console.log(history);
+
   const { updateFeatureStyles, saveFeatureStyles } = useFeatureStyle();
 
   // Dersom applikasjonen er i tilstanden endring -> angre -> endring, kan man ende opp med features i en source
@@ -51,6 +53,30 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
         index: prevHistory.index + 1,
         entries: newEntries,
       };
+    });
+  };
+
+  // TODO poppe change array i stedet for og kun poppe entry hvis changes.length === 0?
+  const popHistoryEntry = (entryId: string) => {
+    const entryIndex = history.entries.findIndex((entry) => getChangeIds(entry).includes(entryId));
+    const entry = history.entries[entryIndex];
+
+    if (!entry || entry.prunable !== true) {
+      return;
+    }
+
+    const wasApplied = entryIndex < history.index;
+
+    if (wasApplied) {
+      onUndo(entry);
+    }
+
+    const entries = history.entries.filter((_, index) => index !== entryIndex);
+    const index = history.index - (wasApplied ? 1 : 0);
+    updateFeatureStyles(entries.slice(0, index));
+    setHistory({
+      entries,
+      index,
     });
   };
 
@@ -118,6 +144,7 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     history,
     restoreHistoryState,
     addHistoryEntry,
+    popHistoryEntry,
     clearHistory,
     undo,
     redo,

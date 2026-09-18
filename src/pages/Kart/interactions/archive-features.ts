@@ -72,7 +72,7 @@ export const archiveFeaturesForInndeling = (inndelingId: string) => {
 };
 
 export const unarchiveFeaturesForInndeling = (inndelingId: string) => {
-  const linestrings = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["archived"]);
+  const linestrings = getLineStringsForOmraadeFromSource("BOPLIKTOMRAADE", inndelingId, ["archived"]); // TODO dynamisk inndelingtype
   const representasjonspunkt = archivedSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   const features = [...linestrings, ...removeNil([representasjonspunkt])];
 
