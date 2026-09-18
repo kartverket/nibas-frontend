@@ -39,14 +39,14 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
     "feature-branch": true,
   },
   CREATE_MULTIPLE_INNDELINGER: {
-    prod: false,
+    prod: true,
     "dev-main": true,
     "dev-e2e": true,
     localhost: true,
     "feature-branch": true,
   },
   VIS_FLATER: {
-    prod: false,
+    prod: true,
     "dev-main": true,
     "dev-e2e": true,
     localhost: true,
