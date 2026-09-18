@@ -56,7 +56,6 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     });
   };
 
-  // TODO poppe change array i stedet for og kun poppe entry hvis changes.length === 0?
   const popHistoryEntry = (entryId: string) => {
     const entryIndex = history.entries.findIndex((entry) => getChangeIds(entry).includes(entryId));
     const entry = history.entries[entryIndex];
@@ -66,13 +65,29 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     }
 
     const wasApplied = entryIndex < history.index;
+    const changeIndex = entry.changes.findIndex((change) => change.id === entryId);
 
-    if (wasApplied) {
-      onUndo(entry);
+    if (changeIndex === -1) {
+      return;
     }
 
-    const entries = history.entries.filter((_, index) => index !== entryIndex);
-    const index = history.index - (wasApplied ? 1 : 0);
+    const entryWithRemovedChange = {
+      ...entry,
+      changes: entry.changes.slice(changeIndex, changeIndex + 1),
+    } as HistoryEntry;
+
+    if (wasApplied) {
+      onUndo(entryWithRemovedChange);
+    }
+
+    const remainingChanges = entry.changes.filter((_, index) => index !== changeIndex);
+    const entries: HistoryEntry[] =
+      remainingChanges.length === 0
+        ? history.entries.filter((_, index) => index !== entryIndex)
+        : history.entries.map((currentEntry, index) =>
+            index === entryIndex ? ({ ...currentEntry, changes: remainingChanges } as HistoryEntry) : currentEntry,
+          );
+    const index = history.index - (wasApplied && remainingChanges.length === 0 ? 1 : 0);
     updateFeatureStyles(entries.slice(0, index));
     setHistory({
       entries,
