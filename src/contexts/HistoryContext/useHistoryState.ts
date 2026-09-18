@@ -17,8 +17,6 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     entries: initialState,
   });
 
-  console.log(history);
-
   const { updateFeatureStyles, saveFeatureStyles } = useFeatureStyle();
 
   // Dersom applikasjonen er i tilstanden endring -> angre -> endring, kan man ende opp med features i en source
