@@ -52,6 +52,7 @@ export type HistoryTypeValues =
 
 export type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
   type: HistoryType;
+  prunable?: boolean; // Indikerer om det er trygt å til enhver tid fjerne historikkoppføringen uten å ødelegge senere historikk.
   changes: HistoryChange<Model>[];
 };
 
@@ -125,6 +126,7 @@ export type HistoryEntry =
 
 export type HistoryContextValue = {
   addHistoryEntry: (entry: HistoryEntry) => void;
+  popHistoryEntry: (entryId: string) => void;
   history: HistoryState;
   clearHistory: (historySaved?: boolean) => void;
   getHistoryEntries: () => HistoryEntry[];

@@ -209,7 +209,7 @@ type HistoryProviderProps = {
   initialHistory?: HistoryEntry[];
 };
 export const HistoryProvider = ({ children, initialHistory }: HistoryProviderProps) => {
-  const { history, addHistoryEntry, clearHistory, undo, redo, restoreHistoryState } = useHistoryState({
+  const { history, addHistoryEntry, popHistoryEntry, clearHistory, undo, redo, restoreHistoryState } = useHistoryState({
     onUndo,
     onRedo,
     initialState: initialHistory,
@@ -232,6 +232,7 @@ export const HistoryProvider = ({ children, initialHistory }: HistoryProviderPro
     undo: history.index > 0 ? undo : undefined,
     redo: history.entries.length > 0 && history.index < history.entries.length ? redo : undefined,
     addHistoryEntry,
+    popHistoryEntry,
     reapplyCurrentEntries,
   };
 
