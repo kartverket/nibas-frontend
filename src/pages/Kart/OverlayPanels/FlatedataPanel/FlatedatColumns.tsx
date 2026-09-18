@@ -147,7 +147,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
   };
 
   return ctx.isArchived ? (
-    <Tooltip label="Angre arkivering av inndelingen og tilknyttede grenser." placement="left" hasArrow>
+    <Tooltip label="Angre arkivering av inndelingen" placement="left" hasArrow>
       <IconButton
         variant="ghost"
         aria-label="Angre arkivering av inndelingen"
@@ -156,7 +156,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
       />
     </Tooltip>
   ) : (
-    <Tooltip label="Arkiver inndelingen. Dette vil også arkivere alle tilknyttede grenser." placement="left" hasArrow>
+    <Tooltip label="Arkiver inndelingen" placement="left" hasArrow>
       <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
     </Tooltip>
   );
@@ -208,7 +208,7 @@ const spacerColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
 const archiveColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<T> => ({
   header: "",
   renderCell: (ctx: FlatedataColumnCtx) => (
-    <TableCell>
+    <TableCell className="archive-action-cell">
       <FeatureToggle feature="ARCHIVE_INNDELING">
         {isNonExhaustiveInndelingtype(ctx.inndelingtype) ? <ArkiverInndelingButton {...ctx} /> : <></>}
       </FeatureToggle>
