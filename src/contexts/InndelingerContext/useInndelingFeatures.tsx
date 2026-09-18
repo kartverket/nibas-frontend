@@ -208,6 +208,7 @@ const useInndelingFeatures = (inndelinger: Inndeling[]) => {
 
 const getRepresentasjonspunktFeatureForInndeling = (
   inndelingWithRepresentasjonspunkt: FullInndelingResponse | SimpleInndelingResponse,
+  inndelingtype: Inndelingtype,
 ): Feature<Geometry> => {
   const inndelingName: string = inndelingResponseNavnToString(inndelingWithRepresentasjonspunkt.navn);
 
@@ -219,6 +220,7 @@ const getRepresentasjonspunktFeatureForInndeling = (
       name: inndelingName,
       number: inndelingWithRepresentasjonspunkt.nummer,
       gyldigTil: inndelingWithRepresentasjonspunkt.gyldighet.gyldigTil,
+      inndelingtype,
     },
   });
 };
@@ -231,7 +233,7 @@ const mapToInndelingerWithFeatures = (featuresResponses: InndelingWithFeatureCol
         : [featuresResponse.inndelinger];
 
       const representasjonspunkter = inndelingerResponse.map((inndeling) =>
-        getRepresentasjonspunktFeatureForInndeling(inndeling),
+        getRepresentasjonspunktFeatureForInndeling(inndeling, featuresResponse.inndelingtype),
       );
 
       const grenser = geoJsonToSource(featuresResponse.geoJSONFeatures).getFeatures();

@@ -123,11 +123,15 @@ export const inndelingColors = {
   GRUNNKRETS: "#4D94AF",
   STEMMEKRETS: "#784814",
   delomraade: "#5DB9DC",
+  BOPLIKTOMRAADE: "#64ab00",
+};
+
+export const stateColors = {
   fremtidigEndring: "#B92659",
   edit: "#000000",
   measure: "#000000",
   sosiFiler: "#1A237E",
-  BOPLIKTOMRAADE: "#64ab00",
+  archived: "#000000",
 };
 
 const sammenslaaingColor = "#7E1A78";
@@ -139,12 +143,12 @@ export const grenseStyles = {
   STEMMEKRETS: lineAndPointStyles({ color: inndelingColors["STEMMEKRETS"] }),
   delomraade: lineAndPointStyles({ color: inndelingColors["delomraade"] }),
   BOPLIKTOMRAADE: lineAndPointStyles({ color: inndelingColors["BOPLIKTOMRAADE"] }),
-  edit: lineAndPointStyles({ color: inndelingColors["edit"] }),
-  measure: lineAndPointStyles({ color: inndelingColors["measure"], dashed: true }),
+  edit: lineAndPointStyles({ color: stateColors["edit"] }),
+  measure: lineAndPointStyles({ color: stateColors["measure"], dashed: true }),
   select: lineAndPointStyles({ color: "#D163E6FF" }),
   dirty: lineAndPointStyles({ color: "#00CB85FF" }),
   error: lineAndPointStyles({ color: "#FF0000FF" }),
-  fremtidigEndring: lineAndPointStyles({ color: inndelingColors["fremtidigEndring"] }),
+  fremtidigEndring: lineAndPointStyles({ color: stateColors["fremtidigEndring"] }),
   matrikkel: lineAndPointStyles({ color: "#009688" }),
   historical: lineAndPointStyles({ color: "#FF00FF", pointRadius: 1.5, dashed: true, lineStrokeWidth: 2 }),
   sammenslaaing: lineAndPointStyles({ color: sammenslaaingColor }),
@@ -161,7 +165,7 @@ export const grenseStyles = {
   archivedStemmekrets: lineAndPointStyles({ color: inndelingColors["STEMMEKRETS"], dashed: true }),
   archivedDelomraade: lineAndPointStyles({ color: inndelingColors["delomraade"], dashed: true }),
   archivedBopliktomraade: lineAndPointStyles({ color: inndelingColors["BOPLIKTOMRAADE"], dashed: true }),
-  sosiFiler: lineAndPointStyles({ color: inndelingColors["sosiFiler"] }),
+  sosiFiler: lineAndPointStyles({ color: stateColors["sosiFiler"] }),
 };
 
 const withOpacity = (color: string, opacity: number): Color => {
@@ -222,7 +226,7 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
   }
 };
 
-export const getLayerStyle = (feature: FeatureLike, grenseId: VectorLayerId, archived: boolean): Style[] => {
+export const getLayerStyle = (feature: FeatureLike, layerId: VectorLayerId, archived: boolean): Style[] => {
   const grenseType = feature.get("type");
 
   if (getFeatureFremtidigEndringDato(feature) != null) {
@@ -230,20 +234,20 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: VectorLayerId, arc
   }
 
   if (isGrenseType(grenseType)) {
-    if (grenseId === "edit" && isFeatureEditable(feature, archived) === true) {
+    if (layerId === "edit" && isFeatureEditable(feature, archived) === true) {
       return grenseStyles.edit;
     }
 
-    return grenseStyleFromType(grenseType, archived || grenseId === "archived");
+    return grenseStyleFromType(grenseType, archived || layerId === "archived");
   }
 
   if (isTeigFeature(feature)) {
     return grenseStyles.matrikkel;
   }
-  if (grenseId === "historical") {
+  if (layerId === "historical") {
     return grenseStyles.historical;
   }
-  if (grenseId === "sosiFiler") {
+  if (layerId === "sosiFiler") {
     const isLayerVisible = feature.get(FEATURE_VISIBLE_PROPERTY);
     if (isLayerVisible === false) {
       return [];
@@ -254,36 +258,44 @@ export const getLayerStyle = (feature: FeatureLike, grenseId: VectorLayerId, arc
   return [];
 };
 
-export const getArchiveLayerStyle = (feature: FeatureLike): Style[] => {
-  const grenseType = feature.get("type");
-  if (isGrenseType(grenseType)) {
-    return grenseStyleFromType(grenseType, true);
-  }
-  return [];
-};
-
-export const getPointOverlayStyle = (feature: FeatureLike, grenseId: VectorLayerId) => {
+export const getPointOverlayStyle = (feature: FeatureLike, layerId: VectorLayerId) => {
   const name = feature.get("name") as string | undefined;
   const number = feature.get("number") as string | undefined;
   const gyldigTil = feature.get("gyldigTil") as string | undefined;
+  const inndelingtype = feature.get("inndelingtype") as Inndelingtype | undefined;
 
   if (
     feature.get("type") !== "Posisjon" ||
     name == null ||
     number == null ||
-    grenseId === "archived" ||
-    grenseId === "matrikkel" ||
-    grenseId === "historical"
+    layerId === "matrikkel" ||
+    layerId === "historical"
   ) {
     return new Style();
   }
 
   const getColor = () => {
     if (gyldigTil != null) {
-      return inndelingColors["fremtidigEndring"];
+      return stateColors["fremtidigEndring"];
     }
 
-    return inndelingColors[grenseId];
+    if (layerId === "archived") {
+      if (inndelingtype != null) {
+        return inndelingColors[inndelingtype];
+      } else {
+        return stateColors["archived"];
+      }
+    }
+
+    if (layerId === "edit") {
+      return stateColors["edit"];
+    }
+
+    if (layerId === "measure" || layerId === "sosiFiler") {
+      return stateColors[layerId];
+    }
+
+    return inndelingColors[layerId];
   };
 
   return new Style({
@@ -303,6 +315,11 @@ export const getPointOverlayStyle = (feature: FeatureLike, grenseId: VectorLayer
   });
 };
 
+export const getArchiveLayerStyle = (feature: FeatureLike): Style[] => [
+  ...getLayerStyle(feature, "archived", true),
+  getPointOverlayStyle(feature, "archived"),
+];
+
 export const updateRepresentasjonspunkt = (inndelingId: string, number?: string, name?: string) => {
   const feature = editSource.getFeatureById(getRepresentasjonspunktId(inndelingId));
   if (feature) {
@@ -318,9 +335,9 @@ export const updateRepresentasjonspunkt = (inndelingId: string, number?: string,
 /**
  * Liten hjelpefunksjon for å slippe så mye typehåndtering når man skal sette stiler
  * @param featureId En gitt feature i editSource eller archivedSource som skal få ny stil
- * @param style Stil fra grenseStyles eller en stilfunksjon
+ * @param style Stil fra grenseStyles eller en stilfunksjon. Utelatt stil tilbakestiller til lagets stil.
  */
-export const setFeatureStyle = (featureId: string, style: Style[] | StyleFunction) => {
+export const setFeatureStyle = (featureId: string, style?: Style[] | StyleFunction) => {
   const sources = [archivedSource, editSource];
   sources.forEach((source) => {
     const feature = source.getFeatureById(featureId) as Feature<Geometry> | null;
