@@ -133,6 +133,7 @@ const getNyeInndelingerMetadataForInndelingtypeFromHistory = (
     case "BOPLIKTOMRAADE": {
       return nyInndelingChanges
         .filter((change) => change.to != null && isBopliktomraadeRequest(change.to))
+        .filter((change) => change.to?.kommuneIdentifikasjon.lokalid === inndeling.id)
         .flatMap((change) => {
           const newInndelingRequest = change.to;
           if (newInndelingRequest != null) {
@@ -170,6 +171,7 @@ const getNyeInndelingerMetadataForInndelingtypeFromUtkast = (
     case "BOPLIKTOMRAADE":
       return nyInndelingEntries
         .filter((entry) => isBopliktomraadeRequest(entry))
+        .filter((entry) => entry.kommuneIdentifikasjon.lokalid === inndeling.id)
         .flatMap((newInndelingRequest) => {
           if (newInndelingRequest != null) {
             const defaultFlatedata = getDefaultFlatedataForInndelingtype(inndelingtype, { withKommune: inndeling });
