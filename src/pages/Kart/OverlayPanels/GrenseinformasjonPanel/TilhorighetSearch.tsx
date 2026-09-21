@@ -5,10 +5,11 @@ import { styled } from "styled-components";
 import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 import { TilhorighetInndelingtype } from "../hooks/tilhorighet-utils";
 
-type OptionType = { value: string; label: string };
+export type OptionType = { value: string; label: string };
 
 type Props = Omit<InputProps, "onChange"> & {
   options: OptionType[];
+  selectableOptions: OptionType[];
   inndelingType: TilhorighetInndelingtype;
   onChange: (newId: string | undefined) => void;
 };
@@ -41,7 +42,7 @@ const highlightFormatter = (option: OptionType, formatOptionLabelMeta: FormatOpt
   );
 };
 
-export const TilhorighetSearch = ({ options, value, onChange, inndelingType }: Props) => {
+export const TilhorighetSearch = ({ options, selectableOptions, value, onChange, inndelingType }: Props) => {
   const noOptionMessage = (obj: { inputValue: string }): ReactNode => {
     return obj.inputValue !== "" ? (
       <ErrorMessage>{`Fant ingen ${getInndelingtypeLabel(inndelingType, { pluralizeLabel: true, capitalizeLabel: false })} som matchet "${obj.inputValue}"`}</ErrorMessage>
@@ -52,10 +53,12 @@ export const TilhorighetSearch = ({ options, value, onChange, inndelingType }: P
     // Vi begrenser antall treff vi viser fordi enkelte grenser kan få VELDIG mange alternativer, spesielt
     // kommunegrenser. Om ikke alternativet dukker opp må man prøve å søke.
     if (term == null || term === "") {
-      resultsCallback(options.slice(0, 40));
+      resultsCallback(selectableOptions.slice(0, 40));
     } else {
       resultsCallback(
-        options.filter((option) => option.label.toLocaleLowerCase().includes(term.toLocaleLowerCase())).slice(0, 40),
+        selectableOptions
+          .filter((option) => option.label.toLocaleLowerCase().includes(term.toLocaleLowerCase()))
+          .slice(0, 40),
       );
     }
   };

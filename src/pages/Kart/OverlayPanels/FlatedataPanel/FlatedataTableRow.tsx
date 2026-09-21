@@ -61,7 +61,7 @@ export const FlatedataTableRow = ({
     setPreviousValues(structuredClone(getValues()));
   };
 
-  const isInndelingArchivedInUtkast = utkast ? inndelingIsArchived(inndelingId, utkast, getHistoryEntries()) : false;
+  const isInndelingArchivedInUtkast = inndelingIsArchived(inndelingId, utkast, getHistoryEntries());
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
   const disabledByFremtidigEndringUntilDate = getInndelingFremtidigEndringDato(inndelingId);
