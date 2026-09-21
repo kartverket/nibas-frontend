@@ -51,6 +51,7 @@ export type FlatedataColumnCtx = {
   inndelingErrors: InndelingErrors;
   allInndelinger: MetadataResponse[];
   sammenslaaingInformasjon: string | undefined;
+  canEditInndeling: boolean;
 };
 
 export type FlatedataColumn<T extends FlatedataTableInndelingtype = FlatedataTableInndelingtype> = {
@@ -243,7 +244,11 @@ const archiveColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn
   renderCell: (ctx: FlatedataColumnCtx) => (
     <TableCell className="archive-action-cell">
       <FeatureToggle feature="ARCHIVE_INNDELING">
-        {isNonExhaustiveInndelingtype(ctx.inndelingtype) ? <ArkiverInndelingButton {...ctx} /> : <></>}
+        {isNonExhaustiveInndelingtype(ctx.inndelingtype) && ctx.canEditInndeling ? (
+          <ArkiverInndelingButton {...ctx} />
+        ) : (
+          <></>
+        )}
       </FeatureToggle>
     </TableCell>
   ),
@@ -254,7 +259,11 @@ const deleteColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
   renderCell: (ctx: FlatedataColumnCtx) => (
     <TableCell>
       <FeatureToggle feature="DELETE_INNDELING">
-        {isNonExhaustiveInndelingtype(ctx.inndelingtype) ? <SlettInndelingButton {...ctx} /> : <></>}
+        {isNonExhaustiveInndelingtype(ctx.inndelingtype) && ctx.canEditInndeling ? (
+          <SlettInndelingButton {...ctx} />
+        ) : (
+          <></>
+        )}
       </FeatureToggle>
     </TableCell>
   ),

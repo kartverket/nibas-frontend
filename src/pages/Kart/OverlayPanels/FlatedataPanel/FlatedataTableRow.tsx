@@ -7,7 +7,7 @@ import { MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { getInndelingFremtidigEndringDato } from "utils/features";
 import { FlatedataInputs } from "./flatedata-utils";
-import { FlatedataColumn, InndelingErrors } from "./FlatedatColumns";
+import { FlatedataColumn, FlatedataColumnCtx, InndelingErrors } from "./FlatedatColumns";
 import type { FlatedataTableInndelingtype } from "./FlatedataPanel";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
@@ -26,6 +26,7 @@ type Props = {
   allInndelinger: MetadataResponse[];
   sammenslaaingInformasjon: string | undefined;
   control: Control<FlatedataInputs>;
+  canEditInndeling: boolean;
 };
 
 export const FlatedataTableRow = ({
@@ -41,6 +42,7 @@ export const FlatedataTableRow = ({
   allInndelinger,
   sammenslaaingInformasjon,
   control,
+  canEditInndeling,
 }: Props) => {
   const { setValue, getValues } = formMethods;
   const inndelingId = getIdFromEntity(inndeling);
@@ -73,7 +75,7 @@ export const FlatedataTableRow = ({
     setFormValues,
   });
 
-  const ctx = {
+  const ctx: FlatedataColumnCtx = {
     inndeling,
     inndelingId,
     inndelingtype,
@@ -85,7 +87,7 @@ export const FlatedataTableRow = ({
     inndelingErrors,
     allInndelinger,
     sammenslaaingInformasjon,
-    kommuneLokalid,
+    canEditInndeling,
   };
 
   return (
