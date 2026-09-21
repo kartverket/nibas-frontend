@@ -3,7 +3,7 @@ import { HistoryChange, HistoryContextValue, HistoryEntry } from "contexts/Histo
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
 import { LineString } from "ol/geom";
-import { FeatureProperties, Inndelingtype, UtkastResponse } from "types/api";
+import { FeatureProperties, UtkastResponse } from "types/api";
 import { removeNil } from "utils/list-utils";
 import { addFeaturesToSource, getRepresentasjonspunktId, removeFeaturesFromSourceByIds } from "utils/map/source";
 import { getLineStringsForOmraadeFromSource } from "../OverlayPanels/FlatedataPanel/flate-highlight-utils";
