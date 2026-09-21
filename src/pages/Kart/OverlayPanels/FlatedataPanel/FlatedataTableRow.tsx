@@ -16,7 +16,6 @@ import { inndelingIsArchived } from "pages/Kart/interactions/archive-features";
 type Props = {
   inndelingtype: FlatedataTableInndelingtype;
   inndeling: MetadataResponse;
-  kommuneLokalid: string;
   columns: FlatedataColumn[];
   isSearchMatch: boolean;
   isEditing: boolean;
@@ -32,7 +31,6 @@ type Props = {
 export const FlatedataTableRow = ({
   inndelingtype,
   inndeling,
-  kommuneLokalid,
   columns,
   isSearchMatch,
   isEditing,
