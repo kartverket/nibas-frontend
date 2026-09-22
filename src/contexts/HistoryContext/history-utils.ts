@@ -41,6 +41,7 @@ import {
   StemmekretsEntry,
 } from "./types";
 import { archiveFeaturesForInndeling, unarchiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
+import { dispatchHistoryEvent } from "./history-events";
 
 const getFeatureFromChange = (change: HistoryChange<MinimalGrense>, direction: HistoryDirection) => {
   const existingFeature = getFeatureIfExists(change.id);
@@ -82,11 +83,9 @@ const setCoordinatesFromChange = (change: HistoryChange<MinimalGrense>, directio
 export const setFeatureCoordinatesForEntry = (entry: GrenseEntry, direction: HistoryDirection) => {
   entry.changes.forEach((change) => setCoordinatesFromChange(change, direction));
 
-  return document.dispatchEvent(
-    new CustomEvent(direction === "from" ? "grenseUndo" : "grenseRedo", {
-      detail: { entry },
-    }),
-  );
+  return direction === "from"
+    ? dispatchHistoryEvent("grenseUndo", { entry })
+    : dispatchHistoryEvent("grenseRedo", { entry });
 };
 
 export const setRepresentasjonspunktForMetadataEntry = (entry: MetadataEntry, direction: HistoryDirection) => {
@@ -250,12 +249,6 @@ export const redoArchiving = (entry: GrenseArkiveringsEntry) => {
 
   addFeaturesToSource("archived", features);
   removeFeaturesFromSourceByIds("edit", featureIds);
-
-  return document.dispatchEvent(
-    new CustomEvent("grensearkiveringRedo", {
-      detail: { entry },
-    }),
-  );
 };
 
 export const undoArchiving = (entry: GrenseArkiveringsEntry) => {
@@ -268,12 +261,6 @@ export const undoArchiving = (entry: GrenseArkiveringsEntry) => {
 
   addFeaturesToSource("edit", features);
   removeFeaturesFromSourceByIds("archived", featureIds);
-
-  return document.dispatchEvent(
-    new CustomEvent("grensearkiveringUndo", {
-      detail: { entry },
-    }),
-  );
 };
 
 export const getChangesForArchiveInndelingEntry = (entry: ArchiveInndelingEntry) => {

@@ -1,59 +1,46 @@
 import { useEffect } from "react";
-import { HistoryDirection, HistoryEntry } from "contexts/HistoryContext/types";
+import { HistoryDirection, MetadataEntry } from "contexts/HistoryContext/types";
+import { addHistoryEventListener, MetadataHistoryEventName } from "./history-events";
 
-const getChangeForId = <EntryType extends HistoryEntry>(entry: EntryType, id?: string) =>
-  entry.changes.find((change) => change.id === id);
+const getChangeForId = (entry: MetadataEntry, id?: string) => entry.changes.find((change) => change.id === id);
 
-type Parameters<EntryType extends HistoryEntry> = {
+type Parameters = {
   entityId: string | undefined;
-  setFormValues: (change: EntryType["changes"][number], direction: HistoryDirection) => void;
-  undoEventKey: string;
-  redoEventKey: string;
+  setFormValues: (change: MetadataEntry["changes"][number], direction: HistoryDirection) => void;
+  undoEventKey: MetadataHistoryEventName | undefined;
+  redoEventKey: MetadataHistoryEventName | undefined;
 };
 
-export const useHistoryFormSync = <EntryType extends HistoryEntry>({
-  entityId,
-  undoEventKey,
-  redoEventKey,
-  setFormValues,
-}: Parameters<EntryType>) => {
+export const useHistoryFormSync = ({ entityId, undoEventKey, redoEventKey, setFormValues }: Parameters) => {
   useEffect(() => {
-    const undo = ((e: CustomEvent) => {
-      const entry = e.detail.entry as EntryType;
+    if (undoEventKey == null) {
+      return;
+    }
 
-      const changeForThisId = getChangeForId(entry, entityId);
+    return addHistoryEventListener(undoEventKey, (event) => {
+      const changeForThisId = getChangeForId(event.detail.entry, entityId);
 
       if (!changeForThisId) {
         return;
       }
 
       setFormValues(changeForThisId, "from");
-    }) as EventListener;
-
-    document.addEventListener(undoEventKey, undo);
-
-    return () => {
-      document.removeEventListener(undoEventKey, undo);
-    };
+    });
   }, [entityId, setFormValues, undoEventKey]);
 
   useEffect(() => {
-    const redo = ((e: CustomEvent) => {
-      const entry = e.detail.entry as EntryType;
+    if (redoEventKey == null) {
+      return;
+    }
 
-      const changeForThisId = getChangeForId(entry, entityId);
+    return addHistoryEventListener(redoEventKey, (event) => {
+      const changeForThisId = getChangeForId(event.detail.entry, entityId);
 
       if (!changeForThisId) {
         return;
       }
 
       setFormValues(changeForThisId, "to");
-    }) as EventListener;
-
-    document.addEventListener(redoEventKey, redo);
-
-    return () => {
-      document.removeEventListener(redoEventKey, redo);
-    };
+    });
   }, [entityId, redoEventKey, setFormValues]);
 };

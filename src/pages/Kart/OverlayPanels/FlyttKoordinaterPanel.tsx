@@ -4,7 +4,8 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { SelectedPoint } from "contexts/FeatureStyleContext/types";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { GrenseEntry, HistoryChange, HistoryDirection, MinimalGrense } from "contexts/HistoryContext/types";
+import { addHistoryEventListener, HistoryEvent } from "contexts/HistoryContext/history-events";
+import { HistoryChange, HistoryDirection, MinimalGrense } from "contexts/HistoryContext/types";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
 import { editSource } from "hooks/layers/constants";
@@ -108,10 +109,10 @@ const FlyttKoordinaterPanel = () => {
 
   // Når man bruker undo og redo må koordinatpanelet oppdateres
   useEffect(() => {
-    const setFormValues = (e: CustomEvent, direction: HistoryDirection) => {
+    const setFormValues = (e: HistoryEvent<"grenseUndo" | "grenseRedo">, direction: HistoryDirection) => {
       // Dette skal bare kjøres dersom et punkt er valgt, ikke ved alle grensendringer
       if (selectedPoint) {
-        const entry = e.detail.entry as GrenseEntry;
+        const entry = e.detail.entry;
 
         // Dersom en valgt feature blir endret ved history må vi oppdatere valgt punkt
         const selectedChange = entry.changes.find((c) => selectedFeatures.some((f) => f.getId() === c.id));
@@ -132,21 +133,21 @@ const FlyttKoordinaterPanel = () => {
       }
     };
 
-    const undo = ((e: CustomEvent) => {
+    const undo = (e: HistoryEvent<"grenseUndo">) => {
       setFormValues(e, "from");
-    }) as EventListener;
+    };
 
-    const redo = ((e: CustomEvent) => {
+    const redo = (e: HistoryEvent<"grenseRedo">) => {
       setFormValues(e, "to");
-    }) as EventListener;
+    };
 
     // Utløses av undo og redo i HistoryContext
-    document.addEventListener("grenseUndo", undo);
-    document.addEventListener("grenseRedo", redo);
+    const removeUndoListener = addHistoryEventListener("grenseUndo", undo);
+    const removeRedoListener = addHistoryEventListener("grenseRedo", redo);
 
     return () => {
-      document.removeEventListener("grenseUndo", undo);
-      document.removeEventListener("grenseRedo", redo);
+      removeUndoListener();
+      removeRedoListener();
     };
   }, [selectedPoint, selectedFeatures, selectPointOnFeature]);
 
