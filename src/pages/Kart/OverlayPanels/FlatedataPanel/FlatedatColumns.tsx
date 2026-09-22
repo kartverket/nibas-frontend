@@ -92,7 +92,7 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry, popHistoryChangeById, getHistoryEntries } = useHistory();
+  const { addHistoryEntry, getHistoryEntries } = useHistory();
   const { utkast, updateUtkast } = useUtkast();
   const { removeArchivedStyles } = useFeatureStyle();
   const toast = useToast();
@@ -102,7 +102,6 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     }
     const archiveInndelingEntry: ArchiveInndelingEntry = {
       type: "archive_inndeling",
-      prunable: true,
       changes: [
         {
           id: ctx.inndelingId,
@@ -126,8 +125,28 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
   };
 
   const hanndleUndoArchivingFromHistoryOrUtkast = () => {
+    if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
+      return;
+    }
     if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
-      popHistoryChangeById(ctx.inndelingId);
+      const archiveEntry: ArchiveInndelingEntry = {
+        type: "archive_inndeling",
+        changes: [
+          {
+            id: ctx.inndelingId,
+            flatetype: ctx.inndelingtype,
+            from: {
+              identifikator: {
+                lokalId: ctx.inndeling.id.lokalid.value,
+                version: ctx.inndeling.version,
+              },
+            },
+            to: null,
+          },
+        ],
+      };
+      removeArchivedStyles(unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype));
+      addHistoryEntry(archiveEntry);
     } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
       updateUtkast(
         utkast.id,

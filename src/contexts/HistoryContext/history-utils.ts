@@ -284,24 +284,18 @@ export const getChangesForArchiveInndelingEntry = (entry: ArchiveInndelingEntry)
 export const handleArchiveInndeling = (entry: ArchiveInndelingEntry, direction: HistoryDirection) => {
   const change = getChangesForArchiveInndelingEntry(entry);
   const { id: inndelingId, flatetype: inndelingtype } = change;
-  switch (direction) {
-    case "from": {
-      unarchiveFeaturesForInndeling(inndelingId, inndelingtype);
-      return document.dispatchEvent(
-        new CustomEvent("archive_inndelingUndo", {
-          detail: { entry },
-        }),
-      );
-    }
-    case "to": {
-      archiveFeaturesForInndeling(inndelingId, inndelingtype);
-      return document.dispatchEvent(
-        new CustomEvent("archive_inndelingRedo", {
-          detail: { entry },
-        }),
-      );
-    }
+
+  if (change[direction] == null) {
+    unarchiveFeaturesForInndeling(inndelingId, inndelingtype);
+  } else {
+    archiveFeaturesForInndeling(inndelingId, inndelingtype);
   }
+
+  return document.dispatchEvent(
+    new CustomEvent(direction === "from" ? "archive_inndelingUndo" : "archive_inndelingRedo", {
+      detail: { entry },
+    }),
+  );
 };
 
 export const redoDelete = (entry: NyGrenseDeleteEntry) => {
@@ -452,7 +446,17 @@ export const getNyInndelingEntries = (entries: HistoryEntry[]): NyeInndelingerEn
 };
 
 export const getArchiveInndelingEntries = (entries: HistoryEntry[]): ArchiveInndelingEntry[] => {
-  return entries.filter((entry) => entry.type === "archive_inndeling") as ArchiveInndelingEntry[];
+  const archiveEntries = entries.filter((entry) => entry.type === "archive_inndeling") as ArchiveInndelingEntry[];
+
+  return archiveEntries.filter((entry, entryIndex) =>
+    entry.changes.some(
+      (change) =>
+        change.to != null &&
+        archiveEntries.findLastIndex((candidate) =>
+          candidate.changes.some((candidateChange) => candidateChange.id === change.id),
+        ) === entryIndex,
+    ),
+  );
 };
 
 /**
