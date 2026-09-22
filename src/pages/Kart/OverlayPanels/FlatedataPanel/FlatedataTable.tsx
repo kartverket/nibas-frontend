@@ -187,6 +187,8 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     setTempFlatedata([]);
   };
 
+  const canEditInndeling = utkast != null && mainInndeling.isEditing === true;
+
   return (
     <Container>
       <TableScrollArea $hasRows={flatedata.length > 0}>
@@ -213,7 +215,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                     key={inndelingId}
                     inndelingtype={mainInndeling.inndelingtype}
                     inndeling={inndeling}
-                    kommuneLokalid={mainInndeling.id}
                     columns={columns}
                     isSearchMatch={isSearchMatch}
                     isEditing={isEditing}
@@ -223,6 +224,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                     setPreviousValues={setPreviousValues}
                     allInndelinger={flatedata}
                     sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
+                    canEditInndeling={canEditInndeling}
                   />
                 );
               })}
@@ -264,12 +266,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       )}
       <FlatedataFooter
         isEditing={isEditing}
-        isDisabled={
-          allInndelingerHasFremtidigEndring ||
-          !utkast ||
-          !(mainInndeling.isEditing === true) ||
-          utkastHarSammenslaainger()
-        }
+        isDisabled={allInndelingerHasFremtidigEndring || canEditInndeling === false || utkastHarSammenslaainger()}
         toggleEditing={toggleEditing}
         canSave={isDirty}
         onSubmit={(e) => {
@@ -283,9 +280,9 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
               ? "Alle inndelingene i denne kommunen har endringer som inntrer på en fremtidig dato og kan derfor ikke redigeres"
               : utkastHarSammenslaainger()
                 ? "Utkastet har sammenslåinger og kan derfor ikke redigeres"
-                : utkast && mainInndeling.isEditing === true
-                  ? null
-                  : "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
+                : canEditInndeling === false
+                  ? "Inndelingen er kun åpnet i forhåndsvisning og kan derfor ikke redigeres"
+                  : null
         }
       >
         Rediger flateinformasjon
