@@ -74,6 +74,11 @@ type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
 };
 
+type SetInndelingArchivedOptions = {
+  shouldArchive: boolean;
+  addToHistory: boolean;
+};
+
 const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
   return (
     <Tooltip
@@ -94,59 +99,65 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
   const { addHistoryEntry, getHistoryEntries } = useHistory();
   const { utkast, updateUtkast } = useUtkast();
-  const { removeArchivedStyles } = useFeatureStyle();
+  const { addArchivedStyles, removeArchivedStyles } = useFeatureStyle();
   const toast = useToast();
-  const handleArchiveInndeling = () => {
-    if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
-      return;
-    }
-    const archiveInndelingEntry: ArchiveInndelingEntry = {
-      type: "archive_inndeling",
-      changes: [
-        {
-          id: ctx.inndelingId,
-          flatetype: ctx.inndelingtype,
-          from: null,
-          to: {
-            identifikator: {
-              lokalId: ctx.inndeling.id.lokalid.value,
-              version: ctx.inndeling.version,
-            },
-          },
-        },
-      ],
-    };
-    archiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype);
-    addHistoryEntry(archiveInndelingEntry);
-    toast({
-      status: "success",
-      title: `Arkiverte ${getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true })} "${ctx.inndeling.nummer} ${getNavnInSpraak(ctx.inndeling.navn, "nor")}".`,
-    });
-  };
 
-  const hanndleUndoArchivingFromHistoryOrUtkast = () => {
+  const setInndelingArchived = ({ shouldArchive, addToHistory }: SetInndelingArchivedOptions) => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
       return;
     }
-    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
-      const archiveEntry: ArchiveInndelingEntry = {
+
+    const archivedInndeling = {
+      identifikator: {
+        lokalId: ctx.inndeling.id.lokalid.value,
+        version: ctx.inndeling.version,
+      },
+    };
+    const featureIds = shouldArchive
+      ? archiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype)
+      : unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype);
+
+    if (shouldArchive) {
+      addArchivedStyles(featureIds);
+    } else {
+      removeArchivedStyles(featureIds);
+    }
+
+    if (addToHistory) {
+      const archiveInndelingEntry: ArchiveInndelingEntry = {
         type: "archive_inndeling",
         changes: [
           {
             id: ctx.inndelingId,
             flatetype: ctx.inndelingtype,
-            from: {
-              identifikator: {
-                lokalId: ctx.inndeling.id.lokalid.value,
-                version: ctx.inndeling.version,
-              },
-            },
-            to: null,
+            from: shouldArchive ? null : archivedInndeling,
+            to: shouldArchive ? archivedInndeling : null,
           },
         ],
       };
-      removeArchivedStyles(unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype));
-      addHistoryEntry(archiveEntry);
+      addHistoryEntry(archiveInndelingEntry);
+    }
+
+    const inndelingLabel = getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true });
+    const inndelingName = `"${ctx.inndeling.nummer} ${getNavnInSpraak(ctx.inndeling.navn, "nor")}"`;
+    toast({
+      status: "success",
+      title: shouldArchive
+        ? `Arkiverte ${inndelingLabel} ${inndelingName}.`
+        : `Angret arkivering av ${inndelingLabel} ${inndelingName}.`,
+    });
+  };
+
+  const handleArchiveInndeling = () => {
+    setInndelingArchived({ shouldArchive: true, addToHistory: true });
+  };
+
+  const handleUndoArchivingFromHistoryOrUtkast = () => {
+    if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
+      return;
+    }
+    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
+      setInndelingArchived({ shouldArchive: false, addToHistory: true });
     } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
       updateUtkast(
         utkast.id,
@@ -161,12 +172,8 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
         },
         false,
       ).then((status: number | null) => {
-        if (
-          status != null &&
-          statusCode.isSuccessful(status) &&
-          isNonExhaustiveInndelingtype(ctx.inndelingtype) === true
-        ) {
-          removeArchivedStyles(unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype));
+        if (status != null && statusCode.isSuccessful(status)) {
+          setInndelingArchived({ shouldArchive: false, addToHistory: false });
         }
       });
     }
@@ -178,7 +185,7 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
         variant="ghost"
         aria-label="Angre arkivering av inndelingen"
         icon="undo"
-        onClick={hanndleUndoArchivingFromHistoryOrUtkast}
+        onClick={handleUndoArchivingFromHistoryOrUtkast}
       />
     </Tooltip>
   ) : (

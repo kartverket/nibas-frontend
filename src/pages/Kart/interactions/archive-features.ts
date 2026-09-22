@@ -70,6 +70,7 @@ export const archiveFeaturesForInndeling = (inndelingId: string, inndelingtype: 
   const featureIds = removeNil(features.map((feature) => feature.getId()?.toString()));
   removeFeaturesFromSourceByIds("edit", featureIds);
   addFeaturesToSource("archived", features);
+  return featureIds;
 };
 
 export const unarchiveFeaturesForInndeling = (inndelingId: string, inndelingtype: TilhorighetInndelingtype) => {
