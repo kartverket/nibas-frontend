@@ -1,4 +1,4 @@
-import { HistoryDirection, MetadataEntry } from "contexts/HistoryContext/types";
+import { HistoryDirection, MetadataEntry, MetadataTypeValues } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
 import { Fragment } from "react";
 import { Control, UseFormReturn, useFormState } from "react-hook-form";
@@ -66,10 +66,13 @@ export const FlatedataTableRow = ({
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
   const disabledByFremtidigEndringUntilDate = getInndelingFremtidigEndringDato(inndelingId);
 
-  useHistoryFormSync<MetadataEntry>({
+  const metadataHistoryType = inndelingtype === "FYLKE" ? undefined : (inndelingtype as MetadataTypeValues);
+  const metadataHistoryEventPrefix = metadataHistoryType?.toLowerCase() as Lowercase<MetadataTypeValues> | undefined;
+
+  useHistoryFormSync({
     entityId: inndelingId,
-    redoEventKey: `${inndelingtype}Redo`,
-    undoEventKey: `${inndelingtype}Undo`,
+    redoEventKey: metadataHistoryEventPrefix == null ? undefined : `${metadataHistoryEventPrefix}Redo`,
+    undoEventKey: metadataHistoryEventPrefix == null ? undefined : `${metadataHistoryEventPrefix}Undo`,
     setFormValues,
   });
 

@@ -15,6 +15,7 @@ import {
   undoDelete,
 } from "./history-utils";
 import { HistoryContextValue, HistoryEntry } from "./types";
+import { dispatchHistoryEvent } from "./history-events";
 
 const onUndo = (entry: HistoryEntry) => {
   const { type } = entry;
@@ -31,48 +32,24 @@ const onUndo = (entry: HistoryEntry) => {
     }
     case "GRUNNKRETS": {
       setRepresentasjonspunktForMetadataEntry(entry, "from");
-      return document.dispatchEvent(
-        new CustomEvent("grunnkretsUndo", {
-          detail: { entry },
-        }),
-      );
+      return dispatchHistoryEvent("grunnkretsUndo", { entry });
     }
     case "STEMMEKRETS": {
       setRepresentasjonspunktForMetadataEntry(entry, "from");
-      return document.dispatchEvent(
-        new CustomEvent("stemmekretsUndo", {
-          detail: { entry },
-        }),
-      );
+      return dispatchHistoryEvent("stemmekretsUndo", { entry });
     }
     case "BOPLIKTOMRAADE": {
       setRepresentasjonspunktForMetadataEntry(entry, "from");
-      return document.dispatchEvent(
-        new CustomEvent("bopliktomraadeUndo", {
-          detail: { entry },
-        }),
-      );
+      return dispatchHistoryEvent("bopliktomraadeUndo", { entry });
     }
     case "KOMMUNE": {
-      return document.dispatchEvent(
-        new CustomEvent("kommuneUndo", {
-          detail: { entry },
-        }),
-      );
+      return dispatchHistoryEvent("kommuneUndo", { entry });
     }
     case "utkast": {
-      return document.dispatchEvent(
-        new CustomEvent("utkastUndo", {
-          detail: { entry },
-        }),
-      );
+      return;
     }
     case "stemmekretssammenslaaingsendring": {
-      return document.dispatchEvent(
-        new CustomEvent("stemmekretssammenslaaingsendringUndo", {
-          detail: { entry },
-        }),
-      );
+      return;
     }
     case "grensearkivering": {
       return undoArchiving(entry);
@@ -81,11 +58,7 @@ const onUndo = (entry: HistoryEntry) => {
       return undoDelete(entry);
     }
     case "kretsdelingendring": {
-      return document.dispatchEvent(
-        new CustomEvent("kretsdelingUndo", {
-          detail: { entry },
-        }),
-      );
+      return;
     }
     case "grensetilhorighetendring": {
       return setKontekstEgenskaperForEntry(entry, "from");
@@ -97,11 +70,7 @@ const onUndo = (entry: HistoryEntry) => {
       return handleGrenseMerge(entry, "from");
     }
     case "create_inndelinger": {
-      return document.dispatchEvent(
-        new CustomEvent("create_inndelingerUndo", {
-          detail: { entry },
-        }),
-      );
+      return;
     }
     case "archive_inndeling": {
       return handleArchiveInndeling(entry, "from");
@@ -124,55 +93,27 @@ const onRedo = (entry: HistoryEntry) => {
     }
     case "GRUNNKRETS": {
       setRepresentasjonspunktForMetadataEntry(entry, "to");
-      return document.dispatchEvent(
-        new CustomEvent("grunnkretsRedo", {
-          detail: { entry },
-        }),
-      );
+      return dispatchHistoryEvent("grunnkretsRedo", { entry });
     }
     case "STEMMEKRETS": {
       setRepresentasjonspunktForMetadataEntry(entry, "to");
-      return document.dispatchEvent(
-        new CustomEvent("stemmekretsRedo", {
-          detail: { entry },
-        }),
-      );
+      return dispatchHistoryEvent("stemmekretsRedo", { entry });
     }
     case "BOPLIKTOMRAADE": {
       setRepresentasjonspunktForMetadataEntry(entry, "to");
-      return document.dispatchEvent(
-        new CustomEvent("bopliktomraadeRedo", {
-          detail: { entry },
-        }),
-      );
+      return dispatchHistoryEvent("bopliktomraadeRedo", { entry });
     }
     case "KOMMUNE": {
-      return document.dispatchEvent(
-        new CustomEvent("kommuneRedo", {
-          detail: { entry },
-        }),
-      );
+      return dispatchHistoryEvent("kommuneRedo", { entry });
     }
     case "utkast": {
-      return document.dispatchEvent(
-        new CustomEvent("utkastRedo", {
-          detail: { entry },
-        }),
-      );
+      return;
     }
     case "stemmekretssammenslaaingsendring": {
-      return document.dispatchEvent(
-        new CustomEvent("stemmekretssammenslaaingsendringRedo", {
-          detail: { entry },
-        }),
-      );
+      return;
     }
     case "kretsdelingendring": {
-      return document.dispatchEvent(
-        new CustomEvent("kretsdelingRedo", {
-          detail: { entry },
-        }),
-      );
+      return;
     }
     case "grensearkivering": {
       return redoArchiving(entry);
@@ -190,11 +131,7 @@ const onRedo = (entry: HistoryEntry) => {
       return handleGrenseMerge(entry, "to");
     }
     case "create_inndelinger": {
-      return document.dispatchEvent(
-        new CustomEvent("create_inndelingerRedo", {
-          detail: { entry },
-        }),
-      );
+      return;
     }
     case "archive_inndeling": {
       return handleArchiveInndeling(entry, "to");
