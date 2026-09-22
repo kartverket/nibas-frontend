@@ -48,6 +48,7 @@ export const FlatedataTableRow = ({
   const inndelingErrors = errors?.[inndelingId] as InndelingErrors;
   const { utkast } = useUtkast();
   const { getHistoryEntries } = useHistory();
+  const historyEntries = getHistoryEntries();
 
   // Ved undo og redo må grensesnittet oppdateres med riktig informasjon
   const setFormValues = (change: MetadataEntry["changes"][number], direction: HistoryDirection) => {
@@ -61,7 +62,10 @@ export const FlatedataTableRow = ({
     setPreviousValues(structuredClone(getValues()));
   };
 
-  const isInndelingArchivedInUtkast = inndelingIsArchived(inndelingId, utkast, getHistoryEntries());
+  const isInndelingArchivedInUtkast = inndelingIsArchived(inndelingId, utkast, historyEntries);
+  const activeInndelingerCount = allInndelinger.filter(
+    (candidate) => !inndelingIsArchived(getIdFromEntity(candidate), utkast, historyEntries),
+  ).length;
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
   const disabledByFremtidigEndringUntilDate = getInndelingFremtidigEndringDato(inndelingId);
@@ -87,6 +91,7 @@ export const FlatedataTableRow = ({
     control,
     inndelingErrors,
     allInndelinger,
+    activeInndelingerCount,
     sammenslaaingInformasjon,
     canEditInndeling,
   };
