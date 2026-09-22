@@ -35,6 +35,7 @@ import {
 } from "pages/Kart/interactions/archive-features";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { statusCode } from "utils/api";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -140,8 +141,12 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
           },
         },
         false,
-      ).then(() => {
-        if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === true) {
+      ).then((status: number | null) => {
+        if (
+          status != null &&
+          statusCode.isSuccessful(status) &&
+          isNonExhaustiveInndelingtype(ctx.inndelingtype) === true
+        ) {
           removeArchivedStyles(unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype));
         }
       });
