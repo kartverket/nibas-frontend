@@ -205,9 +205,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
     getDeduplicatedNyInndelingChanges(historyToCurrentIndex),
   );
   const archiveInndelingOperations = removeNil(
-    getArchiveInndelingEntries(historyToCurrentIndex)
-      .flatMap((entry) => entry.changes)
-      .map((change) => change.to),
+    getArchiveInndelingEntries(historyToCurrentIndex).flatMap((entry) =>
+      entry.changes.map((change) => (change.to == null ? null : { ...change.to, flatetype: change.flatetype })),
+    ),
   );
 
   const kretsdelingOperations = historyToKretsdelingOperations(allKretsdelingHistoryEntries);

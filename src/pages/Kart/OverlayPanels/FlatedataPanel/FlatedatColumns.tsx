@@ -106,9 +106,9 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
       changes: [
         {
           id: ctx.inndelingId,
+          flatetype: ctx.inndelingtype,
           from: null,
           to: {
-            flatetype: ctx.inndelingtype,
             identifikator: {
               lokalId: ctx.inndeling.id.lokalid.value,
               version: ctx.inndeling.version,

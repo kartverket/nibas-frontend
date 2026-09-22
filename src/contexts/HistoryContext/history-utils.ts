@@ -283,11 +283,7 @@ export const getChangesForArchiveInndelingEntry = (entry: ArchiveInndelingEntry)
 
 export const handleArchiveInndeling = (entry: ArchiveInndelingEntry, direction: HistoryDirection) => {
   const change = getChangesForArchiveInndelingEntry(entry);
-  const { id: inndelingId } = change;
-  const inndelingtype = change[direction]?.flatetype;
-  if (inndelingtype == null) {
-    return;
-  }
+  const { id: inndelingId, flatetype: inndelingtype } = change;
   switch (direction) {
     case "from": {
       unarchiveFeaturesForInndeling(inndelingId, inndelingtype);
