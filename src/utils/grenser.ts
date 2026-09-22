@@ -13,7 +13,7 @@ export const isAdministrativGrense = (grenseType: GrenseType): boolean => {
   return administrativeGrenser.includes(grenseType);
 };
 
-export const isBopliktGrense = (grenseType: GrenseType): boolean => grenseType === "Bopliktgrense";
+export const isBopliktomraadeGrense = (grenseType: GrenseType): boolean => grenseType === "Bopliktområdegrense";
 
 export const isKommuneGrense = (grenseType: GrenseType): boolean => grenseType === "Kommunegrense";
 
@@ -32,7 +32,7 @@ export const getMetadataDiscriminatorFromType = (grenseType: GrenseType): Metada
     case "Grunnkretsgrense":
       return "StatistiskgrenseMetadata";
     case "Stemmekretsgrense":
-    case "Bopliktgrense":
+    case "Bopliktområdegrense":
       return "KommunalKretsgrenseMetadata";
     case "Territorialgrense":
       return "TerritorialgrenseMetadata";

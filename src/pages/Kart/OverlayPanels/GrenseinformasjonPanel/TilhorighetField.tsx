@@ -9,7 +9,7 @@ import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import { FeatureProperties } from "types/api";
-import { isAdministrativGrense, isBopliktGrense, isFylkesGrense, isKommuneGrense } from "utils/grenser";
+import { isAdministrativGrense, isBopliktomraadeGrense, isFylkesGrense, isKommuneGrense } from "utils/grenser";
 import { isGrenseType } from "utils/type-utils";
 import {
   CustomOption,
@@ -317,7 +317,7 @@ const LandgrenseTilhørighetField = ({ feature, isDisabled, tooltip }: Tilhorigh
   );
 };
 
-const BopliktgrenseTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetProps) => {
+const BopliktomraadegrenseTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetProps) => {
   const useTilhorighetBopliktomraade = useTilhorighet(feature);
   return (
     <TilhorighetFieldController
@@ -351,8 +351,8 @@ export const TilhorighetField = ({ feature, isDisabled = false }: TilhorighetPro
     return <AdministrativTilhorighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
   } else if (isGrenseType(featureType) && isAdministrativGrense(featureType)) {
     return <LandgrenseTilhørighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
-  } else if (isGrenseType(featureType) && isBopliktGrense(featureType)) {
-    return <BopliktgrenseTilhorighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
+  } else if (isGrenseType(featureType) && isBopliktomraadeGrense(featureType)) {
+    return <BopliktomraadegrenseTilhorighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
   }
   return <CommonTilhorighetField feature={feature} isDisabled={isDisabled} tooltip={tooltip} />;
 };
