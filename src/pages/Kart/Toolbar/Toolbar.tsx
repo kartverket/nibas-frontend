@@ -10,7 +10,7 @@ import { Draw } from "ol/interaction";
 import { useEffect } from "react";
 import { styled } from "styled-components";
 import { anyFeatureIsEditable } from "utils/features";
-import { getLayerById } from "utils/map/layers";
+import { clearMatrikkelLayer } from "utils/map/layers";
 import { map } from "../constants";
 import SnapMenu from "./SnapMenu";
 import ToolbarButton from "./ToolbarButton";
@@ -59,10 +59,7 @@ const Toolbar = () => {
 
   const toggleMatrikkel = () => {
     if (activeModeTools.includes("matrikkel")) {
-      const source = getLayerById("matrikkel").getSource();
-      if (source) {
-        source.clear(true);
-      }
+      clearMatrikkelLayer();
     }
     toggleModeTool("matrikkel");
   };

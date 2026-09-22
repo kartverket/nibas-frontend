@@ -88,7 +88,12 @@ const createTileWMS = (id: KartlagLayerId, url: string) => {
   return tileWMS;
 };
 
-const createAuthedTileWMS = (id: KartlagLayerId, url: string, tjenesteId: string) => {
+const createAuthedTileWMS = (
+  id: KartlagLayerId | "matrikkelnummer",
+  url: string,
+  tjenesteId: string,
+  params: Record<string, string | boolean> = {},
+) => {
   const tileWMS = new TileWMS({
     url,
     tileLoadFunction: async (imageTile, src) => {
@@ -97,7 +102,7 @@ const createAuthedTileWMS = (id: KartlagLayerId, url: string, tjenesteId: string
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (imageTile as any).getImage().src = await getSrcWithTicket(tjenesteId, src);
     },
-    params: defaultTileWMSParams,
+    params: { ...defaultTileWMSParams, ...params },
   });
 
   // Setter id på alle sources for å kunne finne riktig mappedLayer senere
@@ -105,6 +110,13 @@ const createAuthedTileWMS = (id: KartlagLayerId, url: string, tjenesteId: string
   tileWMS.setTileGridForProjection(mapProjectionEPSGCode, tileGrid);
   return tileWMS;
 };
+
+export const matrikkelnummerSource = createAuthedTileWMS("matrikkelnummer", "/skwms1/wms.matrikkel.v1", "background", {
+  LAYERS: "TEIGWFS",
+  STYLES: "Matrikkelnummer",
+  FORMAT: "image/png",
+  TRANSPARENT: true,
+});
 
 export const kartlagSources: Record<KartlagLayerId, WMTS | TileWMS> = {
   topograatone: createWMTS("topograatone", generateWMTSConfig("topograatone")),

@@ -7,7 +7,7 @@ import WMTS from "ol/source/WMTS";
 import { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import { getFlateHighlightStyle, getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
-import { kartlagSources } from "./kartlagSources";
+import { kartlagSources, matrikkelnummerSource } from "./kartlagSources";
 import { VectorLayerId, KartlagLayerId, HighlightVectorLayerId } from "./types";
 import { Feature } from "ol";
 
@@ -34,6 +34,10 @@ export const kartlagLayers: Record<KartlagLayerId, TileLayer<TileWMS | WMTS>> = 
   norgesMaritimeGrenser: createTileLayerFromKartlagSource("norgesMaritimeGrenser"),
   sjokartElektroniske: createTileLayerFromKartlagSource("sjokartElektroniske"),
 };
+
+export const matrikkelnummerLayer = new TileLayer({ source: matrikkelnummerSource, visible: false });
+matrikkelnummerLayer.set("id", "matrikkelnummer");
+map.addLayer(matrikkelnummerLayer);
 
 export const editSource = new VectorSource();
 export const archivedSource = new VectorSource();

@@ -4,6 +4,7 @@ import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContex
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useToolbar } from "contexts/ToolbarContext";
+import { matrikkelnummerLayer } from "hooks/layers/constants";
 import { getGrensetypeFromInndelingtype } from "hooks/layers/types";
 import { useState } from "react";
 import {
@@ -230,8 +231,11 @@ const ToolbarPopups = () => {
       });
     } else {
       setMatrikkelIsLoading(true);
-      const matrikkelFeatures = await getMatrikkelFeatures();
+      const extent = map.getView().calculateExtent(map.getSize());
+      const matrikkelFeatures = await getMatrikkelFeatures(extent);
       if (matrikkelFeatures) {
+        matrikkelnummerLayer.setExtent(extent);
+        matrikkelnummerLayer.setVisible(matrikkelFeatures.length > 0);
         if (matrikkelFeatures.length === 10000) {
           toast({
             status: "warning",
