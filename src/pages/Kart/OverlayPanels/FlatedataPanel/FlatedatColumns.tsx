@@ -22,7 +22,13 @@ import InputCell, {
   TableCell,
   URLInputCell,
 } from "./FlatedataTableCells";
-import { FlatedataInputs, isNonExhaustiveInndelingtype, isValidTempFlateId, isValidUrl } from "./flatedata-utils";
+import {
+  FlatedataInputs,
+  isNonExhaustiveInndelingtype,
+  isValidTempFlateId,
+  isValidUrl,
+  validateBopliktomraadeUtstrekning,
+} from "./flatedata-utils";
 import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -585,7 +591,15 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
     {
       header: "Utstrekning",
       sortKey: "gjelderKunDelAvKommunen",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods }) => {
+      renderCell: ({
+        inndeling,
+        inndelingId,
+        isEditing,
+        disabledDate,
+        formMethods,
+        inndelingErrors,
+        allInndelinger,
+      }) => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
         const value = getValues(`${inndelingId}.gjelderKunDelAvKommunen`) ?? bopliktomraade.gjelderKunDelAvKommunen;
@@ -601,7 +615,15 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
             data={value ? "Deler av kommunen" : "Hele kommunen"}
             {...register(`${inndelingId}.gjelderKunDelAvKommunen`, {
               setValueAs: (v) => (typeof v === "string" ? v === "true" : v),
+              validate: (gjelderKunDelAvKommunen) =>
+                typeof gjelderKunDelAvKommunen !== "boolean" ||
+                validateBopliktomraadeUtstrekning(gjelderKunDelAvKommunen, allInndelinger.length),
             })}
+            validationError={
+              inndelingErrors != null && "gjelderKunDelAvKommunen" in inndelingErrors
+                ? validationError(inndelingErrors.gjelderKunDelAvKommunen)
+                : undefined
+            }
           />
         );
       },

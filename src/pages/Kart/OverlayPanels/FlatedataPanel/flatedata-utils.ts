@@ -47,6 +47,14 @@ type BopliktomraadeInputs = { [inndelingId: string]: BopliktomraadeInput };
 
 export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs | BopliktomraadeInputs;
 
+export const validateBopliktomraadeUtstrekning = (
+  gjelderKunDelAvKommunen: boolean,
+  antallBopliktomraader: number,
+): true | string =>
+  gjelderKunDelAvKommunen || antallBopliktomraader === 1
+    ? true
+    : "Bopliktområde som gjelder hele kommunen kan kun eksistere alene i kommunen";
+
 // Litt uheldig distinksjon da vi ikke har noen diskriminator for å skille mellom de ulike input-typene.
 const isGrunnkretsInput = (
   value: KommuneInput | StemmekretsInput | GrunnkretsInput | BopliktomraadeInput,

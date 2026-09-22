@@ -98,22 +98,26 @@ type SelectCellProps = {
   data: string;
   options: { label: string; value: string }[];
   isEditing: boolean;
+  validationError?: ValidationError;
 } & SelectProps;
 
 const SelectCellInner = (
-  { data, isEditing, options, ...selectProps }: SelectCellProps,
+  { data, isEditing, options, validationError, ...selectProps }: SelectCellProps,
   ref: React.ForwardedRef<HTMLSelectElement>,
 ) => {
   return (
     <TableCell>
       {isEditing ? (
-        <Select defaultValue={data} ref={ref} size="sm" {...selectProps}>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Select>
+        <FormControl isInvalid={validationError?.showError}>
+          <Select defaultValue={data} ref={ref} size="sm" {...selectProps}>
+            {options.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </Select>
+          <FormErrorMessage>{validationError?.message}</FormErrorMessage>
+        </FormControl>
       ) : (
         <Tag className="flatedata-badge" colorScheme="gray" size="md">
           {options.find((o) => o.value === data)?.label ?? data}
