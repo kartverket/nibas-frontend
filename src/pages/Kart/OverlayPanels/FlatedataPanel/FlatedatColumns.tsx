@@ -27,7 +27,15 @@ import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { ArchiveInndelingEntry } from "contexts/HistoryContext/types";
-import { archiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
+import {
+  archiveFeaturesForInndeling,
+  inndelingIsArchivedInHistory,
+  inndelingIsArchivedInUtkast,
+  unarchiveFeaturesForInndeling,
+} from "pages/Kart/interactions/archive-features";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
+import { statusCode } from "utils/api";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -66,6 +74,11 @@ type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
 };
 
+type SetInndelingArchivedOptions = {
+  shouldArchive: boolean;
+  addToHistory: boolean;
+};
+
 const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
   return (
     <Tooltip
@@ -84,40 +97,99 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry } = useHistory();
+  const { addHistoryEntry, getHistoryEntries } = useHistory();
+  const { utkast, updateUtkast } = useUtkast();
+  const { addArchivedStyles, removeArchivedStyles } = useFeatureStyle();
   const toast = useToast();
-  const handleArchiveInndeling = () => {
+
+  const setInndelingArchived = ({ shouldArchive, addToHistory }: SetInndelingArchivedOptions) => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
       return;
     }
-    const archiveInndelingEntry: ArchiveInndelingEntry = {
-      type: "archive_inndeling",
-      changes: [
-        {
-          id: ctx.inndelingId,
-          from: null,
-          to: {
-            flatetype: ctx.inndelingtype,
-            identifikator: {
-              lokalId: ctx.inndeling.id.lokalid.value,
-              version: ctx.inndeling.version,
-            },
-          },
-        },
-      ],
+
+    const archivedInndeling = {
+      identifikator: {
+        lokalId: ctx.inndeling.id.lokalid.value,
+        version: ctx.inndeling.version,
+      },
     };
-    archiveFeaturesForInndeling(ctx.inndelingId);
-    addHistoryEntry(archiveInndelingEntry);
+    const featureIds = shouldArchive
+      ? archiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype)
+      : unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype);
+
+    if (shouldArchive) {
+      addArchivedStyles(featureIds);
+    } else {
+      removeArchivedStyles(featureIds);
+    }
+
+    if (addToHistory) {
+      const archiveInndelingEntry: ArchiveInndelingEntry = {
+        type: "archive_inndeling",
+        changes: [
+          {
+            id: ctx.inndelingId,
+            flatetype: ctx.inndelingtype,
+            from: shouldArchive ? null : archivedInndeling,
+            to: shouldArchive ? archivedInndeling : null,
+          },
+        ],
+      };
+      addHistoryEntry(archiveInndelingEntry);
+    }
+
+    const inndelingLabel = getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true });
+    const inndelingName = `"${ctx.inndeling.nummer} ${getNavnInSpraak(ctx.inndeling.navn, "nor")}"`;
     toast({
       status: "success",
-      title: `Arkiverte ${getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true })} "${ctx.inndeling.nummer} ${getNavnInSpraak(ctx.inndeling.navn, "nor")}".`,
+      title: shouldArchive
+        ? `Arkiverte ${inndelingLabel} ${inndelingName}.`
+        : `Angret arkivering av ${inndelingLabel} ${inndelingName}.`,
     });
   };
 
+  const handleArchiveInndeling = () => {
+    setInndelingArchived({ shouldArchive: true, addToHistory: true });
+  };
+
+  const handleUndoArchivingFromHistoryOrUtkast = () => {
+    if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
+      return;
+    }
+    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
+      setInndelingArchived({ shouldArchive: false, addToHistory: true });
+    } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
+      updateUtkast(
+        utkast.id,
+        {
+          ...utkast,
+          operasjoner: {
+            ...utkast.operasjoner,
+            archiveInndelingEndringer: utkast.operasjoner.archiveInndelingEndringer?.filter(
+              (endring) => endring.identifikator.lokalId !== ctx.inndelingId,
+            ),
+          },
+        },
+        false,
+      ).then((status: number | null) => {
+        if (status != null && statusCode.isSuccessful(status)) {
+          setInndelingArchived({ shouldArchive: false, addToHistory: false });
+        }
+      });
+    }
+  };
+
   return ctx.isArchived ? (
-    <></>
+    <Tooltip label="Angre arkivering av inndelingen" placement="left" hasArrow>
+      <IconButton
+        variant="ghost"
+        aria-label="Angre arkivering av inndelingen"
+        icon="undo"
+        onClick={handleUndoArchivingFromHistoryOrUtkast}
+      />
+    </Tooltip>
   ) : (
-    <Tooltip label="Arkiver inndelingen. Dette vil også arkivere alle tilknyttede grenser." placement="left" hasArrow>
+    <Tooltip label="Arkiver inndelingen" placement="left" hasArrow>
       <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
     </Tooltip>
   );
@@ -169,7 +241,7 @@ const spacerColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
 const archiveColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<T> => ({
   header: "",
   renderCell: (ctx: FlatedataColumnCtx) => (
-    <TableCell>
+    <TableCell className="archive-action-cell">
       <FeatureToggle feature="ARCHIVE_INNDELING">
         {isNonExhaustiveInndelingtype(ctx.inndelingtype) ? <ArkiverInndelingButton {...ctx} /> : <></>}
       </FeatureToggle>

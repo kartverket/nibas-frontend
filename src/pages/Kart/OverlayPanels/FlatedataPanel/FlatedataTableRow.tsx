@@ -128,6 +128,9 @@ const Row = styled.tr<{ $isSearchMatch: boolean; $isNew: boolean; $isDisabled: b
     css`
       td {
         background-color: var(--kvib-colors-gray-100);
+      }
+
+      td:not(.archive-action-cell) > * {
         color: var(--kvib-colors-gray-500);
         filter: grayscale(1);
         opacity: 0.75;

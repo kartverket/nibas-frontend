@@ -51,8 +51,8 @@ const URLInputCellInner = (
 };
 export const URLInputCell = forwardRef<HTMLInputElement, InputCellProps>(URLInputCellInner);
 
-export const TableCell = ({ children }: { children: React.ReactNode }) => (
-  <td>
+export const TableCell = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <td className={className}>
     <CenteredText>{children}</CenteredText>
   </td>
 );

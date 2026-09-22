@@ -32,6 +32,10 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
     setCustomFeatureIds(customFeatureIds.filter((cfi) => !featureIds.includes(cfi)));
   };
 
+  const removeSavedCustomStyles = (featureIds: string[]) => {
+    setSavedCustomFeatureIds(savedCustomFeatureIds.filter((cfi) => !featureIds.includes(cfi)));
+  };
+
   // Mellomlagrer lagrede features med den gitte stilen slik at de ikke blir tilbakestilt til edit-stil
   const saveCustomStyles = () => {
     setSavedCustomFeatureIds([...savedCustomFeatureIds, ...customFeatureIds]);
@@ -59,6 +63,7 @@ const useCustomStyles = (customStyle: StyleFunction | Style[]) => {
     setCustomStyles,
     addCustomStyles,
     removeCustomStyles,
+    removeSavedCustomStyles,
     saveCustomStyles,
     setAndSaveCustomStyles,
     clearCustomStyles,

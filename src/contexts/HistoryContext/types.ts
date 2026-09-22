@@ -104,7 +104,18 @@ export type MergeGrenseEntry = BaseHistoryEntry<"merge_grenser", MergeGrenseMode
 
 export type NyeInndelingerEntry = BaseHistoryEntry<"create_inndelinger", NonExhaustiveInndelingRequest | null>;
 
-export type ArchiveInndelingEntry = BaseHistoryEntry<"archive_inndeling", ArchiveInndelingRequest | null>;
+type ArchiveInndelingHistoryModel = Omit<ArchiveInndelingRequest, "flatetype">;
+
+type ArchiveInndelingChange = HistoryChange<ArchiveInndelingHistoryModel | null> & {
+  flatetype: ArchiveInndelingRequest["flatetype"];
+};
+
+export type ArchiveInndelingEntry = Omit<
+  BaseHistoryEntry<"archive_inndeling", ArchiveInndelingHistoryModel | null>,
+  "changes"
+> & {
+  changes: ArchiveInndelingChange[];
+};
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
