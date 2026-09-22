@@ -4,7 +4,8 @@ import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
-import { TilhorighetSearch } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/TilhorighetSearch";
+import { OptionType, TilhorighetSearch } from "pages/Kart/OverlayPanels/GrenseinformasjonPanel/TilhorighetSearch";
+import { inndelingIsArchived } from "pages/Kart/interactions/archive-features";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
@@ -28,14 +29,34 @@ import { getInndelingtypeLabel } from "utils/inndelinger-utils";
 type TilhorighetRowProps = {
   feature: Feature;
   useTilhorighet: UseTilhorighet;
+  selectableOptions: TilhorighetOptions | undefined;
   isValid: boolean;
   isSubmitted: boolean;
   isEditing: boolean;
 };
 
+const getOptions = (
+  tilhorighetOptions: TilhorighetOptions | undefined,
+  selectableOptions: TilhorighetOptions | undefined,
+  tilhorighet: Tilhorighet,
+) => {
+  const options: OptionType[] =
+    tilhorighetOptions?.[tilhorighet]?.map((krets) => ({
+      value: krets.id.lokalid.value,
+      label: formatKretsNavn(krets),
+    })) ?? [];
+  const mappedSelectableOptions: OptionType[] =
+    selectableOptions?.[tilhorighet]?.map((krets) => ({
+      value: krets.id.lokalid.value,
+      label: formatKretsNavn(krets),
+    })) ?? [];
+  return { options, selectableOptions: mappedSelectableOptions };
+};
+
 const TilhorighetRow = ({
   feature,
   useTilhorighet: { inndelingType, tilhorighetOptions, formState, setValue, isLoading },
+  selectableOptions,
   isSubmitted,
   isValid,
   isEditing,
@@ -57,19 +78,13 @@ const TilhorighetRow = ({
     >
       <Stack>
         {Object.values(Tilhorighet).map((tilhorighet) => (
-          <div key={tilhorighet}>
-            <TilhorighetSearch
-              value={formState[inndelingType][tilhorighet]}
-              inndelingType={inndelingType}
-              onChange={(newValue) => setValue(tilhorighet, newValue)}
-              options={
-                tilhorighetOptions?.[tilhorighet]?.map((krets) => ({
-                  value: krets.id.lokalid.value,
-                  label: formatKretsNavn(krets),
-                })) ?? []
-              }
-            />
-          </div>
+          <TilhorighetSearch
+            key={tilhorighet}
+            value={formState[inndelingType][tilhorighet]}
+            inndelingType={inndelingType}
+            onChange={(newValue) => setValue(tilhorighet, newValue)}
+            {...getOptions(tilhorighetOptions, selectableOptions, tilhorighet)}
+          />
         ))}
       </Stack>
     </GrenseinformasjonRowTilhorighet>
@@ -79,6 +94,7 @@ const TilhorighetRow = ({
 const TilhorighetRowEnkel = ({
   feature,
   useTilhorighet: { inndelingType, tilhorighetOptions, formState, setValue, isLoading },
+  selectableOptions,
   isSubmitted,
   isValid,
   isEditing,
@@ -102,18 +118,13 @@ const TilhorighetRowEnkel = ({
         value={formState[inndelingType][Tilhorighet.A]}
         inndelingType={inndelingType}
         onChange={(newValue) => setValue(Tilhorighet.A, newValue)}
-        options={
-          tilhorighetOptions?.[Tilhorighet.A]?.map((krets) => ({
-            value: krets.id.lokalid.value,
-            label: formatKretsNavn(krets),
-          })) ?? []
-        }
+        {...getOptions(tilhorighetOptions, selectableOptions, Tilhorighet.A)}
       />
     </GrenseinformasjonRowTilhorighet>
   );
 };
 
-type ParentPassedProps = Pick<TilhorighetRowProps, "isEditing" | "isSubmitted"> & {
+type ParentPassedProps = Pick<TilhorighetRowProps, "selectableOptions" | "isEditing" | "isSubmitted"> & {
   isValid: boolean;
 };
 type TilhorighetFieldControllerProps = {
@@ -131,13 +142,22 @@ const TilhorighetFieldController = ({
   tilhorighetForm,
   renderChildren,
 }: TilhorighetFieldControllerProps) => {
-  const { addHistoryEntry } = useHistory();
+  const { addHistoryEntry, getHistoryEntries } = useHistory();
+  const { utkast } = useUtkast();
 
   const isLoading = tilhorighetForm?.isLoading ?? false;
 
   const isValid =
     tilhorighetForm?.formState[tilhorighetForm.inndelingType][Tilhorighet.A] != null &&
     tilhorighetForm?.formState[tilhorighetForm.inndelingType][Tilhorighet.B] != null;
+  const selectableOptions = tilhorighetForm?.tilhorighetOptions && {
+    [Tilhorighet.A]: tilhorighetForm.tilhorighetOptions[Tilhorighet.A].filter(
+      (krets) => !inndelingIsArchived(krets.id.lokalid.value, utkast, getHistoryEntries()),
+    ),
+    [Tilhorighet.B]: tilhorighetForm.tilhorighetOptions[Tilhorighet.B].filter(
+      (krets) => !inndelingIsArchived(krets.id.lokalid.value, utkast, getHistoryEntries()),
+    ),
+  };
 
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -202,6 +222,7 @@ const TilhorighetFieldController = ({
         </EditAndSaveButton>
       </TilhorighetFieldHeader>
       {renderChildren({
+        selectableOptions,
         isEditing,
         isSubmitted,
         isValid,
@@ -225,8 +246,9 @@ const CommonTilhorighetField = ({ feature, isDisabled, tooltip }: TilhorighetPro
       isDisabled={isDisabled}
       tooltip={tooltip}
       tilhorighetForm={commonTilhorighet}
-      renderChildren={({ isEditing, isSubmitted, isValid }) => (
+      renderChildren={({ selectableOptions, isEditing, isSubmitted, isValid }) => (
         <TilhorighetRow
+          selectableOptions={selectableOptions}
           isEditing={isEditing}
           isSubmitted={isSubmitted}
           isValid={isValid}
@@ -249,8 +271,9 @@ const AdministrativTilhorighetField = ({ feature, isDisabled, tooltip }: Tilhori
         isDisabled={isDisabled}
         tooltip={tooltip}
         tilhorighetForm={useTilhorighetGrunnkrets}
-        renderChildren={({ isEditing, isSubmitted, isValid }) => (
+        renderChildren={({ selectableOptions, isEditing, isSubmitted, isValid }) => (
           <TilhorighetRow
+            selectableOptions={selectableOptions}
             isEditing={isEditing}
             isSubmitted={isSubmitted}
             isValid={isValid}
@@ -264,8 +287,9 @@ const AdministrativTilhorighetField = ({ feature, isDisabled, tooltip }: Tilhori
         isDisabled={isDisabled}
         tooltip={tooltip}
         tilhorighetForm={useTilhorighetStemmekrets}
-        renderChildren={({ isEditing, isSubmitted, isValid }) => (
+        renderChildren={({ selectableOptions, isEditing, isSubmitted, isValid }) => (
           <TilhorighetRow
+            selectableOptions={selectableOptions}
             isEditing={isEditing}
             isSubmitted={isSubmitted}
             isValid={isValid}
@@ -288,8 +312,9 @@ const LandgrenseTilhørighetField = ({ feature, isDisabled, tooltip }: Tilhorigh
         isDisabled={isDisabled}
         tooltip={tooltip}
         tilhorighetForm={useTilhorighetGrunnkrets}
-        renderChildren={({ isEditing, isSubmitted, isValid }) => (
+        renderChildren={({ selectableOptions, isEditing, isSubmitted, isValid }) => (
           <TilhorighetRowEnkel
+            selectableOptions={selectableOptions}
             isEditing={isEditing}
             isSubmitted={isSubmitted}
             isValid={isValid}
@@ -303,8 +328,9 @@ const LandgrenseTilhørighetField = ({ feature, isDisabled, tooltip }: Tilhorigh
         isDisabled={isDisabled}
         tooltip={tooltip}
         tilhorighetForm={useTilhorighetStemmekrets}
-        renderChildren={({ isEditing, isSubmitted, isValid }) => (
+        renderChildren={({ selectableOptions, isEditing, isSubmitted, isValid }) => (
           <TilhorighetRowEnkel
+            selectableOptions={selectableOptions}
             isEditing={isEditing}
             isSubmitted={isSubmitted}
             isValid={isValid}
@@ -325,8 +351,9 @@ const BopliktgrenseTilhorighetField = ({ feature, isDisabled, tooltip }: Tilhori
       isDisabled={isDisabled}
       tooltip={tooltip}
       tilhorighetForm={useTilhorighetBopliktomraade}
-      renderChildren={({ isEditing, isSubmitted, isValid }) => (
+      renderChildren={({ selectableOptions, isEditing, isSubmitted, isValid }) => (
         <TilhorighetRowEnkel
+          selectableOptions={selectableOptions}
           isEditing={isEditing}
           isSubmitted={isSubmitted}
           isValid={isValid}
