@@ -123,29 +123,30 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       return;
     }
 
-    switch (mainInndeling.inndelingtype) {
-      case "FYLKE":
-      case "KOMMUNE":
-        addHistoryEntry({
-          type: "KOMMUNE",
-          fylkeId: mainInndeling.id,
-          changes: changesToExisting,
-        } as KommuneEntry);
-        break;
-      case "STEMMEKRETS":
-      case "GRUNNKRETS":
-      case "BOPLIKTOMRAADE":
-        addHistoryEntry({
-          type: mainInndeling.inndelingtype,
-          fylkeId: mainInndeling.id,
-          changes: changesToExisting,
-        } as MetadataEntry);
-        break;
-    }
-
-    for (const change of changesToExisting) {
-      if ("navn" in change.to && "nummer" in change.to) {
-        updateRepresentasjonspunkt(change.id, change.to.nummer, change.to.navn);
+    if (changesToExisting.length > 0) {
+      switch (mainInndeling.inndelingtype) {
+        case "FYLKE":
+        case "KOMMUNE":
+          addHistoryEntry({
+            type: "KOMMUNE",
+            fylkeId: mainInndeling.id,
+            changes: changesToExisting,
+          } as KommuneEntry);
+          break;
+        case "STEMMEKRETS":
+        case "GRUNNKRETS":
+        case "BOPLIKTOMRAADE":
+          addHistoryEntry({
+            type: mainInndeling.inndelingtype,
+            fylkeId: mainInndeling.id,
+            changes: changesToExisting,
+          } as MetadataEntry);
+          break;
+      }
+      for (const change of changesToExisting) {
+        if ("navn" in change.to && "nummer" in change.to) {
+          updateRepresentasjonspunkt(change.id, change.to.nummer, change.to.navn);
+        }
       }
     }
 
