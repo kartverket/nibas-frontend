@@ -238,7 +238,7 @@ export const getUpdatedMetadataForKretser = (
   const metadataFromHistory = historyEntries
     .flatMap((historyEntry) =>
       historyEntry.changes.map((change) => {
-        if (change.to != null && "navn" in change.to && "nummer" in change.to) {
+        if (change.to != null && typeof change.to === "object" && "navn" in change.to && "nummer" in change.to) {
           return {
             id: change.id,
             name: change.to.navn,

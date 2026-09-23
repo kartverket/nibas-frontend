@@ -26,7 +26,7 @@ import { FlatedataInputs, isNonExhaustiveInndelingtype, isValidTempFlateId, isVa
 import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { ArchiveInndelingEntry } from "contexts/HistoryContext/types";
+import { ArchiveInndelingEntry, DeleteInndelingEntry } from "contexts/HistoryContext/types";
 import {
   archiveFeaturesForInndeling,
   inndelingIsArchivedInHistory,
@@ -197,15 +197,34 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
 };
 
 const SlettInndelingButton = (ctx: FlatedataColumnCtx) => {
+  const { addHistoryEntry } = useHistory();
+  const toast = useToast();
+
+  const handleDeleteInndeling = () => {
+    const deleteInndelingEntry: DeleteInndelingEntry = {
+      type: "delete_inndeling",
+      changes: [
+        {
+          id: ctx.inndelingId,
+          from: false,
+          to: true,
+        },
+      ],
+    };
+    addHistoryEntry(deleteInndelingEntry);
+    toast({
+      status: "success",
+      title: `Slettet ${getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true })} "${ctx.inndeling.nummer} ${getNavnInSpraak(ctx.inndeling.navn, "nor")}" fra utkastet.`,
+    });
+  };
+
   return (
     <Tooltip label="Slett inndelingen fra utkastet." placement="left" hasArrow>
       <IconButton
         variant="ghost"
         aria-label="Slett inndelingen"
         icon="delete_forever"
-        onClick={() => {
-          return ctx;
-        }}
+        onClick={handleDeleteInndeling}
       />
     </Tooltip>
   );

@@ -48,6 +48,7 @@ export type HistoryTypeValues =
   | "grensedelete"
   | "merge_grenser"
   | "create_inndelinger"
+  | "delete_inndeling"
   | "archive_inndeling";
 
 export type BaseHistoryEntry<HistoryType extends HistoryTypeValues, Model> = {
@@ -116,6 +117,7 @@ export type ArchiveInndelingEntry = Omit<
 > & {
   changes: ArchiveInndelingChange[];
 };
+export type DeleteInndelingEntry = BaseHistoryEntry<"delete_inndeling", boolean>;
 
 // endringer skal kunne gjøres i bulk, feks et punkt på to features endrer to features i en entry
 export type HistoryEntry =
@@ -132,6 +134,7 @@ export type HistoryEntry =
   | NyGrenseDeleteEntry
   | MergeGrenseEntry
   | NyeInndelingerEntry
+  | DeleteInndelingEntry
   | ArchiveInndelingEntry;
 
 export type HistoryContextValue = {

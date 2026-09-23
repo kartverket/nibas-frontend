@@ -4,6 +4,7 @@ import {
   getGrunnkretsMetadataEntries,
   getKommuneMetadataEntries,
   getDeduplicatedNyInndelingChanges,
+  getDeletedInndelingIds,
   getStemmekretsMetadataEntries,
 } from "contexts/HistoryContext/history-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -161,6 +162,7 @@ const getNyeInndelingerMetadataForInndelingtypeFromHistory = (
 const getNyeInndelingerMetadataForInndelingtypeFromUtkast = (
   utkast: UtkastResponse,
   inndeling: Inndeling,
+  deletedInndelingIds: Set<string>,
 ): MetadataResponse[] => {
   const inndelingtype = inndeling.inndelingtype;
   if (!isNonExhaustiveInndelingtype(inndelingtype)) {
@@ -171,6 +173,7 @@ const getNyeInndelingerMetadataForInndelingtypeFromUtkast = (
     case "BOPLIKTOMRAADE":
       return nyInndelingEntries
         .filter((entry) => isBopliktomraadeRequest(entry))
+        .filter((entry) => !deletedInndelingIds.has(entry.identifikasjon.lokalid))
         .filter((entry) => entry.kommuneIdentifikasjon.lokalid === inndeling.id)
         .flatMap((newInndelingRequest) => {
           if (newInndelingRequest != null) {
@@ -199,6 +202,8 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
   const flatedataFromBackend = useFlatedataFromBackend(inndeling, gyldighetsdato);
   const { getHistoryEntries } = useHistory();
   const { utkast } = useUtkast();
+  const historyEntries = getHistoryEntries();
+  const deletedInndelingIds = getDeletedInndelingIds(historyEntries);
 
   const inndelingtype = inndeling.inndelingtype;
 
@@ -208,7 +213,7 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
   ) ?? []) as MetadataResponse[];
 
   const newFladedataInUtkastWithUtkastChanges = (useUtkastEntity(
-    utkast ? getNyeInndelingerMetadataForInndelingtypeFromUtkast(utkast, inndeling) : [],
+    utkast ? getNyeInndelingerMetadataForInndelingtypeFromUtkast(utkast, inndeling, deletedInndelingIds) : [],
     getEntityUtkastTypeForInndelingtype(inndelingtype),
   ) ?? []) as MetadataResponse[];
 
@@ -217,7 +222,7 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
     ...newFladedataInUtkastWithUtkastChanges,
   ];
 
-  const newFlatedataFromHistory = getNyeInndelingerMetadataForInndelingtypeFromHistory(getHistoryEntries(), inndeling);
+  const newFlatedataFromHistory = getNyeInndelingerMetadataForInndelingtypeFromHistory(historyEntries, inndeling);
 
   // Når en bruker redigerer en ny inndeling som allerede er lagret i utkastet, vil history inneholde
   // en nyere create_inndelinger-entry for samme temp-ID. Utkast-operasjon-entrien må da ekskluderes for å unngå
@@ -228,7 +233,7 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
   );
 
   return [
-    ...addHistoryChangesToMetadata(utkastFlatedataWithoutHistoryOverrides, getHistoryEntries(), inndelingtype),
+    ...addHistoryChangesToMetadata(utkastFlatedataWithoutHistoryOverrides, historyEntries, inndelingtype),
     ...newFlatedataFromHistory,
   ];
 };
