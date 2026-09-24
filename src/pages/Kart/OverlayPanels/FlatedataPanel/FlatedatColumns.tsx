@@ -22,7 +22,13 @@ import InputCell, {
   TableCell,
   URLInputCell,
 } from "./FlatedataTableCells";
-import { FlatedataInputs, isNonExhaustiveInndelingtype, isValidTempFlateId, isValidUrl } from "./flatedata-utils";
+import {
+  FlatedataInputs,
+  isNonExhaustiveInndelingtype,
+  isValidTempFlateId,
+  isValidUrl,
+  validateBopliktomraadeUtstrekning,
+} from "./flatedata-utils";
 import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -50,6 +56,7 @@ export type FlatedataColumnCtx = {
   control: Control<FlatedataInputs>;
   inndelingErrors: InndelingErrors;
   allInndelinger: MetadataResponse[];
+  activeInndelingerCount: number;
   sammenslaaingInformasjon: string | undefined;
   canEditInndeling: boolean;
 };
@@ -157,9 +164,9 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
       return;
     }
-    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
+    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries()) === true) {
       setInndelingArchived({ shouldArchive: false, addToHistory: true });
-    } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
+    } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast) === true) {
       updateUtkast(
         utkast.id,
         {
@@ -585,7 +592,15 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
     {
       header: "Utstrekning",
       sortKey: "gjelderKunDelAvKommunen",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods }) => {
+      renderCell: ({
+        inndeling,
+        inndelingId,
+        isEditing,
+        disabledDate,
+        formMethods,
+        inndelingErrors,
+        activeInndelingerCount,
+      }) => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
         const value = getValues(`${inndelingId}.gjelderKunDelAvKommunen`) ?? bopliktomraade.gjelderKunDelAvKommunen;
@@ -601,7 +616,14 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
             data={value ? "Deler av kommunen" : "Hele kommunen"}
             {...register(`${inndelingId}.gjelderKunDelAvKommunen`, {
               setValueAs: (v) => (typeof v === "string" ? v === "true" : v),
+              validate: (gjelderKunDelAvKommunen) =>
+                validateBopliktomraadeUtstrekning(gjelderKunDelAvKommunen, activeInndelingerCount),
             })}
+            validationError={
+              inndelingErrors != null && "gjelderKunDelAvKommunen" in inndelingErrors
+                ? validationError(inndelingErrors.gjelderKunDelAvKommunen)
+                : undefined
+            }
           />
         );
       },
