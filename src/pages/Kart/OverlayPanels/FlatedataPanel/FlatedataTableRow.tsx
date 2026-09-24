@@ -93,7 +93,7 @@ export const FlatedataTableRow = ({
     inndeling,
     inndelingId,
     inndelingtype,
-    isEditing: isEditing && !isInndelingArchivedInUtkast,
+    isEditing: isEditing,
     disabledDate: disabledByFremtidigEndringUntilDate,
     isArchived: isInndelingArchivedInUtkast,
     formMethods,

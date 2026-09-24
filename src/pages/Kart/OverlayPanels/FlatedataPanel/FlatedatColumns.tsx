@@ -161,19 +161,22 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     }
   };
 
-  return ctx.isArchived ? (
-    <Tooltip label="Angre arkivering av inndelingen" placement="left" hasArrow>
-      <IconButton
-        variant="ghost"
-        aria-label="Angre arkivering av inndelingen"
-        icon="undo"
-        onClick={handleUndoArchivingFromHistoryOrUtkast}
-      />
-    </Tooltip>
-  ) : (
-    <Tooltip label="Arkiver inndelingen" placement="left" hasArrow>
-      <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
-    </Tooltip>
+  return (
+    ctx.isEditing &&
+    (ctx.isArchived ? (
+      <Tooltip label="Angre arkivering av inndelingen" placement="left" hasArrow>
+        <IconButton
+          variant="ghost"
+          aria-label="Angre arkivering av inndelingen"
+          icon="undo"
+          onClick={handleUndoArchivingFromHistoryOrUtkast}
+        />
+      </Tooltip>
+    ) : (
+      <Tooltip label="Arkiver inndelingen" placement="left" hasArrow>
+        <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
+      </Tooltip>
+    ))
   );
 };
 
