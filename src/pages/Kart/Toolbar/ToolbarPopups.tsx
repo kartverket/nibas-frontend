@@ -171,16 +171,16 @@ const ToolbarPopups = () => {
       return;
     }
 
-    deleteFeaturesAndAddHistoryEntry(selectedFeatures);
-    clearSelection();
-
-    toast({
-      status: "success",
-      title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble slettet`,
-    });
+    if (deleteFeaturesAndAddHistoryEntry(selectedFeatures) === true) {
+      clearSelection();
+      toast({
+        status: "success",
+        title: `${selectedFeatureIds.length} grense${selectedFeatureIds.length > 1 ? "r" : ""} ble slettet`,
+      });
+    }
   };
 
-  const deleteFeaturesAndAddHistoryEntry = (featuresToDelete: typeof selectedFeatures) => {
+  const deleteFeaturesAndAddHistoryEntry = (featuresToDelete: typeof selectedFeatures): boolean => {
     const selectedFeatureIds = removeNil(featuresToDelete.map((feature) => feature.getId()?.toString()));
     const selectedFeaturesContainsExistingGrenser = !selectedFeatureIds.every((id) => isTempFeatureId(id));
 
@@ -190,13 +190,14 @@ const ToolbarPopups = () => {
         title: "Kan ikke slette eksisterende grenser",
         description: "Ønsker du å fjerne en eksisterende grense må du benytte Arkiver grense-verktøyet.",
       });
-      return;
+      return false;
     }
     removeFeaturesFromSourceByIds("edit", selectedFeatureIds);
 
     // Oppretter entry som sier at grensen blir slettet, denne blir tatt i bruk ved lagring for å fjerne grenser man har slettet.
     // Denne entrien blir selv slettet (ignorert) ved lagring da den ikke skal med i utkastet.
     addGrenseDeleteEntryFromFeatureList(featuresToDelete, addHistoryEntry);
+    return true;
   };
 
   const handleHistoriskeGrenser = async (gyldigTilDate: string) => {

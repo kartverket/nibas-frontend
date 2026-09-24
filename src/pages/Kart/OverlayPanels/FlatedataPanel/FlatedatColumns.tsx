@@ -22,20 +22,19 @@ import InputCell, {
   TableCell,
   URLInputCell,
 } from "./FlatedataTableCells";
-import { FlatedataInputs, isNonExhaustiveInndelingtype, isValidTempFlateId, isValidUrl } from "./flatedata-utils";
+import {
+  FlatedataInputs,
+  isNonExhaustiveInndelingtype,
+  isValidTempFlateId,
+  isValidUrl,
+  validateBopliktomraadeUtstrekning,
+} from "./flatedata-utils";
 import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { ArchiveInndelingEntry, DeleteInndelingEntry } from "contexts/HistoryContext/types";
-import {
-  archiveFeaturesForInndeling,
-  inndelingIsArchivedInHistory,
-  inndelingIsArchivedInUtkast,
-  unarchiveFeaturesForInndeling,
-} from "pages/Kart/interactions/archive-features";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { archiveFeaturesForInndeling, unarchiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { statusCode } from "utils/api";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -50,6 +49,7 @@ export type FlatedataColumnCtx = {
   control: Control<FlatedataInputs>;
   inndelingErrors: InndelingErrors;
   allInndelinger: MetadataResponse[];
+  activeInndelingerCount: number;
   sammenslaaingInformasjon: string | undefined;
   canEditInndeling: boolean;
 };
@@ -98,8 +98,7 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry, getHistoryEntries } = useHistory();
-  const { utkast, updateUtkast } = useUtkast();
+  const { addHistoryEntry } = useHistory();
   const { addArchivedStyles, removeArchivedStyles } = useFeatureStyle();
   const toast = useToast();
 
@@ -118,12 +117,6 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
       ? archiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype)
       : unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype);
 
-    if (shouldArchive) {
-      addArchivedStyles(featureIds);
-    } else {
-      removeArchivedStyles(featureIds);
-    }
-
     if (addToHistory) {
       const archiveInndelingEntry: ArchiveInndelingEntry = {
         type: "archive_inndeling",
@@ -137,6 +130,12 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
         ],
       };
       addHistoryEntry(archiveInndelingEntry);
+    }
+
+    if (shouldArchive) {
+      addArchivedStyles(featureIds);
+    } else {
+      removeArchivedStyles(featureIds);
     }
 
     const inndelingLabel = getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true });
@@ -157,26 +156,8 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
       return;
     }
-    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries())) {
+    if (ctx.isArchived) {
       setInndelingArchived({ shouldArchive: false, addToHistory: true });
-    } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast)) {
-      updateUtkast(
-        utkast.id,
-        {
-          ...utkast,
-          operasjoner: {
-            ...utkast.operasjoner,
-            archiveInndelingEndringer: utkast.operasjoner.archiveInndelingEndringer?.filter(
-              (endring) => endring.identifikator.lokalId !== ctx.inndelingId,
-            ),
-          },
-        },
-        false,
-      ).then((status: number | null) => {
-        if (status != null && statusCode.isSuccessful(status)) {
-          setInndelingArchived({ shouldArchive: false, addToHistory: false });
-        }
-      });
     }
   };
 
@@ -604,7 +585,15 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
     {
       header: "Utstrekning",
       sortKey: "gjelderKunDelAvKommunen",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods }) => {
+      renderCell: ({
+        inndeling,
+        inndelingId,
+        isEditing,
+        disabledDate,
+        formMethods,
+        inndelingErrors,
+        activeInndelingerCount,
+      }) => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
         const value = getValues(`${inndelingId}.gjelderKunDelAvKommunen`) ?? bopliktomraade.gjelderKunDelAvKommunen;
@@ -620,7 +609,14 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
             data={value ? "Deler av kommunen" : "Hele kommunen"}
             {...register(`${inndelingId}.gjelderKunDelAvKommunen`, {
               setValueAs: (v) => (typeof v === "string" ? v === "true" : v),
+              validate: (gjelderKunDelAvKommunen) =>
+                validateBopliktomraadeUtstrekning(gjelderKunDelAvKommunen, activeInndelingerCount),
             })}
+            validationError={
+              inndelingErrors != null && "gjelderKunDelAvKommunen" in inndelingErrors
+                ? validationError(inndelingErrors.gjelderKunDelAvKommunen)
+                : undefined
+            }
           />
         );
       },

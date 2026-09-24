@@ -165,13 +165,11 @@ const mergeNyInndelingOperations = (
 const mergeArchiveInndelingOperations = (
   archiveInndelingerFromUtkast: ArchiveInndelingRequest[],
   archiveInndelingerFromHistory: ArchiveInndelingRequest[],
+  inndelingIdsOverriddenInHistory: Set<string>,
 ): ArchiveInndelingRequest[] => {
-  const archivedLokalIds = new Set(
-    archiveInndelingerFromHistory.map((archiveInndeling) => archiveInndeling.identifikator.lokalId),
-  );
   return [
     ...archiveInndelingerFromUtkast.filter(
-      (archiveInndeling) => !archivedLokalIds.has(archiveInndeling.identifikator.lokalId),
+      (archiveInndeling) => !inndelingIdsOverriddenInHistory.has(archiveInndeling.identifikator.lokalId),
     ),
     ...archiveInndelingerFromHistory,
   ];
@@ -214,6 +212,11 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
       entry.changes.map((change) => (change.to == null ? null : { ...change.to, flatetype: change.flatetype })),
     ),
   );
+  const archiveInndelingIdsOverriddenInHistory = new Set(
+    historyToCurrentIndex
+      .filter((entry) => entry.type === "archive_inndeling")
+      .flatMap((entry) => entry.changes.map((change) => change.id)),
+  );
 
   const kretsdelingOperations = historyToKretsdelingOperations(allKretsdelingHistoryEntries);
 
@@ -241,6 +244,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
           archiveInndelingEndringer: mergeArchiveInndelingOperations(
             previousUtkast?.operasjoner.archiveInndelingEndringer ?? [],
             archiveInndelingOperations,
+            archiveInndelingIdsOverriddenInHistory,
           ),
         },
       }),
