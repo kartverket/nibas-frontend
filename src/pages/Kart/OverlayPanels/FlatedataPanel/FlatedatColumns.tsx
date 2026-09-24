@@ -33,15 +33,8 @@ import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { ArchiveInndelingEntry } from "contexts/HistoryContext/types";
-import {
-  archiveFeaturesForInndeling,
-  inndelingIsArchivedInHistory,
-  inndelingIsArchivedInUtkast,
-  unarchiveFeaturesForInndeling,
-} from "pages/Kart/interactions/archive-features";
-import { useUtkast } from "contexts/UtkastContext/UtkastContext";
+import { archiveFeaturesForInndeling, unarchiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
-import { statusCode } from "utils/api";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -105,8 +98,7 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry, getHistoryEntries } = useHistory();
-  const { utkast, updateUtkast } = useUtkast();
+  const { addHistoryEntry } = useHistory();
   const { addArchivedStyles, removeArchivedStyles } = useFeatureStyle();
   const toast = useToast();
 
@@ -125,12 +117,6 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
       ? archiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype)
       : unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype);
 
-    if (shouldArchive) {
-      addArchivedStyles(featureIds);
-    } else {
-      removeArchivedStyles(featureIds);
-    }
-
     if (addToHistory) {
       const archiveInndelingEntry: ArchiveInndelingEntry = {
         type: "archive_inndeling",
@@ -144,6 +130,12 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
         ],
       };
       addHistoryEntry(archiveInndelingEntry);
+    }
+
+    if (shouldArchive) {
+      addArchivedStyles(featureIds);
+    } else {
+      removeArchivedStyles(featureIds);
     }
 
     const inndelingLabel = getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true });
@@ -164,26 +156,8 @@ const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
     if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
       return;
     }
-    if (inndelingIsArchivedInHistory(ctx.inndelingId, getHistoryEntries()) === true) {
+    if (ctx.isArchived) {
       setInndelingArchived({ shouldArchive: false, addToHistory: true });
-    } else if (utkast != null && inndelingIsArchivedInUtkast(ctx.inndelingId, utkast) === true) {
-      updateUtkast(
-        utkast.id,
-        {
-          ...utkast,
-          operasjoner: {
-            ...utkast.operasjoner,
-            archiveInndelingEndringer: utkast.operasjoner.archiveInndelingEndringer?.filter(
-              (endring) => endring.identifikator.lokalId !== ctx.inndelingId,
-            ),
-          },
-        },
-        false,
-      ).then((status: number | null) => {
-        if (status != null && statusCode.isSuccessful(status)) {
-          setInndelingArchived({ shouldArchive: false, addToHistory: false });
-        }
-      });
     }
   };
 
