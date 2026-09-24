@@ -1,4 +1,3 @@
-import { getArchiveInndelingEntries, getChangesForArchiveInndelingEntry } from "contexts/HistoryContext/history-utils";
 import { HistoryChange, HistoryContextValue, HistoryEntry } from "contexts/HistoryContext/types";
 import { archivedSource, editSource } from "hooks/layers/constants";
 import { Feature } from "ol";
