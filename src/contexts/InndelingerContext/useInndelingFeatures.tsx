@@ -277,8 +277,15 @@ const getEditedFeaturesOnUtkastInSelectedInndelinger = (
   const implicitlyArchivedFeatures = inndelingFeatures
     .flatMap((inndeling) => inndeling.features)
     .filter((feature) => {
-      return (feature.getProperties() as FeatureProperties).kontekstEgenskaper.some((kontekst) =>
-        archivedInndelingIds.has(kontekst.id?.lokalid.value ?? ""),
+      const featureId = feature.getId()?.toString();
+      const properties = feature.getProperties() as FeatureProperties;
+      const isArchivedRepresentasjonspunkt = [...archivedInndelingIds].some(
+        (inndelingId) => featureId === getRepresentasjonspunktId(inndelingId),
+      );
+
+      return (
+        isArchivedRepresentasjonspunkt ||
+        properties.kontekstEgenskaper.some((kontekst) => archivedInndelingIds.has(kontekst.id?.lokalid.value ?? ""))
       );
     })
     .map((feature) => {

@@ -93,10 +93,14 @@ export const inndelingIsArchived = (
   utkast: UtkastResponse | undefined,
   historyEntries: HistoryEntry[],
 ) => {
-  return (
-    inndelingIsArchivedInUtkast(inndelingId, utkast) === true ||
-    inndelingIsArchivedInHistory(inndelingId, historyEntries) === true
-  );
+  const latestHistoryChange = historyEntries
+    .filter((entry) => entry.type === "archive_inndeling")
+    .flatMap((entry) => entry.changes)
+    .findLast((change) => change.id === inndelingId);
+
+  return latestHistoryChange != null
+    ? latestHistoryChange.to != null
+    : inndelingIsArchivedInUtkast(inndelingId, utkast);
 };
 
 export const inndelingIsArchivedInUtkast = (inndelingId: string, utkast: UtkastResponse | undefined) => {
@@ -104,11 +108,5 @@ export const inndelingIsArchivedInUtkast = (inndelingId: string, utkast: UtkastR
     utkast?.operasjoner.archiveInndelingEndringer?.some(
       (operation) => operation.identifikator.lokalId === inndelingId,
     ) === true
-  );
-};
-
-export const inndelingIsArchivedInHistory = (inndelingId: string, historyEntries: HistoryEntry[]) => {
-  return getArchiveInndelingEntries(historyEntries).some(
-    (entry) => getChangesForArchiveInndelingEntry(entry).id === inndelingId,
   );
 };
