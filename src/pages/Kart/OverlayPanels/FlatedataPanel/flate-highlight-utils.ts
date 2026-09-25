@@ -199,7 +199,8 @@ export const getRepresentasjonspunktForOmraade = (
   const flate = getPolygonForOmraade(inndelingtype, kommuneId, omraade);
   const polygons = flate?.getGeometry()?.getPolygons() ?? [];
   const largestPolygon = polygons.reduce<Polygon | null>(
-    (largest, polygon) => (largest == null || polygon.getArea() > largest.getArea() ? polygon : largest),
+    (largest, polygon) =>
+      largest == null || Math.abs(polygon.getArea()) > Math.abs(largest.getArea()) ? polygon : largest,
     null,
   );
 
