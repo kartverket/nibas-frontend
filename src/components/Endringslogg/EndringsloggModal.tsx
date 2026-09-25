@@ -14,9 +14,9 @@ import {
 import { EndringerForFylke } from "components/Endringslogg/EndringerForFylke";
 import { EndringerForKommune } from "components/Endringslogg/EndringerForKommune";
 import { EndringerUtenTilhorighet } from "components/Endringslogg/EndringerUtenTilhorighet";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { styled } from "styled-components";
 import { UtkastResponse } from "types/api";
+import { useUnsavedEndringer } from "./hooks/useUnsavedEndringer";
 import { useUtkastEndringer } from "./hooks/useUtkastEndringer";
 import { UnsavedEndringerCollapse } from "./UlagredeEndringer/UnsavedEndringerCollapse";
 
@@ -36,8 +36,7 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
     kommunendringer,
     endringerutentilhorighet,
   } = useUtkastEndringer(utkast, isOpen);
-  const { history } = useHistory();
-  const harUlagredeEndringer = history.index > 0;
+  const { harEndringer: harUlagredeEndringer, laster: lasterUlagredeEndringer } = useUnsavedEndringer();
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl" isCentered scrollBehavior="inside">
@@ -46,7 +45,9 @@ const EndringsloggModal = ({ isOpen, onClose, utkast }: Props) => {
         <ModalHeader>Endringslogg</ModalHeader>
         <ModalCloseButton aria-label="Lukk" />
         <ModalBody>
-          {!harEndringer && !harUlagredeEndringer && !laster && <Empty>Det er ingen endringer i dette utkastet</Empty>}
+          {!harEndringer && !harUlagredeEndringer && !laster && !lasterUlagredeEndringer && (
+            <Empty>Det er ingen endringer i dette utkastet</Empty>
+          )}
           <Stack spacing={4}>
             <UnsavedEndringerCollapse expandedByDefault={!harEndringer} />
             <Center>

@@ -72,6 +72,9 @@ const onUndo = (entry: HistoryEntry) => {
     case "create_inndelinger": {
       return;
     }
+    case "delete_inndeling": {
+      return;
+    }
     case "archive_inndeling": {
       return handleArchiveInndeling(entry, "from");
     }
@@ -131,6 +134,9 @@ const onRedo = (entry: HistoryEntry) => {
       return handleGrenseMerge(entry, "to");
     }
     case "create_inndelinger": {
+      return;
+    }
+    case "delete_inndeling": {
       return;
     }
     case "archive_inndeling": {

@@ -432,6 +432,13 @@ export const getNyInndelingEntries = (entries: HistoryEntry[]): NyeInndelingerEn
   return entries.filter((entry) => entry.type === "create_inndelinger") as NyeInndelingerEntry[];
 };
 
+export const getDeletedInndelingIds = (entries: HistoryEntry[]): Set<string> =>
+  new Set(
+    entries
+      .filter((entry) => entry.type === "delete_inndeling")
+      .flatMap((entry) => entry.changes.filter((change) => change.to).map((change) => change.id)),
+  );
+
 export const getArchiveInndelingEntries = (entries: HistoryEntry[]): ArchiveInndelingEntry[] => {
   const archiveEntries = entries.filter((entry) => entry.type === "archive_inndeling") as ArchiveInndelingEntry[];
 
@@ -452,8 +459,11 @@ export const getArchiveInndelingEntries = (entries: HistoryEntry[]): ArchiveInnd
  * gjeldende tilstand for nye inndelinger uten utdaterte, overskrevne endringer.
  */
 export const getDeduplicatedNyInndelingChanges = (entries: HistoryEntry[]): NyeInndelingerEntry["changes"] => {
+  const deletedInndelingIds = getDeletedInndelingIds(entries);
   const allChanges = getNyInndelingEntries(entries).flatMap((entry) => entry.changes);
-  return allChanges.filter((change, i) => allChanges.findLastIndex((c) => c.id === change.id) === i);
+  return allChanges.filter(
+    (change, i) => !deletedInndelingIds.has(change.id) && allChanges.findLastIndex((c) => c.id === change.id) === i,
+  );
 };
 
 export const getNyInndelingEntriesForInndelingtype = (

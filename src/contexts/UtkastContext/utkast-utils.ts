@@ -1,4 +1,8 @@
-import { getArchiveInndelingEntries, getDeduplicatedNyInndelingChanges } from "contexts/HistoryContext/history-utils";
+import {
+  getArchiveInndelingEntries,
+  getDeduplicatedNyInndelingChanges,
+  getDeletedInndelingIds,
+} from "contexts/HistoryContext/history-utils";
 import {
   HistoryChange,
   HistoryState,
@@ -202,6 +206,7 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
   const createInndelingOperations = nyInndelingEntriesToCreateInndelingOperations(
     getDeduplicatedNyInndelingChanges(historyToCurrentIndex),
   );
+  const deletedInndelingIds = getDeletedInndelingIds(historyToCurrentIndex);
   const archiveInndelingOperations = removeNil(
     getArchiveInndelingEntries(historyToCurrentIndex).flatMap((entry) =>
       entry.changes.map((change) => (change.to == null ? null : { ...change.to, flatetype: change.flatetype })),
@@ -231,7 +236,9 @@ export const historyToUtkastOperations = (history: HistoryState, previousUtkast?
             kretsdelingOperations,
           ),
           nyeInndelingEndringer: mergeNyInndelingOperations(
-            previousUtkast?.operasjoner.createInndelingEndringer ?? [],
+            (previousUtkast?.operasjoner.createInndelingEndringer ?? []).filter(
+              (inndeling) => !deletedInndelingIds.has(inndeling.identifikasjon.lokalid),
+            ),
             createInndelingOperations,
           ),
           archiveInndelingEndringer: mergeArchiveInndelingOperations(
