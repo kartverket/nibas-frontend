@@ -111,12 +111,17 @@ const createAuthedTileWMS = (
   return tileWMS;
 };
 
-export const matrikkelnummerSource = createAuthedTileWMS("matrikkelnummer", "/skwms1/wms.matrikkel.v1", "background", {
-  LAYERS: "TEIGWFS",
-  STYLES: "Matrikkelnummer",
-  FORMAT: "image/png",
-  TRANSPARENT: true,
-});
+export const matrikkelnummerSource = createAuthedTileWMS(
+  "matrikkelnummer",
+  "/skwms1/wms.matrikkel.v1",
+  "wms.matrikkel.v1",
+  {
+    LAYERS: "TEIGWFS",
+    STYLES: "Matrikkelnummer",
+    FORMAT: "image/png",
+    TRANSPARENT: true,
+  },
+);
 
 export const kartlagSources: Record<KartlagLayerId, WMTS | TileWMS> = {
   topograatone: createWMTS("topograatone", generateWMTSConfig("topograatone")),
