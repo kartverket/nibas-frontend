@@ -26,6 +26,9 @@ type Props = {
   sammenslaaingInformasjon: string | undefined;
   control: Control<FlatedataInputs>;
   canEditInndeling: boolean;
+  pendingArchived: Record<string, boolean>;
+  toggleArchived: (inndelingId: string, isArchived: boolean) => void;
+  toggleDeleted: (inndelingId: string) => void;
 };
 
 export const FlatedataTableRow = ({
@@ -41,6 +44,9 @@ export const FlatedataTableRow = ({
   sammenslaaingInformasjon,
   control,
   canEditInndeling,
+  pendingArchived,
+  toggleArchived,
+  toggleDeleted,
 }: Props) => {
   const { setValue, getValues, trigger } = formMethods;
   const inndelingId = getIdFromEntity(inndeling);
@@ -63,9 +69,11 @@ export const FlatedataTableRow = ({
   };
 
   const isInndelingArchivedInUtkast = inndelingIsArchived(inndelingId, utkast, historyEntries);
-  const activeInndelingerCount = allInndelinger.filter(
-    (candidate) => !inndelingIsArchived(getIdFromEntity(candidate), utkast, historyEntries),
-  ).length;
+  const isArchived = pendingArchived[inndelingId] ?? isInndelingArchivedInUtkast;
+  const activeInndelingerCount = allInndelinger.filter((candidate) => {
+    const candidateId = getIdFromEntity(candidate);
+    return !(pendingArchived[candidateId] ?? inndelingIsArchived(candidateId, utkast, historyEntries));
+  }).length;
   const previousActiveInndelingerCount = useRef(activeInndelingerCount);
 
   useEffect(() => {
@@ -93,9 +101,11 @@ export const FlatedataTableRow = ({
     inndeling,
     inndelingId,
     inndelingtype,
-    isEditing: isEditing && !isInndelingArchivedInUtkast,
+    isEditing: isEditing,
     disabledDate: disabledByFremtidigEndringUntilDate,
-    isArchived: isInndelingArchivedInUtkast,
+    isArchived,
+    toggleArchived: () => toggleArchived(inndelingId, isInndelingArchivedInUtkast),
+    toggleDeleted: () => toggleDeleted(inndelingId),
     formMethods,
     control,
     inndelingErrors,
@@ -106,12 +116,7 @@ export const FlatedataTableRow = ({
   };
 
   return (
-    <Row
-      key={inndelingId}
-      $isSearchMatch={isSearchMatch}
-      $isNew={isNew && isEditing}
-      $isDisabled={isInndelingArchivedInUtkast}
-    >
+    <Row key={inndelingId} $isSearchMatch={isSearchMatch} $isNew={isNew && isEditing} $isDisabled={isArchived}>
       {columns.map((c, i) => (
         <Fragment key={i}>{c.renderCell(ctx)}</Fragment>
       ))}

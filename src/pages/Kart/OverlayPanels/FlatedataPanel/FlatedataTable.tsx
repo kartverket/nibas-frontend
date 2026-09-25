@@ -1,8 +1,14 @@
 import { Button, TabPanel, Text } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
 import FeatureToggle from "components/FeatureToggle";
+import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { KommuneEntry, MetadataEntry } from "contexts/HistoryContext/types";
+import {
+  ArchiveInndelingEntry,
+  DeleteInndelingEntry,
+  KommuneEntry,
+  MetadataEntry,
+} from "contexts/HistoryContext/types";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -29,6 +35,7 @@ import {
   getDefaultFlatedataForInndelingtype,
   getTempFlateId,
   isInndelingNonExhaustive,
+  isNonExhaustiveInndelingtype,
   isValidTempFlateId,
   partitionDictBy,
   reduceFlatedataChanges,
@@ -36,6 +43,7 @@ import {
 } from "./flatedata-utils";
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
+import { archiveFeaturesForInndeling, unarchiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
 
 type Props = {
   mainInndeling: FlatedataTableInndeling;
@@ -54,9 +62,12 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const { utkast, utkastHarSammenslaainger } = useUtkast();
   const { sortProperty, sortOrder, sortHeaderProps } = useFlatedataTableSort(mainInndeling.inndelingtype);
   const { addHistoryEntry } = useHistory();
+  const { addArchivedStyles, removeArchivedStyles } = useFeatureStyle();
   const columns = useMemo(() => getFlatedataColumns(mainInndeling.inndelingtype), [mainInndeling.inndelingtype]);
   const gridTemplateColumns = columns.map((c) => c.size ?? "auto").join(" ");
   const [tempFlatedata, setTempFlatedata] = useState<MetadataResponse[]>([]);
+  const [pendingArchived, setPendingArchived] = useState<Record<string, boolean>>({});
+  const [pendingDeletedIds, setPendingDeletedIds] = useState<Set<string>>(new Set());
 
   const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
   const utkastSammenslaaingInformasjon: Record<string, string | undefined> =
@@ -71,6 +82,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       ) ?? {};
 
   const flatedata = [...(useFlatedata(mainInndeling) ?? []), ...tempFlatedata];
+  const visibleFlatedata = flatedata.filter((inndeling) => !pendingDeletedIds.has(getIdFromEntity(inndeling)));
 
   const allInndelingerHasFremtidigEndring = flatedata.every(
     (inndeling) => getInndelingFremtidigEndringDato(inndeling?.id.lokalid.value) != null,
@@ -78,6 +90,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const formMethods = useForm<FlatedataInputs>({
     mode: "onSubmit",
     reValidateMode: "onChange",
+    shouldUnregister: true,
   });
   const {
     reset,
@@ -102,13 +115,57 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     if (isEditing) {
       reset(previousValues.current);
       clearNewFlatedata();
+      setPendingArchived({});
+      setPendingDeletedIds(new Set());
     }
     setIsEditing(!isEditing);
   };
 
+  const commitArchiveChanges = () => {
+    const inndelingtype = mainInndeling.inndelingtype;
+    if (!isNonExhaustiveInndelingtype(inndelingtype)) {
+      return;
+    }
+
+    for (const [inndelingId, shouldArchive] of Object.entries(pendingArchived)) {
+      const archivedInndelingData = flatedata.find((candidate) => getIdFromEntity(candidate) === inndelingId);
+      if (archivedInndelingData == null) {
+        continue;
+      }
+
+      const archivedInndeling = {
+        identifikator: {
+          lokalId: inndelingId,
+          version: archivedInndelingData.version,
+        },
+      };
+
+      const archiveInndelingEntry: ArchiveInndelingEntry = {
+        type: "archive_inndeling",
+        changes: [
+          {
+            id: inndelingId,
+            flatetype: inndelingtype,
+            from: shouldArchive ? null : archivedInndeling,
+            to: shouldArchive ? archivedInndeling : null,
+          },
+        ],
+      };
+      addHistoryEntry(archiveInndelingEntry);
+
+      const featureIds = shouldArchive
+        ? archiveFeaturesForInndeling(inndelingId, inndelingtype)
+        : unarchiveFeaturesForInndeling(inndelingId, inndelingtype);
+      if (shouldArchive) {
+        addArchivedStyles(featureIds);
+      } else {
+        removeArchivedStyles(featureIds);
+      }
+    }
+  };
+
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
-    clearNewFlatedata();
 
     const [newFlater, existingFlater] = partitionDictBy<FlatedataInputs>(data, isValidTempFlateId);
 
@@ -119,9 +176,21 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       mainInndeling,
       previousValues.current,
     );
-    if (changesToExisting.length < 1 && newFlaterChanges.length < 1) {
+    const deletedInndelingChanges: DeleteInndelingEntry["changes"] = [...pendingDeletedIds]
+      .filter((inndelingId) => !tempFlatedata.some((candidate) => getIdFromEntity(candidate) === inndelingId))
+      .map((inndelingId) => ({ id: inndelingId, from: false, to: true }));
+
+    if (
+      changesToExisting.length < 1 &&
+      newFlaterChanges.length < 1 &&
+      deletedInndelingChanges.length < 1 &&
+      Object.keys(pendingArchived).length < 1 &&
+      pendingDeletedIds.size < 1
+    ) {
       return;
     }
+
+    commitArchiveChanges();
 
     if (changesToExisting.length > 0) {
       switch (mainInndeling.inndelingtype) {
@@ -156,6 +225,17 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         changes: newFlaterChanges,
       });
     }
+
+    if (deletedInndelingChanges.length > 0) {
+      addHistoryEntry({
+        type: "delete_inndeling",
+        changes: deletedInndelingChanges,
+      });
+    }
+
+    clearNewFlatedata();
+    setPendingArchived({});
+    setPendingDeletedIds(new Set());
     setIsEditing(!isEditing);
   };
 
@@ -188,6 +268,30 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     setTempFlatedata([]);
   };
 
+  const toggleArchived = (inndelingId: string, initiallyArchived: boolean) => {
+    setPendingArchived((current) => {
+      const nextArchived = !(current[inndelingId] ?? initiallyArchived);
+      if (nextArchived === initiallyArchived) {
+        const next = { ...current };
+        delete next[inndelingId];
+        return next;
+      }
+      return { ...current, [inndelingId]: nextArchived };
+    });
+  };
+
+  const toggleDeleted = (inndelingId: string) => {
+    setPendingDeletedIds((current) => {
+      const next = new Set(current);
+      if (next.has(inndelingId)) {
+        next.delete(inndelingId);
+      } else {
+        next.add(inndelingId);
+      }
+      return next;
+    });
+  };
+
   const canEditInndeling = utkast != null && mainInndeling.isEditing === true;
 
   return (
@@ -205,7 +309,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
           </thead>
           {flatedata.length > 0 && (
             <tbody>
-              {orderInndelingerBy(flatedata, sortProperty, sortOrder).map((inndeling) => {
+              {orderInndelingerBy(visibleFlatedata, sortProperty, sortOrder).map((inndeling) => {
                 const inndelingId = getIdFromEntity(inndeling);
 
                 const isSearchMatch =
@@ -223,9 +327,12 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                     formMethods={formMethods}
                     control={control}
                     setPreviousValues={setPreviousValues}
-                    allInndelinger={flatedata}
+                    allInndelinger={visibleFlatedata}
                     sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
                     canEditInndeling={canEditInndeling}
+                    pendingArchived={pendingArchived}
+                    toggleArchived={toggleArchived}
+                    toggleDeleted={toggleDeleted}
                   />
                 );
               })}
@@ -269,7 +376,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         isEditing={isEditing}
         isDisabled={allInndelingerHasFremtidigEndring || canEditInndeling === false || utkastHarSammenslaainger()}
         toggleEditing={toggleEditing}
-        canSave={isDirty}
+        canSave={isDirty || Object.keys(pendingArchived).length > 0 || pendingDeletedIds.size > 0}
         onSubmit={(e) => {
           clearSearch();
           handleSubmit(submitAndAddHistoryEntry)(e);
