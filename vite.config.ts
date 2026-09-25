@@ -71,15 +71,15 @@ export default defineConfig(({ mode }) => {
         "/skbaatts/req": {
           target: "https://baat.geonorge.no",
           changeOrigin: true,
-          pathRewrite: (path) => {
+          rewrite: (path) => {
             let tjenesteId = "";
 
             if (path.indexOf("tjenesteid=wms.ecc_enc") !== -1) {
               tjenesteId = "wms.ecc_enc";
             } else if (path.indexOf("tjenesteid=wms.nib") !== -1) {
               tjenesteId = "wms.nib";
-            } else if (path.indexOf("tjenesteid=background") !== -1) {
-              tjenesteId = "background";
+            } else if (path.indexOf("tjenesteid=wms.matrikkel.v1") !== -1) {
+              tjenesteId = "wms.matrikkel.v1";
             }
 
             return `/skbaatts/req?tjenesteid=${tjenesteId}&brukerid=${baatUsername}&passord=${baatPassword}&retformat=s`;
