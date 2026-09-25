@@ -1,7 +1,7 @@
 name: Release app
 on:
   push:
-    branches: [main]
+    branches: [main, TS-2743]
   workflow_dispatch:
 
 jobs:
