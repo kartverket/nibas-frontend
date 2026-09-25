@@ -25,6 +25,7 @@ import { clearEditLayer, clearViewingLayers, getLayerById } from "utils/map/laye
 import { updateRepresentasjonspunkt } from "utils/map/layerStyles";
 import { addFeaturesToSource } from "utils/map/source";
 import { useMap } from "utils/map/useMap";
+import TempFlateRepresentasjonspunktLoader from "./TempFlateRepresentasjonspunktLoader";
 import useInndelingFeatures from "./useInndelingFeatures";
 
 export type BaseInndeling = {
@@ -553,7 +554,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     isSameInndelinger,
   };
 
-  return <InndelingerContext.Provider value={value}>{children}</InndelingerContext.Provider>;
+  return (
+    <InndelingerContext.Provider value={value}>
+      {children}
+      <TempFlateRepresentasjonspunktLoader inndelinger={getAllInndelinger()} />
+    </InndelingerContext.Provider>
+  );
 };
 
 export const useInndelinger = () => {
