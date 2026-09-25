@@ -38,8 +38,8 @@ export const getGrensetypeFromString = (value: string): GrenseType | null => {
       case "Posisjon": {
         return null;
       }
-      case "Bopliktgrense": {
-        return "Bopliktgrense";
+      case "Bopliktområdegrense": {
+        return "Bopliktområdegrense";
       }
       case "GRUNNKRETS": {
         return null;

@@ -222,7 +222,7 @@ const mapGrenseTypeTilTilhorighetInndelingtype = (grenseType: GrenseType): Tilho
   switch (grenseType) {
     case "Stemmekretsgrense":
       return "STEMMEKRETS";
-    case "Bopliktgrense":
+    case "Bopliktområdegrense":
       return "BOPLIKTOMRAADE";
     default:
       return "GRUNNKRETS";

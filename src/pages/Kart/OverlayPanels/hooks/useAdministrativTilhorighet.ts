@@ -17,7 +17,7 @@ import {
 } from "./tilhorighet-utils";
 import { useTilhorighetForm } from "./useTilhorighetForm";
 
-// Bopliktgrenser er ikke med i administrativ tilhorighet da de ikke deltar i delt geometri.
+// Bopliktområdegrenser er ikke med i administrativ tilhorighet da de ikke deltar i delt geometri.
 type InndelingForAdministrativGrense = Exclude<TilhorighetInndelingtype, "BOPLIKTOMRAADE">;
 
 const useGetMuligeKretserForAdministrativGrense = (

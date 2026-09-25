@@ -29,7 +29,7 @@ export const GRENSETYPER = [
   "Delområdegrense",
   "Posisjon",
   "Stemmekretsgrense",
-  "Bopliktgrense",
+  "Bopliktområdegrense",
   "GRUNNKRETS",
   "STEMMEKRETS",
   "BOPLIKTOMRAADE",
@@ -46,7 +46,7 @@ export const editableGrenseTypes: GrenseType[] = [
   "Territorialgrense",
   "Riksgrense",
   "AvtaltAvgrensningslinje",
-  "Bopliktgrense",
+  "Bopliktområdegrense",
 ];
 
 export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): GrenseType | undefined => {
@@ -64,7 +64,7 @@ export const getGrensetypeFromInndelingtype = (inndelingtype: Inndelingtype): Gr
       return "Grunnkretsgrense";
 
     case "BOPLIKTOMRAADE":
-      return "Bopliktgrense";
+      return "Bopliktområdegrense";
 
     default:
       break;
@@ -91,7 +91,7 @@ export const getInndelingtypeFromGrensetype = (grenseType: GrenseType): Inndelin
     case "Delområdegrense":
       return "GRUNNKRETS";
 
-    case "Bopliktgrense":
+    case "Bopliktområdegrense":
       return "BOPLIKTOMRAADE";
 
     default:

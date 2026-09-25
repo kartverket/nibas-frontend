@@ -215,7 +215,7 @@ const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[]
     case "Stemmekretsgrense": {
       return archived ? grenseStyles.archivedStemmekrets : grenseStyles.STEMMEKRETS;
     }
-    case "Bopliktgrense": {
+    case "Bopliktområdegrense": {
       return archived ? grenseStyles.archivedBopliktomraade : grenseStyles.BOPLIKTOMRAADE;
     }
     case "BOPLIKTOMRAADE":
