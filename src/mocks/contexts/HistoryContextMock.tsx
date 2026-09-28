@@ -1,13 +1,13 @@
 import { HistoryContext } from "contexts/HistoryContext/HistoryContext";
+import { HistoryContextValue } from "contexts/HistoryContext/types";
 import { ReactNode } from "react";
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-
-const mockHistoryContextValue = {
+const mockHistoryContextValue: HistoryContextValue = {
   addHistoryEntry: vitest.fn(),
-  history: {} as any,
+  history: { entries: [], index: 0 },
   clearHistory: vitest.fn(),
-  getHistoryEntries: vitest.fn(),
+  getHistoryEntries: vitest.fn(() => []),
+  restoreHistoryState: vitest.fn(),
   canSave: false,
   undo: vitest.fn(),
   redo: vitest.fn(),
@@ -15,7 +15,7 @@ const mockHistoryContextValue = {
 };
 
 const MockHistoryProvider = ({ children }: { children: ReactNode }) => {
-  return <HistoryContext.Provider value={mockHistoryContextValue as any}>{children}</HistoryContext.Provider>;
+  return <HistoryContext.Provider value={mockHistoryContextValue}>{children}</HistoryContext.Provider>;
 };
 
 export { MockHistoryProvider };

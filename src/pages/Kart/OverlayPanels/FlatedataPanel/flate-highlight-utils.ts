@@ -2,7 +2,7 @@ import { grenserLayers } from "hooks/layers/constants";
 import { VectorLayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
-import { LineString, MultiPolygon, Polygon } from "ol/geom";
+import { LineString, MultiPolygon, Point, Polygon } from "ol/geom";
 import { TilhorighetInndelingtype } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
 import { FeatureProperties, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -189,4 +189,21 @@ export const getPolygonForOmraade = (
   feature.setId(`flate-${inndelingtype}-${omraadeId}`);
   feature.setProperties({ inndelingtype, inndelingId: omraadeId });
   return feature;
+};
+
+export const getRepresentasjonspunktForOmraade = (
+  inndelingtype: TilhorighetInndelingtype,
+  kommuneId: string,
+  omraade: MetadataResponse,
+): Point | null => {
+  const flate = getPolygonForOmraade(inndelingtype, kommuneId, omraade);
+  const polygons = flate?.getGeometry()?.getPolygons() ?? [];
+  const largestPolygon = polygons.reduce<Polygon | null>(
+    (largest, polygon) =>
+      largest == null || Math.abs(polygon.getArea()) > Math.abs(largest.getArea()) ? polygon : largest,
+    null,
+  );
+
+  const interiorCoordinates = largestPolygon?.getInteriorPoint().getCoordinates();
+  return interiorCoordinates == null ? null : new Point(interiorCoordinates.slice(0, 2));
 };
