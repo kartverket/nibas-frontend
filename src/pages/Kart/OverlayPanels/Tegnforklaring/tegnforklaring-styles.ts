@@ -65,12 +65,12 @@ export const tegnforklaringer: TegnforklaringProps[][] = [
       color: getColorFromStyle(grenseStyles.archivedStemmekrets),
     },
     {
-      text: "Bopliktgrense",
+      text: "Bopliktområdegrense",
       dotted: isDottedStyle(grenseStyles.BOPLIKTOMRAADE),
       color: getColorFromStyle(grenseStyles.BOPLIKTOMRAADE),
     },
     {
-      text: "Arkivert bopliktgrense",
+      text: "Arkivert bopliktområdegrense",
       dotted: isDottedStyle(grenseStyles.archivedBopliktomraade),
       color: getColorFromStyle(grenseStyles.archivedBopliktomraade),
     },

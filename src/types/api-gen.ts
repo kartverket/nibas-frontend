@@ -1674,7 +1674,7 @@ export interface components {
              * @description Type grense
              * @enum {string}
              */
-            grensetype: "Kommunegrense" | "Fylkesgrense" | "Riksgrense" | "AvtaltAvgrensningslinje" | "Territorialgrense" | "Grunnlinje" | "Grunnkretsgrense" | "Delomraadegrense" | "Stemmekretsgrense" | "Bopliktgrense";
+            grensetype: "Kommunegrense" | "Fylkesgrense" | "Riksgrense" | "AvtaltAvgrensningslinje" | "Territorialgrense" | "Grunnlinje" | "Grunnkretsgrense" | "Delomraadegrense" | "Stemmekretsgrense" | "Bopliktområdegrense";
             gyldighet: components["schemas"]["GyldighetResponse"];
             /** @description Unik ID for grensen */
             id: string;
