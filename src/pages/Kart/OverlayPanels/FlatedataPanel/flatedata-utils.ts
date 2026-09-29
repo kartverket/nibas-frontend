@@ -2,13 +2,17 @@ import { HistoryChange } from "contexts/HistoryContext/types";
 import { Inndeling } from "contexts/InndelingerContext/InndelingerContext";
 import { getDiscriminatorForCreateInndelingRequest } from "contexts/UtkastContext/utkast-utils";
 import {
+  BopliktomraadeResponse,
   BopliktomraadeRequest,
   GjeldendeMaterielleVilkaar,
+  GrunnkretsResponse,
   GrunnkretsRequest,
   Inndelingtype,
+  KommuneResponse,
   KommuneRequest,
   MetadataRequest,
   MetadataResponse,
+  StemmekretsResponse,
   StemmekretsRequest,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
@@ -46,6 +50,60 @@ type BopliktomraadeInput = {
 type BopliktomraadeInputs = { [inndelingId: string]: BopliktomraadeInput };
 
 export type FlatedataInputs = KommuneInputs | StemmekretsInputs | GrunnkretsInputs | BopliktomraadeInputs;
+
+export const getFlatedataInputs = (inndelingtype: Inndelingtype, flatedata: MetadataResponse[]): FlatedataInputs =>
+  Object.fromEntries(
+    flatedata.map((inndeling) => {
+      const inndelingId = getIdFromEntity(inndeling);
+      switch (inndelingtype) {
+        case "FYLKE":
+        case "KOMMUNE": {
+          const kommune = inndeling as KommuneResponse;
+          return [inndelingId, { samiskforvaltningsomraade: kommune.samiskforvaltningsomraade }];
+        }
+        case "STEMMEKRETS": {
+          const stemmekrets = inndeling as StemmekretsResponse;
+          return [
+            inndelingId,
+            {
+              navn: stemmekrets.navn,
+              nummer: stemmekrets.nummer,
+              tellekretsnavn: stemmekrets.tellekretsnavn ?? "",
+              tellekretsnummer: stemmekrets.tellekretsnummer ?? "",
+              valgdistriktsnummer: stemmekrets.valgdistriktsnummer,
+              informasjon: stemmekrets.informasjon ?? "",
+            },
+          ];
+        }
+        case "GRUNNKRETS": {
+          const grunnkrets = inndeling as GrunnkretsResponse;
+          return [
+            inndelingId,
+            {
+              navn: grunnkrets.navn,
+              nummer: grunnkrets.nummer,
+              informasjon: grunnkrets.informasjon ?? "",
+            },
+          ];
+        }
+        case "BOPLIKTOMRAADE": {
+          const bopliktomraade = inndeling as BopliktomraadeResponse;
+          return [
+            inndelingId,
+            {
+              navn: bopliktomraade.navn,
+              nummer: bopliktomraade.nummer,
+              gjelderKunDelAvKommunen: bopliktomraade.gjelderKunDelAvKommunen,
+              harUsikkerAvgrensning: bopliktomraade.harUsikkerAvgrensning ?? false,
+              forskriftsreferanse: bopliktomraade.forskriftsreferanse,
+              gjeldendeMaterielleVilkaar: bopliktomraade.gjeldendeMaterielleVilkaar ?? [],
+              andreLokaleAvgrensninger: bopliktomraade.andreLokaleAvgrensninger ?? "",
+            },
+          ];
+        }
+      }
+    }),
+  ) as FlatedataInputs;
 
 export const validateBopliktomraadeUtstrekning = (
   gjelderKunDelAvKommunen: boolean,

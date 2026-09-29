@@ -33,6 +33,7 @@ import { FlatedataTableRow } from "./FlatedataTableRow";
 import {
   FlatedataInputs,
   getDefaultFlatedataForInndelingtype,
+  getFlatedataInputs,
   getTempFlateId,
   isInndelingNonExhaustive,
   isNonExhaustiveInndelingtype,
@@ -94,7 +95,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   });
   const {
     reset,
-    getValues,
     handleSubmit,
     formState: { isDirty },
     control,
@@ -107,9 +107,10 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       previousValues.current = undefined;
     }
     if (isEditing && !previousValues.current) {
-      previousValues.current = structuredClone(getValues());
+      const existingFlatedata = flatedata.filter((inndeling) => !isValidTempFlateId(getIdFromEntity(inndeling)));
+      previousValues.current = getFlatedataInputs(mainInndeling.inndelingtype, existingFlatedata);
     }
-  }, [getValues, isEditing]);
+  }, [flatedata, isEditing, mainInndeling.inndelingtype]);
 
   const toggleEditing = () => {
     if (isEditing) {
@@ -172,7 +173,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       (inndelingId) => pendingArchived[inndelingId] === true,
     );
     const [newFlater, existingFlater] = partitionDictBy<FlatedataInputs>(activeFlater, isValidTempFlateId);
-
     const changesToExisting = reduceFlatedataChanges(existingFlater, previousValues.current, flatedata, mainInndeling);
     const newFlaterChanges = reduceFlatedataChangesForNewInndelinger(
       newFlater,
