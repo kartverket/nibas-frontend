@@ -167,7 +167,11 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const submitAndAddHistoryEntry = (data: FlatedataInputs) => {
     clearSearch();
 
-    const [newFlater, existingFlater] = partitionDictBy<FlatedataInputs>(data, isValidTempFlateId);
+    const [, activeFlater] = partitionDictBy<FlatedataInputs>(
+      data,
+      (inndelingId) => pendingArchived[inndelingId] === true,
+    );
+    const [newFlater, existingFlater] = partitionDictBy<FlatedataInputs>(activeFlater, isValidTempFlateId);
 
     const changesToExisting = reduceFlatedataChanges(existingFlater, previousValues.current, flatedata, mainInndeling);
     const newFlaterChanges = reduceFlatedataChangesForNewInndelinger(

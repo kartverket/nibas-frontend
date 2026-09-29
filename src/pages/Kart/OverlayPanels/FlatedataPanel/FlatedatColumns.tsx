@@ -39,6 +39,7 @@ export type FlatedataColumnCtx = {
   inndelingId: string;
   inndelingtype: FlatedataTableInndelingtype;
   isEditing: boolean;
+  isTableEditing: boolean;
   disabledDate: string | undefined;
   isArchived: boolean;
   toggleArchived: () => void;
@@ -92,7 +93,7 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
   return (
-    ctx.isEditing &&
+    ctx.isTableEditing &&
     (ctx.isArchived ? (
       <Tooltip label="Angre arkivering av inndelingen" placement="left" hasArrow>
         <IconButton
@@ -506,6 +507,7 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
         const value = getValues(`${inndelingId}.gjelderKunDelAvKommunen`) ?? bopliktomraade.gjelderKunDelAvKommunen;
+        const shouldValidate = isEditing && disabledDate == null;
         return (
           <SelectCell
             isEditing={isEditing}
@@ -518,8 +520,10 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
             data={value ? "Deler av kommunen" : "Hele kommunen"}
             {...register(`${inndelingId}.gjelderKunDelAvKommunen`, {
               setValueAs: (v) => (typeof v === "string" ? v === "true" : v),
-              validate: (gjelderKunDelAvKommunen) =>
-                validateBopliktomraadeUtstrekning(gjelderKunDelAvKommunen, activeInndelingerCount),
+              validate: shouldValidate
+                ? (gjelderKunDelAvKommunen) =>
+                    validateBopliktomraadeUtstrekning(gjelderKunDelAvKommunen, activeInndelingerCount)
+                : undefined,
             })}
             validationError={
               inndelingErrors != null && "gjelderKunDelAvKommunen" in inndelingErrors

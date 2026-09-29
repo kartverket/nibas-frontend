@@ -1,6 +1,6 @@
 import { HistoryDirection, MetadataEntry, MetadataTypeValues } from "contexts/HistoryContext/types";
 import { useHistoryFormSync } from "contexts/HistoryContext/useHistoryFormSync";
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment } from "react";
 import { Control, UseFormReturn, useFormState } from "react-hook-form";
 import { css, keyframes, styled } from "styled-components";
 import { MetadataResponse } from "types/api";
@@ -48,7 +48,7 @@ export const FlatedataTableRow = ({
   toggleArchived,
   toggleDeleted,
 }: Props) => {
-  const { setValue, getValues, trigger } = formMethods;
+  const { setValue, getValues } = formMethods;
   const inndelingId = getIdFromEntity(inndeling);
   const { errors } = useFormState({ control });
   const inndelingErrors = errors?.[inndelingId] as InndelingErrors;
@@ -74,14 +74,6 @@ export const FlatedataTableRow = ({
     const candidateId = getIdFromEntity(candidate);
     return !(pendingArchived[candidateId] ?? inndelingIsArchived(candidateId, utkast, historyEntries));
   }).length;
-  const previousActiveInndelingerCount = useRef(activeInndelingerCount);
-
-  useEffect(() => {
-    if (inndelingtype === "BOPLIKTOMRAADE" && previousActiveInndelingerCount.current !== activeInndelingerCount) {
-      void trigger(`${inndelingId}.gjelderKunDelAvKommunen`);
-    }
-    previousActiveInndelingerCount.current = activeInndelingerCount;
-  }, [activeInndelingerCount, inndelingId, inndelingtype, trigger]);
 
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
@@ -101,7 +93,8 @@ export const FlatedataTableRow = ({
     inndeling,
     inndelingId,
     inndelingtype,
-    isEditing: isEditing,
+    isEditing: isEditing && !isArchived,
+    isTableEditing: isEditing,
     disabledDate: disabledByFremtidigEndringUntilDate,
     isArchived,
     toggleArchived: () => toggleArchived(inndelingId, isInndelingArchivedInUtkast),
