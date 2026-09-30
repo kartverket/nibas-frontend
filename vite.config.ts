@@ -11,7 +11,6 @@ export default defineConfig(({ mode }) => {
   const matWfsUrl = process.env.VITE_MATRIKKELWFS_URL;
   const baatUsername = process.env.VITE_BAAT_USERNAME;
   const baatPassword = process.env.VITE_BAAT_PASSWORD;
-  const repo_pr_access = process.env.VITE_REPO_PR_ACCESS; // finnes på gcp under samme navn
 
   return {
     build: {
@@ -37,16 +36,6 @@ export default defineConfig(({ mode }) => {
       port: 3000,
       open: true,
       proxy: {
-        "/repos/kartverket/": {
-          target: "https://api.github.com",
-          changeOrigin: true,
-          headers: {
-            Accept: "application/vnd.github+json",
-            Authorization: `Bearer ${repo_pr_access}`,
-            "X-GitHub-Api-Version": "2022-11-28",
-            Host: "api.github.com",
-          },
-        },
         "/v1": {
           target: "http://localhost:8080",
           changeOrigin: true,
