@@ -1,4 +1,4 @@
-import { Icon, IconButton, Tooltip, useToast } from "@kvib/react";
+import { Icon, IconButton, Tooltip } from "@kvib/react";
 import { ValidationError } from "components/Input";
 import { Control, Controller, FieldError, UseFormReturn } from "react-hook-form";
 import { styled } from "styled-components";
@@ -31,10 +31,6 @@ import {
 } from "./flatedata-utils";
 import { SortPropertyFor } from "./useFlatedataTableSort";
 import FeatureToggle from "components/FeatureToggle";
-import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { ArchiveInndelingEntry, DeleteInndelingEntry } from "contexts/HistoryContext/types";
-import { archiveFeaturesForInndeling, unarchiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
-import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -43,8 +39,11 @@ export type FlatedataColumnCtx = {
   inndelingId: string;
   inndelingtype: FlatedataTableInndelingtype;
   isEditing: boolean;
+  isTableEditing: boolean;
   disabledDate: string | undefined;
   isArchived: boolean;
+  toggleArchived: () => void;
+  toggleDeleted: () => void;
   formMethods: UseFormReturn<FlatedataInputs>;
   control: Control<FlatedataInputs>;
   inndelingErrors: InndelingErrors;
@@ -75,11 +74,6 @@ type FremtidigEndringIconProps = {
   formattedDate: string | undefined;
 };
 
-type SetInndelingArchivedOptions = {
-  shouldArchive: boolean;
-  addToHistory: boolean;
-};
-
 const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
   return (
     <Tooltip
@@ -98,116 +92,32 @@ const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
 };
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry } = useHistory();
-  const { addArchivedStyles, removeArchivedStyles } = useFeatureStyle();
-  const toast = useToast();
-
-  const setInndelingArchived = ({ shouldArchive, addToHistory }: SetInndelingArchivedOptions) => {
-    if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
-      return;
-    }
-
-    const archivedInndeling = {
-      identifikator: {
-        lokalId: ctx.inndeling.id.lokalid.value,
-        version: ctx.inndeling.version,
-      },
-    };
-    const featureIds = shouldArchive
-      ? archiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype)
-      : unarchiveFeaturesForInndeling(ctx.inndelingId, ctx.inndelingtype);
-
-    if (addToHistory) {
-      const archiveInndelingEntry: ArchiveInndelingEntry = {
-        type: "archive_inndeling",
-        changes: [
-          {
-            id: ctx.inndelingId,
-            flatetype: ctx.inndelingtype,
-            from: shouldArchive ? null : archivedInndeling,
-            to: shouldArchive ? archivedInndeling : null,
-          },
-        ],
-      };
-      addHistoryEntry(archiveInndelingEntry);
-    }
-
-    if (shouldArchive) {
-      addArchivedStyles(featureIds);
-    } else {
-      removeArchivedStyles(featureIds);
-    }
-
-    const inndelingLabel = getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true });
-    const inndelingName = `"${ctx.inndeling.nummer} ${getNavnInSpraak(ctx.inndeling.navn, "nor")}"`;
-    toast({
-      status: "success",
-      title: shouldArchive
-        ? `Arkiverte ${inndelingLabel} ${inndelingName}.`
-        : `Angret arkivering av ${inndelingLabel} ${inndelingName}.`,
-    });
-  };
-
-  const handleArchiveInndeling = () => {
-    setInndelingArchived({ shouldArchive: true, addToHistory: true });
-  };
-
-  const handleUndoArchivingFromHistoryOrUtkast = () => {
-    if (isNonExhaustiveInndelingtype(ctx.inndelingtype) === false) {
-      return;
-    }
-    if (ctx.isArchived) {
-      setInndelingArchived({ shouldArchive: false, addToHistory: true });
-    }
-  };
-
-  return ctx.isArchived ? (
-    <Tooltip label="Angre arkivering av inndelingen" placement="left" hasArrow>
-      <IconButton
-        variant="ghost"
-        aria-label="Angre arkivering av inndelingen"
-        icon="undo"
-        onClick={handleUndoArchivingFromHistoryOrUtkast}
-      />
-    </Tooltip>
-  ) : (
-    <Tooltip label="Arkiver inndelingen" placement="left" hasArrow>
-      <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={handleArchiveInndeling} />
-    </Tooltip>
+  return (
+    ctx.isTableEditing &&
+    (ctx.isArchived ? (
+      <Tooltip label="Angre arkivering av inndelingen" placement="left" hasArrow>
+        <IconButton
+          variant="ghost"
+          aria-label="Angre arkivering av inndelingen"
+          icon="undo"
+          onClick={ctx.toggleArchived}
+        />
+      </Tooltip>
+    ) : (
+      <Tooltip label="Arkiver inndelingen" placement="left" hasArrow>
+        <IconButton variant="ghost" aria-label="Arkiver inndelingen" icon="archive" onClick={ctx.toggleArchived} />
+      </Tooltip>
+    ))
   );
 };
 
 const SlettInndelingButton = (ctx: FlatedataColumnCtx) => {
-  const { addHistoryEntry } = useHistory();
-  const toast = useToast();
-
-  const handleDeleteInndeling = () => {
-    const deleteInndelingEntry: DeleteInndelingEntry = {
-      type: "delete_inndeling",
-      changes: [
-        {
-          id: ctx.inndelingId,
-          from: false,
-          to: true,
-        },
-      ],
-    };
-    addHistoryEntry(deleteInndelingEntry);
-    toast({
-      status: "success",
-      title: `Slettet ${getInndelingtypeLabel(ctx.inndelingtype, { definiteForm: true })} "${ctx.inndeling.nummer} ${getNavnInSpraak(ctx.inndeling.navn, "nor")}" fra utkastet.`,
-    });
-  };
-
   return (
-    <Tooltip label="Slett inndelingen fra utkastet." placement="left" hasArrow>
-      <IconButton
-        variant="ghost"
-        aria-label="Slett inndelingen"
-        icon="delete_forever"
-        onClick={handleDeleteInndeling}
-      />
-    </Tooltip>
+    ctx.isEditing && (
+      <Tooltip label="Slett inndelingen fra utkastet." placement="left" hasArrow>
+        <IconButton variant="ghost" aria-label="Slett inndelingen" icon="delete_forever" onClick={ctx.toggleDeleted} />
+      </Tooltip>
+    )
   );
 };
 
@@ -597,6 +507,7 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
         const value = getValues(`${inndelingId}.gjelderKunDelAvKommunen`) ?? bopliktomraade.gjelderKunDelAvKommunen;
+        const shouldValidate = isEditing && disabledDate == null;
         return (
           <SelectCell
             isEditing={isEditing}
@@ -609,8 +520,10 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
             data={value ? "Deler av kommunen" : "Hele kommunen"}
             {...register(`${inndelingId}.gjelderKunDelAvKommunen`, {
               setValueAs: (v) => (typeof v === "string" ? v === "true" : v),
-              validate: (gjelderKunDelAvKommunen) =>
-                validateBopliktomraadeUtstrekning(gjelderKunDelAvKommunen, activeInndelingerCount),
+              validate: shouldValidate
+                ? (gjelderKunDelAvKommunen) =>
+                    validateBopliktomraadeUtstrekning(gjelderKunDelAvKommunen, activeInndelingerCount)
+                : undefined,
             })}
             validationError={
               inndelingErrors != null && "gjelderKunDelAvKommunen" in inndelingErrors
