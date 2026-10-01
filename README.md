@@ -22,19 +22,6 @@ VITE_MATRIKKELWFS_AUTH
 VITE_MATRIKKELWFS_URL
 ```
 
-For å hente aktive feature-miljøer fra GitHub, sett følgende i `.env.local`:
-
-```
-VITE_REPO_PR_ACCESS
-```
-
-Funksjonaliteten som bruker denne miljøvariabelen prøver å kalle disse endepunktene til github-apiet:
-
-- /repos/{owner}/{repo}/actions/runs
-- /repos/{owner}/{repo}/pulls
-
-Dermed trengs en fine-grained token med disse rettighetene: "Pull requests", "Acions", og "Metadata"
-
 ### Oppstart av applikasjonen
 
 Last ned dependencies med

@@ -1,7 +1,6 @@
 import { Environment, getCurrentEnvironment } from "components/FeatureToggle";
 import { styled } from "styled-components";
 import { zindex } from "utils/constants";
-import { EnvironmentSelect } from "./EnvironmentSelect";
 
 type EnvironmentStyle = { label: string; color: string };
 
@@ -40,7 +39,6 @@ const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {
       {children}
       <Overlay color={style.color}>
         <OverlayLabel color={style.color}>{style.label}</OverlayLabel>
-        <EnvironmentSelect />
       </Overlay>
     </>
   );
