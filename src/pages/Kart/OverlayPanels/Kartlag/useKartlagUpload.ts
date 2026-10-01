@@ -6,11 +6,6 @@ import { getUrlForPath, statusCode } from "utils/api";
 export const useKartlagUpload = () => {
   const toast = useToast();
   const uploadFetcher = async (url: string, { arg }: { arg: { file: File } }) => {
-    const sizeInMB = arg.file.size / 1024 ** 2;
-    if (sizeInMB > 50) {
-      throw new Error("Filstørrelsen kan ikke overstige 50MB per fil");
-    }
-
     const formData = new FormData();
     formData.append("file", arg.file);
 
