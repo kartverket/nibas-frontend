@@ -513,6 +513,7 @@ export const reduceFlatedataChangesForNewInndelinger = (
     (accumulator, [key, newValues]) => {
       if (isBopliktomraadeInput(newValues) && isInndelingNonExhaustive(inndeling.inndelingtype)) {
         const oldValues = previousValues?.[key];
+        console.log({ key, oldValues, newValues });
         if (oldValues != null && isBopliktomraadeInput(oldValues)) {
           const materielleVilkaarUnchanged =
             newValues.gjeldendeMaterielleVilkaar.length === oldValues.gjeldendeMaterielleVilkaar.length &&

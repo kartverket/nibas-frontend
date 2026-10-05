@@ -92,9 +92,11 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
     mode: "onSubmit",
     reValidateMode: "onChange",
     shouldUnregister: true,
+    defaultValues: getFlatedataInputs(mainInndeling.inndelingtype, flatedata),
   });
   const {
     reset,
+    getValues,
     handleSubmit,
     formState: { isDirty },
     control,
@@ -103,14 +105,13 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   // Hold styr på forrige tilstand i formet slik at vi har sammenlikningsgrunnlag for history
   const previousValues = useRef<FlatedataInputs>();
   useEffect(() => {
-    if (!isEditing) {
+    if (isEditing == false) {
       previousValues.current = undefined;
     }
-    if (isEditing && !previousValues.current) {
-      const existingFlatedata = flatedata.filter((inndeling) => !isValidTempFlateId(getIdFromEntity(inndeling)));
-      previousValues.current = getFlatedataInputs(mainInndeling.inndelingtype, existingFlatedata);
+    if (isEditing && previousValues.current == null) {
+      previousValues.current = structuredClone(getValues());
     }
-  }, [flatedata, isEditing, mainInndeling.inndelingtype]);
+  }, [isEditing, getValues]);
 
   const toggleEditing = () => {
     if (isEditing) {
@@ -237,6 +238,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
       });
     }
 
+    reset(data);
     clearNewFlatedata();
     setPendingArchived({});
     setPendingDeletedIds(new Set());
