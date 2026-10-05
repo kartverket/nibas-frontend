@@ -25,7 +25,7 @@ type Keys =
 
 const featureToggles: Record<Keys, Record<Environment, boolean>> = {
   ARCHIVE_INNDELING: {
-    prod: false,
+    prod: true,
     "dev-main": true,
     "dev-e2e": true,
     localhost: true,
@@ -53,7 +53,7 @@ const featureToggles: Record<Keys, Record<Environment, boolean>> = {
     "feature-branch": true,
   },
   DELETE_INNDELING: {
-    prod: false,
+    prod: true,
     "dev-main": true,
     "dev-e2e": true,
     localhost: true,
