@@ -41,6 +41,7 @@ export type FlatedataColumnCtx = {
   isEditing: boolean;
   isTableEditing: boolean;
   isDisabled: boolean;
+  isSplitInndeling: boolean;
   disabledDate: string | undefined;
   isArchived: boolean;
   toggleArchived: () => void;
@@ -71,26 +72,19 @@ const validationError = (error: FieldError | undefined | null): ValidationError 
   return undefined;
 };
 
-type FremtidigEndringIconProps = {
-  formattedDate: string | undefined;
+type LockColumnOptions = {
+  tooltip: string;
+  ariaLabel: string;
+  icon: "lock" | "lock_clock";
 };
 
-const FremtidigEndringIcon = ({ formattedDate }: FremtidigEndringIconProps) => {
-  return (
-    <Tooltip
-      label={`Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`}
-      placement="left"
-    >
-      <IconContainer>
-        <Icon
-          color="var(--kvib-colors-blue-500)"
-          aria-label="Inndelingen har fremtidig endring"
-          icon="lock_clock"
-        ></Icon>
-      </IconContainer>
-    </Tooltip>
-  );
-};
+const LockIcon = ({ tooltip, ariaLabel, icon }: LockColumnOptions) => (
+  <Tooltip label={tooltip} placement="left">
+    <IconContainer>
+      <Icon color="var(--kvib-colors-blue-500)" aria-label={ariaLabel} icon={icon} />
+    </IconContainer>
+  </Tooltip>
+);
 
 const ArkiverInndelingButton = (ctx: FlatedataColumnCtx) => {
   return (
@@ -133,13 +127,11 @@ const SpacerCell = styled.td`
   /* Fyller ledig plass slik at lock-ikonet trekkes helt til høyre. */
 `;
 
-const lockIconColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<T> => ({
+const lockColumn = <T extends FlatedataTableInndelingtype>(options: LockColumnOptions): FlatedataColumn<T> => ({
   header: "",
-  renderCell: ({ disabledDate }) => (
+  renderCell: () => (
     <TableCell>
-      <FremtidigEndringIcon
-        formattedDate={disabledDate != null ? datestringToFormattedDatestring(disabledDate) : undefined}
-      />
+      <LockIcon {...options} />
     </TableCell>
   ),
 });
@@ -183,8 +175,19 @@ const deleteColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
 const endColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<T> => ({
   header: "",
   renderCell: (ctx: FlatedataColumnCtx) => {
-    if (ctx.disabledDate != null) {
-      return lockIconColumn<T>().renderCell({ ...ctx });
+    if (ctx.isSplitInndeling) {
+      return lockColumn<T>({
+        tooltip: "Inndelinger opprettet ved kretsdeling må endres i kretsdelingsverktøyet.",
+        ariaLabel: "Inndelingen er opprettet ved kretsdeling",
+        icon: "lock",
+      }).renderCell({ ...ctx });
+    } else if (ctx.disabledDate != null) {
+      const formattedDate = datestringToFormattedDatestring(ctx.disabledDate);
+      return lockColumn<T>({
+        tooltip: `Inndelingen har en fremtidig endring og kan ikke endres før endringen inntreffer. Endringer inntreffer ${formattedDate}`,
+        ariaLabel: "Inndelingen har fremtidig endring",
+        icon: "lock_clock",
+      }).renderCell({ ...ctx });
     } else if (isValidTempFlateId(ctx.inndeling.id.lokalid.value)) {
       return deleteColumn<T>().renderCell({ ...ctx });
     } else {

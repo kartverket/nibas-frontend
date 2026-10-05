@@ -20,6 +20,7 @@ type Props = {
   isSearchMatch: boolean;
   isEditing: boolean;
   isNew: boolean;
+  isSplitInndeling: boolean;
   formMethods: UseFormReturn<FlatedataInputs>;
   setPreviousValues: (flatedata: FlatedataInputs | undefined) => void;
   allInndelinger: MetadataResponse[];
@@ -38,6 +39,7 @@ export const FlatedataTableRow = ({
   isSearchMatch,
   isEditing,
   isNew,
+  isSplitInndeling,
   formMethods,
   setPreviousValues,
   allInndelinger,
@@ -95,7 +97,8 @@ export const FlatedataTableRow = ({
     inndelingtype,
     isEditing,
     isTableEditing: isEditing,
-    isDisabled: isArchived || disabledByFremtidigEndringUntilDate != null,
+    isDisabled: isSplitInndeling || isArchived || disabledByFremtidigEndringUntilDate != null,
+    isSplitInndeling,
     disabledDate: disabledByFremtidigEndringUntilDate,
     isArchived,
     toggleArchived: () => toggleArchived(inndelingId, isInndelingArchivedInUtkast),
