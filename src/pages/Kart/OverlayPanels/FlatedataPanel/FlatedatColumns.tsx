@@ -40,6 +40,7 @@ export type FlatedataColumnCtx = {
   inndelingtype: FlatedataTableInndelingtype;
   isEditing: boolean;
   isTableEditing: boolean;
+  isDisabled: boolean;
   disabledDate: string | undefined;
   isArchived: boolean;
   toggleArchived: () => void;
@@ -221,13 +222,13 @@ const getKommuneColumns = <T extends "FYLKE" | "KOMMUNE">(): FlatedataColumn<T>[
     {
       header: "Merknad",
       sortKey: "samiskforvaltningsomraade",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, inndelingErrors }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, inndelingErrors }) => {
         const kommune = inndeling as KommuneResponse;
         const { register, getValues } = formMethods;
         return (
           <MerknadCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             label="Samisk forvaltningsområde"
             data={getValues(`${inndelingId}.samiskforvaltningsomraade`) ?? kommune.samiskforvaltningsomraade}
             validationError={
@@ -246,7 +247,7 @@ const getKommuneColumns = <T extends "FYLKE" | "KOMMUNE">(): FlatedataColumn<T>[
 const nummerColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, label: string): FlatedataColumn<T> => ({
   header: `${label}nummer`,
   sortKey: "nummer" as SortPropertyFor<T>,
-  renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, inndelingErrors }) => {
+  renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, inndelingErrors }) => {
     const { register, getValues, watch, trigger } = formMethods;
     const prefixNumber = "kommunenummer" in inndeling ? inndeling.kommunenummer.kodeverdi : undefined;
     const validateInndelingNumber = getNumberValidatorFunctionForInndelingType<FlatedataInputs, `${string}.nummer`>(
@@ -259,11 +260,11 @@ const nummerColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, l
       shouldNotBeEqualWith: existingIndelingtypeNumbers,
       prefixNumber,
     });
-    const shouldValidate = isEditing && disabledDate == null;
+    const shouldValidate = isEditing && !isDisabled;
     return (
       <InputCell
         isEditing={isEditing}
-        isDisabled={disabledDate != null}
+        isDisabled={isDisabled}
         data={getValues(`${inndelingId}.nummer`) ?? inndeling.nummer}
         validationError={
           inndelingErrors != null && "nummer" in inndelingErrors ? validationError(inndelingErrors.nummer) : undefined
@@ -280,16 +281,16 @@ const nummerColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, l
 const navnColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, label: string): FlatedataColumn<T> => ({
   header: `${label}navn`,
   sortKey: "navn" as SortPropertyFor<T>,
-  renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, inndelingErrors }) => {
+  renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, inndelingErrors }) => {
     const { register, getValues } = formMethods;
     const registerOptions = {
       required: `${getInndelingtypeLabel(inndelingtype, { pluralizeLabel: false, capitalizeLabel: true })}navn kan ikke være tomt`,
     };
-    const shouldValidate = isEditing && disabledDate == null;
+    const shouldValidate = isEditing && !isDisabled;
     return (
       <InputCell
         isEditing={isEditing}
-        isDisabled={disabledDate != null}
+        isDisabled={isDisabled}
         data={getValues(`${inndelingId}.navn`) ?? inndeling.navn}
         validationError={
           inndelingErrors != null && "navn" in inndelingErrors ? validationError(inndelingErrors.navn) : undefined
@@ -308,7 +309,7 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
     {
       header: "Tellekretsnummer",
       sortKey: "tellekretsnummer",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, inndelingErrors }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, inndelingErrors }) => {
         const stemmekrets = inndeling as StemmekretsResponse;
         const { register, getValues } = formMethods;
         const tellekretsNummerOptions = {
@@ -330,11 +331,11 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
           },
           required: undefined,
         };
-        const shouldValidate = isEditing && disabledDate == null;
+        const shouldValidate = isEditing && !isDisabled;
         return (
           <InputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             data={getValues(`${inndelingId}.tellekretsnummer`) ?? stemmekrets.tellekretsnummer}
             validationError={
               inndelingErrors != null && "tellekretsnummer" in inndelingErrors
@@ -349,15 +350,7 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
     {
       header: "Tellekretsnavn",
       sortKey: "tellekretsnavn",
-      renderCell: ({
-        inndeling,
-        inndelingId,
-        isEditing,
-        disabledDate,
-        formMethods,
-        inndelingErrors,
-        allInndelinger,
-      }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, inndelingErrors, allInndelinger }) => {
         const stemmekrets = inndeling as StemmekretsResponse;
         const {
           register,
@@ -387,7 +380,7 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
           },
           required: undefined,
         };
-        const shouldValidate = isEditing && disabledDate == null;
+        const shouldValidate = isEditing && !isDisabled;
         const tellekretsnavnRegister = register(
           `${inndelingId}.tellekretsnavn`,
           shouldValidate ? tellekretsNavnOptions : undefined,
@@ -395,7 +388,7 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
         return (
           <InputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             data={getValues(`${inndelingId}.tellekretsnavn`) ?? stemmekrets.tellekretsnavn}
             validationError={
               inndelingErrors != null && "tellekretsnavn" in inndelingErrors
@@ -424,13 +417,13 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
     {
       header: "Informasjon",
       size: "1fr",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, sammenslaaingInformasjon }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, sammenslaaingInformasjon }) => {
         const stemmekrets = inndeling as StemmekretsResponse;
         const { register, getValues } = formMethods;
         return (
           <InputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? stemmekrets.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
@@ -447,13 +440,13 @@ const getGrunnkretsColumns = (): FlatedataColumn<"GRUNNKRETS">[] => {
     navnColumn("GRUNNKRETS", label),
     {
       header: "Informasjon",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, sammenslaaingInformasjon }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, sammenslaaingInformasjon }) => {
         const grunnkrets = inndeling as GrunnkretsResponse;
         const { register, getValues } = formMethods;
         return (
           <InputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? grunnkrets.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
@@ -473,14 +466,14 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
     navnColumn("BOPLIKTOMRAADE", label),
     {
       header: "Forskriftsreferanse",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods, inndelingErrors }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, inndelingErrors }) => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
-        const shouldValidate = isEditing && disabledDate == null;
+        const shouldValidate = isEditing && !isDisabled;
         return (
           <URLInputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             data={getValues(`${inndelingId}.forskriftsreferanse`) ?? bopliktomraade.forskriftsreferanse}
             {...register(`${inndelingId}.forskriftsreferanse`, shouldValidate ? urlOptions : undefined)}
             validationError={
@@ -499,7 +492,7 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
         inndeling,
         inndelingId,
         isEditing,
-        disabledDate,
+        isDisabled,
         formMethods,
         inndelingErrors,
         activeInndelingerCount,
@@ -507,11 +500,11 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
         const value = getValues(`${inndelingId}.gjelderKunDelAvKommunen`) ?? bopliktomraade.gjelderKunDelAvKommunen;
-        const shouldValidate = isEditing && disabledDate == null;
+        const shouldValidate = isEditing && !isDisabled;
         return (
           <SelectCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             options={[
               { label: "Deler av kommunen", value: "true" },
               { label: "Hele kommunen", value: "false" },
@@ -537,7 +530,7 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
     {
       header: "Har usikker avgrensning",
       sortKey: "harUsikkerAvgrensning",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods }) => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
         const existingHarUsikkerAvgrensning = bopliktomraade.harUsikkerAvgrensning ?? false;
@@ -546,7 +539,7 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
         return (
           <SelectCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             options={[
               { label: "Ja", value: "true" },
               { label: "Nei", value: "false" },
@@ -562,7 +555,7 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
     },
     {
       header: "Gjeldende materielle vilkår",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, control }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, control }) => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         return (
           <Controller
@@ -572,7 +565,7 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
             render={({ field }) => (
               <MultiSelectCell
                 isEditing={isEditing}
-                isDisabled={disabledDate != null}
+                isDisabled={isDisabled}
                 options={MaterielleVilkaarOptions}
                 data={field.value ?? []}
                 onChange={field.onChange}
@@ -585,13 +578,13 @@ const getBopliktomraadeColumns = (): FlatedataColumn<"BOPLIKTOMRAADE">[] => {
     {
       header: "Andre lokale avgrensninger",
       size: "1fr",
-      renderCell: ({ inndeling, inndelingId, isEditing, disabledDate, formMethods }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods }) => {
         const bopliktomraade = inndeling as BopliktomraadeResponse;
         const { register, getValues } = formMethods;
         return (
           <InputCell
             isEditing={isEditing}
-            isDisabled={disabledDate != null}
+            isDisabled={isDisabled}
             data={getValues(`${inndelingId}.andreLokaleAvgrensninger`) ?? bopliktomraade.andreLokaleAvgrensninger ?? ""}
             {...register(`${inndelingId}.andreLokaleAvgrensninger`)}
           />
