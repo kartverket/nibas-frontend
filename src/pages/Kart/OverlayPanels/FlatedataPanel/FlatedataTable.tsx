@@ -105,7 +105,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   // Hold styr på forrige tilstand i formet slik at vi har sammenlikningsgrunnlag for history
   const previousValues = useRef<FlatedataInputs>();
   useEffect(() => {
-    if (isEditing == false) {
+    if (isEditing === false) {
       previousValues.current = undefined;
     }
     if (isEditing && previousValues.current == null) {
