@@ -90,7 +90,12 @@ const Header = () => {
         {!utkast && (
           <Flex alignItems="center">
             <CustomTooltip text="Tilbake til forsiden">
-              <Button leftIcon="arrow_back" variant="tertiary" size="sm" onClick={() => navigate(routes.index)}>
+              <Button
+                leftIcon="arrow_back"
+                variant="tertiary"
+                size="sm"
+                onClick={() => navigate(routes.index, { viewTransition: true })}
+              >
                 Tilbake til forsiden
               </Button>
             </CustomTooltip>

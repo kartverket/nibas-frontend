@@ -151,7 +151,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
       const json = await response.json();
       const utkastId = json.id;
       toast({ title: "Utkast opprettet", status: "success" });
-      navigate(`../utkast/${utkastId}`);
+      navigate(`../utkast/${utkastId}`, { viewTransition: true });
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({
@@ -162,7 +162,7 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
   };
 
   const openVisningsmodusPaaUtkastGyldigFra = (gyldigFra: string) => {
-    navigate(`../kart/${format(new Date(gyldigFra), "yyyy-MM-dd")}`);
+    navigate(`../kart/${format(new Date(gyldigFra), "yyyy-MM-dd")}`, { viewTransition: true });
   };
 
   const getEndredeInndelingerForInndelingtype = (inndelingtype: Inndelingtype) => {

@@ -76,7 +76,7 @@ const UtkastOpprett = () => {
       const json = await response.json();
       const utkastId = json.id;
       toast({ title: "Utkast opprettet", status: "success" });
-      navigate(utkastId);
+      navigate(utkastId, { viewTransition: true });
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;
       setError({

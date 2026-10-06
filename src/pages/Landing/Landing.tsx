@@ -26,19 +26,19 @@ const Landing = () => {
           title="Gjør en eller flere endringer"
           description="Opprett, rediger, eller publiser ett eller flere utkast med endringer."
           icon="draw"
-          onClick={() => navigate(routes.utkast)}
+          onClick={() => navigate(routes.utkast, { viewTransition: true })}
         />
         <ActionCard
           title="Finn og utforsk"
           description="Se oppdaterte data uten å foreta deg noen endringer."
           icon="travel_explore"
-          onClick={() => navigate(`kart/${format(new Date(), "yyyy-MM-dd")}`)}
+          onClick={() => navigate(`kart/${format(new Date(), "yyyy-MM-dd")}`, { viewTransition: true })}
         />
         <ActionCard
           title="Fremtidige endringer"
           description="Se hvilke endringer som er publisert, men som ikke har inntruffet enda."
           icon="event"
-          onClick={() => navigate(routes.endringer)}
+          onClick={() => navigate(routes.endringer, { viewTransition: true })}
         />
       </Page>
       <PrivacyFooter />

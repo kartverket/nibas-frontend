@@ -53,7 +53,7 @@ const UtkastSlettModal = ({ isOpen, onClose, utkast }: Props) => {
       clearInndelingerAndSources();
 
       if (utkastPathMatch) {
-        navigate(routes.utkast);
+        navigate(routes.utkast, { viewTransition: true });
       }
     } else if (statusCode.isError(response.status)) {
       const wrapper = (await response.json()) as ApiErrorResponse;

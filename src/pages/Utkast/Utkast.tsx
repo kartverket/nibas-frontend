@@ -62,7 +62,7 @@ const Utkast = () => {
       <LandingHeader />
       <UtkastPage>
         <TitleContainer>
-          <ReturnButton to={routes.index}>
+          <ReturnButton to={routes.index} viewTransition>
             <Icon icon="arrow_back" />
             <span>Tilbake til forsiden</span>
           </ReturnButton>

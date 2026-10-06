@@ -45,7 +45,7 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
   const onBekreft = (data: FormType) => {
     const valgtDato = data.dato ?? new Date();
     const valgtDatoAsString = format(valgtDato, "yyyy-MM-dd");
-    navigate(`../kart/${valgtDatoAsString}`);
+    navigate(`../kart/${valgtDatoAsString}`, { viewTransition: true });
     clearInndelingerAndSources();
     resetKartlag();
     resetMapView();
