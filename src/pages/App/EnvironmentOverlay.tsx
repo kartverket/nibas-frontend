@@ -25,10 +25,6 @@ export const styles: Record<Environment, EnvironmentStyle> = {
     label: "Lokalt utviklingsmiljø",
     color: "var(--kvib-colors-red-200)",
   },
-  "feature-branch": {
-    label: getFeatureBranchName(),
-    color: "var(--kvib-colors-purple-200)",
-  },
 };
 
 const EnvironmentOverlay = ({ children }: { children: React.ReactNode }) => {

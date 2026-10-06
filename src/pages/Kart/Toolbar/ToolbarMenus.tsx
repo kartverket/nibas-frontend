@@ -341,14 +341,12 @@ const ToolbarMenus = () => {
             tooltip="Flate"
           >
             <MenuList>
-              <FeatureToggle feature="VIS_FLATER">
-                <VisFlaterMenuItem
-                  isAvailable={visFlaterIsAvailable}
-                  isActive={visFlaterIsActive}
-                  onToggle={toggleVisFlater}
-                  disabledMessage={defaultToolDisabledMessage}
-                />
-              </FeatureToggle>
+              <VisFlaterMenuItem
+                isAvailable={visFlaterIsAvailable}
+                isActive={visFlaterIsActive}
+                onToggle={toggleVisFlater}
+                disabledMessage={defaultToolDisabledMessage}
+              />
               {visibleFlateMenuItems.map(renderMenuItem)}
             </MenuList>
           </ToolbarMenu>
@@ -377,14 +375,12 @@ const ToolbarMenus = () => {
             )}
             {(visiblePunktMenuItems.length > 0 || visibleGrenseMenuItems.length > 0) && <MenuDivider />}
             <MenuOptionGroup title="Flate">
-              <FeatureToggle feature="VIS_FLATER">
-                <VisFlaterMenuItem
-                  isAvailable={visFlaterIsAvailable}
-                  isActive={visFlaterIsActive}
-                  onToggle={toggleVisFlater}
-                  disabledMessage={defaultToolDisabledMessage}
-                />
-              </FeatureToggle>
+              <VisFlaterMenuItem
+                isAvailable={visFlaterIsAvailable}
+                isActive={visFlaterIsActive}
+                onToggle={toggleVisFlater}
+                disabledMessage={defaultToolDisabledMessage}
+              />
               {visibleFlateMenuItems.map(renderMenuItem)}
             </MenuOptionGroup>
           </MenuList>

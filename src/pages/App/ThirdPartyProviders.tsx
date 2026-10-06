@@ -1,7 +1,10 @@
 import { SWRConfig } from "swr";
 import { KvibProvider, extendTheme, withDefaultColorScheme, UseToastOptions, defaultKvibTheme } from "@kvib/react";
+import { PostHogProvider } from "posthog-js/react";
 import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
+import { PostHogConfig } from "posthog-js";
+import { getCurrentEnvironment } from "components/FeatureToggle";
 
 const emotionCache = createCache({
   key: "emotion-css-cache",
@@ -23,13 +26,22 @@ const defaultToastOptions: UseToastOptions = {
   },
 };
 
+const posthogApiKey = "phc_px56rqpRXFBgiaEyDdaDMJUAQiHXhBtpv6hVaQJoCwPm";
+const posthogOptions: Partial<PostHogConfig> = {
+  api_host: "https://ph.kartverket.no",
+  ui_host: "https://eu.i.posthog.com",
+  evaluation_contexts: [getCurrentEnvironment()],
+};
+
 const ThirdPartyProviders = ({ children }: { children: React.ReactNode }) => {
   return (
-    <CacheProvider value={emotionCache}>
-      <KvibProvider theme={customTheme} toastOptions={{ defaultOptions: defaultToastOptions }}>
-        <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
-      </KvibProvider>
-    </CacheProvider>
+    <PostHogProvider apiKey={posthogApiKey} options={posthogOptions}>
+      <CacheProvider value={emotionCache}>
+        <KvibProvider theme={customTheme} toastOptions={{ defaultOptions: defaultToastOptions }}>
+          <SWRConfig value={swrGlobalConfig}>{children}</SWRConfig>
+        </KvibProvider>
+      </CacheProvider>
+    </PostHogProvider>
   );
 };
 
