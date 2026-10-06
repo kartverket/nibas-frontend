@@ -21,7 +21,7 @@ import { getRepresentasjonspunktId } from "utils/map/source";
 import { inndelingResponseNavnToString } from "utils/language/language";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
-import { isBopliktomraadeInndeling } from "pages/Kart/OverlayPanels/FlatedataPanel/useFlatedata";
+import { isBopliktomraadeResponse } from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-response-guards";
 
 type InndelingGrenserRequestPath = Pick<
   paths,
@@ -110,7 +110,7 @@ const shouldFetchAdditionalFeatures = (inndelingtype: Inndelingtype, inndeling: 
         (isEmptyInndelingResponse(inndeling) ||
           (inndeling.length > 0 &&
             inndeling.every(
-              (omraade) => isBopliktomraadeInndeling(omraade) === true && omraade.gjelderKunDelAvKommunen === true,
+              (omraade) => isBopliktomraadeResponse(omraade) === true && omraade.gjelderKunDelAvKommunen === true,
             )))
       );
     case "FYLKE":

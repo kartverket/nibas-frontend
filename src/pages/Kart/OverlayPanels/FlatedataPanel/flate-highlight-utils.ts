@@ -7,7 +7,7 @@ import { TilhorighetInndelingtype } from "pages/Kart/OverlayPanels/hooks/tilhori
 import { FeatureProperties, MetadataResponse } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { removeNil } from "utils/list-utils";
-import { isBopliktomraadeInndeling } from "./useFlatedata";
+import { isBopliktomraadeResponse } from "./flatedata-response-guards";
 import {
   getKommuneLokalidFromTempFlateId,
   getInndelingtypeFromTempFlateId,
@@ -163,7 +163,7 @@ const getLineStringsForOmraade = (
         (feature) => feature.getGeometry() as LineString,
       );
     case "BOPLIKTOMRAADE":
-      if (isBopliktomraadeInndeling(omraade) && omraade.gjelderKunDelAvKommunen === false) {
+      if (isBopliktomraadeResponse(omraade) && omraade.gjelderKunDelAvKommunen === false) {
         return getLineStringsForKommuneFromSource(kommuneId);
       }
       return getLineStringsForOmraadeFromSource(inndelingtype, omraadeId, RELEVANT_GRENSE_LAYER_IDS).map(

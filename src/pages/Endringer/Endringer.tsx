@@ -31,9 +31,9 @@ import { useStemmekretser } from "hooks/inndelinger/useStemmekretser";
 import { useUtkasts } from "hooks/inndelinger/useUtkasts";
 import Loading from "pages/App/Loading";
 import {
-  isBopliktomraadeInndeling,
-  isStemmekretsInndeling,
-} from "pages/Kart/OverlayPanels/FlatedataPanel/useFlatedata";
+  isBopliktomraadeResponse,
+  isStemmekretsResponse,
+} from "pages/Kart/OverlayPanels/FlatedataPanel/flatedata-response-guards";
 import LandingHeader from "pages/Landing/LandingHeader";
 import { useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
@@ -188,11 +188,11 @@ const UtkastRow = ({ utkast }: UtkastRowProps) => {
       case "GRUNNKRETS":
         return `${inndeling.nummer}`;
       case "STEMMEKRETS":
-        return isStemmekretsInndeling(inndeling)
+        return isStemmekretsResponse(inndeling)
           ? `(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer}`
           : undefined;
       case "BOPLIKTOMRAADE":
-        return isBopliktomraadeInndeling(inndeling)
+        return isBopliktomraadeResponse(inndeling)
           ? `(${inndeling.kommunenummer.kodeverdi}) ${inndeling.nummer}`
           : undefined;
       case "FYLKE":

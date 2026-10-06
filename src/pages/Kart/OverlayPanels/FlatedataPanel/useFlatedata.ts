@@ -16,10 +16,8 @@ import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext
 import useKommuneInndelinger from "hooks/inndelinger/useKommuneInndelinger";
 import useKommuner, { useKommune } from "hooks/inndelinger/useKommuner";
 import {
-  BopliktomraadeResponse,
   GrunnkretsResponse,
   Inndelingtype,
-  KommuneResponse,
   KretsDelingEndringRequest,
   MetadataResponse,
   StemmekretsResponse,
@@ -31,6 +29,7 @@ import {
   isBopliktomraadeRequest,
   isNonExhaustiveInndelingtype,
 } from "./flatedata-utils";
+import { isGrunnkretsResponse, isStemmekretsResponse } from "./flatedata-response-guards";
 import { getIdFromEntity } from "utils/api";
 
 const useFlatedataFromBackend = (
@@ -205,10 +204,8 @@ const getNyeInndelingerMetadataForInndelingtypeFromUtkast = (
 
 const isKretsMetadataResponse = (
   metadataresponse: MetadataResponse,
-  inndelingtype: Inndelingtype,
 ): metadataresponse is GrunnkretsResponse | StemmekretsResponse =>
-  (inndelingtype === "STEMMEKRETS" && isStemmekretsInndeling(metadataresponse)) ||
-  (inndelingtype === "GRUNNKRETS" && "informasjon" in metadataresponse && !isBopliktomraadeInndeling(metadataresponse));
+  isGrunnkretsResponse(metadataresponse) || isStemmekretsResponse(metadataresponse);
 
 const getKretsdelingMetadata = (
   kretsdelinger: KretsDelingEndringRequest[],
@@ -223,7 +220,7 @@ const getKretsdelingMetadata = (
     .flatMap((kretsdeling) => {
       const opprinneligKrets = metadataresponses.find(
         (metadataresponse): metadataresponse is GrunnkretsResponse | StemmekretsResponse =>
-          isKretsMetadataResponse(metadataresponse, inndeling.inndelingtype) &&
+          isKretsMetadataResponse(metadataresponse) &&
           getIdFromEntity(metadataresponse) === kretsdeling.opprinneligKrets.lokalId,
       );
       if (opprinneligKrets == null) {
@@ -308,10 +305,3 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
     ...newFlatedataFromHistory,
   ];
 };
-
-export const isKommuneInndeling = (value: object): value is KommuneResponse => "samiskforvaltningsomraade" in value;
-
-export const isStemmekretsInndeling = (value: object): value is StemmekretsResponse => "valgdistriktsnummer" in value;
-
-export const isBopliktomraadeInndeling = (value: object): value is BopliktomraadeResponse =>
-  "gjelderKunDelAvKommunen" in value;
