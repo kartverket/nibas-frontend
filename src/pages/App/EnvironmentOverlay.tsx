@@ -4,10 +4,6 @@ import { zindex } from "utils/constants";
 
 type EnvironmentStyle = { label: string; color: string };
 
-const getFeatureBranchName = () => {
-  return window.location.hostname.split(".")[0];
-};
-
 export const styles: Record<Environment, EnvironmentStyle> = {
   "dev-main": {
     label: "Utviklingsmiljø",

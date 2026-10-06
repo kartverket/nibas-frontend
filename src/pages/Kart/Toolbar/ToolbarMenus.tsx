@@ -23,7 +23,6 @@ import InndelingerHighlightLoader from "../OverlayPanels/FlatedataPanel/FlateHig
 import CustomTooltip from "./CustomTooltip";
 import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
-import FeatureToggle from "components/FeatureToggle";
 
 export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
   (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS",

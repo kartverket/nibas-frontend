@@ -1,5 +1,5 @@
 import { useFeatureFlagEnabled } from "posthog-js/react";
-import posthog from "posthog-js";
+import { posthog } from "posthog-js";
 import React from "react";
 
 type Keys = "archive-inndeling" | "delete-inndeling";

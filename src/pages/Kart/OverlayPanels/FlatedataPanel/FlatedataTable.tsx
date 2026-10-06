@@ -1,6 +1,5 @@
 import { Button, TabPanel, Text } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
-import FeatureToggle from "components/FeatureToggle";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import {
