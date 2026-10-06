@@ -162,7 +162,7 @@ const IngenUtkastText = styled.p`
   font-size: var(--kvib-fontSizes-sm);
 `;
 
-const ReturnButton = styled(Link).attrs({ as: RouterLink })`
+const ReturnButton = styled(Link).attrs({ as: RouterLink, viewTransition: true })`
   display: flex;
   gap: 4px;
   align-items: center;
