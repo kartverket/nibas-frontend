@@ -1,6 +1,26 @@
+import { useFeatureFlagEnabled } from "posthog-js/react";
+import { posthog } from "posthog-js";
 import React from "react";
 
-export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e" | "feature-branch";
+type Keys = "archive-inndeling" | "delete-inndeling";
+
+export const featureEnabled = (key: Keys): boolean => {
+  return posthog.isFeatureEnabled(key) ?? false;
+};
+
+type Props = {
+  feature: Keys;
+  children: React.ReactElement;
+};
+
+const FeatureToggle = ({ feature, children }: Props) => {
+  const enabled = useFeatureFlagEnabled(feature) ?? false;
+  return enabled ? children : null;
+};
+
+export default FeatureToggle;
+
+export type Environment = "localhost" | "prod" | "dev-main" | "dev-e2e";
 
 export enum NibasOrigin {
   LOCALHOST = "http://localhost:3000",
@@ -16,84 +36,7 @@ const environmentByUrl: Record<string, Environment> = {
   [NibasOrigin.PROD]: "prod",
 };
 
-// denne utvides etterhvert som vi får flere flagg
-// noe som `type Keys = "flagg1" | "flagg2" | ...`
-// features som skal fjernes kan slettes fra denne listen
-// hvis det ikke er noen keys skal Keys være av typen `never`
-type Keys =
-  "CREATE_INNDELINGER" | "CREATE_MULTIPLE_INNDELINGER" | "VIS_FLATER" | "ARCHIVE_INNDELING" | "DELETE_INNDELING";
-
-const featureToggles: Record<Keys, Record<Environment, boolean>> = {
-  ARCHIVE_INNDELING: {
-    prod: false,
-    "dev-main": true,
-    "dev-e2e": true,
-    localhost: true,
-    "feature-branch": true,
-  },
-  CREATE_INNDELINGER: {
-    prod: true,
-    "dev-main": true,
-    "dev-e2e": true,
-    localhost: true,
-    "feature-branch": true,
-  },
-  CREATE_MULTIPLE_INNDELINGER: {
-    prod: true,
-    "dev-main": true,
-    "dev-e2e": true,
-    localhost: true,
-    "feature-branch": true,
-  },
-  VIS_FLATER: {
-    prod: true,
-    "dev-main": true,
-    "dev-e2e": true,
-    localhost: true,
-    "feature-branch": true,
-  },
-  DELETE_INNDELING: {
-    prod: false,
-    "dev-main": true,
-    "dev-e2e": true,
-    localhost: true,
-    "feature-branch": true,
-  },
-};
-
 export const getCurrentEnvironment = (): Environment => {
   const { origin } = window.location;
-  // Hvis vi ikke er på en kjent og definert url antar vi at det er en feature-branch.
-  // TODO: Dette kan være skummelt da man potensielt kan eksponere eksperimentelle features til ikke-feature-branch-miljøer ved endringer av origins.
-  return environmentByUrl[origin] ?? "feature-branch";
+  return environmentByUrl[origin];
 };
-
-export const featureEnabled = (key: Keys): boolean => {
-  const environment = getCurrentEnvironment();
-
-  if (!environment) {
-    return false;
-  }
-
-  return featureToggles[key][environment];
-};
-
-// Da kan vi bruke feks Unleash som har samme navn på hook
-export const useFlag = (key: Keys) => {
-  return featureEnabled(key);
-};
-
-type Props = {
-  feature: Keys;
-  children: React.ReactElement;
-};
-
-const FeatureToggle = ({ feature, children }: Props) => {
-  if (featureEnabled(feature)) {
-    return children;
-  }
-
-  return null;
-};
-
-export default FeatureToggle;

@@ -154,7 +154,7 @@ const archiveColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn
   header: "",
   renderCell: (ctx: FlatedataColumnCtx) => (
     <TableCell className="archive-action-cell">
-      <FeatureToggle feature="ARCHIVE_INNDELING">
+      <FeatureToggle feature="archive-inndeling">
         {isNonExhaustiveInndelingtype(ctx.inndelingtype) && ctx.canEditInndeling ? (
           <ArkiverInndelingButton {...ctx} />
         ) : (
@@ -169,7 +169,7 @@ const deleteColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
   header: "",
   renderCell: (ctx: FlatedataColumnCtx) => (
     <TableCell>
-      <FeatureToggle feature="DELETE_INNDELING">
+      <FeatureToggle feature="delete-inndeling">
         {isNonExhaustiveInndelingtype(ctx.inndelingtype) && ctx.canEditInndeling ? (
           <SlettInndelingButton {...ctx} />
         ) : (

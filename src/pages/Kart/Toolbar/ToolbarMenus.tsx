@@ -23,7 +23,6 @@ import InndelingerHighlightLoader from "../OverlayPanels/FlatedataPanel/FlateHig
 import CustomTooltip from "./CustomTooltip";
 import SwitchWithShortcutDesc from "./SwitchWithShortcutDesc";
 import { MenuItems, ToolbarMenuItem } from "./Toolbar";
-import FeatureToggle from "components/FeatureToggle";
 
 export const SPLITTABLE_INNDELINGTYPE_VALUES = INNDELINGTYPE_VALUES.filter(
   (type) => type === "GRUNNKRETS" || type === "STEMMEKRETS",
@@ -341,14 +340,12 @@ const ToolbarMenus = () => {
             tooltip="Flate"
           >
             <MenuList>
-              <FeatureToggle feature="VIS_FLATER">
-                <VisFlaterMenuItem
-                  isAvailable={visFlaterIsAvailable}
-                  isActive={visFlaterIsActive}
-                  onToggle={toggleVisFlater}
-                  disabledMessage={defaultToolDisabledMessage}
-                />
-              </FeatureToggle>
+              <VisFlaterMenuItem
+                isAvailable={visFlaterIsAvailable}
+                isActive={visFlaterIsActive}
+                onToggle={toggleVisFlater}
+                disabledMessage={defaultToolDisabledMessage}
+              />
               {visibleFlateMenuItems.map(renderMenuItem)}
             </MenuList>
           </ToolbarMenu>
@@ -377,14 +374,12 @@ const ToolbarMenus = () => {
             )}
             {(visiblePunktMenuItems.length > 0 || visibleGrenseMenuItems.length > 0) && <MenuDivider />}
             <MenuOptionGroup title="Flate">
-              <FeatureToggle feature="VIS_FLATER">
-                <VisFlaterMenuItem
-                  isAvailable={visFlaterIsAvailable}
-                  isActive={visFlaterIsActive}
-                  onToggle={toggleVisFlater}
-                  disabledMessage={defaultToolDisabledMessage}
-                />
-              </FeatureToggle>
+              <VisFlaterMenuItem
+                isAvailable={visFlaterIsAvailable}
+                isActive={visFlaterIsActive}
+                onToggle={toggleVisFlater}
+                disabledMessage={defaultToolDisabledMessage}
+              />
               {visibleFlateMenuItems.map(renderMenuItem)}
             </MenuOptionGroup>
           </MenuList>

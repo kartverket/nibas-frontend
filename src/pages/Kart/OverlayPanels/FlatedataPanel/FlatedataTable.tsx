@@ -1,6 +1,5 @@
 import { Button, TabPanel, Text } from "@kvib/react";
 import EditAndSaveButton from "components/EditAndSaveButton";
-import FeatureToggle from "components/FeatureToggle";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import {
@@ -345,37 +344,29 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             </tbody>
           )}
         </Table>
-        {flatedata.length > 0 && (
-          <FeatureToggle feature="CREATE_MULTIPLE_INNDELINGER">
-            {isEditing === true && isInndelingNonExhaustive(mainInndeling.inndelingtype) === true ? (
-              <AddFlateContainer>
-                <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
-                  Opprett ny flate
-                </Button>
-              </AddFlateContainer>
-            ) : (
-              <></>
-            )}
-          </FeatureToggle>
+        {flatedata.length > 0 &&
+        isEditing === true &&
+        isInndelingNonExhaustive(mainInndeling.inndelingtype) === true ? (
+          <AddFlateContainer>
+            <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
+              Opprett ny flate
+            </Button>
+          </AddFlateContainer>
+        ) : (
+          <></>
         )}
       </TableScrollArea>
       {flatedata.length === 0 && (
         <CreateFlateContainer>
-          <FeatureToggle feature="CREATE_INNDELINGER">
-            {
-              <>
-                <BoldHeading>{`Ingen ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: true, capitalizeLabel: false })} i denne kommunen.`}</BoldHeading>
-                {utkast != null ? (
-                  <>
-                    {`For å opprette et nytt ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })}, klikk på "Opprett ny flate".`}
-                    <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
-                      Opprett ny flate
-                    </Button>
-                  </>
-                ) : null}
-              </>
-            }
-          </FeatureToggle>
+          <BoldHeading>{`Ingen ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: true, capitalizeLabel: false })} i denne kommunen.`}</BoldHeading>
+          {utkast != null ? (
+            <>
+              {`For å opprette et nytt ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: false, capitalizeLabel: false })}, klikk på "Opprett ny flate".`}
+              <Button onClick={handleCreateNewFlate} leftIcon="add" variant="secondary">
+                Opprett ny flate
+              </Button>
+            </>
+          ) : null}
         </CreateFlateContainer>
       )}
       <FlatedataFooter
