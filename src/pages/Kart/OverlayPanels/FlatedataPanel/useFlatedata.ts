@@ -5,6 +5,7 @@ import {
   getKommuneMetadataEntries,
   getDeduplicatedNyInndelingChanges,
   getDeletedInndelingIds,
+  getKretsDelingEntries,
   getStemmekretsMetadataEntries,
 } from "contexts/HistoryContext/history-utils";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
@@ -15,18 +16,20 @@ import { useUtkast, useUtkastEntity } from "contexts/UtkastContext/UtkastContext
 import useKommuneInndelinger from "hooks/inndelinger/useKommuneInndelinger";
 import useKommuner, { useKommune } from "hooks/inndelinger/useKommuner";
 import {
-  BopliktomraadeResponse,
+  GrunnkretsResponse,
   Inndelingtype,
-  KommuneResponse,
+  KretsDelingEndringRequest,
   MetadataResponse,
   StemmekretsResponse,
   UtkastResponse,
 } from "types/api";
 import {
   getDefaultFlatedataForInndelingtype,
+  getTempFlateId,
   isBopliktomraadeRequest,
   isNonExhaustiveInndelingtype,
 } from "./flatedata-utils";
+import { isGrunnkretsResponse, isStemmekretsResponse } from "./flatedata-response-guards";
 import { getIdFromEntity } from "utils/api";
 
 const useFlatedataFromBackend = (
@@ -199,6 +202,49 @@ const getNyeInndelingerMetadataForInndelingtypeFromUtkast = (
   }
 };
 
+const isKretsMetadataResponse = (
+  metadataresponse: MetadataResponse,
+): metadataresponse is GrunnkretsResponse | StemmekretsResponse =>
+  isGrunnkretsResponse(metadataresponse) || isStemmekretsResponse(metadataresponse);
+
+const getKretsdelingMetadata = (
+  kretsdelinger: KretsDelingEndringRequest[],
+  metadataresponses: MetadataResponse[],
+  inndeling: Inndeling,
+): MetadataResponse[] =>
+  kretsdelinger
+    .filter(
+      (kretsdeling) =>
+        kretsdeling.flatetype === inndeling.inndelingtype && kretsdeling.kommuneId.lokalid.value === inndeling.id,
+    )
+    .flatMap((kretsdeling) => {
+      const opprinneligKrets = metadataresponses.find(
+        (metadataresponse): metadataresponse is GrunnkretsResponse | StemmekretsResponse =>
+          isKretsMetadataResponse(metadataresponse) &&
+          getIdFromEntity(metadataresponse) === kretsdeling.opprinneligKrets.lokalId,
+      );
+      if (opprinneligKrets == null) {
+        return [];
+      }
+
+      return kretsdeling.nyeKretser.map((nyKrets) => ({
+        ...opprinneligKrets,
+        id: {
+          ...opprinneligKrets.id,
+          lokalid: {
+            value: getTempFlateId({
+              inndelingtype: inndeling.inndelingtype,
+              kommuneLokalid: inndeling.id,
+              nummer: nyKrets.kretsNummer,
+              distinguisher: nyKrets.kretsNummer,
+            }),
+          },
+        },
+        navn: nyKrets.kretsNavn,
+        nummer: nyKrets.kretsNummer,
+      }));
+    });
+
 export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefined => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
   const flatedataFromBackend = useFlatedataFromBackend(inndeling, gyldighetsdato);
@@ -206,6 +252,16 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
   const { utkast } = useUtkast();
   const historyEntries = getHistoryEntries();
   const deletedInndelingIds = getDeletedInndelingIds(historyEntries);
+  const kretsdelingChanges = getKretsDelingEntries(historyEntries).flatMap((entry) => entry.changes);
+  const latestKretsdelingByOriginalKrets = new Map(kretsdelingChanges.map((change) => [change.id, change.to]));
+  const kretsdelingerFromHistory = [...latestKretsdelingByOriginalKrets.values()].flatMap((kretsdeling) =>
+    kretsdeling == null ? [] : [kretsdeling],
+  );
+  const kretsIdsSplitInHistory = new Set(kretsdelingChanges.map((change) => change.id));
+  const kretsdelingerFromUtkast =
+    utkast?.operasjoner.kretsDelingEndringer.filter(
+      (kretsdeling) => !kretsIdsSplitInHistory.has(kretsdeling.opprinneligKrets.lokalId),
+    ) ?? [];
 
   const inndelingtype = inndeling.inndelingtype;
 
@@ -219,9 +275,19 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
     getEntityUtkastTypeForInndelingtype(inndelingtype),
   ) ?? []) as MetadataResponse[];
 
+  const kretsdelingFlatedataWithUtkastChanges = (useUtkastEntity(
+    getKretsdelingMetadata(
+      [...kretsdelingerFromUtkast, ...kretsdelingerFromHistory],
+      flatedataFromBackendWithUtkastChanges,
+      inndeling,
+    ),
+    getEntityUtkastTypeForInndelingtype(inndelingtype),
+  ) ?? []) as MetadataResponse[];
+
   const flatedataFromBackendWithUtkastChangesAndNewFlatedataInUtkast = [
     ...flatedataFromBackendWithUtkastChanges,
     ...newFladedataInUtkastWithUtkastChanges,
+    ...kretsdelingFlatedataWithUtkastChanges,
   ];
 
   const newFlatedataFromHistory = getNyeInndelingerMetadataForInndelingtypeFromHistory(historyEntries, inndeling);
@@ -239,10 +305,3 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
     ...newFlatedataFromHistory,
   ];
 };
-
-export const isKommuneInndeling = (value: object): value is KommuneResponse => "samiskforvaltningsomraade" in value;
-
-export const isStemmekretsInndeling = (value: object): value is StemmekretsResponse => "valgdistriktsnummer" in value;
-
-export const isBopliktomraadeInndeling = (value: object): value is BopliktomraadeResponse =>
-  "gjelderKunDelAvKommunen" in value;

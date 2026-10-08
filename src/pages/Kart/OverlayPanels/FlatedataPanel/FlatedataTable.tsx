@@ -316,6 +316,9 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
             <tbody>
               {orderInndelingerBy(visibleFlatedata, sortProperty, sortOrder).map((inndeling) => {
                 const inndelingId = getIdFromEntity(inndeling);
+                const isSplitInndeling =
+                  isValidTempFlateId(inndelingId) &&
+                  (mainInndeling.inndelingtype === "GRUNNKRETS" || mainInndeling.inndelingtype === "STEMMEKRETS");
 
                 const isSearchMatch =
                   inndeling.nummer.includes(searchValue) === true ||
@@ -329,6 +332,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                     isSearchMatch={isSearchMatch}
                     isEditing={isEditing}
                     isNew={tempFlatedata.some((f) => getIdFromEntity(f) === inndelingId)}
+                    isSplitInndeling={isSplitInndeling}
                     formMethods={formMethods}
                     control={control}
                     setPreviousValues={setPreviousValues}

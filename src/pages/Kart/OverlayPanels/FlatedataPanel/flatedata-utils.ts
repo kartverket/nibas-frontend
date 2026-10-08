@@ -17,7 +17,12 @@ import {
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { NonExhaustiveInndelingRequest, NonExhaustiveInndelingtype } from "./FlatedataTable";
-import { isBopliktomraadeInndeling, isKommuneInndeling, isStemmekretsInndeling } from "./useFlatedata";
+import {
+  isBopliktomraadeResponse,
+  isGrunnkretsResponse,
+  isKommuneResponse,
+  isStemmekretsResponse,
+} from "./flatedata-response-guards";
 
 type KommuneInput = { samiskforvaltningsomraade: boolean };
 type KommuneInputs = { [inndelingId: string]: KommuneInput };
@@ -144,7 +149,7 @@ export const getRequestFromInputs = (
   switch (inndelingtype) {
     case "FYLKE":
     case "KOMMUNE": {
-      if (isKommuneInndeling(inndeling) && isKommuneInput(data)) {
+      if (isKommuneResponse(inndeling) && isKommuneInput(data)) {
         const kommuneRequest: KommuneRequest = {
           lokalid: getIdFromEntity(inndeling),
           administrativenhetnavn: inndeling.navn,
@@ -156,7 +161,7 @@ export const getRequestFromInputs = (
       return null;
     }
     case "STEMMEKRETS": {
-      if (isStemmekretsInput(data) && isStemmekretsInndeling(inndeling)) {
+      if (isStemmekretsInput(data) && isStemmekretsResponse(inndeling)) {
         const stemmekretsRequest: StemmekretsRequest = {
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
@@ -190,7 +195,7 @@ export const getRequestFromInputs = (
       return null;
     }
     case "BOPLIKTOMRAADE": {
-      if (isBopliktomraadeInput(data) && isBopliktomraadeInndeling(inndeling)) {
+      if (isBopliktomraadeInput(data) && isBopliktomraadeResponse(inndeling)) {
         const bopliktomraadeRequest: BopliktomraadeRequest = {
           identifikasjon: {
             lokalid: getIdFromEntity(inndeling),
@@ -314,10 +319,10 @@ export const isNonExhaustiveInndelingtype = (
 
 // Obs: rekkefølgen her er dessverre viktig da grunnkrets ikke har noen bra diskriminator i responsen sin.
 const inndelingtypeFromResponse = {
-  KOMMUNE: isKommuneInndeling,
-  STEMMEKRETS: isStemmekretsInndeling,
-  BOPLIKTOMRAADE: isBopliktomraadeInndeling,
-  GRUNNKRETS: (inndeling: MetadataResponse) => "informasjon" in inndeling,
+  KOMMUNE: isKommuneResponse,
+  STEMMEKRETS: isStemmekretsResponse,
+  BOPLIKTOMRAADE: isBopliktomraadeResponse,
+  GRUNNKRETS: isGrunnkretsResponse,
 } satisfies Record<Exclude<Inndelingtype, "FYLKE">, (inndeling: MetadataResponse) => boolean>;
 
 export const getInndelingtypeFromResponse = (inndeling: MetadataResponse): Inndelingtype | null => {
