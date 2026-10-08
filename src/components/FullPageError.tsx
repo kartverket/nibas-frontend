@@ -1,6 +1,16 @@
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Logo } from "@kvib/react";
 import { styled } from "styled-components";
+import { PostHogErrorBoundary } from "@posthog/react";
+import { Outlet } from "react-router-dom";
+
+export const FullPageErrorWithPostHogErrorBoundry = () => {
+  return (
+    <PostHogErrorBoundary fallback={<FullPageError />}>
+      <Outlet />
+    </PostHogErrorBoundary>
+  );
+};
 
 export const FullPageError = () => (
   <ThirdPartyProviders>

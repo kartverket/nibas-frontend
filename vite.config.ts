@@ -3,14 +3,18 @@ import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import viteTsconfigPaths from "vite-tsconfig-paths";
 import { checker } from "vite-plugin-checker";
 import babel from "@rolldown/plugin-babel";
+import posthog from "@posthog/rollup-plugin";
 
 export default defineConfig(({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd(), "") };
   // Husk å restarte etter endringer i f.eks env.local
   const matWfsAuth = process.env.VITE_MATRIKKELWFS_AUTH;
   const matWfsUrl = process.env.VITE_MATRIKKELWFS_URL;
   const baatUsername = process.env.VITE_BAAT_USERNAME;
   const baatPassword = process.env.VITE_BAAT_PASSWORD;
+  const posthogApiKey = process.env.VITE_POSTHOG_API_KEY;
+  const posthogProjectId = process.env.VITE_POSTHOG_PROJECT_ID;
+  const posthogHost = process.env.VITE_POSTHOG_HOST;
 
   return {
     build: {
@@ -26,6 +30,19 @@ export default defineConfig(({ mode }) => {
       checker({
         typescript: true,
       }),
+      ...(posthogApiKey != null && posthogProjectId != null
+        ? [
+            posthog({
+              personalApiKey: posthogApiKey,
+              projectId: posthogProjectId,
+              host: posthogHost,
+              sourcemaps: {
+                enabled: true,
+                deleteAfterUpload: true,
+              },
+            }),
+          ]
+        : []),
     ],
     test: {
       globals: true,
