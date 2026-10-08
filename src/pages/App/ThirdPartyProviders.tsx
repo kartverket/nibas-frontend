@@ -27,12 +27,14 @@ const defaultToastOptions: UseToastOptions = {
 };
 
 const env = getCurrentEnvironment();
+const inProduction = env === "prod";
 const posthogApiKey = "phc_px56rqpRXFBgiaEyDdaDMJUAQiHXhBtpv6hVaQJoCwPm";
 const posthogOptions: Partial<PostHogConfig> = {
   api_host: "https://ph.kartverket.no",
   ui_host: "https://eu.i.posthog.com",
   evaluation_contexts: [env],
-  capture_exceptions: env === "prod",
+  capture_exceptions: inProduction,
+  capture_performance: inProduction,
 };
 
 const ThirdPartyProviders = ({ children }: { children: React.ReactNode }) => {
