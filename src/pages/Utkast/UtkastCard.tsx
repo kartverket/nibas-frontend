@@ -12,7 +12,7 @@ const UtkastCard = ({ utkast }: { utkast: UtkastResponse }) => {
   const navigate = useNavigate();
 
   const handleUtkastCardClick = () => {
-    navigate(utkast.id);
+    navigate(utkast.id, { viewTransition: true });
   };
 
   const handleMenuClick = (event: React.MouseEvent) => {

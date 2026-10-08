@@ -25,7 +25,7 @@ const HeaderBreadcrumb = () => {
     if (canSave) {
       openModal();
     } else {
-      navigate(routes.utkast);
+      navigate(routes.utkast, { viewTransition: true });
     }
   };
 
@@ -60,7 +60,7 @@ const HeaderBreadcrumb = () => {
         onClose={closeModal}
         secondaryAction={{
           text: "Forkast endringer",
-          onClick: () => navigate(routes.utkast),
+          onClick: () => navigate(routes.utkast, { viewTransition: true }),
         }}
         primaryAction={{
           text: "Fortsett redigering",

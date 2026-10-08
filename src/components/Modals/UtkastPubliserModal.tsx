@@ -76,7 +76,7 @@ const UtkastPubliserModal = ({ isOpen, onClose, utkast }: Props) => {
       clearInndelingerAndSources();
 
       if (utkastPathMatch) {
-        navigate(routes.utkast);
+        navigate(routes.utkast, { viewTransition: true });
       }
     } else if (statusCode.isConflict(response.status)) {
       setError({
