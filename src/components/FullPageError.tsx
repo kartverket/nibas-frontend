@@ -1,16 +1,6 @@
 import ThirdPartyProviders from "pages/App/ThirdPartyProviders";
 import { Alert, AlertDescription, AlertIcon, AlertTitle, Box, Logo } from "@kvib/react";
 import { styled } from "styled-components";
-import { FaroErrorBoundary } from "@grafana/faro-react";
-import { Outlet } from "react-router-dom";
-
-export const FullPageErrorWithFaroErrorBoundry = () => {
-  return (
-    <FaroErrorBoundary fallback={<FullPageError />}>
-      <Outlet />
-    </FaroErrorBoundary>
-  );
-};
 
 export const FullPageError = () => (
   <ThirdPartyProviders>
