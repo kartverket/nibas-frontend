@@ -70,10 +70,15 @@ export const FlatedataTableRow = ({
 
   const isInndelingArchivedInUtkast = inndelingIsArchived(inndelingId, utkast, historyEntries);
   const isArchived = pendingArchived[inndelingId] ?? isInndelingArchivedInUtkast;
-  const activeInndelingerCount = allInndelinger.filter((candidate) => {
-    const candidateId = getIdFromEntity(candidate);
-    return !(pendingArchived[candidateId] ?? inndelingIsArchived(candidateId, utkast, historyEntries));
-  }).length;
+  const activeInndelingIds = new Set(
+    allInndelinger
+      .filter((candidate) => {
+        const candidateId = getIdFromEntity(candidate);
+        return !(pendingArchived[candidateId] ?? inndelingIsArchived(candidateId, utkast, historyEntries));
+      })
+      .map(getIdFromEntity),
+  );
+  const activeInndelingerCount = activeInndelingIds.size;
 
   // Dersom representasjonspunktet til en inndeling har en gyldigTil dato vet vi at inndelingen har en fremtidig endring på seg, enten denne er geometri eller metadata
   // Ettersom vi ikke vet hvilket lag vi er i kontekst av så sjekker vi bare alle alg
@@ -104,6 +109,7 @@ export const FlatedataTableRow = ({
     control,
     inndelingErrors,
     allInndelinger,
+    activeInndelingIds,
     activeInndelingerCount,
     sammenslaaingInformasjon,
     canEditInndeling,
