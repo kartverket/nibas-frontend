@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import { PostHogErrorBoundary } from "@posthog/react";
 import { Outlet } from "react-router-dom";
 
-export const FullPageErrorWithPostHogErrorBoundry = () => {
+export const FullPageErrorWithPostHogErrorBoundary = () => {
   return (
     <PostHogErrorBoundary fallback={<FullPageError />}>
       <Outlet />
