@@ -12,9 +12,9 @@ export default defineConfig(({ mode }) => {
   const matWfsUrl = process.env.VITE_MATRIKKELWFS_URL;
   const baatUsername = process.env.VITE_BAAT_USERNAME;
   const baatPassword = process.env.VITE_BAAT_PASSWORD;
-  const posthogApiKey = process.env.VITE_POSTHOG_API_KEY;
-  const posthogProjectId = process.env.VITE_POSTHOG_PROJECT_ID;
-  const posthogHost = process.env.VITE_POSTHOG_HOST;
+  const posthogApiKey = process.env.POSTHOG_API_KEY;
+  const posthogProjectId = process.env.POSTHOG_PROJECT_ID;
+  const posthogHost = process.env.POSTHOG_HOST;
 
   return {
     build: {
