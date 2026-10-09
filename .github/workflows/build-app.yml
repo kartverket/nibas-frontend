@@ -6,6 +6,13 @@ on:
         description: "Deploy to ghcr?"
         default: "false"
         type: string
+    secrets:
+      POSTHOG_API_KEY:
+        required: true
+      POSTHOG_PROJECT_ID:
+        required: true
+      POSTHOG_HOST:
+        required: true
     outputs:
       version:
         description: "The version of the docker-image created"
@@ -59,6 +66,9 @@ jobs:
           npm run build --if-present
         env:
           VITE_VERSION: ${{ steps.tag_version.outputs.new_version }}
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_API_KEY }}
+          POSTHOG_PROJECT_ID: ${{ secrets.POSTHOG_PROJECT_ID }}
+          POSTHOG_HOST: ${{ secrets.POSTHOG_HOST }}
 
       - name: Login to Github Container Registry
         uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0

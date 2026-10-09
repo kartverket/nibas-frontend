@@ -7,7 +7,7 @@ import PageLayout from "../Kart/PageLayout";
 import EnvironmentOverlay from "./EnvironmentOverlay";
 import Loading from "./Loading";
 import Providers from "./Providers";
-import { FullPageError } from "components/FullPageError";
+import { FullPageErrorWithPostHogErrorBoundary } from "components/FullPageError";
 import "cypress-globals";
 import { Endringer } from "pages/Endringer/Endringer";
 import { UtkastRestore } from "pages/Utkast/UtkastRestore";
@@ -15,7 +15,7 @@ import { UtkastRestore } from "pages/Utkast/UtkastRestore";
 const App = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route errorElement={<FullPageError />}>
+      <Route errorElement={<FullPageErrorWithPostHogErrorBoundary />}>
         <Route element={<ProvidersRoute />}>
           <Route index element={<Landing />} />
           <Route path={routes.utkast} element={<UtkastRestore />}>
