@@ -1,0 +1,9 @@
+allowBuilds:
+  core-js: false
+  unrs-resolver: true
+
+ignoredBuiltDependencies:
+  - core-js
+  - unrs-resolver
+minimumReleaseAge: 4320
+blockExoticSubdeps: true

@@ -2,11 +2,15 @@
   "name": "nibas-klient",
   "version": "0.2.3",
   "private": true,
+  "packageManager": "pnpm@10.18.3",
   "type": "module",
   "dependencies": {
+    "@emotion/cache": "11.11.0",
+    "@emotion/react": "11.11.4",
     "@kvib/react": "^4.3.3",
     "@posthog/react": "^1.11.3",
     "@rolldown/plugin-babel": "^0.2.4",
+    "chakra-react-select": "4.7.6",
     "date-fns": "^4.4.0",
     "framer-motion": "^13.5.0",
     "js-yaml": "^5.4.2",
@@ -28,6 +32,9 @@
     "styled-components": "^6.5.3",
     "swr": "~2.5.1"
   },
+  "engines": {
+    "pnpm": ">=10"
+  },
   "scripts": {
     "start": "vite",
     "start:no-auth": "cross-env VITE_DISABLE_AUTH=true vite",
@@ -36,14 +43,15 @@
     "serve": "vite preview",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest watch --passWithNoTests",
-    "test:coverage": "npm test -- src/* --coverage",
+    "test:coverage": "pnpm test src/* --coverage",
     "lint": "eslint src --max-warnings 0 && stylelint src --max-warnings 0",
     "lint:fix": "eslint src --fix",
     "update-api-types": "openapi-typescript http://localhost:8080/api-docs --alphabetize --output src/types/api-gen.ts",
     "update-api-types-arbeidsliste": "openapi-typescript http://localhost:8082/api-docs --alphabetize --output src/types/api-gen-arbeidsliste.ts",
     "format": "prettier --write .",
     "clean": "rm -rf node_modules/.vite/",
-    "better-audit": "better-npm-audit audit --production --level high"
+    "audit": "pnpm audit --prod --audit-level high",
+    "preinstall": "npx only-allow pnpm"
   },
   "eslintConfig": {
     "extends": [
@@ -82,7 +90,6 @@
     "@typescript-eslint/parser": "8.71.0",
     "@vitejs/plugin-react": "^6.1.1",
     "babel-plugin-react-compiler": "^19.1.0-rc.3",
-    "better-npm-audit": "^3.11.0",
     "cross-env": "^10.1.0",
     "eslint": "~10.11.0",
     "eslint-config-prettier": "~10.1.8",
