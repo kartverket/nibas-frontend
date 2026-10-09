@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-import { map } from "../constants";
 import { Feature, MapBrowserEvent } from "ol";
-import { findNearbyVertexOnFeature } from "utils/map/map-utils";
-import { isLineStringFeature } from "utils/type-utils";
 import { Coordinate } from "ol/coordinate";
 import { LineString } from "ol/geom";
+import { useState } from "react";
+import { findNearbyVertexOnFeature } from "utils/map/map-utils";
+import { isLineStringFeature } from "utils/type-utils";
 import { useGetFeatures } from "./interaction-utils";
-import { ListenerFunction } from "ol/events";
+import useHoveredFeature from "./useHoveredFeature";
 
 const useHoveredLineString = (enabled: boolean, shouldClearHover?: boolean) => {
   const { getFeaturesAtPixel } = useGetFeatures();
@@ -14,58 +13,39 @@ const useHoveredLineString = (enabled: boolean, shouldClearHover?: boolean) => {
   const [hoveredVertex, setHoveredVertex] = useState<Coordinate | undefined>();
   const [hoveredLineString, setHoveredLineString] = useState<Feature<LineString> | null>(null);
 
-  useEffect(() => {
-    // Definerer timeout her slik at vi kan referere til den før den blir satt i koden
-    let timeout: ReturnType<typeof setTimeout>;
+  const setHoverState = (linestring: Feature<LineString> | null, vertex?: Coordinate) => {
+    setHoveredLineString(linestring);
+    setHoveredVertex(vertex);
+  };
 
-    const setHoverState = (linestring: Feature<LineString> | null, vertex?: Coordinate) => {
-      setHoveredLineString(linestring);
-      setHoveredVertex(vertex);
-    };
+  const handleClearHoverState = () => {
+    if (shouldClearHover === true) {
+      setHoverState(null);
+    }
+  };
 
-    const hover = (e: MapBrowserEvent<PointerEvent>) => {
-      // Hvis det finnes et tidligere kall som ikke har blitt gjennomført enda kansellerer vi den
-      clearTimeout(timeout);
-      // Hvis brukeren dragger trenger vi ikke å kalle hover funksjonalitet
-      if (e.dragging) {
-        return;
-      }
-      // Starter en ny timeout som det kan hende blir kansellert i fremtiden hvis musen beveger seg i mellomtiden.
-      timeout = setTimeout(() => {
-        const features = getFeaturesAtPixel(e as MapBrowserEvent<PointerEvent>, null);
-        // Vi velger første feature. Hvis det er flere må man zoome inn for å treffe den man tenker på.
-        const feature = features[0];
-        if (feature != null) {
-          if (isLineStringFeature(feature)) {
-            const lineString = feature.getGeometry();
-            if (lineString != null) {
-              const vertex = findNearbyVertexOnFeature(lineString, e.coordinate);
-              if (vertex != null) {
-                setHoverState(feature, vertex);
-              } else {
-                setHoverState(feature);
-              }
-            }
-          }
-        } else {
-          if (shouldClearHover === true) {
-            setHoverState(null);
+  const onPointerMove = (e: MapBrowserEvent<PointerEvent>) => {
+    const features = getFeaturesAtPixel(e as MapBrowserEvent<PointerEvent>, null);
+    // Vi velger første feature. Hvis det er flere må man zoome inn for å treffe den man tenker på.
+    const feature = features[0];
+    if (feature != null) {
+      if (isLineStringFeature(feature)) {
+        const lineString = feature.getGeometry();
+        if (lineString != null) {
+          const vertex = findNearbyVertexOnFeature(lineString, e.coordinate);
+          if (vertex != null) {
+            setHoverState(feature, vertex);
+          } else {
+            setHoverState(feature);
           }
         }
-      }, 150);
-    };
-    if (enabled) {
-      map.on("pointermove", hover as ListenerFunction);
-    } else {
-      if (shouldClearHover === true) {
-        setHoverState(null);
       }
+    } else {
+      handleClearHoverState();
     }
-    return () => {
-      clearTimeout(timeout);
-      map.un("pointermove", hover as ListenerFunction);
-    };
-  }, [enabled, getFeaturesAtPixel]);
+  };
+
+  useHoveredFeature(enabled, onPointerMove, handleClearHoverState);
 
   return { hoveredLineString, hoveredVertex };
 };
