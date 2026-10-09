@@ -50,6 +50,7 @@ export type FlatedataColumnCtx = {
   control: Control<FlatedataInputs>;
   inndelingErrors: InndelingErrors;
   allInndelinger: MetadataResponse[];
+  activeInndelingIds: Set<string>;
   activeInndelingerCount: number;
   sammenslaaingInformasjon: string | undefined;
   canEditInndeling: boolean;
@@ -250,14 +251,14 @@ const getKommuneColumns = <T extends "FYLKE" | "KOMMUNE">(): FlatedataColumn<T>[
 const nummerColumn = <T extends FlatedataTableInndelingtype>(inndelingtype: T, label: string): FlatedataColumn<T> => ({
   header: `${label}nummer`,
   sortKey: "nummer" as SortPropertyFor<T>,
-  renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, inndelingErrors }) => {
+  renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, inndelingErrors, activeInndelingIds }) => {
     const { register, getValues, watch, trigger } = formMethods;
     const prefixNumber = "kommunenummer" in inndeling ? inndeling.kommunenummer.kodeverdi : undefined;
     const validateInndelingNumber = getNumberValidatorFunctionForInndelingType<FlatedataInputs, `${string}.nummer`>(
       inndelingtype,
     );
     const existingIndelingtypeNumbers = Object.entries(watch())
-      .filter(([rowId]) => rowId !== inndelingId)
+      .filter(([rowId]) => rowId !== inndelingId && activeInndelingIds.has(rowId))
       .map(([, rowVal]) => rowVal.nummer);
     const registerOptions = validateInndelingNumber({
       shouldNotBeEqualWith: existingIndelingtypeNumbers,
