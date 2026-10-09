@@ -1,3 +1,17 @@
 {
-
+  "GHSA-6j4f-fj2g-mc7p": {
+    "active": true,
+    "notes": "DoS ikke relevant",
+    "expiry": "2026-12-31"
+  },
+  "GHSA-qhr7-859c-m2p7": {
+    "active": true,
+    "notes": "DoS ikke relevant",
+    "expiry": "2026-12-31"
+  },
+  "GHSA-q2hr-2g5m-vwhr": {
+    "active": true,
+    "notes": "DoS ikke relevant",
+    "expiry": "2026-12-31"
+  }
 }
