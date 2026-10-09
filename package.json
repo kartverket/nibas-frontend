@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@grafana/faro-react": "^2.12.1",
     "@kvib/react": "^4.3.3",
     "@posthog/react": "^1.11.3",
     "@rolldown/plugin-babel": "^0.2.4",
@@ -28,11 +27,6 @@
     "react-select": "^5.10.2",
     "styled-components": "^6.5.3",
     "swr": "~2.5.1"
-  },
-  "overrides": {
-    "@grafana/faro-react": {
-      "react-router-dom": "^7.5.2"
-    }
   },
   "scripts": {
     "start": "vite",
@@ -74,7 +68,6 @@
     "@eslint/compat": "^2.1.1",
     "@eslint/eslintrc": "^3.3.7",
     "@eslint/js": "^10.0.1",
-    "@grafana/faro-react": "^2.12.1",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "~7.0.1",
     "@testing-library/react": "^16.3.3",
