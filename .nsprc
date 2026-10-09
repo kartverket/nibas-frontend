@@ -1,1 +1,7 @@
-{}
+{
+  "GHSA-vfj7-8cjw-p6xm": {
+    "active": true,
+    "notes": "DoS ikke relevant",
+    "expiry": "2027-01-01"
+  }
+}
