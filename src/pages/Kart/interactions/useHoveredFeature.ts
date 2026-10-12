@@ -47,7 +47,7 @@ const useHoveredFeature = <T extends Geometry>(
         } else {
           clearHoverState();
         }
-      }, 150);
+      }, 50);
     };
     if (enabled) {
       map.on("pointermove", hover as ListenerFunction);
