@@ -1,5 +1,5 @@
 import { Tool, useToolbar } from "contexts/ToolbarContext";
-import { navigationPinLayer, navigationPinSource } from "hooks/layers/constants";
+import { navigationPinSource } from "hooks/layers/constants";
 import { VectorLayerId } from "hooks/layers/types";
 import { MapBrowserEvent } from "ol";
 import { ListenerFunction } from "ol/events";
