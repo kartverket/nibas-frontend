@@ -9,7 +9,7 @@ import { isLineStringFeature } from "utils/type-utils";
 
 export const useGetFeatures = () => {
   const getFeaturesAtPixel = (
-    event: MapBrowserEvent<PointerEvent>,
+    event: MapBrowserEvent,
     layerIdsToFilter: LayerId[] | null,
   ): FeatureLike[] =>
     map.getFeaturesAtPixel(event.pixel, {
@@ -19,7 +19,7 @@ export const useGetFeatures = () => {
     });
 
   const getLineStringFeaturesAtPixel = (
-    event: MapBrowserEvent<PointerEvent>,
+    event: MapBrowserEvent,
     layerIdToFilter: LayerId[] | null,
   ): Feature<LineString>[] => getFeaturesAtPixel(event, layerIdToFilter).filter(isLineStringFeature);
 
