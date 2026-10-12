@@ -30,7 +30,6 @@ import {
   validateBopliktomraadeUtstrekning,
 } from "./flatedata-utils";
 import { SortPropertyFor } from "./useFlatedataTableSort";
-import FeatureToggle from "components/FeatureToggle";
 
 export type InndelingErrors = Partial<Record<string, FieldError>> | undefined;
 
@@ -147,13 +146,11 @@ const archiveColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn
   header: "",
   renderCell: (ctx: FlatedataColumnCtx) => (
     <TableCell className="archive-action-cell">
-      <FeatureToggle feature="archive-inndeling">
-        {isNonExhaustiveInndelingtype(ctx.inndelingtype) && ctx.canEditInndeling ? (
-          <ArkiverInndelingButton {...ctx} />
-        ) : (
-          <></>
-        )}
-      </FeatureToggle>
+      {isNonExhaustiveInndelingtype(ctx.inndelingtype) && ctx.canEditInndeling ? (
+        <ArkiverInndelingButton {...ctx} />
+      ) : (
+        <></>
+      )}
     </TableCell>
   ),
 });
@@ -162,13 +159,11 @@ const deleteColumn = <T extends FlatedataTableInndelingtype>(): FlatedataColumn<
   header: "",
   renderCell: (ctx: FlatedataColumnCtx) => (
     <TableCell>
-      <FeatureToggle feature="delete-inndeling">
-        {isNonExhaustiveInndelingtype(ctx.inndelingtype) && ctx.canEditInndeling ? (
-          <SlettInndelingButton {...ctx} />
-        ) : (
-          <></>
-        )}
-      </FeatureToggle>
+      {isNonExhaustiveInndelingtype(ctx.inndelingtype) && ctx.canEditInndeling ? (
+        <SlettInndelingButton {...ctx} />
+      ) : (
+        <></>
+      )}
     </TableCell>
   ),
 });
