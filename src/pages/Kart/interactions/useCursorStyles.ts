@@ -42,9 +42,12 @@ const isCustomEventName = (value: EventName | CustomEventName): value is CustomE
  */
 
 export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: CursorStyleProps) => {
-  const mapViewportStyle = map.getViewport().style;
-
   useEffect(() => {
+    const mapViewportStyle = map.getViewport()?.style;
+    if (!mapViewportStyle) {
+      return;
+    }
+
     const setDefaultCursor = (e?: Event | BaseEvent) => {
       if (defaultCursor && e) {
         mapViewportStyle.cursor = defaultCursor(e);
@@ -61,7 +64,7 @@ export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: C
           const callback = (e: Event | BaseEvent) => {
             mapViewportStyle.cursor = event.cursor(e);
           };
-          map.getTargetElement().addEventListener(event.name, callback);
+          map.getTargetElement()?.addEventListener(event.name, callback);
           event.callback = callback;
         }
       }
@@ -114,5 +117,5 @@ export const useCursorStyles = ({ isEnabled, defaultCursor, eventsAndCursor }: C
       }
       mapViewportStyle.cursor = "";
     };
-  }, [defaultCursor, eventsAndCursor, isEnabled, mapViewportStyle]);
+  }, [defaultCursor, eventsAndCursor, isEnabled]);
 };

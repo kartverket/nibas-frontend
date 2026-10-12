@@ -8,10 +8,7 @@ import { LayerId } from "hooks/layers/types";
 import { isLineStringFeature } from "utils/type-utils";
 
 export const useGetFeatures = () => {
-  const getFeaturesAtPixel = (
-    event: MapBrowserEvent<PointerEvent>,
-    layerIdsToFilter: LayerId[] | null,
-  ): FeatureLike[] =>
+  const getFeaturesAtPixel = (event: MapBrowserEvent, layerIdsToFilter: LayerId[] | null): FeatureLike[] =>
     map.getFeaturesAtPixel(event.pixel, {
       layerFilter: (layer) =>
         layerIdsToFilter ? layerIdsToFilter.map((l) => getLayerById(l)).find((l) => l === layer) !== undefined : true,
@@ -19,7 +16,7 @@ export const useGetFeatures = () => {
     });
 
   const getLineStringFeaturesAtPixel = (
-    event: MapBrowserEvent<PointerEvent>,
+    event: MapBrowserEvent,
     layerIdToFilter: LayerId[] | null,
   ): Feature<LineString>[] => getFeaturesAtPixel(event, layerIdToFilter).filter(isLineStringFeature);
 

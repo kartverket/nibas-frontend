@@ -215,6 +215,11 @@ const useModify = () => {
     };
 
     const saveCoordinatesBeforeModification = (e: ModifyEvent) => {
+      const mapBrowserEvent = e.mapBrowserEvent;
+      if (!mapBrowserEvent) {
+        return;
+      }
+
       e.features.forEach((feature) => {
         const featureId = feature.getId()?.toString();
         if (featureId === undefined) {
@@ -225,7 +230,7 @@ const useModify = () => {
         if (geometry instanceof LineString) {
           feature.set(previousCoordinateKey, geometry.getCoordinates());
           // Når vi legger til en vertex på en feature avfyres det ikke et modifyend-event (pointerup) når vertexen har blitt lagt på, så vi må derfor lytte på featuren i stedet for.
-          if (activeTool === "add" && !e.mapBrowserEvent.dragging) {
+          if (activeTool === "add" && !mapBrowserEvent.dragging) {
             feature.once("change", createAddPointGrenseEntry);
             return () => {
               feature.un("change", createAddPointGrenseEntry);
@@ -270,9 +275,9 @@ const useModify = () => {
       }
     };
 
-    const onSnap = (event: ModifyEvent, actingLineString: Feature<Geometry>, pointCoords: Coordinate) => {
+    const onSnap = (mapBrowserEvent: MapBrowserEvent, actingLineString: Feature<Geometry>, pointCoords: Coordinate) => {
       // Vi ønsker ikke å arve posisjonskvalitet fra grenser i redigeringsmodus
-      const targetFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
+      const targetFeatures = getLineStringFeaturesAtPixel(mapBrowserEvent, [
         "matrikkel",
         "FYLKE",
         "KOMMUNE",
@@ -322,6 +327,11 @@ const useModify = () => {
     };
 
     const updateFeatureOnModification = async (event: ModifyEvent) => {
+      const mapBrowserEvent = event.mapBrowserEvent;
+      if (!mapBrowserEvent) {
+        return;
+      }
+
       const nibasVectorLayers: VectorLayerId[] = [
         "FYLKE",
         "KOMMUNE",
@@ -336,16 +346,11 @@ const useModify = () => {
         ...(activeModeTools.includes("snap_matrikkel") ? matrikkelVectorLayers : []),
         ...(activeModeTools.includes("snap_nibas") ? nibasVectorLayers : []),
       ];
-      const activeFeatures = getLineStringFeaturesAtPixel(event.mapBrowserEvent as MapBrowserEvent<PointerEvent>, [
-        "edit",
-      ]);
+      const activeFeatures = getLineStringFeaturesAtPixel(mapBrowserEvent, ["edit"]);
       const nonSelectedActiveFeatures = activeFeatures.filter(
         (feature) => !selectedFeatures.map((f) => f.getId()).includes(feature.getId()),
       );
-      const snappableFeatures = getLineStringFeaturesAtPixel(
-        event.mapBrowserEvent as MapBrowserEvent<PointerEvent>,
-        snappableLayers,
-      );
+      const snappableFeatures = getLineStringFeaturesAtPixel(mapBrowserEvent, snappableLayers);
       if (selectedFeatures.length > 1 && activeModeTools.includes("snap_forced")) {
         // Vi bryr oss kun om tilfeller der mer enn én feature blir modifisert hvis tvungen snapping er påskrudd.
         if (nonSelectedActiveFeatures.length === 0 && snappableFeatures.length === 0) {
@@ -378,10 +383,7 @@ const useModify = () => {
             return;
           }
 
-          const nearbyVertex = findNearbyVertexOnFeature(
-            nonSelectedActiveFeatureGeometry,
-            event.mapBrowserEvent.coordinate,
-          );
+          const nearbyVertex = findNearbyVertexOnFeature(nonSelectedActiveFeatureGeometry, mapBrowserEvent.coordinate);
 
           if (nearbyVertex) {
             const nonSelectedActiveFeatureCoordinates = nonSelectedActiveFeatureGeometry.getCoordinates();
@@ -424,7 +426,7 @@ const useModify = () => {
             return;
           }
         }
-        onSnap(event, selectedFeature, event.mapBrowserEvent.coordinate);
+        onSnap(mapBrowserEvent, selectedFeature, mapBrowserEvent.coordinate);
       }
       addModificationToHistory(event.features.getArray());
     };
