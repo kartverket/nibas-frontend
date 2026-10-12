@@ -1,13 +1,28 @@
-import { MapBrowserEvent } from "ol";
+import { Feature, MapBrowserEvent } from "ol";
+import { Coordinate } from "ol/coordinate";
 import { ListenerFunction } from "ol/events";
-import { useEffect } from "react";
+import { FeatureLike } from "ol/Feature";
+import { Geometry } from "ol/geom";
+import { useEffect, useState } from "react";
 import { map } from "../constants";
+import { useGetFeatures } from "./interaction-utils";
 
-const useHoveredFeature = (
+const useHoveredFeature = <T extends Geometry>(
   enabled: boolean,
-  onPointerMove: (e: MapBrowserEvent<PointerEvent>) => void,
-  clearHoverState: () => void,
+  shouldClearHover: boolean | undefined,
+  isTargetFeature: (feature: FeatureLike) => feature is Feature<T>,
 ) => {
+  const { getFeaturesAtPixel } = useGetFeatures();
+  const [hoveredFeature, setHoveredFeature] = useState<Feature<T> | null>(null);
+  const [hoveredCoordinate, setHoveredCoordinate] = useState<Coordinate>();
+
+  const clearHoverState = () => {
+    if (shouldClearHover === true) {
+      setHoveredFeature(null);
+      setHoveredCoordinate(undefined);
+    }
+  };
+
   useEffect(() => {
     // Definerer timeout her slik at vi kan referere til den før den blir satt i koden
     let timeout: ReturnType<typeof setTimeout>;
@@ -21,7 +36,17 @@ const useHoveredFeature = (
       }
       // Starter en ny timeout som det kan hende blir kansellert i fremtiden hvis musen beveger seg i mellomtiden.
       timeout = setTimeout(() => {
-        onPointerMove(e);
+        const features = getFeaturesAtPixel(e, null);
+        // Vi velger første feature. Hvis det er flere må man zoome inn for å treffe den man tenker på.
+        const feature = features[0];
+        if (feature != null) {
+          if (isTargetFeature(feature) && feature.getGeometry() != null) {
+            setHoveredFeature(feature);
+            setHoveredCoordinate(e.coordinate);
+          }
+        } else {
+          clearHoverState();
+        }
       }, 150);
     };
     if (enabled) {
@@ -34,6 +59,8 @@ const useHoveredFeature = (
       map.un("pointermove", hover as ListenerFunction);
     };
   }, [enabled]);
+
+  return { hoveredFeature, hoveredCoordinate };
 };
 
 export default useHoveredFeature;
