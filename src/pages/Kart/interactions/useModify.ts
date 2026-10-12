@@ -275,11 +275,7 @@ const useModify = () => {
       }
     };
 
-    const onSnap = (
-      mapBrowserEvent: MapBrowserEvent,
-      actingLineString: Feature<Geometry>,
-      pointCoords: Coordinate,
-    ) => {
+    const onSnap = (mapBrowserEvent: MapBrowserEvent, actingLineString: Feature<Geometry>, pointCoords: Coordinate) => {
       // Vi ønsker ikke å arve posisjonskvalitet fra grenser i redigeringsmodus
       const targetFeatures = getLineStringFeaturesAtPixel(mapBrowserEvent, [
         "matrikkel",
@@ -387,10 +383,7 @@ const useModify = () => {
             return;
           }
 
-          const nearbyVertex = findNearbyVertexOnFeature(
-            nonSelectedActiveFeatureGeometry,
-            mapBrowserEvent.coordinate,
-          );
+          const nearbyVertex = findNearbyVertexOnFeature(nonSelectedActiveFeatureGeometry, mapBrowserEvent.coordinate);
 
           if (nearbyVertex) {
             const nonSelectedActiveFeatureCoordinates = nonSelectedActiveFeatureGeometry.getCoordinates();

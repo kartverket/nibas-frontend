@@ -7,7 +7,7 @@ const getColorFromStyle = (styles: Style[]): string => {
   if (!strokeStyle) {
     return "#000000";
   }
-  return strokeStyle.getStroke()?.getColor().toLocaleString() ?? "";
+  return strokeStyle.getStroke()?.getColor()?.toLocaleString() ?? "";
 };
 
 const isDottedStyle = (styles: Style[]): boolean => {
