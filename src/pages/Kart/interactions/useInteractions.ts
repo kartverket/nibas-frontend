@@ -1,4 +1,5 @@
 import { Tool, useToolbar } from "contexts/ToolbarContext";
+import { navigationPinLayer, navigationPinSource } from "hooks/layers/constants";
 import { VectorLayerId } from "hooks/layers/types";
 import { MapBrowserEvent } from "ol";
 import { ListenerFunction } from "ol/events";
@@ -13,6 +14,11 @@ import useMeasure from "./useMeasure";
 import useModify from "./useModify";
 import useSelect from "./useSelect";
 import useSelectPoint from "./useSelectPoint";
+
+export const clearNavigationPinOnClick = () => {
+  navigationPinSource.clear();
+};
+
 const useInteractions = () => {
   const { modify } = useModify();
   const { dragPan, dragZoom } = useDragInteractions();
@@ -86,6 +92,7 @@ const useInteractions = () => {
   }, [activeTool, draw]);
   useEffect(() => {
     // Rekkefølgen her er potensielt viktig for at events skal avbryte hverandre i riktig rekkefølge
+    map.on("click", clearNavigationPinOnClick as ListenerFunction);
     map.on("click", select as ListenerFunction);
     map.on("click", selectPoint as ListenerFunction);
     map.addInteraction(dragPan);
@@ -107,6 +114,7 @@ const useInteractions = () => {
     }
 
     return () => {
+      map.un("click", clearNavigationPinOnClick as ListenerFunction);
       map.un("click", select as ListenerFunction);
       map.un("click", selectPoint as ListenerFunction);
       map.removeInteraction(dragPan);
