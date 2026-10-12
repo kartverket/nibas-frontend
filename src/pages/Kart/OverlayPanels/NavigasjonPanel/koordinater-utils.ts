@@ -1,7 +1,9 @@
 import { Coordinate } from "ol/coordinate";
+import Feature from "ol/Feature";
 import Point from "ol/geom/Point";
 import Polygon from "ol/geom/Polygon";
 import { ProjectionLike, transform } from "ol/proj";
+import { navigationPinSource } from "hooks/layers/constants";
 import { map } from "pages/Kart/constants";
 import { pixelTolerance } from "pages/Kart/interactions/constants";
 
@@ -92,6 +94,9 @@ export const areCoordsWithinNibasHitTolerance = (coord1: Coordinate, coord2: Coo
 
 export const centerOnCoordinate = (north: number, east: number, zoom?: number, duration?: number) => {
   if (north !== null && east !== null) {
+    navigationPinSource.clear();
+    navigationPinSource.addFeature(new Feature(new Point([east, north])));
+
     const view = map.getView();
     view.animate({
       duration: duration !== null ? duration : 0,
