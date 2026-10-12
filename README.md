@@ -27,13 +27,13 @@ VITE_MATRIKKELWFS_URL
 Last ned dependencies med
 
 ```
-npm i
+pnpm install
 ```
 
 Start opp en dev-server med
 
 ```
-npm start
+pnpm start
 ```
 
 For å hente ut grenser er du nødt til å klone og sette opp [nibas-backend](https://gitlab-staging.statkart.no/nibas/nibas-backend).
@@ -41,12 +41,12 @@ Følg readme i dette repoet for å få denne kjørende.
 
 ### Linting
 
-eslint blir installert på npm install. Men husk å aktivere plugin. For IntelliJ: Languages & Frameworks -> Javascript ->
+eslint blir installert på pnpm install. Men husk å aktivere plugin. For IntelliJ: Languages & Frameworks -> Javascript ->
 Code Quality Tools -> ESLint. Velg å huke av for Automatic ESLint configuration.
 
 ### Types
 
-Types fra API blir generert ved `npm run update-api-types`. Videre blir disse typene renamet i `src/types/api` for å gjøre det lettere å skrive inn typene når de brukes. (Dette kan nok gjøres i et script for å gjøre det lettere å vedlikeholde på sikt)
+Types fra API blir generert ved `pnpm run update-api-types`. Videre blir disse typene renamet i `src/types/api` for å gjøre det lettere å skrive inn typene når de brukes. (Dette kan nok gjøres i et script for å gjøre det lettere å vedlikeholde på sikt)
 
 ### Feature toggles
 
