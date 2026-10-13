@@ -2,7 +2,7 @@ import { useFeatureFlagEnabled } from "posthog-js/react";
 import { posthog } from "posthog-js";
 import React from "react";
 
-type Keys = "archive-inndeling" | "delete-inndeling";
+type Keys = never;
 
 export const featureEnabled = (key: Keys): boolean => {
   return posthog.isFeatureEnabled(key) ?? false;
