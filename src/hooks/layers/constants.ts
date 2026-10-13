@@ -4,12 +4,14 @@ import VectorLayer from "ol/layer/Vector";
 import TileWMS from "ol/source/TileWMS";
 import VectorSource from "ol/source/Vector";
 import WMTS from "ol/source/WMTS";
-import { StyleFunction } from "ol/style/Style";
+import Style, { StyleFunction } from "ol/style/Style";
 import { map } from "pages/Kart/constants";
 import { getFlateHighlightStyle, getLayerStyle, getPointOverlayStyle } from "utils/map/layerStyles";
 import { kartlagSources, matrikkelnummerSource } from "./kartlagSources";
 import { VectorLayerId, KartlagLayerId, HighlightVectorLayerId } from "./types";
 import { Feature } from "ol";
+import Point from "ol/geom/Point";
+import Icon from "ol/style/Icon";
 
 const createTileLayerFromKartlagSource = (id: keyof typeof kartlagSources, options?: Options<WMTS | TileWMS>) => {
   const newLayer = new TileLayer({ source: kartlagSources[id], visible: false, preload: Infinity, ...options });
@@ -42,6 +44,33 @@ map.addLayer(matrikkelnummerLayer);
 export const editSource = new VectorSource();
 export const archivedSource = new VectorSource();
 export const measureSource = new VectorSource();
+export const navigationPinSource = new VectorSource<Feature<Point>>();
+
+let navigationPinStyle: Style | undefined;
+
+const getNavigationPinStyle = () => {
+  if (navigationPinStyle == null) {
+    const fillColor = getComputedStyle(document.documentElement).getPropertyValue("--kvib-colors-red-400").trim();
+    const strokeColor = getComputedStyle(document.documentElement).getPropertyValue("--kvib-colors-red-600").trim();
+    navigationPinStyle = new Style({
+      image: new Icon({
+        anchor: [0.5, 1],
+        src: `data:image/svg+xml,${encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40"><path fill="${fillColor}" stroke="${strokeColor}" stroke-width="2" d="M16 1C8.3 1 2 7.3 2 15c0 10.5 14 24 14 24s14-13.5 14-24C30 7.3 23.7 1 16 1Z"/><circle cx="16" cy="15" r="5" fill="${strokeColor}"/></svg>`,
+        )}`,
+      }),
+    });
+  }
+  return navigationPinStyle;
+};
+
+export const navigationPinLayer = new VectorLayer({
+  source: navigationPinSource,
+  zIndex: 1001,
+  style: getNavigationPinStyle,
+});
+navigationPinLayer.set("id", "navigationPin");
+map.addLayer(navigationPinLayer);
 
 const grenseStyle =
   (grenseId: VectorLayerId): StyleFunction =>
