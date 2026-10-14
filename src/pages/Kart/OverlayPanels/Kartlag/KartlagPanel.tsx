@@ -18,7 +18,7 @@ const KartlagPanel = () => {
     description: "Prøv å laste opp filen på nytt, og hvis feilen vedvarer, vennligst kontakt Kartverket",
   });
   const toast = useToast();
-  const { mappedLayers, addSOSIFileSublayers, uploadKartlag } = useKartlag();
+  const { mappedLayers, isKartlagLoading, addSOSIFileSublayers, uploadKartlag } = useKartlag();
   const { closeOverlayPanel } = useOverlayPanel();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploadingFiles, setIsUploadingFiles] = useState(false);
@@ -129,16 +129,15 @@ const KartlagPanel = () => {
         </Button>
       </PanelHeader>
       <KartlagList>
-        {mappedLayers.length > 0 ? (
-          mappedLayers.map((mappedLayer, index) => (
-            <Kartlag
-              key={mappedLayer.sourceId}
-              mappedLayer={mappedLayer}
-              index={index}
-              maxIndex={mappedLayers.length - 1}
-            />
-          ))
-        ) : (
+        {mappedLayers.map((mappedLayer, index) => (
+          <Kartlag
+            key={mappedLayer.sourceId}
+            mappedLayer={mappedLayer}
+            index={index}
+            maxIndex={mappedLayers.length - 1}
+          />
+        ))}
+        {isKartlagLoading && (
           <Center>
             <Spinner thickness="2px" emptyColor="gray.200" color="blue.500" size="xl" />
           </Center>
