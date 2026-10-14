@@ -207,6 +207,12 @@ export const mapKommunalInndelingResponseToKrets = (
   );
 };
 
+export const getUniqueKretserById = (kretser: Krets[]): Krets[] => {
+  const uniqueKretser = new Map<string, Krets>();
+  kretser.forEach((krets) => uniqueKretser.set(krets.id.lokalid.value, krets));
+  return [...uniqueKretser.values()];
+};
+
 export const getKretsTypeForFeature = (
   kontekstgenskaper: KontekstEgenskaper[],
   featureProperties: FeatureProperties,
