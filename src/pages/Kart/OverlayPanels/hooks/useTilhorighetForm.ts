@@ -14,6 +14,7 @@ import {
   getKretsTypeForFeature,
   getNyeInndelingerFromUtkast,
   getTilhorighetData,
+  getUniqueKretserById,
   getUpdatedMetadataForKretser,
   Krets,
   Tilhorighet,
@@ -89,13 +90,13 @@ export const useTilhorighetForm = (feature: Feature, inndelingTypeOverride?: Til
       const tilhorighetOptionsFromHistory = getKretserFromHistory(historyEntries, kommunerIdOgNummer, inndelingType);
       const optionsFromUtkastAndHistory = [...tilhorighetOptionsFromUtkast, ...tilhorighetOptionsFromHistory];
       const listeA: Krets[] = getUpdatedMetadataForKretser(
-        [...baseOptions[Tilhorighet.A], ...optionsFromUtkastAndHistory],
+        getUniqueKretserById([...baseOptions[Tilhorighet.A], ...optionsFromUtkastAndHistory]),
         historyEntries,
         utkast.operasjoner,
         inndelingType,
       );
       const listeB: Krets[] = getUpdatedMetadataForKretser(
-        [...baseOptions[Tilhorighet.B], ...optionsFromUtkastAndHistory],
+        getUniqueKretserById([...baseOptions[Tilhorighet.B], ...optionsFromUtkastAndHistory]),
         historyEntries,
         utkast.operasjoner,
         inndelingType,
