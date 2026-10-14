@@ -1,4 +1,5 @@
 import { InndelingOfType, useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { highlightLayers } from "hooks/layers/constants";
 import {
   TILHORIGHET_INNDELINGTYPE_VALUES,
@@ -57,6 +58,7 @@ type FlateKommuneOmraaderHighlighterProps = {
  */
 const InndelingHighlighter = ({ inndeling }: FlateKommuneOmraaderHighlighterProps) => {
   const omraader = useFlatedata(inndeling) ?? [];
+  const { utkast } = useUtkast();
 
   useEffect(() => {
     const flaterSource = highlightLayers.flateHighlight.getSource();
@@ -65,7 +67,11 @@ const InndelingHighlighter = ({ inndeling }: FlateKommuneOmraaderHighlighterProp
     }
 
     const features = removeNil(
-      omraader.map((omraade) => getPolygonForOmraade(inndeling.inndelingtype, inndeling.id, omraade)),
+      omraader.map((omraade) =>
+        getPolygonForOmraade(inndeling.inndelingtype, inndeling.id, omraade, {
+          sammenslaaing: utkast?.operasjoner.stemmekretsSammenslaaingsendring,
+        }),
+      ),
     );
 
     addFeaturesToSource("flateHighlight", features);
@@ -79,7 +85,7 @@ const InndelingHighlighter = ({ inndeling }: FlateKommuneOmraaderHighlighterProp
         }
       });
     };
-  }, [omraader, inndeling.id, inndeling.inndelingtype]);
+  }, [omraader, inndeling.id, inndeling.inndelingtype, utkast]);
 
   return null;
 };

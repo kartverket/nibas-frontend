@@ -24,7 +24,6 @@ type Props = {
   formMethods: UseFormReturn<FlatedataInputs>;
   setPreviousValues: (flatedata: FlatedataInputs | undefined) => void;
   allInndelinger: MetadataResponse[];
-  sammenslaaingInformasjon: string | undefined;
   control: Control<FlatedataInputs>;
   canEditInndeling: boolean;
   pendingArchived: Record<string, boolean>;
@@ -43,7 +42,6 @@ export const FlatedataTableRow = ({
   formMethods,
   setPreviousValues,
   allInndelinger,
-  sammenslaaingInformasjon,
   control,
   canEditInndeling,
   pendingArchived,
@@ -114,7 +112,6 @@ export const FlatedataTableRow = ({
     allInndelinger,
     activeInndelingIds,
     activeInndelingerCount,
-    sammenslaaingInformasjon,
     canEditInndeling,
   };
 

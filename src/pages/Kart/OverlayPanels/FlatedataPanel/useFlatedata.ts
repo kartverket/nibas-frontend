@@ -21,13 +21,16 @@ import {
   KretsDelingEndringRequest,
   MetadataResponse,
   StemmekretsResponse,
+  StemmekretsSammenslaaingsendringRequest,
   UtkastResponse,
 } from "types/api";
 import {
   getDefaultFlatedataForInndelingtype,
+  getSammenslaattStemmekretsId,
   getTempFlateId,
   isBopliktomraadeRequest,
   isNonExhaustiveInndelingtype,
+  TempFlateId,
 } from "./flatedata-utils";
 import { isGrunnkretsResponse, isStemmekretsResponse } from "./flatedata-response-guards";
 import { getIdFromEntity } from "utils/api";
@@ -207,6 +210,14 @@ const isKretsMetadataResponse = (
 ): metadataresponse is GrunnkretsResponse | StemmekretsResponse =>
   isGrunnkretsResponse(metadataresponse) || isStemmekretsResponse(metadataresponse);
 
+export type TempFlatedata = MetadataResponse & {
+  id: {
+    lokalid: {
+      value: TempFlateId;
+    };
+  };
+};
+
 const getKretsdelingMetadata = (
   kretsdelinger: KretsDelingEndringRequest[],
   metadataresponses: MetadataResponse[],
@@ -244,6 +255,40 @@ const getKretsdelingMetadata = (
         nummer: nyKrets.kretsNummer,
       }));
     });
+
+export const getSammenslaaingMetadata = (
+  sammenslaaing: StemmekretsSammenslaaingsendringRequest | null | undefined,
+  metadataresponses: MetadataResponse[],
+  inndeling: Inndeling,
+): TempFlatedata[] => {
+  if (sammenslaaing == null || inndeling.inndelingtype !== "STEMMEKRETS") {
+    return [];
+  }
+
+  const viderefoertStemmekrets = metadataresponses.find(
+    (metadataresponse): metadataresponse is StemmekretsResponse =>
+      isStemmekretsResponse(metadataresponse) &&
+      getIdFromEntity(metadataresponse) === sammenslaaing.viderefoertStemmekrets.lokalId,
+  );
+  if (viderefoertStemmekrets == null) {
+    return [];
+  }
+
+  return [
+    {
+      ...viderefoertStemmekrets,
+      id: {
+        ...viderefoertStemmekrets.id,
+        lokalid: {
+          value: getSammenslaattStemmekretsId(sammenslaaing, inndeling.id),
+        },
+      },
+      navn: sammenslaaing.navn,
+      nummer: sammenslaaing.nummer,
+      informasjon: sammenslaaing.informasjon ?? "",
+    },
+  ];
+};
 
 export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefined => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
@@ -284,11 +329,27 @@ export const useFlatedata = (inndeling: Inndeling): MetadataResponse[] | undefin
     getEntityUtkastTypeForInndelingtype(inndelingtype),
   ) ?? []) as MetadataResponse[];
 
+  const sammenslaaingFlatedataWithUtkastChanges = (useUtkastEntity(
+    getSammenslaaingMetadata(
+      utkast?.operasjoner.stemmekretsSammenslaaingsendring,
+      flatedataFromBackendWithUtkastChanges,
+      inndeling,
+    ),
+    getEntityUtkastTypeForInndelingtype(inndelingtype),
+  ) ?? []) as MetadataResponse[];
+
+  const sammenslaaingSourceIds = new Set(
+    utkast?.operasjoner.stemmekretsSammenslaaingsendring?.stemmekretserTilSammenslaaing
+      .concat(utkast.operasjoner.stemmekretsSammenslaaingsendring.viderefoertStemmekrets)
+      .map((stemmekrets) => stemmekrets.lokalId) ?? [],
+  );
+
   const flatedataFromBackendWithUtkastChangesAndNewFlatedataInUtkast = [
     ...flatedataFromBackendWithUtkastChanges,
     ...newFladedataInUtkastWithUtkastChanges,
     ...kretsdelingFlatedataWithUtkastChanges,
-  ];
+    ...sammenslaaingFlatedataWithUtkastChanges,
+  ].filter((flate) => !sammenslaaingSourceIds.has(getIdFromEntity(flate)));
 
   const newFlatedataFromHistory = getNyeInndelingerMetadataForInndelingtypeFromHistory(historyEntries, inndeling);
 
