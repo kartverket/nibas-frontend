@@ -15,9 +15,6 @@ import {
 import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useForm } from "react-hook-form";
 import { format, parseISO } from "date-fns";
-import { useKartlag } from "contexts/KartlagContext/KartlagContext";
-import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
-import { resetMapView } from "utils/map/useMap";
 import { useNavigate } from "react-router-dom";
 
 type Props = {
@@ -31,8 +28,6 @@ type FormType = {
 
 const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
   const { gyldighetsdato } = useValgtGyldighetsdato();
-  const { resetKartlag } = useKartlag();
-  const { clearInndelingerAndSources } = useInndelinger();
   const navigate = useNavigate();
 
   const defeaultDato = gyldighetsdato != null ? new Date(gyldighetsdato) : undefined;
@@ -46,9 +41,6 @@ const VelgVisningsdatoModal = ({ isOpen, onClose }: Props) => {
     const valgtDato = data.dato ?? new Date();
     const valgtDatoAsString = format(valgtDato, "yyyy-MM-dd");
     navigate(`../kart/${valgtDatoAsString}`, { viewTransition: true });
-    clearInndelingerAndSources();
-    resetKartlag();
-    resetMapView();
     onClose();
   };
 
