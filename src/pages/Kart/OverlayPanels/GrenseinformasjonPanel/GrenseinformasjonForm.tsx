@@ -419,11 +419,11 @@ const GrenseinformasjonForm = ({ feature, onClose }: Props) => {
             tooltipLabel="Dato når grensen skal være gyldig til."
             valueLabel={datestringToFormattedDatestring(gyldigTil)}
           />
-          <Alert status="warning" variant="top-accent">
+          <GyldigTilAlert status="warning">
             <AlertIcon />
             Grensen er satt til å utgå ved en fremtidig dato, og du vil derfor ikke kunne gjøre noen endringer på denne
             grensen.
-          </Alert>
+          </GyldigTilAlert>
         </div>
       )}
 
@@ -531,4 +531,9 @@ const AutofillAlertHeader = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
+`;
+
+const GyldigTilAlert = styled(Alert)`
+  margin-top: 10px;
+  border-radius: var(--kvib-radii-md, 6px);
 `;
