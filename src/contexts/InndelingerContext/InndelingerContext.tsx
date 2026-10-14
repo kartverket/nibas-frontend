@@ -1,22 +1,10 @@
-import {
-  fetchActiveOverlayModalFromSessionStorage,
-  fetchActiveOverlayPanelFromSessionStorage,
-  fetchHistoryFromSessionStorage,
-  fetchMapPositionFromSessionStorage,
-  fetchSelectedFeaturesFromSessionStorage,
-  fetchSelectedPointFromSessionStorage,
-} from "contexts/application-state-utils";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
-import { useOverlayPanel } from "contexts/OverlayPanelContext";
-import { useToolbar } from "contexts/ToolbarContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { editSource, grenserLayers } from "hooks/layers/constants";
 import { VectorLayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
-import { map } from "pages/Kart/constants";
-import { exclusiveSelectTools } from "pages/Kart/interactions/useSelect";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { AdministrativEnhetNavn, FeatureProperties, Inndelingtype, INNDELINGTYPE_VALUES } from "types/api";
 import { getFeatureFremtidigEndringDato } from "utils/features";
@@ -104,15 +92,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(inndelingerToFetch);
   const { utkast } = useUtkast();
 
-  const { reapplyCurrentEntries, getHistoryEntries, restoreHistoryState } = useHistory();
+  const { reapplyCurrentEntries, getHistoryEntries } = useHistory();
 
   const isSameInndelinger = (a: Inndeling, b: Inndeling): boolean => {
     return a.id === b.id && a.inndelingtype === b.inndelingtype;
   };
-
-  const { selectPointOnFeature, addToSelection, selectFeatures } = useFeatureStyle();
-  const { openOverlayModal, openOverlayPanel } = useOverlayPanel();
-  const { activeTool } = useToolbar();
 
   const getAllInndelinger = useCallback((): Inndeling[] => {
     return Object.values(inndelinger).flatMap((inndelingerMap) => [...inndelingerMap.values()]);
@@ -121,71 +105,6 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
   const getAllInndelingerId = useCallback((): string[] => {
     return getAllInndelinger().map((inndeling) => inndeling.id);
   }, [getAllInndelinger]);
-
-  const restoreApplicationState = useCallback(() => {
-    const sessionStorageHistory = fetchHistoryFromSessionStorage();
-    // TODO: Selected feature/point style virker ikke.
-    const selectedFeatures = fetchSelectedFeaturesFromSessionStorage();
-    if (selectedFeatures != null && selectedFeatures.length > 0) {
-      const mapPosition = fetchMapPositionFromSessionStorage();
-
-      if (shouldZoom === true) {
-        map.getView().animate({
-          center: mapPosition?.center,
-          zoom: mapPosition?.zoom,
-        });
-      }
-      if (exclusiveSelectTools.includes(activeTool) === true) {
-        selectFeatures(selectedFeatures);
-      } else {
-        addToSelection(selectedFeatures[0]);
-      }
-    } else {
-      if (shouldZoom === true) {
-        zoomToFeatures(
-          inndelingFeatures
-            .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
-            .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
-        );
-      }
-    }
-
-    const selectedPointFromSessionStorage = fetchSelectedPointFromSessionStorage();
-    if (selectedPointFromSessionStorage != null) {
-      const coords = selectedPointFromSessionStorage.getGeometry()?.getCoordinates();
-      if (coords == null) {
-        return;
-      }
-      selectPointOnFeature(coords, selectedFeatures);
-    }
-
-    if (sessionStorageHistory != null) {
-      restoreHistoryState(sessionStorageHistory);
-    }
-
-    const activeModalFromSessionStorage = fetchActiveOverlayModalFromSessionStorage();
-
-    if (activeModalFromSessionStorage != null) {
-      openOverlayModal(activeModalFromSessionStorage);
-    }
-
-    const activePanelFromSessionStorage = fetchActiveOverlayPanelFromSessionStorage();
-
-    if (activePanelFromSessionStorage != null) {
-      openOverlayPanel(activePanelFromSessionStorage);
-    }
-  }, [
-    activeTool,
-    addToSelection,
-    getAllInndelingerId,
-    inndelingFeatures,
-    openOverlayModal,
-    openOverlayPanel,
-    restoreHistoryState,
-    selectFeatures,
-    selectPointOnFeature,
-    shouldZoom,
-  ]);
 
   /**
    * Denne useEffecten er kjernen av motoren i InndelingerContext og tar for seg det å legge til features fra inndelingen i kartet
@@ -375,7 +294,13 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     }
     // Reapply historikken slik at eventuelle features som har blitt endret på siden siste lagring er i sync med historikken
     reapplyCurrentEntries();
-    restoreApplicationState();
+    if (shouldZoom) {
+      zoomToFeatures(
+        inndelingFeatures
+          .filter((inndeling) => getAllInndelingerId().includes(inndeling.id))
+          .flatMap((inndelingWithFeatures) => inndelingWithFeatures.features),
+      );
+    }
     // Når vi er ferdig med å håndtere features for inndelinger man har valgt, så er det ikke lenger noen aktive inndelinger som må bli hentet
     // Dette sikrer også at featurene man får hentet fra inndelingene er tomme, og useEffecten ikke kjører flere ganger
     setInndelingerToFetch([]);
@@ -388,10 +313,11 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     utkast?.operasjoner.metadataendringer,
     utkastFeaturesInInndeling,
     reapplyCurrentEntries,
-    restoreApplicationState,
     getHistoryEntries,
     addDirtyStyles,
     getAllInndelingerId,
+    shouldZoom,
+    zoomToFeatures,
   ]);
 
   const clearViewingLayersAndInndelinger = () => {

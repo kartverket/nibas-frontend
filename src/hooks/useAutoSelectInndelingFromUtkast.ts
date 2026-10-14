@@ -8,7 +8,7 @@ import { Inndelingtype } from "types/api";
 
 // Denne fungerer for vanlige brukstilfeller, men den kan ikke autoselekere alle tilfeller korrekt.
 // Dette er fordi vi mangler informasjon for å finne inndelingstypen vi skal bruke.
-export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
+export const useAutoSelectInndelingFromUtkast = () => {
   const { selectInndelinger, setSelectedFylkeIds, currentlyEditingInndelinger } = useInndelinger();
   const { utkast } = useUtkast();
   const { gyldighetsdato } = useValgtGyldighetsdato();
@@ -54,10 +54,6 @@ export const useAutoSelectInndelingFromUtkast = (enabled: boolean) => {
 
   useEffect(() => {
     if (kommuner && kommuner.length > 0 && !hasAutoSelected && currentlyEditingInndelinger.length === 0) {
-      if (!enabled) {
-        return;
-      }
-
       // Det er mulig å redigere stemmekretsgrenser og grunnkretsgrenser i kommuneredigeringsmodus,
       // men det er ingen måte å vite om det ble gjort i kommuneredigeringsmodus eller stemmekrets- eller grunnkretsmodus.
       // Derfor velger vi kommune som default da det er mest sannsynlig.

@@ -4,7 +4,6 @@ import { useErrorHandling } from "contexts/ErrorHandlingContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { HistoryChange } from "contexts/HistoryContext/types";
-import { fetchUtkastFromSessionStorage, sessionStorageKeys } from "contexts/application-state-utils";
 import useNibasApi from "hooks/useNibasApi";
 import { isTempFeatureId } from "pages/Kart/interactions/feature-id-utils";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -29,7 +28,6 @@ export const UtkastContext = createContext<UtkastContextValue | undefined>(undef
 
 export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
   const [utkast, setUtkast] = useState<UtkastResponse>();
-  const sessionUtkast = fetchUtkastFromSessionStorage();
   const { history, clearHistory } = useHistory();
   const { addDirtyStyles, addErrorStyles, clearFeatureStyles } = useFeatureStyle();
   const { setError } = useErrorHandling();
@@ -46,7 +44,7 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
     mutate,
     isValidating,
   } = useNibasApi(
-    sessionUtkast == null && utkastId != null ? "/v1/utkast/{id}" : null,
+    utkastId != null ? "/v1/utkast/{id}" : null,
     {
       // id blir ikke brukt før den er truthy, så vi kan trygt si at den
       // ikke er null her
@@ -74,14 +72,10 @@ export const UtkastProvider = ({ children }: { children: React.ReactNode }) => {
       }
       return;
     }
-    if (sessionUtkast && !utkast) {
-      setUtkast(sessionUtkast);
-    }
-  }, [fetchedUtkast, sessionUtkast, utkast]);
+  }, [fetchedUtkast, utkast]);
 
   useEffect(() => {
     if (utkastId == null && utkast) {
-      sessionStorage.removeItem(sessionStorageKeys.utkast);
       closeUtkast();
       mutate();
     }

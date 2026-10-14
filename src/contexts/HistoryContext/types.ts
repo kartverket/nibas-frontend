@@ -142,7 +142,6 @@ export type HistoryContextValue = {
   history: HistoryState;
   clearHistory: (historySaved?: boolean) => void;
   getHistoryEntries: () => HistoryEntry[];
-  restoreHistoryState: (historyState: HistoryState) => void;
   canSave: boolean;
   undo: (() => void) | undefined;
   redo: (() => void) | undefined;

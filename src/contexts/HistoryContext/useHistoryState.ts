@@ -62,14 +62,6 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
     updateFeatureStyles([]);
   };
 
-  const restoreHistoryState = (historyState: HistoryState) => {
-    for (let i = 0; i < historyState.index; i++) {
-      onRedo(historyState.entries[i]);
-    }
-    setHistory(historyState);
-    updateFeatureStyles(historyState.entries);
-  };
-
   const revert = (amount: number) => {
     const { index, entries } = history;
 
@@ -116,7 +108,6 @@ const useHistoryState = ({ onUndo, onRedo, initialState = [] }: Options) => {
 
   return {
     history,
-    restoreHistoryState,
     addHistoryEntry,
     clearHistory,
     undo,
