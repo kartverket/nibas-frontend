@@ -64,6 +64,8 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   // Henter XML-data fra hver av tjenestene i kartlagslisten og mapper det over til noe mer brukbart
   useEffect(() => {
     if (!areLayersInitialized.current) {
+      setWMTSLayerVisibility(getLayerById(defaultKartlag.sourceId as KartlagLayerId), true, defaultKartlag.layer);
+
       const mappedLayerPromises = Object.entries(kartlagLayers).map(([layerId, layer]) => {
         const source = layer.getSource();
         if (source) {
