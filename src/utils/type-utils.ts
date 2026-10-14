@@ -1,6 +1,6 @@
 import { GRENSETYPER, GrenseType } from "hooks/layers/types";
 import Feature, { FeatureLike } from "ol/Feature";
-import { LineString, Point } from "ol/geom";
+import { LineString, Point, MultiPolygon } from "ol/geom";
 
 export type Primitive = string | boolean | number | null | undefined;
 
@@ -57,6 +57,9 @@ export const getGrensetypeFromString = (value: string): GrenseType | null => {
 
 export const isLineStringFeature = (feature: FeatureLike): feature is Feature<LineString> =>
   feature.getGeometry() instanceof LineString;
+
+export const isMultiPolygonFeature = (feature: FeatureLike): feature is Feature<MultiPolygon> =>
+  feature.getGeometry() instanceof MultiPolygon;
 
 export const isPointFeature = (feature: FeatureLike): feature is Feature<Point> =>
   feature.getGeometry() instanceof Point;

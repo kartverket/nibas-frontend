@@ -173,15 +173,19 @@ const withOpacity = (color: string, opacity: number): Color => {
   return [r, g, b, opacity];
 };
 
-const flateHighlightFillStyles: Record<Inndelingtype, Style> = INNDELINGTYPE_VALUES.reduce(
-  (styles, inndelingtype) => ({
-    ...styles,
-    [inndelingtype]: new Style({
-      fill: new Fill({ color: withOpacity(inndelingColors[inndelingtype], 0.4) }),
+const createFlateFillStyles = (opacity: number): Record<Inndelingtype, Style> =>
+  INNDELINGTYPE_VALUES.reduce(
+    (styles, inndelingtype) => ({
+      ...styles,
+      [inndelingtype]: new Style({
+        fill: new Fill({ color: withOpacity(inndelingColors[inndelingtype], opacity) }),
+      }),
     }),
-  }),
-  {} as Record<Inndelingtype, Style>,
-);
+    {} as Record<Inndelingtype, Style>,
+  );
+
+const flateHighlightFillStyles = createFlateFillStyles(0.4);
+const flateHoverFillStyles = createFlateFillStyles(0.6);
 
 export const getFlateHighlightStyle = (feature: FeatureLike): Style[] => {
   const inndelingtype = feature.get("inndelingtype") as Inndelingtype | undefined;
@@ -190,6 +194,15 @@ export const getFlateHighlightStyle = (feature: FeatureLike): Style[] => {
   }
 
   return [flateHighlightFillStyles[inndelingtype]];
+};
+
+export const getFlateHoverStyle = (feature: FeatureLike): Style[] => {
+  const inndelingtype = feature.get("inndelingtype") as Inndelingtype | undefined;
+  if (inndelingtype == null) {
+    return [];
+  }
+
+  return [flateHoverFillStyles[inndelingtype]];
 };
 
 const grenseStyleFromType = (grenseType: GrenseType, archived: boolean): Style[] => {
