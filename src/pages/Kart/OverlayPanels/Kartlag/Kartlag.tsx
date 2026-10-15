@@ -1,5 +1,6 @@
 import { IconButton } from "@kvib/react";
 import { MappedLayer, useKartlag } from "contexts/KartlagContext/KartlagContext";
+import { motion } from "framer-motion";
 import { styled } from "styled-components";
 import KartlagInner from "./KartlagInner";
 import KartlagOuter from "./KartlagOuter";
@@ -14,7 +15,12 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
   const { moveLayer } = useKartlag();
 
   return (
-    <Container>
+    <Container
+      layout="position"
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, delay: index * 0.025 }}
+    >
       <ArrowButtons>
         <IconButton
           variant="ghost"
@@ -43,7 +49,7 @@ const Kartlag = ({ mappedLayer, index, maxIndex }: Props) => {
   );
 };
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   display: flex;
   align-items: center;
   gap: 8px;

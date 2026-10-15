@@ -126,3 +126,12 @@ export const highlightLayers: Record<HighlightVectorLayerId, VectorLayer<VectorS
   pointsHighlight: createHighlightVectorLayer("pointsHighlight", highlightPointSource, 1000),
   flateHighlight: createHighlightVectorLayer("flateHighlight", new VectorSource(), -1, getFlateHighlightStyle),
 };
+
+export const standaloneMapSources = [
+  matrikkelnummerSource,
+  navigationPinSource,
+  ...Object.values(highlightLayers).flatMap((layer) => {
+    const source = layer.getSource();
+    return source ? [source] : [];
+  }),
+];

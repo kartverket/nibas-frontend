@@ -16,8 +16,11 @@ import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { KeyboardShortcuts } from "hooks/keyboard-shortcuts/keyboard-shortcuts";
 import { useKeyboardShortcut } from "hooks/keyboard-shortcuts/keyboard-shortcuts-hook";
 import { ToolbarMenu } from "pages/Kart/Toolbar/ToolbarMenu";
+import { useEffect } from "react";
 import { INNDELINGTYPE_VALUES } from "types/api";
 import { anyFeatureIsEditable } from "utils/features";
+import { getFlateHoverStyle } from "utils/map/layerStyles";
+import useHoveredFlate from "../interactions/useHoveredFlate";
 import { FLATEDATA_TABLE_INNDELINGTYPE_VALUES } from "../OverlayPanels/FlatedataPanel/FlatedataPanel";
 import InndelingerHighlightLoader from "../OverlayPanels/FlatedataPanel/FlateHighlightLoader";
 import CustomTooltip from "./CustomTooltip";
@@ -38,6 +41,20 @@ type VisFlaterMenuItemProps = {
 };
 
 const VisFlaterMenuItem = ({ isAvailable, isActive, onToggle, disabledMessage }: VisFlaterMenuItemProps) => {
+  const { hoveredFlate } = useHoveredFlate(isActive, true);
+
+  useEffect(() => {
+    if (hoveredFlate == null) {
+      return;
+    }
+
+    hoveredFlate.setStyle(getFlateHoverStyle);
+
+    return () => {
+      hoveredFlate.setStyle(undefined);
+    };
+  }, [hoveredFlate]);
+
   useKeyboardShortcut("flater", onToggle);
 
   return (

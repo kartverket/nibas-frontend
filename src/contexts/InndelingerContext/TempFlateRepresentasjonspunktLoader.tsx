@@ -1,5 +1,6 @@
 import { Inndeling, InndelingOfType } from "contexts/InndelingerContext/InndelingerContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
+import { useUtkast } from "contexts/UtkastContext/UtkastContext";
 import { editSource, grenserLayers } from "hooks/layers/constants";
 import { Feature } from "ol";
 import Point from "ol/geom/Point";
@@ -21,17 +22,21 @@ const isTilhorighetInndeling = (inndeling: Inndeling): inndeling is InndelingOfT
 const TempFlateRepresentasjonspunkt = ({ inndeling }: { inndeling: InndelingOfType<TilhorighetInndelingtype> }) => {
   const flatedata = useFlatedata(inndeling) ?? [];
   const { history } = useHistory();
+  const { utkast } = useUtkast();
 
   useEffect(() => {
     const tempFlater = flatedata.filter((flate) => isValidTempFlateId(getIdFromEntity(flate)));
     const viewingSource = grenserLayers[inndeling.inndelingtype].getSource();
+    const sammenslaaing = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
 
     const synchronizeRepresentasjonspunkter = () => {
       for (const flate of tempFlater) {
         const flateId = getIdFromEntity(flate);
         const representasjonspunktId = getRepresentasjonspunktId(flateId);
         const viewingId = `${representasjonspunktId}_isViewing`;
-        const point = getRepresentasjonspunktForOmraade(inndeling.inndelingtype, inndeling.id, flate);
+        const point = getRepresentasjonspunktForOmraade(inndeling.inndelingtype, inndeling.id, flate, {
+          sammenslaaing,
+        });
         if (point == null) {
           const editFeature = editSource.getFeatureById(representasjonspunktId);
           const viewingFeature = viewingSource?.getFeatureById(viewingId);
@@ -92,7 +97,7 @@ const TempFlateRepresentasjonspunkt = ({ inndeling }: { inndeling: InndelingOfTy
         }
       });
     };
-  }, [flatedata, history, inndeling]);
+  }, [flatedata, history, inndeling, utkast]);
 
   return null;
 };

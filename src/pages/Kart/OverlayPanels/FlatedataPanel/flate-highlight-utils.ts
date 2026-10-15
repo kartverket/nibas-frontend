@@ -4,7 +4,7 @@ import { Feature } from "ol";
 import { Coordinate, equals } from "ol/coordinate";
 import { LineString, MultiPolygon, Point, Polygon } from "ol/geom";
 import { TilhorighetInndelingtype } from "pages/Kart/OverlayPanels/hooks/tilhorighet-utils";
-import { FeatureProperties, MetadataResponse } from "types/api";
+import { FeatureProperties, MetadataResponse, StemmekretsSammenslaaingsendringRequest } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { removeNil } from "utils/list-utils";
 import { isBopliktomraadeResponse } from "./flatedata-response-guards";
@@ -12,6 +12,7 @@ import {
   getKommuneLokalidFromTempFlateId,
   getInndelingtypeFromTempFlateId,
   getNummerFromTempFlateId,
+  getSammenslaattStemmekretsId,
   isValidTempFlateId,
 } from "./flatedata-utils";
 
@@ -128,6 +129,41 @@ export const getLineStringsForOmraadeFromSource = (
   );
 };
 
+const getLineStringsForSammenslaaingFromSource = (stemmekretsIds: string[]): LineString[] => {
+  const participantIds = new Set(stemmekretsIds);
+  const RELEVANT_STEMMEKRETS_GRENSE_LAYER_IDS: VectorLayerId[] = ["STEMMEKRETS", "edit"];
+  const candidateFeatures = RELEVANT_STEMMEKRETS_GRENSE_LAYER_IDS.flatMap(
+    (layerId) => grenserLayers[layerId].getSource()?.getFeatures() ?? [],
+  );
+  const boundaries = new Map<string | Feature, { geometry: LineString; participantIds: Set<string> }>();
+
+  for (const feature of candidateFeatures) {
+    const geometry = feature.getGeometry();
+    if (!(geometry instanceof LineString)) {
+      continue;
+    }
+
+    const properties = feature.getProperties() as FeatureProperties;
+    const matchingParticipantIds = properties.kontekstEgenskaper
+      .filter((kontekst) => kontekst.type === "STEMMEKRETS")
+      .map((kontekst) => kontekst.id?.lokalid.value)
+      .filter((id): id is string => id != null && participantIds.has(id));
+    if (matchingParticipantIds.length === 0) {
+      continue;
+    }
+
+    const boundaryKey = feature.getId()?.toString() ?? feature;
+    const boundary = boundaries.get(boundaryKey) ?? { geometry, participantIds: new Set<string>() };
+    matchingParticipantIds.forEach((id) => boundary.participantIds.add(id));
+    boundary.geometry = geometry;
+    boundaries.set(boundaryKey, boundary);
+  }
+
+  return [...boundaries.values()]
+    .filter((boundary) => boundary.participantIds.size === 1)
+    .map((boundary) => boundary.geometry);
+};
+
 const getLineStringsForKommuneFromSource = (kommuneId: string): LineString[] => {
   const candidateFeatures = RELEVANT_GRENSE_LAYER_IDS.flatMap(
     (layerId) => grenserLayers[layerId].getSource()?.getFeatures() ?? [],
@@ -176,9 +212,18 @@ export const getPolygonForOmraade = (
   inndelingtype: TilhorighetInndelingtype,
   kommuneId: string,
   omraade: MetadataResponse,
+  options?: { sammenslaaing?: StemmekretsSammenslaaingsendringRequest | null },
 ): Feature<MultiPolygon> | null => {
   const omraadeId = getIdFromEntity(omraade);
-  const lineStrings = getLineStringsForOmraade(inndelingtype, kommuneId, omraadeId, omraade);
+  const sammenslaaing = options?.sammenslaaing;
+  const isSammenslaattStemmekrets =
+    sammenslaaing != null && omraadeId === getSammenslaattStemmekretsId(sammenslaaing, kommuneId);
+  const lineStrings = isSammenslaattStemmekrets
+    ? getLineStringsForSammenslaaingFromSource([
+        sammenslaaing.viderefoertStemmekrets.lokalId,
+        ...sammenslaaing.stemmekretserTilSammenslaaing.map((stemmekrets) => stemmekrets.lokalId),
+      ])
+    : getLineStringsForOmraade(inndelingtype, kommuneId, omraadeId, omraade);
   const rings = buildRingsFromLineStrings(lineStrings);
 
   if (rings.length === 0) {
@@ -195,8 +240,9 @@ export const getRepresentasjonspunktForOmraade = (
   inndelingtype: TilhorighetInndelingtype,
   kommuneId: string,
   omraade: MetadataResponse,
+  options?: { sammenslaaing?: StemmekretsSammenslaaingsendringRequest | null },
 ): Point | null => {
-  const flate = getPolygonForOmraade(inndelingtype, kommuneId, omraade);
+  const flate = getPolygonForOmraade(inndelingtype, kommuneId, omraade, options);
   const polygons = flate?.getGeometry()?.getPolygons() ?? [];
   const largestPolygon = polygons.reduce<Polygon | null>(
     (largest, polygon) =>

@@ -26,6 +26,7 @@ export type MappedLayer = {
 export type KartlagContextValue = {
   mappedLayers: MappedLayer[];
   defaultSosiLayer: MappedLayer;
+  isKartlagLoading: boolean;
   toggleKartlag: (mappedLayer: MappedLayer, indexPath: number[]) => void;
   moveLayer: (direction: "up" | "down", layerId: LayerId) => void;
   resetKartlag: () => void;
@@ -42,6 +43,24 @@ const defaultKartlag: { sourceId: LayerId; layer: string } = {
   layer: "topograatone",
 };
 
+const kartlagLoadTimeoutMs = 10_000;
+
+const loadKartlagWithinTimeout = <T,>(promise: Promise<T>): Promise<T | null> =>
+  new Promise((resolve) => {
+    const timeoutId = window.setTimeout(() => resolve(null), kartlagLoadTimeoutMs);
+
+    promise.then(
+      (value) => {
+        window.clearTimeout(timeoutId);
+        resolve(value);
+      },
+      () => {
+        window.clearTimeout(timeoutId);
+        resolve(null);
+      },
+    );
+  });
+
 const defaultSosiLayer: MappedLayer = {
   type: "vector",
   sourceId: "sosiFiler",
@@ -55,27 +74,33 @@ export const KartlagContext = createContext<KartlagContextValue | undefined>(und
 
 export const KartlagProvider = ({ children }: { children: React.ReactNode }) => {
   const { uploadKartlag, isLoading } = useKartlagUpload();
-  const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([]);
+  const [mappedLayers, setMappedLayers] = useState<MappedLayer[]>([defaultSosiLayer]);
+  const [isKartlagLoading, setIsKartlagLoading] = useState(true);
 
   // Litt støttestate for å gjøre det lettere å tilbakestille senere
-  const [defaultLayers, setDefaultLayers] = useState<MappedLayer[]>([]);
+  const [defaultLayers, setDefaultLayers] = useState<MappedLayer[]>([defaultSosiLayer]);
   const areLayersInitialized = useRef(false);
 
   // Henter XML-data fra hver av tjenestene i kartlagslisten og mapper det over til noe mer brukbart
   useEffect(() => {
     if (!areLayersInitialized.current) {
+      setWMTSLayerVisibility(getLayerById(defaultKartlag.sourceId as KartlagLayerId), true, defaultKartlag.layer);
+
       const mappedLayerPromises = Object.entries(kartlagLayers).map(([layerId, layer]) => {
         const source = layer.getSource();
         if (source) {
-          return getLayersFromSource(layerId as KartlagLayerId, source);
+          return loadKartlagWithinTimeout(getLayersFromSource(layerId as KartlagLayerId, source));
         }
       });
 
-      Promise.all(mappedLayerPromises).then((layers) => {
-        const nonNullLayers = layers.filter(isNotNil);
+      Promise.allSettled(mappedLayerPromises).then((layers) => {
+        const nonNullLayers = layers.flatMap((layer) =>
+          layer.status === "fulfilled" && isNotNil(layer.value) ? [layer.value] : [],
+        );
         const initialLayers = [defaultSosiLayer].concat(findAndToggleLayer(defaultKartlag.layer, nonNullLayers));
         setMappedLayers([...initialLayers]);
         setDefaultLayers(initialLayers);
+        setIsKartlagLoading(false);
         areLayersInitialized.current = true;
       });
     }
@@ -169,6 +194,7 @@ export const KartlagProvider = ({ children }: { children: React.ReactNode }) => 
   const value = {
     mappedLayers,
     defaultSosiLayer,
+    isKartlagLoading,
     toggleKartlag,
     moveLayer,
     resetKartlag,

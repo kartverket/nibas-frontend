@@ -91,14 +91,14 @@ export const getLayersFromSource = async (layerId: KartlagLayerId, source: TileW
     capabilitiesUrl += serviceParam;
   }
 
-  if (source.get("protectedTjenesteId") != null) {
-    const ticket = await getTicketForTjeneste(source.get("protectedTjenesteId"), url);
-    if (ticket) {
-      capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
-    }
-  }
-
   try {
+    if (source.get("protectedTjenesteId") != null) {
+      const ticket = await getTicketForTjeneste(source.get("protectedTjenesteId"), url);
+      if (ticket) {
+        capabilitiesUrl = `${capabilitiesUrl}&ticket=${ticket}`;
+      }
+    }
+
     const response = await fetch(getUrlForPath(capabilitiesUrl));
     const xml = await response.text();
 

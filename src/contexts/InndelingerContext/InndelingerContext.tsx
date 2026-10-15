@@ -1,3 +1,4 @@
+import { useValgtGyldighetsdato } from "contexts/GyldighetsdatoContext";
 import { useFeatureStyle } from "contexts/FeatureStyleContext/FeatureStyleContext";
 import { useHistory } from "contexts/HistoryContext/HistoryContext";
 import { useUtkast } from "contexts/UtkastContext/UtkastContext";
@@ -5,7 +6,7 @@ import { editSource, grenserLayers } from "hooks/layers/constants";
 import { VectorLayerId } from "hooks/layers/types";
 import { Feature } from "ol";
 import { Geometry, LineString } from "ol/geom";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { AdministrativEnhetNavn, FeatureProperties, Inndelingtype, INNDELINGTYPE_VALUES } from "types/api";
 import { getFeatureFremtidigEndringDato } from "utils/features";
 import { removeNil } from "utils/list-utils";
@@ -88,6 +89,8 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
 
   const [selectedFylkeIds, setSelectedFylkeIds] = useState<string[]>([]);
   const [inndelingerToFetch, setInndelingerToFetch] = useState<Inndeling[]>([]);
+  const { gyldighetsdato } = useValgtGyldighetsdato();
+  const previousGyldighetsdato = useRef(gyldighetsdato);
 
   const { isFetching, inndelingFeatures, utkastFeaturesInInndeling } = useInndelingFeatures(inndelingerToFetch);
   const { utkast } = useUtkast();
@@ -106,6 +109,12 @@ export const InndelingerProvider = ({ children }: { children: React.ReactNode })
     return getAllInndelinger().map((inndeling) => inndeling.id);
   }, [getAllInndelinger]);
 
+  useEffect(() => {
+    if (previousGyldighetsdato.current !== gyldighetsdato) {
+      previousGyldighetsdato.current = gyldighetsdato;
+      setInndelingerToFetch(getAllInndelinger());
+    }
+  }, [getAllInndelinger, gyldighetsdato]);
   /**
    * Denne useEffecten er kjernen av motoren i InndelingerContext og tar for seg det å legge til features fra inndelingen i kartet
    *
