@@ -14,6 +14,7 @@ import {
   MetadataResponse,
   StemmekretsResponse,
   StemmekretsRequest,
+  StemmekretsSammenslaaingsendringRequest,
 } from "types/api";
 import { getIdFromEntity } from "utils/api";
 import { NonExhaustiveInndelingRequest, NonExhaustiveInndelingtype } from "./FlatedataTable";
@@ -456,6 +457,17 @@ export const getTempFlateId = ({
 
   return parts.join(SEPARATOR) as TempFlateId;
 };
+
+export const getSammenslaattStemmekretsId = (
+  sammenslaaing: StemmekretsSammenslaaingsendringRequest,
+  kommuneLokalid: string,
+): TempFlateId =>
+  getTempFlateId({
+    inndelingtype: "STEMMEKRETS",
+    kommuneLokalid,
+    nummer: sammenslaaing.nummer,
+    distinguisher: "SAMMENSLAAING",
+  });
 
 export const getKommuneLokalidFromTempFlateId = (tempFlateId: string): string | null => {
   if (isValidTempFlateId(tempFlateId)) {

@@ -51,7 +51,6 @@ export type FlatedataColumnCtx = {
   allInndelinger: MetadataResponse[];
   activeInndelingIds: Set<string>;
   activeInndelingerCount: number;
-  sammenslaaingInformasjon: string | undefined;
   canEditInndeling: boolean;
 };
 
@@ -416,14 +415,14 @@ const getStemmekretsColumns = (): FlatedataColumn<"STEMMEKRETS">[] => {
     {
       header: "Informasjon",
       size: "1fr",
-      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, sammenslaaingInformasjon }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods }) => {
         const stemmekrets = inndeling as StemmekretsResponse;
         const { register, getValues } = formMethods;
         return (
           <InputCell
             isEditing={isEditing}
             isDisabled={isDisabled}
-            data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? stemmekrets.informasjon}
+            data={getValues(`${inndelingId}.informasjon`) ?? stemmekrets.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
         );
@@ -439,14 +438,14 @@ const getGrunnkretsColumns = (): FlatedataColumn<"GRUNNKRETS">[] => {
     navnColumn("GRUNNKRETS", label),
     {
       header: "Informasjon",
-      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods, sammenslaaingInformasjon }) => {
+      renderCell: ({ inndeling, inndelingId, isEditing, isDisabled, formMethods }) => {
         const grunnkrets = inndeling as GrunnkretsResponse;
         const { register, getValues } = formMethods;
         return (
           <InputCell
             isEditing={isEditing}
             isDisabled={isDisabled}
-            data={sammenslaaingInformasjon ?? getValues(`${inndelingId}.informasjon`) ?? grunnkrets.informasjon}
+            data={getValues(`${inndelingId}.informasjon`) ?? grunnkrets.informasjon}
             {...register(`${inndelingId}.informasjon`)}
           />
         );

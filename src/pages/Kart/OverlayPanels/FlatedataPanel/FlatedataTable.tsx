@@ -70,16 +70,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const [pendingDeletedIds, setPendingDeletedIds] = useState<Set<string>>(new Set());
 
   const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
-  const utkastSammenslaaingInformasjon: Record<string, string | undefined> =
-    utkastSammenslaaingEndring?.stemmekretserTilSammenslaaing
-      .concat(utkastSammenslaaingEndring?.viderefoertStemmekrets)
-      .reduce(
-        (acc, sk) => {
-          acc[sk.lokalId] = utkast?.operasjoner.stemmekretsSammenslaaingsendring?.informasjon ?? undefined;
-          return acc;
-        },
-        {} as Record<string, string | undefined>,
-      ) ?? {};
 
   const flatedata = [...(useFlatedata(mainInndeling) ?? []), ...tempFlatedata];
   const visibleFlatedata = flatedata.filter((inndeling) => !pendingDeletedIds.has(getIdFromEntity(inndeling)));
@@ -318,7 +308,8 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                 const inndelingId = getIdFromEntity(inndeling);
                 const isSplitInndeling =
                   isValidTempFlateId(inndelingId) &&
-                  (mainInndeling.inndelingtype === "GRUNNKRETS" || mainInndeling.inndelingtype === "STEMMEKRETS");
+                  (mainInndeling.inndelingtype === "GRUNNKRETS" || mainInndeling.inndelingtype === "STEMMEKRETS") &&
+                  utkastSammenslaaingEndring == null;
 
                 const isSearchMatch =
                   inndeling.nummer.includes(searchValue) === true ||
@@ -337,7 +328,6 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
                     control={control}
                     setPreviousValues={setPreviousValues}
                     allInndelinger={visibleFlatedata}
-                    sammenslaaingInformasjon={utkastSammenslaaingInformasjon[inndelingId]}
                     canEditInndeling={canEditInndeling}
                     pendingArchived={pendingArchived}
                     toggleArchived={toggleArchived}
