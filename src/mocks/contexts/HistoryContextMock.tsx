@@ -7,7 +7,6 @@ const mockHistoryContextValue: HistoryContextValue = {
   history: { entries: [], index: 0 },
   clearHistory: vitest.fn(),
   getHistoryEntries: vitest.fn(() => []),
-  restoreHistoryState: vitest.fn(),
   canSave: false,
   undo: vitest.fn(),
   redo: vitest.fn(),

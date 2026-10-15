@@ -1,17 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { fetchActiveModeToolsFromSessionStorage, fetchActiveToolFromSessionStorage } from "./application-state-utils";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isModeTool = (value: any): value is ModeTool => {
-  const allowedValues: ModeTool[] = modeToolValues.slice();
-  return allowedValues.includes(value);
-};
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const isTool = (value: any): value is Tool => {
-  const allowedValues: Tool[] = toolValues.slice();
-  return allowedValues.includes(value);
-};
+import React, { createContext, useContext, useState } from "react";
 
 export const toolValues = [
   "add",
@@ -67,18 +54,6 @@ export const ToolbarProvider = ({ children }: { children: React.ReactNode }) => 
 
   const defaultModeTools: ModeTool[] = ["move", "snap_matrikkel", "snap_nibas"];
   const [activeModeTools, setActiveModeTools] = useState<ModeTool[]>(defaultModeTools);
-
-  useEffect(() => {
-    const modeTools = fetchActiveModeToolsFromSessionStorage();
-    const tools = fetchActiveToolFromSessionStorage();
-
-    if (tools !== null) {
-      setActiveTool(tools);
-    }
-    if (modeTools !== null) {
-      setActiveModeTools(modeTools);
-    }
-  }, []);
 
   const toggleTool = (tool: Tool) => {
     if (tool === activeTool) {

@@ -10,7 +10,7 @@ import Providers from "./Providers";
 import { FullPageError } from "components/FullPageError";
 import "cypress-globals";
 import { Endringer } from "pages/Endringer/Endringer";
-import { UtkastRestore } from "pages/Utkast/UtkastRestore";
+import { UtkastRoute } from "pages/Utkast/UtkastRoute";
 
 const App = () => {
   const router = createBrowserRouter(
@@ -18,7 +18,7 @@ const App = () => {
       <Route errorElement={<FullPageError />}>
         <Route element={<ProvidersRoute />}>
           <Route index element={<Landing />} />
-          <Route path={routes.utkast} element={<UtkastRestore />}>
+          <Route path={routes.utkast} element={<UtkastRoute />}>
             <Route index element={<Utkast />} />
             <Route path={routes.utkastId} element={<PageLayout />} />
           </Route>
