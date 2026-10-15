@@ -2,6 +2,7 @@ import { useInndelinger } from "contexts/InndelingerContext/InndelingerContext";
 import { useKartlag } from "contexts/KartlagContext/KartlagContext";
 import { useOverlayPanel } from "contexts/OverlayPanelContext";
 import { useToolbar } from "contexts/ToolbarContext";
+import { standaloneMapSources } from "hooks/layers/constants";
 import { resetMapView } from "utils/map/useMap";
 
 const useMapReset = () => {
@@ -15,6 +16,7 @@ const useMapReset = () => {
     resetTool();
     resetModeTools();
     resetKartlag();
+    standaloneMapSources.forEach((source) => source.clear());
 
     // Disse krever ekstra sjekking for å unngå uendelig useEffekt-løkke
     if (activeOverlayPanel) {
