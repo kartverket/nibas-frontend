@@ -9,6 +9,7 @@ const useHoveredLineString = (enabled: boolean, shouldClearHover?: boolean) => {
     enabled,
     shouldClearHover,
     isLineStringFeature,
+    16,
   );
   const hoveredVertex = useMemo<Coordinate | undefined>(() => {
     const lineString = hoveredLineString?.getGeometry();

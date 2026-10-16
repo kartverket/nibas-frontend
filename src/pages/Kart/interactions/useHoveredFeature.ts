@@ -11,6 +11,7 @@ const useHoveredFeature = <T extends Geometry>(
   enabled: boolean,
   shouldClearHover: boolean | undefined,
   isTargetFeature: (feature: FeatureLike) => feature is Feature<T>,
+  timeoutMs: number,
 ) => {
   const { getFeaturesAtPixel } = useGetFeatures();
   const [hoveredFeature, setHoveredFeature] = useState<Feature<T> | null>(null);
@@ -47,7 +48,7 @@ const useHoveredFeature = <T extends Geometry>(
         } else {
           clearHoverState();
         }
-      }, 50);
+      }, timeoutMs);
     };
     if (enabled) {
       map.on("pointermove", hover as ListenerFunction);
@@ -58,7 +59,7 @@ const useHoveredFeature = <T extends Geometry>(
       clearTimeout(timeout);
       map.un("pointermove", hover as ListenerFunction);
     };
-  }, [enabled]);
+  }, [enabled, timeoutMs]);
 
   return { hoveredFeature, hoveredCoordinate };
 };
