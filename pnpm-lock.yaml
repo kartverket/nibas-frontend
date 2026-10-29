@@ -170,8 +170,8 @@ overrides:
   brace-expansion@>=2.0.0 <2.1.6: '>=2.1.6'
   brace-expansion@>=2.0.0 <2.1.7: '>=2.1.7'
   fast-uri@>=3.0.0 <3.1.8: '>=3.1.8'
-  js-yaml@>=4.0.0 <4.3.1: '>=4.3.1'
-  js-yaml@>=4.0.0 <4.3.2: '>=4.3.2'
+  js-yaml@>=4.0.0 <4.3.1: '>=4.3.1 <5'
+  js-yaml@>=4.0.0 <4.3.2: '>=4.3.2 <5'
 
 importers:
 
@@ -7194,7 +7194,7 @@ snapshots:
       colorette: 1.4.0
       https-proxy-agent: 7.0.6(supports-color@10.2.2)
       js-levenshtein: 1.1.6
-      js-yaml: 5.5.0
+      js-yaml: 4.3.2
       minimatch: 5.1.9
       pluralize: 8.0.0
       yaml-ast-parser: 0.0.43
@@ -7850,7 +7850,7 @@ snapshots:
     dependencies:
       env-paths: 2.2.1
       import-fresh: 3.3.0
-      js-yaml: 5.5.0
+      js-yaml: 4.3.2
       parse-json: 5.2.0
     optionalDependencies:
       typescript: 6.0.3
