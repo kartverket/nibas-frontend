@@ -44,6 +44,7 @@ import {
 import { useFlatedata } from "./useFlatedata";
 import { orderInndelingerBy, useFlatedataTableSort } from "./useFlatedataTableSort";
 import { archiveFeaturesForInndeling, unarchiveFeaturesForInndeling } from "pages/Kart/interactions/archive-features";
+import ImporterSosiGrenserModal, { NyttBopliktomraade } from "./ImporterSosiGrenserModal";
 
 type Props = {
   mainInndeling: FlatedataTableInndeling;
@@ -68,6 +69,7 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
   const [tempFlatedata, setTempFlatedata] = useState<MetadataResponse[]>([]);
   const [pendingArchived, setPendingArchived] = useState<Record<string, boolean>>({});
   const [pendingDeletedIds, setPendingDeletedIds] = useState<Set<string>>(new Set());
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   const utkastSammenslaaingEndring = utkast?.operasjoner.stemmekretsSammenslaaingsendring;
 
@@ -289,6 +291,22 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
 
   const canEditInndeling = utkast != null && mainInndeling.isEditing === true;
 
+  // Grenser kan bare importeres til nye bopliktområder som er lagret i historikken, så tilhørigheten ikke peker på
+  // et område som forsvinner hvis redigeringen avbrytes
+  const nyeBopliktomraader: NyttBopliktomraade[] =
+    mainInndeling.inndelingtype === "BOPLIKTOMRAADE"
+      ? visibleFlatedata
+          .filter((inndeling) => isValidTempFlateId(getIdFromEntity(inndeling)))
+          .filter((inndeling) => !tempFlatedata.some((temp) => getIdFromEntity(temp) === getIdFromEntity(inndeling)))
+          .map((inndeling) => ({
+            id: getIdFromEntity(inndeling),
+            nummer: inndeling.nummer,
+            navn: getNavnInSpraak(inndeling.navn, "nor"),
+            version: inndeling.version,
+          }))
+      : [];
+  const kanImportereGrenser = canEditInndeling && isEditing === false && nyeBopliktomraader.length > 0;
+
   return (
     <Container>
       <TableScrollArea $hasRows={flatedata.length > 0}>
@@ -349,7 +367,23 @@ const FlatedataTable = ({ mainInndeling, isEditing, setIsEditing, searchValue, c
         ) : (
           <></>
         )}
+        {kanImportereGrenser && (
+          <AddFlateContainer>
+            <Button onClick={() => setIsImportOpen(true)} leftIcon="upload" variant="secondary">
+              Importer grenser fra SOSI-fil
+            </Button>
+          </AddFlateContainer>
+        )}
       </TableScrollArea>
+      {/* Monteres bare når den er åpen, så valgt fil ikke henger igjen og målemetodene bare hentes ved import */}
+      {isImportOpen && (
+        <ImporterSosiGrenserModal
+          isOpen
+          onClose={() => setIsImportOpen(false)}
+          kommuneId={mainInndeling.id}
+          nyeBopliktomraader={nyeBopliktomraader}
+        />
+      )}
       {flatedata.length === 0 && (
         <CreateFlateContainer>
           <BoldHeading>{`Ingen ${getInndelingtypeLabel(mainInndeling.inndelingtype, { pluralizeLabel: true, capitalizeLabel: false })} i denne kommunen.`}</BoldHeading>

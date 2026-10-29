@@ -1566,7 +1566,7 @@ export interface components {
         FeatureProperties: {
             /** @description Egenskaper til konteksten til grensen. */
             kontekstEgenskaper: components["schemas"]["KontekstEgenskaper"][];
-            metadata?: (components["schemas"]["AdministrativGrenseMetadata"] | components["schemas"]["AvtaltAvgrensningslinjeMetadata"] | components["schemas"]["FlateMetadata"] | components["schemas"]["GrunnlinjeMetadata"] | components["schemas"]["KommunalKretsgrenseMetadata"] | components["schemas"]["RiksgrenseMetadata"] | components["schemas"]["StatistiskgrenseMetadata"] | components["schemas"]["TerritorialgrenseMetadata"] | unknown) | null;
+            metadata?: components["schemas"]["AdministrativGrenseMetadata"] | components["schemas"]["AvtaltAvgrensningslinjeMetadata"] | components["schemas"]["FlateMetadata"] | components["schemas"]["GrunnlinjeMetadata"] | components["schemas"]["KommunalKretsgrenseMetadata"] | components["schemas"]["RiksgrenseMetadata"] | components["schemas"]["StatistiskgrenseMetadata"] | components["schemas"]["TerritorialgrenseMetadata"] | unknown;
             /** @description Egenskap som sier om en grense med en grenseendring er skal arkiveres */
             shouldArchive: boolean;
             /**
@@ -1674,7 +1674,7 @@ export interface components {
              * @description Type grense
              * @enum {string}
              */
-            grensetype: "Kommunegrense" | "Fylkesgrense" | "Riksgrense" | "AvtaltAvgrensningslinje" | "Territorialgrense" | "Grunnlinje" | "Grunnkretsgrense" | "Delomraadegrense" | "Stemmekretsgrense" | "Bopliktområdegrense";
+            grensetype: "Kommunegrense" | "Fylkesgrense" | "Riksgrense" | "AvtaltAvgrensningslinje" | "Territorialgrense" | "Grunnlinje" | "Grunnkretsgrense" | "Delomraadegrense" | "Stemmekretsgrense" | "Bopliktomraadegrense";
             gyldighet: components["schemas"]["GyldighetResponse"];
             /** @description Unik ID for grensen */
             id: string;
