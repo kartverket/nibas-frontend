@@ -16,7 +16,7 @@
     "js-yaml": "^5.5.0",
     "lodash.get": "^4.4.2",
     "material-symbols": "^0.48.2",
-    "minimatch": "^10.2.6",
+    "minimatch": "^11.0.3",
     "oidc-client-ts": "^3.5.0",
     "ol": "^10.11.0",
     "posthog-js": "^1.442.1",
